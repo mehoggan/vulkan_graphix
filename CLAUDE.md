@@ -30,9 +30,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner`
-- `./build/bin/tutorial02_runner`
-- `./build/bin/tutorial03_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial10_runner`
 
 ### Development Workflow
 
@@ -66,7 +64,8 @@ This compiles `.vert` and `.frag` files to `.spv` format in the Data folder.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-07.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-10.cpp/.h` - Individual tutorial implementations
+  - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10
   - `Logging.cpp/.h` - Boost-based logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
   - `Tools.cpp/.h` - Utility functions
@@ -74,7 +73,7 @@ This compiles `.vert` and `.frag` files to `.spv` format in the Data folder.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One main per active tutorial (01-03)
+  - One main per active tutorial (01-10)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
