@@ -148,7 +148,13 @@ The project uses a custom logging infrastructure built on Boost.Log:
 Tutorial classes inherit patterns from Tutorial01, building incrementally:
 - Tutorial01: Basic device initialization
 - Tutorial02: Rendering pipeline setup
-- Tutorial03 onwards: Progressive feature additions
+- Tutorial03 - Tutorial09: Progressive feature additions (vertex/index/
+  uniform buffers, textures, depth testing, Phong lighting, mouse-orbit
+  camera, tessellated terrain)
+- Tutorial10: Phong-shaded tube swept along a `Math::CubicCurve`-sampled
+  spline, drawn alongside its control polygon as an unlit line strip —
+  first tutorial with push constants, line topology, and two pipelines
+  sharing one pipeline layout
 
 ## Common Tasks
 
