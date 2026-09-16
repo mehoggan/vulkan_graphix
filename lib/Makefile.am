@@ -6,6 +6,7 @@ libvulkan_graphix_la_CPPFLAGS = -Werror -Wall -pedantic \
 libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
+															./OrbitCamera.cpp \
 															./Tools.cpp \
 															./Tutorial01.cpp \
 															./Tutorial02.cpp \
@@ -16,6 +17,7 @@ libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
 															./Tutorial07.cpp \
 															./Tutorial08.cpp \
 															./Tutorial09.cpp \
+															./Tutorial10.cpp \
 															./TutorialBase.cpp \
 															./VulkanFunctions.cpp
 

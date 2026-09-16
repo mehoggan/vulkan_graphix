@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TUTORIAL09_H
-#define VULKAN_GRAPHIX_TUTORIAL09_H
+#ifndef VULKAN_GRAPHIX_TUTORIAL10_H
+#define VULKAN_GRAPHIX_TUTORIAL10_H
 
 #include <cstddef>
 #include <cstdint>
@@ -17,28 +17,34 @@
 namespace vulkan_graphix {
 
 // ************************************************************ //
-// VertexData                                                   //
+// TubeVertexData / LineVertexData                              //
 //                                                              //
-// Struct describing data type and format of vertex attributes  //
+// Two vertex layouts for the two things this tutorial draws:   //
+// a Phong-lit triangle mesh (a tube swept along the sampled    //
+// curve) and a flat-colored line strip (the control polygon).  //
 // ************************************************************ //
-struct VertexData {
+struct TubeVertexData {
     Math::Vec4<float> position;
     Math::Vec3<float> normal;
-    Math::Vec2<float> texcoord;
 };
 
-using VertexAttributeTraits = VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                                           Math::Vec3<float>,
-                                                           Math::Vec2<float>>;
+struct LineVertexData {
+    Math::Vec4<float> position;
+};
+
+using TubeVertexAttributeTraits =
+        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec3<float>>;
+using LineVertexAttributeTraits =
+        VertexTypes::AttributeTraits<Math::Vec4<float>>;
 
 // ************************************************************ //
 // UniformBufferData                                            //
 //                                                              //
-// Layout of the Phong lighting uniform buffer. Vec3 fields are //
-// promoted to Vec4 for std140 alignment.                       //
+// Shared by both pipelines. No model matrix: both the tube and //
+// the control polygon are generated directly in world space.   //
+// Vec3 fields are promoted to Vec4 for std140 alignment.       //
 // ************************************************************ //
 struct UniformBufferData {
-    Math::Mat4<float> model;
     Math::Mat4<float> view;
     Math::Mat4<float> projection;
     Math::Vec4<float> light_position;
@@ -47,15 +53,24 @@ struct UniformBufferData {
 };
 
 // ************************************************************ //
-// VulkanTutorial09Parameters                                   //
+// LinePushConstants                                            //
+//                                                              //
+// The control polygon's flat color, set per draw call.         //
+// ************************************************************ //
+struct LinePushConstants {
+    Math::Vec4<float> color;
+};
+
+// ************************************************************ //
+// VulkanTutorial10Parameters                                   //
 //                                                              //
 // Vulkan specific parameters                                   //
 // ************************************************************ //
-class VulkanTutorial09Parameters {
+class VulkanTutorial10Parameters {
 public:
     static const std::size_t resources_count = 3;
 
-    VulkanTutorial09Parameters();
+    VulkanTutorial10Parameters();
 
     const VkRenderPass& getVkRenderPass() const;
     VkRenderPass& getVkRenderPass();
@@ -64,10 +79,6 @@ public:
     const ImageParameters& getDepthImageParameters() const;
     ImageParameters& getDepthImageParameters();
     void setDepthImageParameters(const ImageParameters& depth_image);
-
-    const ImageParameters& getTextureImageParameters() const;
-    ImageParameters& getTextureImageParameters();
-    void setTextureImageParameters(const ImageParameters& texture_image);
 
     const BufferParameters& getUniformBufferParameters() const;
     BufferParameters& getUniformBufferParameters();
@@ -82,20 +93,31 @@ public:
     VkPipelineLayout& getVkPipelineLayout();
     void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
 
-    const VkPipeline& getVkGraphicsPipeline() const;
-    VkPipeline& getVkGraphicsPipeline();
-    void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
+    const VkPipeline& getVkTubePipeline() const;
+    VkPipeline& getVkTubePipeline();
+    void setVkTubePipeline(const VkPipeline& vk_tube_pipeline);
 
-    const BufferParameters& getVertexBufferParameters() const;
-    BufferParameters& getVertexBufferParameters();
-    void setVertexBufferParameters(const BufferParameters& vertex_buffer);
+    const VkPipeline& getVkLinePipeline() const;
+    VkPipeline& getVkLinePipeline();
+    void setVkLinePipeline(const VkPipeline& vk_line_pipeline);
 
-    const BufferParameters& getIndexBufferParameters() const;
-    BufferParameters& getIndexBufferParameters();
-    void setIndexBufferParameters(const BufferParameters& index_buffer);
+    const BufferParameters& getTubeVertexBufferParameters() const;
+    BufferParameters& getTubeVertexBufferParameters();
+    void setTubeVertexBufferParameters(const BufferParameters& vertex_buffer);
 
-    std::uint32_t getIndexCount() const;
-    void setIndexCount(std::uint32_t index_count);
+    const BufferParameters& getTubeIndexBufferParameters() const;
+    BufferParameters& getTubeIndexBufferParameters();
+    void setTubeIndexBufferParameters(const BufferParameters& index_buffer);
+
+    std::uint32_t getTubeIndexCount() const;
+    void setTubeIndexCount(std::uint32_t index_count);
+
+    const BufferParameters& getLineVertexBufferParameters() const;
+    BufferParameters& getLineVertexBufferParameters();
+    void setLineVertexBufferParameters(const BufferParameters& vertex_buffer);
+
+    std::uint32_t getLineVertexCount() const;
+    void setLineVertexCount(std::uint32_t vertex_count);
 
     const BufferParameters& getStagingBufferParameters() const;
     BufferParameters& getStagingBufferParameters();
@@ -122,14 +144,16 @@ public:
 private:
     VkRenderPass m_vk_render_pass;
     ImageParameters m_depth_image_parameters;
-    ImageParameters m_texture_image_parameters;
     BufferParameters m_uniform_buffer;
     DescriptorSetParameters m_descriptor_set_parameters;
     VkPipelineLayout m_vk_pipeline_layout;
-    VkPipeline m_vk_graphics_pipeline;
-    BufferParameters m_vertex_buffer;
-    BufferParameters m_index_buffer;
-    std::uint32_t m_index_count;
+    VkPipeline m_vk_tube_pipeline;
+    VkPipeline m_vk_line_pipeline;
+    BufferParameters m_tube_vertex_buffer;
+    BufferParameters m_tube_index_buffer;
+    std::uint32_t m_tube_index_count;
+    BufferParameters m_line_vertex_buffer;
+    std::uint32_t m_line_vertex_count;
     BufferParameters m_staging_buffer;
     VkCommandPool m_vk_command_pool;
     std::vector<RenderingResourceParameters> m_rendering_resources;
@@ -137,19 +161,18 @@ private:
 };
 
 // ************************************************************ //
-// Tutorial09                                                   //
+// Tutorial10                                                   //
 //                                                              //
 // Class for presenting Vulkan usage topics                     //
 // ************************************************************ //
-class Tutorial09 : public TutorialBase {
+class Tutorial10 : public TutorialBase {
 public:
-    Tutorial09();
-    ~Tutorial09() override;
+    Tutorial10();
+    ~Tutorial10() override;
 
     bool createRenderingResources();
     bool createStagingBuffer();
     bool createDepthResources();
-    bool createTexture();
     bool createUniformBuffer();
     bool createDescriptorSetLayout();
     bool createDescriptorPool();
@@ -157,9 +180,11 @@ public:
     bool updateDescriptorSet();
     bool createRenderPass();
     bool createPipelineLayout();
-    bool createPipeline();
-    bool createVertexBuffer();
-    bool createIndexBuffer();
+    bool createTubePipeline();
+    bool createLinePipeline();
+    bool createTubeVertexBuffer();
+    bool createTubeIndexBuffer();
+    bool createLineVertexBuffer();
 
     bool draw() override;
 
@@ -196,18 +221,14 @@ private:
                          VkFormat format,
                          VkImageAspectFlags aspect_mask,
                          VkImageView* image_view);
-    bool createSampler(VkSamplerAddressMode address_mode, VkSampler* sampler);
-    bool copyTextureData(char* texture_data,
-                         std::uint32_t data_size,
-                         std::uint32_t width,
-                         std::uint32_t height);
     bool destroyDepthResources();
     UniformBufferData getUniformBufferData() const;
     bool updateUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
     createShaderModule(const char* filename);
-    const std::vector<VertexData>& getVertexData() const;
-    const std::vector<std::uint32_t>& getIndexData() const;
+    const std::vector<TubeVertexData>& getTubeVertexData() const;
+    const std::vector<std::uint32_t>& getTubeIndexData() const;
+    const std::vector<LineVertexData>& getLineVertexData() const;
     bool copyBufferData(BufferParameters& destination,
                         const void* data,
                         std::uint32_t data_size,
@@ -222,10 +243,10 @@ private:
     bool childOnWindowSizeChanged() override;
     void childClear() override;
 
-    VulkanTutorial09Parameters m_vulkan_tutorial09_parameters;
+    VulkanTutorial10Parameters m_vulkan_tutorial10_parameters;
     OrbitCamera m_camera;
 };
 
 }  // namespace vulkan_graphix
 
-#endif  // VULKAN_GRAPHIX_TUTORIAL09_H
+#endif  // VULKAN_GRAPHIX_TUTORIAL10_H

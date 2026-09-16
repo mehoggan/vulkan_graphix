@@ -1,0 +1,70 @@
+; SPIR-V
+; Version: 1.0
+; Generator: Google Shaderc over Glslang; 11
+; Bound: 30
+; Schema: 0
+               OpCapability Shader
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint Vertex %main "main" %_ %i_Position
+               OpSource GLSL 450
+               OpSourceExtension "GL_GOOGLE_cpp_style_line_directive"
+               OpSourceExtension "GL_GOOGLE_include_directive"
+               OpName %main "main"
+               OpName %gl_PerVertex "gl_PerVertex"
+               OpMemberName %gl_PerVertex 0 "gl_Position"
+               OpName %_ ""
+               OpName %u_UniformBuffer "u_UniformBuffer"
+               OpMemberName %u_UniformBuffer 0 "u_View"
+               OpMemberName %u_UniformBuffer 1 "u_Projection"
+               OpMemberName %u_UniformBuffer 2 "u_LightPosition"
+               OpMemberName %u_UniformBuffer 3 "u_LightColor"
+               OpMemberName %u_UniformBuffer 4 "u_ViewPosition"
+               OpName %__0 ""
+               OpName %i_Position "i_Position"
+               OpDecorate %gl_PerVertex Block
+               OpMemberDecorate %gl_PerVertex 0 BuiltIn Position
+               OpDecorate %u_UniformBuffer Block
+               OpMemberDecorate %u_UniformBuffer 0 ColMajor
+               OpMemberDecorate %u_UniformBuffer 0 MatrixStride 16
+               OpMemberDecorate %u_UniformBuffer 0 Offset 0
+               OpMemberDecorate %u_UniformBuffer 1 ColMajor
+               OpMemberDecorate %u_UniformBuffer 1 MatrixStride 16
+               OpMemberDecorate %u_UniformBuffer 1 Offset 64
+               OpMemberDecorate %u_UniformBuffer 2 Offset 128
+               OpMemberDecorate %u_UniformBuffer 3 Offset 144
+               OpMemberDecorate %u_UniformBuffer 4 Offset 160
+               OpDecorate %__0 Binding 0
+               OpDecorate %__0 DescriptorSet 0
+               OpDecorate %i_Position Location 0
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+      %float = OpTypeFloat 32
+    %v4float = OpTypeVector %float 4
+%gl_PerVertex = OpTypeStruct %v4float
+%_ptr_Output_gl_PerVertex = OpTypePointer Output %gl_PerVertex
+          %_ = OpVariable %_ptr_Output_gl_PerVertex Output
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+%mat4v4float = OpTypeMatrix %v4float 4
+%u_UniformBuffer = OpTypeStruct %mat4v4float %mat4v4float %v4float %v4float %v4float
+%_ptr_Uniform_u_UniformBuffer = OpTypePointer Uniform %u_UniformBuffer
+        %__0 = OpVariable %_ptr_Uniform_u_UniformBuffer Uniform
+      %int_1 = OpConstant %int 1
+%_ptr_Uniform_mat4v4float = OpTypePointer Uniform %mat4v4float
+%_ptr_Input_v4float = OpTypePointer Input %v4float
+ %i_Position = OpVariable %_ptr_Input_v4float Input
+%_ptr_Output_v4float = OpTypePointer Output %v4float
+       %main = OpFunction %void None %3
+          %5 = OpLabel
+         %19 = OpAccessChain %_ptr_Uniform_mat4v4float %__0 %int_1
+         %20 = OpLoad %mat4v4float %19
+         %21 = OpAccessChain %_ptr_Uniform_mat4v4float %__0 %int_0
+         %22 = OpLoad %mat4v4float %21
+         %23 = OpMatrixTimesMatrix %mat4v4float %20 %22
+         %26 = OpLoad %v4float %i_Position
+         %27 = OpMatrixTimesVector %v4float %23 %26
+         %29 = OpAccessChain %_ptr_Output_v4float %_ %int_0
+               OpStore %29 %27
+               OpReturn
+               OpFunctionEnd

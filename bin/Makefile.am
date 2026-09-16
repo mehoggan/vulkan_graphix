@@ -1,6 +1,6 @@
 bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial04_runner tutorial05_runner tutorial06_runner tutorial07_runner \
-    tutorial08_runner tutorial09_runner
+    tutorial08_runner tutorial09_runner tutorial10_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./tutorial01_main.cpp
@@ -73,6 +73,14 @@ tutorial09_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial09_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial09_runner_LDFLAGS = -pthread
+
+# Tutorial 10 Binary
+tutorial10_runner_SOURCES = ./tutorial10_main.cpp
+tutorial10_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial10_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial10_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -93,13 +101,19 @@ tutorial08_frag = $(top_srcdir)/resources/08/Data/shader.frag.08.spv
 tutorial09_vert = $(top_srcdir)/resources/09/Data/shader.vert.09.spv
 tutorial09_frag = $(top_srcdir)/resources/09/Data/shader.frag.09.spv
 tutorial09_texture = $(top_srcdir)/resources/09/Data/texture.09.png
+tutorial10_tube_vert = $(top_srcdir)/resources/10/Data/shader.vert.10_tube.spv
+tutorial10_tube_frag = $(top_srcdir)/resources/10/Data/shader.frag.10_tube.spv
+tutorial10_line_vert = $(top_srcdir)/resources/10/Data/shader.vert.10_line.spv
+tutorial10_line_frag = $(top_srcdir)/resources/10/Data/shader.frag.10_line.spv
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
     $(tutorial06_vert) $(tutorial06_frag) $(tutorial06_texture) \
     $(tutorial07_vert) $(tutorial07_frag) $(tutorial07_texture) \
     $(tutorial08_vert) $(tutorial08_frag) \
-    $(tutorial09_vert) $(tutorial09_frag) $(tutorial09_texture)
+    $(tutorial09_vert) $(tutorial09_frag) $(tutorial09_texture) \
+    $(tutorial10_tube_vert) $(tutorial10_tube_frag) \
+    $(tutorial10_line_vert) $(tutorial10_line_frag)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -117,10 +131,16 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial09_vert) $(builddir)/shader.09.vert.spv
 	cp $(tutorial09_frag) $(builddir)/shader.09.frag.spv
 	cp $(tutorial09_texture) $(builddir)/texture.09.png
+	cp $(tutorial10_tube_vert) $(builddir)/shader.10_tube.vert.spv
+	cp $(tutorial10_tube_frag) $(builddir)/shader.10_tube.frag.spv
+	cp $(tutorial10_line_vert) $(builddir)/shader.10_line.vert.spv
+	cp $(tutorial10_line_frag) $(builddir)/shader.10_line.frag.spv
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
     shader.06.vert.spv shader.06.frag.spv texture.06.png \
     shader.07.vert.spv shader.07.frag.spv texture.07.png \
     shader.08.vert.spv shader.08.frag.spv \
-    shader.09.vert.spv shader.09.frag.spv texture.09.png
+    shader.09.vert.spv shader.09.frag.spv texture.09.png \
+    shader.10_tube.vert.spv shader.10_tube.frag.spv \
+    shader.10_line.vert.spv shader.10_line.frag.spv
