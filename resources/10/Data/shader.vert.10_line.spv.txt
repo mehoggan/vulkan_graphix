@@ -17,9 +17,6 @@
                OpName %u_UniformBuffer "u_UniformBuffer"
                OpMemberName %u_UniformBuffer 0 "u_View"
                OpMemberName %u_UniformBuffer 1 "u_Projection"
-               OpMemberName %u_UniformBuffer 2 "u_LightPosition"
-               OpMemberName %u_UniformBuffer 3 "u_LightColor"
-               OpMemberName %u_UniformBuffer 4 "u_ViewPosition"
                OpName %__0 ""
                OpName %i_Position "i_Position"
                OpDecorate %gl_PerVertex Block
@@ -31,9 +28,6 @@
                OpMemberDecorate %u_UniformBuffer 1 ColMajor
                OpMemberDecorate %u_UniformBuffer 1 MatrixStride 16
                OpMemberDecorate %u_UniformBuffer 1 Offset 64
-               OpMemberDecorate %u_UniformBuffer 2 Offset 128
-               OpMemberDecorate %u_UniformBuffer 3 Offset 144
-               OpMemberDecorate %u_UniformBuffer 4 Offset 160
                OpDecorate %__0 Binding 0
                OpDecorate %__0 DescriptorSet 0
                OpDecorate %i_Position Location 0
@@ -47,7 +41,7 @@
         %int = OpTypeInt 32 1
       %int_0 = OpConstant %int 0
 %mat4v4float = OpTypeMatrix %v4float 4
-%u_UniformBuffer = OpTypeStruct %mat4v4float %mat4v4float %v4float %v4float %v4float
+%u_UniformBuffer = OpTypeStruct %mat4v4float %mat4v4float
 %_ptr_Uniform_u_UniformBuffer = OpTypePointer Uniform %u_UniformBuffer
         %__0 = OpVariable %_ptr_Uniform_u_UniformBuffer Uniform
       %int_1 = OpConstant %int 1

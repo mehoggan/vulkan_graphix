@@ -7,7 +7,7 @@ int main(int /*argc*/, char** /*argv*/) {
             std::make_shared<vulkan_graphix::Tutorial10>();
 
     // Window creation
-    if (!window.create("10 - Phong Tube Along a Sampled Curve")) {
+    if (!window.create("10 - Sampled Bezier Curve Polyline")) {
         return -1;
     }
 
@@ -50,19 +50,13 @@ int main(int /*argc*/, char** /*argv*/) {
     if (!tutorial10->createPipelineLayout()) {
         return -1;
     }
-    if (!tutorial10->createTubePipeline()) {
-        return -1;
-    }
     if (!tutorial10->createLinePipeline()) {
         return -1;
     }
-    if (!tutorial10->createTubeVertexBuffer()) {
+    if (!tutorial10->createCurveVertexBuffer()) {
         return -1;
     }
-    if (!tutorial10->createTubeIndexBuffer()) {
-        return -1;
-    }
-    if (!tutorial10->createLineVertexBuffer()) {
+    if (!tutorial10->createControlPolygonVertexBuffer()) {
         return -1;
     }
 

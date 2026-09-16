@@ -701,6 +701,18 @@ bool TutorialBase::createDevice() {
 
     std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
+    // Enable wideLines when the device supports it (near-universal - see
+    // checkPhysicalDeviceProperties()'s own feature query) so a tutorial
+    // that needs a line thicker than the default 1px (e.g. Tutorial10's
+    // polyline) can just set the rasterization state's lineWidth, without
+    // a device-creation failure on hardware that lacks the feature.
+    VkPhysicalDeviceFeatures available_device_features;
+    vkGetPhysicalDeviceFeatures(
+            m_vulkan_common_parameters.getVkPhysicalDevice(),
+            &available_device_features);
+    VkPhysicalDeviceFeatures enabled_device_features = {};
+    enabled_device_features.wideLines = available_device_features.wideLines;
+
     VkDeviceCreateInfo device_create_info = {
             .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
             .pNext = nullptr,
@@ -713,7 +725,7 @@ bool TutorialBase::createDevice() {
             .enabledExtensionCount =
                     static_cast<std::uint32_t>(extensions.size()),
             .ppEnabledExtensionNames = extensions.data(),
-            .pEnabledFeatures = nullptr};
+            .pEnabledFeatures = &enabled_device_features};
 
     if (vkCreateDevice(m_vulkan_common_parameters.getVkPhysicalDevice(),
                        &device_create_info,

@@ -15,10 +15,10 @@ namespace vulkan_graphix::Math {
 namespace detail {
 
 template <typename T> Mat4<T> catmullRomBasis() {
-    return Mat4<T>(Vec4<T>(T(-0.5), T(+1.0), T(-0.5), T(+0.0)),
-                   Vec4<T>(T(+1.5), T(-2.5), T(+0.0), T(+1.0)),
-                   Vec4<T>(T(-1.5), T(+2.0), T(+0.5), T(+0.0)),
-                   Vec4<T>(T(+0.5), T(-0.5), T(+0.0), T(+0.0)));
+    return Mat4<T>(Vec4<T>(T(-0.5), T(+1.5), T(-1.5), T(+0.5)),
+                   Vec4<T>(T(+1.0), T(-2.5), T(+2.0), T(-0.5)),
+                   Vec4<T>(T(-0.5), T(+0.0), T(+0.5), T(+0.0)),
+                   Vec4<T>(T(+0.0), T(+1.0), T(+0.0), T(+0.0)));
 }
 
 template <typename T> Mat4<T> bezierBasis() {

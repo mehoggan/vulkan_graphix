@@ -15,6 +15,13 @@ class OrbitCamera {
 public:
     OrbitCamera();
 
+    // Lets a tutorial start from a specific vantage point (e.g. a 3/4 view)
+    // instead of the default front-on one, without changing the default
+    // constructor's behavior for tutorials that don't care.
+    OrbitCamera(float initial_yaw_radians,
+               float initial_pitch_radians,
+               float initial_distance);
+
     void onMouseButton(int button, bool pressed, int pos_x, int pos_y);
     void onMouseMove(int pos_x, int pos_y);
 

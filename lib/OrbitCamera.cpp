@@ -5,10 +5,14 @@
 
 namespace vulkan_graphix {
 
-OrbitCamera::OrbitCamera()
-        : m_yaw(0.0f)
-        , m_pitch(0.45f)
-        , m_distance(9.0f)
+OrbitCamera::OrbitCamera() : OrbitCamera(0.0f, 0.45f, 9.0f) {}
+
+OrbitCamera::OrbitCamera(float initial_yaw_radians,
+                         float initial_pitch_radians,
+                         float initial_distance)
+        : m_yaw(initial_yaw_radians)
+        , m_pitch(initial_pitch_radians)
+        , m_distance(initial_distance)
         , m_dragging(false)
         , m_last_x(0)
         , m_last_y(0)

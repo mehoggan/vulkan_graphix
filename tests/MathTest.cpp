@@ -267,3 +267,27 @@ TEST(CubicCurveTest, AdaptiveSamplingProducesSortedParameters) {
         EXPECT_LT(samples[index - 1].parameter, samples[index].parameter);
     }
 }
+
+TEST(CubicCurveTest, CatmullRomEndpointsMatchInnerControlPoints) {
+    // A Catmull-Rom segment interpolates between its two inner control
+    // points (point1, point2); the outer points (point0, point3) only
+    // shape the tangents at those ends.
+    Vec3<float> point0(0.0f, 0.0f, 0.0f);
+    Vec3<float> point1(1.0f, 0.0f, 0.0f);
+    Vec3<float> point2(2.0f, 0.0f, 0.0f);
+    Vec3<float> point3(3.0f, 0.0f, 0.0f);
+
+    CubicCurve<float> curve(CubicCurve<float>::Type::CatmullRom,
+                            point0,
+                            point1,
+                            point2,
+                            point3);
+
+    Vec3<float> start = curve.evaluatePosition(0.0f);
+    Vec3<float> end_point = curve.evaluatePosition(1.0f);
+    Vec3<float> midpoint = curve.evaluatePosition(0.5f);
+
+    EXPECT_NEAR(point1.x, start.x, 1e-4f);
+    EXPECT_NEAR(point2.x, end_point.x, 1e-4f);
+    EXPECT_NEAR(1.5f, midpoint.x, 1e-4f);
+}

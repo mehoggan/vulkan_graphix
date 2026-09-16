@@ -17,45 +17,35 @@
 namespace vulkan_graphix {
 
 // ************************************************************ //
-// TubeVertexData / LineVertexData                              //
+// LineVertexData                                               //
 //                                                              //
-// Two vertex layouts for the two things this tutorial draws:   //
-// a Phong-lit triangle mesh (a tube swept along the sampled    //
-// curve) and a flat-colored line strip (the control polygon).  //
+// One vertex layout for both things this tutorial draws with   //
+// LINE_STRIP: the sampled curve itself (a real polyline, not a //
+// swept mesh) and its control polygon.                         //
 // ************************************************************ //
-struct TubeVertexData {
-    Math::Vec4<float> position;
-    Math::Vec3<float> normal;
-};
-
 struct LineVertexData {
     Math::Vec4<float> position;
 };
 
-using TubeVertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec3<float>>;
 using LineVertexAttributeTraits =
         VertexTypes::AttributeTraits<Math::Vec4<float>>;
 
 // ************************************************************ //
 // UniformBufferData                                            //
 //                                                              //
-// Shared by both pipelines. No model matrix: both the tube and //
-// the control polygon are generated directly in world space.   //
-// Vec3 fields are promoted to Vec4 for std140 alignment.       //
+// No model matrix: both line strips are generated directly in  //
+// world space. No lighting fields either - flat-colored lines  //
+// have no surface to light.                                    //
 // ************************************************************ //
 struct UniformBufferData {
     Math::Mat4<float> view;
     Math::Mat4<float> projection;
-    Math::Vec4<float> light_position;
-    Math::Vec4<float> light_color;
-    Math::Vec4<float> view_position;
 };
 
 // ************************************************************ //
 // LinePushConstants                                            //
 //                                                              //
-// The control polygon's flat color, set per draw call.         //
+// The active line strip's flat color, set per draw call.       //
 // ************************************************************ //
 struct LinePushConstants {
     Math::Vec4<float> color;
@@ -93,31 +83,24 @@ public:
     VkPipelineLayout& getVkPipelineLayout();
     void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
 
-    const VkPipeline& getVkTubePipeline() const;
-    VkPipeline& getVkTubePipeline();
-    void setVkTubePipeline(const VkPipeline& vk_tube_pipeline);
-
     const VkPipeline& getVkLinePipeline() const;
     VkPipeline& getVkLinePipeline();
     void setVkLinePipeline(const VkPipeline& vk_line_pipeline);
 
-    const BufferParameters& getTubeVertexBufferParameters() const;
-    BufferParameters& getTubeVertexBufferParameters();
-    void setTubeVertexBufferParameters(const BufferParameters& vertex_buffer);
+    const BufferParameters& getCurveVertexBufferParameters() const;
+    BufferParameters& getCurveVertexBufferParameters();
+    void setCurveVertexBufferParameters(const BufferParameters& vertex_buffer);
 
-    const BufferParameters& getTubeIndexBufferParameters() const;
-    BufferParameters& getTubeIndexBufferParameters();
-    void setTubeIndexBufferParameters(const BufferParameters& index_buffer);
+    std::uint32_t getCurveVertexCount() const;
+    void setCurveVertexCount(std::uint32_t vertex_count);
 
-    std::uint32_t getTubeIndexCount() const;
-    void setTubeIndexCount(std::uint32_t index_count);
+    const BufferParameters& getControlPolygonVertexBufferParameters() const;
+    BufferParameters& getControlPolygonVertexBufferParameters();
+    void setControlPolygonVertexBufferParameters(
+            const BufferParameters& vertex_buffer);
 
-    const BufferParameters& getLineVertexBufferParameters() const;
-    BufferParameters& getLineVertexBufferParameters();
-    void setLineVertexBufferParameters(const BufferParameters& vertex_buffer);
-
-    std::uint32_t getLineVertexCount() const;
-    void setLineVertexCount(std::uint32_t vertex_count);
+    std::uint32_t getControlPolygonVertexCount() const;
+    void setControlPolygonVertexCount(std::uint32_t vertex_count);
 
     const BufferParameters& getStagingBufferParameters() const;
     BufferParameters& getStagingBufferParameters();
@@ -147,13 +130,11 @@ private:
     BufferParameters m_uniform_buffer;
     DescriptorSetParameters m_descriptor_set_parameters;
     VkPipelineLayout m_vk_pipeline_layout;
-    VkPipeline m_vk_tube_pipeline;
     VkPipeline m_vk_line_pipeline;
-    BufferParameters m_tube_vertex_buffer;
-    BufferParameters m_tube_index_buffer;
-    std::uint32_t m_tube_index_count;
-    BufferParameters m_line_vertex_buffer;
-    std::uint32_t m_line_vertex_count;
+    BufferParameters m_curve_vertex_buffer;
+    std::uint32_t m_curve_vertex_count;
+    BufferParameters m_control_polygon_vertex_buffer;
+    std::uint32_t m_control_polygon_vertex_count;
     BufferParameters m_staging_buffer;
     VkCommandPool m_vk_command_pool;
     std::vector<RenderingResourceParameters> m_rendering_resources;
@@ -180,11 +161,9 @@ public:
     bool updateDescriptorSet();
     bool createRenderPass();
     bool createPipelineLayout();
-    bool createTubePipeline();
     bool createLinePipeline();
-    bool createTubeVertexBuffer();
-    bool createTubeIndexBuffer();
-    bool createLineVertexBuffer();
+    bool createCurveVertexBuffer();
+    bool createControlPolygonVertexBuffer();
 
     bool draw() override;
 
@@ -226,9 +205,9 @@ private:
     bool updateUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
     createShaderModule(const char* filename);
-    const std::vector<TubeVertexData>& getTubeVertexData() const;
-    const std::vector<std::uint32_t>& getTubeIndexData() const;
-    const std::vector<LineVertexData>& getLineVertexData() const;
+    const std::vector<LineVertexData>& getCurveVertexData() const;
+    const std::vector<LineVertexData>& getControlPolygonVertexData() const;
+    float getLineWidth() const;
     bool copyBufferData(BufferParameters& destination,
                         const void* data,
                         std::uint32_t data_size,

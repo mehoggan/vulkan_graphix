@@ -2,13 +2,12 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstring>
 
-#include <glm/geometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "vulkan_graphix/Math/CubicCurve.hpp"
 #include "vulkan_graphix/VulkanFunctions.h"
@@ -18,20 +17,41 @@ namespace vulkan_graphix {
 namespace {
 constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 
-constexpr float c_tube_radius = 0.12f;
-constexpr std::size_t c_radial_segments = 16;
 constexpr float c_chordal_tolerance = 0.01f;
-constexpr float c_two_pi = 6.28318530717958647692f;
 
-// The curve's control points. Not planar and not evenly spaced on purpose,
-// to show the spline actually curving in 3D rather than lying flat.
+// The camera's initial view: a 3/4 vantage point rather than the default
+// front-on one, so the curve's 3D shape reads clearly from the first frame.
+constexpr float c_initial_camera_yaw = 0.78539816f;    // 45 degrees
+constexpr float c_initial_camera_pitch = 0.78539816f;  // 45 degrees
+constexpr float c_initial_camera_distance = 8.0f;
+
+// The curve's control points: a single gentle bend, like a road segment
+// seen on a map - mostly planar, one smooth arc rather than a full loop or
+// wave, with only a slight elevation change for a subtle 3D feel. x is
+// monotonic (the road's length) so the curve never doubles back on itself.
+// Earlier versions of this curve swept a full spiral turn, then a full
+// sine wave, and both read as too tangled/dramatic once projected to 2D.
 std::vector<Math::Vec3<float>> const& getControlPoints() {
-    static std::vector<Math::Vec3<float>> const points = {
-            Math::Vec3<float>(-2.5f, 0.0f, 0.0f),
-            Math::Vec3<float>(-1.2f, 1.5f, 1.0f),
-            Math::Vec3<float>(0.0f, -1.2f, 1.5f),
-            Math::Vec3<float>(1.2f, 1.5f, -1.0f),
-            Math::Vec3<float>(2.5f, 0.0f, 0.0f)};
+    static std::vector<Math::Vec3<float>> const points = [] {
+        constexpr std::size_t point_count = 6;
+        constexpr float x_start = -3.0f;
+        constexpr float x_end = 3.0f;
+        constexpr float bend_amplitude = 1.0f;
+        constexpr float elevation_gain = 0.4f;
+        constexpr float half_turn = 3.14159265358979323846f;
+
+        std::vector<Math::Vec3<float>> result;
+        result.reserve(point_count);
+        for (std::size_t i = 0; i < point_count; ++i) {
+            float const fraction = static_cast<float>(i) /
+                                   static_cast<float>(point_count - 1);
+            result.emplace_back(
+                    x_start + fraction * (x_end - x_start),
+                    elevation_gain * fraction,
+                    bend_amplitude * std::sin(fraction * half_turn));
+        }
+        return result;
+    }();
     return points;
 }
 
@@ -69,7 +89,7 @@ std::vector<Math::CurveSample3D<float>> const& getCurveSamples() {
 
             // Segment i's last sample and segment i+1's first sample are
             // the same point (the shared control point between them) -
-            // skip it to avoid a zero-length gap in the tube.
+            // skip it to avoid a duplicate vertex in the polyline.
             std::size_t const start_index = (segment == 0) ? 0 : 1;
             for (std::size_t i = start_index; i < segment_samples.size();
                  ++i) {
@@ -80,88 +100,6 @@ std::vector<Math::CurveSample3D<float>> const& getCurveSamples() {
     }();
     return samples;
 }
-
-struct TubeGeometry {
-    std::vector<TubeVertexData> vertices;
-    std::vector<std::uint32_t> indices;
-};
-
-// Sweeps a ring of vertices around each curve sample's tangent, connecting
-// adjacent rings into triangles - the same row-to-row quad-splitting shape
-// Tutorial09's terrain grid uses, just following a 1D path instead of a
-// 2D grid, and with each ring closed circularly instead of the path being
-// closed end-to-end (the tube is open at both ends).
-//
-// The ring is oriented with a simple per-sample frame (a fixed reference
-// "up", falling back to a fixed reference "right" when nearly parallel to
-// the tangent) rather than a twist-free Frenet/parallel-transport frame -
-// sufficient for this smooth, non-looping demo spline.
-TubeGeometry const& getTubeGeometry() {
-    static TubeGeometry const geometry = [] {
-        TubeGeometry result;
-        std::vector<Math::CurveSample3D<float>> const& samples =
-                getCurveSamples();
-
-        Math::Vec3<float> const world_up(0.0f, 1.0f, 0.0f);
-        Math::Vec3<float> const world_right(1.0f, 0.0f, 0.0f);
-
-        result.vertices.reserve(samples.size() * c_radial_segments);
-        for (Math::CurveSample3D<float> const& sample : samples) {
-            Math::Vec3<float> const tangent = glm::normalize(sample.tangent);
-            Math::Vec3<float> const& reference =
-                    (std::abs(glm::dot(tangent, world_up)) > 0.99f)
-                            ? world_right
-                            : world_up;
-            Math::Vec3<float> const right =
-                    glm::normalize(glm::cross(tangent, reference));
-            Math::Vec3<float> const ring_up = glm::cross(right, tangent);
-
-            for (std::size_t j = 0; j < c_radial_segments; ++j) {
-                float const theta = static_cast<float>(j) /
-                                    static_cast<float>(c_radial_segments) *
-                                    c_two_pi;
-                Math::Vec3<float> const offset =
-                        c_tube_radius *
-                        (std::cos(theta) * right + std::sin(theta) * ring_up);
-                Math::Vec3<float> const ring_point = sample.position + offset;
-                Math::Vec3<float> const normal = glm::normalize(offset);
-                result.vertices.push_back(
-                        {Math::Vec4<float>(ring_point, 1.0f), normal});
-            }
-        }
-
-        std::size_t const ring_count = samples.size();
-        result.indices.reserve((ring_count - 1) * c_radial_segments * 6);
-        for (std::size_t ring = 0; ring + 1 < ring_count; ++ring) {
-            std::uint32_t const ring_base =
-                    static_cast<std::uint32_t>(ring * c_radial_segments);
-            std::uint32_t const next_ring_base =
-                    static_cast<std::uint32_t>((ring + 1) * c_radial_segments);
-            for (std::size_t j = 0; j < c_radial_segments; ++j) {
-                std::uint32_t const ring_slot = static_cast<std::uint32_t>(j);
-                std::uint32_t const next_ring_slot =
-                        static_cast<std::uint32_t>((j + 1) %
-                                                   c_radial_segments);
-
-                std::uint32_t const point_a = ring_base + ring_slot;
-                std::uint32_t const point_b = ring_base + next_ring_slot;
-                std::uint32_t const point_c = next_ring_base + ring_slot;
-                std::uint32_t const point_d = next_ring_base + next_ring_slot;
-
-                result.indices.push_back(point_a);
-                result.indices.push_back(point_b);
-                result.indices.push_back(point_c);
-
-                result.indices.push_back(point_b);
-                result.indices.push_back(point_d);
-                result.indices.push_back(point_c);
-            }
-        }
-
-        return result;
-    }();
-    return geometry;
-}
 }  // namespace
 
 // ************************************************************ //
@@ -170,10 +108,9 @@ TubeGeometry const& getTubeGeometry() {
 VulkanTutorial10Parameters::VulkanTutorial10Parameters()
         : m_vk_render_pass(VK_NULL_HANDLE)
         , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_tube_pipeline(VK_NULL_HANDLE)
         , m_vk_line_pipeline(VK_NULL_HANDLE)
-        , m_tube_index_count(0)
-        , m_line_vertex_count(0)
+        , m_curve_vertex_count(0)
+        , m_control_polygon_vertex_count(0)
         , m_vk_command_pool(VK_NULL_HANDLE)
         , m_rendering_resources(resources_count) {}
 
@@ -237,17 +174,6 @@ void VulkanTutorial10Parameters::setVkPipelineLayout(
     m_vk_pipeline_layout = vk_pipeline_layout;
 }
 
-const VkPipeline& VulkanTutorial10Parameters::getVkTubePipeline() const {
-    return m_vk_tube_pipeline;
-}
-VkPipeline& VulkanTutorial10Parameters::getVkTubePipeline() {
-    return m_vk_tube_pipeline;
-}
-void VulkanTutorial10Parameters::setVkTubePipeline(
-        const VkPipeline& vk_tube_pipeline) {
-    m_vk_tube_pipeline = vk_tube_pipeline;
-}
-
 const VkPipeline& VulkanTutorial10Parameters::getVkLinePipeline() const {
     return m_vk_line_pipeline;
 }
@@ -260,54 +186,46 @@ void VulkanTutorial10Parameters::setVkLinePipeline(
 }
 
 const BufferParameters&
-VulkanTutorial10Parameters::getTubeVertexBufferParameters() const {
-    return m_tube_vertex_buffer;
+VulkanTutorial10Parameters::getCurveVertexBufferParameters() const {
+    return m_curve_vertex_buffer;
 }
-BufferParameters& VulkanTutorial10Parameters::getTubeVertexBufferParameters() {
-    return m_tube_vertex_buffer;
+BufferParameters&
+VulkanTutorial10Parameters::getCurveVertexBufferParameters() {
+    return m_curve_vertex_buffer;
 }
-void VulkanTutorial10Parameters::setTubeVertexBufferParameters(
+void VulkanTutorial10Parameters::setCurveVertexBufferParameters(
         const BufferParameters& vertex_buffer) {
-    m_tube_vertex_buffer = vertex_buffer;
+    m_curve_vertex_buffer = vertex_buffer;
 }
 
-const BufferParameters&
-VulkanTutorial10Parameters::getTubeIndexBufferParameters() const {
-    return m_tube_index_buffer;
+std::uint32_t VulkanTutorial10Parameters::getCurveVertexCount() const {
+    return m_curve_vertex_count;
 }
-BufferParameters& VulkanTutorial10Parameters::getTubeIndexBufferParameters() {
-    return m_tube_index_buffer;
-}
-void VulkanTutorial10Parameters::setTubeIndexBufferParameters(
-        const BufferParameters& index_buffer) {
-    m_tube_index_buffer = index_buffer;
-}
-
-std::uint32_t VulkanTutorial10Parameters::getTubeIndexCount() const {
-    return m_tube_index_count;
-}
-void VulkanTutorial10Parameters::setTubeIndexCount(std::uint32_t index_count) {
-    m_tube_index_count = index_count;
-}
-
-const BufferParameters&
-VulkanTutorial10Parameters::getLineVertexBufferParameters() const {
-    return m_line_vertex_buffer;
-}
-BufferParameters& VulkanTutorial10Parameters::getLineVertexBufferParameters() {
-    return m_line_vertex_buffer;
-}
-void VulkanTutorial10Parameters::setLineVertexBufferParameters(
-        const BufferParameters& vertex_buffer) {
-    m_line_vertex_buffer = vertex_buffer;
-}
-
-std::uint32_t VulkanTutorial10Parameters::getLineVertexCount() const {
-    return m_line_vertex_count;
-}
-void VulkanTutorial10Parameters::setLineVertexCount(
+void VulkanTutorial10Parameters::setCurveVertexCount(
         std::uint32_t vertex_count) {
-    m_line_vertex_count = vertex_count;
+    m_curve_vertex_count = vertex_count;
+}
+
+const BufferParameters&
+VulkanTutorial10Parameters::getControlPolygonVertexBufferParameters() const {
+    return m_control_polygon_vertex_buffer;
+}
+BufferParameters&
+VulkanTutorial10Parameters::getControlPolygonVertexBufferParameters() {
+    return m_control_polygon_vertex_buffer;
+}
+void VulkanTutorial10Parameters::setControlPolygonVertexBufferParameters(
+        const BufferParameters& vertex_buffer) {
+    m_control_polygon_vertex_buffer = vertex_buffer;
+}
+
+std::uint32_t VulkanTutorial10Parameters::getControlPolygonVertexCount()
+        const {
+    return m_control_polygon_vertex_count;
+}
+void VulkanTutorial10Parameters::setControlPolygonVertexCount(
+        std::uint32_t vertex_count) {
+    m_control_polygon_vertex_count = vertex_count;
 }
 
 const BufferParameters&
@@ -362,7 +280,10 @@ void VulkanTutorial10Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial10                                                   //
 // ************************************************************ //
-Tutorial10::Tutorial10() = default;
+Tutorial10::Tutorial10()
+        : m_camera(c_initial_camera_yaw,
+                   c_initial_camera_pitch,
+                   c_initial_camera_distance) {}
 
 Tutorial10::~Tutorial10() { childClear(); }
 
@@ -779,10 +700,6 @@ UniformBufferData Tutorial10::getUniformBufferData() const {
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
-    data.light_position = Math::Vec4<float>(4.0f, 5.0f, 4.0f, 1.0f);
-    data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
-
     return data;
 }
 
@@ -814,8 +731,7 @@ bool Tutorial10::createDescriptorSetLayout() {
             {.binding = 0,
              .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
              .descriptorCount = 1,
-             .stageFlags =
-                     VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
              .pImmutableSamplers = nullptr}};
 
     VkDescriptorSetLayoutCreateInfo descriptor_set_layout_create_info = {
@@ -996,8 +912,6 @@ bool Tutorial10::createPipelineLayout() {
             m_vulkan_tutorial10_parameters.getDescriptorSetParameters()
                     .getVkDescriptorSetLayout();
 
-    // Declared once, shared by both pipelines below - the tube pipeline's
-    // shaders just don't reference it, which Vulkan allows.
     VkPushConstantRange push_constant_range = {
             .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
             .offset = 0,
@@ -1053,190 +967,6 @@ Tutorial10::createShaderModule(const char* filename) {
 
     return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>(
             shader_module, vkDestroyShaderModule, getVkDevice());
-}
-
-bool Tutorial10::createTubePipeline() {
-    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            vertex_shader_module =
-                    createShaderModule("shader.10_tube.vert.spv");
-    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            fragment_shader_module =
-                    createShaderModule("shader.10_tube.frag.spv");
-
-    if (!vertex_shader_module || !fragment_shader_module) {
-        return false;
-    }
-
-    std::vector<VkPipelineShaderStageCreateInfo> shader_stage_create_infos = {
-            {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-             .pNext = nullptr,
-             .flags = 0,
-             .stage = VK_SHADER_STAGE_VERTEX_BIT,
-             .module = vertex_shader_module.get(),
-             .pName = "main",
-             .pSpecializationInfo = nullptr},
-            {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-             .pNext = nullptr,
-             .flags = 0,
-             .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-             .module = fragment_shader_module.get(),
-             .pName = "main",
-             .pSpecializationInfo = nullptr}};
-
-    std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions =
-            {{.binding = 0,
-              .stride = TubeVertexAttributeTraits::stride,
-              .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
-
-    std::vector<VkVertexInputAttributeDescription>
-            vertex_attribute_descriptions = {
-                    {.location = 0,
-                     .binding = vertex_binding_descriptions[0].binding,
-                     .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct TubeVertexData, position)},
-                    {.location = 1,
-                     .binding = vertex_binding_descriptions[0].binding,
-                     .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct TubeVertexData, normal)}};
-
-    VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .vertexBindingDescriptionCount = static_cast<std::uint32_t>(
-                    vertex_binding_descriptions.size()),
-            .pVertexBindingDescriptions = vertex_binding_descriptions.data(),
-            .vertexAttributeDescriptionCount = static_cast<std::uint32_t>(
-                    vertex_attribute_descriptions.size()),
-            .pVertexAttributeDescriptions =
-                    vertex_attribute_descriptions.data()};
-
-    VkPipelineInputAssemblyStateCreateInfo input_assembly_state_create_info = {
-            .sType =
-                    VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            .primitiveRestartEnable = VK_FALSE};
-
-    VkPipelineViewportStateCreateInfo viewport_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .viewportCount = 1,
-            .pViewports = nullptr,
-            .scissorCount = 1,
-            .pScissors = nullptr};
-
-    VkPipelineRasterizationStateCreateInfo rasterization_state_create_info = {
-            .sType =
-                    VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .depthClampEnable = VK_FALSE,
-            .rasterizerDiscardEnable = VK_FALSE,
-            .polygonMode = VK_POLYGON_MODE_FILL,
-            .cullMode = VK_CULL_MODE_BACK_BIT,
-            .frontFace = VK_FRONT_FACE_CLOCKWISE,
-            .depthBiasEnable = VK_FALSE,
-            .depthBiasConstantFactor = 0.0f,
-            .depthBiasClamp = 0.0f,
-            .depthBiasSlopeFactor = 0.0f,
-            .lineWidth = 1.0f};
-
-    VkPipelineMultisampleStateCreateInfo multisample_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
-            .sampleShadingEnable = VK_FALSE,
-            .minSampleShading = 1.0f,
-            .pSampleMask = nullptr,
-            .alphaToCoverageEnable = VK_FALSE,
-            .alphaToOneEnable = VK_FALSE};
-
-    VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
-            .sType =
-                    VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .depthTestEnable = VK_TRUE,
-            .depthWriteEnable = VK_TRUE,
-            .depthCompareOp = VK_COMPARE_OP_LESS,
-            .depthBoundsTestEnable = VK_FALSE,
-            .stencilTestEnable = VK_FALSE,
-            .front = {},
-            .back = {},
-            .minDepthBounds = 0.0f,
-            .maxDepthBounds = 1.0f};
-
-    VkPipelineColorBlendAttachmentState color_blend_attachment_state = {
-            .blendEnable = VK_FALSE,
-            .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
-            .dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
-            .colorBlendOp = VK_BLEND_OP_ADD,
-            .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
-            .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-            .alphaBlendOp = VK_BLEND_OP_ADD,
-            .colorWriteMask =
-                    VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-                    VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
-
-    VkPipelineColorBlendStateCreateInfo color_blend_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .logicOpEnable = VK_FALSE,
-            .logicOp = VK_LOGIC_OP_COPY,
-            .attachmentCount = 1,
-            .pAttachments = &color_blend_attachment_state,
-            .blendConstants = {0.0f, 0.0f, 0.0f, 0.0f}};
-
-    std::vector<VkDynamicState> dynamic_states = {VK_DYNAMIC_STATE_VIEWPORT,
-                                                  VK_DYNAMIC_STATE_SCISSOR};
-
-    VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .dynamicStateCount =
-                    static_cast<std::uint32_t>(dynamic_states.size()),
-            .pDynamicStates = dynamic_states.data()};
-
-    VkGraphicsPipelineCreateInfo pipeline_create_info = {
-            .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .stageCount = static_cast<std::uint32_t>(
-                    shader_stage_create_infos.size()),
-            .pStages = shader_stage_create_infos.data(),
-            .pVertexInputState = &vertex_input_state_create_info,
-            .pInputAssemblyState = &input_assembly_state_create_info,
-            .pTessellationState = nullptr,
-            .pViewportState = &viewport_state_create_info,
-            .pRasterizationState = &rasterization_state_create_info,
-            .pMultisampleState = &multisample_state_create_info,
-            .pDepthStencilState = &depth_stencil_state_create_info,
-            .pColorBlendState = &color_blend_state_create_info,
-            .pDynamicState = &dynamic_state_create_info,
-            .layout = m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
-            .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
-            .subpass = 0,
-            .basePipelineHandle = VK_NULL_HANDLE,
-            .basePipelineIndex = -1};
-
-    if (vkCreateGraphicsPipelines(
-                getVkDevice(),
-                VK_NULL_HANDLE,
-                1,
-                &pipeline_create_info,
-                nullptr,
-                &m_vulkan_tutorial10_parameters.getVkTubePipeline()) !=
-        VK_SUCCESS) {
-        Logging::error(LOG_TAG, "Could not create tube graphics pipeline!");
-        return false;
-    }
-    return true;
 }
 
 bool Tutorial10::createLinePipeline() {
@@ -1316,12 +1046,19 @@ bool Tutorial10::createLinePipeline() {
             .depthClampEnable = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
             .polygonMode = VK_POLYGON_MODE_FILL,
-            .cullMode = VK_CULL_MODE_NONE,
+            // Per spec, cull mode only affects polygon (triangle)
+            // rasterization and is simply ignored for line topology - set
+            // to BACK anyway for consistency with the rest of the project's
+            // pipelines rather than leaving it in an unspecified state.
+            .cullMode = VK_CULL_MODE_BACK_BIT,
             .frontFace = VK_FRONT_FACE_CLOCKWISE,
             .depthBiasEnable = VK_FALSE,
             .depthBiasConstantFactor = 0.0f,
             .depthBiasClamp = 0.0f,
             .depthBiasSlopeFactor = 0.0f,
+            // Ignored per spec: VK_DYNAMIC_STATE_LINE_WIDTH is set below,
+            // via vkCmdSetLineWidth() in prepareFrame() - the curve and
+            // control polygon draw with different widths from one pipeline.
             .lineWidth = 1.0f};
 
     VkPipelineMultisampleStateCreateInfo multisample_state_create_info = {
@@ -1373,7 +1110,8 @@ bool Tutorial10::createLinePipeline() {
             .blendConstants = {0.0f, 0.0f, 0.0f, 0.0f}};
 
     std::vector<VkDynamicState> dynamic_states = {VK_DYNAMIC_STATE_VIEWPORT,
-                                                  VK_DYNAMIC_STATE_SCISSOR};
+                                                  VK_DYNAMIC_STATE_SCISSOR,
+                                                  VK_DYNAMIC_STATE_LINE_WIDTH};
 
     VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
@@ -1419,16 +1157,23 @@ bool Tutorial10::createLinePipeline() {
     return true;
 }
 
-const std::vector<TubeVertexData>& Tutorial10::getTubeVertexData() const {
-    return getTubeGeometry().vertices;
+const std::vector<LineVertexData>& Tutorial10::getCurveVertexData() const {
+    static const std::vector<LineVertexData> curve_vertices = [] {
+        std::vector<Math::CurveSample3D<float>> const& samples =
+                getCurveSamples();
+        std::vector<LineVertexData> data;
+        data.reserve(samples.size());
+        for (Math::CurveSample3D<float> const& sample : samples) {
+            data.push_back({Math::Vec4<float>(sample.position, 1.0f)});
+        }
+        return data;
+    }();
+    return curve_vertices;
 }
 
-const std::vector<std::uint32_t>& Tutorial10::getTubeIndexData() const {
-    return getTubeGeometry().indices;
-}
-
-const std::vector<LineVertexData>& Tutorial10::getLineVertexData() const {
-    static const std::vector<LineVertexData> line_vertices = [] {
+const std::vector<LineVertexData>& Tutorial10::getControlPolygonVertexData()
+        const {
+    static const std::vector<LineVertexData> control_polygon_vertices = [] {
         std::vector<Math::Vec3<float>> const& control_points =
                 getControlPoints();
         std::vector<LineVertexData> data;
@@ -1438,7 +1183,25 @@ const std::vector<LineVertexData>& Tutorial10::getLineVertexData() const {
         }
         return data;
     }();
-    return line_vertices;
+    return control_polygon_vertices;
+}
+
+float Tutorial10::getLineWidth() const {
+    constexpr float c_desired_line_width = 4.0f;
+
+    VkPhysicalDeviceFeatures device_features;
+    vkGetPhysicalDeviceFeatures(getVkPhysicalDevice(), &device_features);
+    if (device_features.wideLines == VK_FALSE) {
+        // Per spec, lineWidth must be exactly 1.0 when wideLines isn't
+        // enabled - TutorialBase::createDevice() only enables it when the
+        // physical device reports support.
+        return 1.0f;
+    }
+
+    VkPhysicalDeviceProperties device_properties;
+    vkGetPhysicalDeviceProperties(getVkPhysicalDevice(), &device_properties);
+    return std::min(c_desired_line_width,
+                    device_properties.limits.lineWidthRange[1]);
 }
 
 bool Tutorial10::copyBufferData(BufferParameters& destination,
@@ -1539,18 +1302,20 @@ bool Tutorial10::copyBufferData(BufferParameters& destination,
     return true;
 }
 
-bool Tutorial10::createTubeVertexBuffer() {
-    const std::vector<TubeVertexData>& vertex_data = getTubeVertexData();
+bool Tutorial10::createCurveVertexBuffer() {
+    const std::vector<LineVertexData>& vertex_data = getCurveVertexData();
+    m_vulkan_tutorial10_parameters.setCurveVertexCount(
+            static_cast<std::uint32_t>(vertex_data.size()));
 
     BufferParameters& vertex_buffer =
-            m_vulkan_tutorial10_parameters.getTubeVertexBufferParameters();
+            m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters();
     vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
                                                      sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                       vertex_buffer)) {
-        Logging::error(LOG_TAG, "Could not create tube vertex buffer!");
+        Logging::error(LOG_TAG, "Could not create curve vertex buffer!");
         return false;
     }
 
@@ -1561,44 +1326,23 @@ bool Tutorial10::createTubeVertexBuffer() {
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool Tutorial10::createTubeIndexBuffer() {
-    const std::vector<std::uint32_t>& index_data = getTubeIndexData();
-    m_vulkan_tutorial10_parameters.setTubeIndexCount(
-            static_cast<std::uint32_t>(index_data.size()));
-
-    BufferParameters& index_buffer =
-            m_vulkan_tutorial10_parameters.getTubeIndexBufferParameters();
-    index_buffer.setSize(static_cast<std::uint32_t>(index_data.size() *
-                                                    sizeof(index_data[0])));
-    if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
-                              VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      index_buffer)) {
-        Logging::error(LOG_TAG, "Could not create tube index buffer!");
-        return false;
-    }
-
-    return copyBufferData(index_buffer,
-                          index_data.data(),
-                          index_buffer.getSize(),
-                          VK_ACCESS_INDEX_READ_BIT,
-                          VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
-}
-
-bool Tutorial10::createLineVertexBuffer() {
-    const std::vector<LineVertexData>& vertex_data = getLineVertexData();
-    m_vulkan_tutorial10_parameters.setLineVertexCount(
+bool Tutorial10::createControlPolygonVertexBuffer() {
+    const std::vector<LineVertexData>& vertex_data =
+            getControlPolygonVertexData();
+    m_vulkan_tutorial10_parameters.setControlPolygonVertexCount(
             static_cast<std::uint32_t>(vertex_data.size()));
 
     BufferParameters& vertex_buffer =
-            m_vulkan_tutorial10_parameters.getLineVertexBufferParameters();
+            m_vulkan_tutorial10_parameters
+                    .getControlPolygonVertexBufferParameters();
     vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
                                                      sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                       vertex_buffer)) {
-        Logging::error(LOG_TAG, "Could not create line vertex buffer!");
+        Logging::error(LOG_TAG,
+                       "Could not create control polygon vertex buffer!");
         return false;
     }
 
@@ -1742,56 +1486,59 @@ bool Tutorial10::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    // The tube: Phong-lit, indexed triangle mesh.
-    vkCmdBindPipeline(command_buffer,
-                      VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      m_vulkan_tutorial10_parameters.getVkTubePipeline());
-
-    VkDeviceSize offset = 0;
-    vkCmdBindVertexBuffers(
-            command_buffer,
-            0,
-            1,
-            &m_vulkan_tutorial10_parameters.getTubeVertexBufferParameters()
-                     .getVkBuffer(),
-            &offset);
-    vkCmdBindIndexBuffer(
-            command_buffer,
-            m_vulkan_tutorial10_parameters.getTubeIndexBufferParameters()
-                    .getVkBuffer(),
-            0,
-            VK_INDEX_TYPE_UINT32);
-    vkCmdDrawIndexed(command_buffer,
-                     m_vulkan_tutorial10_parameters.getTubeIndexCount(),
-                     1,
-                     0,
-                     0,
-                     0);
-
-    // The control polygon: flat, unlit line strip, colored via a push
-    // constant instead of a second descriptor set.
     vkCmdBindPipeline(command_buffer,
                       VK_PIPELINE_BIND_POINT_GRAPHICS,
                       m_vulkan_tutorial10_parameters.getVkLinePipeline());
 
-    LinePushConstants const line_push_constants = {
+    VkDeviceSize offset = 0;
+
+    // The curve itself: a real polyline through the adaptively-sampled
+    // points, in a vibrant color.
+    LinePushConstants const curve_push_constants = {
+            Math::Vec4<float>(0.1f, 0.85f, 0.8f, 1.0f)};
+    vkCmdPushConstants(command_buffer,
+                       m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
+                       VK_SHADER_STAGE_FRAGMENT_BIT,
+                       0,
+                       sizeof(LinePushConstants),
+                       &curve_push_constants);
+    vkCmdBindVertexBuffers(
+            command_buffer,
+            0,
+            1,
+            &m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters()
+                     .getVkBuffer(),
+            &offset);
+    vkCmdSetLineWidth(command_buffer, getLineWidth());
+    vkCmdDraw(command_buffer,
+              m_vulkan_tutorial10_parameters.getCurveVertexCount(),
+              1,
+              0,
+              0);
+
+    // The control polygon: a muted gray reference line connecting the raw
+    // control points in order.
+    LinePushConstants const control_polygon_push_constants = {
             Math::Vec4<float>(0.55f, 0.58f, 0.62f, 1.0f)};
     vkCmdPushConstants(command_buffer,
                        m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
                        VK_SHADER_STAGE_FRAGMENT_BIT,
                        0,
                        sizeof(LinePushConstants),
-                       &line_push_constants);
-
-    vkCmdBindVertexBuffers(
-            command_buffer,
-            0,
-            1,
-            &m_vulkan_tutorial10_parameters.getLineVertexBufferParameters()
-                     .getVkBuffer(),
-            &offset);
+                       &control_polygon_push_constants);
+    vkCmdBindVertexBuffers(command_buffer,
+                           0,
+                           1,
+                           &m_vulkan_tutorial10_parameters
+                                    .getControlPolygonVertexBufferParameters()
+                                    .getVkBuffer(),
+                           &offset);
+    // Always exactly 1.0 - the thin end of what a line can be regardless
+    // of device wideLines support - so it reads as background scaffolding
+    // next to the thicker curve.
+    vkCmdSetLineWidth(command_buffer, 1.0f);
     vkCmdDraw(command_buffer,
-              m_vulkan_tutorial10_parameters.getLineVertexCount(),
+              m_vulkan_tutorial10_parameters.getControlPolygonVertexCount(),
               1,
               0,
               0);
@@ -1991,19 +1738,13 @@ bool Tutorial10::childOnWindowSizeChanged() {
     if (!createPipelineLayout()) {
         return false;
     }
-    if (!createTubePipeline()) {
-        return false;
-    }
     if (!createLinePipeline()) {
         return false;
     }
-    if (!createTubeVertexBuffer()) {
+    if (!createCurveVertexBuffer()) {
         return false;
     }
-    if (!createTubeIndexBuffer()) {
-        return false;
-    }
-    return createLineVertexBuffer();
+    return createControlPolygonVertexBuffer();
 }
 
 void Tutorial10::childClear() {
@@ -2060,19 +1801,10 @@ void Tutorial10::childClear() {
     }
 
     destroyBuffer(
-            m_vulkan_tutorial10_parameters.getTubeVertexBufferParameters());
-    destroyBuffer(
-            m_vulkan_tutorial10_parameters.getTubeIndexBufferParameters());
-    destroyBuffer(
-            m_vulkan_tutorial10_parameters.getLineVertexBufferParameters());
+            m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial10_parameters
+                          .getControlPolygonVertexBufferParameters());
     destroyBuffer(m_vulkan_tutorial10_parameters.getStagingBufferParameters());
-
-    if (m_vulkan_tutorial10_parameters.getVkTubePipeline() != VK_NULL_HANDLE) {
-        vkDestroyPipeline(getVkDevice(),
-                          m_vulkan_tutorial10_parameters.getVkTubePipeline(),
-                          nullptr);
-        m_vulkan_tutorial10_parameters.getVkTubePipeline() = VK_NULL_HANDLE;
-    }
 
     if (m_vulkan_tutorial10_parameters.getVkLinePipeline() != VK_NULL_HANDLE) {
         vkDestroyPipeline(getVkDevice(),
