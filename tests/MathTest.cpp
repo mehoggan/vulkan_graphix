@@ -291,3 +291,167 @@ TEST(CubicCurveTest, CatmullRomEndpointsMatchInnerControlPoints) {
     EXPECT_NEAR(point2.x, end_point.x, 1e-4f);
     EXPECT_NEAR(1.5f, midpoint.x, 1e-4f);
 }
+
+TEST(CubicCurveTest, BezierTangentAtEndpointsMatchesControlPointDelta) {
+    // B'(0) = 3*(P1-P0), B'(1) = 3*(P3-P2) - the standard Bezier
+    // derivative formula.
+    Vec3<float> point0(0.0f, 0.0f, 0.0f);
+    Vec3<float> point1(1.0f, 0.0f, 0.0f);
+    Vec3<float> point2(2.0f, 0.0f, 0.0f);
+    Vec3<float> point3(4.0f, 0.0f, 0.0f);
+
+    CubicCurve<float> curve(
+            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+
+    Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
+    Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
+
+    EXPECT_NEAR(3.0f, start_tangent.x, 1e-4f);
+    EXPECT_NEAR(6.0f, end_tangent.x, 1e-4f);
+}
+
+TEST(CubicCurveTest, HermiteTangentsMatchSpecifiedTangents) {
+    // Hermite curves interpolate the tangent at each endpoint exactly -
+    // that's the whole point of specifying them explicitly.
+    Vec3<float> point0(0.0f, 0.0f, 0.0f);
+    Vec3<float> point1(5.0f, 0.0f, 0.0f);
+    Vec3<float> tangent0(2.0f, 1.0f, 0.0f);
+    Vec3<float> tangent1(3.0f, -1.0f, 0.0f);
+
+    CubicCurve<float> curve(point0, point1, tangent0, tangent1);
+
+    Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
+    Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
+
+    EXPECT_NEAR(tangent0.x, start_tangent.x, 1e-4f);
+    EXPECT_NEAR(tangent0.y, start_tangent.y, 1e-4f);
+    EXPECT_NEAR(tangent1.x, end_tangent.x, 1e-4f);
+    EXPECT_NEAR(tangent1.y, end_tangent.y, 1e-4f);
+}
+
+TEST(CubicCurveTest, CatmullRomTangentAtInnerPointsMatchesFiniteDifference) {
+    // Regression test for the basis-matrix bug fixed alongside Tutorial10:
+    // a Catmull-Rom segment's tangent at its inner points (point1, point2)
+    // must equal the classic finite-difference formula - tangent(0) =
+    // (point2-point0)/2, tangent(1) = (point3-point1)/2 - using the outer
+    // control points as neighbors. The old, incorrect basis matrix broke
+    // this along with the endpoint-position property covered above.
+    Vec3<float> point0(0.0f, 0.0f, 0.0f);
+    Vec3<float> point1(2.0f, 0.0f, 0.0f);
+    Vec3<float> point2(4.0f, 0.0f, 0.0f);
+    Vec3<float> point3(6.0f, 0.0f, 0.0f);
+
+    CubicCurve<float> curve(CubicCurve<float>::Type::CatmullRom,
+                            point0,
+                            point1,
+                            point2,
+                            point3);
+
+    Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
+    Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
+
+    EXPECT_NEAR(2.0f, start_tangent.x, 1e-4f);
+    EXPECT_NEAR(2.0f, end_tangent.x, 1e-4f);
+}
+
+TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
+    // Mirrors Tutorial10's actual technique: duplicate the first/last
+    // control point so a chain of overlapping 4-point Catmull-Rom
+    // segments passes through every point, then verify each segment's
+    // end lands exactly on the next segment's start (C0 continuity).
+    // The original basis-matrix bug broke exactly this property - every
+    // segment boundary had a visible gap - which is why Tutorial10's
+    // polyline looked tangled independent of its control-point layout.
+    std::vector<Vec3<float>> control_points = {Vec3<float>(-3.0f, 0.0f, 0.0f),
+                                               Vec3<float>(-1.5f, 1.0f, 0.5f),
+                                               Vec3<float>(0.0f, 0.2f, 1.0f),
+                                               Vec3<float>(1.5f, -0.6f, 0.3f),
+                                               Vec3<float>(3.0f, 0.4f, 0.0f)};
+
+    std::vector<Vec3<float>> working_points;
+    working_points.push_back(control_points.front());
+    for (Vec3<float> const& point : control_points) {
+        working_points.push_back(point);
+    }
+    working_points.push_back(control_points.back());
+
+    std::size_t const segment_count = working_points.size() - 3;
+    std::vector<CubicCurve<float>> segments;
+    segments.reserve(segment_count);
+    for (std::size_t segment = 0; segment < segment_count; ++segment) {
+        segments.emplace_back(CubicCurve<float>::Type::CatmullRom,
+                              working_points[segment],
+                              working_points[segment + 1],
+                              working_points[segment + 2],
+                              working_points[segment + 3]);
+    }
+
+    for (std::size_t segment = 0; segment + 1 < segments.size(); ++segment) {
+        Vec3<float> end_of_this = segments[segment].evaluatePosition(1.0f);
+        Vec3<float> start_of_next =
+                segments[segment + 1].evaluatePosition(0.0f);
+        EXPECT_NEAR(end_of_this.x, start_of_next.x, 1e-4f);
+        EXPECT_NEAR(end_of_this.y, start_of_next.y, 1e-4f);
+        EXPECT_NEAR(end_of_this.z, start_of_next.z, 1e-4f);
+    }
+
+    // Every segment should also pass through its actual control point.
+    for (std::size_t index = 0; index < control_points.size(); ++index) {
+        Vec3<float> sampled =
+                (index == 0) ? segments.front().evaluatePosition(0.0f)
+                             : segments[index - 1].evaluatePosition(1.0f);
+        EXPECT_NEAR(control_points[index].x, sampled.x, 1e-4f);
+        EXPECT_NEAR(control_points[index].y, sampled.y, 1e-4f);
+        EXPECT_NEAR(control_points[index].z, sampled.z, 1e-4f);
+    }
+}
+
+TEST(CubicCurveTest, ComputeSamplesUniformProducesRequestedCountAndEndpoints) {
+    Vec3<float> point0(0.0f, 0.0f, 0.0f);
+    Vec3<float> point1(1.0f, 1.0f, 0.0f);
+    Vec3<float> point2(2.0f, -1.0f, 0.0f);
+    Vec3<float> point3(3.0f, 0.0f, 0.0f);
+    CubicCurve<float> curve(
+            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+
+    std::vector<CurveSample3D<float>> samples = curve.computeSamplesUniform(5);
+
+    ASSERT_EQ(5u, samples.size());
+    EXPECT_NEAR(point0.x, samples.front().position.x, 1e-4f);
+    EXPECT_NEAR(point3.x, samples.back().position.x, 1e-4f);
+    EXPECT_FLOAT_EQ(0.0f, samples.front().parameter);
+    EXPECT_FLOAT_EQ(1.0f, samples.back().parameter);
+    for (std::size_t index = 1; index < samples.size(); ++index) {
+        EXPECT_NEAR(0.25f,
+                    samples[index].parameter - samples[index - 1].parameter,
+                    1e-4f);
+    }
+}
+
+TEST(CubicCurveTest, ComputeSampleValuesClampsCountBelowTwo) {
+    CubicCurve<float> curve;
+    std::vector<float> samples = curve.computeSampleValues(1);
+    ASSERT_EQ(2u, samples.size());
+    EXPECT_FLOAT_EQ(0.0f, samples.front());
+    EXPECT_FLOAT_EQ(1.0f, samples.back());
+}
+
+TEST(CubicCurveTest, TighterChordalToleranceProducesMoreSamples) {
+    // A single gentle hump, not a sharp zigzag: isOfGoodQuality() also
+    // forces subdivision when a sample's tangent deviates too far from
+    // the secant, independent of chordal_tolerance, so a sharply-curving
+    // segment can hit the same subdivision depth regardless of tolerance.
+    // This shape keeps the chordal-distance check the limiting factor.
+    Vec3<float> point0(0.0f, 0.0f, 0.0f);
+    Vec3<float> point1(1.0f, 1.0f, 0.0f);
+    Vec3<float> point2(3.0f, 1.0f, 0.0f);
+    Vec3<float> point3(4.0f, 0.0f, 0.0f);
+    CubicCurve<float> curve(
+            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+
+    std::size_t const loose_count = curve.computeSamplesAdaptive(0.1f).size();
+    std::size_t const tight_count =
+            curve.computeSamplesAdaptive(0.001f).size();
+
+    EXPECT_GT(tight_count, loose_count);
+}

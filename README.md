@@ -46,3 +46,56 @@ package installed above provides `spirv-dis`/`spirv-val` if you'd rather
 disassemble or validate an existing `.spv` directly instead of
 recompiling from source — `spirv-dis` produces the same disassembly
 style `glslc -S` does, since `glslc` uses it internally.
+
+### Code Coverage
+
+The test suite (`tests/MathTest.cpp`, `tests/VertexTypesTest.cpp`) only
+exercises the header-only `Math/` and `VertexTypes/` modules — it doesn't
+link against `libvulkan_graphix.la`, so `lib/*.cpp` (all ten tutorials plus
+`TutorialBase`/`OperatingSystem`/`Logging`/`Tools`/`OrbitCamera`) has no
+automated coverage; those need a live Vulkan device and X11 window, and are
+verified by running each `tutorialNN_runner` and checking the output.
+
+Install a report generator (either works; `gcovr` needs no root access):
+
+```sh
+pip install --user gcovr
+# or
+sudo apt install -y lcov
+```
+
+Configure with coverage instrumentation (this passes `--coverage -O0` to
+`lib/` and `tests/` only — `bin/` stays uninstrumented), then generate a
+report:
+
+```sh
+./configure --enable-coverage
+make -j8
+make coverage
+```
+
+`make coverage` rebuilds, runs `make check`, and writes an HTML report to
+`coverage-html/index.html` — open it in a browser for a per-file, line-by-
+line view with uncovered lines highlighted. It prefers `gcovr` when both
+tools are present; `lcov`/`genhtml` are used as a fallback.
+
+To see exactly which lines aren't covered without opening a browser:
+
+```sh
+make coverage-missing
+```
+
+This prints a `gcovr --txt` table per file with a `Missing` column listing
+the uncovered line numbers/ranges directly (run `make coverage` or
+`make check` first if the `.gcda` files might be stale). This one needs
+`gcovr` specifically — `lcov` has no equivalent per-line text report; with
+`lcov` only, read uncovered lines off the highlighted source in `make
+coverage`'s HTML output instead. Both targets filter out system headers,
+`glm`, `gtest`, `boost`, and the vendored `STBImage.h`/`ListOfFunctions.inl`
+— only this project's own `lib/` and `include/vulkan_graphix/` code is
+reported on.
+
+`make clean` removes the generated `.gcno`/`.gcda`/`coverage-html`/
+`coverage.info` files. Coverage instrumentation adds real runtime and
+binary-size overhead, so reconfigure without `--enable-coverage` (a plain
+`./configure`) for normal development/tutorial-running.

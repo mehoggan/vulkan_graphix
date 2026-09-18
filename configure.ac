@@ -21,6 +21,31 @@ if test "x$have_gtest" = "xno"; then
   AC_MSG_WARN([gtest/gtest_main not found via pkg-config, tests/ will not build])
 fi
 
+# Code coverage (gcov instrumentation for lib/ and tests/; see README.md)
+AC_ARG_ENABLE([coverage],
+  [AS_HELP_STRING([--enable-coverage],
+    [instrument lib/ and tests/ with gcov for code coverage reports])],
+  [enable_coverage=$enableval], [enable_coverage=no])
+AM_CONDITIONAL([COVERAGE_ENABLED], [test "x$enable_coverage" = "xyes"])
+
+COVERAGE_CXXFLAGS=
+COVERAGE_LDFLAGS=
+if test "x$enable_coverage" = "xyes"; then
+  # -O0 keeps line-level coverage accurate; optimization can merge or
+  # eliminate lines gcov would otherwise report on individually.
+  COVERAGE_CXXFLAGS="--coverage -O0"
+  COVERAGE_LDFLAGS="--coverage"
+
+  AC_CHECK_PROG([GCOVR], [gcovr], [gcovr], [])
+  AC_CHECK_PROG([LCOV], [lcov], [lcov], [])
+  AC_CHECK_PROG([GENHTML], [genhtml], [genhtml], [])
+  if test -z "$GCOVR" && test -z "$LCOV"; then
+    AC_MSG_WARN([--enable-coverage was given but neither gcovr nor lcov was found on PATH - install one to turn the raw .gcda/.gcno files into a report (pip install --user gcovr, or apt install lcov)])
+  fi
+fi
+AC_SUBST([COVERAGE_CXXFLAGS])
+AC_SUBST([COVERAGE_LDFLAGS])
+
 # Conditionals
 AC_CANONICAL_HOST()
 

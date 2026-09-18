@@ -48,6 +48,18 @@ bear -- ../configure
 bear -- make
 ```
 
+Code coverage (`gcovr` or `lcov`/`genhtml` required — see README.md):
+```sh
+./configure --enable-coverage
+make -j8
+make coverage          # HTML report at coverage-html/index.html
+make coverage-missing  # prints uncovered line numbers per file, no HTML
+```
+Only `lib/` and `tests/` are instrumented. The test suite currently only
+exercises the header-only `Math/`/`VertexTypes/` modules (~96% covered);
+`lib/*.cpp` (all ten tutorials + infrastructure) has no automated coverage
+since it needs a live Vulkan device/window.
+
 ### Compiling Shaders
 
 Shaders are compiled to SPIR-V bytecode using glslangValidator:
@@ -150,10 +162,11 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
 - Tutorial03 - Tutorial09: Progressive feature additions (vertex/index/
   uniform buffers, textures, depth testing, Phong lighting, mouse-orbit
   camera, tessellated terrain)
-- Tutorial10: Phong-shaded tube swept along a `Math::CubicCurve`-sampled
-  spline, drawn alongside its control polygon as an unlit line strip —
-  first tutorial with push constants, line topology, and two pipelines
-  sharing one pipeline layout
+- Tutorial10: a real polyline through a `Math::CubicCurve`-sampled
+  spline (Catmull-Rom), drawn alongside its control polygon as a
+  second, thinner line strip — first tutorial with push constants,
+  line topology, and `VK_DYNAMIC_STATE_LINE_WIDTH` (curve thicker
+  than control polygon, gated on the device's `wideLines` feature)
 
 ## Common Tasks
 

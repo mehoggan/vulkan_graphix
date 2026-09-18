@@ -25,3 +25,8 @@ libvulkan_graphix_la_LIBADD = -lboost_log -lboost_system -lboost_thread \
 														$(VULKAN_LIBS) $(X11_LIBS)
 
 libvulkan_graphix_la_LDFLAGS = -pthread
+
+if COVERAGE_ENABLED
+libvulkan_graphix_la_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+libvulkan_graphix_la_LDFLAGS += $(COVERAGE_LDFLAGS)
+endif
