@@ -1,5 +1,5 @@
 if HAVE_GTEST
-TESTS = vertex_types_test math_test \
+TESTS = vertex_types_test math_test tools_test \
 		tutorial01_integration_test \
 		tutorial02_integration_test \
 		tutorial03_integration_test \
@@ -23,6 +23,21 @@ math_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 math_test_LDADD = $(GTEST_LIBS)
 math_test_LDFLAGS = -pthread
+
+# Exercises vulkan_graphix::Tools's file-IO/math helpers directly (see
+# ToolsTest.cpp's header comment) - needs libvulkan_graphix.la (Tools.cpp
+# carries the STB_IMAGE_IMPLEMENTATION and the Vulkan/X11/boost symbols the
+# library as a whole depends on), but no live device or window, unlike the
+# integration tests below.
+tools_test_SOURCES = ./ToolsTest.cpp
+tools_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS) \
+		$(VULKAN_CFLAGS)
+tools_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread \
+		$(VULKAN_LIBS) $(X11_LIBS)
+tools_test_LDFLAGS = -pthread
 
 # Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
@@ -149,6 +164,8 @@ vertex_types_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 vertex_types_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 math_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 math_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tools_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tools_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
