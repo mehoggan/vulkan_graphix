@@ -55,10 +55,16 @@ make -j8
 make coverage          # HTML report at coverage-html/index.html
 make coverage-missing  # prints uncovered line numbers per file, no HTML
 ```
-Only `lib/` and `tests/` are instrumented. The test suite currently only
-exercises the header-only `Math/`/`VertexTypes/` modules (~96% covered);
-`lib/*.cpp` (all ten tutorials + infrastructure) has no automated coverage
-since it needs a live Vulkan device/window.
+Only `lib/` and `tests/` are instrumented. All ten tutorials get a real
+integration test (drives each through a live Vulkan device/X11 window -
+skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
+`OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`, and
+`Tools` each have their own direct unit tests. Overall `lib/`+`include/`
+line coverage is ~66% (header-only `Math/`/`VertexTypes/` modules are
+close to fully covered); most of the remaining gap is Vulkan-call
+failure branches (`if (result != VK_SUCCESS) return false;`) that would
+need a fault-injection/mocking layer to exercise, not real device/window
+setup.
 
 ### Compiling Shaders
 

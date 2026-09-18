@@ -49,12 +49,21 @@ style `glslc -S` does, since `glslc` uses it internally.
 
 ### Code Coverage
 
-The test suite (`tests/MathTest.cpp`, `tests/VertexTypesTest.cpp`) only
-exercises the header-only `Math/` and `VertexTypes/` modules — it doesn't
-link against `libvulkan_graphix.la`, so `lib/*.cpp` (all ten tutorials plus
-`TutorialBase`/`OperatingSystem`/`Logging`/`Tools`/`OrbitCamera`) has no
-automated coverage; those need a live Vulkan device and X11 window, and are
-verified by running each `tutorialNN_runner` and checking the output.
+`tests/MathTest.cpp`/`tests/VertexTypesTest.cpp` exercise the header-only
+`Math/`/`VertexTypes/` modules. `tests/TutorialNNIntegrationTest.cpp` (one
+binary per tutorial, linked against `libvulkan_graphix.la`) drives each
+tutorial through its real `prepareVulkan()`/`create*()`/`draw()`/
+`onWindowSizeChanged()` sequence, plus mouse input for Tutorial09/10 —
+these need a live Vulkan device and X11 window, so they call `GTEST_SKIP()`
+when `DISPLAY` isn't set (e.g. headless CI) rather than failing.
+`tests/OperatingSystemTest.cpp` drives the real X11 event loop
+(`os::Window::renderingLoop()`) with synthetic events. `tests/ToolsTest.cpp`,
+`tests/LoggingTest.cpp`, and `tests/LoggerHelpersTest.cpp` cover
+`Tools`/`Logging`/`LoggerHelpers` directly — pure/file-based code needing
+no device or window. Overall `lib/`+`include/vulkan_graphix/` line coverage
+is ~66%; most of the remaining gap is Vulkan-call failure branches
+(`if (result != VK_SUCCESS) return false;`) that would need a fault-
+injection/mocking layer to exercise.
 
 Install a report generator (either works; `gcovr` needs no root access):
 
