@@ -70,6 +70,9 @@ tests/tools_test.trs
 tests/operating_system_test
 tests/operating_system_test.log
 tests/operating_system_test.trs
+tests/logging_test
+tests/logging_test.log
+tests/logging_test.trs
 tests/tutorial*_integration_test
 tests/tutorial*_integration_test.log
 tests/tutorial*_integration_test.trs

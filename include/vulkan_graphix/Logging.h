@@ -90,7 +90,14 @@ public:
      * @return true if \p lhs tag_ is a string equivalent to \p rhs tag_.
      */
     friend bool operator==(const LogTag& lhs, const LogTag& rhs) {
-        return lhs.tag() == rhs.tag();
+        // lhs.tag()/rhs.tag() return tag_.c_str(): comparing those directly
+        // compares *pointers* into two separate std::string allocations,
+        // which are equal only for self-comparison - never for two LogTags
+        // built from equal-content strings. hash<LogTag> below already
+        // hashes by content, so this must compare by content too, or the
+        // hash/equality pair is inconsistent for use as an unordered_map
+        // key (exactly how Logging::Dict uses LogTag).
+        return lhs.tag_ == rhs.tag_;
     }
 
 private:

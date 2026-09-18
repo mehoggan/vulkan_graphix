@@ -1,6 +1,6 @@
 if HAVE_GTEST
 TESTS = vertex_types_test math_test tools_test \
-		operating_system_test \
+		operating_system_test logging_test \
 		tutorial01_integration_test \
 		tutorial02_integration_test \
 		tutorial03_integration_test \
@@ -52,6 +52,17 @@ operating_system_test_LDADD = $(GTEST_LIBS) \
 		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 operating_system_test_LDFLAGS = -pthread
+
+# Exercises vulkan_graphix::Logging directly (see LoggingTest.cpp's header
+# comment) - pure Boost.Log/filesystem code, no live device or window.
+logging_test_SOURCES = ./LoggingTest.cpp
+logging_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+logging_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread -lboost_filesystem \
+		$(VULKAN_LIBS) $(X11_LIBS)
+logging_test_LDFLAGS = -pthread
 
 # Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
@@ -182,6 +193,8 @@ tools_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tools_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 operating_system_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 operating_system_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+logging_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+logging_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
