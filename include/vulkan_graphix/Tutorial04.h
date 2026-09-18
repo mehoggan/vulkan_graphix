@@ -20,7 +20,7 @@ namespace vulkan_graphix {
 //                                                              //
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
-struct VertexData {
+struct Tutorial04VertexData {
     Math::Vec4<float> position;
     Math::Vec4<float> color;
 };

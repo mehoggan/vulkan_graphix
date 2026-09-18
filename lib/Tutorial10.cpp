@@ -671,7 +671,7 @@ bool Tutorial10::destroyDepthResources() {
 bool Tutorial10::createUniformBuffer() {
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial10_parameters.getUniformBufferParameters();
-    uniform_buffer.setSize(sizeof(UniformBufferData));
+    uniform_buffer.setSize(sizeof(Tutorial10UniformBufferData));
     // Host-visible/coherent (not device-local + staging) since this buffer
     // is rewritten every frame as the orbit camera moves; see
     // updateUniformBufferData()/draw() for how the CPU/GPU race that
@@ -687,8 +687,8 @@ bool Tutorial10::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-UniformBufferData Tutorial10::getUniformBufferData() const {
-    UniformBufferData data{};
+Tutorial10UniformBufferData Tutorial10::getUniformBufferData() const {
+    Tutorial10UniformBufferData data{};
     data.view = glm::lookAt(m_camera.eye(),
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
@@ -704,7 +704,7 @@ UniformBufferData Tutorial10::getUniformBufferData() const {
 }
 
 bool Tutorial10::updateUniformBufferData() {
-    UniformBufferData const uniform_data = getUniformBufferData();
+    Tutorial10UniformBufferData const uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial10_parameters.getUniformBufferParameters();
 

@@ -1103,11 +1103,13 @@ bool Tutorial07::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct VertexData, position)},
+                     .offset =
+                             offsetof(struct Tutorial07VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset = offsetof(struct VertexData, texcoord)}};
+                     .offset =
+                             offsetof(struct Tutorial07VertexData, texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1234,8 +1236,8 @@ bool Tutorial07::createPipeline() {
     return true;
 }
 
-const std::vector<VertexData>& Tutorial07::getVertexData() const {
-    static const std::vector<VertexData> vertex_data = {
+const std::vector<Tutorial07VertexData>& Tutorial07::getVertexData() const {
+    static const std::vector<Tutorial07VertexData> vertex_data = {
             {Math::Vec4<float>(-170.0f, -170.0f, 0.0f, 1.0f),
              Math::Vec2<float>(-0.1f, -0.1f)},
             {Math::Vec4<float>(-170.0f, 170.0f, 0.0f, 1.0f),
@@ -1249,7 +1251,7 @@ const std::vector<VertexData>& Tutorial07::getVertexData() const {
 }
 
 bool Tutorial07::copyVertexData() {
-    const std::vector<VertexData>& vertex_data = getVertexData();
+    const std::vector<Tutorial07VertexData>& vertex_data = getVertexData();
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial07_parameters.getVertexBufferParameters();
     BufferParameters& staging_buffer =
@@ -1348,7 +1350,7 @@ bool Tutorial07::copyVertexData() {
 }
 
 bool Tutorial07::createVertexBuffer() {
-    const std::vector<VertexData>& vertex_data = getVertexData();
+    const std::vector<Tutorial07VertexData>& vertex_data = getVertexData();
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial07_parameters.getVertexBufferParameters();

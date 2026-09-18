@@ -38,8 +38,14 @@ void WindowParameters::setWindowHandle(::Window& handle) { m_handle = handle; }
 Window::Window() = default;
 
 Window::~Window() {
-    XDestroyWindow(m_parameters.getDisplayPtr(),
-                   m_parameters.getWindowHandle());
+    // getDisplayPtr() is null if create() was never called or failed (e.g.
+    // XOpenDisplay() itself failing) - XDestroyWindow/XCloseDisplay on a
+    // null Display* is undefined behavior, so skip both in that case.
+    if (m_parameters.getDisplayPtr() != nullptr) {
+        XDestroyWindow(m_parameters.getDisplayPtr(),
+                       m_parameters.getWindowHandle());
+        XCloseDisplay(m_parameters.getDisplayPtr());
+    }
 }
 
 WindowParameters Window::getParameters() const { return m_parameters; }

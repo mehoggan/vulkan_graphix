@@ -64,9 +64,9 @@ tests/math_test.trs
 tests/vertex_types_test
 tests/vertex_types_test.log
 tests/vertex_types_test.trs
-tests/integration_test
-tests/integration_test.log
-tests/integration_test.trs
+tests/tutorial*_integration_test
+tests/tutorial*_integration_test.log
+tests/tutorial*_integration_test.trs
 tests/test-suite.log
 tests/shader.*.spv
 tests/texture.*.png

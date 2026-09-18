@@ -20,7 +20,7 @@ namespace vulkan_graphix {
 //                                                              //
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
-struct VertexData {
+struct Tutorial05VertexData {
     Math::Vec4<float> position;
     Math::Vec4<float> color;
 };
@@ -121,7 +121,7 @@ private:
     bool allocateBufferMemory(VkBuffer buffer,
                               VkMemoryPropertyFlags property,
                               VkDeviceMemory* memory);
-    const std::vector<VertexData>& getVertexData() const;
+    const std::vector<Tutorial05VertexData>& getVertexData() const;
     bool prepareFrame(VkCommandBuffer command_buffer,
                       const ImageParameters& image_parameters,
                       VkFramebuffer& framebuffer);

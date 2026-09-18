@@ -20,7 +20,7 @@ namespace vulkan_graphix {
 //                                                              //
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
-struct VertexData {
+struct Tutorial07VertexData {
     Math::Vec4<float> position;
     Math::Vec2<float> texcoord;
 };
@@ -160,7 +160,7 @@ private:
     bool copyUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
     createShaderModule(const char* filename);
-    const std::vector<VertexData>& getVertexData() const;
+    const std::vector<Tutorial07VertexData>& getVertexData() const;
     bool copyVertexData();
     bool prepareFrame(VkCommandBuffer command_buffer,
                       const ImageParameters& image_parameters,

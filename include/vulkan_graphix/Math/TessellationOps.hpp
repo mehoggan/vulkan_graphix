@@ -2,29 +2,33 @@
 #define VULKAN_GRAPHIX_TESSELLATIONOPS_HPP
 
 #include <cstddef>
-#include <functional>
 #include <unordered_map>
 #include <vector>
+
+// Vec3<T> keys below need std::hash, which glm only provides behind this
+// flag (see glm/gtx/hash.hpp). Must match Math/Sphere.hpp's use of the
+// exact same GLM_ENABLE_EXPERIMENTAL + glm/gtx/hash.hpp combination - a
+// second, hand-rolled std::hash<Vec3<T>> specialization here previously
+// competed with GLM's own for the same type. Since template
+// specializations get weak/vague linkage, whichever definition a given
+// translation unit saw was inlined into that TU's compiled code, but the
+// linker then picks just one definition to keep across the whole binary -
+// so a TU built against one specialization could still be calling into
+// std::unordered_map<Vec3<T>, ...> machinery compiled against the other,
+// which changes the hashtable node's internal layout (a cached vs.
+// uncached hash code) and corrupts the heap on new/delete. Caught via
+// AddressSanitizer's new-delete-type-mismatch report during Tutorial09's
+// terrain tessellation.
+#ifndef GLM_ENABLE_EXPERIMENTAL
+#define GLM_ENABLE_EXPERIMENTAL
+#endif
+#include <glm/gtx/hash.hpp>
 
 #include "vulkan_graphix/Math/Geometry.hpp"
 #include "vulkan_graphix/Math/Line.hpp"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Math/TessellationTypes.hpp"
 #include "vulkan_graphix/Math/Triangle.hpp"
-
-namespace std {
-
-// glm doesn't provide a std::hash for its vector types.
-template <typename T> struct hash<vulkan_graphix::Math::Vec3<T>> {
-    std::size_t operator()(vulkan_graphix::Math::Vec3<T> const& value) const {
-        std::size_t hash_x = std::hash<T>()(value.x);
-        std::size_t hash_y = std::hash<T>()(value.y);
-        std::size_t hash_z = std::hash<T>()(value.z);
-        return ((hash_x ^ (hash_y << 1)) >> 1) ^ (hash_z << 1);
-    }
-};
-
-}  // namespace std
 
 namespace vulkan_graphix::Math {
 

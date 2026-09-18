@@ -543,7 +543,7 @@ bool Tutorial08::destroyDepthResources() {
 bool Tutorial08::createUniformBuffer() {
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial08_parameters.getUniformBufferParameters();
-    uniform_buffer.setSize(sizeof(UniformBufferData));
+    uniform_buffer.setSize(sizeof(Tutorial08UniformBufferData));
     // Host-visible/coherent (not device-local + staging) since this buffer
     // is rewritten every frame to animate the model matrix; see
     // updateUniformBufferData()/draw() for how the CPU/GPU race that
@@ -559,12 +559,12 @@ bool Tutorial08::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-UniformBufferData Tutorial08::getUniformBufferData() const {
+Tutorial08UniformBufferData Tutorial08::getUniformBufferData() const {
     using namespace std::chrono;
     float const elapsed_seconds =
             duration<float>(steady_clock::now() - m_start_time).count();
 
-    UniformBufferData data{};
+    Tutorial08UniformBufferData data{};
     data.model = glm::rotate(Math::Mat4<float>(1.0f),
                              elapsed_seconds,
                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
@@ -587,7 +587,7 @@ UniformBufferData Tutorial08::getUniformBufferData() const {
 }
 
 bool Tutorial08::updateUniformBufferData() {
-    UniformBufferData const uniform_data = getUniformBufferData();
+    Tutorial08UniformBufferData const uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial08_parameters.getUniformBufferParameters();
 
@@ -883,11 +883,12 @@ bool Tutorial08::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct VertexData, position)},
+                     .offset =
+                             offsetof(struct Tutorial08VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct VertexData, normal)}};
+                     .offset = offsetof(struct Tutorial08VertexData, normal)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1033,12 +1034,12 @@ bool Tutorial08::createPipeline() {
     return true;
 }
 
-const std::vector<VertexData>& Tutorial08::getVertexData() const {
-    static const std::vector<VertexData> vertex_data = [] {
+const std::vector<Tutorial08VertexData>& Tutorial08::getVertexData() const {
+    static const std::vector<Tutorial08VertexData> vertex_data = [] {
         Math::Sphere<float, std::uint32_t> const sphere(
                 1.0f, static_cast<std::uint8_t>(3));
 
-        std::vector<VertexData> data;
+        std::vector<Tutorial08VertexData> data;
         data.reserve(sphere.points().size());
         for (std::size_t i = 0; i < sphere.points().size(); ++i) {
             Math::Vec3<float> const& point = sphere.points()[i];
@@ -1160,7 +1161,7 @@ bool Tutorial08::copyBufferData(BufferParameters& destination,
 }
 
 bool Tutorial08::createVertexBuffer() {
-    const std::vector<VertexData>& vertex_data = getVertexData();
+    const std::vector<Tutorial08VertexData>& vertex_data = getVertexData();
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial08_parameters.getVertexBufferParameters();

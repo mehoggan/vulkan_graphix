@@ -860,7 +860,7 @@ bool Tutorial09::createTexture() {
 bool Tutorial09::createUniformBuffer() {
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial09_parameters.getUniformBufferParameters();
-    uniform_buffer.setSize(sizeof(UniformBufferData));
+    uniform_buffer.setSize(sizeof(Tutorial09UniformBufferData));
     // Host-visible/coherent (not device-local + staging) since this buffer
     // is rewritten every frame as the orbit camera moves; see
     // updateUniformBufferData()/draw() for how the CPU/GPU race that
@@ -876,8 +876,8 @@ bool Tutorial09::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-UniformBufferData Tutorial09::getUniformBufferData() const {
-    UniformBufferData data{};
+Tutorial09UniformBufferData Tutorial09::getUniformBufferData() const {
+    Tutorial09UniformBufferData data{};
     data.model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
     data.view = glm::lookAt(m_camera.eye(),
                             m_camera.target(),
@@ -898,7 +898,7 @@ UniformBufferData Tutorial09::getUniformBufferData() const {
 }
 
 bool Tutorial09::updateUniformBufferData() {
-    UniformBufferData const uniform_data = getUniformBufferData();
+    Tutorial09UniformBufferData const uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial09_parameters.getUniformBufferParameters();
 
@@ -1218,15 +1218,17 @@ bool Tutorial09::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct VertexData, position)},
+                     .offset =
+                             offsetof(struct Tutorial09VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct VertexData, normal)},
+                     .offset = offsetof(struct Tutorial09VertexData, normal)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset = offsetof(struct VertexData, texcoord)}};
+                     .offset =
+                             offsetof(struct Tutorial09VertexData, texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1371,12 +1373,12 @@ bool Tutorial09::createPipeline() {
     return true;
 }
 
-const std::vector<VertexData>& Tutorial09::getVertexData() const {
-    static const std::vector<VertexData> vertex_data = [] {
+const std::vector<Tutorial09VertexData>& Tutorial09::getVertexData() const {
+    static const std::vector<Tutorial09VertexData> vertex_data = [] {
         Math::TessellatedTriangleData<float, std::uint32_t> const& tess =
                 getTerrainTessellation();
 
-        std::vector<VertexData> data;
+        std::vector<Tutorial09VertexData> data;
         data.reserve(tess.points().size());
         for (Math::Vec3<float> const& point : tess.points()) {
             float const texcoord_u = (point.x + c_terrain_half_size) /
@@ -1498,7 +1500,7 @@ bool Tutorial09::copyBufferData(BufferParameters& destination,
 }
 
 bool Tutorial09::createVertexBuffer() {
-    const std::vector<VertexData>& vertex_data = getVertexData();
+    const std::vector<Tutorial09VertexData>& vertex_data = getVertexData();
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial09_parameters.getVertexBufferParameters();

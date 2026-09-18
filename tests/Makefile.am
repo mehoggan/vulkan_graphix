@@ -1,6 +1,15 @@
 if HAVE_GTEST
-TESTS = vertex_types_test math_test integration_test
-check_PROGRAMS = vertex_types_test math_test integration_test
+TESTS = vertex_types_test math_test \
+		tutorial01_integration_test \
+		tutorial02_integration_test \
+		tutorial03_integration_test \
+		tutorial04_integration_test \
+		tutorial05_integration_test \
+		tutorial06_integration_test \
+		tutorial07_integration_test \
+		tutorial08_integration_test \
+		tutorial09_integration_test
+check_PROGRAMS = $(TESTS)
 
 vertex_types_test_SOURCES = ./VertexTypesTest.cpp
 vertex_types_test_CPPFLAGS = -Werror -Wall -pedantic \
@@ -14,27 +23,71 @@ math_test_CPPFLAGS = -Werror -Wall -pedantic \
 math_test_LDADD = $(GTEST_LIBS)
 math_test_LDFLAGS = -pthread
 
-# Integration tests: drive real tutorials through a live Vulkan device and
+# Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
-# the two tests above, this links against the library itself. One .cpp per
-# tutorial (see IntegrationTestCommon.h) compiled into a single binary.
-integration_test_SOURCES = ./IntegrationTestCommon.h \
-		./Tutorial01IntegrationTest.cpp \
-		./Tutorial02IntegrationTest.cpp \
-		./Tutorial03IntegrationTest.cpp \
-		./Tutorial04IntegrationTest.cpp \
-		./Tutorial05IntegrationTest.cpp \
-		./Tutorial06IntegrationTest.cpp \
-		./Tutorial07IntegrationTest.cpp
-integration_test_CPPFLAGS = -Werror -Wall -pedantic \
+# the two tests above, these link against the library itself. Each
+# tutorial gets its own binary/process rather than sharing one, since
+# repeatedly dlopen()/dlclose()-ing the Vulkan ICD within a single
+# long-lived process (as one shared binary running nine TEST()s would do)
+# triggered intermittent heap corruption inside the Mesa/Intel driver's
+# own shader-cache code - not a bug in this project, but the Vulkan ICD
+# clearly isn't robust to being reloaded many times in one process, so
+# match how every tutorialNN_runner actually runs: one process, one
+# dlopen, one dlclose.
+integration_test_common_cppflags = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
-integration_test_LDADD = $(GTEST_LIBS) \
+integration_test_common_ldadd = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
-integration_test_LDFLAGS = -pthread
+integration_test_common_ldflags = -pthread
 
-# --- Shader copying for integration_test (mirrors bin/Makefile.am) ---
+tutorial01_integration_test_SOURCES = ./Tutorial01IntegrationTest.cpp
+tutorial01_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial01_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial01_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial02_integration_test_SOURCES = ./Tutorial02IntegrationTest.cpp
+tutorial02_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial02_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial02_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial03_integration_test_SOURCES = ./Tutorial03IntegrationTest.cpp
+tutorial03_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial03_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial03_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial04_integration_test_SOURCES = ./Tutorial04IntegrationTest.cpp
+tutorial04_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial04_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial04_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial05_integration_test_SOURCES = ./Tutorial05IntegrationTest.cpp
+tutorial05_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial05_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial05_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial06_integration_test_SOURCES = ./Tutorial06IntegrationTest.cpp
+tutorial06_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial06_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial06_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial07_integration_test_SOURCES = ./Tutorial07IntegrationTest.cpp
+tutorial07_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial07_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial07_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial08_integration_test_SOURCES = ./Tutorial08IntegrationTest.cpp
+tutorial08_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial08_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial08_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+tutorial09_integration_test_SOURCES = ./Tutorial09IntegrationTest.cpp
+tutorial09_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial09_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial09_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
+# --- Shader copying for the integration tests (mirrors bin/Makefile.am) ---
 integration_tutorial03_vert = $(top_srcdir)/resources/03/Data/shader.vert.03.spv
 integration_tutorial03_frag = $(top_srcdir)/resources/03/Data/shader.frag.03.spv
 integration_tutorial04_vert = $(top_srcdir)/resources/04/Data/shader.vert.04.spv
@@ -47,13 +100,21 @@ integration_tutorial06_texture = $(top_srcdir)/resources/06/Data/texture.06.png
 integration_tutorial07_vert = $(top_srcdir)/resources/07/Data/shader.vert.07.spv
 integration_tutorial07_frag = $(top_srcdir)/resources/07/Data/shader.frag.07.spv
 integration_tutorial07_texture = $(top_srcdir)/resources/07/Data/texture.07.png
+integration_tutorial08_vert = $(top_srcdir)/resources/08/Data/shader.vert.08.spv
+integration_tutorial08_frag = $(top_srcdir)/resources/08/Data/shader.frag.08.spv
+integration_tutorial09_vert = $(top_srcdir)/resources/09/Data/shader.vert.09.spv
+integration_tutorial09_frag = $(top_srcdir)/resources/09/Data/shader.frag.09.spv
+integration_tutorial09_texture = $(top_srcdir)/resources/09/Data/texture.09.png
 
 all-local: $(integration_tutorial03_vert) $(integration_tutorial03_frag) \
 		$(integration_tutorial04_vert) $(integration_tutorial04_frag) \
 		$(integration_tutorial05_vert) $(integration_tutorial05_frag) \
 		$(integration_tutorial06_vert) $(integration_tutorial06_frag) \
 		$(integration_tutorial06_texture) $(integration_tutorial07_vert) \
-		$(integration_tutorial07_frag) $(integration_tutorial07_texture)
+		$(integration_tutorial07_frag) $(integration_tutorial07_texture) \
+		$(integration_tutorial08_vert) $(integration_tutorial08_frag) \
+		$(integration_tutorial09_vert) $(integration_tutorial09_frag) \
+		$(integration_tutorial09_texture)
 	cp $(integration_tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(integration_tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(integration_tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -66,14 +127,35 @@ all-local: $(integration_tutorial03_vert) $(integration_tutorial03_frag) \
 	cp $(integration_tutorial07_vert) $(builddir)/shader.07.vert.spv
 	cp $(integration_tutorial07_frag) $(builddir)/shader.07.frag.spv
 	cp $(integration_tutorial07_texture) $(builddir)/texture.07.png
+	cp $(integration_tutorial08_vert) $(builddir)/shader.08.vert.spv
+	cp $(integration_tutorial08_frag) $(builddir)/shader.08.frag.spv
+	cp $(integration_tutorial09_vert) $(builddir)/shader.09.vert.spv
+	cp $(integration_tutorial09_frag) $(builddir)/shader.09.frag.spv
+	cp $(integration_tutorial09_texture) $(builddir)/texture.09.png
 
 if COVERAGE_ENABLED
 vertex_types_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 vertex_types_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 math_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 math_test_LDFLAGS += $(COVERAGE_LDFLAGS)
-integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
-integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial02_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial03_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial03_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial04_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial04_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial05_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial05_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial06_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial06_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial07_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial07_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial08_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial08_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial09_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial09_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 endif
 endif
 

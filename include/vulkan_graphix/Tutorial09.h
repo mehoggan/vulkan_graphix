@@ -21,7 +21,7 @@ namespace vulkan_graphix {
 //                                                              //
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
-struct VertexData {
+struct Tutorial09VertexData {
     Math::Vec4<float> position;
     Math::Vec3<float> normal;
     Math::Vec2<float> texcoord;
@@ -37,7 +37,7 @@ using VertexAttributeTraits = VertexTypes::AttributeTraits<Math::Vec4<float>,
 // Layout of the Phong lighting uniform buffer. Vec3 fields are //
 // promoted to Vec4 for std140 alignment.                       //
 // ************************************************************ //
-struct UniformBufferData {
+struct Tutorial09UniformBufferData {
     Math::Mat4<float> model;
     Math::Mat4<float> view;
     Math::Mat4<float> projection;
@@ -202,11 +202,11 @@ private:
                          std::uint32_t width,
                          std::uint32_t height);
     bool destroyDepthResources();
-    UniformBufferData getUniformBufferData() const;
+    Tutorial09UniformBufferData getUniformBufferData() const;
     bool updateUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
     createShaderModule(const char* filename);
-    const std::vector<VertexData>& getVertexData() const;
+    const std::vector<Tutorial09VertexData>& getVertexData() const;
     const std::vector<std::uint32_t>& getIndexData() const;
     bool copyBufferData(BufferParameters& destination,
                         const void* data,

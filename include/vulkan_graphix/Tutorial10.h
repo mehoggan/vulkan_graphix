@@ -37,7 +37,7 @@ using LineVertexAttributeTraits =
 // world space. No lighting fields either - flat-colored lines  //
 // have no surface to light.                                    //
 // ************************************************************ //
-struct UniformBufferData {
+struct Tutorial10UniformBufferData {
     Math::Mat4<float> view;
     Math::Mat4<float> projection;
 };
@@ -201,7 +201,7 @@ private:
                          VkImageAspectFlags aspect_mask,
                          VkImageView* image_view);
     bool destroyDepthResources();
-    UniformBufferData getUniformBufferData() const;
+    Tutorial10UniformBufferData getUniformBufferData() const;
     bool updateUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
     createShaderModule(const char* filename);
