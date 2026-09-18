@@ -1,5 +1,6 @@
 if HAVE_GTEST
 TESTS = vertex_types_test math_test tools_test \
+		operating_system_test \
 		tutorial01_integration_test \
 		tutorial02_integration_test \
 		tutorial03_integration_test \
@@ -38,6 +39,19 @@ tools_test_LDADD = $(GTEST_LIBS) \
 		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tools_test_LDFLAGS = -pthread
+
+# Drives os::Window::renderingLoop() with synthetic X11 events (see
+# OperatingSystemTest.cpp's header comment) - needs a live DISPLAY, like the
+# integration tests below, but not a Vulkan device.
+operating_system_test_SOURCES = ./OperatingSystemTest.cpp
+operating_system_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS) \
+		$(X11_CFLAGS)
+operating_system_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread \
+		$(VULKAN_LIBS) $(X11_LIBS)
+operating_system_test_LDFLAGS = -pthread
 
 # Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
@@ -166,6 +180,8 @@ math_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 math_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tools_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tools_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+operating_system_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+operating_system_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
