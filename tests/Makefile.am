@@ -8,7 +8,8 @@ TESTS = vertex_types_test math_test \
 		tutorial06_integration_test \
 		tutorial07_integration_test \
 		tutorial08_integration_test \
-		tutorial09_integration_test
+		tutorial09_integration_test \
+		tutorial10_integration_test
 check_PROGRAMS = $(TESTS)
 
 vertex_types_test_SOURCES = ./VertexTypesTest.cpp
@@ -87,6 +88,11 @@ tutorial09_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
 tutorial09_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial09_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
+tutorial10_integration_test_SOURCES = ./Tutorial10IntegrationTest.cpp
+tutorial10_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial10_integration_test_LDADD = $(integration_test_common_ldadd)
+tutorial10_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
 # --- Shader copying for the integration tests (mirrors bin/Makefile.am) ---
 integration_tutorial03_vert = $(top_srcdir)/resources/03/Data/shader.vert.03.spv
 integration_tutorial03_frag = $(top_srcdir)/resources/03/Data/shader.frag.03.spv
@@ -105,6 +111,8 @@ integration_tutorial08_frag = $(top_srcdir)/resources/08/Data/shader.frag.08.spv
 integration_tutorial09_vert = $(top_srcdir)/resources/09/Data/shader.vert.09.spv
 integration_tutorial09_frag = $(top_srcdir)/resources/09/Data/shader.frag.09.spv
 integration_tutorial09_texture = $(top_srcdir)/resources/09/Data/texture.09.png
+integration_tutorial10_line_vert = $(top_srcdir)/resources/10/Data/shader.vert.10_line.spv
+integration_tutorial10_line_frag = $(top_srcdir)/resources/10/Data/shader.frag.10_line.spv
 
 all-local: $(integration_tutorial03_vert) $(integration_tutorial03_frag) \
 		$(integration_tutorial04_vert) $(integration_tutorial04_frag) \
@@ -114,7 +122,8 @@ all-local: $(integration_tutorial03_vert) $(integration_tutorial03_frag) \
 		$(integration_tutorial07_frag) $(integration_tutorial07_texture) \
 		$(integration_tutorial08_vert) $(integration_tutorial08_frag) \
 		$(integration_tutorial09_vert) $(integration_tutorial09_frag) \
-		$(integration_tutorial09_texture)
+		$(integration_tutorial09_texture) $(integration_tutorial10_line_vert) \
+		$(integration_tutorial10_line_frag)
 	cp $(integration_tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(integration_tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(integration_tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -132,6 +141,8 @@ all-local: $(integration_tutorial03_vert) $(integration_tutorial03_frag) \
 	cp $(integration_tutorial09_vert) $(builddir)/shader.09.vert.spv
 	cp $(integration_tutorial09_frag) $(builddir)/shader.09.frag.spv
 	cp $(integration_tutorial09_texture) $(builddir)/texture.09.png
+	cp $(integration_tutorial10_line_vert) $(builddir)/shader.10_line.vert.spv
+	cp $(integration_tutorial10_line_frag) $(builddir)/shader.10_line.frag.spv
 
 if COVERAGE_ENABLED
 vertex_types_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
@@ -156,6 +167,8 @@ tutorial08_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial08_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial09_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial09_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial10_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial10_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 endif
 endif
 
