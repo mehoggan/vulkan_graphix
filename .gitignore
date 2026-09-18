@@ -73,6 +73,9 @@ tests/operating_system_test.trs
 tests/logging_test
 tests/logging_test.log
 tests/logging_test.trs
+tests/logger_helpers_test
+tests/logger_helpers_test.log
+tests/logger_helpers_test.trs
 tests/tutorial*_integration_test
 tests/tutorial*_integration_test.log
 tests/tutorial*_integration_test.trs

@@ -1,6 +1,6 @@
 if HAVE_GTEST
 TESTS = vertex_types_test math_test tools_test \
-		operating_system_test logging_test \
+		operating_system_test logging_test logger_helpers_test \
 		tutorial01_integration_test \
 		tutorial02_integration_test \
 		tutorial03_integration_test \
@@ -63,6 +63,17 @@ logging_test_LDADD = $(GTEST_LIBS) \
 		-lboost_log -lboost_system -lboost_thread -lboost_filesystem \
 		$(VULKAN_LIBS) $(X11_LIBS)
 logging_test_LDFLAGS = -pthread
+
+# Exercises LoggerHelpers.h's stream operators directly (see
+# LoggerHelpersTest.cpp's header comment) - pure stringstream formatting,
+# no boost/X11/library link needed, so LoggerHelpers.cpp is compiled
+# straight into this binary rather than linking libvulkan_graphix.la.
+logger_helpers_test_SOURCES = ./LoggerHelpersTest.cpp \
+		$(abs_top_srcdir)/lib/LoggerHelpers.cpp
+logger_helpers_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(VULKAN_CFLAGS)
+logger_helpers_test_LDADD = $(GTEST_LIBS) $(VULKAN_LIBS)
+logger_helpers_test_LDFLAGS = -pthread
 
 # Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
@@ -195,6 +206,8 @@ operating_system_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 operating_system_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 logging_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 logging_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+logger_helpers_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+logger_helpers_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
