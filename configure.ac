@@ -31,9 +31,19 @@ AM_CONDITIONAL([COVERAGE_ENABLED], [test "x$enable_coverage" = "xyes"])
 COVERAGE_CXXFLAGS=
 COVERAGE_LDFLAGS=
 if test "x$enable_coverage" = "xyes"; then
-  # -O0 keeps line-level coverage accurate; optimization can merge or
-  # eliminate lines gcov would otherwise report on individually.
-  COVERAGE_CXXFLAGS="--coverage -O0"
+  # Force CXXFLAGS itself (not just a value we AC_SUBST elsewhere) here,
+  # before AC_PROG_CXX below would otherwise default it to "-g -O2": a
+  # per-target Makefile.am `+=` can only ever *append* to CPPFLAGS, and
+  # every Automake compile recipe places the global $(CXXFLAGS) last on
+  # the command line (by design, so users can always override package
+  # flags) - so an appended "-O0" there previously lost to the trailing
+  # "-O2" every time, silently building "coverage" binaries at -O2. That
+  # optimizes away small inline functions (e.g. accessor one-liners)
+  # entirely, so gcov can never mark their line as executed even though
+  # they ran - under-reporting coverage for exactly the code most likely
+  # to be fully exercised. -O0 keeps line-level coverage accurate.
+  CXXFLAGS="-g -O0"
+  COVERAGE_CXXFLAGS="--coverage"
   COVERAGE_LDFLAGS="--coverage"
 
   AC_CHECK_PROG([GCOVR], [gcovr], [gcovr], [])

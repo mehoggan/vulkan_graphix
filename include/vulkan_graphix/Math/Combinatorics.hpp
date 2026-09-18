@@ -29,8 +29,16 @@ bool nextCombination(CI& values, T select_count) {
             ++index;
             ++search_index;
             swap_index = select_count;
-            std::rotate(
-                    &values[index], &values[search_index], (&values[0] + N));
+            // search_index can legitimately reach N here (one past the
+            // last element), so it must be turned into a pointer via
+            // arithmetic on &values[0] rather than &values[search_index]:
+            // vector::operator[] on an out-of-range (== size()) index is
+            // undefined behavior, silently tolerated at -O2 but caught by
+            // libstdc++'s hardened assertions at -O0 (the -O0 coverage
+            // build correctly caught this real bug).
+            std::rotate(&values[index],
+                        (&values[0] + search_index),
+                        (&values[0] + N));
             while (search_index != N) {
                 ++search_index;
                 ++swap_index;
