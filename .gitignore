@@ -91,6 +91,15 @@ tests/tutorial_base_fault_injection_device_level_test.trs
 tests/tutorial04_fault_injection_test
 tests/tutorial04_fault_injection_test.log
 tests/tutorial04_fault_injection_test.trs
+tests/tutorial05_fault_injection_test
+tests/tutorial05_fault_injection_test.log
+tests/tutorial05_fault_injection_test.trs
+tests/tutorial06_fault_injection_test
+tests/tutorial06_fault_injection_test.log
+tests/tutorial06_fault_injection_test.trs
+tests/tutorial07_fault_injection_test
+tests/tutorial07_fault_injection_test.log
+tests/tutorial07_fault_injection_test.trs
 tests/tutorial*_integration_test
 tests/tutorial*_integration_test.log
 tests/tutorial*_integration_test.trs

@@ -4,7 +4,8 @@ TESTS = vertex_types_test math_test tools_test \
 		tutorial_base_helpers_test tutorial_base_fault_injection_test \
 		tutorial_base_fault_injection_swapchain_test \
 		tutorial_base_fault_injection_device_level_test \
-		tutorial04_fault_injection_test \
+		tutorial04_fault_injection_test tutorial05_fault_injection_test \
+		tutorial06_fault_injection_test tutorial07_fault_injection_test \
 		tutorial01_integration_test \
 		tutorial02_integration_test \
 		tutorial03_integration_test \
@@ -147,6 +148,38 @@ tutorial04_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial04_fault_injection_test_LDFLAGS = -pthread
+
+# Fault-injects Tutorial05/06/07's own create*() failure branches, same
+# pattern as tutorial04_fault_injection_test above.
+tutorial05_fault_injection_test_SOURCES = \
+		./Tutorial05FaultInjectionTest.cpp
+tutorial05_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+tutorial05_fault_injection_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread \
+		$(VULKAN_LIBS) $(X11_LIBS)
+tutorial05_fault_injection_test_LDFLAGS = -pthread
+
+tutorial06_fault_injection_test_SOURCES = \
+		./Tutorial06FaultInjectionTest.cpp
+tutorial06_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+tutorial06_fault_injection_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread \
+		$(VULKAN_LIBS) $(X11_LIBS)
+tutorial06_fault_injection_test_LDFLAGS = -pthread
+
+tutorial07_fault_injection_test_SOURCES = \
+		./Tutorial07FaultInjectionTest.cpp
+tutorial07_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+tutorial07_fault_injection_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread \
+		$(VULKAN_LIBS) $(X11_LIBS)
+tutorial07_fault_injection_test_LDFLAGS = -pthread
 
 # Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
@@ -293,6 +326,12 @@ tutorial_base_fault_injection_device_level_test_LDFLAGS += \
 		$(COVERAGE_LDFLAGS)
 tutorial04_fault_injection_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial04_fault_injection_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial05_fault_injection_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial05_fault_injection_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial06_fault_injection_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial06_fault_injection_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial07_fault_injection_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial07_fault_injection_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
