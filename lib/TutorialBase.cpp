@@ -334,8 +334,23 @@ TutorialBase::TutorialBase()
         , m_enable_vk_debug(true) {}
 
 TutorialBase::~TutorialBase() {
+    // vkDeviceWaitIdle/vkDestroyImageView/vkDestroyDevice/vkDestroyInstance
+    // are all loaded on demand (loadInstanceLevelEntryPoints()/
+    // loadDeviceLevelEntryPoints(), see ListOfFunctions.inl) rather than
+    // linked directly, so a handle being non-null doesn't guarantee its
+    // matching destroy function was ever resolved: if prepareVulkan() fails
+    // partway - e.g. the device was created but loadDeviceLevelEntryPoints()
+    // then failed on an earlier function than vkDeviceWaitIdle/
+    // vkDestroyDevice - those pointers are still null, and calling through
+    // a null function pointer here segfaults. Guard each one explicitly;
+    // vkDestroySwapchainKHR/vkDestroySurfaceKHR aren't namespaced the same
+    // way (see ListOfFunctions.inl's USE_SWAPCHAIN_EXTENSIONS comment) and
+    // always resolve to the real libvulkan.so symbol, so they don't need
+    // this guard.
     if (m_vulkan_common_parameters.getVkDevice() != VK_NULL_HANDLE) {
-        vkDeviceWaitIdle(m_vulkan_common_parameters.getVkDevice());
+        if (vkDeviceWaitIdle != nullptr) {
+            vkDeviceWaitIdle(m_vulkan_common_parameters.getVkDevice());
+        }
 
         if (m_vulkan_common_parameters.getVkDebugUtilsMessenger() !=
             VK_NULL_HANDLE) {
@@ -346,20 +361,22 @@ TutorialBase::~TutorialBase() {
             }
         }
 
-        for (size_t i = 0;
-             i < m_vulkan_common_parameters.getSwapchainParameters()
-                         .getImageParameters()
-                         .size();
-             ++i) {
-            if (m_vulkan_common_parameters.getSwapchainParameters()
-                        .getImageParameters()[i]
-                        .getVkImageView() != VK_NULL_HANDLE) {
-                vkDestroyImageView(
-                        getVkDevice(),
-                        m_vulkan_common_parameters.getSwapchainParameters()
-                                .getImageParameters()[i]
-                                .getVkImageView(),
-                        nullptr);
+        if (vkDestroyImageView != nullptr) {
+            for (size_t i = 0;
+                 i < m_vulkan_common_parameters.getSwapchainParameters()
+                             .getImageParameters()
+                             .size();
+                 ++i) {
+                if (m_vulkan_common_parameters.getSwapchainParameters()
+                            .getImageParameters()[i]
+                            .getVkImageView() != VK_NULL_HANDLE) {
+                    vkDestroyImageView(
+                            getVkDevice(),
+                            m_vulkan_common_parameters.getSwapchainParameters()
+                                    .getImageParameters()[i]
+                                    .getVkImageView(),
+                            nullptr);
+                }
             }
         }
 
@@ -371,7 +388,9 @@ TutorialBase::~TutorialBase() {
                             .getVkSwapchainKhr(),
                     nullptr);
         }
-        vkDestroyDevice(m_vulkan_common_parameters.getVkDevice(), nullptr);
+        if (vkDestroyDevice != nullptr) {
+            vkDestroyDevice(m_vulkan_common_parameters.getVkDevice(), nullptr);
+        }
     }
 
     if (m_vulkan_common_parameters.getVkSurfaceKhr() != VK_NULL_HANDLE) {
@@ -380,7 +399,8 @@ TutorialBase::~TutorialBase() {
                             nullptr);
     }
 
-    if (m_vulkan_common_parameters.getVkInstance() != VK_NULL_HANDLE) {
+    if ((m_vulkan_common_parameters.getVkInstance() != VK_NULL_HANDLE) &&
+        (vkDestroyInstance != nullptr)) {
         vkDestroyInstance(m_vulkan_common_parameters.getVkInstance(), nullptr);
     }
 
