@@ -88,6 +88,9 @@ tests/tutorial_base_fault_injection_swapchain_test.trs
 tests/tutorial_base_fault_injection_device_level_test
 tests/tutorial_base_fault_injection_device_level_test.log
 tests/tutorial_base_fault_injection_device_level_test.trs
+tests/tutorial04_fault_injection_test
+tests/tutorial04_fault_injection_test.log
+tests/tutorial04_fault_injection_test.trs
 tests/tutorial*_integration_test
 tests/tutorial*_integration_test.log
 tests/tutorial*_integration_test.trs
