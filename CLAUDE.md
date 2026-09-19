@@ -59,12 +59,26 @@ Only `lib/` and `tests/` are instrumented. All ten tutorials get a real
 integration test (drives each through a live Vulkan device/X11 window -
 skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
 `OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`, and
-`Tools` each have their own direct unit tests. Overall `lib/`+`include/`
-line coverage is ~66% (header-only `Math/`/`VertexTypes/` modules are
-close to fully covered); most of the remaining gap is Vulkan-call
-failure branches (`if (result != VK_SUCCESS) return false;`) that would
-need a fault-injection/mocking layer to exercise, not real device/window
-setup.
+`Tools` each have their own direct unit tests. `TutorialBase` and every
+tutorial's own `create*()` Vulkan-call failure branches (`if (result !=
+VK_SUCCESS) return false;`) are covered by a fault-injection layer: since
+every Vulkan call here goes through a mutable `vulkan_graphix::vkSomething`
+function-pointer global (see `VulkanFunctions.h`/`ListOfFunctions.inl`),
+a test can bring a tutorial up through a real `prepareVulkan()`, swap one
+of those pointers for a fake that returns a failure code, call the one
+step under test, and assert it fails - see
+`tests/Tutorial04FaultInjectionTest.cpp` and
+`tests/TutorialBaseFaultInjectionCommon.h`'s header comments for the
+technique and its one-real-device-per-process constraint. The WSI
+surface/swapchain entry points (`vkCreateXlibSurfaceKHR`,
+`vkCreateSwapchainKHR`, etc.) aren't routed through that seam - they
+resolve to real `libvulkan.so` symbols instead - so `createPresentation
+Surface()`'s and `createSwapChain()`'s own failure branches stay out of
+reach without LD_PRELOAD interposition. Overall `lib/`+`include/` line
+coverage is ~71%; the remaining gap is mostly those swapchain/surface
+branches, plus a few `checkPhysicalDeviceProperties()` branches (e.g. "no
+queue family with the required properties") that would need a fake
+device's reported properties, not just a failure code, to reach.
 
 ### Compiling Shaders
 

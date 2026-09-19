@@ -60,10 +60,34 @@ when `DISPLAY` isn't set (e.g. headless CI) rather than failing.
 (`os::Window::renderingLoop()`) with synthetic events. `tests/ToolsTest.cpp`,
 `tests/LoggingTest.cpp`, and `tests/LoggerHelpersTest.cpp` cover
 `Tools`/`Logging`/`LoggerHelpers` directly — pure/file-based code needing
-no device or window. Overall `lib/`+`include/vulkan_graphix/` line coverage
-is ~66%; most of the remaining gap is Vulkan-call failure branches
-(`if (result != VK_SUCCESS) return false;`) that would need a fault-
-injection/mocking layer to exercise.
+no device or window. `tests/TutorialBaseHelpersTest.cpp` covers
+`TutorialBase`'s pure swap-chain-parameter-selection helpers the same way.
+
+A `tests/*FaultInjectionTest.cpp` per tutorial (plus
+`tests/TutorialBaseFaultInjection*Test.cpp` for the shared setup sequence)
+covers the `if (result != VK_SUCCESS) return false;` branches a real
+device essentially never takes: every Vulkan call in this codebase goes
+through a mutable `vulkan_graphix::vkSomething` function-pointer global
+(populated at runtime via `dlsym`/`vkGetInstanceProcAddr`/
+`vkGetDeviceProcAddr`, see `VulkanFunctions.h`/`ListOfFunctions.inl`), so
+a test can bring a tutorial up through a real `prepareVulkan()`, swap one
+of those pointers for a fake that returns a chosen failure `VkResult`,
+call the one step under test, assert it fails, and restore the real
+pointer. See `tests/Tutorial04FaultInjectionTest.cpp` and
+`tests/TutorialBaseFaultInjectionCommon.h`'s header comments for the full
+technique, including a real, observed hazard: `vkGetDeviceProcAddr`-loaded
+pointers are process-global but not actually valid across different
+`VkDevice` objects, so each binary keeps to one real device per process.
+The WSI surface/swapchain entry points (`vkCreateXlibSurfaceKHR`,
+`vkCreateSwapchainKHR`, etc.) aren't routed through that seam — they
+resolve to the real `libvulkan.so` symbols instead — so
+`createPresentationSurface()`'s and `createSwapChain()`'s own failure
+branches are out of reach without LD_PRELOAD interposition.
+
+Overall `lib/`+`include/vulkan_graphix/` line coverage is ~71%; the
+remaining gap is mostly those swapchain/surface branches, plus a few
+`checkPhysicalDeviceProperties()` branches that need a fake device's
+reported properties (not just a failure code) to reach.
 
 Install a report generator (either works; `gcovr` needs no root access):
 
