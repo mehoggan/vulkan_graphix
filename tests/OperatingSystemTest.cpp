@@ -145,14 +145,18 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
     // at the window - two distinct sizes guarantee a real resize is
     // detected regardless of whether mapping itself also emits an initial
     // ConfigureNotify (see OperatingSystem.cpp's renderingLoop comment
-    // about the static width/height baseline).
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    // about the static width/height baseline). These margins are
+    // deliberately generous (observed flaking at 200/100/100ms under the
+    // CPU contention of a concurrent full `make -j8` rebuild, which can
+    // starve loop_thread of its first time slice) rather than tight,
+    // since this test's own runtime cost is trivial either way.
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     XResizeWindow(send_display, handle, 640, 640);
     XFlush(send_display);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     XResizeWindow(send_display, handle, 800, 800);
     XFlush(send_display);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     sendButtonEvent(send_display,
                     handle,
@@ -170,7 +174,7 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
                     120,
                     110);
     XFlush(send_display);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     sendDeleteWindowMessage(
             send_display, handle, wm_protocols, wm_delete_window);

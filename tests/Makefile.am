@@ -1,6 +1,7 @@
 if HAVE_GTEST
 TESTS = vertex_types_test math_test tools_test \
 		operating_system_test logging_test logger_helpers_test \
+		tutorial_base_helpers_test \
 		tutorial01_integration_test \
 		tutorial02_integration_test \
 		tutorial03_integration_test \
@@ -74,6 +75,19 @@ logger_helpers_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(VULKAN_CFLAGS)
 logger_helpers_test_LDADD = $(GTEST_LIBS) $(VULKAN_LIBS)
 logger_helpers_test_LDFLAGS = -pthread
+
+# Exercises TutorialBase's pure swap-chain-parameter-selection helpers (see
+# TutorialBaseHelpersTest.cpp's header comment) - no live device or window,
+# just data in, data out - but still needs libvulkan_graphix.la for
+# TutorialBase's own (non-inline) methods/vtable.
+tutorial_base_helpers_test_SOURCES = ./TutorialBaseHelpersTest.cpp
+tutorial_base_helpers_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+tutorial_base_helpers_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		-lboost_log -lboost_system -lboost_thread \
+		$(VULKAN_LIBS) $(X11_LIBS)
+tutorial_base_helpers_test_LDFLAGS = -pthread
 
 # Integration tests: drive a real tutorial through a live Vulkan device and
 # X11 window (see Tutorial01IntegrationTest.cpp's header comment) - unlike
@@ -208,6 +222,8 @@ logging_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 logging_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 logger_helpers_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 logger_helpers_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+tutorial_base_helpers_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+tutorial_base_helpers_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial01_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial01_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial02_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
