@@ -716,8 +716,8 @@ void ReadyMenu::draw(){
 	glPopMatrix();
 
 
-	int winWidth=glutGet(GLUT_SCREEN_WIDTH);
-	int winHeight=glutGet(GLUT_SCREEN_HEIGHT);
+	int winWidth=glutGet(GLUT_WINDOW_WIDTH);
+	int winHeight=glutGet(GLUT_WINDOW_HEIGHT);
 
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();

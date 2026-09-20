@@ -19,6 +19,12 @@ PKG_CHECK_MODULES([GLM], [glm])
 PKG_CHECK_MODULES([VULKAN_EARTH_GL], [gl glu glut])
 PKG_CHECK_MODULES([VULKAN_EARTH_GLEW], [glew])
 PKG_CHECK_MODULES([VULKAN_EARTH_SDL], [sdl SDL_mixer])
+# Queries the primary monitor's real geometry via RandR: GLUT's own
+# GLUT_SCREEN_WIDTH/HEIGHT is the combined virtual screen across every
+# monitor on X11 (unlike Windows, where it's the primary display), so
+# sizing/positioning the game's window off RandR instead is what keeps
+# it confined to one monitor on a multi-monitor X11 desktop.
+PKG_CHECK_MODULES([VULKAN_EARTH_XRANDR], [xrandr])
 
 PKG_CHECK_MODULES([GTEST], [gtest gtest_main],
   [have_gtest=yes], [have_gtest=no])

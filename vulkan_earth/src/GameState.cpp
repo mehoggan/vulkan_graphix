@@ -920,8 +920,8 @@ void GameState::drawMinimap(){
 						currentPlayer->getCurrentTank()->getProjectileLandPos()[1]+900);
 	glEnd();
 
-	int winWidth=glutGet(GLUT_SCREEN_WIDTH);
-	int winHeight=glutGet(GLUT_SCREEN_HEIGHT);
+	int winWidth=glutGet(GLUT_WINDOW_WIDTH);
+	int winHeight=glutGet(GLUT_WINDOW_HEIGHT);
 
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();
@@ -1026,13 +1026,13 @@ void GameState::drawHelp(){
 	glClearColor(0.75, 0.75, 0.75, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	int distance = (int)(glutGet(GLUT_SCREEN_HEIGHT)/4*tan(1.04719755));
+	int distance = (int)(glutGet(GLUT_WINDOW_HEIGHT)/4*tan(1.04719755));
 	gluLookAt(0,0,distance,0,0,0,0.0f,1.0f,0.0f);
 
 	manual->draw();
 	
-	int winWidth=glutGet(GLUT_SCREEN_WIDTH);
-	int winHeight=glutGet(GLUT_SCREEN_HEIGHT);
+	int winWidth=glutGet(GLUT_WINDOW_WIDTH);
+	int winHeight=glutGet(GLUT_WINDOW_HEIGHT);
 
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();

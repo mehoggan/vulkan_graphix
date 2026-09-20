@@ -4,6 +4,8 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <X11/Xlib.h>
+#include <X11/extensions/Xrandr.h>
 #include "math.h"
 #include "MainMenu.h"
 #include "ReadyMenu.h"
@@ -50,15 +52,56 @@ PlayerFactory* player_factory;
 GameState* game_state;
 LoadingScreen* loadingScreen;
 
+// GLUT_SCREEN_WIDTH/HEIGHT is the whole X11 screen - the combined
+// virtual desktop spanning every monitor, not just the primary one
+// (unlike Windows, where it's the primary display's resolution). Ask
+// RandR for the primary monitor's real geometry instead, so the window
+// created from it stays confined to that one monitor.
+static void primaryMonitorGeometry(int* posX, int* posY,
+									int* width, int* height) {
+	*posX = 0;
+	*posY = 0;
+	*width = 1280;
+	*height = 800;
+	Display* display = XOpenDisplay(NULL);
+	if (!display) {
+		return;
+	}
+	Window root = RootWindow(display, DefaultScreen(display));
+	XRRScreenResources* resources = XRRGetScreenResources(display, root);
+	if (resources) {
+		RROutput primary = XRRGetOutputPrimary(display, root);
+		XRROutputInfo* output = primary ?
+			XRRGetOutputInfo(display, resources, primary) : NULL;
+		if (output && output->crtc) {
+			XRRCrtcInfo* crtc =
+				XRRGetCrtcInfo(display, resources, output->crtc);
+			if (crtc) {
+				*posX = crtc->x;
+				*posY = crtc->y;
+				*width = crtc->width;
+				*height = crtc->height;
+				XRRFreeCrtcInfo(crtc);
+			}
+		}
+		if (output) {
+			XRRFreeOutputInfo(output);
+		}
+		XRRFreeScreenResources(resources);
+	}
+	XCloseDisplay(display);
+}
+
 int main(int argc, char* argv[]) {
 	gameState = MAIN_MENU;
 	prevGameState = gameState;
-	
+
 	initSound();
-	winWidth=glutGet(GLUT_SCREEN_WIDTH);
-	winHeight=glutGet(GLUT_SCREEN_HEIGHT);
 	glutInit(&argc, argv);
+	int winPosX, winPosY;
+	primaryMonitorGeometry(&winPosX, &winPosY, &winWidth, &winHeight);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowPosition(winPosX, winPosY);
 	glutInitWindowSize(winWidth,winHeight);
 	glutCreateWindow("VulkanEarth");
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
@@ -75,8 +118,7 @@ int main(int argc, char* argv[]) {
 	glutMouseFunc(mouseHandler);
 	glutMotionFunc(mouseMotionHandler);
 	gameState=MAIN_MENU;
-	glutFullScreen();
-	
+
 	global_settings=new GlobalSettings();
 	player_factory=new PlayerFactory(global_settings);
 	player_factory->setNumberofPlayers(global_settings->getPlayer_Count());
@@ -104,8 +146,8 @@ int main(int argc, char* argv[]) {
 }
 
 void resize(int width, int height) {
-	winWidth=glutGet(GLUT_SCREEN_WIDTH);
-	winHeight=glutGet(GLUT_SCREEN_HEIGHT);
+	winWidth=glutGet(GLUT_WINDOW_WIDTH);
+	winHeight=glutGet(GLUT_WINDOW_HEIGHT);
 	glViewport(0, 0, winWidth, winHeight);
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();

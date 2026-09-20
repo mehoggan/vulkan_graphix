@@ -16,7 +16,7 @@ TextObject::TextObject(	char* input,
 	this->posY=posY;
 	this->posZ=posZ+1;
 	this->font_size=font_size;
-	if(glutGet(GLUT_SCREEN_WIDTH) < 1300){
+	if(glutGet(GLUT_WINDOW_WIDTH) < 1300){
 		this->font_size = GLUT_BITMAP_9_BY_15;
 	}
 	this->color[0]=red;

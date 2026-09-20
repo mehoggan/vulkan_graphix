@@ -212,8 +212,8 @@ void SubMenuLandscape::draw(){
 	this->tm->draw();
 	//glPopMatrix();
 
-	int winWidth=glutGet(GLUT_SCREEN_WIDTH);
-	int winHeight=glutGet(GLUT_SCREEN_HEIGHT);
+	int winWidth=glutGet(GLUT_WINDOW_WIDTH);
+	int winHeight=glutGet(GLUT_WINDOW_HEIGHT);
 	
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();
@@ -334,8 +334,8 @@ void SubMenuLandscape::updateMouse(int x, int y){
 		oldMouseX=x;
 		oldMouseY=y;
 	}
-	int winWidth=glutGet(GLUT_SCREEN_WIDTH);
-    int winHeight=glutGet(GLUT_SCREEN_HEIGHT);
+	int winWidth=glutGet(GLUT_WINDOW_WIDTH);
+    int winHeight=glutGet(GLUT_WINDOW_HEIGHT);
 	this->subMenuButton[0]->updateMouse(x-(int)(winWidth/2),(int)(winHeight/2)-y);
 	this->subMenuButton[1]->updateMouse(x-(int)(winWidth/2),(int)(winHeight/2)-y);
 	this->subMenuButton[2]->updateMouse(x-(int)(winWidth/2),(int)(winHeight/2)-y);
