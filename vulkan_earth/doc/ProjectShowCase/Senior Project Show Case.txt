@@ -1,0 +1,9 @@
+1. Project Statement: Goal and Objective
+2. General Definitions and Terms
+3. Overview of General Terms
+4. Planning and Preparation
+5. Design Patterns Used
+6. Content Management and Bug Tracking
+7. Coding Standards
+8. Overall Architecture of Program
+9. Testing Strategies

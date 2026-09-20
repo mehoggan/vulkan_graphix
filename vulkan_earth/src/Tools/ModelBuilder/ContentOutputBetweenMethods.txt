@@ -1,0 +1,65 @@
+From Arrays:
+Status: Using GLEW (1.5.8)
+Status: GL_ARB VBOs supported (3.1.0)
+VBOs Available for Object 4319e8
+Vertices Data
+<-2.1, 2.1, 0>
+<-2.1, -2.1, 0>
+<2.1, 2.1, 0>
+<-2.1, -2.1, 0>
+<2.1, -2.1, 0>
+<2.1, 2.1, 0>
+Normal Data
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+TexCoord Data
+<0, 0>
+<1, 0>
+<0, 1>
+<1, 0>
+<1, 1>
+<0, 1>
+
+VBOs Initialized
+Going to read VertexShader.vs
+Going to read FragmentShader.vs
+GOOD JOB: Your Model Is Ready To Use
+Done Loading Image
+Done Loading Image
+**********************************************
+From File
+Status: Using GLEW (1.5.8)
+Status: GL_ARB VBOs supported (3.1.0)
+VBOs Available for Object 4319e8
+vert_vec contains 18 floats
+<-2.1, 2.1, 0>
+<-2.1, -2.1, 0>
+<2.1, 2.1, 0>
+<-2.1, -2.1, 0>
+<2.1, -2.1, 0>
+<2.1, 2.1, 0>
+normal_vec contains 18 floats
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+<0, 0, 1>
+texcoord_vec contains 12 floats
+<0, 0>
+<1, 0>
+<0, 1>
+<1, 0>
+<1, 1>
+<0, 1>
+
+VBOs Initialized
+Going to read VertexShader.vs
+Going to read FragmentShader.vs
+GOOD JOB: Your Model Is Ready To Use
+Done Loading Image
+Done Loading Image

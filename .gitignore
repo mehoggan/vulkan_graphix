@@ -9,6 +9,7 @@ lib/.libs/
 bin/.deps/
 bin/.libs/
 tests/.deps/
+vulkan_earth/src/.deps/
 
 ######
 # Files
@@ -58,6 +59,7 @@ compile_commands.json
 bin/tutorial*_runner
 bin/shader.*.spv
 bin/texture.*.png
+vulkan_earth/src/vulkan_earth_runner
 tests/math_test
 tests/math_test.log
 tests/math_test.trs

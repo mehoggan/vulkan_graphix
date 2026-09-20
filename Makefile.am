@@ -1,4 +1,4 @@
-SUBDIRS = lib bin tests
+SUBDIRS = lib bin tests vulkan_earth/src
 ACLOCAL_AMFLAGS = -I m4
 CLEANFILES = *.o
 CLEANDIRS = deps/ .lib/

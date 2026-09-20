@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="ScorchedEarth">
+</Property><Property Name="Solution File" Value="C:\cygwin64\home\matthew.hoggan\devel\Scorch3dEarth\src\ScorchedEarth.sln">
+</Property><Property Name="Date" Value="Friday, January 17, 2014">
+</Property><Property Name="Time" Value="11:45:30 AM">
+</Property></Properties><Event ErrorLevel="0" Project="ScorchedEarth" Source="ScorchedEarth.vcproj" Description="Converting project file 'C:\cygwin64\home\matthew.hoggan\devel\Scorch3dEarth\src\ScorchedEarth.vcproj'.">
+</Event><Event ErrorLevel="1" Project="ScorchedEarth" Source="ScorchedEarth.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="ScorchedEarth" Source="ScorchedEarth.vcproj" Description="Done converting to new project file 'C:\cygwin64\home\matthew.hoggan\devel\Scorch3dEarth\src\ScorchedEarth.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="ScorchedEarth" Source="ScorchedEarth.vcproj" Description="Converted">
+</Event></UpgradeLog>

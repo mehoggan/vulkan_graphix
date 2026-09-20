@@ -1,0 +1,363 @@
+***************************************************************************
+Matthew Hoggan
+4/14/2011
+
+-Added in a feature to the chase cam that takes over the world shake cam.
+
+-Added a special effect stage, this will be used for explosions etc.
+
+-Currently working on tanks falling. They don't seem to fall consitenly, the actullay have the tendency
+	not to fall at all.
+
+-Currently working on getting explosion class into the game
+***************************************************************************
+David Schaffer
+3/24/2011
+
+-Added power adjusting feature
+	-press '-' or '=' in-game to adjust the power setting
+	-this value is used to help determine initial velocity when GameState::currentPlayerFire() creates a projectile
+	-HUD now shows power as a number in the lower right, and as a graphical meter at the bottom
+
+-Basic projectiles are now implemented
+	-Press spacebar to fire
+	-Projectile will colide with the terrain or with the ocean
+	-When a projectile is destroyed this signals the end of the player's turn (may change later)
+
+-New ChaseCam class
+	-Press 'c' while a projectile is in the air to switch to a chase cam
+	-Follows the projectile until player hits 'c' again, or projectile explodes
+
+-New WorldCam class(experimental)
+	-The new world camera now behaves more like an RTS camera
+	-'w','a','s','d' to move, 'r','f' to zoom in and out
+	-currently no boundaries, able to go through terrain
+
+-subGameState enum updated with new PROJECTILE state
+	-When a projectile is active the GameState subGameState will enter PROJECTILE state
+	-during this time most inputs are disabled
+	-transitions back into the PASS_TIME state once the projectile lands and the turn is over
+
+-BEWARE!!! There is a bug i'm trying to track down where the turret disappears, see bugzilla for more info!
+
+
+***************************************************************************
+Matthew Hoggan
+3/20/2011
+
+Got tanks placed on terrain, and got turret to rotate
+
+***************************************************************************
+Hangul Lim
+3/11/2011
+
+Added a feature for team player to the project.
+Created a function "int GameState::getWinner()" which is to get the number (not index) of the winner (could be either solo or a team)
+
+***************************************************************************
+David Schaffer
+3/5/2011
+
+Water improved
+	-modified vertexWater.vs to produce wave motion
+	-alpha value of water can now be set
+
+New Terrain Textures
+	-6 textures to choose from
+	-subMenuLandscape modified to show new parameters
+
+Major changes to GameState class
+	-class is not created until after the shop menu
+	-Tanks are placed randomly in GameState constructor
+	-Basic turn-based functionality
+		-press Space to end your turn
+	-Basic HUD functionality
+		-displays the current player's name (or CPU) in the upper left corner in their color
+
+
+***************************************************************************
+Matthew Hoggan
+3/2/2011
+
+Added a new Water.cpp which creates a nicer looking water. It is similar to
+the TerrainMaker class however it does not procedurally generate a height map.
+This will be take care of via a vertex shader that will produced a sinusoidal
+wave function across the surface of the water.
+
+***************************************************************************
+Hangul Lim
+3/2/2011
+
+Added a header file, macro_crtdbg.h, as a macro for checking for memory leak.
+<Usage>	
+1. Include the header file to a cpp file where you want to check for memory leak.
+2. Add the following line to where a program begins ( _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);)
+3. Run the program in debugging mode, play around with it, and quit the program. Crtdbg reports most, if not all, of memory leak in the output
+
+***************************************************************************
+Matthew Hoggan
+2/28/2011
+
+Added the main game state the terrain now draws.
+	-You can also go back to previous states from game state by pressing 'm', 'r', and, 's'.
+	-You can now rotate around the terrain.
+
+Added a skybox factory that will be used to generate random backgrounds. This needs some work. I am working on 
+getting it so that you can provide it a file in the shap of a horizontal cross that can be loaded without any 
+editing.
+	-Eventually a random number will generate the background.
+
+Added a body of water around the main land insisde the main game state.
+
+Lets get ready to own the other group and make this game something to put on our resume.
+***************************************************************************
+David Schaffer
+2/24/2011
+
+Fixed the main crash when exiting the shop menu
+	-numPlayers wasn't being set from global_settings, now it is
+	-may have also fixed the random crash
+
+Various fixes for the ControlItemTextField in ReadyMenu
+	-fixed cursor width on lower resolutions
+	-Text now properly resets between screens
+
+Scorch3dEarth.cpp now calls ReadyMenu::updatePageInfo() when the state first changes to READY_MENU
+
+Fixed the location of the Tank Preview Screen for all resolutions
+	-Fixed value of tankPrvScrHeight (was not correct before)
+	-glViewport and glScissors are now given the proper coordinates
+
+***************************************************************************
+
+David Schaffer
+2/23/2011
+
+-Scorch3dEarth.cpp does not create readymenu or shopmenu until the game state first switches to the appropriate menu
+	-The change ensures that readymenu and shopmenu have the most current values when first entering each menu
+	-NULL checks were added to all readymenu/shopmenu references in Scorch3dEarth.cpp
+
+-ShopMenu now supports stacking of inventory items
+	-ShopMenu::buyHandler() now checks to see if you have the inventory item already
+		-if you do, it adds more to your supply
+		-if you don't, it creates a new Weapon/Item object and adds it to the player
+	-ShopMenu::sellHandler() now deletes objects that are sold
+		-It sells your whole stack at once, but it gives you money based on how large the stack was
+
+-Weapon/Item subclasses can return new instances of themselves ::getWeaponInstance(),::getItemInstance()
+	-ShopMenu has one instance of each weapon/item subclass
+	-When a player buys a weapon/item, the object "clones" itself and passes the reference to the Player
+	-ShopMenu::sellHandler() is currently responsible for deleting these objects
+
+
+-Debug text added to console when program completes (run from command line so the window doesn't auto-close)
+	-Lists the PlayerType,AIType,Name,TankType, and it will list any inventory items along with the amount they have
+	-This information is drawn directly from the PlayerFactory
+
+**************************************************************************
+
+Matthew Hoggan
+2-20-2011
+[Modified files]
+-ReadyMenu.cpp 
+-PlayerFactory.h 
+-PlayerFactory.cpp 
+-Player.h 
+-Player.cpp 
+-PlayerCPU.h
+-PlayerCPU.cpp
+-PlayerHuman.h
+-PlayerHuman.cpp
+-MainMenu.cpp
+
+[Details]
+The goal is to get the PlayerFactory as the key database for everything that is drawn that is associated with a given player throughout all states after the main menu. For example, in the readymenu the tank color and the flashing screen should be pulled from the PlayerFactory using the ReadyMenu's currentPlayerIndex variable. After discussing things with Hangul (see email) we agreed that colors should be stored inside the players. We also discussed how tanks should be created and connected with a player. Due to the fact that some of the details were not discussed, I am going to hand this off to Hangul to get the player class's created and to finish off the ReadyMenu. As for my changes, we now have a dynamic player array that will hold "Player" classes. To accomodate both AI and human playable characters, I have created "Player" interface which PlayerHuman and PlayerCPU implement. When you click the next or previous button on the ReadyMenu a new character is created over the previous player. This can be modified, however we will need a comprehensive player class before we can do that. I also did not store the data in the player class because right now it is just a skeleton. 
+
+****************************************************************************
+
+Hangul Lim
+2-9-11
+
+[Modified files]
+-ImageObject.h/cpp
+-TextObject.h/cpp
+-Weapon.h
+-item.h
+-ControlItemButton.cpp
+-WeaponBFB.h/cpp
+-WeaponThor.h/cpp
+-ItemSmallRepair.h/cpp
+-ItemBigRepair.h/cpp
+
+[Details]
+-Finished ShopMenu (except the stuff dealing with xml)
+-Added getter and setter functions to ImageObject.h/cpp.
+-Added setter functions to TextObject.h/cpp.
+-Added a virtual function const 'char* getDescription()' to both Weapon.h and Item.h.
+-Added a virtual function 'const int getPrice()'to both Weapon.h and Item.h.
+-Added a virtual function 'const int getPackageNum()' to both Weapon.h and Item.h.
+-Added virtual functions 'get/setRemaining' to both Weapon.h and Item.h.
+-Added missing 'glPopMatrix()' to controlItemButton.cpp.
+-Changed a virtual function 'char* getImage()' to 'const char* getImageFileName()' in both Weapon.h and Item.h.
+-Replaced virtual functions 'get/setWidth' and 'get/setHeight' with virtual functions 'get/setScale' in both Weapon.h and item.h.
+-Removed a virtual function 'void setImage(char* c)' from both Weapon.h and Item.h.
+-Created prototype WeaponBFB.h/cpp, WeaponThor.h/cpp, ItemSmallRepair.h/cpp, ItemBigRepair.h/cpp for the project.
+
+*********************************************************************
+
+Hangul Lm
+2-6-11
+
+[Modified files]
+-Scorch3dEarth.cpp
+-ControlItemGrid.h/cpp
+-ControlItemButton.h/cpp
+-ReadyMenu.cpp
+
+[Details]
+-Created ControlItemGrid.h/cpp for the project.
+-Finished 42.7% of ShopMenu layout and features.
+-Added a variable 'bool toggled' to ControlItemButton.h for the purpose of toggle function of a button.
+-Added functions 'int isToggled()' and 'void setToggled(bool t)' to ContolItemButton.h/cpp.
+-Added a function 'void updateButtonState()' to ControlItemButton.h/cpp to update buttonState based on toggled.
+-Added a statement 'this->toggled = true;' in the function 'ControlItemButton::mouseClickEvent(...)'
+-Added a statement 'this->toggled = false;' in the constructor of ControlItemButton.
+-Removed unnecessary statements where 'Label Placement' is in ReadyMenu.cpp.
+
+*********************************************************************
+
+Hangul Lim
+2-4-11
+
+-Added prototype ShopMenu.h/cpp to the project.
+-Replaced enum gameState to int gameState 
+	--it is a bit easier to manage game state using const int variables from a header file of each major state such as MainMenu, ReadyMenu, 
+	  ShopMenu, and so on.
+	--change the function 'void setGameState(int i)' to 'void resetMyState()' for each major state.
+	--Added const int 'XXXX_MENU_STATE = X' for xxxxMenu.h.	Note: The value must not be the same as the other.
+
+*********************************************************************
+
+David Schaffer
+1-28-11
+
+-Added blinking cursor functionality to ControlItemTextField
+-Moved 'const int MAX_CHARS' back to ControlItemTextField.cpp, and changed value to 15
+-Added setTextBuffer(char*) and clearTextBuffer() to ControlItemTextField
+-Updated ReadyMenu to use setTextBuffer and clearTextBuffer
+
+
+*********************************************************************
+
+Hangul Lim
+1-28-11
+
+-setOptionText(char* newText) and collectData() function calls from the text field have been added to ReadyMenu.cpp to dynamically hold player names as player pages change.
+-Added a virtual function 'setOptionText(char* newText)' to controlItems.h and other corresponding child control items. (dummies)
+-Added a 2D GLfloat array to ReadyMenu.h/cpp, which will be used to keep the information of player colors
+-Added a function 'GLfloat* collectPlayerColor(int i)' which will return the address of the first color of the player i.
+-Moved 'const int MAX_CHARS = 10' from controlItemTextField.cpp to controlItemTextField.h
+
+*********************************************************************
+
+David Schaffer
+1-27-11
+
+-New class ControlItemTextField added to project
+-Pointer and instance of ControlItemTextField added to ReadyMenu.h/.cpp
+-Updated keyboard callback function in Scorch3dEarth.cpp to route keyboard inputs to the ReadyMenu
+
+
+*********************************************************************
+
+Matthew Hoggan
+1-28-11
+-DO NOT PLACE sound.h INTO SCORC3EDEARTH.CPP it will cause the makefile not to work.
+*********************************************************************
+
+Matthew Hoggan
+1-26-11
+
+-Implemented a new Control Item (ControlItemButton.h/.cpp)
+	--This Button is used inside the landscape class to trigger terrain changes
+	--This Button can be used elsewhere
+-Implemented terrain modeler in SubMenuLandscape.cpp
+	--Now when you click submit button code inside the ControlItemButton accesses the data its parent submenu and modifies the terrain
+	--Some tweaks need to be made to make it more consistant, but for now it is working pretty good
+	--Needs to be debugged.
+-Added three ControlItemSlidebars to SubMenuLandscape.cpp used to set the values used in terrain modeler. Right now there is a range of 5 
+	--This needs to be dsicussed
+*********************************************************************
+
+Hangul Lim
+1-23-11
+
+-implemented Sliderbar control item(ControlItemSliderbar.h/.cpp).
+	--Very similar to David Schaffer's other control items in terms of usage and implementation.
+	--adds and changed some codes to:
+		Scorch3dEarth.cpp to use mouse motion handling.
+		ControlItem.h/.cpp, ControlItemCheckBox.h/.cpp, ControlItemSelectionBox.h/.cpp to match with motion handling function.
+-Replaced Sound control items(selection box) with sliderbar items.
+
+*********************************************************************
+
+David Schaffer
+1-20-11
+
+-Implemented basic rotation of terrain in landscape sub-menu
+	-New function for MainMenu class to return a pointer to the current active menu, MainMenu::getActiveSubMenu()
+	-Adds new callback function mouseMotionHandler() for glutMotionFunc in Scorch3dEarth.cpp
+		-this callback calls the function described above (getActiveSubMenu) after a conditional check	
+	-Changes include new virtual function updateMouse(int x, int y) in SubMenu class, and implementation in every SubMenuXXX class
+	-Changes in SubMenuLandScape::subMenuMouseTest() to support new mouse handling for rotating terrain
+
+-NOTE:  Allow some time, 10-20 seconds, when you load the program.  This is due to the large terrain and inefficient algorithm. 
+	If you do not wish to wait that long each time you start the program, go to TerrainMaker::prepareData(), this->terrainGen(3000,500,100,5), and change 3000 to 1 for a flat land
+	
+
+
+*********************************************************************
+
+Mathew Hoggan and David Schaffer
+1-18-11
+
+-Implemented VBO for drawing of terrain, most of the work done in TerrainMaker.cpp/.h
+-Project now uses glext.h (for VBO)
+-SubMenuLandscape.cpp/h updated to include new viewport for viewing terrain
+-Added new project files TerrainMaker/Vertex/Normal/VBOQualifer *.cpp/*.h
+  
+
+*********************************************************************
+
+David Schaffer
+1-11-11
+
+-Adjusted sizes of arrows/checkbox in ControlItemSelectionBox.cpp and ControlItemCheckBox.cpp
+-Changed text on main menu control items to "# of ..." to be compatible with lower resolutions
+-Removed "resolution" as an option in the hardware menu (SubMenuHardware.cpp/h)
+
+
+*********************************************************************
+Hangul Lim
+1-11-11
+
+-removed unworthy control itemes in sound, physics, weapons, and playOptions submenues.
+-changed the size of control items as David suggested.
+-volume controls now work. 
+	--included "sound.h" in the SubMenuSound.cpp to use functions from the SDL library.
+	--created a simple function "changeVolumes(Controlitem* button)" in SubmenuSound.h/cpp
+	   to handle the volume changes
+	--obviously, I uncommented the playMusic function in MainMenu.cpp to see the changes.
+
+*********************************************************************
+
+David Schaffer
+1-8-11
+
+-fixed mouse detection on down arrow in ControlItemSelectionBox.cpp
+-fixed "press down" effect on the checkbox in ControlItemCheckBox.cpp
+-fixed check-mark effect in checkbox (should not overlap) in ControlItemCheckBox.cpp
+-rewrote various parts of all SubMenuXXX.h,cpp
+	-number of buttons per sub menu is now NUM_CONTROL_ITEMS_XXX
+	-all button instantiations are stored in subMenuButton[NUM_CONTROL_ITEMS_XXX]
+	-fixed mouse logic to reflect the changes

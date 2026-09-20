@@ -14,6 +14,12 @@ PKG_CHECK_MODULES([VULKAN], [vulkan])
 PKG_CHECK_MODULES([X11], [x11])
 PKG_CHECK_MODULES([GLM], [glm])
 
+# vulkan_earth: a legacy OpenGL/GLUT game vendored under vulkan_earth/,
+# ported off MSVC/Win32 onto X11 via GLUT (see vulkan_earth/src/Makefile.am).
+PKG_CHECK_MODULES([VULKAN_EARTH_GL], [gl glu glut])
+PKG_CHECK_MODULES([VULKAN_EARTH_GLEW], [glew])
+PKG_CHECK_MODULES([VULKAN_EARTH_SDL], [sdl SDL_mixer])
+
 PKG_CHECK_MODULES([GTEST], [gtest gtest_main],
   [have_gtest=yes], [have_gtest=no])
 AM_CONDITIONAL([HAVE_GTEST], [test "x$have_gtest" = "xyes"])
@@ -96,6 +102,7 @@ AC_CONFIG_FILES([
   lib/Makefile
   bin/Makefile
   tests/Makefile
+  vulkan_earth/src/Makefile
 ])
 
 AC_OUTPUT
