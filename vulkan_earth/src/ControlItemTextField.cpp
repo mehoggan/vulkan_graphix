@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const int MAX_CHARS = 15;
+const int max_chars = 15;
 
 extern void playSFX(int sfx);
 
@@ -100,25 +100,25 @@ void ControlItemTextField::draw() {
 
     if (this->textFieldActive) {
         if (this->textCursorOn == 1) {
-            int realLength = 0;
+            int real_length = 0;
             for (char ch : this->currentChars) {
                 if (ch != ' ') {
-                    realLength +=
+                    real_length +=
                             glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
                 }
             }
             glBegin(GL_QUADS);
             glColor3f(0, 0, 0);
-            glVertex3f(this->xPos + 0.02 * this->width + realLength,
+            glVertex3f(this->xPos + 0.02 * this->width + real_length,
                        this->yPos - 0.15 * height,
                        this->zPos + 0.1);
-            glVertex3f(this->xPos + 0.02 * this->width + realLength,
+            glVertex3f(this->xPos + 0.02 * this->width + real_length,
                        this->yPos - this->height + 0.15 * height,
                        this->zPos + 0.1);
-            glVertex3f(this->xPos + 0.02 * this->width + realLength + 2,
+            glVertex3f(this->xPos + 0.02 * this->width + real_length + 2,
                        this->yPos - this->height + 0.15 * height,
                        this->zPos + 0.1);
-            glVertex3f(this->xPos + 0.02 * this->width + realLength + 2,
+            glVertex3f(this->xPos + 0.02 * this->width + real_length + 2,
                        this->yPos - 0.15 * height,
                        this->zPos + 0.1);
             glEnd();
@@ -144,17 +144,17 @@ void ControlItemTextField::setOptionText(int index) {}
 void ControlItemTextField::setOptionText(const std::string& newText) {
     delete this->currentText;
 
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : newText) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + 0.02 * this->width;
-    GLfloat labelYPos = this->yPos +
-                        ((this->yPos - (this->yPos + this->height)) / 2) -
-                        this->height / 4;
+    GLfloat label_x_pos = this->xPos + 0.02 * this->width;
+    GLfloat label_y_pos = this->yPos +
+                          ((this->yPos - (this->yPos + this->height)) / 2) -
+                          this->height / 4;
     this->currentText = new TextObject(newText,
-                                       labelXPos,
-                                       labelYPos,
+                                       label_x_pos,
+                                       label_y_pos,
                                        this->zPos + 0.1,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.0f,
@@ -177,7 +177,7 @@ void ControlItemTextField::keyHandler(unsigned char key) {
                 this->setOptionText("");
                 this->currentLength = 0;
             }
-            if (currentLength < MAX_CHARS) {
+            if (currentLength < max_chars) {
                 playSFX(KEYTYPING);
                 this->currentChars[currentLength] = key;
                 this->currentLength++;
@@ -198,18 +198,18 @@ void ControlItemTextField::keyHandler(unsigned char key) {
 }
 
 void ControlItemTextField::clearTextBuffer() {
-    this->currentChars.assign(MAX_CHARS, ' ');
+    this->currentChars.assign(max_chars, ' ');
     this->currentLength = 0;
 }
 
 void ControlItemTextField::setTextBuffer(const std::string& newText) {
     this->setOptionText(newText);
     this->clearTextBuffer();
-    int newLength = 0;
+    int new_length = 0;
     for (size_t i = 0; i < newText.size() && i < this->currentChars.size();
          i++) {
         this->currentChars[i] = newText[i];
-        if (newText[i] != ' ') newLength++;
+        if (newText[i] != ' ') new_length++;
     }
-    this->currentLength = newLength;
+    this->currentLength = new_length;
 }

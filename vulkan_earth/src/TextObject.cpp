@@ -36,12 +36,12 @@ void TextObject::setYpos(GLfloat y) { this->posY = y; }
 void TextObject::setZpos(GLfloat z) { this->posZ = z; }
 
 GLvoid TextObject::draw() {
-    GLfloat xPos = this->posX;
+    GLfloat x_pos = this->posX;
     glColor3f(this->color[0], this->color[1], this->color[2]);
     for (char ch : this->output) {
         int step = glutBitmapWidth(this->font_size, ch);
-        glRasterPos3f(xPos, this->posY, this->posZ);
+        glRasterPos3f(x_pos, this->posY, this->posZ);
         glutBitmapCharacter(this->font_size, ch);
-        xPos += step;
+        x_pos += step;
     }
 }

@@ -38,17 +38,17 @@ SubMenuSound::SubMenuSound(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->caption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
-    GLfloat labelYPos = this->yPos - this->height / 20;
+    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->yPos - this->height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     this->label = new TextObject(this->caption,
-                                 labelXPos,
-                                 labelYPos,
+                                 label_x_pos,
+                                 label_y_pos,
                                  (this->zPos + 1),
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
@@ -242,17 +242,17 @@ void SubMenuSound::updateMouse(int x, int y) {
 void SubMenuSound::changeVolumes(ControlItem* TheSubMenuButton) {
     // SFX volume handler
     if (TheSubMenuButton == this->subMenuButton[0]) {
-        int newVolume = atoi(TheSubMenuButton->collectData().c_str());
-        Mix_Volume(
-                -1,
-                128 / 100 * newVolume);  //-1 is to apply to all allocated
+        int new_volume = atoi(TheSubMenuButton->collectData().c_str());
+        Mix_Volume(-1,
+                   128 / 100 *
+                           new_volume);  //-1 is to apply to all allocated
                                          // channels, 128 is the maximum volume
     }
     // Music volume handler
     else if (TheSubMenuButton == this->subMenuButton[1]) {
-        int newVolume = atoi(TheSubMenuButton->collectData().c_str());
+        int new_volume = atoi(TheSubMenuButton->collectData().c_str());
         Mix_VolumeMusic(128 / 100 *
-                        newVolume);  // music has its special channel, so don't
-                                     // need to specify which channel.
+                        new_volume);  // music has its special channel, so
+                                      // don't need to specify which channel.
     }
 }

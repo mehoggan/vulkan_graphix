@@ -13,7 +13,7 @@ Player::Player() {
     this->state_of_AI = NEED_NEW_TARGET;
     this->prev_state_of_AI = NEED_NEW_TARGET;
     this->sub_state_of_AI = NOTHING;
-    bool drawDebugLinesandPlanes = false;
+    bool draw_debug_linesand_planes = false;
     this->maxPitchAngle = 89.0f;
     this->previous_distance_off_from_target = 0;
     this->degrees_rotated = 0;
@@ -233,12 +233,12 @@ void Player::setUpYawVectors() {
         v2.compoY = v1.compoY;
         v2.compoZ = v1.compoZ;
     }
-    GLfloat magnitudeW1 =
+    GLfloat magnitude_w1 =
             sqrt((w1.compoX * w1.compoX) + (w1.compoY * w1.compoY) +
                  (w1.compoZ * w1.compoZ));
     GLfloat scalar = (w1.compoX * v2.compoX + w1.compoY * v2.compoY +
                       w1.compoZ * v2.compoZ) /
-                     (pow(static_cast<double>(magnitudeW1), 2.0));
+                     (pow(static_cast<double>(magnitude_w1), 2.0));
     w1.compoX *= scalar;
     w1.compoY *= scalar;
     w1.compoZ *= scalar;
@@ -313,13 +313,16 @@ void Player::setUpYawVectors() {
 
 void Player::setUpPitchVectors() {
     const GLfloat* matrix = this->getBalisticMatrix();
-    GLfloat* turretMatrix = this->getCurrentTank()->getTurretMatrix();
+    GLfloat* turret_matrix = this->getCurrentTank()->getTurretMatrix();
     this->pitch_vector.compoX =
-            ((turretMatrix[12] - 10000 * turretMatrix[8]) - turretMatrix[12]);
+            ((turret_matrix[12] - 10000 * turret_matrix[8]) -
+             turret_matrix[12]);
     this->pitch_vector.compoY =
-            ((turretMatrix[13] - 10000 * turretMatrix[9]) - turretMatrix[13]);
+            ((turret_matrix[13] - 10000 * turret_matrix[9]) -
+             turret_matrix[13]);
     this->pitch_vector.compoZ =
-            ((turretMatrix[14] - 10000 * turretMatrix[10]) - turretMatrix[14]);
+            ((turret_matrix[14] - 10000 * turret_matrix[10]) -
+             turret_matrix[14]);
     this->up_vector.compoX = (matrix[12] - matrix[12]);
     this->up_vector.compoY = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
     this->up_vector.compoZ = (matrix[14] - matrix[14]);
@@ -332,8 +335,8 @@ bool Player::calculateProjectilePhysics(GLfloat Xerr,
                                         GLfloat Yerr,
                                         GLfloat Zerr) {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
-    GLfloat PERCENT_ERRORY = Yerr;
-    GLfloat PERCENT_ERRORXZ = Xerr;
+    GLfloat percent_errory = Yerr;
+    GLfloat percent_errorxz = Xerr;
     GLfloat numerator = this->game_state->getGlobalSettings()
                                 ->getCurrentTerrain()
                                 ->getActualSize();
@@ -342,10 +345,10 @@ bool Player::calculateProjectilePhysics(GLfloat Xerr,
                                   ->getScale();
     GLfloat terrain_size = numerator / denominator;
     GLfloat g = this->game_state->getGravity();  // Note: gravity is negative
-    GLfloat tankAttributePower = this->getCurrentTank()->getPower();
-    GLfloat powerBar = this->getCurrentTank()->getCurrentPower();
-    GLfloat BALISTIC_SCALAR = this->game_state->getBalisticScalar();
-    GLfloat speed = tankAttributePower * powerBar * BALISTIC_SCALAR;
+    GLfloat tank_attribute_power = this->getCurrentTank()->getPower();
+    GLfloat power_bar = this->getCurrentTank()->getCurrentPower();
+    GLfloat balistic_scalar = this->game_state->getBalisticScalar();
+    GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
 
     /****************************************************************************************/
     /*	Physics Calculations First (Formulas)
@@ -355,85 +358,85 @@ bool Player::calculateProjectilePhysics(GLfloat Xerr,
     /*	Xf = Xo + Vox*time */
     /*	Zf = Zo + Voz*time */
     /****************************************************************************************/
-    GLfloat* turretMatrix = this->getCurrentTank()->getTurretMatrix();
+    GLfloat* turret_matrix = this->getCurrentTank()->getTurretMatrix();
     // MAKE SURE TO UPDATE 200 TO WHAT EVER SCALAR IS IN PROJECTILE.CPP
-    GLfloat Xo = turretMatrix[12] - 200 * turretMatrix[8];
-    GLfloat Yo = turretMatrix[13] - 200 * turretMatrix[9];
-    GLfloat Zo = turretMatrix[14] - 200 * turretMatrix[10];
-    GLfloat Vox = -turretMatrix[8] * speed;
-    GLfloat Voy = -turretMatrix[9] * speed;
-    GLfloat Voz = -turretMatrix[10] * speed;
-    GLfloat Xf = Xo;
-    GLfloat Yf = Yo;
-    GLfloat Zf = Zo;
-    GLfloat Xe = this->getEnemyPosition().coordX;
-    GLfloat Ye = this->getEnemyPosition().coordY;
-    GLfloat Ze = this->getEnemyPosition().coordZ;
+    GLfloat xo = turret_matrix[12] - 200 * turret_matrix[8];
+    GLfloat yo = turret_matrix[13] - 200 * turret_matrix[9];
+    GLfloat zo = turret_matrix[14] - 200 * turret_matrix[10];
+    GLfloat vox = -turret_matrix[8] * speed;
+    GLfloat voy = -turret_matrix[9] * speed;
+    GLfloat voz = -turret_matrix[10] * speed;
+    GLfloat xf = xo;
+    GLfloat yf = yo;
+    GLfloat zf = zo;
+    GLfloat xe = this->getEnemyPosition().coordX;
+    GLfloat ye = this->getEnemyPosition().coordY;
+    GLfloat ze = this->getEnemyPosition().coordZ;
     GLfloat t = 0;
-    bool ON_TARGET = false;
-    while (Yf > 0) {
-        Xf = Vox * t + Xo;
-        Yf = .5 * g * pow(t, 2.0f) + Voy * t + Yo;
-        Zf = Voz * t + Zo;
+    bool on_target = false;
+    while (yf > 0) {
+        xf = vox * t + xo;
+        yf = .5 * g * pow(t, 2.0f) + voy * t + yo;
+        zf = voz * t + zo;
 
-        if (abs(Xf - Xe) <= PERCENT_ERRORXZ &&
-            abs(Zf - Ze) <= PERCENT_ERRORXZ &&
-            abs(Yf - Ye) <= PERCENT_ERRORY) {
-            ON_TARGET = true;
+        if (abs(xf - xe) <= percent_errorxz &&
+            abs(zf - ze) <= percent_errorxz &&
+            abs(yf - ye) <= percent_errory) {
+            on_target = true;
             break;
         }
 
         GLfloat terrain_height = this->game_state->getGlobalSettings()
                                          ->getCurrentTerrain()
-                                         ->getHeightAt(Zf, Xf);
-        if (terrain_height >= Yf) {
+                                         ->getHeightAt(zf, xf);
+        if (terrain_height >= yf) {
             break;
         }
 
         t = t + .02;
     }
-    return ON_TARGET;
+    return on_target;
 }
 
 void Player::displayProjectilePhysiscs() {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
-    GLfloat tankAttributePower = this->getCurrentTank()->getPower();
-    GLfloat powerBar = this->getCurrentTank()->getCurrentPower();
-    GLfloat BALISTIC_SCALAR = this->game_state->getBalisticScalar();
-    GLfloat speed = tankAttributePower * powerBar * BALISTIC_SCALAR;
+    GLfloat tank_attribute_power = this->getCurrentTank()->getPower();
+    GLfloat power_bar = this->getCurrentTank()->getCurrentPower();
+    GLfloat balistic_scalar = this->game_state->getBalisticScalar();
+    GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
     GLfloat g = this->game_state->getGravity();  // Note: gravity is negative
 
-    GLfloat* turretMatrix = this->getCurrentTank()->getTurretMatrix();
+    GLfloat* turret_matrix = this->getCurrentTank()->getTurretMatrix();
     // MAKE SURE TO UPDATE 200 TO WHAT EVER SCALAR IS IN PROJECTILE.CPP
-    GLfloat Xo = turretMatrix[12] - 200 * turretMatrix[8];
-    GLfloat Yo = turretMatrix[13] - 200 * turretMatrix[9];
-    GLfloat Zo = turretMatrix[14] - 200 * turretMatrix[10];
-    GLfloat Vox = -turretMatrix[8] * speed;
-    GLfloat Voy = -turretMatrix[9] * speed;
-    GLfloat Voz = -turretMatrix[10] * speed;
-    GLfloat Xf = Xo;
-    GLfloat Yf = Yo;
-    GLfloat Zf = Zo;
-    GLfloat Xe = this->getEnemyPosition().coordX;
-    GLfloat Ye = this->getEnemyPosition().coordY;
-    GLfloat Ze = this->getEnemyPosition().coordZ;
+    GLfloat xo = turret_matrix[12] - 200 * turret_matrix[8];
+    GLfloat yo = turret_matrix[13] - 200 * turret_matrix[9];
+    GLfloat zo = turret_matrix[14] - 200 * turret_matrix[10];
+    GLfloat vox = -turret_matrix[8] * speed;
+    GLfloat voy = -turret_matrix[9] * speed;
+    GLfloat voz = -turret_matrix[10] * speed;
+    GLfloat xf = xo;
+    GLfloat yf = yo;
+    GLfloat zf = zo;
+    GLfloat xe = this->getEnemyPosition().coordX;
+    GLfloat ye = this->getEnemyPosition().coordY;
+    GLfloat ze = this->getEnemyPosition().coordZ;
 
     GLfloat t = 0;
-    while (Yf > 0) {
-        Xf = Vox * t + Xo;
-        Yf = .5 * g * pow(t, 2.0f) + Voy * t + Yo;
-        Zf = Voz * t + Zo;
+    while (yf > 0) {
+        xf = vox * t + xo;
+        yf = .5 * g * pow(t, 2.0f) + voy * t + yo;
+        zf = voz * t + zo;
         t = t + .02;
     }
 
     cout << "Variables:" << endl;
-    cout << " Vox = " << Vox << " Voy = " << Voy << " Voz = " << Voz << endl
+    cout << " Vox = " << vox << " Voy = " << voy << " Voz = " << voz << endl
          << endl
-         << " Xo = " << Xo << " Yo = " << Yo << " Zo = " << Zo << endl
+         << " Xo = " << xo << " Yo = " << yo << " Zo = " << zo << endl
          << endl
-         << " Xf = " << Xf << " Yf = " << Yf << " Zf = " << Zf << endl
+         << " Xf = " << xf << " Yf = " << yf << " Zf = " << zf << endl
          << endl
-         << " Xe = " << Xe << " Ye = " << Ye << " Ze = " << Ze << endl
+         << " Xe = " << xe << " Ye = " << ye << " Ze = " << ze << endl
          << endl
          << " g = " << g << endl
          << endl;
@@ -557,37 +560,37 @@ void Player::drawTestLinesandPlanes() {
         /*	END	PROJECTILE PATH		*/
 
         glBegin(GL_QUADS);
-        const GLfloat* Matrix = this->getBalisticMatrix();
+        const GLfloat* matrix = this->getBalisticMatrix();
         glColor4f(Pink, 0.75f);
-        glVertex3f(Matrix[12] - 1000 * Matrix[0],
-                   Matrix[13],
-                   Matrix[14] - 1000 * Matrix[2]);
-        glVertex3f(Matrix[12] - 1000 * Matrix[0] - 10000 * Matrix[8],
-                   Matrix[13],
-                   Matrix[14] - 1000 * Matrix[2] - 10000 * Matrix[10]);
-        glVertex3f(Matrix[12] + 1000 * Matrix[0] - 10000 * Matrix[8],
-                   Matrix[13],
-                   Matrix[14] + 1000 * Matrix[2] - 10000 * Matrix[10]);
-        glVertex3f(Matrix[12] + 1000 * Matrix[0],
-                   Matrix[13],
-                   Matrix[14] + 1000 * Matrix[2]);
+        glVertex3f(matrix[12] - 1000 * matrix[0],
+                   matrix[13],
+                   matrix[14] - 1000 * matrix[2]);
+        glVertex3f(matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
+                   matrix[13],
+                   matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]);
+        glVertex3f(matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
+                   matrix[13],
+                   matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]);
+        glVertex3f(matrix[12] + 1000 * matrix[0],
+                   matrix[13],
+                   matrix[14] + 1000 * matrix[2]);
         glEnd();
 
         glBegin(GL_QUADS);
-        const GLfloat* tMatrix = this->getCurrentTank()->getTurretMatrix();
+        const GLfloat* t_matrix = this->getCurrentTank()->getTurretMatrix();
         glColor4f(Red, 0.75f);
-        glVertex3f(tMatrix[12] - 1000 * tMatrix[0],
-                   tMatrix[13] - 1000 * tMatrix[1],
-                   tMatrix[14] - 1000 * tMatrix[2]);
-        glVertex3f(tMatrix[12] - 1000 * tMatrix[0] - 10000 * tMatrix[8],
-                   tMatrix[13] - 1000 * tMatrix[1] - 10000 * tMatrix[9],
-                   tMatrix[14] - 1000 * tMatrix[2] - 10000 * tMatrix[10]);
-        glVertex3f(tMatrix[12] + 1000 * tMatrix[0] - 10000 * tMatrix[8],
-                   tMatrix[13] + 1000 * tMatrix[1] - 10000 * tMatrix[9],
-                   tMatrix[14] + 1000 * tMatrix[2] - 10000 * tMatrix[10]);
-        glVertex3f(tMatrix[12] + 1000 * tMatrix[0],
-                   tMatrix[13] + 1000 * tMatrix[1],
-                   tMatrix[14] + 1000 * tMatrix[2]);
+        glVertex3f(t_matrix[12] - 1000 * t_matrix[0],
+                   t_matrix[13] - 1000 * t_matrix[1],
+                   t_matrix[14] - 1000 * t_matrix[2]);
+        glVertex3f(t_matrix[12] - 1000 * t_matrix[0] - 10000 * t_matrix[8],
+                   t_matrix[13] - 1000 * t_matrix[1] - 10000 * t_matrix[9],
+                   t_matrix[14] - 1000 * t_matrix[2] - 10000 * t_matrix[10]);
+        glVertex3f(t_matrix[12] + 1000 * t_matrix[0] - 10000 * t_matrix[8],
+                   t_matrix[13] + 1000 * t_matrix[1] - 10000 * t_matrix[9],
+                   t_matrix[14] + 1000 * t_matrix[2] - 10000 * t_matrix[10]);
+        glVertex3f(t_matrix[12] + 1000 * t_matrix[0],
+                   t_matrix[13] + 1000 * t_matrix[1],
+                   t_matrix[14] + 1000 * t_matrix[2]);
         glEnd();
     }
 }

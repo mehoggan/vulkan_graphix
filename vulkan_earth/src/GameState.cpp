@@ -330,11 +330,11 @@ GLfloat GameState::calcAngleBetweenVectors(Vector one, Vector two) {
     this->NormalizeVector(&one);
     this->NormalizeVector(&two);
     errno = 0;
-    GLfloat TT = 3.141592653f;
+    GLfloat tt = 3.141592653f;
     GLfloat u[3] = {one.compoX, one.compoY, one.compoZ};
     GLfloat v[3] = {two.compoX, two.compoY, two.compoZ};
     GLfloat angle =
-            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / TT);
+            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / tt);
     if (errno) {
         return .01;
     }
@@ -419,16 +419,16 @@ void GameState::draw() {
         if (!playerCam) {
             this->worldCam->view();
         } else {
-            const GLfloat* turretMatrix =
+            const GLfloat* turret_matrix =
                     this->currentPlayer->getCurrentTank()->getTurretMatrix();
-            const GLfloat* headMatrix =
+            const GLfloat* head_matrix =
                     this->currentPlayer->getCurrentTank()->getHeadMatrix();
-            gluLookAt(headMatrix[12] + headMatrix[8] * 4000,
-                      headMatrix[13] + 2000,
-                      headMatrix[14] + headMatrix[10] * 4000,
-                      headMatrix[12] - headMatrix[8] * 3000,
-                      headMatrix[13] + headMatrix[9] * 0,
-                      headMatrix[14] - headMatrix[10] * 3000,
+            gluLookAt(head_matrix[12] + head_matrix[8] * 4000,
+                      head_matrix[13] + 2000,
+                      head_matrix[14] + head_matrix[10] * 4000,
+                      head_matrix[12] - head_matrix[8] * 3000,
+                      head_matrix[13] + head_matrix[9] * 0,
+                      head_matrix[14] - head_matrix[10] * 3000,
                       0,
                       1,
                       0);
@@ -493,14 +493,15 @@ void GameState::draw() {
 
     if (this->gameSubState == PLAYER_CONTROL) {
         if (currentPlayer->getPlayer_Type() == "CPU") {
-            const GLfloat* turretMatrix =
+            const GLfloat* turret_matrix =
                     this->currentPlayer->getCurrentTank()->getTurretMatrix();
-            const GLfloat* bodyMatrix =
+            const GLfloat* body_matrix =
                     this->currentPlayer->getCurrentTank()->getBodyMatrix();
             glLineWidth(1000);
             glBegin(GL_LINES);
-            glVertex3f(turretMatrix[12], turretMatrix[13], turretMatrix[14]);
-            glVertex3f(bodyMatrix[12], bodyMatrix[13], bodyMatrix[14]);
+            glVertex3f(
+                    turret_matrix[12], turret_matrix[13], turret_matrix[14]);
+            glVertex3f(body_matrix[12], body_matrix[13], body_matrix[14]);
             glEnd();
             glLineWidth(1);
         }
@@ -532,9 +533,9 @@ void GameState::drawHUD() {
     glLoadIdentity();
     glTranslatef(0.0f, 0.0f, -800.0f);
 
-    float newX = GLUT_SCREEN_WIDTH / 2 +
-                 800 * tan(30 * PI / 180);  // this is wrong, change later
-    float newY = GLUT_SCREEN_HEIGHT / 2 + 800 * tan(30 * PI / 180);
+    float new_x = GLUT_SCREEN_WIDTH / 2 +
+                  800 * tan(30 * PI / 180);  // this is wrong, change later
+    float new_y = GLUT_SCREEN_HEIGHT / 2 + 800 * tan(30 * PI / 180);
 
     // Current Player Name
     if (this->gameSubState == PLAYER_CONTROL) {
@@ -544,25 +545,25 @@ void GameState::drawHUD() {
         drawHUDText(player_factory->getPlayer(this->currentPlayerIndex)
                             ->getPlayerName(),
                     0,
-                    0.75 * newY);
+                    0.75 * new_y);
     }
 
     // List of Players and health/delay/team
     glColor3f(1, 1, 1);
-    drawHUDText("Wait", -0.99 * newX, 0.75 * newY);
-    drawHUDText("HP", -0.87 * newX, 0.75 * newY);
-    drawHUDText("Player Name", -0.76 * newX, 0.75 * newY);
-    drawHUDText("Team", -0.525 * newX, 0.75 * newY);
+    drawHUDText("Wait", -0.99 * new_x, 0.75 * new_y);
+    drawHUDText("HP", -0.87 * new_x, 0.75 * new_y);
+    drawHUDText("Player Name", -0.76 * new_x, 0.75 * new_y);
+    drawHUDText("Team", -0.525 * new_x, 0.75 * new_y);
     for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
         glColor3f(player_factory->getPlayer(i)->getRed(),
                   player_factory->getPlayer(i)->getGreen(),
                   player_factory->getPlayer(i)->getBlue());
         drawHUDText(player_factory->getPlayer(i)->getPlayerName(),
-                    -0.76 * newX,
-                    0.70 * newY - 0.05 * newY * i);
+                    -0.76 * new_x,
+                    0.70 * new_y - 0.05 * new_y * i);
         std::string team(1, player_factory->getPlayer(i)->getTeamLabel());
         glColor3f(1, 1, 1);
-        drawHUDText(team, -0.475 * newX, 0.70 * newY - 0.05 * newY * i);
+        drawHUDText(team, -0.475 * new_x, 0.70 * new_y - 0.05 * new_y * i);
         char buffer[128];
         memset(buffer, 0, 128);
         drawHUDText((sprintf(buffer,
@@ -570,8 +571,8 @@ void GameState::drawHUD() {
                              static_cast<int>(player_factory->getPlayer(i)
                                                       ->getCurrentWait())),
                      buffer),
-                    -0.95 * newX,
-                    0.70 * newY - 0.05 * newY * i);
+                    -0.95 * new_x,
+                    0.70 * new_y - 0.05 * new_y * i);
         if (!player_factory->getPlayer(i)->getCurrentTank()->isAlive()) {
             glColor3f(1, 0, 0);
         }
@@ -590,45 +591,45 @@ void GameState::drawHUD() {
                                      ->getCurrentTank()
                                      ->getHP()),
                      buffer),
-                    -0.87 * newX,
-                    0.70 * newY - 0.05 * newY * i);
+                    -0.87 * new_x,
+                    0.70 * new_y - 0.05 * new_y * i);
     }
 
     // Power Output
     if (this->gameSubState == PLAYER_CONTROL) {
         // Text
-        GLfloat powerRatio = player_factory->getPlayer(currentPlayerIndex)
-                                     ->getCurrentTank()
-                                     ->getCurrentPower() /
-                             10.0;
+        GLfloat power_ratio = player_factory->getPlayer(currentPlayerIndex)
+                                      ->getCurrentTank()
+                                      ->getCurrentPower() /
+                              10.0;
         char buffer[128];
         memset(buffer, 0, 128);
         glColor3f(1, 1, 1);
-        drawHUDText("Power:", 0.7 * newX, -0.7 * newY);
+        drawHUDText("Power:", 0.7 * new_x, -0.7 * new_y);
         drawHUDText(
-                (sprintf(buffer, "%d", static_cast<int>(powerRatio * 1000)),
+                (sprintf(buffer, "%d", static_cast<int>(power_ratio * 1000)),
                  buffer),
-                0.95 * newX,
-                -0.7 * newY);
+                0.95 * new_x,
+                -0.7 * new_y);
         // show previous power
         char buffer1[128];
         memset(buffer1, 0, 128);
         glColor3f(0.55, 0.55, 0.55);
-        drawHUDText("Power:", 0.7 * newX, -0.65 * newY);
+        drawHUDText("Power:", 0.7 * new_x, -0.65 * new_y);
         drawHUDText((sprintf(buffer1,
                              "%d",
                              player_factory->getPlayer(currentPlayerIndex)
                                      ->getCurrentTank()
                                      ->getPreviousPower()),
                      buffer1),
-                    0.95 * newX,
-                    -0.65 * newY);
+                    0.95 * new_x,
+                    -0.65 * new_y);
 
         // Angle
         char buffer2[128];
         memset(buffer2, 0, 128);
         glColor3f(1, 1, 1);
-        drawHUDText("Angle:", 0.7 * newX, -0.8 * newY);
+        drawHUDText("Angle:", 0.7 * new_x, -0.8 * new_y);
         drawHUDText(
                 (sprintf(buffer2,
                          "%d",
@@ -638,25 +639,25 @@ void GameState::drawHUD() {
                                          ->getTurretDegrees() +
                                  1)),
                  buffer2),
-                0.95 * newX,
-                -0.8 * newY);
+                0.95 * new_x,
+                -0.8 * new_y);
         // show previous angle
         char buffer3[128];
         memset(buffer3, 0, 128);
         glColor3f(0.55, 0.55, 0.55);
-        drawHUDText("Angle:", 0.7 * newX, -0.75 * newY);
+        drawHUDText("Angle:", 0.7 * new_x, -0.75 * new_y);
         drawHUDText((sprintf(buffer3,
                              "%d",
                              player_factory->getPlayer(currentPlayerIndex)
                                      ->getCurrentTank()
                                      ->getPreviousAngle()),
                      buffer3),
-                    0.95 * newX,
-                    -0.75 * newY);
+                    0.95 * new_x,
+                    -0.75 * new_y);
 
         // Show Weapon Slot
-        weaponSlot->setXpos(-newX * 0.7);
-        weaponSlot->setYpos(-0.6 * newY);
+        weaponSlot->setXpos(-new_x * 0.7);
+        weaponSlot->setYpos(-0.6 * new_y);
         weaponSlot->setZpos(2);
         weaponSlot->draw();
         if (currentPlayer->getLoadedWeapon() != nullptr) {
@@ -673,7 +674,7 @@ void GameState::drawHUD() {
         // Display Need Help?
         if (needHelp) {
             glColor3f(1, 1, 0);
-            drawHUDText("Press F1 for help", -1.3 * newX, -0.5 * newY);
+            drawHUDText("Press F1 for help", -1.3 * new_x, -0.5 * new_y);
         }
 
         // Graphic meter: Power
@@ -700,7 +701,7 @@ void GameState::drawHUD() {
         glEnd();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBegin(GL_QUADS);
-        glColor3f(powerRatio, 1 - powerRatio, 0);
+        glColor3f(power_ratio, 1 - power_ratio, 0);
         glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
                    0.05 * GLUT_SCREEN_HEIGHT,
                    2);
@@ -708,18 +709,18 @@ void GameState::drawHUD() {
                    0.08 * GLUT_SCREEN_HEIGHT,
                    2);
         glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (powerRatio * 0.2) * GLUT_SCREEN_WIDTH,
+                           (power_ratio * 0.2) * GLUT_SCREEN_WIDTH,
                    0.08 * GLUT_SCREEN_HEIGHT,
                    2);
         glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (powerRatio * 0.2) * GLUT_SCREEN_WIDTH,
+                           (power_ratio * 0.2) * GLUT_SCREEN_WIDTH,
                    0.05 * GLUT_SCREEN_HEIGHT,
                    2);
         glEnd();
         glPopMatrix();
 
         // Graphic meter: Health
-        GLfloat healthRatio =
+        GLfloat health_ratio =
                 static_cast<float>(
                         player_factory->getPlayer(currentPlayerIndex)
                                 ->getCurrentTank()
@@ -752,7 +753,7 @@ void GameState::drawHUD() {
         glEnd();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBegin(GL_QUADS);
-        glColor3f(1 - healthRatio, healthRatio, 0);
+        glColor3f(1 - health_ratio, health_ratio, 0);
         glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
                    0.90 * GLUT_SCREEN_HEIGHT,
                    2);
@@ -760,11 +761,11 @@ void GameState::drawHUD() {
                    0.93 * GLUT_SCREEN_HEIGHT,
                    2);
         glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (healthRatio * 0.2) * GLUT_SCREEN_WIDTH,
+                           (health_ratio * 0.2) * GLUT_SCREEN_WIDTH,
                    0.93 * GLUT_SCREEN_HEIGHT,
                    2);
         glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (healthRatio * 0.2) * GLUT_SCREEN_WIDTH,
+                           (health_ratio * 0.2) * GLUT_SCREEN_WIDTH,
                    0.90 * GLUT_SCREEN_HEIGHT,
                    2);
         glEnd();
@@ -778,18 +779,18 @@ void GameState::drawHUD() {
 }
 
 void GameState::drawHUDText(const std::string& input, GLfloat x, GLfloat y) {
-    GLfloat xPos = x;
+    GLfloat x_pos = x;
     for (char ch : input) {
         int step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
-        glRasterPos2f(xPos, y);
+        glRasterPos2f(x_pos, y);
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ch);
-        xPos += step;
+        x_pos += step;
     }
 }
 
 void GameState::updateMouse(int x, int y) {
     if (playerCam) {
-        float tHeight =
+        float t_height =
                 this->global_settings->getCurrentTerrain()->getHeightAt(
                         this->currentPlayer->getCurrentTank()
                                         ->getHeadMatrix()[12] -
@@ -1209,20 +1210,20 @@ void GameState::drawMinimap() {
             currentPlayer->getCurrentTank()->getProjectileLandPos()[1] + 900);
     glEnd();
 
-    int winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    int winHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    int win_width = glutGet(GLUT_WINDOW_WIDTH);
+    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, winWidth, winHeight);
+    glViewport(0, 0, win_width, win_height);
     gluPerspective(
             60.0,
-            static_cast<float>(winWidth) / static_cast<float>(winHeight),
+            static_cast<float>(win_width) / static_cast<float>(win_height),
             1.0,
             1000000.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, winWidth, winHeight);
+    glScissor(0, 0, win_width, win_height);
     glLoadIdentity();
 }
 
@@ -1357,20 +1358,20 @@ void GameState::drawHelp() {
 
     manual->draw();
 
-    int winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    int winHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    int win_width = glutGet(GLUT_WINDOW_WIDTH);
+    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, winWidth, winHeight);
+    glViewport(0, 0, win_width, win_height);
     gluPerspective(
             60.0,
-            static_cast<float>(winWidth) / static_cast<float>(winHeight),
+            static_cast<float>(win_width) / static_cast<float>(win_height),
             1.0,
             1000000.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, winWidth, winHeight);
+    glScissor(0, 0, win_width, win_height);
     glLoadIdentity();
 }
 
@@ -1490,13 +1491,13 @@ void GameState::updateWorldCam() {
 }
 
 void GameState::createSpecialEffect() {
-    GLfloat powerRatio = player_factory->getPlayer(currentPlayerIndex)
-                                 ->getCurrentTank()
-                                 ->getCurrentPower() /
-                         10.0;
+    GLfloat power_ratio = player_factory->getPlayer(currentPlayerIndex)
+                                  ->getCurrentTank()
+                                  ->getCurrentPower() /
+                          10.0;
     player_factory->getPlayer(currentPlayerIndex)
             ->getCurrentTank()
-            ->setPreviousPower(static_cast<int>(powerRatio * 1000));
+            ->setPreviousPower(static_cast<int>(power_ratio * 1000));
     player_factory->getPlayer(currentPlayerIndex)
             ->getCurrentTank()
             ->setPreviousAngle(
@@ -1518,23 +1519,26 @@ void GameState::createSpecialEffect() {
         // Make sure the projectile has not landed on the water
         if (0 < projectile->getPos()[0] && projectile->getPos()[0] < size &&
             0 < projectile->getPos()[2] && projectile->getPos()[2] < size) {
-            int newX = static_cast<int>(projectile->getPos()[0] / 100.0) * 100;
-            int newY = static_cast<int>(projectile->getPos()[1] / 100.0) * 100;
-            int newZ = static_cast<int>(projectile->getPos()[2] / 100.0) * 100;
-            currentPlayer->getCurrentTank()->setTankPos(newX, newY, newZ);
-            const GLfloat* bodyMatrix =
+            int new_x =
+                    static_cast<int>(projectile->getPos()[0] / 100.0) * 100;
+            int new_y =
+                    static_cast<int>(projectile->getPos()[1] / 100.0) * 100;
+            int new_z =
+                    static_cast<int>(projectile->getPos()[2] / 100.0) * 100;
+            currentPlayer->getCurrentTank()->setTankPos(new_x, new_y, new_z);
+            const GLfloat* body_matrix =
                     currentPlayer->getCurrentTank()->getBodyMatrix();
-            GLfloat newHeight =
+            GLfloat new_height =
                     this->global_settings->getCurrentTerrain()->getHeightAt(
-                            bodyMatrix[14], bodyMatrix[12]);
+                            body_matrix[14], body_matrix[12]);
             int scale = static_cast<int>(
                     global_settings->getCurrentTerrain()->getScale());
             Normal n = this->global_settings->getCurrentTerrain()
-                               ->getTriangleNormal(bodyMatrix[12] / scale,
-                                                   bodyMatrix[14] / scale);
+                               ->getTriangleNormal(body_matrix[12] / scale,
+                                                   body_matrix[14] / scale);
             currentPlayer->getCurrentTank()->orientTank(&n);
             currentPlayer->getCurrentTank()->setTankPos(
-                    bodyMatrix[12], newHeight, bodyMatrix[14]);
+                    body_matrix[12], new_height, body_matrix[14]);
         }
     }
     projectile->getWeapon()->playExplosionSFX();
@@ -1568,13 +1572,13 @@ void GameState::createSpecialEffect() {
 }
 
 void GameState::handleProjectileState() {
-    bool collisionOccured = false;
+    bool collision_occured = false;
     if (this->projectile) {
         if (this->projectile->getPos()[1] <=
             this->global_settings->getCurrentTerrain()->getHeightAt(
                     this->projectile->getPos()[2],
                     this->projectile->getPos()[0])) {
-            collisionOccured = true;
+            collision_occured = true;
         } else {
             for (int i = 0; i < this->numberOfPlayers; i++) {
                 if (this->player_factory->getPlayer(i)
@@ -1582,11 +1586,11 @@ void GameState::handleProjectileState() {
                             ->checkCollision(this->projectile->getPos()[0],
                                              this->projectile->getPos()[1],
                                              this->projectile->getPos()[2])) {
-                    collisionOccured = true;
+                    collision_occured = true;
                 }
             }
         }
-        if (collisionOccured) {
+        if (collision_occured) {
             /* RESET AI VARIABLES	*/
             this->timer = 0;
             /* DONE RESETING AI VARIABLES */
@@ -1599,47 +1603,47 @@ void GameState::handleProjectileState() {
         } else {
             this->timer = this->timer + .02f;
             GLfloat scalar = this->projectile->getInitialPositionScalar();
-            GLfloat* physicsMatrix =
+            GLfloat* physics_matrix =
                     this->currentPlayer->getCurrentTank()->getTurretMatrix();
-            GLfloat Xo = this->projectile->getXo();
-            GLfloat Yo = this->projectile->getYo();
-            GLfloat Zo = this->projectile->getZo();
+            GLfloat xo = this->projectile->getXo();
+            GLfloat yo = this->projectile->getYo();
+            GLfloat zo = this->projectile->getZo();
             ;
-            GLfloat Vox = this->projectile->getVox();
-            GLfloat Voy = this->projectile->getVoy();
-            GLfloat Voz = this->projectile->getVoz();
+            GLfloat vox = this->projectile->getVox();
+            GLfloat voy = this->projectile->getVoy();
+            GLfloat voz = this->projectile->getVoz();
             GLfloat g = this->gravity;  // Note: gravity is negative
 
-            GLfloat X = Vox * this->timer + Xo;
-            GLfloat Y = 0.5f * g * pow(static_cast<double>(this->timer), 2.0) +
-                        Voy * this->timer + Yo;
-            GLfloat Z = Voz * this->timer + Zo;
-            this->projectile->update(X, Y, Z);
+            GLfloat x = vox * this->timer + xo;
+            GLfloat y = 0.5f * g * pow(static_cast<double>(this->timer), 2.0) +
+                        voy * this->timer + yo;
+            GLfloat z = voz * this->timer + zo;
+            this->projectile->update(x, y, z);
         }
     } else {
-        GLfloat tankAttributePower =
+        GLfloat tank_attribute_power =
                 player_factory->getPlayer(this->currentPlayerIndex)
                         ->getCurrentTank()
                         ->getPower();
-        GLfloat powerBar = player_factory->getPlayer(this->currentPlayerIndex)
-                                   ->getCurrentTank()
-                                   ->getCurrentPower();
-        const GLfloat* turretMatrix =
+        GLfloat power_bar = player_factory->getPlayer(this->currentPlayerIndex)
+                                    ->getCurrentTank()
+                                    ->getCurrentPower();
+        const GLfloat* turret_matrix =
                 player_factory->getPlayer(this->currentPlayerIndex)
                         ->getCurrentTank()
                         ->getTurretMatrix();
         GLfloat matrix[16];
         for (int i = 0; i < 16; i++) {
-            matrix[i] = turretMatrix[i];
+            matrix[i] = turret_matrix[i];
         }
-        matrix[12] = turretMatrix[12] + 1000 * turretMatrix[4];
-        matrix[13] = turretMatrix[13] + 1000 * turretMatrix[5];
-        matrix[13] = turretMatrix[14] + 1000 * turretMatrix[6];
-        this->projectile =
-                new Projectile(this,
-                               matrix,
-                               tankAttributePower * powerBar * BALISTIC_SCALAR,
-                               this->projectileModels);
+        matrix[12] = turret_matrix[12] + 1000 * turret_matrix[4];
+        matrix[13] = turret_matrix[13] + 1000 * turret_matrix[5];
+        matrix[13] = turret_matrix[14] + 1000 * turret_matrix[6];
+        this->projectile = new Projectile(
+                this,
+                matrix,
+                tank_attribute_power * power_bar * BALISTIC_SCALAR,
+                this->projectileModels);
         if (currentPlayer->getLoadedWeapon() != nullptr) {
             projectile->setWeapon(currentPlayer->getLoadedWeapon());
         } else {
@@ -1689,21 +1693,21 @@ void GameState::currentPlayerFire() {
 }
 
 void GameState::constructProjectile() {
-    GLfloat tankAttributePower =
+    GLfloat tank_attribute_power =
             player_factory->getPlayer(this->currentPlayerIndex)
                     ->getCurrentTank()
                     ->getPower();
-    GLfloat powerBar = player_factory->getPlayer(this->currentPlayerIndex)
-                               ->getCurrentTank()
-                               ->getCurrentPower();
+    GLfloat power_bar = player_factory->getPlayer(this->currentPlayerIndex)
+                                ->getCurrentTank()
+                                ->getCurrentPower();
 
-    const GLfloat* turretMatrix =
+    const GLfloat* turret_matrix =
             this->currentPlayer->getCurrentTank()->getTurretMatrix();
     GLfloat scalar = 700.0f;
     // YOU DON'T HAVE PROJECTILE SO SCALAR NEEDS TO BE MODIFIED IN TWO PLACES
-    GLfloat pos[3] = {turretMatrix[12] - scalar * turretMatrix[8],
-                      turretMatrix[13] - scalar * turretMatrix[9],
-                      turretMatrix[14] - scalar * turretMatrix[10]};
+    GLfloat pos[3] = {turret_matrix[12] - scalar * turret_matrix[8],
+                      turret_matrix[13] - scalar * turret_matrix[9],
+                      turret_matrix[14] - scalar * turret_matrix[10]};
 
     if (pos[1] < this->global_settings->getCurrentTerrain()->getHeightAt(
                          pos[2], pos[0])) {
@@ -1714,7 +1718,7 @@ void GameState::constructProjectile() {
                 player_factory->getPlayer(this->currentPlayerIndex)
                         ->getCurrentTank()
                         ->getTurretMatrix(),
-                tankAttributePower * powerBar * BALISTIC_SCALAR,
+                tank_attribute_power * power_bar * BALISTIC_SCALAR,
                 this->projectileModels);
     }
 }
@@ -1730,15 +1734,16 @@ void GameState::handleSpecialEffectState() {
                         this->projectile->getPos()[2],
                         this->radiusOfCurrentExplosion);
             }
-            int TOTAL_PLAYERS = this->global_settings->getPlayer_Count();
-            for (int p = 0; p < TOTAL_PLAYERS; p++) {
+            int total_players = this->global_settings->getPlayer_Count();
+            for (int p = 0; p < total_players; p++) {
                 if (this->player_factory->getPlayer(p)->getCurrentTank() !=
                     nullptr) {
-                    const GLfloat* bodyMatrix =
+                    const GLfloat* body_matrix =
                             this->player_factory->getPlayer(p)
                                     ->getCurrentTank()
                                     ->getBodyMatrix();
-                    Vertex v0(bodyMatrix[12], bodyMatrix[13], bodyMatrix[14]);
+                    Vertex v0(
+                            body_matrix[12], body_matrix[13], body_matrix[14]);
                     Vertex v1(this->projectile->getPos()[0],
                               this->projectile->getPos()[1],
                               this->projectile->getPos()[2]);
@@ -1780,25 +1785,25 @@ void GameState::handleSpecialEffectState() {
                             int scale = static_cast<int>(
                                     global_settings->getCurrentTerrain()
                                             ->getScale());
-                            GLfloat newHeight =
+                            GLfloat new_height =
                                     this->global_settings->getCurrentTerrain()
-                                            ->getHeightAt(bodyMatrix[14],
-                                                          bodyMatrix[12]);
+                                            ->getHeightAt(body_matrix[14],
+                                                          body_matrix[12]);
 
                             Normal n =
                                     this->global_settings->getCurrentTerrain()
                                             ->getTriangleNormal(
-                                                    bodyMatrix[12] / scale,
-                                                    bodyMatrix[14] / scale);
+                                                    body_matrix[12] / scale,
+                                                    body_matrix[14] / scale);
 
                             player_factory->getPlayer(p)
                                     ->getCurrentTank()
                                     ->orientTank(&n);
                             this->player_factory->getPlayer(p)
                                     ->getCurrentTank()
-                                    ->setTankPos(bodyMatrix[12],
-                                                 newHeight,
-                                                 bodyMatrix[14]);
+                                    ->setTankPos(body_matrix[12],
+                                                 new_height,
+                                                 body_matrix[14]);
                             this->player_factory->getPlayer(p)
                                     ->getCurrentTank()
                                     ->checkFallingDamage();
@@ -1808,8 +1813,8 @@ void GameState::handleSpecialEffectState() {
             }
         }
         this->projectile->getChaseCam()->updateFactor();
-        int shakeItBaby = rand() % 30;
-        this->projectile->getChaseCam()->setShakeCam(20 + shakeItBaby);
+        int shake_it_baby = rand() % 30;
+        this->projectile->getChaseCam()->setShakeCam(20 + shake_it_baby);
     } else {
         if (this->specialEffectType == EXPLOSION) {
             for (int x = 0; x < this->specialEffectsCount; x++) {
@@ -1831,8 +1836,8 @@ void GameState::handleSpecialEffectState() {
         this->radiusOfCurrentExplosion = 0;
         this->useTurn();
         this->gameSubState = PASS_TIME;
-        int invenIndex = 0;
-        this->inventory->handleInventory(currentPlayer, invenIndex);
+        int inven_index = 0;
+        this->inventory->handleInventory(currentPlayer, inven_index);
     }
 }
 
@@ -1894,7 +1899,10 @@ void GameState::handleInventoryKeyboard(int key, bool key_status) {
                                             256,
                                             currentPlayer->getLoadedWeapon()
                                                     ->getImageFileName());
-                                        std::string remain = "x " + std::to_string(currentPlayer->getLoadedWeapon()->getRemaining());
+                    std::string remain =
+                            "x " +
+                            std::to_string(currentPlayer->getLoadedWeapon()
+                                                   ->getRemaining());
                     this->selectedWeaponRemain =
                             new TextObject(remain,
                                            0,
@@ -2062,7 +2070,9 @@ void GameState::handlePassTime() {
                         256,
                         256,
                         currentPlayer->getLoadedWeapon()->getImageFileName());
-                                std::string remain = "x " + std::to_string(currentPlayer->getLoadedWeapon()->getRemaining());
+                std::string remain =
+                        "x " + std::to_string(currentPlayer->getLoadedWeapon()
+                                                      ->getRemaining());
                 this->selectedWeaponRemain =
                         new TextObject(remain,
                                        weaponSlot->getXpos() * 1.1,
@@ -2118,22 +2128,22 @@ void GameState::nearestEnemy() {
     if (this->currentPlayer != nullptr &&
         currentPlayer->getPlayer_Type() == "CPU") {
         /*	RECALULATE ALL DISTANCE	*/
-        const GLfloat* tankMatrix =
+        const GLfloat* tank_matrix =
                 this->currentPlayer->getCurrentTank()->getBodyMatrix();
         for (int i = 0; i < this->numberOfPlayers; i++) {
             if (this->tankList[this->currentPlayerIndex][i] !=
                         this->currentPlayer->getCurrentTank() &&
                 this->tankList[i] != nullptr) {
-                const GLfloat* targetMatrix =
+                const GLfloat* target_matrix =
                         this->tankList[this->currentPlayerIndex][i]
                                 ->getBodyMatrix();
                 GLfloat distance =
-                        sqrt((tankMatrix[12] - targetMatrix[12]) *
-                                     (tankMatrix[12] - targetMatrix[12]) +
-                             (tankMatrix[13] - targetMatrix[13]) *
-                                     (tankMatrix[13] - targetMatrix[13]) +
-                             (tankMatrix[14] - targetMatrix[14]) *
-                                     (tankMatrix[14] - targetMatrix[14]));
+                        sqrt((tank_matrix[12] - target_matrix[12]) *
+                                     (tank_matrix[12] - target_matrix[12]) +
+                             (tank_matrix[13] - target_matrix[13]) *
+                                     (tank_matrix[13] - target_matrix[13]) +
+                             (tank_matrix[14] - target_matrix[14]) *
+                                     (tank_matrix[14] - target_matrix[14]));
                 this->distance_to_target[this->currentPlayerIndex][i] =
                         distance;
             }

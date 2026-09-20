@@ -39,10 +39,10 @@ void mouseMotionHandler(int, int);
 extern void initSound();
 void initStuff();
 
-int gameState;
-int prevGameState;
+int screen_state;
+int prev_screen_state;
 enum removeGlutStates { UP, DOWN };
-int winWidth, winHeight;
+int win_width, win_height;
 int timer;
 MainMenu* mainmenu;
 ReadyMenu* readymenu;
@@ -50,7 +50,7 @@ ShopMenu* shopmenu;
 GlobalSettings* global_settings;
 PlayerFactory* player_factory;
 GameState* game_state;
-LoadingScreen* loadingScreen;
+LoadingScreen* loading_screen;
 
 // GLUT_SCREEN_WIDTH/HEIGHT is the whole X11 screen - the combined
 // virtual desktop spanning every monitor, not just the primary one
@@ -96,16 +96,16 @@ static void primaryMonitorGeometry(int* posX,
 }
 
 int main(int argc, char* argv[]) {
-    gameState = MAIN_MENU;
-    prevGameState = gameState;
+    screen_state = MAIN_MENU;
+    prev_screen_state = screen_state;
 
     initSound();
     glutInit(&argc, argv);
-    int winPosX, winPosY;
-    primaryMonitorGeometry(&winPosX, &winPosY, &winWidth, &winHeight);
+    int win_pos_x, win_pos_y;
+    primaryMonitorGeometry(&win_pos_x, &win_pos_y, &win_width, &win_height);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowPosition(winPosX, winPosY);
-    glutInitWindowSize(winWidth, winHeight);
+    glutInitWindowPosition(win_pos_x, win_pos_y);
+    glutInitWindowSize(win_width, win_height);
     glutCreateWindow("VulkanEarth");
     glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 
@@ -120,26 +120,26 @@ int main(int argc, char* argv[]) {
     glutSpecialUpFunc(specKeyHandlerUp);
     glutMouseFunc(mouseHandler);
     glutMotionFunc(mouseMotionHandler);
-    gameState = MAIN_MENU;
+    screen_state = MAIN_MENU;
 
     global_settings = new GlobalSettings();
     player_factory = new PlayerFactory(global_settings);
     player_factory->setNumberofPlayers(global_settings->getPlayer_Count());
-    mainmenu = new MainMenu(winWidth,
-                            winHeight,
+    mainmenu = new MainMenu(win_width,
+                            win_height,
                             0.01f,
                             global_settings,
                             player_factory,
-                            &gameState);
-    loadingScreen = new LoadingScreen(-winWidth / 4.0,
-                                      winHeight / 4.0,
-                                      10,
-                                      winWidth * 0.5,
-                                      winHeight * 0.5,
-                                      0.75,
-                                      0.75,
-                                      0.75,
-                                      1);
+                            &screen_state);
+    loading_screen = new LoadingScreen(-win_width / 4.0,
+                                       win_height / 4.0,
+                                       10,
+                                       win_width * 0.5,
+                                       win_height * 0.5,
+                                       0.75,
+                                       0.75,
+                                       0.75,
+                                       1);
     game_state = nullptr;
     readymenu = nullptr;
     shopmenu = nullptr;
@@ -152,24 +152,24 @@ int main(int argc, char* argv[]) {
     delete global_settings;
     delete player_factory;
     delete game_state;
-    delete loadingScreen;
+    delete loading_screen;
     return 0;
 }
 
 void resize(int width, int height) {
-    winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    winHeight = glutGet(GLUT_WINDOW_HEIGHT);
-    glViewport(0, 0, winWidth, winHeight);
+    win_width = glutGet(GLUT_WINDOW_WIDTH);
+    win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    glViewport(0, 0, win_width, win_height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(
             60.0,
-            static_cast<float>(winWidth) / static_cast<float>(winHeight),
+            static_cast<float>(win_width) / static_cast<float>(win_height),
             1.0,
             1000000.0);
     glMatrixMode(GL_MODELVIEW);
-    winWidth = width;
-    winHeight = height;
+    win_width = width;
+    win_height = height;
     mainmenu->setWidth(width);
     mainmenu->setHeight(height);
     if (readymenu) {
@@ -190,93 +190,93 @@ void draw() {
     glClearDepth(1.0f);        // 0 is near, 1 is far
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_SCISSOR_TEST);
-    if (gameState != GAME_PLAY) {
+    if (screen_state != GAME_PLAY) {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glViewport(0, 0, winWidth, winHeight);
+        glViewport(0, 0, win_width, win_height);
         gluPerspective(
                 60.0,
-                static_cast<float>(winWidth) / static_cast<float>(winHeight),
+                static_cast<float>(win_width) / static_cast<float>(win_height),
                 1.0,
                 1000000.0);
 
         glMatrixMode(GL_MODELVIEW);
-        glScissor(0, 0, winWidth, winHeight);
+        glScissor(0, 0, win_width, win_height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
     } else {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glViewport(0, 0, winWidth, winHeight);
+        glViewport(0, 0, win_width, win_height);
         gluPerspective(
                 60.0,
-                static_cast<float>(winWidth) / static_cast<float>(winHeight),
+                static_cast<float>(win_width) / static_cast<float>(win_height),
                 100.0,
                 100000000.0);
 
         glMatrixMode(GL_MODELVIEW);
-        glScissor(0, 0, winWidth, winHeight);
+        glScissor(0, 0, win_width, win_height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
     }
-    switch (gameState) {
+    switch (screen_state) {
         case MAIN_MENU: {
-            if (prevGameState != MAIN_MENU) {
+            if (prev_screen_state != MAIN_MENU) {
                 mainmenu->getSubMenuLandscape()->tm->prepareData(
                         0, 0, 0, 0, 0);
                 glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
             }
-            int distance = winHeight / 2 * tan(1.04719755);
+            int distance = win_height / 2 * tan(1.04719755);
             gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
             mainmenu->draw();
             break;
         }
         case READY_MENU: {
             if (readymenu == nullptr) {
-                int distance = winHeight / 2 * tan(1.04719755);
+                int distance = win_height / 2 * tan(1.04719755);
                 gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
-                loadingScreen->draw();
+                loading_screen->draw();
                 glutSwapBuffers();
-                readymenu = new ReadyMenu(winWidth,
-                                          winHeight,
+                readymenu = new ReadyMenu(win_width,
+                                          win_height,
                                           0.01f,
                                           global_settings,
                                           player_factory,
-                                          &gameState);
+                                          &screen_state);
             }
-            if (prevGameState != READY_MENU) {
+            if (prev_screen_state != READY_MENU) {
                 readymenu->updatePageInfo();
             }
-            int distance = winHeight / 2 * tan(1.04719755);
+            int distance = win_height / 2 * tan(1.04719755);
             gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
             readymenu->draw();
             break;
         }
         case SHOP_MENU: {
             if (shopmenu == nullptr) {
-                shopmenu = new ShopMenu(winWidth,
-                                        winHeight,
+                shopmenu = new ShopMenu(win_width,
+                                        win_height,
                                         0.01f,
                                         global_settings,
                                         player_factory,
-                                        &gameState);
+                                        &screen_state);
             }
             if (game_state) {
                 delete game_state;
                 game_state = nullptr;
             }
-            int distance = winHeight / 2 * tan(1.04719755);
+            int distance = win_height / 2 * tan(1.04719755);
             gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
-            if (gameState == SHOP_MENU) shopmenu->draw();
+            if (screen_state == SHOP_MENU) shopmenu->draw();
             break;
         }
         case GAME_PLAY: {
             if (game_state == nullptr) {
-                game_state = new GameState(winWidth,
-                                           winHeight,
+                game_state = new GameState(win_width,
+                                           win_height,
                                            player_factory,
                                            global_settings,
-                                           &gameState);
+                                           &screen_state);
                 glutSetCursor(GLUT_CURSOR_NONE);
             }
             if (readymenu) {
@@ -287,7 +287,7 @@ void draw() {
                 delete shopmenu;
                 shopmenu = nullptr;
             }
-            int distance = winHeight / 2 * tan(1.04719755);
+            int distance = win_height / 2 * tan(1.04719755);
             game_state->draw();
 
             glPushMatrix();
@@ -321,25 +321,25 @@ void draw() {
         }
     }
 
-    if (gameState != prevGameState) {
+    if (screen_state != prev_screen_state) {
         if (readymenu)
             readymenu->updateNumPlayers(global_settings->getPlayer_Count());
         if (shopmenu)
             shopmenu->updateNumPlayers(global_settings->getPlayer_Count());
-        prevGameState = gameState;
+        prev_screen_state = screen_state;
     }
 
     glutSwapBuffers();
 }
 
 void keyHandler(unsigned char key, int x, int y) {
-    if (gameState == READY_MENU) {
+    if (screen_state == READY_MENU) {
         if (key == 27) {
-            gameState = QUIT_GAME;
+            screen_state = QUIT_GAME;
         }
         if (readymenu) readymenu->keyTest(key);
     }
-    if (gameState == SHOP_MENU) {
+    if (screen_state == SHOP_MENU) {
         if (key == 27) {
             delete mainmenu;
             delete readymenu;
@@ -350,7 +350,7 @@ void keyHandler(unsigned char key, int x, int y) {
             exit(0);  // this is just temporary, delete this later
         }
     }
-    if (gameState == MAIN_MENU) {
+    if (screen_state == MAIN_MENU) {
         switch (key) {
             case 27: {  // ESCAPE KEY
                 delete mainmenu;
@@ -364,7 +364,7 @@ void keyHandler(unsigned char key, int x, int y) {
             }
         }
     }
-    if (gameState == GAME_PLAY) {
+    if (screen_state == GAME_PLAY) {
         if (key == 27) {
             delete mainmenu;
             delete readymenu;
@@ -376,7 +376,7 @@ void keyHandler(unsigned char key, int x, int y) {
         } else if (key == 'n')
             global_settings->getCurrentTerrain()->toggleWireframe();
         else if (key == 'm')
-            gameState =
+            screen_state =
                     MAIN_MENU;  // this is just temporary, delete this later
         else
             game_state->handleKeyboardInput(key, true);
@@ -384,7 +384,7 @@ void keyHandler(unsigned char key, int x, int y) {
 }
 
 void keyHandlerUp(unsigned char key, int x, int y) {
-    if (gameState == GAME_PLAY) {
+    if (screen_state == GAME_PLAY) {
         if (key == static_cast<int>('l')) {
             global_settings->getCurrentTerrain()->toggleWireframe();
         } else {
@@ -394,7 +394,7 @@ void keyHandlerUp(unsigned char key, int x, int y) {
 }
 
 void specKeyHandler(int key, int x, int y) {
-    if (gameState == GAME_PLAY) {
+    if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, true);
         }
@@ -421,7 +421,7 @@ void specKeyHandler(int key, int x, int y) {
 }
 
 void specKeyHandlerUp(int key, int x, int y) {
-    if (gameState == GAME_PLAY) {
+    if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, false);
         }
@@ -444,7 +444,7 @@ void specKeyHandlerUp(int key, int x, int y) {
 }
 
 void mouseHandler(int button, int state, int x, int y) {
-    switch (gameState) {
+    switch (screen_state) {
         case MAIN_MENU: {
             if (button == GLUT_LEFT_BUTTON) {
                 if (state == GLUT_UP) {
@@ -458,8 +458,8 @@ void mouseHandler(int button, int state, int x, int y) {
                     // GLUT_MOUSEHANDLER_CALLBACK_MOUSEDOWN are now [0]=%s --
                     // [1]=%s\n",mainmenu->getSubMenuI(0)->getCaption(),mainmenu->getSubMenuI(1)->getCaption());
                 }
-                mainmenu->buttonTest(x - (winWidth / 2),
-                                     (winHeight / 2) - y,
+                mainmenu->buttonTest(x - (win_width / 2),
+                                     (win_height / 2) - y,
                                      state);  // remember to check about screen
                                               // size changing
             }
@@ -473,8 +473,8 @@ void mouseHandler(int button, int state, int x, int y) {
                     state = 1;
                 }
                 if (readymenu)
-                    readymenu->buttonTest(x - (winWidth / 2),
-                                          (winHeight / 2) - y,
+                    readymenu->buttonTest(x - (win_width / 2),
+                                          (win_height / 2) - y,
                                           state);  // remember to check about
                                                    // screen size changing
             }
@@ -488,8 +488,8 @@ void mouseHandler(int button, int state, int x, int y) {
                     state = 1;
                 }
                 if (shopmenu)
-                    shopmenu->buttonTest(x - (winWidth / 2),
-                                         (winHeight / 2) - y,
+                    shopmenu->buttonTest(x - (win_width / 2),
+                                         (win_height / 2) - y,
                                          state);  // remember to check about
                                                   // screen size changing
             }
@@ -507,36 +507,36 @@ void mouseHandler(int button, int state, int x, int y) {
 void mouseMotionHandler(int x, int y) {
     if (mainmenu->getActiveSubMenu() != nullptr) {
         if (mainmenu->getActiveSubMenu()->getUNIQUEIDENTIFIER() == 1) {
-            mainmenu->getActiveSubMenu()->updateMouse(x - (winWidth / 2),
-                                                      (winHeight / 2) - y);
+            mainmenu->getActiveSubMenu()->updateMouse(x - (win_width / 2),
+                                                      (win_height / 2) - y);
         } else if (mainmenu->getActiveSubMenu()->getUNIQUEIDENTIFIER() == 5) {
             mainmenu->getActiveSubMenu()->updateMouse(x, y);
         }
     }
-    if (gameState == READY_MENU) {
+    if (screen_state == READY_MENU) {
         if (readymenu)
-            readymenu->updateMouse(x - (winWidth / 2), (winHeight / 2) - y);
+            readymenu->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     }
-    if (gameState == GAME_PLAY) {
+    if (screen_state == GAME_PLAY) {
         if (game_state)
-            game_state->updateMouse(x - (winWidth / 2), (winHeight / 2) - y);
+            game_state->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     }
 }
 
 void initStuff() {
-    GLfloat lightA[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
-    GLfloat lightD[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
-    GLfloat lightS[] = {1.0f, 1.0f, 1.0f, 0.0f};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lightA);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightD);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lightS);
-    GLfloat lightPos0[4] = {1.0f, -1.0f, 0.0f, 0.0f};
-    GLfloat lightPos1[4] = {1.0f, 1.0f, 1.0f, 0.0f};
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+    GLfloat light_a[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
+    GLfloat light_d[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
+    GLfloat light_s[] = {1.0f, 1.0f, 1.0f, 0.0f};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_a);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_d);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_s);
+    GLfloat light_pos0[4] = {1.0f, -1.0f, 0.0f, 0.0f};
+    GLfloat light_pos1[4] = {1.0f, 1.0f, 1.0f, 0.0f};
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos0);
 
     // readymenu light
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightD);
-    glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_d);
+    glLightfv(GL_LIGHT1, GL_POSITION, light_pos1);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -33,15 +33,15 @@ Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weaponRadius) {
     this->timer = 50.0f;
     this->radius = 0.0f;
 
-    GLfloat tempColors1[3] = {White};
-    GLfloat tempColors2[3] = {Yellow};
-    GLfloat tempColors3[3] = {Orange};
-    GLfloat tempColors4[3] = {Red};
+    GLfloat temp_colors1[3] = {White};
+    GLfloat temp_colors2[3] = {Yellow};
+    GLfloat temp_colors3[3] = {Orange};
+    GLfloat temp_colors4[3] = {Red};
     for (int i = 0; i < 3; i++) {
-        colors1[i] = tempColors1[i];
-        colors2[i] = tempColors2[i];
-        colors3[i] = tempColors3[i];
-        colors4[i] = tempColors4[i];
+        colors1[i] = temp_colors1[i];
+        colors2[i] = temp_colors2[i];
+        colors3[i] = temp_colors3[i];
+        colors4[i] = temp_colors4[i];
     }
 }
 
@@ -91,14 +91,14 @@ void Explosion::setColors4(GLfloat* colors4) {
     this->colors4[2] = colors4[2];
 }
 void Explosion::setDefaultColors() {
-    GLfloat tempColors1[3] = {White};
-    GLfloat tempColors2[3] = {Yellow};
-    GLfloat tempColors3[3] = {Orange};
-    GLfloat tempColors4[3] = {Red};
+    GLfloat temp_colors1[3] = {White};
+    GLfloat temp_colors2[3] = {Yellow};
+    GLfloat temp_colors3[3] = {Orange};
+    GLfloat temp_colors4[3] = {Red};
     for (int i = 0; i < 3; i++) {
-        colors1[i] = tempColors1[i];
-        colors2[i] = tempColors2[i];
-        colors3[i] = tempColors3[i];
-        colors4[i] = tempColors4[i];
+        colors1[i] = temp_colors1[i];
+        colors2[i] = temp_colors2[i];
+        colors3[i] = temp_colors3[i];
+        colors4[i] = temp_colors4[i];
     }
 }

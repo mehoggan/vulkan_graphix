@@ -95,7 +95,8 @@ void Inventory::setupInventory(Player* player) {
                                           256,
                                           weapons[i]->getImageFileName());
             invenGrid->setImageSizeToCell(this->imgInven[i], 0.8);
-                        std::string remain = "x " + std::to_string(weapons[i]->getRemaining());
+            std::string remain =
+                    "x " + std::to_string(weapons[i]->getRemaining());
             remainings[i] = new TextObject(remain,
                                            0,
                                            0,
@@ -124,7 +125,8 @@ void Inventory::setupInventory(Player* player) {
                     0, 0, 0, 0, 0, 0, 256, 256, items[i]->getImageFileName());
             invenGrid->setImageSizeToCell(
                     this->imgInven[PLAYER_MAX_WEAPONS + i], 0.8);
-                        std::string remain = "x " + std::to_string(items[i]->getRemaining());
+            std::string remain =
+                    "x " + std::to_string(items[i]->getRemaining());
             remainings[PLAYER_MAX_WEAPONS + i] =
                     new TextObject(remain,
                                    0,
@@ -331,19 +333,19 @@ void Inventory::draw() {
         }
     }
 
-    int winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    int winHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    int win_width = glutGet(GLUT_WINDOW_WIDTH);
+    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, winWidth, winHeight);
+    glViewport(0, 0, win_width, win_height);
     gluPerspective(
             60.0,
-            static_cast<float>(winWidth) / static_cast<float>(winHeight),
+            static_cast<float>(win_width) / static_cast<float>(win_height),
             1.0,
             1000000.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, winWidth, winHeight);
+    glScissor(0, 0, win_width, win_height);
     glLoadIdentity();
 }

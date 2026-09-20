@@ -66,16 +66,16 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
     this->optionText = nullptr;
     this->setOptionText(menuState);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->caption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = barXPos;
-    GLfloat labelYPos = this->yPos - this->height * 0.45;
+    GLfloat label_x_pos = barXPos;
+    GLfloat label_y_pos = this->yPos - this->height * 0.45;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     this->label = new TextObject(this->caption,
-                                 labelXPos,
-                                 labelYPos,
+                                 label_x_pos,
+                                 label_y_pos,
                                  this->zPos,
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
@@ -355,16 +355,16 @@ void ControlItemSliderbar::setOptionText(const std::string& newText) {}
 
 void ControlItemSliderbar::setOptionText(int index) {
     this->currentOption = this->allOptions[index];
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->currentOption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + (this->width / 2) - (realLength / 2);
-    GLfloat labelYPos = this->yPos - this->height * 0.45;
+    GLfloat label_x_pos = this->xPos + (this->width / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->yPos - this->height * 0.45;
     delete optionText;
     this->optionText = new TextObject(this->currentOption,
-                                      labelXPos,
-                                      labelYPos,
+                                      label_x_pos,
+                                      label_y_pos,
                                       this->zPos,
                                       GLUT_BITMAP_TIMES_ROMAN_24,
                                       0.0f,

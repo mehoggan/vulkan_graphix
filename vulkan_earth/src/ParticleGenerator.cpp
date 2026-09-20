@@ -42,21 +42,21 @@ void ParticleGenerator::addParticles() {
     int i = 0, count = 0;
     while ((i < max) && (count < particlesPerEmission)) {
         if (particleArray[i] == nullptr) {
-            GLfloat dirX = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
-            GLfloat dirY = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
-            GLfloat dirZ = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
-            GLfloat mag = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
-            dirX /= mag;
-            dirY /= mag;
-            dirZ /= mag;
+            GLfloat dir_x = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
+            GLfloat dir_y = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
+            GLfloat dir_z = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
+            GLfloat mag = sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
+            dir_x /= mag;
+            dir_y /= mag;
+            dir_z /= mag;
             switch (this->type) {
                 case 0:
                     particleArray[i] = new ParticleSmoke(x,
                                                          y,
                                                          z,
-                                                         dirX,
-                                                         dirY,
-                                                         dirZ,
+                                                         dir_x,
+                                                         dir_y,
+                                                         dir_z,
                                                          emissionSpeed,
                                                          emissionLife);
                     break;
@@ -64,9 +64,9 @@ void ParticleGenerator::addParticles() {
                     particleArray[i] = new ParticleAcid(x,
                                                         y,
                                                         z,
-                                                        dirX,
-                                                        dirY,
-                                                        dirZ,
+                                                        dir_x,
+                                                        dir_y,
+                                                        dir_z,
                                                         emissionSpeed,
                                                         emissionLife);
                     break;
@@ -74,9 +74,9 @@ void ParticleGenerator::addParticles() {
                     particleArray[i] = new ParticleFloat(x,
                                                          y,
                                                          z,
-                                                         dirX,
-                                                         dirY,
-                                                         dirZ,
+                                                         dir_x,
+                                                         dir_y,
+                                                         dir_z,
                                                          emissionSpeed,
                                                          emissionLife);
                     break;

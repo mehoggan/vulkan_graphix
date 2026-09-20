@@ -26,19 +26,20 @@ Water::Water(int scale, int size) {
     this->totalVertices = this->size * this->size;
     this->triStripBufferSize = (this->size - 1) * (this->size - 1) * 6;
     this->initData();
-    PFNGLGENBUFFERSARBPROC pglGenBuffersARB =
+    PFNGLGENBUFFERSARBPROC pgl_gen_buffers_arb =
             nullptr;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pglBindBufferARB = nullptr;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pglBufferDataARB =
+    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb =
+            nullptr;  // VBO Bind Procedure
+    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb =
             nullptr;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC pglBufferSubDataARB =
+    PFNGLBUFFERSUBDATAARBPROC pgl_buffer_sub_data_arb =
             nullptr;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC pglDeleteBuffersARB =
+    PFNGLDELETEBUFFERSARBPROC pgl_delete_buffers_arb =
             nullptr;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC pglGetBufferParameterivARB =
+    PFNGLGETBUFFERPARAMETERIVARBPROC pgl_get_buffer_parameteriv_arb =
             nullptr;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pglMapBufferARB = nullptr;  // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pglUnmapBufferARB =
+    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb = nullptr;  // map VBO procedure
+    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb =
             nullptr;  // unmap VBO procedure
     this->prepTerrain();
     this->shader = new Shader();
@@ -101,9 +102,9 @@ GLuint Water::LoadTexture(const char* filename, int width, int height) {
 }
 
 void Water::draw() {
-    int SIZE = this->size;
-    int SCALE = this->scale;
-    int BUFFERSIZE = this->triStripBufferSize;
+    int size = this->size;
+    int scale = this->scale;
+    int buffersize = this->triStripBufferSize;
 
     this->shader->bind();
     glEnable(GL_LIGHTING);  // NOT PART OF SHADER CODE
@@ -137,13 +138,13 @@ void Water::draw() {
     this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexVBOId);
     glVertexPointer(3, GL_FLOAT, 0, nullptr);
     glNormalPointer(
-            GL_FLOAT, 0, reinterpret_cast<void*>(BUFFERSIZE * sizeof(Vertex)));
+            GL_FLOAT, 0, reinterpret_cast<void*>(buffersize * sizeof(Vertex)));
     glTexCoordPointer(2,
                       GL_FLOAT,
                       0,
                       reinterpret_cast<void*>(
-                              BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal))));
-    glDrawArrays(GL_TRIANGLES, 0, BUFFERSIZE);
+                              buffersize * (sizeof(Vertex) + sizeof(Normal))));
+    glDrawArrays(GL_TRIANGLES, 0, buffersize);
     glDisableClientState(GL_VERTEX_ARRAY);         // Disable Vertex Arrays
     glDisableClientState(GL_NORMAL_ARRAY);         // Disable Vertex Arrays
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);  // Disable Texture Arrays
@@ -180,42 +181,42 @@ void Water::calcAverageofSixNormals(Vertex* v_0,
                                     GLfloat y6,
                                     GLfloat z6,
                                     Normal* n) {
-    GLfloat u_1X = x1 - v_0->coordX;
-    GLfloat u_1Y = y1 - v_0->coordY;
-    GLfloat u_1Z = z1 - v_0->coordZ;
-    GLfloat u_2X = x2 - v_0->coordX;
-    GLfloat u_2Y = y2 - v_0->coordY;
-    GLfloat u_2Z = z2 - v_0->coordZ;
-    GLfloat u_3X = x3 - v_0->coordX;
-    GLfloat u_3Y = y3 - v_0->coordY;
-    GLfloat u_3Z = z3 - v_0->coordZ;
-    GLfloat u_4X = x4 - v_0->coordX;
-    GLfloat u_4Y = y4 - v_0->coordY;
-    GLfloat u_4Z = z4 - v_0->coordZ;
-    GLfloat u_5X = x5 - v_0->coordX;
-    GLfloat u_5Y = y5 - v_0->coordY;
-    GLfloat u_5Z = z5 - v_0->coordZ;
-    GLfloat u_6X = x6 - v_0->coordX;
-    GLfloat u_6Y = y6 - v_0->coordY;
-    GLfloat u_6Z = z6 - v_0->coordZ;
-    n->compoX += u_6Y * u_1Z - u_1Y * u_6Z;
-    n->compoY += u_6Z * u_1X - u_6X * u_1Z;
-    n->compoZ += u_6X * u_1Y - u_1X * u_6Y;
-    n->compoX += u_1Y * u_2Z - u_2Y * u_1Z;
-    n->compoY += u_1Z * u_2X - u_1X * u_2Z;
-    n->compoZ += u_1X * u_2Y - u_2X * u_1Y;
-    n->compoX += u_2Y * u_3Z - u_3Y * u_2Z;
-    n->compoY += u_2Z * u_3X - u_2X * u_3Z;
-    n->compoZ += u_2X * u_3Y - u_3X * u_2Y;
-    n->compoX += u_3Y * u_4Z - u_4Y * u_3Z;
-    n->compoY += u_3Z * u_4X - u_3X * u_4Z;
-    n->compoZ += u_3X * u_4Y - u_4X * u_3Y;
-    n->compoX += u_4Y * u_5Z - u_5Y * u_4Z;
-    n->compoY += u_4Z * u_5X - u_4X * u_5Z;
-    n->compoZ += u_4X * u_5Y - u_5X * u_4Y;
-    n->compoX += u_5Y * u_6Z - u_6Y * u_5Z;
-    n->compoY += u_5Z * u_6X - u_5X * u_6Z;
-    n->compoZ += u_5X * u_6Y - u_6X * u_5Y;
+    GLfloat u_1_x = x1 - v_0->coordX;
+    GLfloat u_1_y = y1 - v_0->coordY;
+    GLfloat u_1_z = z1 - v_0->coordZ;
+    GLfloat u_2_x = x2 - v_0->coordX;
+    GLfloat u_2_y = y2 - v_0->coordY;
+    GLfloat u_2_z = z2 - v_0->coordZ;
+    GLfloat u_3_x = x3 - v_0->coordX;
+    GLfloat u_3_y = y3 - v_0->coordY;
+    GLfloat u_3_z = z3 - v_0->coordZ;
+    GLfloat u_4_x = x4 - v_0->coordX;
+    GLfloat u_4_y = y4 - v_0->coordY;
+    GLfloat u_4_z = z4 - v_0->coordZ;
+    GLfloat u_5_x = x5 - v_0->coordX;
+    GLfloat u_5_y = y5 - v_0->coordY;
+    GLfloat u_5_z = z5 - v_0->coordZ;
+    GLfloat u_6_x = x6 - v_0->coordX;
+    GLfloat u_6_y = y6 - v_0->coordY;
+    GLfloat u_6_z = z6 - v_0->coordZ;
+    n->compoX += u_6_y * u_1_z - u_1_y * u_6_z;
+    n->compoY += u_6_z * u_1_x - u_6_x * u_1_z;
+    n->compoZ += u_6_x * u_1_y - u_1_x * u_6_y;
+    n->compoX += u_1_y * u_2_z - u_2_y * u_1_z;
+    n->compoY += u_1_z * u_2_x - u_1_x * u_2_z;
+    n->compoZ += u_1_x * u_2_y - u_2_x * u_1_y;
+    n->compoX += u_2_y * u_3_z - u_3_y * u_2_z;
+    n->compoY += u_2_z * u_3_x - u_2_x * u_3_z;
+    n->compoZ += u_2_x * u_3_y - u_3_x * u_2_y;
+    n->compoX += u_3_y * u_4_z - u_4_y * u_3_z;
+    n->compoY += u_3_z * u_4_x - u_3_x * u_4_z;
+    n->compoZ += u_3_x * u_4_y - u_4_x * u_3_y;
+    n->compoX += u_4_y * u_5_z - u_5_y * u_4_z;
+    n->compoY += u_4_z * u_5_x - u_4_x * u_5_z;
+    n->compoZ += u_4_x * u_5_y - u_5_x * u_4_y;
+    n->compoX += u_5_y * u_6_z - u_6_y * u_5_z;
+    n->compoY += u_5_z * u_6_x - u_5_x * u_6_z;
+    n->compoZ += u_5_x * u_6_y - u_6_x * u_5_y;
     n->compoX /= 6;
     n->compoY /= 6;
     n->compoZ /= 6;
@@ -294,9 +295,9 @@ void Water::prepTerrain() {
 }
 
 void Water::prepareData() {
-    int BUFFERSIZE = this->triStripBufferSize;
-    int SIZE = this->size;
-    int SCALE = this->scale;
+    int buffersize = this->triStripBufferSize;
+    int size = this->size;
+    int scale = this->scale;
 
     //
     // 				v_k
@@ -309,18 +310,18 @@ void Water::prepareData() {
     //	v_j			v_y
     //	v_x
     int index = 0;
-    int indexNormals = 0;
-    int indexTexture = 0;
-    for (int i = 0; i < SIZE - 1; i++) {
-        for (int j = 0; j < SIZE - 1; j++) {
+    int index_normals = 0;
+    int index_texture = 0;
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1; j++) {
             /************************************************************/
             /*	V_I -- N_I		                            */
             /************************************************************/
-            Vertex v_i(j * SCALE, surfaceheight[i][j] /*SCALE*/, i * SCALE);
+            Vertex v_i(j * scale, surfaceheight[i][j] /*SCALE*/, i * scale);
             this->vertices[index++] = v_i;
-            TexCoord t_i(i / (static_cast<float>(SIZE) - 1),
-                         (j) / (static_cast<float>(SIZE) - 1));
-            this->tex_coord[indexTexture++] = t_i;
+            TexCoord t_i(i / (static_cast<float>(size) - 1),
+                         (j) / (static_cast<float>(size) - 1));
+            this->tex_coord[index_texture++] = t_i;
             Normal n_i(0, 0, 0);
             if (i == 0 && j == 0) {
                 this->calcAverageofSixNormals(&v_i,
@@ -407,19 +408,19 @@ void Water::prepareData() {
                                               static_cast<GLfloat>(i),
                                               &n_i);
             }
-            this->normals[indexNormals++] = n_i;
+            this->normals[index_normals++] = n_i;
             /************************************************************/
             /*	V_J -- N_J		                 	    */
             /************************************************************/
-            Vertex v_j(j * SCALE,
+            Vertex v_j(j * scale,
                        surfaceheight[i + 1][j] /*SCALE*/,
-                       (i + 1) * SCALE);
+                       (i + 1) * scale);
             this->vertices[index++] = v_j;
-            TexCoord t_j((i + 1) / (static_cast<float>(SIZE) - 1),
-                         (j) / (static_cast<float>(SIZE) - 1));
-            this->tex_coord[indexTexture++] = t_j;
+            TexCoord t_j((i + 1) / (static_cast<float>(size) - 1),
+                         (j) / (static_cast<float>(size) - 1));
+            this->tex_coord[index_texture++] = t_j;
             Normal n_j(0, 0, 0);
-            if (i == SIZE - 2 && j == 0) {
+            if (i == size - 2 && j == 0) {
                 this->calcAverageofSixNormals(&v_j,
                                               static_cast<GLfloat>(j + 1),
                                               surfaceheight[i][j + 1],
@@ -461,7 +462,7 @@ void Water::prepareData() {
                                               surfaceheight[i + 1][j + 1],
                                               static_cast<GLfloat>(i + 1),
                                               &n_j);
-            } else if (i == SIZE - 2) {
+            } else if (i == size - 2) {
                 this->calcAverageofSixNormals(&v_j,
                                               static_cast<GLfloat>(j) + 1,
                                               surfaceheight[i][j + 1],
@@ -504,19 +505,19 @@ void Water::prepareData() {
                                               static_cast<GLfloat>(i + 1),
                                               &n_j);
             }
-            this->normals[indexNormals++] = n_j;
+            this->normals[index_normals++] = n_j;
             /************************************************************/
             /*	V_K -- N_K					    */
             /************************************************************/
-            Vertex v_k((j + 1) * SCALE,
+            Vertex v_k((j + 1) * scale,
                        surfaceheight[i][j + 1] /*SCALE*/,
-                       (i)*SCALE);
+                       (i)*scale);
             this->vertices[index++] = v_k;
-            TexCoord t_k(i / (static_cast<float>(SIZE) - 1),
-                         (j + 1) / (static_cast<float>(SIZE) - 1));
-            this->tex_coord[indexTexture++] = t_k;
+            TexCoord t_k(i / (static_cast<float>(size) - 1),
+                         (j + 1) / (static_cast<float>(size) - 1));
+            this->tex_coord[index_texture++] = t_k;
             Normal n_k(0, 0, 0);
-            if (i == 0 && j == SIZE - 2) {
+            if (i == 0 && j == size - 2) {
                 this->calcAverageofSixNormals(&v_k,
                                               v_k.coordX,
                                               v_k.coordY,
@@ -558,7 +559,7 @@ void Water::prepareData() {
                                               surfaceheight[i][j + 2],
                                               static_cast<GLfloat>(i),
                                               &n_k);
-            } else if (j == SIZE - 2) {
+            } else if (j == size - 2) {
                 this->calcAverageofSixNormals(&v_k,
                                               v_i.coordX,
                                               v_i.coordY,
@@ -601,19 +602,19 @@ void Water::prepareData() {
                                               static_cast<GLfloat>(i),
                                               &n_k);
             }
-            this->normals[indexNormals++] = n_k;
+            this->normals[index_normals++] = n_k;
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)	            */
             /************************************************************/
-            Vertex v_x(j * SCALE,
+            Vertex v_x(j * scale,
                        surfaceheight[i + 1][j] /*SCALE*/,
-                       (i + 1) * SCALE);
+                       (i + 1) * scale);
             this->vertices[index++] = v_x;
-            TexCoord t_x((i + 1) / (static_cast<float>(SIZE) - 1),
-                         (j) / (static_cast<float>(SIZE) - 1));
-            this->tex_coord[indexTexture++] = t_x;
+            TexCoord t_x((i + 1) / (static_cast<float>(size) - 1),
+                         (j) / (static_cast<float>(size) - 1));
+            this->tex_coord[index_texture++] = t_x;
             Normal n_x(0, 0, 0);
-            if (i == SIZE - 2 && j == 0) {
+            if (i == size - 2 && j == 0) {
                 this->calcAverageofSixNormals(&v_x,
                                               static_cast<GLfloat>(j + 1),
                                               surfaceheight[i][j + 1],
@@ -655,7 +656,7 @@ void Water::prepareData() {
                                               surfaceheight[i + 1][j + 1],
                                               static_cast<GLfloat>(i + 1),
                                               &n_x);
-            } else if (i == SIZE - 2) {
+            } else if (i == size - 2) {
                 this->calcAverageofSixNormals(&v_x,
                                               static_cast<GLfloat>(j) + 1,
                                               surfaceheight[i][j + 1],
@@ -698,20 +699,20 @@ void Water::prepareData() {
                                               static_cast<GLfloat>(i + 1),
                                               &n_x);
             }
-            this->normals[indexNormals++] = n_x;
+            this->normals[index_normals++] = n_x;
 
             /************************************************************/
             /*	V_Y -- N_Y					    */
             /************************************************************/
-            Vertex v_y((j + 1) * SCALE,
+            Vertex v_y((j + 1) * scale,
                        surfaceheight[i + 1][j + 1] /*SCALE*/,
-                       (i + 1) * SCALE);
+                       (i + 1) * scale);
             this->vertices[index++] = v_y;
-            TexCoord t_y((i + 1) / (static_cast<float>(SIZE) - 1),
-                         (j + 1) / (static_cast<float>(SIZE) - 1));
-            this->tex_coord[indexTexture++] = t_y;
+            TexCoord t_y((i + 1) / (static_cast<float>(size) - 1),
+                         (j + 1) / (static_cast<float>(size) - 1));
+            this->tex_coord[index_texture++] = t_y;
             Normal n_y(0, 0, 0);
-            if (i == SIZE - 2 && j == SIZE - 2) {
+            if (i == size - 2 && j == size - 2) {
                 this->calcAverageofSixNormals(&v_y,
                                               v_y.coordX,
                                               v_y.coordY,
@@ -732,7 +733,7 @@ void Water::prepareData() {
                                               v_y.coordY,
                                               v_y.coordZ,
                                               &n_y);
-            } else if (i == SIZE - 2) {
+            } else if (i == size - 2) {
                 this->calcAverageofSixNormals(&v_y,
                                               static_cast<GLfloat>(j + 2),
                                               surfaceheight[i][j + 2],
@@ -753,7 +754,7 @@ void Water::prepareData() {
                                               surfaceheight[i + 1][j + 2],
                                               static_cast<GLfloat>(i + 1),
                                               &n_y);
-            } else if (j == SIZE - 2) {
+            } else if (j == size - 2) {
                 this->calcAverageofSixNormals(&v_y,
                                               v_y.coordX,
                                               v_y.coordY,
@@ -796,19 +797,19 @@ void Water::prepareData() {
                                               static_cast<GLfloat>(i + 1),
                                               &n_y);
             }
-            this->normals[indexNormals++] = n_y;
+            this->normals[index_normals++] = n_y;
             /************************************************************/
             /*	V_Z -- N_Z					    */
             /************************************************************/
-            Vertex v_z((j + 1) * SCALE,
+            Vertex v_z((j + 1) * scale,
                        surfaceheight[i][j + 1] /*SCALE*/,
-                       (i)*SCALE);
+                       (i)*scale);
             this->vertices[index++] = v_z;
-            TexCoord t_z(i / (static_cast<float>(SIZE) - 1),
-                         (j + 1) / (static_cast<float>(SIZE) - 1));
-            this->tex_coord[indexTexture++] = t_z;
+            TexCoord t_z(i / (static_cast<float>(size) - 1),
+                         (j + 1) / (static_cast<float>(size) - 1));
+            this->tex_coord[index_texture++] = t_z;
             Normal n_z(0, 0, 0);
-            if (i == 0 && j == SIZE - 2) {
+            if (i == 0 && j == size - 2) {
                 this->calcAverageofSixNormals(&v_z,
                                               v_z.coordX,
                                               v_z.coordY,
@@ -850,7 +851,7 @@ void Water::prepareData() {
                                               surfaceheight[i][j + 2],
                                               static_cast<GLfloat>(i),
                                               &n_z);
-            } else if (j == SIZE - 2) {
+            } else if (j == size - 2) {
                 this->calcAverageofSixNormals(&v_z,
                                               v_i.coordX,
                                               v_i.coordY,
@@ -893,26 +894,26 @@ void Water::prepareData() {
                                               static_cast<GLfloat>(i),
                                               &n_z);
             }
-            this->normals[indexNormals++] = n_z;
+            this->normals[index_normals++] = n_z;
         }
     }
     this->pglGenBuffersARB(1, &vertexVBOId);  // Create VBO for Vertices
     this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexVBOId);
     this->pglBufferDataARB(
             GL_ARRAY_BUFFER_ARB,
-            BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
+            buffersize * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
             nullptr,
             GL_DYNAMIC_DRAW_ARB);
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               0,
-                              BUFFERSIZE * sizeof(Vertex),
+                              buffersize * sizeof(Vertex),
                               this->vertices.data());
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                              BUFFERSIZE * sizeof(Vertex),
-                              BUFFERSIZE * sizeof(Normal),
+                              buffersize * sizeof(Vertex),
+                              buffersize * sizeof(Normal),
                               this->normals.data());
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                              BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal)),
-                              BUFFERSIZE * sizeof(TexCoord),
+                              buffersize * (sizeof(Vertex) + sizeof(Normal)),
+                              buffersize * sizeof(TexCoord),
                               this->tex_coord.data());
 }

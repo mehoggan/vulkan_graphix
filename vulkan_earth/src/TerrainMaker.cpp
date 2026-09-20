@@ -25,19 +25,20 @@ TerrainMaker::TerrainMaker(int iScale, int iSize) {
     this->triStripBufferSize = (this->size - 1) * (this->size - 1) * 6;
     this->prepTerrain();
     this->initData();
-    PFNGLGENBUFFERSARBPROC pglGenBuffersARB =
+    PFNGLGENBUFFERSARBPROC pgl_gen_buffers_arb =
             nullptr;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pglBindBufferARB = nullptr;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pglBufferDataARB =
+    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb =
+            nullptr;  // VBO Bind Procedure
+    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb =
             nullptr;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC pglBufferSubDataARB =
+    PFNGLBUFFERSUBDATAARBPROC pgl_buffer_sub_data_arb =
             nullptr;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC pglDeleteBuffersARB =
+    PFNGLDELETEBUFFERSARBPROC pgl_delete_buffers_arb =
             nullptr;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC pglGetBufferParameterivARB =
+    PFNGLGETBUFFERPARAMETERIVARBPROC pgl_get_buffer_parameteriv_arb =
             nullptr;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pglMapBufferARB = nullptr;  // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pglUnmapBufferARB =
+    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb = nullptr;  // map VBO procedure
+    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb =
             nullptr;  // unmap VBO procedure
 
     this->shader = new Shader();
@@ -115,9 +116,9 @@ GLuint TerrainMaker::LoadTexture(const char* filename, int width, int height) {
 }
 
 void TerrainMaker::draw() {
-    int SIZE = this->size;
-    int SCALE = this->scale;
-    int BUFFERSIZE = this->triStripBufferSize;
+    int size = this->size;
+    int scale = this->scale;
+    int buffersize = this->triStripBufferSize;
     glEnable(GL_COLOR_MATERIAL);
 
     if (wireframeActive) {
@@ -126,7 +127,7 @@ void TerrainMaker::draw() {
         glEnableClientState(GL_VERTEX_ARRAY);
         this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexVBOId);
         glVertexPointer(3, GL_FLOAT, 0, nullptr);
-        glDrawArrays(GL_TRIANGLES, 0, BUFFERSIZE);
+        glDrawArrays(GL_TRIANGLES, 0, buffersize);
         glDisableClientState(GL_VERTEX_ARRAY);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glColor4f(1, 1, 1, .75);
@@ -181,14 +182,14 @@ void TerrainMaker::draw() {
         glVertexPointer(3, GL_FLOAT, 0, nullptr);
         glNormalPointer(GL_FLOAT,
                         0,
-                        reinterpret_cast<void*>(BUFFERSIZE * sizeof(Vertex)));
+                        reinterpret_cast<void*>(buffersize * sizeof(Vertex)));
         glTexCoordPointer(
                 2,
                 GL_FLOAT,
                 0,
-                reinterpret_cast<void*>(BUFFERSIZE *
+                reinterpret_cast<void*>(buffersize *
                                         (sizeof(Vertex) + sizeof(Normal))));
-        glDrawArrays(GL_TRIANGLES, 0, BUFFERSIZE);
+        glDrawArrays(GL_TRIANGLES, 0, buffersize);
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -293,14 +294,14 @@ void TerrainMaker::prepareData(int steps,
                                float radius,
                                int randomJump,
                                int smoothness) {
-    int chunkSize = this->size / 2;
+    int chunk_size = this->size / 2;
     this->steps = steps;
     this->increase = increase;
     this->radius = radius;
     this->randomJump = randomJump;
-    int BUFFERSIZE = this->triStripBufferSize;
-    int SIZE = this->size;
-    int SCALE = this->scale;
+    int buffersize = this->triStripBufferSize;
+    int size = this->size;
+    int scale = this->scale;
     this->terrainGen(steps, increase, radius, randomJump);
     for (int i = -1; i < smoothness; i++) this->terrainSmoothe(10);
 
@@ -315,20 +316,20 @@ void TerrainMaker::prepareData(int steps,
     //	v_j			v_y
     //	v_x
     int index = 0;
-    int indexNormals = 0;
-    int indexTexture = 0;
-    for (int i = 0; i < SIZE - 1; i++) {
-        for (int j = 0; j < SIZE - 1; j++) {
+    int index_normals = 0;
+    int index_texture = 0;
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1; j++) {
             /************************************************************/
             /*	V_I -- N_I												*/
             /************************************************************/
-            Vertex v_i(j * SCALE, this->th[i][j] /*SCALE*/, i * SCALE);
+            Vertex v_i(j * scale, this->th[i][j] /*SCALE*/, i * scale);
             this->vertices[index++] = v_i;
-            TexCoord t_i((static_cast<float>(i % (chunkSize - 1))) /
-                                 static_cast<float>(chunkSize - 1),
-                         (static_cast<float>(j % (chunkSize - 1))) /
-                                 static_cast<float>(chunkSize - 1));
-            this->tex_coord[indexTexture++] = t_i;
+            TexCoord t_i((static_cast<float>(i % (chunk_size - 1))) /
+                                 static_cast<float>(chunk_size - 1),
+                         (static_cast<float>(j % (chunk_size - 1))) /
+                                 static_cast<float>(chunk_size - 1));
+            this->tex_coord[index_texture++] = t_i;
             Normal n_i(0, 0, 0);
             if (i == 0 && j == 0) {
             } else if (i == 0) {
@@ -336,108 +337,108 @@ void TerrainMaker::prepareData(int steps,
             } else {
                 smoothShadeNormal(j, i, &n_i);
             }
-            this->normals[indexNormals++] = n_i;
+            this->normals[index_normals++] = n_i;
 
             /************************************************************/
             /*	V_J -- N_J												*/
             /************************************************************/
             Vertex v_j(
-                    j * SCALE, this->th[i + 1][j] /*SCALE*/, (i + 1) * SCALE);
+                    j * scale, this->th[i + 1][j] /*SCALE*/, (i + 1) * scale);
             this->vertices[index++] = v_j;
-            TexCoord t_j((static_cast<float>(i % (chunkSize - 1)) + 1) /
-                                 static_cast<float>(chunkSize - 1),
-                         (static_cast<float>(j % (chunkSize - 1))) /
-                                 static_cast<float>(chunkSize - 1));
-            this->tex_coord[indexTexture++] = t_j;
+            TexCoord t_j((static_cast<float>(i % (chunk_size - 1)) + 1) /
+                                 static_cast<float>(chunk_size - 1),
+                         (static_cast<float>(j % (chunk_size - 1))) /
+                                 static_cast<float>(chunk_size - 1));
+            this->tex_coord[index_texture++] = t_j;
             Normal n_j(0, 0, 0);
-            if (i == SIZE - 2 && j == 0) {
+            if (i == size - 2 && j == 0) {
             } else if (j == 0) {
-            } else if (i == SIZE - 2) {
+            } else if (i == size - 2) {
             } else {
                 smoothShadeNormal(j, i + 1, &n_j);
             }
-            this->normals[indexNormals++] = n_j;
+            this->normals[index_normals++] = n_j;
 
             /************************************************************/
             /*	V_K -- N_K												*/
             /************************************************************/
             Vertex v_k(
-                    (j + 1) * SCALE, this->th[i][j + 1] /*SCALE*/, (i)*SCALE);
+                    (j + 1) * scale, this->th[i][j + 1] /*SCALE*/, (i)*scale);
             this->vertices[index++] = v_k;
-            TexCoord t_k((static_cast<float>(i % (chunkSize - 1))) /
-                                 static_cast<float>(chunkSize - 1),
-                         (static_cast<float>(j % (chunkSize - 1)) + 1) /
-                                 static_cast<float>(chunkSize - 1));
-            this->tex_coord[indexTexture++] = t_k;
+            TexCoord t_k((static_cast<float>(i % (chunk_size - 1))) /
+                                 static_cast<float>(chunk_size - 1),
+                         (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                                 static_cast<float>(chunk_size - 1));
+            this->tex_coord[index_texture++] = t_k;
             Normal n_k(0, 0, 0);
-            if (i == 0 && j == SIZE - 2) {
+            if (i == 0 && j == size - 2) {
             } else if (i == 0) {
-            } else if (j == SIZE - 2) {
+            } else if (j == size - 2) {
             } else {
                 smoothShadeNormal(j + 1, i, &n_k);
             }
-            this->normals[indexNormals++] = n_k;
+            this->normals[index_normals++] = n_k;
 
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)							*/
             /************************************************************/
             Vertex v_x(
-                    j * SCALE, this->th[i + 1][j] /*SCALE*/, (i + 1) * SCALE);
+                    j * scale, this->th[i + 1][j] /*SCALE*/, (i + 1) * scale);
             this->vertices[index++] = v_x;
-            TexCoord t_x((static_cast<float>(i % (chunkSize - 1)) + 1) /
-                                 static_cast<float>(chunkSize - 1),
-                         (static_cast<float>(j % (chunkSize - 1))) /
-                                 static_cast<float>(chunkSize - 1));
-            this->tex_coord[indexTexture++] = t_x;
+            TexCoord t_x((static_cast<float>(i % (chunk_size - 1)) + 1) /
+                                 static_cast<float>(chunk_size - 1),
+                         (static_cast<float>(j % (chunk_size - 1))) /
+                                 static_cast<float>(chunk_size - 1));
+            this->tex_coord[index_texture++] = t_x;
             Normal n_x(0, 0, 0);
-            if (i == SIZE - 2 && j == 0) {
+            if (i == size - 2 && j == 0) {
             } else if (j == 0) {
-            } else if (i == SIZE - 2) {
+            } else if (i == size - 2) {
             } else {
                 smoothShadeNormal(j, i + 1, &n_x);
             }
-            this->normals[indexNormals++] = n_x;
+            this->normals[index_normals++] = n_x;
 
             /************************************************************/
             /*	V_Y -- N_Y												*/
             /************************************************************/
-            Vertex v_y((j + 1) * SCALE,
+            Vertex v_y((j + 1) * scale,
                        this->th[i + 1][j + 1] /*SCALE*/,
-                       (i + 1) * SCALE);
+                       (i + 1) * scale);
             this->vertices[index++] = v_y;
-            TexCoord t_y((static_cast<float>(i % (chunkSize - 1)) + 1) /
-                                 static_cast<float>(chunkSize - 1),
-                         (static_cast<float>(j % (chunkSize - 1)) + 1) /
-                                 static_cast<float>(chunkSize - 1));
-            this->tex_coord[indexTexture++] = t_y;
+            TexCoord t_y((static_cast<float>(i % (chunk_size - 1)) + 1) /
+                                 static_cast<float>(chunk_size - 1),
+                         (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                                 static_cast<float>(chunk_size - 1));
+            this->tex_coord[index_texture++] = t_y;
             Normal n_y(0, 0, 0);
-            if (i == SIZE - 2 && j == SIZE - 2) {
-            } else if (i == SIZE - 2) {
-            } else if (j == SIZE - 2) {
+            if (i == size - 2 && j == size - 2) {
+            } else if (i == size - 2) {
+            } else if (j == size - 2) {
             } else {
                 smoothShadeNormal(j + 1, i + 1, &n_y);
             }
-            this->normals[indexNormals++] = n_y;
+            this->normals[index_normals++] = n_y;
 
             /************************************************************/
             /*	V_Z -- N_Z												*/
             /************************************************************/
             Vertex v_z(
-                    (j + 1) * SCALE, this->th[i][j + 1] /*SCALE*/, (i)*SCALE);
+                    (j + 1) * scale, this->th[i][j + 1] /*SCALE*/, (i)*scale);
             this->vertices[index++] = v_z;
-            TexCoord t_z((static_cast<float>(i % (chunkSize - 1))) /
-                                 static_cast<float>(chunkSize - 1),
-                         (static_cast<float>(j % (chunkSize - 1)) + 1) /
-                                 static_cast<float>(chunkSize - 1));
-            this->tex_coord[indexTexture++] = t_z;
+            TexCoord t_z((static_cast<float>(i % (chunk_size - 1))) /
+                                 static_cast<float>(chunk_size - 1),
+                         (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                                 static_cast<float>(chunk_size - 1));
+            this->tex_coord[index_texture++] = t_z;
             Normal n_z(0, 0, 0);
-            if (i == 0 && j == SIZE - 2) {
+            if (i == 0 && j == size - 2) {
             } else if (i == 0) {
-            } else if (j == SIZE - 2) {
+            } else if (j == size - 2) {
             } else {
                 smoothShadeNormal(j + 1, i, &n_z);
             }
-            this->normals[indexNormals++] = n_z;
+            this->normals[index_normals++] = n_z;
         }
     }
 
@@ -445,23 +446,23 @@ void TerrainMaker::prepareData(int steps,
     this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexVBOId);
     this->pglBufferDataARB(
             GL_ARRAY_BUFFER_ARB,
-            BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
+            buffersize * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
             nullptr,
             GL_DYNAMIC_DRAW_ARB);
 
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               0,
-                              BUFFERSIZE * sizeof(Vertex),
+                              buffersize * sizeof(Vertex),
                               this->vertices.data());
 
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                              BUFFERSIZE * sizeof(Vertex),
-                              BUFFERSIZE * sizeof(Normal),
+                              buffersize * sizeof(Vertex),
+                              buffersize * sizeof(Normal),
                               this->normals.data());
 
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                              BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal)),
-                              BUFFERSIZE * sizeof(TexCoord),
+                              buffersize * (sizeof(Vertex) + sizeof(Normal)),
+                              buffersize * sizeof(TexCoord),
                               this->tex_coord.data());
 }
 
@@ -536,8 +537,8 @@ void TerrainMaker::terrainGen(int steps,
                               int increase,
                               float radius,
                               int randomJump) {
-    float currentX = this->size / 2;
-    float currentY = this->size / 2;
+    float current_x = this->size / 2;
+    float current_y = this->size / 2;
     float distance = 0;
 
     for (int i = 0; i < this->size; i++) {
@@ -546,39 +547,39 @@ void TerrainMaker::terrainGen(int steps,
         }
     }
 
-    for (int currentStep = 1; currentStep < steps; currentStep++) {
+    for (int current_step = 1; current_step < steps; current_step++) {
         int random = (rand() % 100);
 
         if (random > randomJump) {
             switch ((rand() % 4)) {
                 case 0:
-                    currentX--;
+                    current_x--;
                     break;
                 case 1:
-                    currentX++;
+                    current_x++;
                     break;
                 case 2:
-                    currentY--;
+                    current_y--;
                     break;
                 case 3:
-                    currentY++;
+                    current_y++;
                     break;
             }
-            if (((currentX >= this->size) || (currentX < 0)) ||
-                ((currentY >= this->size) || (currentY < 0))) {
-                currentX = (rand() % this->size);
-                currentY = (rand() % this->size);
+            if (((current_x >= this->size) || (current_x < 0)) ||
+                ((current_y >= this->size) || (current_y < 0))) {
+                current_x = (rand() % this->size);
+                current_y = (rand() % this->size);
             }
         } else {
-            currentX = (rand() % this->size);
-            currentY = (rand() % this->size);
+            current_x = (rand() % this->size);
+            current_y = (rand() % this->size);
         }
 
-        for (int x = currentX - radius; x < currentX + radius; x++)
-            for (int y = currentY - radius; y < currentY + radius; y++) {
+        for (int x = current_x - radius; x < current_x + radius; x++)
+            for (int y = current_y - radius; y < current_y + radius; y++) {
                 distance = static_cast<float>(
-                        sqrt(pow(static_cast<double>(currentX - x), 2) +
-                             pow(static_cast<double>(currentY) - y, 2)));
+                        sqrt(pow(static_cast<double>(current_x - x), 2) +
+                             pow(static_cast<double>(current_y) - y, 2)));
                 if ((distance < radius) &&
                     ((x >= 0 && x < this->size) && (y >= 0 && y < this->size)))
                     th[x][y] += increase;
@@ -743,46 +744,46 @@ Normal TerrainMaker::getTriangleNormal(float x, float z) {
 }
 
 Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
-    int nX = static_cast<int>(x / this->scale);
-    int nZ = static_cast<int>(z / this->scale);
-    float dX = x / this->scale - nX;
-    float dZ = z / this->scale - nZ;
+    int n_x = static_cast<int>(x / this->scale);
+    int n_z = static_cast<int>(z / this->scale);
+    float d_x = x / this->scale - n_x;
+    float d_z = z / this->scale - n_z;
 
-    if (dX > 0) {
-        if (abs(dX) > 0.5) {
-            nX++;
+    if (d_x > 0) {
+        if (abs(d_x) > 0.5) {
+            n_x++;
         }
     } else {
-        if (abs(dX) < 0.5) {
-            nX++;
+        if (abs(d_x) < 0.5) {
+            n_x++;
         }
     }
-    if (dZ > 0) {
-        if (abs(dZ) > 0.5) {
-            nZ++;
+    if (d_z > 0) {
+        if (abs(d_z) > 0.5) {
+            n_z++;
         }
     } else {
-        if (abs(dZ) < 0.5) {
-            nZ++;
+        if (abs(d_z) < 0.5) {
+            n_z++;
         }
     }
-    float N[3];
-    float V[3] = {0,
-                  static_cast<float>(th[nZ][nX + 1] - th[nZ][nX]),
+    float n[3];
+    float v[3] = {0,
+                  static_cast<float>(th[n_z][n_x + 1] - th[n_z][n_x]),
                   static_cast<float>(this->scale)};
-    float U[3] = {static_cast<float>(this->scale),
-                  static_cast<float>(th[nZ + 1][nX] - th[nZ][nX]),
+    float u[3] = {static_cast<float>(this->scale),
+                  static_cast<float>(th[n_z + 1][n_x] - th[n_z][n_x]),
                   0};
 
-    N[0] = (V[1] * U[2] - U[1] * V[2]);
-    N[1] = (U[0] * V[2] - V[0] * U[2]);
-    N[2] = (V[0] * U[1] - U[0] * V[1]);
+    n[0] = (v[1] * u[2] - u[1] * v[2]);
+    n[1] = (u[0] * v[2] - v[0] * u[2]);
+    n[2] = (v[0] * u[1] - u[0] * v[1]);
 
-    float mag = sqrt(N[0] * N[0] + N[1] * N[1] + N[2] * N[2]);
-    N[0] /= mag;
-    N[1] /= mag;
-    N[2] /= mag;
-    return Normal(N[0], N[1], N[2]);
+    float mag = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+    n[0] /= mag;
+    n[1] /= mag;
+    n[2] /= mag;
+    return Normal(n[0], n[1], n[2]);
     /*int i;
     for(i=0;i<(this->size-1)*(this->size-1)*6;i++){
         if((this->vertices[i].coordX==nX*this->scale)&&(this->vertices[i].coordZ==nZ*this->scale))
@@ -794,30 +795,30 @@ Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
 GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
     if ((x >= 0 && x < (this->size - 1) * this->scale) &&
         (z >= 0 && z < (this->size - 1) * this->scale)) {
-        int vX = static_cast<int>(x / this->scale);
-        int vZ = static_cast<int>(z / this->scale);
-        float dX = x / this->scale - vX;
-        float dZ = z / this->scale - vZ;
+        int v_x = static_cast<int>(x / this->scale);
+        int v_z = static_cast<int>(z / this->scale);
+        float d_x = x / this->scale - v_x;
+        float d_z = z / this->scale - v_z;
 
-        if (dX < 0) {
-            if (abs(dX) < 0.5) {
-                vX++;
+        if (d_x < 0) {
+            if (abs(d_x) < 0.5) {
+                v_x++;
             }
         } else {
-            if (abs(dX) > 0.5) {
-                vX++;
+            if (abs(d_x) > 0.5) {
+                v_x++;
             }
         }
-        if (dZ < 0) {
-            if (abs(dZ) < 0.5) {
-                vZ++;
+        if (d_z < 0) {
+            if (abs(d_z) < 0.5) {
+                v_z++;
             }
         } else {
-            if (abs(dZ) > 0.5) {
-                vZ++;
+            if (abs(d_z) > 0.5) {
+                v_z++;
             }
         }
-        return this->th[vX][vZ];
+        return this->th[v_x][v_z];
     }
     return 0.0;
 }
@@ -844,62 +845,63 @@ void TerrainMaker::collectVerticesForTriangleNormal(
 void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
     int x = static_cast<int>(fx / this->scale);
     int z = static_cast<int>(fz / this->scale);
-    Vertex* bufferPtr = static_cast<Vertex*>(
+    Vertex* buffer_ptr = static_cast<Vertex*>(
             this->pglMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
-    int craterSize = static_cast<int>(blastSize * 1.5);
+    int crater_size = static_cast<int>(blastSize * 1.5);
 
     if (((x >= 0) && (x < size)) && ((z >= 0) && (z < size))) {
-        GLfloat impactY = th[z][x];
-        for (int i = x - craterSize; i < x + craterSize; i++) {
-            for (int j = z - craterSize; j < z + craterSize; j++) {
+        GLfloat impact_y = th[z][x];
+        for (int i = x - crater_size; i < x + crater_size; i++) {
+            for (int j = z - crater_size; j < z + crater_size; j++) {
                 GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
                                                            (z - j) * (z - j)));
                 if ((((i >= 0) && (j >= 0)) &&
                      ((i < this->size) && (j < this->size))) &&
                     (distance <= blastSize)) {
-                    GLfloat xDis, yDis, zDis, radius;
-                    xDis = abs(i - x);
-                    zDis = abs(j - z);
-                    radius = sqrt(xDis * xDis + zDis * zDis);
+                    GLfloat x_dis, y_dis, z_dis, radius;
+                    x_dis = abs(i - x);
+                    z_dis = abs(j - z);
+                    radius = sqrt(x_dis * x_dis + z_dis * z_dis);
 
-                    GLfloat damageDepth = -((sqrt(radius * radius +
-                                                  xDis * xDis + zDis * zDis) -
-                                             blastSize * 2) *
-                                            this->scale / 2);
-                    GLfloat adjustHeight = th[j][i];
-                    if (adjustHeight > (impactY + (damageDepth))) {
-                        adjustHeight -= damageDepth;
-                    } else if (adjustHeight > (impactY - damageDepth)) {
-                        adjustHeight = impactY - damageDepth;
+                    GLfloat damage_depth =
+                            -((sqrt(radius * radius + x_dis * x_dis +
+                                    z_dis * z_dis) -
+                               blastSize * 2) *
+                              this->scale / 2);
+                    GLfloat adjust_height = th[j][i];
+                    if (adjust_height > (impact_y + (damage_depth))) {
+                        adjust_height -= damage_depth;
+                    } else if (adjust_height > (impact_y - damage_depth)) {
+                        adjust_height = impact_y - damage_depth;
                     }
                     // lower vertex height in local th[][]
                     // lower vertex height for the 6 vertices that share the
                     // same location in VBO
-                    th[j][i] = adjustHeight;  // local
+                    th[j][i] = adjust_height;  // local
                     if (i == x && j == z && j > 1 && i > 1) {
-                        adjustHeight =
+                        adjust_height =
                                 (th[j - 1][i] + th[j][i - 1] + th[j][i]) / 3;
                     }
-                    th[j][i] = adjustHeight;  // local
-                    bufferPtr[(j * (this->size - 1) + i) * 6].coordY =
-                            adjustHeight;  // VBO
+                    th[j][i] = adjust_height;  // local
+                    buffer_ptr[(j * (this->size - 1) + i) * 6].coordY =
+                            adjust_height;  // VBO
                     if ((j - 1) > 0) {
-                        bufferPtr[((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordY = adjustHeight;  // VBO
-                        bufferPtr[((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordY = adjustHeight;  // VBO
+                        buffer_ptr[((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                .coordY = adjust_height;  // VBO
+                        buffer_ptr[((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                .coordY = adjust_height;  // VBO
                         if ((i - 1) > 0) {
-                            bufferPtr[((j - 1) * (this->size - 1) + (i - 1)) *
-                                              6 +
-                                      4]
-                                    .coordY = adjustHeight;  // VBO
+                            buffer_ptr[((j - 1) * (this->size - 1) + (i - 1)) *
+                                               6 +
+                                       4]
+                                    .coordY = adjust_height;  // VBO
                         }
                     }
                     if ((i - 1) > 0) {
-                        bufferPtr[((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordY = adjustHeight;  // VBO
-                        bufferPtr[((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordY = adjustHeight;  // VBO
+                        buffer_ptr[((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                .coordY = adjust_height;  // VBO
+                        buffer_ptr[((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                .coordY = adjust_height;  // VBO
                     }
                 }
             }
@@ -907,77 +909,77 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
 
         // adjust normals
 
-        int normalOffset = this->triStripBufferSize;
-        for (int i = x - craterSize; i < x + craterSize; i++) {
-            for (int j = z - craterSize; j < z + craterSize; j++) {
-                Normal adjustNormal;
+        int normal_offset = this->triStripBufferSize;
+        for (int i = x - crater_size; i < x + crater_size; i++) {
+            for (int j = z - crater_size; j < z + crater_size; j++) {
+                Normal adjust_normal;
                 GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
                                                            (z - j) * (z - j)));
                 if ((i >= 0 && j >= 0 && i < this->size && j < this->size) &&
                     (distance <= blastSize)) {
-                    this->smoothShadeNormal(j, i, &adjustNormal);
-                    bufferPtr[normalOffset + (j * (this->size - 1) + i) * 6]
-                            .coordX = adjustNormal.compoX;  // VBO
-                    bufferPtr[normalOffset + (j * (this->size - 1) + i) * 6]
-                            .coordY = adjustNormal.compoY;  // VBO
-                    bufferPtr[normalOffset + (j * (this->size - 1) + i) * 6]
-                            .coordZ = adjustNormal.compoZ;  // VBO
+                    this->smoothShadeNormal(j, i, &adjust_normal);
+                    buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
+                            .coordX = adjust_normal.compoX;  // VBO
+                    buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
+                            .coordY = adjust_normal.compoY;  // VBO
+                    buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
+                            .coordZ = adjust_normal.compoZ;  // VBO
                     if ((j - 1) > 0) {
-                        bufferPtr[normalOffset +
-                                  ((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordX = adjustNormal.compoX;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordY = adjustNormal.compoY;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordZ = adjustNormal.compoZ;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordX = adjustNormal.compoX;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordY = adjustNormal.compoY;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordZ = adjustNormal.compoZ;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                .coordX = adjust_normal.compoX;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                .coordY = adjust_normal.compoY;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                .coordZ = adjust_normal.compoZ;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                .coordX = adjust_normal.compoX;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                .coordY = adjust_normal.compoY;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                .coordZ = adjust_normal.compoZ;  // VBO
                         if ((i - 1) > 0) {
-                            bufferPtr[normalOffset +
-                                      ((j - 1) * (this->size - 1) + (i - 1)) *
-                                              6 +
-                                      4]
-                                    .coordX = adjustNormal.compoX;  // VBO
-                            bufferPtr[normalOffset +
-                                      ((j - 1) * (this->size - 1) + (i - 1)) *
-                                              6 +
-                                      4]
-                                    .coordY = adjustNormal.compoY;  // VBO
-                            bufferPtr[normalOffset +
-                                      ((j - 1) * (this->size - 1) + (i - 1)) *
-                                              6 +
-                                      4]
-                                    .coordZ = adjustNormal.compoZ;  // VBO
+                            buffer_ptr[normal_offset +
+                                       ((j - 1) * (this->size - 1) + (i - 1)) *
+                                               6 +
+                                       4]
+                                    .coordX = adjust_normal.compoX;  // VBO
+                            buffer_ptr[normal_offset +
+                                       ((j - 1) * (this->size - 1) + (i - 1)) *
+                                               6 +
+                                       4]
+                                    .coordY = adjust_normal.compoY;  // VBO
+                            buffer_ptr[normal_offset +
+                                       ((j - 1) * (this->size - 1) + (i - 1)) *
+                                               6 +
+                                       4]
+                                    .coordZ = adjust_normal.compoZ;  // VBO
                         }
                     }
                     if ((i - 1) > 0) {
-                        bufferPtr[normalOffset +
-                                  ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordX = adjustNormal.compoX;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordY = adjustNormal.compoY;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordZ = adjustNormal.compoZ;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordX = adjustNormal.compoX;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordY = adjustNormal.compoY;  // VBO
-                        bufferPtr[normalOffset +
-                                  ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordZ = adjustNormal.compoZ;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                .coordX = adjust_normal.compoX;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                .coordY = adjust_normal.compoY;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                .coordZ = adjust_normal.compoZ;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                .coordX = adjust_normal.compoX;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                .coordY = adjust_normal.compoY;  // VBO
+                        buffer_ptr[normal_offset +
+                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                .coordZ = adjust_normal.compoZ;  // VBO
                     }
                 }
             }

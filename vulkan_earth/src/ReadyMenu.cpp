@@ -192,12 +192,12 @@ ReadyMenu::ReadyMenu(GLfloat width,
             stat = "Speed:";
         else
             stat = "Meh...:";
-        GLfloat statLabelXPos = this->pos[0] - this->width * 0.385;
-        GLfloat statLabelYPos =
+        GLfloat stat_label_x_pos = this->pos[0] - this->width * 0.385;
+        GLfloat stat_label_y_pos =
                 this->pos[1] + this->height * 0.12 - this->height * (i * 0.07);
         this->tankStatLabels[i] = new TextObject(stat,
-                                                 statLabelXPos,
-                                                 statLabelYPos,
+                                                 stat_label_x_pos,
+                                                 stat_label_y_pos,
                                                  (this->pos[2] + 1),
                                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                                  0.0f,
@@ -221,14 +221,14 @@ ReadyMenu::ReadyMenu(GLfloat width,
     }
 
     // STAT IMAGES
-    GLfloat imgStartPosX = this->pos[0] - this->width * 0.325;
+    GLfloat img_start_pos_x = this->pos[0] - this->width * 0.325;
     for (int i = 0; i < NUM_STAT_IMAGES; i++) {
         // For Off Lights
         if (i < 30) {
             // For Power Lights
             if (i < 10) {
                 statImages[i] = new ImageObject(
-                        imgStartPosX + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + this->width * (i % 10) * 0.03,
                         this->pos[1] + height * 0.14 -
                                 this->height * ((i / 10) * 0.07),
                         this->pos[2] + 0.5,
@@ -242,7 +242,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
             // For Armor Lights
             else if (i < 20) {
                 statImages[i] = new ImageObject(
-                        imgStartPosX + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + this->width * (i % 10) * 0.03,
                         this->pos[1] + height * 0.14 -
                                 this->height * ((i / 10) * 0.07),
                         this->pos[2] + 0.5,
@@ -256,7 +256,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
             // For Speed Lights
             else {
                 statImages[i] = new ImageObject(
-                        imgStartPosX + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + this->width * (i % 10) * 0.03,
                         this->pos[1] + height * 0.14 -
                                 this->height * ((i / 10) * 0.07),
                         this->pos[2] + 0.5,
@@ -273,7 +273,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
             // For Power Lights
             if (i < 40) {
                 statImages[i] = new ImageObject(
-                        imgStartPosX + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + this->width * (i % 10) * 0.03,
                         this->pos[1] + height * 0.14 -
                                 this->height * (((i - 30) / 10) * 0.07),
                         this->pos[2] + 1,
@@ -287,7 +287,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
             // For Armor Lights
             else if (i < 50) {
                 statImages[i] = new ImageObject(
-                        imgStartPosX + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + this->width * (i % 10) * 0.03,
                         this->pos[1] + height * 0.14 -
                                 this->height * (((i - 30) / 10) * 0.07),
                         this->pos[2] + 1,
@@ -301,7 +301,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
             // For Speed Lights
             else {
                 statImages[i] = new ImageObject(
-                        imgStartPosX + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + this->width * (i % 10) * 0.03,
                         this->pos[1] + height * 0.14 -
                                 this->height * (((i - 30) / 10) * 0.07),
                         this->pos[2] + 1,
@@ -347,14 +347,14 @@ void ReadyMenu::saveCurrentPlayerData() {
     std::string aitype = this->controlItems[0]->collectData();
     std::string name = this->textField->collectData();
     std::string tank = this->controlItems[1]->collectData();
-    char teamLabel = (this->controlItems[2]->collectData()[0]);
+    char team_label = (this->controlItems[2]->collectData()[0]);
 
     if (this->buttons[0]->isActive()) {
         this->player_factory->updatePlayerBasicStrings(
-                "CPU", aitype, "", teamLabel, tank, currentPlayerIndex);
+                "CPU", aitype, "", team_label, tank, currentPlayerIndex);
     } else {
         this->player_factory->updatePlayerBasicStrings(
-                "HUMAN", "", name, teamLabel, tank, currentPlayerIndex);
+                "HUMAN", "", name, team_label, tank, currentPlayerIndex);
         this->textField->clearTextBuffer();
         this->textField->deactivate();
     }
@@ -404,23 +404,23 @@ void ReadyMenu::updatePageInfo() {
     for (int i = 0; i < NUM_TANK_TYPES; i++) {
         tanks[i]->changeHeadTexture(currentPlayerIndex);
     }
-    std::string playerType =
+    std::string player_type =
             this->player_factory->getPlayer(currentPlayerIndex)
                     ->getPlayer_Type();
 
     // test to see if it's CPU
-    if (playerType == "CPU") {
+    if (player_type == "CPU") {
         this->buttons[0]->pressButton();
         Mix_HaltChannel(0);
         this->buttons[0]->activateSubMenu();
         this->buttons[1]->depressButton();
         this->buttons[1]->deactivateSubMenu();
 
-        std::string aiType =
+        std::string ai_type =
                 this->player_factory->getPlayer(currentPlayerIndex)
                         ->getAI_Type();
         int i = 0;
-        while (this->controlItems[0]->collectData() != aiType) {
+        while (this->controlItems[0]->collectData() != ai_type) {
             this->controlItems[0]->setOptionText(i);
             i++;
         }
@@ -446,10 +446,10 @@ void ReadyMenu::updatePageInfo() {
                 48);
     }
 
-    std::string tankType =
+    std::string tank_type =
             this->player_factory->getPlayer(currentPlayerIndex)->getTankType();
     int i = 0;
-    while (this->controlItems[1]->collectData() != tankType) {
+    while (this->controlItems[1]->collectData() != tank_type) {
         this->controlItems[1]->setOptionText(i);
         i++;
     }
@@ -474,11 +474,11 @@ void ReadyMenu::updatePageInfo() {
 void ReadyMenu::setPlayerPageNum(int i) {
     delete this->playerPageNum;
     this->caption = "Player " + std::to_string(i + 1);
-    GLfloat labelXPos = this->pos[0] - this->width * 0.25;
-    GLfloat labelYPos = this->pos[1] + this->height * 0.4;
+    GLfloat label_x_pos = this->pos[0] - this->width * 0.25;
+    GLfloat label_y_pos = this->pos[1] + this->height * 0.4;
     this->playerPageNum = new TextObject(this->caption,
-                                         labelXPos,
-                                         labelYPos,
+                                         label_x_pos,
+                                         label_y_pos,
                                          (this->pos[2] + 1),
                                          GLUT_BITMAP_TIMES_ROMAN_24,
                                          0.0f,
@@ -995,20 +995,20 @@ void ReadyMenu::draw() {
     glEnable(GL_LIGHT0);
     glPopMatrix();
 
-    int winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    int winHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    int win_width = glutGet(GLUT_WINDOW_WIDTH);
+    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, winWidth, winHeight);
+    glViewport(0, 0, win_width, win_height);
     gluPerspective(
             60.0,
-            static_cast<float>(winWidth) / static_cast<float>(winHeight),
+            static_cast<float>(win_width) / static_cast<float>(win_height),
             1.0,
             1000000.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, winWidth, winHeight);
+    glScissor(0, 0, win_width, win_height);
     glLoadIdentity();
 }
 

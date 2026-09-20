@@ -3,11 +3,11 @@
 #include "VBOShaderLibrary.h"
 #include "macro_crtdbg.h"
 
-const char* TANK_D_NAME = "Panzer";
-const int TANK_D_HP = 1000;
-const int TANK_D_POWER = 9;
-const int TANK_D_ARMOR = 5;
-const int TANK_D_SPEED = 30;
+const char* tank_d_name = "Panzer";
+const int tank_d_hp = 1000;
+const int tank_d_power = 9;
+const int tank_d_armor = 5;
+const int tank_d_speed = 30;
 
 TankD::TankD() = default;
 TankD::TankD(GLfloat x, GLfloat y, GLfloat z) {
@@ -34,9 +34,9 @@ TankD::TankD(GLfloat x, GLfloat y, GLfloat z) {
         this->wheelScale[i] = 50;
     }
 
-    this->power = TANK_D_POWER;
-    this->armor = TANK_D_ARMOR;
-    this->speed = TANK_D_SPEED;
+    this->power = tank_d_power;
+    this->armor = tank_d_armor;
+    this->speed = tank_d_speed;
     this->currentPower = 10;
     this->previousPower = 1000;
     this->previousAngle = 1;
@@ -78,8 +78,8 @@ TankD::~TankD() {
 }
 
 // GETTERS
-int TankD::getBaseHP() { return TANK_D_HP; }
-int TankD::getBasePower() { return TANK_D_POWER; }
-int TankD::getBaseArmor() { return TANK_D_ARMOR; }
-int TankD::getBaseSpeed() { return TANK_D_SPEED; }
-std::string TankD::getName() { return TANK_D_NAME; }
+int TankD::getBaseHP() { return tank_d_hp; }
+int TankD::getBasePower() { return tank_d_power; }
+int TankD::getBaseArmor() { return tank_d_armor; }
+int TankD::getBaseSpeed() { return tank_d_speed; }
+std::string TankD::getName() { return tank_d_name; }

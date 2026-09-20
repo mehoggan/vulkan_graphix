@@ -53,18 +53,18 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     this->optionText = nullptr;
     this->setOptionText(menuState);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->caption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + (this->width / 2) - (realLength / 2);
-    GLfloat labelYPos = this->yPos +
-                        ((this->yPos - (this->yPos + this->height)) / 2) -
-                        this->height / 4;
+    GLfloat label_x_pos = this->xPos + (this->width / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->yPos +
+                          ((this->yPos - (this->yPos + this->height)) / 2) -
+                          this->height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     this->label = new TextObject(this->caption,
-                                 labelXPos,
-                                 labelYPos,
+                                 label_x_pos,
+                                 label_y_pos,
                                  this->zPos,
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
@@ -181,19 +181,19 @@ std::string ControlItemSelectionBox::collectData() {
 
 void ControlItemSelectionBox::setOptionText(int index) {
     this->currentOption = this->allOptions[index];
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->currentOption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos =
-            this->xPos + this->width - realLength - this->width / 50;
-    GLfloat labelYPos = this->yPos +
-                        ((this->yPos - (this->yPos + this->height)) / 2) -
-                        this->height / 4;
+    GLfloat label_x_pos =
+            this->xPos + this->width - real_length - this->width / 50;
+    GLfloat label_y_pos = this->yPos +
+                          ((this->yPos - (this->yPos + this->height)) / 2) -
+                          this->height / 4;
     delete optionText;
     this->optionText = new TextObject(this->currentOption,
-                                      labelXPos,
-                                      labelYPos,
+                                      label_x_pos,
+                                      label_y_pos,
                                       this->zPos,
                                       GLUT_BITMAP_TIMES_ROMAN_24,
                                       0.0f,

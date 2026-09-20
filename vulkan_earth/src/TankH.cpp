@@ -3,11 +3,11 @@
 #include "VBOShaderLibrary.h"
 #include "macro_crtdbg.h"
 
-const char* TANK_H_NAME = "Predator";
-const int TANK_H_HP = 1000;
-const int TANK_H_POWER = 10;
-const int TANK_H_ARMOR = 10;
-const int TANK_H_SPEED = 100;
+const char* tank_h_name = "Predator";
+const int tank_h_hp = 1000;
+const int tank_h_power = 10;
+const int tank_h_armor = 10;
+const int tank_h_speed = 100;
 
 TankH::TankH() = default;
 TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
@@ -33,9 +33,9 @@ TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
         this->turretScale[i] = 70;
     }
 
-    this->power = TANK_H_POWER;
-    this->armor = TANK_H_ARMOR;
-    this->speed = TANK_H_SPEED;
+    this->power = tank_h_power;
+    this->armor = tank_h_armor;
+    this->speed = tank_h_speed;
     this->currentPower = 10;
     this->previousPower = 1000;
     this->previousAngle = 1;
@@ -77,8 +77,8 @@ TankH::~TankH() {
 }
 
 // GETTERS
-int TankH::getBaseHP() { return TANK_H_HP; }
-int TankH::getBasePower() { return TANK_H_POWER; }
-int TankH::getBaseArmor() { return TANK_H_ARMOR; }
-int TankH::getBaseSpeed() { return TANK_H_SPEED; }
-std::string TankH::getName() { return TANK_H_NAME; }
+int TankH::getBaseHP() { return tank_h_hp; }
+int TankH::getBasePower() { return tank_h_power; }
+int TankH::getBaseArmor() { return tank_h_armor; }
+int TankH::getBaseSpeed() { return tank_h_speed; }
+std::string TankH::getName() { return tank_h_name; }

@@ -152,11 +152,11 @@ GLfloat Tank::calcAngleBetweenVectors(Vector one, Vector two) {
     this->NormalizeVector(&one);
     this->NormalizeVector(&two);
     errno = 0;
-    GLfloat TT = 3.141592653f;
+    GLfloat tt = 3.141592653f;
     GLfloat u[3] = {one.compoX, one.compoY, one.compoZ};
     GLfloat v[3] = {two.compoX, two.compoY, two.compoZ};
     GLfloat angle =
-            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / TT);
+            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / tt);
     if (errno) {
         return .01;
     }
@@ -290,9 +290,9 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                           this->hitBoxLength / 2.0 * at.compoZ +
                           this->hitBoxWidth / 2.0 * right.compoZ +
                           this->hitBoxHeight / 2.0 * up.compoZ;
-        GLfloat D = up.compoX * plane_x + up.compoY * plane_y +
+        GLfloat d = up.compoX * plane_x + up.compoY * plane_y +
                     up.compoZ * plane_z;
-        if (up.compoX * X + up.compoY * Y + up.compoZ * Z - D <= 0) {
+        if (up.compoX * X + up.compoY * Y + up.compoZ * Z - d <= 0) {
             // right
             plane_x = tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
                       this->hitBoxWidth / 2.0 * right.compoX +
@@ -303,9 +303,9 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
             plane_z = tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
                       this->hitBoxWidth / 2.0 * right.compoZ +
                       this->hitBoxHeight / 2.0 * up.compoZ;
-            D = right.compoX * plane_x + right.compoY * plane_y +
+            d = right.compoX * plane_x + right.compoY * plane_y +
                 right.compoZ * plane_z;
-            if (right.compoX * X + right.compoY * Y + right.compoZ * Z - D <=
+            if (right.compoX * X + right.compoY * Y + right.compoZ * Z - d <=
                 0) {
                 // left
                 plane_x = tankPos.coordX +
@@ -320,9 +320,9 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                           this->hitBoxLength / 2.0 * at.compoZ +
                           this->hitBoxWidth / 2.0 * left.compoZ +
                           this->hitBoxHeight / 2.0 * up.compoZ;
-                D = left.compoX * plane_x + left.compoY * plane_y +
+                d = left.compoX * plane_x + left.compoY * plane_y +
                     left.compoZ * plane_z;
-                if (left.compoX * X + left.compoY * Y + left.compoZ * Z - D <=
+                if (left.compoX * X + left.compoY * Y + left.compoZ * Z - d <=
                     0) {
                     // front
                     plane_x = tankPos.coordX +
@@ -337,9 +337,9 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                               this->hitBoxLength / 2.0 * at.compoZ +
                               this->hitBoxWidth / 2.0 * left.compoZ +
                               this->hitBoxHeight / 2.0 * up.compoZ;
-                    D = at.compoX * plane_x + at.compoY * plane_y +
+                    d = at.compoX * plane_x + at.compoY * plane_y +
                         at.compoZ * plane_z;
-                    if (at.compoX * X + at.compoY * Y + at.compoZ * Z - D <=
+                    if (at.compoX * X + at.compoY * Y + at.compoZ * Z - d <=
                         0) {
                         // back
                         plane_x = tankPos.coordX +
@@ -354,10 +354,10 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                                   this->hitBoxLength / 2.0 * back.compoZ +
                                   this->hitBoxWidth / 2.0 * left.compoZ +
                                   this->hitBoxHeight / 2.0 * up.compoZ;
-                        D = back.compoX * plane_x + back.compoY * plane_y +
+                        d = back.compoX * plane_x + back.compoY * plane_y +
                             back.compoZ * plane_z;
                         if (back.compoX * X + back.compoY * Y +
-                                    back.compoZ * Z - D <=
+                                    back.compoZ * Z - d <=
                             0) {
                             cout << "COLLISION WITH TANK DETECTED" << endl;
                             return true;

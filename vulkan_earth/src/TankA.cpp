@@ -3,11 +3,11 @@
 #include "VBOShaderLibrary.h"
 #include "macro_crtdbg.h"
 
-const char* TANK_A_NAME = "Rhinoxx";
-const int TANK_A_HP = 1000;
-const int TANK_A_POWER = 5;
-const int TANK_A_ARMOR = 7;
-const int TANK_A_SPEED = 40;
+const char* tank_a_name = "Rhinoxx";
+const int tank_a_hp = 1000;
+const int tank_a_power = 5;
+const int tank_a_armor = 7;
+const int tank_a_speed = 40;
 
 TankA::TankA() = default;
 TankA::TankA(GLfloat x, GLfloat y, GLfloat z) {
@@ -34,9 +34,9 @@ TankA::TankA(GLfloat x, GLfloat y, GLfloat z) {
         this->wheelScale[i] = 80;
     }
 
-    this->power = TANK_A_POWER;
-    this->armor = TANK_A_ARMOR;
-    this->speed = TANK_A_SPEED;
+    this->power = tank_a_power;
+    this->armor = tank_a_armor;
+    this->speed = tank_a_speed;
     this->currentPower = 10;
     this->previousPower = 1000;
     this->previousAngle = 1;
@@ -78,11 +78,11 @@ TankA::~TankA() {
 }
 
 // GETTERS
-int TankA::getBaseHP() { return TANK_A_HP; }
-int TankA::getBasePower() { return TANK_A_POWER; }
-int TankA::getBaseArmor() { return TANK_A_ARMOR; }
-int TankA::getBaseSpeed() { return TANK_A_SPEED; }
-std::string TankA::getName() { return TANK_A_NAME; }
+int TankA::getBaseHP() { return tank_a_hp; }
+int TankA::getBasePower() { return tank_a_power; }
+int TankA::getBaseArmor() { return tank_a_armor; }
+int TankA::getBaseSpeed() { return tank_a_speed; }
+std::string TankA::getName() { return tank_a_name; }
 
 void TankA::drawTankHitBox() {
     // Vertex tankPos(headMatrix[12],headMatrix[13],headMatrix[14]);

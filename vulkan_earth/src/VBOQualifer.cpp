@@ -57,9 +57,9 @@ bool VBOQualifer::establishIfQualified() {
         exit(0);
     }
 
-    std::string extensionsStr = str;
+    std::string extensions_str = str;
     std::string current;
-    for (char ch : extensionsStr) {
+    for (char ch : extensions_str) {
         if (ch != ' ') {
             current += ch;
         } else if (!current.empty()) {

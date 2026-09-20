@@ -21,10 +21,10 @@ ImageObject::ImageObject(GLfloat xPos,
     this->height = height;
     this->borderSize = border;
 
-    int imgWidth = iWidth;
-    int imgHeight = iHeight;
+    int img_width = iWidth;
+    int img_height = iHeight;
 
-    std::vector<unsigned char> data(imgWidth * imgHeight * 3);
+    std::vector<unsigned char> data(img_width * img_height * 3);
     std::ifstream file(filename, std::ios::binary);
     file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);
@@ -33,8 +33,8 @@ ImageObject::ImageObject(GLfloat xPos,
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
-                 imgWidth,
-                 imgHeight,
+                 img_width,
+                 img_height,
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,

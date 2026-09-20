@@ -57,17 +57,17 @@ SubMenuLandscape::SubMenuLandscape(int ID,
     this->oldMouseY = -1;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->caption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
-    GLfloat labelYPos = this->yPos - this->height / 20;
+    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->yPos - this->height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     this->label = new TextObject(this->caption,
-                                 labelXPos,
-                                 labelYPos,
+                                 label_x_pos,
+                                 label_y_pos,
                                  (this->zPos + 1),
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
@@ -214,8 +214,8 @@ void SubMenuLandscape::draw() {
         }
     }
 
-    GLfloat borderX = this->xPos + 0.03 * this->width;
-    GLfloat borderY = this->yPos - 0.07 * this->height;
+    GLfloat border_x = this->xPos + 0.03 * this->width;
+    GLfloat border_y = this->yPos - 0.07 * this->height;
 
     // top-left
     glBegin(GL_QUADS);
@@ -223,20 +223,20 @@ void SubMenuLandscape::draw() {
               this->color[1] - .2,
               this->color[2] - .2,
               this->color[3]);
-    glVertex3f(borderX, borderY, this->zPos + 1);
-    glVertex3f(borderX - 3, borderY + 3, this->zPos + 1);
-    glVertex3f(borderX + 0.936 * width + 3, borderY + 3, this->zPos + 1);
-    glVertex3f(borderX + 0.936 * width, borderY, this->zPos + 1);
+    glVertex3f(border_x, border_y, this->zPos + 1);
+    glVertex3f(border_x - 3, border_y + 3, this->zPos + 1);
+    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, this->zPos + 1);
+    glVertex3f(border_x + 0.936 * width, border_y, this->zPos + 1);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(this->color[0] - .2,
               this->color[1] - .2,
               this->color[2] - .2,
               this->color[3]);
-    glVertex3f(borderX - 3, borderY + 3, this->zPos + 1);
-    glVertex3f(borderX - 3, borderY - 0.597 * height - 3, this->zPos + 1);
-    glVertex3f(borderX, borderY - 0.597 * height, this->zPos + 1);
-    glVertex3f(borderX, borderY, this->zPos + 1);
+    glVertex3f(border_x - 3, border_y + 3, this->zPos + 1);
+    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, this->zPos + 1);
+    glVertex3f(border_x, border_y - 0.597 * height, this->zPos + 1);
+    glVertex3f(border_x, border_y, this->zPos + 1);
     glEnd();
 
     // bottom-right
@@ -245,26 +245,27 @@ void SubMenuLandscape::draw() {
               this->color[1] + .4,
               this->color[2] + .4,
               this->color[3]);
-    glVertex3f(borderX - 3, borderY - 0.597 * height - 3, this->zPos + 1);
-    glVertex3f(borderX + 0.936 * width + 3,
-               borderY - 0.597 * height - 3,
+    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, this->zPos + 1);
+    glVertex3f(border_x + 0.936 * width + 3,
+               border_y - 0.597 * height - 3,
                this->zPos + 1);
-    glVertex3f(
-            borderX + 0.936 * width, borderY - 0.597 * height, this->zPos + 1);
-    glVertex3f(borderX, borderY - 0.597 * height, this->zPos + 1);
+    glVertex3f(border_x + 0.936 * width,
+               border_y - 0.597 * height,
+               this->zPos + 1);
+    glVertex3f(border_x, border_y - 0.597 * height, this->zPos + 1);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(this->color[0] + .4,
               this->color[1] + .4,
               this->color[2] + .4,
               this->color[3]);
-    glVertex3f(borderX + 0.936 * width, borderY, this->zPos + 1);
-    glVertex3f(borderX + 0.936 * width + 3, borderY + 3, this->zPos + 1);
-    glVertex3f(borderX + 0.936 * width + 3,
-               borderY - 0.597 * height - 3,
+    glVertex3f(border_x + 0.936 * width, border_y, this->zPos + 1);
+    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, this->zPos + 1);
+    glVertex3f(border_x + 0.936 * width + 3,
+               border_y - 0.597 * height - 3,
                this->zPos + 1);
-    glVertex3f(borderX + 0.936 * width,
-               borderY + -0.597 * height,
+    glVertex3f(border_x + 0.936 * width,
+               border_y + -0.597 * height,
                this->zPos + 1);
     glEnd();
 
@@ -301,20 +302,20 @@ void SubMenuLandscape::draw() {
     this->tm->draw();
     // glPopMatrix();
 
-    int winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    int winHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    int win_width = glutGet(GLUT_WINDOW_WIDTH);
+    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, winWidth, winHeight);
+    glViewport(0, 0, win_width, win_height);
     gluPerspective(
             60.0,
-            static_cast<float>(winWidth) / static_cast<float>(winHeight),
+            static_cast<float>(win_width) / static_cast<float>(win_height),
             1.0,
             1000000.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, winWidth, winHeight);
+    glScissor(0, 0, win_width, win_height);
     glLoadIdentity();
 }
 
@@ -423,47 +424,47 @@ void SubMenuLandscape::updateMouse(int x, int y) {
          (x <= this->xPos + 0.8 * this->width + (0.9417 * this->width))) &&
         ((y >= this->yPos - 0.15 * this->height) &&
          (y <= this->yPos - 0.15 * this->height + (0.6 * this->height)))) {
-        float newCamX = camX, newCamY = camY, newCamZ = camZ;
+        float new_cam_x = camX, new_cam_y = camY, new_cam_z = camZ;
         if (x < oldMouseX) {
-            newCamX = (camX - (this->tm->getActualSize() / 2.0)) *
-                              cos(-PI / 180) -
-                      (camZ - (this->tm->getActualSize() / 2.0)) *
-                              sin(-PI / 180) +
-                      (this->tm->getActualSize() / 2.0);
-            newCamZ = (camX - (this->tm->getActualSize() / 2.0)) *
-                              sin(-PI / 180) +
-                      (camZ - (this->tm->getActualSize() / 2.0)) *
-                              cos(-PI / 180) +
-                      (this->tm->getActualSize() / 2.0);
+            new_cam_x = (camX - (this->tm->getActualSize() / 2.0)) *
+                                cos(-PI / 180) -
+                        (camZ - (this->tm->getActualSize() / 2.0)) *
+                                sin(-PI / 180) +
+                        (this->tm->getActualSize() / 2.0);
+            new_cam_z = (camX - (this->tm->getActualSize() / 2.0)) *
+                                sin(-PI / 180) +
+                        (camZ - (this->tm->getActualSize() / 2.0)) *
+                                cos(-PI / 180) +
+                        (this->tm->getActualSize() / 2.0);
         }
         if (x > oldMouseX) {
-            newCamX = (camX - (this->tm->getActualSize() / 2.0)) *
-                              cos(PI / 180) -
-                      (camZ - (this->tm->getActualSize() / 2.0)) *
-                              sin(PI / 180) +
-                      (this->tm->getActualSize() / 2.0);
-            newCamZ = (camX - (this->tm->getActualSize() / 2.0)) *
-                              sin(PI / 180) +
-                      (camZ - (this->tm->getActualSize() / 2.0)) *
-                              cos(PI / 180) +
-                      (this->tm->getActualSize() / 2.0);
+            new_cam_x = (camX - (this->tm->getActualSize() / 2.0)) *
+                                cos(PI / 180) -
+                        (camZ - (this->tm->getActualSize() / 2.0)) *
+                                sin(PI / 180) +
+                        (this->tm->getActualSize() / 2.0);
+            new_cam_z = (camX - (this->tm->getActualSize() / 2.0)) *
+                                sin(PI / 180) +
+                        (camZ - (this->tm->getActualSize() / 2.0)) *
+                                cos(PI / 180) +
+                        (this->tm->getActualSize() / 2.0);
         }
         if (y < oldMouseY) {
         }
         if (y > oldMouseY) {
         }
-        camX = newCamX;
-        camY = newCamY;
-        camZ = newCamZ;
+        camX = new_cam_x;
+        camY = new_cam_y;
+        camZ = new_cam_z;
         oldMouseX = x;
         oldMouseY = y;
     }
-    int winWidth = glutGet(GLUT_WINDOW_WIDTH);
-    int winHeight = glutGet(GLUT_WINDOW_HEIGHT);
-    this->subMenuButton[0]->updateMouse(x - (winWidth / 2),
-                                        (winHeight / 2) - y);
-    this->subMenuButton[1]->updateMouse(x - (winWidth / 2),
-                                        (winHeight / 2) - y);
-    this->subMenuButton[2]->updateMouse(x - (winWidth / 2),
-                                        (winHeight / 2) - y);
+    int win_width = glutGet(GLUT_WINDOW_WIDTH);
+    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    this->subMenuButton[0]->updateMouse(x - (win_width / 2),
+                                        (win_height / 2) - y);
+    this->subMenuButton[1]->updateMouse(x - (win_width / 2),
+                                        (win_height / 2) - y);
+    this->subMenuButton[2]->updateMouse(x - (win_width / 2),
+                                        (win_height / 2) - y);
 }

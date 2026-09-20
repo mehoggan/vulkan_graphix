@@ -19,15 +19,15 @@ WeaponRevive::WeaponRevive(int ID) {
     this->damage = 0;
     this->specialNumber = 400;
 
-    GLfloat tempColors1[3] = {White};
-    GLfloat tempColors2[3] = {Silver};
-    GLfloat tempColors3[3] = {White};
-    GLfloat tempColors4[3] = {LightGray};
+    GLfloat temp_colors1[3] = {White};
+    GLfloat temp_colors2[3] = {Silver};
+    GLfloat temp_colors3[3] = {White};
+    GLfloat temp_colors4[3] = {LightGray};
     for (int i = 0; i < 3; i++) {
-        explosionColor1[i] = tempColors1[i];
-        explosionColor2[i] = tempColors2[i];
-        explosionColor3[i] = tempColors3[i];
-        explosionColor4[i] = tempColors4[i];
+        explosionColor1[i] = temp_colors1[i];
+        explosionColor2[i] = temp_colors2[i];
+        explosionColor3[i] = temp_colors3[i];
+        explosionColor4[i] = temp_colors4[i];
     }
 }
 WeaponRevive::~WeaponRevive() = default;

@@ -3,11 +3,11 @@
 #include "VBOShaderLibrary.h"
 #include "macro_crtdbg.h"
 
-const char* TANK_E_NAME = "Eggroid";
-const int TANK_E_HP = 1000;
-const int TANK_E_POWER = 4;
-const int TANK_E_ARMOR = 3;
-const int TANK_E_SPEED = 80;
+const char* tank_e_name = "Eggroid";
+const int tank_e_hp = 1000;
+const int tank_e_power = 4;
+const int tank_e_armor = 3;
+const int tank_e_speed = 80;
 
 TankE::TankE() = default;
 TankE::TankE(GLfloat x, GLfloat y, GLfloat z) {
@@ -38,9 +38,9 @@ TankE::TankE(GLfloat x, GLfloat y, GLfloat z) {
         this->wheelScale[i] = 40;
     }
 
-    this->power = TANK_E_POWER;
-    this->armor = TANK_E_ARMOR;
-    this->speed = TANK_E_SPEED;
+    this->power = tank_e_power;
+    this->armor = tank_e_armor;
+    this->speed = tank_e_speed;
     this->currentPower = 10;
     this->previousPower = 1000;
     this->previousAngle = 1;
@@ -88,8 +88,8 @@ TankE::~TankE() {
 }
 
 // GETTERS
-int TankE::getBaseHP() { return TANK_E_HP; }
-int TankE::getBasePower() { return TANK_E_POWER; }
-int TankE::getBaseArmor() { return TANK_E_ARMOR; }
-int TankE::getBaseSpeed() { return TANK_E_SPEED; }
-std::string TankE::getName() { return TANK_E_NAME; }
+int TankE::getBaseHP() { return tank_e_hp; }
+int TankE::getBasePower() { return tank_e_power; }
+int TankE::getBaseArmor() { return tank_e_armor; }
+int TankE::getBaseSpeed() { return tank_e_speed; }
+std::string TankE::getName() { return tank_e_name; }

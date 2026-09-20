@@ -484,7 +484,8 @@ void ShopMenu::printDebugInfo() {
                        j,
                        player_factory->getPlayer(i)
                                ->getCurrentWeapons()[j]
-                               ->getDescription());
+                               ->getDescription()
+                               .c_str());
                 printf("\nWeapon Slot %i amount: %i",
                        j,
                        player_factory->getPlayer(i)
@@ -498,7 +499,8 @@ void ShopMenu::printDebugInfo() {
                        j,
                        player_factory->getPlayer(i)
                                ->getCurrentItems()[j]
-                               ->getDescription());
+                               ->getDescription()
+                               .c_str());
                 printf("\nItem Slot %i amount: %i",
                        j,
                        player_factory->getPlayer(i)
@@ -512,10 +514,10 @@ void ShopMenu::printDebugInfo() {
 }
 
 void ShopMenu::updateBuyDiscriptLabel() {
-    bool* selectedCells = grids[0]->getSelectedCells();
+    bool* selected_cells = grids[0]->getSelectedCells();
     if (this->buttons[0]->isToggled()) {
         for (int i = 0; i < NUM_SALES_WEAPON; i++) {
-            if (selectedCells[i]) {
+            if (selected_cells[i]) {
                 delete this->labelDiscription;
                 delete this->labelBuyPrice;
                 this->labelDiscription =
@@ -550,7 +552,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
         }
     } else {
         for (int i = 0; i < NUM_SALES_ITEM; i++) {
-            if (selectedCells[i]) {
+            if (selected_cells[i]) {
                 delete this->labelDiscription;
                 delete this->labelBuyPrice;
                 this->labelDiscription =
@@ -587,20 +589,20 @@ void ShopMenu::updateBuyDiscriptLabel() {
 }
 
 void ShopMenu::updateSellLabel() {
-    bool* selectedCells = grids[1]->getSelectedCells();
-    int totalSell = 0;
+    bool* selected_cells = grids[1]->getSelectedCells();
+    int total_sell = 0;
 
     for (int i = 0; i < INVEN_GRID_ROW * 2; i++) {
-        if (selectedCells[i] && invenWpns[i / 2] != nullptr &&
+        if (selected_cells[i] && invenWpns[i / 2] != nullptr &&
             i % 2 == 0) {  //	i%2 == 0 is weapon inventory
-            totalSell +=
+            total_sell +=
                     static_cast<int>(((invenWpns[i / 2]->getPrice() /
                                        invenWpns[i / 2]->getPackageNum()) /
                                       1.5) *
                                      invenWpns[i / 2]->getRemaining());
         }
-        if (selectedCells[i] && invenItems[i / 2] != nullptr && i % 2 == 1) {
-            totalSell +=
+        if (selected_cells[i] && invenItems[i / 2] != nullptr && i % 2 == 1) {
+            total_sell +=
                     static_cast<int>(((invenItems[i / 2]->getPrice() /
                                        invenItems[i / 2]->getPackageNum()) /
                                       1.5) *
@@ -609,7 +611,7 @@ void ShopMenu::updateSellLabel() {
     }
 
     delete this->labelSellPrice;
-    std::string price = "$ " + std::to_string(totalSell);
+    std::string price = "$ " + std::to_string(total_sell);
     this->labelSellPrice = new TextObject(price,
                                           this->pos[0] + this->width * 0.15,
                                           this->pos[1] - this->height * 0.2,
@@ -622,11 +624,11 @@ void ShopMenu::updateSellLabel() {
 
 void ShopMenu::buyHandler() {
     int inven_i;
-    bool* selectedCells = grids[0]->getSelectedCells();
+    bool* selected_cells = grids[0]->getSelectedCells();
 
     if (this->buttons[0]->isToggled()) {
         for (int i = 0; i < NUM_SALES_WEAPON; i++) {
-            if (selectedCells[i]) {
+            if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < INVEN_GRID_ROW; inven_i++) {
                     if ((this->invenWpns[inven_i] == nullptr) ||
                         (this->shopWpns[i]->getUNIQUEIDENTIFIER() ==
@@ -709,7 +711,7 @@ void ShopMenu::buyHandler() {
         }
     } else {
         for (int i = 0; i < NUM_SALES_ITEM; i++) {
-            if (selectedCells[i]) {
+            if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < INVEN_GRID_ROW; inven_i++) {
                     if ((this->invenItems[inven_i] == nullptr) ||
                         (this->shopItems[i]->getUNIQUEIDENTIFIER() ==
@@ -795,13 +797,13 @@ void ShopMenu::buyHandler() {
 }
 
 void ShopMenu::sellHandler() {
-    bool* selectedCells = grids[1]->getSelectedCells();
-    int totalSell = 0;
+    bool* selected_cells = grids[1]->getSelectedCells();
+    int total_sell = 0;
 
     for (int i = 0; i < INVEN_GRID_ROW * 2; i++) {
-        if (selectedCells[i] && invenWpns[i / 2] != nullptr &&
+        if (selected_cells[i] && invenWpns[i / 2] != nullptr &&
             i % 2 == 0) {  // i%2 == 0 is weapon inventory
-            totalSell +=
+            total_sell +=
                     static_cast<int>(((invenWpns[i / 2]->getPrice() /
                                        invenWpns[i / 2]->getPackageNum()) /
                                       1.5) *
@@ -813,8 +815,8 @@ void ShopMenu::sellHandler() {
             this->labelInvenWpnRemains[i / 2] = nullptr;
             this->invenWpns[i / 2] = nullptr;
         }
-        if (selectedCells[i] && invenItems[i / 2] != nullptr && i % 2 == 1) {
-            totalSell +=
+        if (selected_cells[i] && invenItems[i / 2] != nullptr && i % 2 == 1) {
+            total_sell +=
                     static_cast<int>(((invenItems[i / 2]->getPrice() /
                                        invenItems[i / 2]->getPackageNum()) /
                                       1.5) *
@@ -828,9 +830,9 @@ void ShopMenu::sellHandler() {
         }
     }
 
-    if (totalSell != 0) {
+    if (total_sell != 0) {
         playSFX(TRANSACTION);
-        currentPlayerBalance += totalSell;
+        currentPlayerBalance += total_sell;
         delete this->labelPlayerBalance;
         std::string balance = "$ " + std::to_string(currentPlayerBalance);
         this->labelPlayerBalance =

@@ -3,11 +3,11 @@
 #include "VBOShaderLibrary.h"
 #include "macro_crtdbg.h"
 
-const char* TANK_F_NAME = "Behemoth";
-const int TANK_F_HP = 1000;
-const int TANK_F_POWER = 8;
-const int TANK_F_ARMOR = 8;
-const int TANK_F_SPEED = 20;
+const char* tank_f_name = "Behemoth";
+const int tank_f_hp = 1000;
+const int tank_f_power = 8;
+const int tank_f_armor = 8;
+const int tank_f_speed = 20;
 
 TankF::TankF() = default;
 TankF::TankF(GLfloat x, GLfloat y, GLfloat z) {
@@ -34,9 +34,9 @@ TankF::TankF(GLfloat x, GLfloat y, GLfloat z) {
         this->wheelScale[i] = 60;
     }
 
-    this->power = TANK_F_POWER;
-    this->armor = TANK_F_ARMOR;
-    this->speed = TANK_F_SPEED;
+    this->power = tank_f_power;
+    this->armor = tank_f_armor;
+    this->speed = tank_f_speed;
     this->currentPower = 10;
     this->previousPower = 1000;
     this->previousAngle = 1;
@@ -84,8 +84,8 @@ TankF::~TankF() {
 }
 
 // GETTERS
-int TankF::getBaseHP() { return TANK_F_HP; }
-int TankF::getBasePower() { return TANK_F_POWER; }
-int TankF::getBaseArmor() { return TANK_F_ARMOR; }
-int TankF::getBaseSpeed() { return TANK_F_SPEED; }
-std::string TankF::getName() { return TANK_F_NAME; }
+int TankF::getBaseHP() { return tank_f_hp; }
+int TankF::getBasePower() { return tank_f_power; }
+int TankF::getBaseArmor() { return tank_f_armor; }
+int TankF::getBaseSpeed() { return tank_f_speed; }
+std::string TankF::getName() { return tank_f_name; }

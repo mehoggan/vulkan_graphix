@@ -37,18 +37,18 @@ MainMenuButton::MainMenuButton(int ID,
     this->height = height;
     this->caption = caption;
     /*	BUTTON TEXT PLACEMENT	*/
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->caption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
-    GLfloat labelYPos = this->yPos +
-                        ((this->yPos - (this->yPos + this->height)) / 2) -
-                        this->height / 4;
+    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->yPos +
+                          ((this->yPos - (this->yPos + this->height)) / 2) -
+                          this->height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     this->label = new TextObject(this->caption,
-                                 labelXPos,
-                                 labelYPos,
+                                 label_x_pos,
+                                 label_y_pos,
                                  this->zPos,
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
@@ -196,18 +196,18 @@ void MainMenuButton::setLabel(const std::string& c) {
     delete this->label;
     this->caption = c;
 
-    int realLength = 0;
+    int real_length = 0;
     for (char ch : this->caption) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
-    GLfloat labelYPos = this->yPos +
-                        ((this->yPos - (this->yPos + this->height)) / 2) -
-                        this->height / 4;
+    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->yPos +
+                          ((this->yPos - (this->yPos + this->height)) / 2) -
+                          this->height / 4;
 
     this->label = new TextObject(this->caption,
-                                 labelXPos,
-                                 labelYPos,
+                                 label_x_pos,
+                                 label_y_pos,
                                  this->zPos,
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
