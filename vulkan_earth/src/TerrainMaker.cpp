@@ -70,20 +70,20 @@ TerrainMaker::~TerrainMaker() {
 GLint TerrainMaker::getScale() { return this->scale; }
 GLint TerrainMaker::getActualSize() { return (this->size) * (this->scale); }
 
-GLuint TerrainMaker::selectTexture(char* tex) {
+GLuint TerrainMaker::selectTexture(const std::string& tex) {
     glDeleteTextures(1, &this->color_texture);
 
-    if (strcmp(tex, "Rock") == 0)
+    if (tex == "Rock")
         return LoadTexture("Rocky.raw", 2048, 2048);
-    else if (strcmp(tex, "Snow") == 0)
+    else if (tex == "Snow")
         return LoadTexture("Snowy.raw", 2048, 2048);
-    else if (strcmp(tex, "Ice") == 0)
+    else if (tex == "Ice")
         return LoadTexture("Icy.raw", 2048, 2048);
-    else if (strcmp(tex, "Mars") == 0)
+    else if (tex == "Mars")
         return LoadTexture("RedPlanet.raw", 2048, 2048);
-    else if (strcmp(tex, "Desert") == 0)
+    else if (tex == "Desert")
         return LoadTexture("Desert.raw", 2048, 2048);
-    else if (strcmp(tex, "Lava") == 0)
+    else if (tex == "Lava")
         return LoadTexture("LavaRock.raw", 2048, 2048);
     else
         return 0;
@@ -989,6 +989,6 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
 /************************************************************************/
 /*	Debugging MessageBox functions										*/
 /************************************************************************/
-void TerrainMaker::stdMessageBox(char* output) {}
+void TerrainMaker::stdMessageBox(const std::string& output) {}
 
-void TerrainMaker::errorMessageBox(char* output) {}
+void TerrainMaker::errorMessageBox(const std::string& output) {}

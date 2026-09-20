@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include "Normal.h"
 #include "Vector.h"
 #include "Vertex.h"
@@ -63,7 +64,7 @@ public:
     void update();
     void draw();
     void drawHUD();
-    void drawHUDText(char* input, float x, float y);
+    void drawHUDText(const std::string& input, float x, float y);
     void updateMouse(int x, int y);
     void useTurn();
     int getWinner();

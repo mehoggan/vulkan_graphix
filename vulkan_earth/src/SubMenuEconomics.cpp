@@ -21,7 +21,7 @@ SubMenuEconomics::SubMenuEconomics(int ID,
                                    GLfloat blue,
                                    GLint width,
                                    GLint height,
-                                   char* caption,
+                                   const std::string& caption,
                                    GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -37,13 +37,9 @@ SubMenuEconomics::SubMenuEconomics(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -138,8 +134,10 @@ GLint SubMenuEconomics::getWidth() { return this->width; }
 void SubMenuEconomics::setWdith(GLint width) { this->width = width; }
 GLint SubMenuEconomics::getHeight() { return this->height; }
 void SubMenuEconomics::setHeight(GLint height) { this->height = height; }
-char* SubMenuEconomics::getCaption() { return this->caption; }
-void SubMenuEconomics::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuEconomics::getCaption() { return this->caption; }
+void SubMenuEconomics::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuEconomics::getPerecentBorder() { return this->percentBorder; }
 void SubMenuEconomics::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -202,18 +200,15 @@ void SubMenuEconomics::draw() {
     }
 }
 
-const char* SubMenuEconomics::collectData() {
-    char optionsarray[512];
-    memset(optionsarray, 0, 512);
-    strcat(optionsarray, "/Economics/");
+std::string SubMenuEconomics::collectData() {
+    std::string optionsarray = "/Economics/";
     for (int x = 0; x < NUM_CONTROL_ITEMS_ECON; x++) {
         if (this->subMenuButton[x]) {
-            strcat(optionsarray, this->subMenuButton[x]->collectData());
-            strcat(optionsarray, "/");
+            optionsarray += this->subMenuButton[x]->collectData();
+            optionsarray += "/";
         }
     }
-    const char* realretrn = optionsarray;
-    return realretrn;
+    return optionsarray;
 }
 
 void SubMenuEconomics::subMenuMouseTest(int x, int y, int buttonDown) {

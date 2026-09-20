@@ -38,8 +38,6 @@ VBOShaderLibrary::VBOShaderLibrary() {
     this->useVBOs = false;
     this->useTextures = false;
     this->useShaders = false;
-    this->vsText = nullptr;
-    this->fsText = nullptr;
     this->color_texture = 0;
     this->normal_texture = 0;
     this->verticesLoaded = 0;
@@ -138,9 +136,8 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
         std::streamsize count = vs_file.tellg();
         vs_file.seekg(0);
         if (count > 0) {
-            this->vsText = new char[count + 1];
-            vs_file.read(this->vsText, count);
-            this->vsText[count] = '\0';
+            this->vsText.resize(count);
+            vs_file.read(this->vsText.data(), count);
         } else {
             // shader_status = false;
             // this->useShaders = false;
@@ -155,9 +152,8 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
         std::streamsize count = fs_file.tellg();
         fs_file.seekg(0);
         if (count > 0) {
-            this->fsText = new char[count + 1];
-            fs_file.read(this->fsText, count);
-            this->fsText[count] = '\0';
+            this->fsText.resize(count);
+            fs_file.read(this->fsText.data(), count);
         } else {
             // shader_status = false;
             // this->useShaders = false;
@@ -168,7 +164,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     }
 
     /*	ERROR: NO CODE IN SHADERS	*/
-    if (!this->vsText || !this->fsText) {
+    if (this->vsText.empty() || this->fsText.empty()) {
         cerr << "ERROR: Either vertex shader or fragment shader file not "
                 "found."
              << endl;
@@ -177,7 +173,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     }
 
     /*	COMPILE AND VALIDATE THE VERTEX SHADER	*/
-    const char* tempVSText = this->vsText;
+    const char* tempVSText = this->vsText.c_str();
     glShaderSource(this->shader_vp, 1, &tempVSText, nullptr);
     glCompileShader(this->shader_vp);
     const unsigned int VERTEX_BUFFER_SIZE = 2048;
@@ -193,7 +189,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     memset(buffer1, 0, VERTEX_BUFFER_SIZE);
 
     /*	COMPILE AND VALIDATE THE FRAGMENT SHADER	*/
-    const char* tempFSText = this->fsText;
+    const char* tempFSText = this->fsText.c_str();
     glShaderSource(this->shader_fp, 1, &tempFSText, nullptr);
     glCompileShader(this->shader_fp);
     const unsigned int FRAGMENT_BUFFER_SIZE = 2048;
@@ -239,20 +235,17 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     }
     memset(buffer, 0, BUFFER_SIZE);
 
-    delete fsText;
-    delete vsText;
-
     return shader_status;
 }
 
-bool VBOShaderLibrary::loadClientData(char* modelFile) {
+bool VBOShaderLibrary::loadClientData(const std::string& modelFile) {
     bool contentLoaded = true;
     unsigned int c;
     bool done = false;
 
     std::ifstream ogl_file(modelFile, std::ios::binary | std::ios::ate);
     if (!ogl_file) {
-        printf("ERROR: File %s not found\n", modelFile);
+        printf("ERROR: File %s not found\n", modelFile.c_str());
         contentLoaded = false;
     } else if (contentLoaded && ogl_file) {
         std::streamsize read_file_size = ogl_file.tellg();
@@ -615,90 +608,42 @@ bool VBOShaderLibrary::InitGlew() {
 /*	STATIC FUNCTION */
 bool VBOShaderLibrary::AreVBOsSupported() {
     bool qualified = true;
-    char* str = nullptr;
-    char* vendor;
-    char* renderer;
-    char* version;
-    int extensions_supported;
-    char** extensions;
-    int redBits;
-    int greenBits;
-    int blueBits;
-    int alphaBits;
-    int depthBits;
-    int stencilBits;
-    int maxTextureSize;
-    int maxLights;
-    int maxAttribStacks;
-    int maxModelViewStacks;
-    int maxProjectionStacks;
-    int maxClipPlanes;
-    int maxTextureStacks;
 
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-    if (str) {
-        vendor = str;
-    } else {
-        qualified = false;
-    }
+    const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    if (!vendor) qualified = false;
 
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-    if (str) {
-        renderer = str;
-    } else {
-        qualified = false;
-    }
+    const char* renderer =
+            reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    if (!renderer) qualified = false;
 
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-    if (str) {
-        version = str;
-    } else {
-        qualified = false;
-    }
+    const char* version =
+            reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    if (!version) qualified = false;
 
-    extensions_supported = 0;
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-    if (str) {
-        char* tok = str;
-        int index = 0;
-        int size = strlen(tok);
-        int iteration = 0;
-        while (iteration++ < size) {
-            if (*(tok + index) == ' ' || *(tok + index) == '\n' ||
-                *(tok + index) == '\t') {
-                extensions_supported++;
+    const char* extensionsRaw =
+            reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (!extensionsRaw) qualified = false;
+
+    std::vector<std::string> extensions;
+    if (extensionsRaw) {
+        std::string extensionsStr = extensionsRaw;
+        std::string current;
+        for (char ch : extensionsStr) {
+            if (ch != ' ') {
+                current += ch;
+            } else if (!current.empty()) {
+                extensions.push_back(current);
+                current.clear();
             }
-            index++;
         }
-        extensions = new char*[extensions_supported];
-    } else {
-        qualified = false;
+        if (!current.empty()) {
+            extensions.push_back(current);
+        }
     }
 
-    char* tok = str;
-    int size = strlen(tok);
-    int array_index = 0;
-    int char_pos = 0;
-    int iteration = 0;
-    char extension[256];
-    memset(extension, 0, 256);
-    while (iteration < size) {
-        if (*(tok + iteration) != ' ') {
-            extension[char_pos++] = *(tok + iteration);
-        } else {
-            extensions[array_index] = new char[sizeof(extension)];
-            strcpy(extensions[array_index], extension);
-            array_index++;
-            char_pos = 0;
-            memset(extension, 0, 256);
-        }
-        iteration++;
-    }
-
+    int redBits, greenBits, blueBits, alphaBits, depthBits, stencilBits;
+    int maxTextureSize, maxLights, maxAttribStacks, maxModelViewStacks;
+    int maxProjectionStacks, maxClipPlanes, maxTextureStacks;
     glGetIntegerv(GL_RED_BITS, &redBits);
     glGetIntegerv(GL_GREEN_BITS, &greenBits);
     glGetIntegerv(GL_BLUE_BITS, &blueBits);
@@ -713,12 +658,10 @@ bool VBOShaderLibrary::AreVBOsSupported() {
     glGetIntegerv(GL_MAX_ATTRIB_STACK_DEPTH, &maxAttribStacks);
     glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &maxTextureStacks);
 
-    const char* exten = "GL_ARB_vertex_buffer_object";
-
+    const std::string exten = "GL_ARB_vertex_buffer_object";
     bool extension_exists = false;
-    for (int x = 0; x < extensions_supported; x++) {
-        const char* compare = extensions[x];
-        if (strcmp(compare, exten) == 0) {
+    for (const std::string& compare : extensions) {
+        if (compare == exten) {
             extension_exists = true;
         }
     }
@@ -726,18 +669,8 @@ bool VBOShaderLibrary::AreVBOsSupported() {
         qualified = false;
     }
 
-    for (int i = 0; i < extensions_supported; i++) {
-        if (extensions[i]) {
-            delete[] extensions[i];
-            extensions[i] = nullptr;
-        }
-    }
-
-    delete[] extensions;
-
     if (qualified) {
-        // fprintf(stdout, "Status: GL_ARB VBOs supported (%s)\n",
-        // (char*)glGetString(GL_VERSION));
+        // fprintf(stdout, "Status: GL_ARB VBOs supported (%s)\n", version);
     }
 
     return qualified;

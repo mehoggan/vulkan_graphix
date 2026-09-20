@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 
 #include "ControlItem.h"
 
@@ -30,13 +31,13 @@ public:
     GLfloat getHeight() override;
     GLfloat getWidth() override;
     bool isTextFieldActive();
-    char* collectData() override;
+    std::string collectData() override;
     void updateMouse(int x, int y) override;
     void keyHandler(unsigned char key);
     void deactivate();
-    void setOptionText(char* newText) override;
+    void setOptionText(const std::string& newText) override;
     void clearTextBuffer();
-    void setTextBuffer(char* newText);
+    void setTextBuffer(const std::string& newText);
 
 private:
     void setOptionText(int index) override;
@@ -49,7 +50,7 @@ private:
     GLint height;
     TextObject* currentText;
     bool textFieldActive;
-    char* currentChars;
+    std::string currentChars;
     int currentLength;
     int numberOfFrames;
     int textCursorOn;  // this is a toggle, -1 off, 1 on

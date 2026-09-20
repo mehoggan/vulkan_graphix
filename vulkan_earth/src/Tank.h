@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <string>
 
 // class Normal;
 #include "Normal.h"  //THIS IS FOR DEBUGGING PURPOSES ONLY BAD STYLE
@@ -57,7 +58,7 @@ public:
     virtual int getBasePower();
     virtual int getBaseArmor();
     virtual int getBaseSpeed();
-    virtual const char* getName();
+    virtual std::string getName();
 
     // SETTERS
     void setTankPos(GLfloat x, GLfloat y, GLfloat z);

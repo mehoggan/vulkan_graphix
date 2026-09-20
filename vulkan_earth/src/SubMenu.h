@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 
 class TextObject;
 
@@ -18,7 +19,7 @@ public:
             GLfloat blue,
             GLint width,
             GLint height,
-            char* caption,
+            const std::string& caption,
             GLfloat percentBorder);
     virtual ~SubMenu() = 0;
     /*	GETTERS AND SETTERS	*/
@@ -40,14 +41,14 @@ public:
     virtual void setWdith(GLint width) = 0;
     virtual GLint getHeight() = 0;
     virtual void setHeight(GLint height) = 0;
-    virtual char* getCaption() = 0;
-    virtual void setCaption(char* caption) = 0;
+    virtual std::string getCaption() = 0;
+    virtual void setCaption(const std::string& caption) = 0;
     virtual GLfloat getPerecentBorder() = 0;
     virtual void setPercentBorder(GLfloat percent) = 0;
     /*	END OF GETTERS AND SETTERS	*/
     /*	ACTUAL ACTIONS A SUBMENU CAN MAKE	*/
     virtual void draw() = 0;
-    virtual const char* collectData() = 0;
+    virtual std::string collectData() = 0;
     virtual void subMenuMouseTest(int x, int y, int buttonDown) = 0;
     virtual void updateMouse(int x, int y) = 0;
     /*	END OF ACTIONS A SUBMENU CAN MAKE	*/

@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 
 #ifndef Control_ITEM_BUTTON_H
 #define Control_ITEM_BUTTON_H
@@ -22,7 +23,7 @@ public:
                       GLfloat blue,
                       GLint width,
                       GLint height,
-                      char* caption);
+                      const std::string& caption);
     ~ControlItemButton() override;
     void draw() override;
     void mouseClickEvent(GLint x,
@@ -33,10 +34,10 @@ public:
     GLfloat getYPos() override;
     GLfloat getHeight() override;
     GLfloat getWidth() override;
-    char* collectData() override;
+    std::string collectData() override;
     void updateMouse(int x, int y) override;
     void setOptionText(int index) override;
-    void setOptionText(char* newText) override;
+    void setOptionText(const std::string& newText) override;
     void updateButtonState();
     bool isToggled();
     void setToggled(bool t);
@@ -49,7 +50,7 @@ private:
     GLint width;
     GLint height;
     TextObject* label;
-    char* caption;
+    std::string caption;
     int menuState;
     int buttonState;  // 0 = no button pressed, 1 = up button pressed, 2 = down
                       // button pressed

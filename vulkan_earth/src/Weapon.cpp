@@ -14,8 +14,8 @@ Weapon::~Weapon() = default;
 int Weapon::getUNIQUEIDENTIFIER() { return this->UNIQUEIDENTIFIER; }
 float Weapon::getScale() { return this->scale; }
 int Weapon::getRemaining() { return this->remaining; }
-const char* Weapon::getImageFileName() { return this->imageFileName; }
-const char* Weapon::getDescription() { return this->description; }
+std::string Weapon::getImageFileName() { return this->imageFileName; }
+std::string Weapon::getDescription() { return this->description; }
 int Weapon::getPrice() { return this->price; }
 int Weapon::getPackageNum() { return this->packageNum; }
 int Weapon::getMaxStack() { return this->maxStack; }

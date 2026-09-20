@@ -85,21 +85,17 @@ void Inventory::setupInventory(Player* player) {
                 delete imgInven[i];
                 delete remainings[i];
             }
-            imgInven[i] = new ImageObject(
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    256,
-                    256,
-                    const_cast<char*>(weapons[i]->getImageFileName()));
+            imgInven[i] = new ImageObject(0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          0,
+                                          256,
+                                          256,
+                                          weapons[i]->getImageFileName());
             invenGrid->setImageSizeToCell(this->imgInven[i], 0.8);
-            char* remain = "";
-            char add[10];
-            sprintf(add, "x %d", weapons[i]->getRemaining());
-            remain = add;
+                        std::string remain = "x " + std::to_string(weapons[i]->getRemaining());
             remainings[i] = new TextObject(remain,
                                            0,
                                            0,
@@ -125,21 +121,10 @@ void Inventory::setupInventory(Player* player) {
                 delete remainings[PLAYER_MAX_WEAPONS + i];
             }
             imgInven[PLAYER_MAX_WEAPONS + i] = new ImageObject(
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    256,
-                    256,
-                    const_cast<char*>(items[i]->getImageFileName()));
+                    0, 0, 0, 0, 0, 0, 256, 256, items[i]->getImageFileName());
             invenGrid->setImageSizeToCell(
                     this->imgInven[PLAYER_MAX_WEAPONS + i], 0.8);
-            char* remain = "";
-            char add[10];
-            sprintf(add, "x %d", items[i]->getRemaining());
-            remain = add;
+                        std::string remain = "x " + std::to_string(items[i]->getRemaining());
             remainings[PLAYER_MAX_WEAPONS + i] =
                     new TextObject(remain,
                                    0,
@@ -174,15 +159,14 @@ void Inventory::setupInventory(Player* player) {
     invenGrid->selectCell(selectCellRow, selectCellCol);
     if (weapons[0] != nullptr) {
         delete descript;
-        descript =
-                new TextObject(const_cast<char*>(weapons[0]->getDescription()),
-                               -width / 3.6,
-                               -height / 3.0,
-                               1,
-                               GLUT_BITMAP_TIMES_ROMAN_24,
-                               0,
-                               0,
-                               0);
+        descript = new TextObject(weapons[0]->getDescription(),
+                                  -width / 3.6,
+                                  -height / 3.0,
+                                  1,
+                                  GLUT_BITMAP_TIMES_ROMAN_24,
+                                  0,
+                                  0,
+                                  0);
     } else {
         delete descript;
         descript = new TextObject("",
@@ -271,16 +255,14 @@ void Inventory::keyHandler(int key) {
     if (selectCellRow == 0) {
         if (weapons[selectCellCol] != nullptr) {
             delete descript;
-            descript = new TextObject(
-                    const_cast<char*>(
-                            weapons[selectCellCol]->getDescription()),
-                    -width / 3.6,
-                    -height / 3.0,
-                    1,
-                    GLUT_BITMAP_TIMES_ROMAN_24,
-                    0,
-                    0,
-                    0);
+            descript = new TextObject(weapons[selectCellCol]->getDescription(),
+                                      -width / 3.6,
+                                      -height / 3.0,
+                                      1,
+                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      0,
+                                      0,
+                                      0);
         } else {
             delete descript;
             descript = new TextObject("",
@@ -297,15 +279,14 @@ void Inventory::keyHandler(int key) {
     else {
         if (items[selectCellCol] != nullptr) {
             delete descript;
-            descript = new TextObject(
-                    const_cast<char*>(items[selectCellCol]->getDescription()),
-                    -width / 3.6,
-                    -height / 3.0,
-                    1,
-                    GLUT_BITMAP_TIMES_ROMAN_24,
-                    0,
-                    0,
-                    0);
+            descript = new TextObject(items[selectCellCol]->getDescription(),
+                                      -width / 3.6,
+                                      -height / 3.0,
+                                      1,
+                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      0,
+                                      0,
+                                      0);
         } else {
             delete descript;
             descript = new TextObject("",

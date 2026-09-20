@@ -10,14 +10,14 @@ public:
     ~VBOQualifer();
     bool getQualified();
     bool establishIfQualified();
-    bool isExtensionSupported(const char* exten);
+    bool isExtensionSupported(const std::string& exten);
 
 private:
-    char* vendor;
-    char* renderer;
-    char* version;
+    std::string vendor;
+    std::string renderer;
+    std::string version;
     int extensions_supported;
-    char** extensions;
+    std::vector<std::string> extensions;
     int redBits;
     int greenBits;
     int blueBits;

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 #include <vector>
 #include "Normal.h"
 #include "TexCoord.h"
@@ -14,7 +15,7 @@ public:
     ~VBOShaderLibrary();
     void drawClientData();
     bool loadShaders(const char* vsFileName, const char* fsFileName);
-    bool loadClientData(char* modelFile);
+    bool loadClientData(const std::string& modelFile);
     bool loadClientData(float* vertices,
                         float* normals,
                         float* tex_coord,
@@ -47,8 +48,8 @@ private:
     PFNGLMAPBUFFERARBPROC pglMapBufferARB;  // map VBO procedure
     PFNGLUNMAPBUFFERARBPROC pglUnmapBufferARB;  // unmap VBO procedure
 
-    char* vsText;
-    char* fsText;
+    std::string vsText;
+    std::string fsText;
     unsigned int shader_id;
     unsigned int shader_vp;
     unsigned int shader_fp;

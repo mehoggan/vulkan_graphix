@@ -17,8 +17,8 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
                                            GLfloat blue,
                                            GLint width,
                                            GLint height,
-                                           char* caption,
-                                           char* menuString,
+                                           const std::string& caption,
+                                           const std::string& menuString,
                                            int sliderStartingIndex) {
     this->xPos = xPos;
     this->yPos = yPos;
@@ -45,47 +45,30 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
     this->menuInfo = menuString;
     this->isSliderClicked = false;
 
-    // count number of "arguments" in menuString
-    int counter = 0;
-    const char* strlength = this->menuInfo;
-    for (int i = 0; i < strlen(strlength); i++) {
-        char test = this->menuInfo[i];
-        if (test == '/') counter++;
+    // split menuInfo on '/' into allOptions
+    std::string current;
+    for (char ch : this->menuInfo) {
+        if (ch == '/') {
+            this->allOptions.push_back(current);
+            current.clear();
+        } else {
+            current += ch;
+        }
     }
-    this->numberOfOptions = counter;
+    this->numberOfOptions = static_cast<int>(this->allOptions.size());
     this->interval =
             barWidth / (numberOfOptions -
                         1.0);  // if it's divided by an integer, the whole
                                // thing becomes an integer value???
 
-    char insert_container[256];
-    memset(insert_container, 0, 256);
-    this->allOptions = new char*[this->numberOfOptions];
-    int items = 0;
-    for (int i = 0; i < strlen(strlength); i++) {
-        int j = 0;
-        while (this->menuInfo[i] != '/') {
-            insert_container[j++] = this->menuInfo[i++];
-        }
-        char* next = insert_container;
-        this->allOptions[items] = new char[strlen(next) + 1];
-        strcpy(this->allOptions[items++], next);
-        memset(insert_container, 0, 256);
-    }
-
     this->menuState = sliderStartingIndex;
     this->buttonState = 0;
-    this->currentOption = nullptr;
     this->optionText = nullptr;
     this->setOptionText(menuState);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = barXPos;
     GLfloat labelYPos = this->yPos - this->height * 0.45;
@@ -102,9 +85,6 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
 ControlItemSliderbar::~ControlItemSliderbar() {
     delete optionText;
     delete label;
-    delete[] currentOption;
-    for (int i = 0; i < numberOfOptions; i++) delete[] allOptions[i];
-    delete[] allOptions;
 }
 
 void ControlItemSliderbar::draw() {
@@ -369,20 +349,15 @@ GLfloat ControlItemSliderbar::getBarXPos() { return this->barXPos; }
 GLfloat ControlItemSliderbar::getInterval() { return this->interval; }
 GLfloat ControlItemSliderbar::getSliderXPos() { return this->sliderXPos; }
 void ControlItemSliderbar::setSliderXPos(GLfloat x) { this->sliderXPos = x; }
-char* ControlItemSliderbar::collectData() { return this->currentOption; }
+std::string ControlItemSliderbar::collectData() { return this->currentOption; }
 
-void ControlItemSliderbar::setOptionText(char* newText) {}
+void ControlItemSliderbar::setOptionText(const std::string& newText) {}
 
 void ControlItemSliderbar::setOptionText(int index) {
-    delete[] this->currentOption;
-
-    this->currentOption = new char[strlen(this->allOptions[index]) + 1];
-    strcpy(this->currentOption, this->allOptions[index]);
+    this->currentOption = this->allOptions[index];
     int realLength = 0;
-    int wordLength = strlen(this->currentOption);
-    for (int i = 0; i < wordLength; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24,
-                                      this->currentOption[i]);
+    for (char ch : this->currentOption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + (this->width / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height * 0.45;

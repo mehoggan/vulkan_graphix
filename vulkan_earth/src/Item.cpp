@@ -13,8 +13,8 @@ Item::~Item() = default;
 /*GETTERS*/
 int Item::getUNIQUEIDENTIFIER() { return this->UNIQUEIDENTIFIER; }
 int Item::getRemaining() { return this->remaining; }
-const char* Item::getImageFileName() { return this->imageFileName; }
-const char* Item::getDescription() { return this->description; }
+std::string Item::getImageFileName() { return this->imageFileName; }
+std::string Item::getDescription() { return this->description; }
 int Item::getPrice() { return this->price; }
 int Item::getPackageNum() { return this->packageNum; }
 int Item::getMaxStack() { return this->maxStack; }

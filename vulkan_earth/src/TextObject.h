@@ -5,11 +5,12 @@
 #include <GL/freeglut.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <string>
 
 class TextObject {
 public:
     TextObject();
-    TextObject(char* input,
+    TextObject(const std::string& input,
                GLfloat posX,
                GLfloat posY,
                GLfloat posZ,
@@ -18,20 +19,19 @@ public:
                GLfloat green,
                GLfloat blue);
     ~TextObject();
-    char* getOutput();
+    const std::string& getOutput();
     void setXpos(GLfloat x);
     void setYpos(GLfloat y);
     void setZpos(GLfloat z);
     GLvoid draw();
 
 private:
-    char output[256];
+    std::string output;
     GLfloat posX;
     GLfloat posY;
     GLfloat posZ;
     GLfloat color[4];
     void* font_size;
-    char* string_iterator;
 };
 
 #endif

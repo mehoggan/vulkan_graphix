@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 #include "Item.h"
 
 class TextObject;
@@ -20,7 +21,7 @@ public:
                    GLfloat blue,
                    GLint width,
                    GLint height,
-                   char* caption,
+                   const std::string& caption,
                    SubMenu* submenu);
     ~MainMenuButton();
     void pressDraw();
@@ -31,7 +32,7 @@ public:
     void depressButton();
     bool isPressed();
     bool isActive();
-    void setLabel(char* c);
+    void setLabel(const std::string& c);
     int getUNIQUEIDENTIFIER();
     GLfloat getXPos();
     GLfloat getYPos();
@@ -50,7 +51,7 @@ private:
     GLfloat color[4];
     GLint width;
     GLint height;
-    char* caption;
+    std::string caption;
     TextObject* label;
     bool pressed;
     bool active;

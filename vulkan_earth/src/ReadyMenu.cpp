@@ -182,16 +182,16 @@ ReadyMenu::ReadyMenu(GLfloat width,
                                          0.0f,
                                          0.0f);
 
-    char* stat = new char[30];
     for (int i = 0; i < NUM_TANK_STATS; i++) {
+        std::string stat;
         if (i == 0)
-            strcpy(stat, "Power:");
+            stat = "Power:";
         else if (i == 1)
-            strcpy(stat, "Armor:");
+            stat = "Armor:";
         else if (i == 2)
-            strcpy(stat, "Speed:");
+            stat = "Speed:";
         else
-            strcpy(stat, "Meh...:");
+            stat = "Meh...:";
         GLfloat statLabelXPos = this->pos[0] - this->width * 0.385;
         GLfloat statLabelYPos =
                 this->pos[1] + this->height * 0.12 - this->height * (i * 0.07);
@@ -204,7 +204,6 @@ ReadyMenu::ReadyMenu(GLfloat width,
                                                  0.0f,
                                                  0.0f);
     }
-    delete[] stat;
 
     // TANKS
     tanks[0] = new TankA(0, 0, 0);
@@ -345,9 +344,9 @@ void ReadyMenu::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 }
 
 void ReadyMenu::saveCurrentPlayerData() {
-    char* aitype = this->controlItems[0]->collectData();
-    char* name = this->textField->collectData();
-    char* tank = this->controlItems[1]->collectData();
+    std::string aitype = this->controlItems[0]->collectData();
+    std::string name = this->textField->collectData();
+    std::string tank = this->controlItems[1]->collectData();
     char teamLabel = (this->controlItems[2]->collectData()[0]);
 
     if (this->buttons[0]->isActive()) {
@@ -405,48 +404,36 @@ void ReadyMenu::updatePageInfo() {
     for (int i = 0; i < NUM_TANK_TYPES; i++) {
         tanks[i]->changeHeadTexture(currentPlayerIndex);
     }
-    char playerType[20];
-    memset(playerType, 0, 20);
-    const char* tempPlayerType =
+    std::string playerType =
             this->player_factory->getPlayer(currentPlayerIndex)
                     ->getPlayer_Type();
-    strcpy(playerType, tempPlayerType);
 
     // test to see if it's CPU
-    if (strcmp(playerType, "CPU") == 0) {
+    if (playerType == "CPU") {
         this->buttons[0]->pressButton();
         Mix_HaltChannel(0);
         this->buttons[0]->activateSubMenu();
         this->buttons[1]->depressButton();
         this->buttons[1]->deactivateSubMenu();
 
-        char aiType[20];
-        memset(aiType, 0, 20);
-        const char* tempAIType =
+        std::string aiType =
                 this->player_factory->getPlayer(currentPlayerIndex)
                         ->getAI_Type();
-        strcpy(aiType, tempAIType);
         int i = 0;
-        while (strcmp(this->controlItems[0]->collectData(), aiType) != 0) {
+        while (this->controlItems[0]->collectData() != aiType) {
             this->controlItems[0]->setOptionText(i);
             i++;
         }
     } else {
-        char name[20];
-        memset(name, 0, 20);
-        const char* playerName =
-                this->player_factory->getPlayer(currentPlayerIndex)
-                        ->getPlayerName();
-
-        strcpy(name, playerName);
-        char* test = name;
+        std::string name = this->player_factory->getPlayer(currentPlayerIndex)
+                                   ->getPlayerName();
         this->buttons[1]->pressButton();
         Mix_HaltChannel(0);
         this->buttons[1]->activateSubMenu();
         this->buttons[0]->depressButton();
         this->buttons[0]->deactivateSubMenu();
 
-        this->textField->setTextBuffer(test);
+        this->textField->setTextBuffer(name);
     }
 
     if (this->player_factory->getPlayer(currentPlayerIndex)->getTeamLabel() ==
@@ -459,13 +446,10 @@ void ReadyMenu::updatePageInfo() {
                 48);
     }
 
-    char tankType[25];
-    memset(tankType, 0, 25);
-    const char* tank =
+    std::string tankType =
             this->player_factory->getPlayer(currentPlayerIndex)->getTankType();
-    strcpy(tankType, tank);
     int i = 0;
-    while (strcmp(this->controlItems[1]->collectData(), tankType) != 0) {
+    while (this->controlItems[1]->collectData() != tankType) {
         this->controlItems[1]->setOptionText(i);
         i++;
     }
@@ -489,10 +473,7 @@ void ReadyMenu::updatePageInfo() {
 
 void ReadyMenu::setPlayerPageNum(int i) {
     delete this->playerPageNum;
-    this->caption = "";
-    char add[20];
-    sprintf(add, "Player %d", i + 1);
-    this->caption = add;
+    this->caption = "Player " + std::to_string(i + 1);
     GLfloat labelXPos = this->pos[0] - this->width * 0.25;
     GLfloat labelYPos = this->pos[1] + this->height * 0.4;
     this->playerPageNum = new TextObject(this->caption,
@@ -862,104 +843,89 @@ void ReadyMenu::draw() {
             statImages[i]->draw();
         } else {
             if (i < 40) {
-                if (strcmp(this->controlItems[1]->collectData(), "Rhinoxx") ==
-                            0 &&
+                if (this->controlItems[1]->collectData() == "Rhinoxx" &&
                     i - 30 < this->tanks[0]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Hellfire") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Hellfire" &&
                            i - 30 < this->tanks[1]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "HeavyD") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "HeavyD" &&
                            i - 30 < this->tanks[2]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Panzer") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Panzer" &&
                            i - 30 < this->tanks[3]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Eggroid") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Eggroid" &&
                            i - 30 < this->tanks[4]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Behemoth") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Behemoth" &&
                            i - 30 < this->tanks[5]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Cubix") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Cubix" &&
                            i - 30 < this->tanks[6]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Predator") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Predator" &&
                            i - 30 < this->tanks[7]->getBasePower()) {
                     statImages[i]->draw();
                 }
             } else if (i < 50) {
-                if (strcmp(this->controlItems[1]->collectData(), "Rhinoxx") ==
-                            0 &&
+                if (this->controlItems[1]->collectData() == "Rhinoxx" &&
                     i - 40 < this->tanks[0]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Hellfire") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Hellfire" &&
                            i - 40 < this->tanks[1]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "HeavyD") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "HeavyD" &&
                            i - 40 < this->tanks[2]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Panzer") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Panzer" &&
                            i - 40 < this->tanks[3]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Eggroid") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Eggroid" &&
                            i - 40 < this->tanks[4]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Behemoth") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Behemoth" &&
                            i - 40 < this->tanks[5]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Cubix") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Cubix" &&
                            i - 40 < this->tanks[6]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Predator") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Predator" &&
                            i - 40 < this->tanks[7]->getBaseArmor()) {
                     statImages[i]->draw();
                 }
             } else {
-                if (strcmp(this->controlItems[1]->collectData(), "Rhinoxx") ==
-                            0 &&
+                if (this->controlItems[1]->collectData() == "Rhinoxx" &&
                     i - 50 < this->tanks[0]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Hellfire") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Hellfire" &&
                            i - 50 < this->tanks[1]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "HeavyD") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "HeavyD" &&
                            i - 50 < this->tanks[2]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Panzer") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Panzer" &&
                            i - 50 < this->tanks[3]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Eggroid") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Eggroid" &&
                            i - 50 < this->tanks[4]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Behemoth") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Behemoth" &&
                            i - 50 < this->tanks[5]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Cubix") == 0 &&
+                } else if (this->controlItems[1]->collectData() == "Cubix" &&
                            i - 50 < this->tanks[6]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (strcmp(this->controlItems[1]->collectData(),
-                                  "Predator") == 0 &&
+                } else if (this->controlItems[1]->collectData() ==
+                                   "Predator" &&
                            i - 50 < this->tanks[7]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
                 }
@@ -1001,21 +967,21 @@ void ReadyMenu::draw() {
     glTranslatef(
             this->pos[0], this->pos[1] - tankPrvScrHeight * 0.2, this->pos[2]);
     glRotatef(tankAngle, 0, 1, 0);
-    if (strcmp(this->controlItems[1]->collectData(), "Rhinoxx") == 0)
+    if (this->controlItems[1]->collectData() == "Rhinoxx")
         this->tanks[0]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "Hellfire") == 0)
+    else if (this->controlItems[1]->collectData() == "Hellfire")
         this->tanks[1]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "HeavyD") == 0)
+    else if (this->controlItems[1]->collectData() == "HeavyD")
         this->tanks[2]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "Panzer") == 0)
+    else if (this->controlItems[1]->collectData() == "Panzer")
         this->tanks[3]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "Eggroid") == 0)
+    else if (this->controlItems[1]->collectData() == "Eggroid")
         this->tanks[4]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "Behemoth") == 0)
+    else if (this->controlItems[1]->collectData() == "Behemoth")
         this->tanks[5]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "Cubix") == 0)
+    else if (this->controlItems[1]->collectData() == "Cubix")
         this->tanks[6]->draw();
-    else if (strcmp(this->controlItems[1]->collectData(), "Predator") == 0)
+    else if (this->controlItems[1]->collectData() == "Predator")
         this->tanks[7]->draw();
     else {
         printf("ERROR: Unkown tank type\n");

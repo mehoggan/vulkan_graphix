@@ -1,6 +1,8 @@
 #ifndef GLOBAL_SETTINGS_H
 #define GLOBAL_SETTINGS_H
 
+#include <string>
+
 const int NUM_OPTIONS = 23;
 const int MAX_NUM_PLAYERS = 10;
 
@@ -10,68 +12,68 @@ class GlobalSettings {
 public:
     GlobalSettings();
     ~GlobalSettings();
-    void setVariables(const char* global_options,
-                      const char* round_and_player_count);
-    char* getGame_Speed();
-    char* getInterest_Rate();
-    char* getCash_At_Start();
-    char* getComputers_Buy();
-    char* getFree_Market();
-    char* getScoring_Mode();
-    char* getAir_Viscosity();
-    char* getGravity();
-    char* getTanks_Fall();
-    char* getHillyness();
-    char* getHill_Height();
-    char* getHill_Girth();
-    char* getTeams();
-    char* getStatus_bar();
-    char* getPlay_Order();
-    char* getFast_Computers();
-    char* getTalking_Tanks();
-    char* getTalk_Probability();
-    char* getArms_Level();
-    char* getBomb_Icon();
-    char* getTunneling();
-    char* getScale();
-    char* getTrace_Path();
+    void setVariables(const std::string& global_options,
+                      const std::string& round_and_player_count);
+    std::string getGame_Speed();
+    std::string getInterest_Rate();
+    std::string getCash_At_Start();
+    std::string getComputers_Buy();
+    std::string getFree_Market();
+    std::string getScoring_Mode();
+    std::string getAir_Viscosity();
+    std::string getGravity();
+    std::string getTanks_Fall();
+    std::string getHillyness();
+    std::string getHill_Height();
+    std::string getHill_Girth();
+    std::string getTeams();
+    std::string getStatus_bar();
+    std::string getPlay_Order();
+    std::string getFast_Computers();
+    std::string getTalking_Tanks();
+    std::string getTalk_Probability();
+    std::string getArms_Level();
+    std::string getBomb_Icon();
+    std::string getTunneling();
+    std::string getScale();
+    std::string getTrace_Path();
     int getPlayer_Count();
     int getRound_Count();
     void setCurrentTerrain(TerrainMaker* newTerrain);
     TerrainMaker* getCurrentTerrain();
 
 private:
-    char* options[NUM_OPTIONS];
+    std::string options[NUM_OPTIONS];
 
     /*	HARDWARE SUBMENU	*/
-    char* game_speed;
+    std::string game_speed;
     /*	ECONOMICS SUBMENU	*/
-    char* interest_rate;
-    char* cash_at_start;
-    char* computers_buy;
-    char* free_market;
-    char* scoring_mode;
+    std::string interest_rate;
+    std::string cash_at_start;
+    std::string computers_buy;
+    std::string free_market;
+    std::string scoring_mode;
     /*	PHYSICS SUBMENU	*/
-    char* air_viscosity;
-    char* gravity;
-    char* tanks_fall;
+    std::string air_viscosity;
+    std::string gravity;
+    std::string tanks_fall;
     /*	LANDSCAPE SUBMENU	*/
-    char* hillyness;
-    char* hill_height;
-    char* hill_girth;
+    std::string hillyness;
+    std::string hill_height;
+    std::string hill_girth;
     /*	PLAY SETTINGS SUBMENU	*/
-    char* teams;
-    char* status_bar;
-    char* play_order;
-    char* fast_computers;
-    char* talking_tanks;
-    char* talk_probability;
+    std::string teams;
+    std::string status_bar;
+    std::string play_order;
+    std::string fast_computers;
+    std::string talking_tanks;
+    std::string talk_probability;
     /*	WEAPONS SUBMENU	*/
-    char* arms_level;
-    char* bomb_icon;
-    char* tunneling;
-    char* scale;
-    char* trace_path;
+    std::string arms_level;
+    std::string bomb_icon;
+    std::string tunneling;
+    std::string scale;
+    std::string trace_path;
     /*	PLAYER AND ROUND DATA	*/
     int player_count;
     int round_count;

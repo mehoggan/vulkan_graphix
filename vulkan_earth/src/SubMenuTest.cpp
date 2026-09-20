@@ -18,7 +18,7 @@ SubMenuTest::SubMenuTest(int ID,
                          GLfloat blue,
                          GLint width,
                          GLint height,
-                         char* caption,
+                         const std::string& caption,
                          GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -34,13 +34,9 @@ SubMenuTest::SubMenuTest(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -76,8 +72,10 @@ GLint SubMenuTest::getWidth() { return this->width; }
 void SubMenuTest::setWdith(GLint width) { this->width = width; }
 GLint SubMenuTest::getHeight() { return this->height; }
 void SubMenuTest::setHeight(GLint height) { this->height = height; }
-char* SubMenuTest::getCaption() { return this->caption; }
-void SubMenuTest::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuTest::getCaption() { return this->caption; }
+void SubMenuTest::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuTest::getPerecentBorder() { return this->percentBorder; }
 void SubMenuTest::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -134,8 +132,4 @@ void SubMenuTest::draw() {
     this->label->draw();
 }
 
-const char* SubMenuTest::collectData() {
-    char* retrn = "Test:";
-    const char* realretrn = retrn;
-    return realretrn;
-}
+std::string SubMenuTest::collectData() { return "Test:"; }

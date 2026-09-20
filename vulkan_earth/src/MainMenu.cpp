@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include "ControlItem.h"
 #include "ControlItemCheckBox.h"
 #include "ControlItemSelectionBox.h"
@@ -624,24 +625,19 @@ void MainMenu::buttonTest(int x, int y, int buttonDown) {
 }
 
 void MainMenu::collectData() {
-    char optionsarray[1024];
-    memset(optionsarray, 0, 1024);
+    std::string optionsarray;
     for (int x = 2; x < NUM_SUBMENUS;
          x++) {  // SOUND AND START GAME ARE 1 AND 0 RESPECTIVLY
         if (this->submenus[x]) {
-            strcat(optionsarray, this->submenus[x]->collectData());
+            optionsarray += this->submenus[x]->collectData();
         }
     }
-    const char* global_options = optionsarray;
 
-    char playercount[64];
-    memset(playercount, 0, 16);
-    strcat(playercount, "/Player Count/");
+    std::string playercount = "/Player Count/";
     if (this->arrowsbutton[0]) {
-        strcat(playercount, arrowsbutton[0]->collectData());
-        strcat(playercount, "/");
+        playercount += arrowsbutton[0]->collectData();
+        playercount += "/";
     }
-    const char* player_count = playercount;
 
-    this->global_settings->setVariables(global_options, player_count);
+    this->global_settings->setVariables(optionsarray, playercount);
 }

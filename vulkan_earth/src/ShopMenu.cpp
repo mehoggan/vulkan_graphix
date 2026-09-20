@@ -191,10 +191,7 @@ ShopMenu::ShopMenu(GLfloat width,
                                           0.0f,
                                           0.0f,
                                           0.0f);
-    char* balance = "";
-    char add[20];
-    sprintf(add, "$ %d", currentPlayerBalance);
-    balance = add;
+    std::string balance = "$ " + std::to_string(currentPlayerBalance);
     this->labelPlayerBalance =
             new TextObject(balance,
                            this->pos[0] - this->width * 0.2,
@@ -230,42 +227,38 @@ ShopMenu::ShopMenu(GLfloat width,
 
     /*Images and remainsLabels Creation*/
     for (int i = 0; i < NUM_SALES_WEAPON; i++) {
-        this->imgShopWpns[i] = new ImageObject(
-                0,
-                0,
-                2.0f,
-                100,
-                100,
-                .0006 * (this->width),
-                256,
-                256,
-                const_cast<char*>(shopWpns[i]->getImageFileName()));
+        this->imgShopWpns[i] =
+                new ImageObject(0,
+                                0,
+                                2.0f,
+                                100,
+                                100,
+                                .0006 * (this->width),
+                                256,
+                                256,
+                                shopWpns[i]->getImageFileName());
         grids[0]->setImageSizeToCell(this->imgShopWpns[i], 0.8);
 
-        char* remain = "";
-        char add[10];
-        sprintf(add, "x %d", shopWpns[i]->getPackageNum());
-        remain = add;
+        std::string remain =
+                "x " + std::to_string(shopWpns[i]->getPackageNum());
         this->labelShopWpnRemains[i] = new TextObject(
                 remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
     }
     for (int i = 0; i < NUM_SALES_ITEM; i++) {
-        this->imgShopItems[i] = new ImageObject(
-                0,
-                0,
-                2.0f,
-                100,
-                100,
-                .0006 * (this->width),
-                256,
-                256,
-                const_cast<char*>(shopItems[i]->getImageFileName()));
+        this->imgShopItems[i] =
+                new ImageObject(0,
+                                0,
+                                2.0f,
+                                100,
+                                100,
+                                .0006 * (this->width),
+                                256,
+                                256,
+                                shopItems[i]->getImageFileName());
         grids[0]->setImageSizeToCell(this->imgShopItems[i], 0.8);
 
-        char* remain = "";
-        char add[10];
-        sprintf(add, "x %d", shopItems[i]->getPackageNum());
-        remain = add;
+        std::string remain =
+                "x " + std::to_string(shopItems[i]->getPackageNum());
         this->labelShopItemRemains[i] = new TextObject(
                 remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
     }
@@ -355,9 +348,8 @@ void ShopMenu::saveCurrentPlayerInfo() {
 
 void ShopMenu::displayCurrentPlayerInfo() {
     while ((this->currentPlayerIndex < numPlayers) &&
-           (strcmp(this->player_factory->getPlayer(currentPlayerIndex)
-                           ->getPlayer_Type(),
-                   "CPU") == 0)) {
+           (this->player_factory->getPlayer(currentPlayerIndex)
+                    ->getPlayer_Type() == "CPU")) {
         this->currentPlayerIndex++;
     }
 
@@ -375,15 +367,12 @@ void ShopMenu::displayCurrentPlayerInfo() {
                         0,
                         256,
                         256,
-                        const_cast<char*>(
-                                this->invenWpns[i]->getImageFileName()));
+                        this->invenWpns[i]->getImageFileName());
                 this->grids[1]->setImageSizeToCell(this->imgInvenWpns[i], 0.8);
                 this->grids[1]->placeImageToCell(this->imgInvenWpns[i], i, 0);
 
-                char* remain = "";
-                char add1[10];
-                sprintf(add1, "x %d", invenWpns[i]->getRemaining());
-                remain = add1;
+                std::string remain =
+                        "x " + std::to_string(invenWpns[i]->getRemaining());
                 delete this->labelInvenWpnRemains[i];
                 this->labelInvenWpnRemains[i] =
                         new TextObject(remain,
@@ -410,16 +399,14 @@ void ShopMenu::displayCurrentPlayerInfo() {
                         0,
                         256,
                         256,
-                        const_cast<char*>(
-                                this->invenItems[i]->getImageFileName()));
+                        this->invenItems[i]->getImageFileName());
                 this->grids[1]->setImageSizeToCell(this->imgInvenItems[i],
                                                    0.8);
                 this->grids[1]->placeImageToCell(this->imgInvenItems[i], i, 1);
 
-                char* remain = "";
-                char add1[10];
-                sprintf(add1, "x %d", this->invenItems[i]->getRemaining());
-                remain = add1;
+                std::string remain =
+                        "x " +
+                        std::to_string(this->invenItems[i]->getRemaining());
                 delete this->labelInvenItemRemains[i];
                 this->labelInvenItemRemains[i] =
                         new TextObject(remain,
@@ -437,10 +424,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
 
         // Set next player number label
         delete this->labelPlayerNum;
-        char* str = "";
-        char add[20];
-        sprintf(add, "Player %d Balance:", currentPlayerIndex + 1);
-        str = add;
+        std::string str = "Player " + std::to_string(currentPlayerIndex + 1) +
+                          " Balance:";
         this->labelPlayerNum =
                 new TextObject(str,
                                this->pos[0] - this->width * 0.35,
@@ -455,10 +440,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
         currentPlayerBalance =
                 player_factory->getPlayer(currentPlayerIndex)->getCash();
         delete this->labelPlayerBalance;
-        char* balance = "";
-        char add1[20];
-        sprintf(add1, "$ %d", currentPlayerBalance);
-        balance = add1;
+        std::string balance = "$ " + std::to_string(currentPlayerBalance);
         this->labelPlayerBalance =
                 new TextObject(balance,
                                this->pos[0] - this->width * 0.2,
@@ -486,14 +468,15 @@ void ShopMenu::printDebugInfo() {
     for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
         printf("\n\nPlayer%d", i + 1);
         printf("\nPlayer Type: %s",
-               player_factory->getPlayer(i)->getPlayer_Type());
+               player_factory->getPlayer(i)->getPlayer_Type().c_str());
         printf("\nAI Difficulty: %s",
-               player_factory->getPlayer(i)->getAI_Type());
+               player_factory->getPlayer(i)->getAI_Type().c_str());
         printf("\nPlayer Name: %s",
-               player_factory->getPlayer(i)->getPlayerName());
+               player_factory->getPlayer(i)->getPlayerName().c_str());
         printf("\nTeam Number: %c",
                player_factory->getPlayer(i)->getTeamLabel());
-        printf("\nTank Type: %s", player_factory->getPlayer(i)->getTankType());
+        printf("\nTank Type: %s",
+               player_factory->getPlayer(i)->getTankType().c_str());
         printf("\nCurrent Money: %d", player_factory->getPlayer(i)->getCash());
         for (int j = 0; j < INVEN_GRID_ROW; j++) {
             if (player_factory->getPlayer(i)->getCurrentWeapons()[j]) {
@@ -535,19 +518,17 @@ void ShopMenu::updateBuyDiscriptLabel() {
             if (selectedCells[i]) {
                 delete this->labelDiscription;
                 delete this->labelBuyPrice;
-                this->labelDiscription = new TextObject(
-                        const_cast<char*>(shopWpns[i]->getDescription()),
-                        this->pos[0] - this->width * 0.4,
-                        this->pos[1] - this->height * 0.1,
-                        this->pos[2] + 1,
-                        GLUT_BITMAP_TIMES_ROMAN_24,
-                        0.0f,
-                        0.0f,
-                        0.0f);
-                char* price = "";
-                char add[20];
-                sprintf(add, "$ %d", this->shopWpns[i]->getPrice());
-                price = add;
+                this->labelDiscription =
+                        new TextObject(shopWpns[i]->getDescription(),
+                                       this->pos[0] - this->width * 0.4,
+                                       this->pos[1] - this->height * 0.1,
+                                       this->pos[2] + 1,
+                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f);
+                std::string price =
+                        "$ " + std::to_string(this->shopWpns[i]->getPrice());
                 this->labelBuyPrice =
                         new TextObject(price,
                                        this->pos[0] - this->width * 0.35,
@@ -572,19 +553,17 @@ void ShopMenu::updateBuyDiscriptLabel() {
             if (selectedCells[i]) {
                 delete this->labelDiscription;
                 delete this->labelBuyPrice;
-                this->labelDiscription = new TextObject(
-                        const_cast<char*>(shopItems[i]->getDescription()),
-                        this->pos[0] - this->width * 0.4,
-                        this->pos[1] - this->height * 0.1,
-                        this->pos[2] + 1,
-                        GLUT_BITMAP_TIMES_ROMAN_24,
-                        0.0f,
-                        0.0f,
-                        0.0f);
-                char* price = "";
-                char add[20];
-                sprintf(add, "$ %d", this->shopItems[i]->getPrice());
-                price = add;
+                this->labelDiscription =
+                        new TextObject(shopItems[i]->getDescription(),
+                                       this->pos[0] - this->width * 0.4,
+                                       this->pos[1] - this->height * 0.1,
+                                       this->pos[2] + 1,
+                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f);
+                std::string price =
+                        "$ " + std::to_string(this->shopItems[i]->getPrice());
                 this->labelBuyPrice =
                         new TextObject(price,
                                        this->pos[0] - this->width * 0.35,
@@ -630,10 +609,7 @@ void ShopMenu::updateSellLabel() {
     }
 
     delete this->labelSellPrice;
-    char* price = "";
-    char add[20];
-    sprintf(add, "$ %d", totalSell);
-    price = add;
+    std::string price = "$ " + std::to_string(totalSell);
     this->labelSellPrice = new TextObject(price,
                                           this->pos[0] + this->width * 0.15,
                                           this->pos[1] - this->height * 0.2,
@@ -671,9 +647,7 @@ void ShopMenu::buyHandler() {
                                 0,
                                 256,
                                 256,
-                                const_cast<char*>(
-                                        this->shopWpns[i]
-                                                ->getImageFileName()));
+                                this->shopWpns[i]->getImageFileName());
                         this->grids[1]->setImageSizeToCell(
                                 this->imgInvenWpns[inven_i], 0.8);
                         this->grids[1]->placeImageToCell(
@@ -700,10 +674,8 @@ void ShopMenu::buyHandler() {
                     }
 
                     delete this->labelPlayerBalance;
-                    char* balance = "";
-                    char add[20];
-                    sprintf(add, "$ %d", currentPlayerBalance);
-                    balance = add;
+                    std::string balance =
+                            "$ " + std::to_string(currentPlayerBalance);
                     this->labelPlayerBalance =
                             new TextObject(balance,
                                            this->pos[0] - this->width * 0.2,
@@ -714,10 +686,9 @@ void ShopMenu::buyHandler() {
                                            0.0f,
                                            0.0f);
 
-                    char* remain = "";
-                    char add1[10];
-                    sprintf(add1, "x %d", invenWpns[inven_i]->getRemaining());
-                    remain = add1;
+                    std::string remain =
+                            "x " +
+                            std::to_string(invenWpns[inven_i]->getRemaining());
                     delete this->labelInvenWpnRemains[inven_i];
                     this->labelInvenWpnRemains[inven_i] =
                             new TextObject(remain,
@@ -759,9 +730,7 @@ void ShopMenu::buyHandler() {
                                 0,
                                 256,
                                 256,
-                                const_cast<char*>(
-                                        this->shopItems[i]
-                                                ->getImageFileName()));
+                                this->shopItems[i]->getImageFileName());
                         this->grids[1]->setImageSizeToCell(
                                 this->imgInvenItems[inven_i], 0.8);
                         this->grids[1]->placeImageToCell(
@@ -788,10 +757,8 @@ void ShopMenu::buyHandler() {
                     }
 
                     delete this->labelPlayerBalance;
-                    char* balance = "";
-                    char add[20];
-                    sprintf(add, "$ %d", currentPlayerBalance);
-                    balance = add;
+                    std::string balance =
+                            "$ " + std::to_string(currentPlayerBalance);
                     this->labelPlayerBalance =
                             new TextObject(balance,
                                            this->pos[0] - this->width * 0.2,
@@ -802,12 +769,10 @@ void ShopMenu::buyHandler() {
                                            0.0f,
                                            0.0f);
 
-                    char* remain = "";
-                    char add1[10];
-                    sprintf(add1,
-                            "x %d",
-                            this->invenItems[inven_i]->getRemaining());
-                    remain = add1;
+                    std::string remain =
+                            "x " +
+                            std::to_string(
+                                    this->invenItems[inven_i]->getRemaining());
                     delete this->labelInvenItemRemains[inven_i];
                     this->labelInvenItemRemains[inven_i] =
                             new TextObject(remain,
@@ -867,10 +832,7 @@ void ShopMenu::sellHandler() {
         playSFX(TRANSACTION);
         currentPlayerBalance += totalSell;
         delete this->labelPlayerBalance;
-        char* balance = "";
-        char add[20];
-        sprintf(add, "$ %d", currentPlayerBalance);
-        balance = add;
+        std::string balance = "$ " + std::to_string(currentPlayerBalance);
         this->labelPlayerBalance =
                 new TextObject(balance,
                                this->pos[0] - this->width * 0.2,

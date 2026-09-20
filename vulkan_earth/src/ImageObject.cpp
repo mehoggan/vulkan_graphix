@@ -13,7 +13,7 @@ ImageObject::ImageObject(GLfloat xPos,
                          GLfloat border,
                          GLint iWidth,
                          GLint iHeight,
-                         char* filename) {
+                         const std::string& filename) {
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;

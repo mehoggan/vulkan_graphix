@@ -26,7 +26,7 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
                                      GLfloat blue,
                                      GLint width,
                                      GLint height,
-                                     char* caption) {
+                                     const std::string& caption) {
     this->parent = parent;
 
     this->xPos = xPos;
@@ -45,13 +45,9 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
     this->menuState = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos +
@@ -200,8 +196,8 @@ void ControlItemButton::updateButtonState() {
 }
 void ControlItemButton::setToggled(bool t) { this->toggled = t; }
 void ControlItemButton::setOptionText(int index) {}
-void ControlItemButton::setOptionText(char* newText) {}
-char* ControlItemButton::collectData() { return "Button"; }
+void ControlItemButton::setOptionText(const std::string& newText) {}
+std::string ControlItemButton::collectData() { return "Button"; }
 
 void ControlItemButton::mouseClickEvent(GLint x,
                                         GLint y,

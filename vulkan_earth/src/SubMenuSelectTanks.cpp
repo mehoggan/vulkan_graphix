@@ -21,7 +21,7 @@ SubMenuSelectTanks::SubMenuSelectTanks(int ID,
                                        GLfloat blue,
                                        GLint width,
                                        GLint height,
-                                       char* caption,
+                                       const std::string& caption,
                                        GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -37,13 +37,9 @@ SubMenuSelectTanks::SubMenuSelectTanks(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -83,8 +79,10 @@ GLint SubMenuSelectTanks::getWidth() { return this->width; }
 void SubMenuSelectTanks::setWdith(GLint width) { this->width = width; }
 GLint SubMenuSelectTanks::getHeight() { return this->height; }
 void SubMenuSelectTanks::setHeight(GLint height) { this->height = height; }
-char* SubMenuSelectTanks::getCaption() { return this->caption; }
-void SubMenuSelectTanks::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuSelectTanks::getCaption() { return this->caption; }
+void SubMenuSelectTanks::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuSelectTanks::getPerecentBorder() { return this->percentBorder; }
 void SubMenuSelectTanks::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -146,11 +144,7 @@ void SubMenuSelectTanks::draw() {
     }
 }
 
-const char* SubMenuSelectTanks::collectData() {
-    char* retrn = "SelectTanks:";
-    const char* realretrn = retrn;
-    return realretrn;
-}
+std::string SubMenuSelectTanks::collectData() { return "SelectTanks:"; }
 
 void SubMenuSelectTanks::subMenuMouseTest(int x, int y, int buttonDown) {
     /*

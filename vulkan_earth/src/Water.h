@@ -45,8 +45,8 @@ public:
     void terrainGen(int steps, int increase, float radius, int randomJump);
     GLint getActualSize();
     GLint getScale();
-    void stdMessageBox(char* output);
-    void errorMessageBox(char* output);
+    void stdMessageBox(const std::string& output);
+    void errorMessageBox(const std::string& output);
     GLuint LoadTexture(const char* filename, int width, int height);
 
 private:
@@ -64,7 +64,6 @@ private:
     std::vector<GLfloat> materialSpecular;
     std::vector<GLfloat> materialShininess;
     std::vector<GLfloat> materialDiffuse;
-    unsigned char* heightDataContainer;
     void configVBOs();
     unsigned int vertexVBOId;
     unsigned int normalVBOId;

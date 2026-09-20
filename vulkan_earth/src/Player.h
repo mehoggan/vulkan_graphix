@@ -8,6 +8,7 @@ const int PLAYER_MAX_ITEMS = 5;
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <iostream>
+#include <string>
 #include "OpenGLColors.h"
 #include "Vector.h"
 #include "Vertex.h"
@@ -41,19 +42,19 @@ public:
     virtual ~Player();
     virtual void updateTank(
             /* Pass in all paramaters that are associated with a tank */) = 0;
-    virtual char* getTankType() = 0;
-    virtual void setTankType(char* tankType) = 0;
+    virtual std::string getTankType() = 0;
+    virtual void setTankType(const std::string& tankType) = 0;
     virtual Tank* getCurrentTank() = 0;
     virtual Item** getCurrentItems() = 0;
     virtual void setItems(Item** itemSet) = 0;
     virtual Weapon** getCurrentWeapons() = 0;
     virtual void setWeapons(Weapon** weaponSet) = 0;
-    virtual char* getAI_Type() = 0;
-    virtual void setAI_Type(char* ai_type) = 0;
-    virtual char* getPlayer_Type() = 0;
-    virtual void setPlayer_Type(char* player_type) = 0;
-    virtual char* getPlayerName() = 0;
-    virtual void setPlayerName(char* name) = 0;
+    virtual std::string getAI_Type() = 0;
+    virtual void setAI_Type(const std::string& ai_type) = 0;
+    virtual std::string getPlayer_Type() = 0;
+    virtual void setPlayer_Type(const std::string& player_type) = 0;
+    virtual std::string getPlayerName() = 0;
+    virtual void setPlayerName(const std::string& name) = 0;
     virtual int getCash() = 0;
     virtual void setCash(int cash) = 0;
     virtual GLfloat getRed() = 0;

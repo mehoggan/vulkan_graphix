@@ -5,6 +5,7 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <iostream>
+#include <string>
 
 class ControlItem {
 public:
@@ -20,8 +21,8 @@ public:
     virtual GLfloat getYPos() = 0;
     virtual GLfloat getHeight() = 0;
     virtual GLfloat getWidth() = 0;
-    virtual char* collectData() = 0;
+    virtual std::string collectData() = 0;
     virtual void setOptionText(int index) = 0;
-    virtual void setOptionText(char* newText) = 0;
+    virtual void setOptionText(const std::string& newText) = 0;
 };
 #endif  // CONTROL_ITEM_H

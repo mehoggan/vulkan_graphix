@@ -21,7 +21,7 @@ SubMenuPhysics::SubMenuPhysics(int ID,
                                GLfloat blue,
                                GLint width,
                                GLint height,
-                               char* caption,
+                               const std::string& caption,
                                GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -37,13 +37,9 @@ SubMenuPhysics::SubMenuPhysics(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -117,8 +113,10 @@ GLint SubMenuPhysics::getWidth() { return this->width; }
 void SubMenuPhysics::setWdith(GLint width) { this->width = width; }
 GLint SubMenuPhysics::getHeight() { return this->height; }
 void SubMenuPhysics::setHeight(GLint height) { this->height = height; }
-char* SubMenuPhysics::getCaption() { return this->caption; }
-void SubMenuPhysics::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuPhysics::getCaption() { return this->caption; }
+void SubMenuPhysics::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuPhysics::getPerecentBorder() { return this->percentBorder; }
 void SubMenuPhysics::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -180,18 +178,15 @@ void SubMenuPhysics::draw() {
     }
 }
 
-const char* SubMenuPhysics::collectData() {
-    char optionsarray[512];
-    memset(optionsarray, 0, 512);
-    strcat(optionsarray, "/Physics/");
+std::string SubMenuPhysics::collectData() {
+    std::string optionsarray = "/Physics/";
     for (int x = 0; x < NUM_CONTROL_ITEMS_PHY; x++) {
         if (this->subMenuButton[x]) {
-            strcat(optionsarray, this->subMenuButton[x]->collectData());
-            strcat(optionsarray, "/");
+            optionsarray += this->subMenuButton[x]->collectData();
+            optionsarray += "/";
         }
     }
-    const char* realretrn = optionsarray;
-    return realretrn;
+    return optionsarray;
 }
 
 void SubMenuPhysics::subMenuMouseTest(int x, int y, int buttonDown) {

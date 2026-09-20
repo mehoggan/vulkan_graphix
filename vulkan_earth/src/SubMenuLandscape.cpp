@@ -31,7 +31,7 @@ SubMenuLandscape::SubMenuLandscape(int ID,
                                    GLfloat blue,
                                    GLint width,
                                    GLint height,
-                                   char* caption,
+                                   const std::string& caption,
                                    GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -57,13 +57,9 @@ SubMenuLandscape::SubMenuLandscape(int ID,
     this->oldMouseY = -1;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -154,8 +150,10 @@ GLint SubMenuLandscape::getWidth() { return this->width; }
 void SubMenuLandscape::setWdith(GLint width) { this->width = width; }
 GLint SubMenuLandscape::getHeight() { return this->height; }
 void SubMenuLandscape::setHeight(GLint height) { this->height = height; }
-char* SubMenuLandscape::getCaption() { return this->caption; }
-void SubMenuLandscape::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuLandscape::getCaption() { return this->caption; }
+void SubMenuLandscape::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuLandscape::getPerecentBorder() { return this->percentBorder; }
 void SubMenuLandscape::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -320,18 +318,15 @@ void SubMenuLandscape::draw() {
     glLoadIdentity();
 }
 
-const char* SubMenuLandscape::collectData() {
-    char optionsarray[512];
-    memset(optionsarray, 0, 512);
-    strcat(optionsarray, "/Landscape/");
+std::string SubMenuLandscape::collectData() {
+    std::string optionsarray = "/Landscape/";
     for (int x = 0; x < NUM_CONTROL_ITEMS_LND; x++) {
         if (this->subMenuButton[x]) {
-            strcat(optionsarray, this->subMenuButton[x]->collectData());
-            strcat(optionsarray, "/");
+            optionsarray += this->subMenuButton[x]->collectData();
+            optionsarray += "/";
         }
     }
-    const char* realretrn = optionsarray;
-    return realretrn;
+    return optionsarray;
 }
 
 void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
@@ -379,21 +374,12 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
                     /*		Terrain Texture	--			out3,i3
                      */
                     /********************************************************************************/
-                    char out1[256];
-                    sprintf(out1, "%s", this->subMenuButton[0]->collectData());
-                    char* pout1 = out1;
-                    stringstream ss1(pout1);
+                    stringstream ss1(this->subMenuButton[0]->collectData());
                     int i1;
                     if (!(ss1 >> i1)) i1 = 0;
-                    char out2[256];
-                    sprintf(out2, "%s", this->subMenuButton[1]->collectData());
-                    char* pout2 = out2;
-                    stringstream ss2(pout2);
+                    stringstream ss2(this->subMenuButton[1]->collectData());
                     int i2;
                     if (!(ss2 >> i2)) i2 = 0;
-                    char out3[256];
-                    sprintf(out3, "%s", this->subMenuButton[2]->collectData());
-                    char* pout3 = out3;
                     this->tm->prepareData(2500,          // int steps
                                           i2 * i2 + 10,  // int increase
                                           30,            // float radius

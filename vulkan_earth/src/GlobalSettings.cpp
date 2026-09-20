@@ -10,11 +10,6 @@
 using namespace std;
 
 GlobalSettings::GlobalSettings() {
-    for (int i = 0; i < NUM_OPTIONS; i++) {
-        this->options[i] = new char[256];
-        memset(this->options[i], 0, 256);
-    }
-
     this->player_count = 2;
     this->round_count = 1;
 
@@ -43,42 +38,31 @@ GlobalSettings::GlobalSettings() {
     this->trace_path = "false";
 }
 
-GlobalSettings::~GlobalSettings() {
-    for (int i = 0; i < NUM_OPTIONS; i++) {
-        delete[] this->options[i];
-    }
-}
+GlobalSettings::~GlobalSettings() = default;
 
-void GlobalSettings::setVariables(const char* global_options,
-                                  const char* round_and_player_count) {
+void GlobalSettings::setVariables(const std::string& global_options,
+                                  const std::string& round_and_player_count) {
     for (int i = 0; i < NUM_OPTIONS; i++) {
-        memset(this->options[i], 0, 256);
+        this->options[i].clear();
     }
 
-    int index = 0;
-    int chars_in_global_options = strlen(global_options);
     int cur_char = 0;
     int cur_token_count = 0;
-    while (cur_char < chars_in_global_options) {
-        if (*(global_options + cur_char) == '/') {
+    while (cur_char < static_cast<int>(global_options.size())) {
+        if (global_options[cur_char] == '/') {
             cur_char++;
-            char DATA[256];
-            memset(DATA, 0, 256);
-            int index = 0;
-            while ((*(global_options + cur_char) != '/') &&
-                   (cur_char < chars_in_global_options)) {
-                DATA[index++] = *(global_options + cur_char);
+            std::string data;
+            while (cur_char < static_cast<int>(global_options.size()) &&
+                   global_options[cur_char] != '/') {
+                data += global_options[cur_char];
                 cur_char++;
             }
             cur_char--;
-            if ((strcmp(DATA, "") != 0) && ((strcmp(DATA, "Hardware") != 0)) &&
-                ((strcmp(DATA, "Economics") != 0)) &&
-                ((strcmp(DATA, "Physics") != 0)) &&
-                ((strcmp(DATA, "Landscape") != 0)) &&
-                ((strcmp(DATA, "Game Options") != 0)) &&
-                ((strcmp(DATA, "Weapons") != 0)) &&
-                ((strcmp(DATA, "Button") != 0))) {
-                strcpy(this->options[cur_token_count], DATA);
+            if (data != "" && data != "Hardware" && data != "Economics" &&
+                data != "Physics" && data != "Landscape" &&
+                data != "Game Options" && data != "Weapons" &&
+                data != "Button") {
+                this->options[cur_token_count] = data;
                 cur_token_count++;
             }
         }
@@ -87,32 +71,26 @@ void GlobalSettings::setVariables(const char* global_options,
     this->copyData();
 
     /*	GET NUMBER OF PLAYERS AND ROUNDS	*/
-    //*
-    int chars_in_round_and_player_count = strlen(round_and_player_count);
     int cur_char1 = 0;
     int cur_token_count1 = 0;
-    while (cur_char1 < chars_in_round_and_player_count) {
-        if (*(round_and_player_count + cur_char1) == '/') {
+    while (cur_char1 < static_cast<int>(round_and_player_count.size())) {
+        if (round_and_player_count[cur_char1] == '/') {
             cur_char1++;
-            char DATA[256];
-            memset(DATA, 0, 256);
-            int index = 0;
-            while ((round_and_player_count[cur_char1] != '/') &&
-                   (cur_char1 < chars_in_round_and_player_count)) {
-                DATA[index++] = round_and_player_count[cur_char1];
+            std::string data;
+            while (cur_char1 <
+                           static_cast<int>(round_and_player_count.size()) &&
+                   round_and_player_count[cur_char1] != '/') {
+                data += round_and_player_count[cur_char1];
                 cur_char1++;
             }
             cur_char1--;
-            if ((strcmp(DATA, "") != 0) &&
-                ((strcmp(DATA, "Player Count") != 0)) &&
-                ((strcmp(DATA, "Round Count") != 0))) {
+            if (data != "" && data != "Player Count" &&
+                data != "Round Count") {
                 if (cur_token_count1 == 0) {
-                    char* pout1 = DATA;
-                    stringstream ss1(pout1);
+                    stringstream ss1(data);
                     if (!(ss1 >> this->player_count)) this->player_count = 0;
                 } else if (cur_token_count1 == 1) {
-                    char* pout1 = DATA;
-                    stringstream ss1(pout1);
+                    stringstream ss1(data);
                     if (!(ss1 >> this->round_count)) this->round_count = 0;
                 }
                 cur_token_count1++;
@@ -159,54 +137,58 @@ void GlobalSettings::printSelf(int index) {
     printf("Number of Players == %d\n", this->player_count);
     printf("Number of Rounds == %d\n", this->round_count);
 
-    printf("game speed = %s\n", this->game_speed);
-    printf("interest rate = %s\n", this->interest_rate);
-    printf("cash at start = %s\n", this->cash_at_start);
-    printf("computers buy = %s\n", this->computers_buy);
-    printf("free market = %s\n", this->free_market);
-    printf("scoring mode = %s\n", this->scoring_mode);
-    printf("air viscosity = %s\n", this->air_viscosity);
-    printf("gravity = %s\n", this->gravity);
-    printf("tanks fall = %s\n", this->tanks_fall);
-    printf("hillyness = %s\n", this->hillyness);
-    printf("hill_height = %s\n", this->hill_height);
-    printf("hill girth = %s\n", this->hill_girth);
-    printf("teams = %s\n", this->teams);
-    printf("status bar = %s\n", this->status_bar);
-    printf("play order = %s\n", this->play_order);
-    printf("fast computers = %s\n", this->fast_computers);
-    printf("talking tanks = %s\n", this->talking_tanks);
-    printf("talk probability = %s\n", this->talk_probability);
-    printf("arms level = %s\n", this->arms_level);
-    printf("bomb icon = %s\n", this->bomb_icon);
-    printf("tunneling = %s\n", this->tunneling);
-    printf("scale = %s\n", this->scale);
-    printf("trace path = %s\n", this->trace_path);
+    printf("game speed = %s\n", this->game_speed.c_str());
+    printf("interest rate = %s\n", this->interest_rate.c_str());
+    printf("cash at start = %s\n", this->cash_at_start.c_str());
+    printf("computers buy = %s\n", this->computers_buy.c_str());
+    printf("free market = %s\n", this->free_market.c_str());
+    printf("scoring mode = %s\n", this->scoring_mode.c_str());
+    printf("air viscosity = %s\n", this->air_viscosity.c_str());
+    printf("gravity = %s\n", this->gravity.c_str());
+    printf("tanks fall = %s\n", this->tanks_fall.c_str());
+    printf("hillyness = %s\n", this->hillyness.c_str());
+    printf("hill_height = %s\n", this->hill_height.c_str());
+    printf("hill girth = %s\n", this->hill_girth.c_str());
+    printf("teams = %s\n", this->teams.c_str());
+    printf("status bar = %s\n", this->status_bar.c_str());
+    printf("play order = %s\n", this->play_order.c_str());
+    printf("fast computers = %s\n", this->fast_computers.c_str());
+    printf("talking tanks = %s\n", this->talking_tanks.c_str());
+    printf("talk probability = %s\n", this->talk_probability.c_str());
+    printf("arms level = %s\n", this->arms_level.c_str());
+    printf("bomb icon = %s\n", this->bomb_icon.c_str());
+    printf("tunneling = %s\n", this->tunneling.c_str());
+    printf("scale = %s\n", this->scale.c_str());
+    printf("trace path = %s\n", this->trace_path.c_str());
 }
 
-char* GlobalSettings::getGame_Speed() { return this->game_speed; }
-char* GlobalSettings::getInterest_Rate() { return this->interest_rate; }
-char* GlobalSettings::getCash_At_Start() { return this->cash_at_start; }
-char* GlobalSettings::getComputers_Buy() { return this->computers_buy; }
-char* GlobalSettings::getFree_Market() { return this->free_market; }
-char* GlobalSettings::getScoring_Mode() { return this->scoring_mode; }
-char* GlobalSettings::getAir_Viscosity() { return this->air_viscosity; }
-char* GlobalSettings::getGravity() { return this->gravity; }
-char* GlobalSettings::getTanks_Fall() { return this->tanks_fall; }
-char* GlobalSettings::getHillyness() { return this->hillyness; }
-char* GlobalSettings::getHill_Height() { return this->hill_height; }
-char* GlobalSettings::getHill_Girth() { return this->hill_girth; }
-char* GlobalSettings::getTeams() { return this->teams; }
-char* GlobalSettings::getStatus_bar() { return this->status_bar; }
-char* GlobalSettings::getPlay_Order() { return this->play_order; }
-char* GlobalSettings::getFast_Computers() { return this->fast_computers; }
-char* GlobalSettings::getTalking_Tanks() { return this->talking_tanks; }
-char* GlobalSettings::getTalk_Probability() { return this->talk_probability; }
-char* GlobalSettings::getArms_Level() { return this->arms_level; }
-char* GlobalSettings::getBomb_Icon() { return this->bomb_icon; }
-char* GlobalSettings::getTunneling() { return this->tunneling; }
-char* GlobalSettings::getScale() { return this->scale; }
-char* GlobalSettings::getTrace_Path() { return this->trace_path; }
+std::string GlobalSettings::getGame_Speed() { return this->game_speed; }
+std::string GlobalSettings::getInterest_Rate() { return this->interest_rate; }
+std::string GlobalSettings::getCash_At_Start() { return this->cash_at_start; }
+std::string GlobalSettings::getComputers_Buy() { return this->computers_buy; }
+std::string GlobalSettings::getFree_Market() { return this->free_market; }
+std::string GlobalSettings::getScoring_Mode() { return this->scoring_mode; }
+std::string GlobalSettings::getAir_Viscosity() { return this->air_viscosity; }
+std::string GlobalSettings::getGravity() { return this->gravity; }
+std::string GlobalSettings::getTanks_Fall() { return this->tanks_fall; }
+std::string GlobalSettings::getHillyness() { return this->hillyness; }
+std::string GlobalSettings::getHill_Height() { return this->hill_height; }
+std::string GlobalSettings::getHill_Girth() { return this->hill_girth; }
+std::string GlobalSettings::getTeams() { return this->teams; }
+std::string GlobalSettings::getStatus_bar() { return this->status_bar; }
+std::string GlobalSettings::getPlay_Order() { return this->play_order; }
+std::string GlobalSettings::getFast_Computers() {
+    return this->fast_computers;
+}
+std::string GlobalSettings::getTalking_Tanks() { return this->talking_tanks; }
+std::string GlobalSettings::getTalk_Probability() {
+    return this->talk_probability;
+}
+std::string GlobalSettings::getArms_Level() { return this->arms_level; }
+std::string GlobalSettings::getBomb_Icon() { return this->bomb_icon; }
+std::string GlobalSettings::getTunneling() { return this->tunneling; }
+std::string GlobalSettings::getScale() { return this->scale; }
+std::string GlobalSettings::getTrace_Path() { return this->trace_path; }
 int GlobalSettings::getPlayer_Count() { return this->player_count; }
 int GlobalSettings::getRound_Count() { return this->round_count; }
 void GlobalSettings::setCurrentTerrain(TerrainMaker* newTerrain) {

@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 #include "stdio.h"
 
 #ifndef IMAGEOBJECT
@@ -16,7 +17,7 @@ public:
                 GLfloat border,
                 GLint iwidth,
                 GLint iheight,
-                char* filename);
+                const std::string& filename);
     ~ImageObject();
     GLfloat getXpos();
     GLfloat getYpos();

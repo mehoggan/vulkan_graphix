@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 
 #include "ControlItem.h"
 
@@ -19,7 +20,7 @@ public:
                         GLfloat blue,
                         GLint width,
                         GLint height,
-                        char* caption);
+                        const std::string& caption);
     ~ControlItemCheckBox() override;
     void draw() override;
     void mouseClickEvent(GLint x,
@@ -30,12 +31,12 @@ public:
     GLfloat getYPos() override;
     GLfloat getHeight() override;
     GLfloat getWidth() override;
-    char* collectData() override;
+    std::string collectData() override;
     void updateMouse(int x, int y) override;
 
 private:
     void setOptionText(int index) override;
-    void setOptionText(char* newText) override;
+    void setOptionText(const std::string& newText) override;
     GLfloat xPos;
     GLfloat yPos;
     GLfloat zPos;
@@ -43,7 +44,7 @@ private:
     GLint width;
     GLint height;
     TextObject* label;
-    char* caption;
+    std::string caption;
     int menuState;
     int buttonState;  // 0 = no button pressed, 1 = up button pressed, 2 = down
                       // button pressed

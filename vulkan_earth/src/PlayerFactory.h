@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <string>
 
 class Player;
 class GlobalSettings;
@@ -18,11 +19,11 @@ public:
     void setNumberofPlayers(int number_of_players);
     int getNumberofPlayers();
     void initializePlayerDataBase();
-    void updatePlayerBasicStrings(char* player_type,
-                                  char* ai_type,
-                                  char* name,
+    void updatePlayerBasicStrings(const std::string& player_type,
+                                  const std::string& ai_type,
+                                  const std::string& name,
                                   char teamLabel,
-                                  char* tank_type,
+                                  const std::string& tank_type,
                                   int player_number);
     GLfloat* collectPlayerColor(int i);
     Player* getPlayer(int i);

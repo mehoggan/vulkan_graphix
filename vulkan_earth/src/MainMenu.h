@@ -69,7 +69,6 @@ private:
     MainMenuButton* buttonPressed;
     SubMenu* activeSubMenu;
     ControlItem* arrowButtonPressed;
-    char* options;
     GlobalSettings* global_settings;
     PlayerFactory* player_factory;
 };

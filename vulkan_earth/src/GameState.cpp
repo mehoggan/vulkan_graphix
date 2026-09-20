@@ -378,7 +378,7 @@ void GameState::update() {
             gameSubState = PASS_TIME;
         }
 
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+        if (currentPlayer->getPlayer_Type() == "CPU") {
             this->handlePlayerControlUpdates();
             if (this->currentPlayer->getCurrentTank()->isAlive()) {
                 this->controlAI();
@@ -387,7 +387,7 @@ void GameState::update() {
                      << endl;
             }
             this->updateWorldCam();
-        } else if (strcmp(currentPlayer->getPlayer_Type(), "HUMAN") == 0) {
+        } else if (currentPlayer->getPlayer_Type() == "HUMAN") {
             this->handlePlayerControlUpdates();
             this->updateWorldCam();
         }
@@ -438,7 +438,7 @@ void GameState::draw() {
     this->global_settings->getCurrentTerrain()->draw();
     this->skybox_factory->draw();
 
-    if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+    if (currentPlayer->getPlayer_Type() == "CPU") {
         if (this->currentPlayer->getDrawDebugLinesandPlanes()) {
             this->currentPlayer->drawTestLinesandPlanes();
         }
@@ -492,7 +492,7 @@ void GameState::draw() {
     }
 
     if (this->gameSubState == PLAYER_CONTROL) {
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+        if (currentPlayer->getPlayer_Type() == "CPU") {
             const GLfloat* turretMatrix =
                     this->currentPlayer->getCurrentTank()->getTurretMatrix();
             const GLfloat* bodyMatrix =
@@ -560,11 +560,7 @@ void GameState::drawHUD() {
         drawHUDText(player_factory->getPlayer(i)->getPlayerName(),
                     -0.76 * newX,
                     0.70 * newY - 0.05 * newY * i);
-        char* team = "";
-        char add[2];
-        add[0] = player_factory->getPlayer(i)->getTeamLabel();
-        add[1] = '\0';
-        team = add;
+        std::string team(1, player_factory->getPlayer(i)->getTeamLabel());
         glColor3f(1, 1, 1);
         drawHUDText(team, -0.475 * newX, 0.70 * newY - 0.05 * newY * i);
         char buffer[128];
@@ -781,16 +777,13 @@ void GameState::drawHUD() {
     glPopMatrix();
 }
 
-void GameState::drawHUDText(char* input, GLfloat x, GLfloat y) {
-    char* string_iterator = input;
+void GameState::drawHUDText(const std::string& input, GLfloat x, GLfloat y) {
     GLfloat xPos = x;
-    while (*string_iterator != '\0') {
-        int step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24,
-                                   *(string_iterator));
+    for (char ch : input) {
+        int step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
         glRasterPos2f(xPos, y);
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *(string_iterator));
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ch);
         xPos += step;
-        string_iterator++;
     }
 }
 
@@ -1234,7 +1227,7 @@ void GameState::drawMinimap() {
 }
 
 void GameState::playBackgroundSounds() {
-    if (strcmp(this->global_settings->getHill_Girth(), "Rock") == 0) {
+    if (this->global_settings->getHill_Girth() == "Rock") {
         sfxRandom = rand() % 3000;  // set the frequency of the wave sound
         if (sfxRandom == 0)
             playSFX(WAVE1);
@@ -1257,7 +1250,7 @@ void GameState::playBackgroundSounds() {
             playSFX(SEAGULLS5);
 
         playMusic(GAMESTATE_ROCK);
-    } else if (strcmp(this->global_settings->getHill_Girth(), "Snow") == 0) {
+    } else if (this->global_settings->getHill_Girth() == "Snow") {
         sfxRandom = rand() % 3000;  // set the frequency of the wave sound
         if (sfxRandom == 0)
             playSFX(WAVE1);
@@ -1280,7 +1273,7 @@ void GameState::playBackgroundSounds() {
             playSFX(SEAGULLS5);
 
         playMusic(GAMESTATE_SNOW);
-    } else if (strcmp(this->global_settings->getHill_Girth(), "Ice") == 0) {
+    } else if (this->global_settings->getHill_Girth() == "Ice") {
         sfxRandom = rand() % 3000;  // set the frequency of the wave sound
         if (sfxRandom == 0)
             playSFX(WAVE1);
@@ -1292,7 +1285,7 @@ void GameState::playBackgroundSounds() {
             playSFX(WAVE1);
 
         playMusic(GAMESTATE_ICE);
-    } else if (strcmp(this->global_settings->getHill_Girth(), "Desert") == 0) {
+    } else if (this->global_settings->getHill_Girth() == "Desert") {
         sfxRandom = rand() % 3000;  // set the frequency of the wave sound
         if (sfxRandom == 0)
             playSFX(WAVE1);
@@ -1314,8 +1307,8 @@ void GameState::playBackgroundSounds() {
         else if (sfxRandom == 4)
             playSFX(SEAGULLS5);
 
-        if (atoi(this->global_settings->getHill_Height()) < 2 &&
-            atoi(this->global_settings->getHillyness()) > 4) {
+        if (atoi(this->global_settings->getHill_Height().c_str()) < 2 &&
+            atoi(this->global_settings->getHillyness().c_str()) > 4) {
             if (!startMusicPlayed) {
                 playMusic(GAMESTATE_BEACH_START);
                 startMusicPlayed = true;
@@ -1325,7 +1318,7 @@ void GameState::playBackgroundSounds() {
         } else {
             playMusic(GAMESTATE_DESERT);
         }
-    } else if (strcmp(this->global_settings->getHill_Girth(), "Mars") == 0) {
+    } else if (this->global_settings->getHill_Girth() == "Mars") {
         sfxRandom = rand() % 3000;  // set the frequency of the wave sound
         if (sfxRandom == 0)
             playSFX(WAVE1);
@@ -1337,7 +1330,7 @@ void GameState::playBackgroundSounds() {
             playSFX(WAVE1);
 
         playMusic(GAMESTATE_MARS);
-    } else if (strcmp(this->global_settings->getHill_Girth(), "Lava") == 0) {
+    } else if (this->global_settings->getHill_Girth() == "Lava") {
         playMusic(GAMESTATE_LAVA);
     }
 }
@@ -1384,17 +1377,15 @@ void GameState::drawHelp() {
 void GameState::handlePlayerControlUpdates() {
     if (this->keyMonitor[1]) {
         playSFX(TANK_CONTROL2);
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+        if (currentPlayer->getPlayer_Type() == "CPU") {
             this->currentPlayer->updateBalsticMatrix();
             this->currentPlayer->setUpYawVectors();
         }
         this->player_factory->getPlayer(currentPlayerIndex)
                 ->getCurrentTank()
                 ->rotateHead(-0.1 - 0.4 * this->keyMonitor[1] / 50);
-        if (strcmp(currentPlayer->getCurrentTank()->getName(), "Rhinoxx") ==
-                    0 ||
-            strcmp(currentPlayer->getCurrentTank()->getName(), "HeavyD") ==
-                    0) {
+        if (currentPlayer->getCurrentTank()->getName() == "Rhinoxx" ||
+            currentPlayer->getCurrentTank()->getName() == "HeavyD") {
             currentPlayer->getCurrentTank()->rotateWheel(-.1);
         }
         this->cameraX =
@@ -1407,17 +1398,15 @@ void GameState::handlePlayerControlUpdates() {
                         1000;
     } else if (this->keyMonitor[3]) {
         playSFX(TANK_CONTROL2);
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+        if (currentPlayer->getPlayer_Type() == "CPU") {
             this->currentPlayer->updateBalsticMatrix();
             this->currentPlayer->setUpYawVectors();
         }
         this->player_factory->getPlayer(currentPlayerIndex)
                 ->getCurrentTank()
                 ->rotateHead(0.1 + 0.4 * this->keyMonitor[3] / 50);
-        if (strcmp(currentPlayer->getCurrentTank()->getName(), "Rhinoxx") ==
-                    0 ||
-            strcmp(currentPlayer->getCurrentTank()->getName(), "HeavyD") ==
-                    0) {
+        if (currentPlayer->getCurrentTank()->getName() == "Rhinoxx" ||
+            currentPlayer->getCurrentTank()->getName() == "HeavyD") {
             currentPlayer->getCurrentTank()->rotateWheel(.1);
         }
         this->cameraX =
@@ -1429,7 +1418,7 @@ void GameState::handlePlayerControlUpdates() {
                 this->currentPlayer->getCurrentTank()->getHeadMatrix()[10] *
                         1000;
     } else {
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") != 0) {
+        if (currentPlayer->getPlayer_Type() != "CPU") {
             Mix_HaltChannel(3);
         }
     }
@@ -1461,7 +1450,7 @@ void GameState::handlePlayerControlUpdates() {
             if (Mix_Playing(4) == 0) playSFX(TANK_STUCK);
         }
     } else {
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") != 0) {
+        if (currentPlayer->getPlayer_Type() != "CPU") {
             Mix_HaltChannel(2);
         }
     }
@@ -1524,8 +1513,7 @@ void GameState::createSpecialEffect() {
     this->specialEffectY = this->projectile->getPos()[1];
     this->specialEffectZ = this->projectile->getPos()[2];
     // Teleport weapon effect handling
-    if (strcmp(projectile->getWeapon()->getImageFileName(),
-               "WeaponTeleport.raw") == 0) {
+    if (projectile->getWeapon()->getImageFileName() == "WeaponTeleport.raw") {
         int size = this->global_settings->getCurrentTerrain()->getActualSize();
         // Make sure the projectile has not landed on the water
         if (0 < projectile->getPos()[0] && projectile->getPos()[0] < size &&
@@ -1663,7 +1651,7 @@ void GameState::handleProjectileState() {
 }
 
 void GameState::currentPlayerFire() {
-    if (strcmp(currentPlayer->getPlayer_Type(), "HUMAN") == 0) {
+    if (currentPlayer->getPlayer_Type() == "HUMAN") {
         // just in case
         if (this->projectile) {
             this->destroyProjectile();
@@ -1677,7 +1665,7 @@ void GameState::currentPlayerFire() {
                 projectile->setWeapon(projectile->getDefaultWeapon());
             }
         }
-    } else if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+    } else if (currentPlayer->getPlayer_Type() == "CPU") {
         if (this->projectile) {
             this->destroyProjectile();
         }
@@ -1735,8 +1723,8 @@ void GameState::handleSpecialEffectState() {
     specialEffectTimer++;
     if (this->specialEffectTimer < SPECIAL_EFFECT_TIME_LIMIT) {
         if (this->specialEffectTimer == 1) {
-            if (strcmp(projectile->getWeapon()->getImageFileName(),
-                       "WeaponRevive.raw") != 0) {
+            if (projectile->getWeapon()->getImageFileName() !=
+                "WeaponRevive.raw") {
                 this->global_settings->getCurrentTerrain()->makeCrater(
                         this->projectile->getPos()[0],
                         this->projectile->getPos()[2],
@@ -1849,11 +1837,12 @@ void GameState::handleSpecialEffectState() {
 }
 
 void GameState::handleKeyboardInput(int key, bool key_status) {
-    if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+    if (currentPlayer->getPlayer_Type() == "CPU") {
         this->handleNonInventoryKeyboard(key, key_status);
     }
-    if (strcmp(currentPlayer->getPlayer_Type(), "HUMAN") ==
-        0) {  // TEMP TEST FOR CPU PLAYERS REMOVE CPU'S DON'T USE KEYBOARDS
+    if (currentPlayer->getPlayer_Type() ==
+        "HUMAN") {  // TEMP TEST FOR CPU PLAYERS REMOVE CPU'S DON'T USE
+                    // KEYBOARDS
         if (this->gameSubState == INVENTORY) {
             this->handleInventoryKeyboard(key, key_status);
         } else if (this->gameSubState != INVENTORY) {
@@ -1894,23 +1883,18 @@ void GameState::handleInventoryKeyboard(int key, bool key_status) {
                     }
                     currentPlayer->setLoadedWeapon(
                             currentPlayer->getCurrentWeapons()[index]);
-                    this->selectedWeaponImg = new ImageObject(
-                            weaponSlot->getXpos() * 1.01,
-                            weaponSlot->getYpos() * 1.01,
-                            2,
-                            weaponSlot->getWidth() * 0.9,
-                            weaponSlot->getHeight() * 0.9,
-                            0,
-                            256,
-                            256,
-                            const_cast<char*>(currentPlayer->getLoadedWeapon()
-                                                      ->getImageFileName()));
-                    char* remain = "";
-                    char add[10];
-                    sprintf(add,
-                            "x %d",
-                            currentPlayer->getLoadedWeapon()->getRemaining());
-                    remain = add;
+                    this->selectedWeaponImg =
+                            new ImageObject(weaponSlot->getXpos() * 1.01,
+                                            weaponSlot->getYpos() * 1.01,
+                                            2,
+                                            weaponSlot->getWidth() * 0.9,
+                                            weaponSlot->getHeight() * 0.9,
+                                            0,
+                                            256,
+                                            256,
+                                            currentPlayer->getLoadedWeapon()
+                                                    ->getImageFileName());
+                                        std::string remain = "x " + std::to_string(currentPlayer->getLoadedWeapon()->getRemaining());
                     this->selectedWeaponRemain =
                             new TextObject(remain,
                                            0,
@@ -1973,7 +1957,7 @@ void GameState::handleNonInventoryKeyboard(int key, bool key_status) {
         *currentGameState = MAIN_MENU;
     } else if ((key == 'i') && (key_status) &&
                (this->gameSubState == PLAYER_CONTROL)) {
-        if (strcmp(currentPlayer->getPlayer_Type(), "HUMAN") == 0 &&
+        if (currentPlayer->getPlayer_Type() == "HUMAN" &&
             currentPlayer->getCurrentTank()->getDurationPadlock() == 0) {
             Mix_HaltChannel(2);
             Mix_HaltChannel(3);
@@ -1994,7 +1978,7 @@ void GameState::handleNonInventoryKeyboard(int key, bool key_status) {
     } else if (key == 'b' && !key_status) {
         this->drawHitBox = !this->drawHitBox;
     } else if (key == 'p' && !key_status) {
-        if (strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+        if (currentPlayer->getPlayer_Type() == "CPU") {
             if (this->currentPlayer->getDrawDebugLinesandPlanes())
                 this->currentPlayer->setDrawDebugLinesandPlanes(false);
             else
@@ -2060,7 +2044,7 @@ void GameState::handlePassTime() {
     if (currentPlayer->getCurrentTank()->getDurationParalyze() > 0) {
         useTurn();
     } else {
-        if (strcmp(currentPlayer->getPlayer_Type(), "HUMAN") == 0) {
+        if (currentPlayer->getPlayer_Type() == "HUMAN") {
             inventory->setupInventory(currentPlayer);
             Mix_HaltChannel(0);
             if (selectedWeaponImg != nullptr) {
@@ -2077,14 +2061,8 @@ void GameState::handlePassTime() {
                         0,
                         256,
                         256,
-                        const_cast<char*>(currentPlayer->getLoadedWeapon()
-                                                  ->getImageFileName()));
-                char* remain = "";
-                char add[10];
-                sprintf(add,
-                        "x %d",
-                        currentPlayer->getLoadedWeapon()->getRemaining());
-                remain = add;
+                        currentPlayer->getLoadedWeapon()->getImageFileName());
+                                std::string remain = "x " + std::to_string(currentPlayer->getLoadedWeapon()->getRemaining());
                 this->selectedWeaponRemain =
                         new TextObject(remain,
                                        weaponSlot->getXpos() * 1.1,
@@ -2138,7 +2116,7 @@ void GameState::controlAI() {
 
 void GameState::nearestEnemy() {
     if (this->currentPlayer != nullptr &&
-        strcmp(currentPlayer->getPlayer_Type(), "CPU") == 0) {
+        currentPlayer->getPlayer_Type() == "CPU") {
         /*	RECALULATE ALL DISTANCE	*/
         const GLfloat* tankMatrix =
                 this->currentPlayer->getCurrentTank()->getBodyMatrix();

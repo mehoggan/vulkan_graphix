@@ -13,8 +13,6 @@ Shader::Shader(const char* vsFile, const char* fsFile) {
 }
 
 Shader::~Shader() {
-    delete[] text;
-
     glDetachShader(this->shader_id, this->shader_fp);
     glDetachShader(this->shader_id, this->shader_vp);
 
@@ -67,19 +65,21 @@ void Shader::init(const char* vsFile, const char* fsFile) {
     this->shader_vp = glCreateShader(GL_VERTEX_SHADER);
     this->shader_fp = glCreateShader(GL_FRAGMENT_SHADER);
 
-    const char* vsText = textFileRead(vsFile);
-    const char* fsText = textFileRead(fsFile);
+    std::string vsTextStr = textFileRead(vsFile);
+    std::string fsTextStr = textFileRead(fsFile);
 
-    if (vsText == nullptr || fsText == nullptr) {
+    if (vsTextStr.empty() || fsTextStr.empty()) {
         cerr << "Either vertex shader or fragment shader file not found."
              << endl;
         exit(0);
     }
 
+    const char* vsText = vsTextStr.c_str();
     glShaderSource(this->shader_vp, 1, &vsText, nullptr);
     glCompileShader(this->shader_vp);
     validateShader(shader_vp, vsFile);
 
+    const char* fsText = fsTextStr.c_str();
     glShaderSource(this->shader_fp, 1, &fsText, nullptr);
     glCompileShader(this->shader_fp);
     this->validateShader(shader_fp, fsFile);
@@ -89,10 +89,6 @@ void Shader::init(const char* vsFile, const char* fsFile) {
     glAttachShader(this->shader_id, this->shader_vp);
     glLinkProgram(this->shader_id);
     validateProgram(shader_id);
-    fsText = nullptr;
-    vsText = nullptr;
-    delete[] this->text;
-    this->text = nullptr;
 }
 
 unsigned int Shader::id() { return this->shader_id; }
@@ -101,26 +97,20 @@ void Shader::bind() { glUseProgram(this->shader_id); }
 
 void Shader::unbind() { glUseProgram(0); }
 
-char* Shader::textFileRead(const char* fileName) {
-    text = nullptr;
-    if (fileName != nullptr) {
-        std::ifstream file(fileName, std::ios::binary | std::ios::ate);
-        if (file) {
-            std::streamsize count = file.tellg();
-            file.seekg(0);
-            if (count > 0) {
-                text = new char[count + 1];
-                file.read(text, count);
-                text[count] = '\0';
-            }
-            return text;
-        }
-    } else {
+std::string Shader::textFileRead(const char* fileName) {
+    std::string text;
+    if (fileName == nullptr) {
         exit(0);
     }
-    if (text == nullptr) {
-        exit(0);
-    } else {
+    std::ifstream file(fileName, std::ios::binary | std::ios::ate);
+    if (file) {
+        std::streamsize count = file.tellg();
+        file.seekg(0);
+        if (count > 0) {
+            text.resize(count);
+            file.read(text.data(), count);
+        }
         return text;
     }
+    exit(0);
 }

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 #include "OpenGLColors.h"
 #include "Tank.h"
 
@@ -17,8 +18,8 @@ public:
     void setScale(float scale);
     int getRemaining();
     void setRemaining(int r);
-    const char* getImageFileName();
-    const char* getDescription();
+    std::string getImageFileName();
+    std::string getDescription();
     int getPrice();
     int getPackageNum();
     int getMaxStack();
@@ -41,8 +42,8 @@ protected:
     float radius;
     int damage;
     float scale;
-    char* imageFileName;
-    char* description;
+    std::string imageFileName;
+    std::string description;
     int price;
     int packageNum;
     int maxStack;

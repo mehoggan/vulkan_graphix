@@ -82,7 +82,7 @@ int TankA::getBaseHP() { return TANK_A_HP; }
 int TankA::getBasePower() { return TANK_A_POWER; }
 int TankA::getBaseArmor() { return TANK_A_ARMOR; }
 int TankA::getBaseSpeed() { return TANK_A_SPEED; }
-const char* TankA::getName() { return TANK_A_NAME; }
+std::string TankA::getName() { return TANK_A_NAME; }
 
 void TankA::drawTankHitBox() {
     // Vertex tankPos(headMatrix[12],headMatrix[13],headMatrix[14]);

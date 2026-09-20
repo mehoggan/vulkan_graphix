@@ -5,6 +5,7 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <iostream>
+#include <string>
 
 class TextObject;
 class ImageObject;
@@ -66,8 +67,7 @@ private:
     TextObject* playerPageNum;
     TextObject* tankStatLabels[NUM_TANK_STATS];
     MainMenuButton* buttonPressed;
-    char* caption;
-    char* options;
+    std::string caption;
     int currentPlayerIndex;
     int numPlayers;
     int* currentGameState;

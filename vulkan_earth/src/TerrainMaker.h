@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <string>
 #include <vector>
 #include "Normal.h"
 #include "TexCoord.h"
@@ -32,8 +33,8 @@ public:
     void terrainSqDi(
             int left, int right, int top, int bottom, int seed, int subtract);
     void terrainSmoothe(int box_width);
-    void stdMessageBox(char* output);
-    void errorMessageBox(char* output);
+    void stdMessageBox(const std::string& output);
+    void errorMessageBox(const std::string& output);
     void toggleWireframe();
     void makeCrater(GLfloat x, GLfloat z, GLfloat size);
     Normal getTriangleNormal(float X, float Z);
@@ -42,7 +43,7 @@ public:
     GLint getActualSize();
     GLint getScale();
     GLuint LoadTexture(const char* filename, int width, int height);
-    GLuint selectTexture(char* tex);
+    GLuint selectTexture(const std::string& tex);
     void collectVerticesForTriangleNormal(int x,
                                           int z,
                                           Vertex* three_vertices_array[3]);
@@ -63,11 +64,9 @@ private:
     std::vector<TexCoord> tex_coord;
     GLuint color_texture;
     GLuint normal_texture;
-    unsigned char* data;
     std::vector<GLfloat> materialSpecular;
     std::vector<GLfloat> materialShininess;
     std::vector<GLfloat> materialDiffuse;
-    unsigned char* heightDataContainer;
     void configVBOs();
     GLuint vertexVBOId;
     GLuint normalVBOId;

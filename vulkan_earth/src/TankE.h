@@ -15,7 +15,7 @@ public:
     int getBasePower() override;
     int getBaseArmor() override;
     int getBaseSpeed() override;
-    const char* getName() override;
+    std::string getName() override;
     void buildList();
 };
 

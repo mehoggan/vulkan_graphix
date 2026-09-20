@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 
 #include "ControlItem.h"
 
@@ -36,9 +37,9 @@ public:
     GLfloat getYPos() override;
     GLfloat getHeight() override;
     GLfloat getWidth() override;
-    char* collectData() override;
+    std::string collectData() override;
     void setOptionText(int index) override;
-    void setOptionText(char* newText) override;
+    void setOptionText(const std::string& newText) override;
     void setImageSizeToCell(ImageObject* img, float scale);
     void placeImageToCell(ImageObject* img, int row, int col);
     void placeTextToCell(TextObject* text, int row, int col);

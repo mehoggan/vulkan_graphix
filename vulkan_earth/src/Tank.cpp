@@ -510,7 +510,7 @@ int Tank::getBaseHP() { return 0; }
 int Tank::getBasePower() { return 0; }
 int Tank::getBaseArmor() { return 0; }
 int Tank::getBaseSpeed() { return 0; }
-const char* Tank::getName() { return "Huh?"; }
+std::string Tank::getName() { return "Huh?"; }
 Normal Tank::getAlignmentVector() { return this->alignmentVector; }
 Normal Tank::getRotateAbout() { return this->rotate_about; }
 GLfloat Tank::getTurretDegrees() { return this->turret_degrees; }

@@ -22,7 +22,7 @@ SubMenuSound::SubMenuSound(int ID,
                            GLfloat blue,
                            GLint width,
                            GLint height,
-                           char* caption,
+                           const std::string& caption,
                            GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -38,13 +38,9 @@ SubMenuSound::SubMenuSound(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -119,8 +115,10 @@ GLint SubMenuSound::getWidth() { return this->width; }
 void SubMenuSound::setWdith(GLint width) { this->width = width; }
 GLint SubMenuSound::getHeight() { return this->height; }
 void SubMenuSound::setHeight(GLint height) { this->height = height; }
-char* SubMenuSound::getCaption() { return this->caption; }
-void SubMenuSound::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuSound::getCaption() { return this->caption; }
+void SubMenuSound::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuSound::getPerecentBorder() { return this->percentBorder; }
 void SubMenuSound::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -182,11 +180,7 @@ void SubMenuSound::draw() {
     }
 }
 
-const char* SubMenuSound::collectData() {
-    char* retrn = "Sound:";
-    const char* realretrn = retrn;
-    return realretrn;
-}
+std::string SubMenuSound::collectData() { return "Sound:"; }
 
 void SubMenuSound::subMenuMouseTest(int x, int y, int buttonDown) {
     if (buttonDown) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
@@ -248,7 +242,7 @@ void SubMenuSound::updateMouse(int x, int y) {
 void SubMenuSound::changeVolumes(ControlItem* TheSubMenuButton) {
     // SFX volume handler
     if (TheSubMenuButton == this->subMenuButton[0]) {
-        int newVolume = atoi(TheSubMenuButton->collectData());
+        int newVolume = atoi(TheSubMenuButton->collectData().c_str());
         Mix_Volume(
                 -1,
                 128 / 100 * newVolume);  //-1 is to apply to all allocated
@@ -256,7 +250,7 @@ void SubMenuSound::changeVolumes(ControlItem* TheSubMenuButton) {
     }
     // Music volume handler
     else if (TheSubMenuButton == this->subMenuButton[1]) {
-        int newVolume = atoi(TheSubMenuButton->collectData());
+        int newVolume = atoi(TheSubMenuButton->collectData().c_str());
         Mix_VolumeMusic(128 / 100 *
                         newVolume);  // music has its special channel, so don't
                                      // need to specify which channel.

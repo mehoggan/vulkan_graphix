@@ -23,88 +23,54 @@ VBOQualifer::VBOQualifer() {
     this->qualified = true;
 }
 
-VBOQualifer::~VBOQualifer() {
-    /*for(int i=0 ; i<extensions_supported ; i++) {
-        if(extensions[i]) {
-            printf("I am deleting at (%d) ---------------------\n",i);
-            delete [] extensions[i];
-            extensions[i]=NULL;
-        }
-    }
-    if(extensions) {
-        delete [] extensions;
-    }*/
-}
+VBOQualifer::~VBOQualifer() = default;
 
 bool VBOQualifer::getQualified() { return this->qualified; }
 
 bool VBOQualifer::establishIfQualified() {
-    char* str = nullptr;
+    const char* str = nullptr;
 
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+    str = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
     if (str)
         this->vendor = str;
     else {
         this->qualified = false;
     }
 
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+    str = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     if (str)
         this->renderer = str;
     else {
         this->qualified = false;
     }
 
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    str = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     if (str)
         this->version = str;
     else {
         this->qualified = false;
     }
 
-    this->extensions_supported = 0;
-    str = const_cast<char*>(
-            reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-    if (str) {
-        char* tok = str;
-        int index = 0;
-        int size = strlen(tok);
-        int iteration = 0;
-        while (iteration++ < size) {
-            if (*(tok + index) == ' ' || *(tok + index) == '\n' ||
-                *(tok + index) == '\t') {
-                this->extensions_supported++;
-            }
-            index++;
-        }
-        this->extensions =
-                new char*[extensions_supported];  // <--------- THE LEAK!
-    } else {
+    str = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (!str) {
         this->qualified = false;
         exit(0);
     }
 
-    char* tok = str;
-    int size = strlen(tok);
-    int array_index = 0;
-    int char_pos = 0;
-    int iteration = 0;
-    char extension[256];
-    while (iteration < size) {
-        if (*(tok + iteration) != ' ') {
-            extension[char_pos++] = *(tok + iteration);
-        } else {
-            this->extensions[array_index] = new char[sizeof(extension)];
-            strcpy(this->extensions[array_index], extension);
-            array_index++;
-            char_pos = 0;
-            memset(extension, 0, 256);
+    std::string extensionsStr = str;
+    std::string current;
+    for (char ch : extensionsStr) {
+        if (ch != ' ') {
+            current += ch;
+        } else if (!current.empty()) {
+            this->extensions.push_back(current);
+            current.clear();
         }
-        iteration++;
     }
+    if (!current.empty()) {
+        this->extensions.push_back(current);
+    }
+    this->extensions_supported = static_cast<int>(this->extensions.size());
 
     glGetIntegerv(GL_RED_BITS, &this->redBits);
     glGetIntegerv(GL_GREEN_BITS, &this->greenBits);
@@ -123,12 +89,10 @@ bool VBOQualifer::establishIfQualified() {
     return this->qualified;
 }
 
-bool VBOQualifer::isExtensionSupported(const char* exten) {
+bool VBOQualifer::isExtensionSupported(const std::string& exten) {
     bool extension_exists = false;
     for (int x = 0; x < this->extensions_supported; x++) {
-        const char* compare = this->extensions[x];
-        if (strcmp(compare, exten) == 0) {
-            char out[256];
+        if (this->extensions[x] == exten) {
             extension_exists = true;
         }
     }

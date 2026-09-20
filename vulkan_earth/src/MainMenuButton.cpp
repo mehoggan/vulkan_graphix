@@ -21,7 +21,7 @@ MainMenuButton::MainMenuButton(int ID,
                                GLfloat blue,
                                GLint width,
                                GLint height,
-                               char* caption,
+                               const std::string& caption,
                                SubMenu* submenu) {
     this->UNIQUEIDENTIFIER = ID;
     this->pressed = false;
@@ -37,13 +37,9 @@ MainMenuButton::MainMenuButton(int ID,
     this->height = height;
     this->caption = caption;
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos +
@@ -196,17 +192,13 @@ void MainMenuButton::setColor(GLfloat r, GLfloat g, GLfloat b) {
     this->color[2] = b;
 }
 
-void MainMenuButton::setLabel(char* c) {
+void MainMenuButton::setLabel(const std::string& c) {
     delete this->label;
     this->caption = c;
 
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos +

@@ -6,7 +6,7 @@ using namespace std;
 
 TextObject::TextObject() = default;
 
-TextObject::TextObject(char* input,
+TextObject::TextObject(const std::string& input,
                        GLfloat posX,
                        GLfloat posY,
                        GLfloat posZ,
@@ -14,7 +14,7 @@ TextObject::TextObject(char* input,
                        GLfloat red,
                        GLfloat green,
                        GLfloat blue) {
-    sprintf(this->output, input);
+    this->output = input;
     this->posX = posX;
     this->posY = posY;
     this->posZ = posZ + 1;
@@ -30,20 +30,18 @@ TextObject::TextObject(char* input,
 
 TextObject::~TextObject() = default;
 
-char* TextObject::getOutput() { return this->output; }
+const std::string& TextObject::getOutput() { return this->output; }
 void TextObject::setXpos(GLfloat x) { this->posX = x; }
 void TextObject::setYpos(GLfloat y) { this->posY = y; }
 void TextObject::setZpos(GLfloat z) { this->posZ = z; }
 
 GLvoid TextObject::draw() {
-    this->string_iterator = this->output;
     GLfloat xPos = this->posX;
     glColor3f(this->color[0], this->color[1], this->color[2]);
-    while (*(this->string_iterator) != '\0') {
-        int step = glutBitmapWidth(this->font_size, *(this->string_iterator));
+    for (char ch : this->output) {
+        int step = glutBitmapWidth(this->font_size, ch);
         glRasterPos3f(xPos, this->posY, this->posZ);
-        glutBitmapCharacter(this->font_size, *(this->string_iterator));
+        glutBitmapCharacter(this->font_size, ch);
         xPos += step;
-        (this->string_iterator)++;
     }
 }

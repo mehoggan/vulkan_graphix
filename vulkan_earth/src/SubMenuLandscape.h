@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
 #include "SubMenu.h"
 
 class TextObject;
@@ -28,7 +29,7 @@ public:
                      GLfloat blue,
                      GLint width,
                      GLint height,
-                     char* caption,
+                     const std::string& caption,
                      GLfloat percentBorder);
     ~SubMenuLandscape() override;
     int getUNIQUEIDENTIFIER() override;
@@ -49,12 +50,12 @@ public:
     void setWdith(GLint width) override;
     GLint getHeight() override;
     void setHeight(GLint height) override;
-    char* getCaption() override;
-    void setCaption(char* caption) override;
+    std::string getCaption() override;
+    void setCaption(const std::string& caption) override;
     GLfloat getPerecentBorder() override;
     void setPercentBorder(GLfloat percent) override;
     void draw() override;
-    const char* collectData() override;
+    std::string collectData() override;
     void subMenuMouseTest(int x, int y, int buttonDown) override;
     void updateMouse(int x, int y) override;
     TerrainMaker* tm;  // PUBLIC BECAUSE I AM TOO LAZY TO UPDATE ENTIRE
@@ -73,7 +74,7 @@ private:
     GLfloat color[4];
     GLint width;
     GLint height;
-    char* caption;
+    std::string caption;
     GLfloat percentBorder;
     TextObject* label;
     ControlItem* buttonPressed;

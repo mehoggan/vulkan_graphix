@@ -34,7 +34,6 @@ ControlItemTextField::ControlItemTextField(GLfloat xPos,
     this->height = height;
     this->currentText = nullptr;
     this->textFieldActive = false;
-    this->currentChars = new char[MAX_CHARS + 1];
     this->clearTextBuffer();
     this->currentLength = 0;
     this->numberOfFrames = 0;
@@ -42,10 +41,7 @@ ControlItemTextField::ControlItemTextField(GLfloat xPos,
     this->setOptionText("");
 }
 
-ControlItemTextField::~ControlItemTextField() {
-    delete this->currentText;
-    delete[] currentChars;
-}
+ControlItemTextField::~ControlItemTextField() { delete this->currentText; }
 
 void ControlItemTextField::draw() {
     if (numberOfFrames == 50) {
@@ -105,10 +101,10 @@ void ControlItemTextField::draw() {
     if (this->textFieldActive) {
         if (this->textCursorOn == 1) {
             int realLength = 0;
-            for (int i = 0; i < strlen(this->currentChars); i++) {
-                if (this->currentChars[i] != ' ') {
-                    realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24,
-                                                  this->currentChars[i]);
+            for (char ch : this->currentChars) {
+                if (ch != ' ') {
+                    realLength +=
+                            glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
                 }
             }
             glBegin(GL_QUADS);
@@ -139,18 +135,18 @@ GLfloat ControlItemTextField::getWidth() { return this->width; }
 bool ControlItemTextField::isTextFieldActive() {
     return this->textFieldActive;
 }
-char* ControlItemTextField::collectData() {
+std::string ControlItemTextField::collectData() {
     return this->currentText->getOutput();
 }
 void ControlItemTextField::deactivate() { textFieldActive = false; }
 void ControlItemTextField::setOptionText(int index) {}
 
-void ControlItemTextField::setOptionText(char* newText) {
+void ControlItemTextField::setOptionText(const std::string& newText) {
     delete this->currentText;
 
     int realLength = 0;
-    for (int i = 0; i < strlen(newText); i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, newText[i]);
+    for (char ch : newText) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + 0.02 * this->width;
     GLfloat labelYPos = this->yPos +
@@ -202,16 +198,16 @@ void ControlItemTextField::keyHandler(unsigned char key) {
 }
 
 void ControlItemTextField::clearTextBuffer() {
-    for (int i = 0; i < MAX_CHARS; i++) this->currentChars[i] = ' ';
-    this->currentChars[MAX_CHARS] = '\0';
+    this->currentChars.assign(MAX_CHARS, ' ');
     this->currentLength = 0;
 }
 
-void ControlItemTextField::setTextBuffer(char* newText) {
+void ControlItemTextField::setTextBuffer(const std::string& newText) {
     this->setOptionText(newText);
     this->clearTextBuffer();
     int newLength = 0;
-    for (int i = 0; i < strlen(newText); i++) {
+    for (size_t i = 0; i < newText.size() && i < this->currentChars.size();
+         i++) {
         this->currentChars[i] = newText[i];
         if (newText[i] != ' ') newLength++;
     }

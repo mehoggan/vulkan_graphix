@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include "GlobalSettings.h"
 #include "Player.h"
 #include "PlayerCPU.h"
@@ -33,7 +34,8 @@ PlayerFactory::PlayerFactory(GlobalSettings* game_global_settings) {
                     "",
                     '-',
                     "CPU",
-                    atoi(this->game_global_settings->getCash_At_Start()));
+                    atoi(this->game_global_settings->getCash_At_Start()
+                                 .c_str()));
         }
     }
     // Set Players' Colors
@@ -112,21 +114,20 @@ void PlayerFactory::initializePlayerDataBase() {
                     "",
                     '-',
                     "CPU",
-                    atoi(this->game_global_settings->getCash_At_Start()));
+                    atoi(this->game_global_settings->getCash_At_Start()
+                                 .c_str()));
         }
         this->prev_number_of_players = this->number_of_players;
     }
 }
 
-void PlayerFactory::updatePlayerBasicStrings(char* player_type,
-                                             char* ai_type,
-                                             char* name,
+void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
+                                             const std::string& ai_type,
+                                             const std::string& name,
                                              char teamLabel,
-                                             char* tank_type,
+                                             const std::string& tank_type,
                                              int player_number) {
-    char check_player_type[15];
-    sprintf(check_player_type, "%s", player_type);
-    if (strcmp(check_player_type, "CPU") == 0) {
+    if (player_type == "CPU") {
         delete this->player_set[player_number];
         this->player_set[player_number] = new PlayerCPU(
                 playerColor[player_number][0],
@@ -137,9 +138,9 @@ void PlayerFactory::updatePlayerBasicStrings(char* player_type,
                 name,
                 teamLabel,
                 player_type,
-                atoi(this->game_global_settings->getCash_At_Start()));
-    } else if (strcmp(check_player_type, "HUMAN") == 0) {
-        if (strcmp(player_set[player_number]->getPlayer_Type(), "CPU") == 0) {
+                atoi(this->game_global_settings->getCash_At_Start().c_str()));
+    } else if (player_type == "HUMAN") {
+        if (player_set[player_number]->getPlayer_Type() == "CPU") {
             delete this->player_set[player_number];
             this->player_set[player_number] = new PlayerHuman(
                     playerColor[player_number][0],
@@ -150,7 +151,8 @@ void PlayerFactory::updatePlayerBasicStrings(char* player_type,
                     name,
                     teamLabel,
                     player_type,
-                    atoi(this->game_global_settings->getCash_At_Start()));
+                    atoi(this->game_global_settings->getCash_At_Start()
+                                 .c_str()));
         } else {
             this->player_set[player_number]->setPlayer_Type(player_type);
             this->player_set[player_number]->setPlayerName(name);

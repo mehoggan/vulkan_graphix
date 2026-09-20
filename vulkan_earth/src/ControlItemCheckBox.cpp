@@ -21,7 +21,7 @@ ControlItemCheckBox::ControlItemCheckBox(GLfloat xPos,
                                          GLfloat blue,
                                          GLint width,
                                          GLint height,
-                                         char* caption) {
+                                         const std::string& caption) {
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;
@@ -37,13 +37,9 @@ ControlItemCheckBox::ControlItemCheckBox(GLfloat xPos,
     this->menuState = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
 
     GLfloat labelXPos = this->xPos + (this->width / 2) - (realLength / 2);
@@ -294,7 +290,7 @@ GLfloat ControlItemCheckBox::getXPos() { return this->xPos; }
 GLfloat ControlItemCheckBox::getYPos() { return this->yPos; }
 GLfloat ControlItemCheckBox::getHeight() { return this->height; }
 GLfloat ControlItemCheckBox::getWidth() { return this->width; }
-char* ControlItemCheckBox::collectData() {
+std::string ControlItemCheckBox::collectData() {
     if (this->menuState == 0)
         return "false";
     else
@@ -302,7 +298,7 @@ char* ControlItemCheckBox::collectData() {
 }
 
 void ControlItemCheckBox::setOptionText(int index) {}
-void ControlItemCheckBox::setOptionText(char* newText) {}
+void ControlItemCheckBox::setOptionText(const std::string& newText) {}
 
 // NOTE: I use this->height for the x value check, this is intentional to
 // maintain a square

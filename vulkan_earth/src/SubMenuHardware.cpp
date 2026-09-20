@@ -21,7 +21,7 @@ SubMenuHardware::SubMenuHardware(int ID,
                                  GLfloat blue,
                                  GLint width,
                                  GLint height,
-                                 char* caption,
+                                 const std::string& caption,
                                  GLfloat percentBorder) {
     this->UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
@@ -37,13 +37,9 @@ SubMenuHardware::SubMenuHardware(int ID,
     this->caption = caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    const char* cpchar = this->caption;
-    int length = strlen(cpchar);
-    char* pchar = this->caption;
     int realLength = 0;
-    for (int i = 0; i < length; i++) {
-        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *(pchar));
-        *(pchar)++;
+    for (char ch : this->caption) {
+        realLength += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat labelXPos = this->xPos + ((this->width) / 2) - (realLength / 2);
     GLfloat labelYPos = this->yPos - this->height / 20;
@@ -96,8 +92,10 @@ GLint SubMenuHardware::getWidth() { return this->width; }
 void SubMenuHardware::setWdith(GLint width) { this->width = width; }
 GLint SubMenuHardware::getHeight() { return this->height; }
 void SubMenuHardware::setHeight(GLint height) { this->height = height; }
-char* SubMenuHardware::getCaption() { return this->caption; }
-void SubMenuHardware::setCaption(char* caption) { this->caption = caption; }
+std::string SubMenuHardware::getCaption() { return this->caption; }
+void SubMenuHardware::setCaption(const std::string& caption) {
+    this->caption = caption;
+}
 GLfloat SubMenuHardware::getPerecentBorder() { return this->percentBorder; }
 void SubMenuHardware::setPercentBorder(GLfloat percent) {
     this->percentBorder = percentBorder;
@@ -159,18 +157,15 @@ void SubMenuHardware::draw() {
     }
 }
 
-const char* SubMenuHardware::collectData() {
-    char optionsarray[512];
-    memset(optionsarray, 0, 512);
-    strcat(optionsarray, "/Hardware/");
+std::string SubMenuHardware::collectData() {
+    std::string optionsarray = "/Hardware/";
     for (int x = 0; x < NUM_CONTROL_ITEMS_HW; x++) {
         if (this->subMenuButton[x]) {
-            strcat(optionsarray, this->subMenuButton[x]->collectData());
-            strcat(optionsarray, "/");
+            optionsarray += this->subMenuButton[x]->collectData();
+            optionsarray += "/";
         }
     }
-    const char* realretrn = optionsarray;
-    return realretrn;
+    return optionsarray;
 }
 
 void SubMenuHardware::subMenuMouseTest(int x, int y, int buttonDown) {

@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string>
 
-#pragma comment(lib, "glew32.lib")
-
 class Shader {
 public:
     Shader();
@@ -22,10 +20,9 @@ public:
     unsigned int id();
 
 private:
-    char* text;
     unsigned int shader_id;
     unsigned int shader_vp;
     unsigned int shader_fp;
-    char* textFileRead(const char* fileName);
+    std::string textFileRead(const char* fileName);
 };
 #endif /*__SHADER_H__*/

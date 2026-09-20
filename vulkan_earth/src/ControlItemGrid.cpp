@@ -271,6 +271,6 @@ void ControlItemGrid::placeTextToCell(TextObject* text, int row, int col) {
 
 // DUMMY FUNCTIONS
 void ControlItemGrid::setOptionText(int index) {}
-void ControlItemGrid::setOptionText(char* newText) {}
+void ControlItemGrid::setOptionText(const std::string& newText) {}
 void ControlItemGrid::updateMouse(int x, int y) {}
-char* ControlItemGrid::collectData() { return nullptr; }
+std::string ControlItemGrid::collectData() { return ""; }

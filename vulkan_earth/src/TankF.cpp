@@ -88,4 +88,4 @@ int TankF::getBaseHP() { return TANK_F_HP; }
 int TankF::getBasePower() { return TANK_F_POWER; }
 int TankF::getBaseArmor() { return TANK_F_ARMOR; }
 int TankF::getBaseSpeed() { return TANK_F_SPEED; }
-const char* TankF::getName() { return TANK_F_NAME; }
+std::string TankF::getName() { return TANK_F_NAME; }

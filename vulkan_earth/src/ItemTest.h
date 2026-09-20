@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <string>
+
 #include "Item.h"
 
 class ImageObject;
@@ -30,8 +32,8 @@ public:
     virtual void setWdith(GLint width) = 0;
     virtual GLint getHeight() = 0;
     virtual void setHeight(GLint height) = 0;
-    virtual char* getImage() = 0;
-    virtual void setImage(char* image) = 0;
+    virtual std::string getImage() = 0;
+    virtual void setImage(const std::string& image) = 0;
     /*	END OF GETTERS AND SETTERS	*/
     /*	ACTUAL ACTIONS A Weapon CAN MAKE	*/
     virtual void draw() = 0;
