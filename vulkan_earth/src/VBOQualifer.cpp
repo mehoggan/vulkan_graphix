@@ -8,52 +8,52 @@
 // #include "macro_crtdbg.h"
 
 VBOQualifer::VBOQualifer() {
-    this->redBits = 0;
-    this->greenBits = 0;
-    this->blueBits = 0;
-    this->alphaBits = 0;
-    this->depthBits = 0;
-    this->stencilBits = 0;
-    this->maxTextureSize = 0;
-    this->maxLights = 0;
-    this->maxClipPlanes = 0;
-    this->maxModelViewStacks = 0;
-    this->maxAttribStacks = 0;
-    this->maxTextureStacks = 0;
-    this->qualified = true;
+    redBits = 0;
+    greenBits = 0;
+    blueBits = 0;
+    alphaBits = 0;
+    depthBits = 0;
+    stencilBits = 0;
+    maxTextureSize = 0;
+    maxLights = 0;
+    maxClipPlanes = 0;
+    maxModelViewStacks = 0;
+    maxAttribStacks = 0;
+    maxTextureStacks = 0;
+    qualified = true;
 }
 
 VBOQualifer::~VBOQualifer() = default;
 
-bool VBOQualifer::getQualified() { return this->qualified; }
+bool VBOQualifer::getQualified() { return qualified; }
 
 bool VBOQualifer::establishIfQualified() {
     const char* str = nullptr;
 
     str = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
     if (str)
-        this->vendor = str;
+        vendor = str;
     else {
-        this->qualified = false;
+        qualified = false;
     }
 
     str = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
     if (str)
-        this->renderer = str;
+        renderer = str;
     else {
-        this->qualified = false;
+        qualified = false;
     }
 
     str = reinterpret_cast<const char*>(glGetString(GL_VERSION));
     if (str)
-        this->version = str;
+        version = str;
     else {
-        this->qualified = false;
+        qualified = false;
     }
 
     str = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     if (!str) {
-        this->qualified = false;
+        qualified = false;
         exit(0);
     }
 
@@ -63,36 +63,36 @@ bool VBOQualifer::establishIfQualified() {
         if (ch != ' ') {
             current += ch;
         } else if (!current.empty()) {
-            this->extensions.push_back(current);
+            extensions.push_back(current);
             current.clear();
         }
     }
     if (!current.empty()) {
-        this->extensions.push_back(current);
+        extensions.push_back(current);
     }
-    this->extensions_supported = static_cast<int>(this->extensions.size());
+    extensions_supported = static_cast<int>(extensions.size());
 
-    glGetIntegerv(GL_RED_BITS, &this->redBits);
-    glGetIntegerv(GL_GREEN_BITS, &this->greenBits);
-    glGetIntegerv(GL_BLUE_BITS, &this->blueBits);
-    glGetIntegerv(GL_ALPHA_BITS, &this->alphaBits);
-    glGetIntegerv(GL_DEPTH_BITS, &this->depthBits);
-    glGetIntegerv(GL_STENCIL_BITS, &this->stencilBits);
-    glGetIntegerv(GL_MAX_LIGHTS, &this->maxLights);
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &this->maxTextureSize);
-    glGetIntegerv(GL_MAX_CLIP_PLANES, &this->maxClipPlanes);
-    glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &this->maxModelViewStacks);
-    glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &this->maxProjectionStacks);
-    glGetIntegerv(GL_MAX_ATTRIB_STACK_DEPTH, &this->maxAttribStacks);
-    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &this->maxTextureStacks);
+    glGetIntegerv(GL_RED_BITS, &redBits);
+    glGetIntegerv(GL_GREEN_BITS, &greenBits);
+    glGetIntegerv(GL_BLUE_BITS, &blueBits);
+    glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
+    glGetIntegerv(GL_DEPTH_BITS, &depthBits);
+    glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
+    glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    glGetIntegerv(GL_MAX_CLIP_PLANES, &maxClipPlanes);
+    glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &maxModelViewStacks);
+    glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &maxProjectionStacks);
+    glGetIntegerv(GL_MAX_ATTRIB_STACK_DEPTH, &maxAttribStacks);
+    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &maxTextureStacks);
 
-    return this->qualified;
+    return qualified;
 }
 
 bool VBOQualifer::isExtensionSupported(const std::string& exten) {
     bool extension_exists = false;
-    for (int x = 0; x < this->extensions_supported; x++) {
-        if (this->extensions[x] == exten) {
+    for (int x = 0; x < extensions_supported; x++) {
+        if (extensions[x] == exten) {
             extension_exists = true;
         }
     }

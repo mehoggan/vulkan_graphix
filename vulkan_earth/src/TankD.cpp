@@ -11,40 +11,40 @@ const int tank_d_speed = 30;
 
 TankD::TankD() = default;
 TankD::TankD(GLfloat x, GLfloat y, GLfloat z) {
-    this->initBody();
-    this->initHead();
-    this->initTurret();
-    this->initWheel();
-    this->initDuration();
+    initBody();
+    initHead();
+    initTurret();
+    initWheel();
+    initDuration();
 
-    this->turretOffset[0] = 0;
-    this->turretOffset[1] = 10;
-    this->turretOffset[2] = 0.0001;
-    this->headOffset[0] = 0;
-    this->headOffset[1] = 70;
-    this->headOffset[2] = 40;
-    this->bodyOffset[0] = 0;
-    this->bodyOffset[1] = 45;
-    this->bodyOffset[2] = 0;
+    turretOffset[0] = 0;
+    turretOffset[1] = 10;
+    turretOffset[2] = 0.0001;
+    headOffset[0] = 0;
+    headOffset[1] = 70;
+    headOffset[2] = 40;
+    bodyOffset[0] = 0;
+    bodyOffset[1] = 45;
+    bodyOffset[2] = 0;
 
     for (int i = 0; i < 3; i++) {
-        this->bodyScale[i] = 50;
-        this->headScale[i] = 50;
-        this->turretScale[i] = 50;
-        this->wheelScale[i] = 50;
+        bodyScale[i] = 50;
+        headScale[i] = 50;
+        turretScale[i] = 50;
+        wheelScale[i] = 50;
     }
 
-    this->power = tank_d_power;
-    this->armor = tank_d_armor;
-    this->speed = tank_d_speed;
-    this->currentPower = 10;
-    this->previousPower = 1000;
-    this->previousAngle = 1;
-    this->HP = this->armor * 100;
+    power = tank_d_power;
+    armor = tank_d_armor;
+    speed = tank_d_speed;
+    currentPower = 10;
+    previousPower = 1000;
+    previousAngle = 1;
+    HP = armor * 100;
 
-    this->vbo_shader_head = new VBOShaderLibrary();
-    this->vbo_shader_body = new VBOShaderLibrary();
-    this->vbo_shader_turret = new VBOShaderLibrary();
+    vbo_shader_head = new VBOShaderLibrary();
+    vbo_shader_body = new VBOShaderLibrary();
+    vbo_shader_turret = new VBOShaderLibrary();
     /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
     if (!(VBOShaderLibrary::InitGlew())) {
         exit(1);
@@ -72,9 +72,9 @@ TankD::TankD(GLfloat x, GLfloat y, GLfloat z) {
     projectileLandPos[1] = 9999999;
 }
 TankD::~TankD() {
-    delete this->vbo_shader_head;
-    delete this->vbo_shader_body;
-    delete this->vbo_shader_turret;
+    delete vbo_shader_head;
+    delete vbo_shader_body;
+    delete vbo_shader_turret;
 }
 
 // GETTERS

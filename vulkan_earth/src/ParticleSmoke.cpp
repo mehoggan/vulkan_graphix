@@ -12,16 +12,16 @@ ParticleSmoke::ParticleSmoke(GLfloat x,
     this->x = x;
     this->y = y;
     this->z = z;
-    this->dir[0] = dirX;
-    this->dir[1] = dirY;
-    this->dir[2] = dirZ;
+    dir[0] = dirX;
+    dir[1] = dirY;
+    dir[2] = dirZ;
     this->speed = speed;
-    this->activeFrames = frames;
-    this->currentFrame = 0;
-    this->size = 2;
-    this->red = 1;
-    this->green = 1;
-    this->blue = 1;
+    activeFrames = frames;
+    currentFrame = 0;
+    size = 2;
+    red = 1;
+    green = 1;
+    blue = 1;
 }
 
 bool ParticleSmoke::update() {
@@ -32,12 +32,12 @@ bool ParticleSmoke::update() {
     z += dir[2] * speed;
 
     // color test
-    if (this->currentFrame <= 30) {
-        this->blue = 1 - (static_cast<GLfloat>(currentFrame) / 30.0);
-    } else if (this->currentFrame <= 60) {
-        this->green = 1 - ((static_cast<GLfloat>(currentFrame) - 30.0) / 30.0);
+    if (currentFrame <= 30) {
+        blue = 1 - (static_cast<GLfloat>(currentFrame) / 30.0);
+    } else if (currentFrame <= 60) {
+        green = 1 - ((static_cast<GLfloat>(currentFrame) - 30.0) / 30.0);
     } else {
-        this->red = 1 - ((static_cast<GLfloat>(currentFrame) - 30.0) / 40.0);
+        red = 1 - ((static_cast<GLfloat>(currentFrame) - 30.0) / 40.0);
     }
 
     currentFrame++;

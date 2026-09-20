@@ -7,19 +7,19 @@ extern void playSFX(int sfx);
 
 ItemAntiAcid::ItemAntiAcid() = default;
 ItemAntiAcid::ItemAntiAcid(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->packageNum = 3;
-    this->maxStack = 12;
-    this->remaining = 3;
-    this->imageFileName = "ItemAntiAcid.raw";
-    this->description = "Anti-Acid:     Cures acid status.";
-    this->price = 70;
-    this->specialNum = 0;
+    UNIQUEIDENTIFIER = ID;
+    packageNum = 3;
+    maxStack = 12;
+    remaining = 3;
+    imageFileName = "ItemAntiAcid.raw";
+    description = "Anti-Acid:     Cures acid status.";
+    price = 70;
+    specialNum = 0;
 }
 ItemAntiAcid::~ItemAntiAcid() = default;
 
 ItemAntiAcid* ItemAntiAcid::getItemInstance() {
-    return new ItemAntiAcid(this->UNIQUEIDENTIFIER);
+    return new ItemAntiAcid(UNIQUEIDENTIFIER);
 }
 
 bool ItemAntiAcid::causeEffectToTank(Tank* tank) {

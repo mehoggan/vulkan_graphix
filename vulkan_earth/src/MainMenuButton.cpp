@@ -23,16 +23,16 @@ MainMenuButton::MainMenuButton(int ID,
                                GLint height,
                                const std::string& caption,
                                SubMenu* submenu) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->pressed = false;
-    this->active = false;
+    UNIQUEIDENTIFIER = ID;
+    pressed = false;
+    active = false;
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;
-    this->color[0] = red;
-    this->color[1] = green;
-    this->color[2] = blue;
-    this->color[3] = 1.0;
+    color[0] = red;
+    color[1] = green;
+    color[2] = blue;
+    color[3] = 1.0;
     this->width = width;
     this->height = height;
     this->caption = caption;
@@ -46,63 +46,51 @@ MainMenuButton::MainMenuButton(int ID,
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    this->label = new TextObject(this->caption,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 this->zPos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
+    label = new TextObject(this->caption,
+                           label_x_pos,
+                           label_y_pos,
+                           this->zPos,
+                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           0.0f,
+                           0.0f,
+                           0.0f);
     this->submenu = submenu;
 }
 
-MainMenuButton::~MainMenuButton() { delete this->label; }
+MainMenuButton::~MainMenuButton() { delete label; }
 
 void MainMenuButton::pressDraw() {
     glPushMatrix();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - .4,
-              this->color[1] - .4,
-              this->color[2] - .4,
-              this->color[3]);
+    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - .4,
-              this->color[1] - .4,
-              this->color[2] - .4,
-              this->color[3]);
+    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0], this->color[1], this->color[2], this->color[3]);
+    glColor4f(color[0], color[1], color[2], color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + .2,
-              this->color[1] + .2,
-              this->color[2] + .2,
-              this->color[3]);
+    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + .2,
-              this->color[1] + .2,
-              this->color[2] + .2,
-              this->color[3]);
+    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
@@ -113,44 +101,32 @@ void MainMenuButton::pressDraw() {
 
 void MainMenuButton::draw() {
     glPushMatrix();
-    if (this->pressed)
+    if (pressed)
         pressDraw();
     else {
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] + .2,
-                  this->color[1] + .2,
-                  this->color[2] + .2,
-                  this->color[3]);
+        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] + .2,
-                  this->color[1] + .2,
-                  this->color[2] + .2,
-                  this->color[3]);
+        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
         glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0],
-                  this->color[1],
-                  this->color[2],
-                  this->color[3]);
+        glColor4f(color[0], color[1], color[2], color[3]);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] - .4,
-                  this->color[1] - .4,
-                  this->color[2] - .4,
-                  this->color[3]);
+        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
         glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
         glVertex3f(
                 this->xPos + width + 3, this->yPos - height - 3, this->zPos);
@@ -158,10 +134,7 @@ void MainMenuButton::draw() {
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] - .4,
-                  this->color[1] - .4,
-                  this->color[2] - .4,
-                  this->color[3]);
+        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
         glVertex3f(
@@ -169,7 +142,7 @@ void MainMenuButton::draw() {
         glVertex3f(this->xPos + width, this->yPos + -height, this->zPos);
         glEnd();
     }
-    this->label->draw();
+    label->draw();
 
     if (active) {
         if (this->submenu != nullptr) {
@@ -179,21 +152,21 @@ void MainMenuButton::draw() {
     glPopMatrix();
 }
 
-int MainMenuButton::getUNIQUEIDENTIFIER() { return this->UNIQUEIDENTIFIER; }
+int MainMenuButton::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
 GLfloat MainMenuButton::getXPos() { return this->xPos; }
 GLfloat MainMenuButton::getYPos() { return this->yPos; }
 GLfloat MainMenuButton::getHeight() { return this->height; }
 GLfloat MainMenuButton::getWidth() { return this->width; }
 SubMenu* MainMenuButton::getSubMenu() { return this->submenu; }
-GLfloat* MainMenuButton::getColor() { return &this->color[0]; }
+GLfloat* MainMenuButton::getColor() { return &color[0]; }
 void MainMenuButton::setColor(GLfloat r, GLfloat g, GLfloat b) {
-    this->color[0] = r;
-    this->color[1] = g;
-    this->color[2] = b;
+    color[0] = r;
+    color[1] = g;
+    color[2] = b;
 }
 
 void MainMenuButton::setLabel(const std::string& c) {
-    delete this->label;
+    delete label;
     this->caption = c;
 
     int real_length = 0;
@@ -205,14 +178,14 @@ void MainMenuButton::setLabel(const std::string& c) {
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
 
-    this->label = new TextObject(this->caption,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 this->zPos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
+    label = new TextObject(this->caption,
+                           label_x_pos,
+                           label_y_pos,
+                           this->zPos,
+                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           0.0f,
+                           0.0f,
+                           0.0f);
 }
 
 bool MainMenuButton::isPressed() { return pressed; }
@@ -220,18 +193,18 @@ bool MainMenuButton::isActive() { return active; }
 
 void MainMenuButton::pressButton() {
     if (Mix_Playing(0) == 0) playSFX(BIG_CLICK);
-    this->pressed = true;
+    pressed = true;
 }
 
-void MainMenuButton::depressButton() { this->pressed = false; }
+void MainMenuButton::depressButton() { pressed = false; }
 
-void MainMenuButton::activateSubMenu() { this->active = true; }
+void MainMenuButton::activateSubMenu() { active = true; }
 
-void MainMenuButton::deactivateSubMenu() { this->active = false; }
+void MainMenuButton::deactivateSubMenu() { active = false; }
 
 void MainMenuButton::printSelf(int i) {
-    cout << " Button[" << i << "].x=" << (this->getXPos()) << " Button[" << i
-         << "].y=" << (this->getYPos()) << " Button[" << i
-         << "].width=" << (this->getWidth()) << " Button[" << i
-         << "].height=" << (this->getHeight()) << endl;
+    cout << " Button[" << i << "].x=" << (getXPos()) << " Button[" << i
+         << "].y=" << (getYPos()) << " Button[" << i
+         << "].width=" << (getWidth()) << " Button[" << i
+         << "].height=" << (getHeight()) << endl;
 }

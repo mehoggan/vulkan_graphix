@@ -17,21 +17,21 @@ Explosion::Explosion() = default;
 Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weaponRadius) {
     glPushMatrix();
     glLoadIdentity();
-    glGetFloatv(GL_MODELVIEW_MATRIX, this->transMatrix);
+    glGetFloatv(GL_MODELVIEW_MATRIX, transMatrix);
     glPopMatrix();
     this->x = x;
     this->y = y;
     this->z = z;
-    this->transMatrix[12] = this->x;
-    this->transMatrix[13] = this->y;
-    this->transMatrix[14] = this->z;
+    transMatrix[12] = this->x;
+    transMatrix[13] = this->y;
+    transMatrix[14] = this->z;
     this->weaponRadius = weaponRadius;
 
-    this->shader = new Shader();
-    this->shader->init("VertexExplosion.vs", "FragmentExplosion.vs");
+    shader = new Shader();
+    shader->init("VertexExplosion.vs", "FragmentExplosion.vs");
 
-    this->timer = 50.0f;
-    this->radius = 0.0f;
+    timer = 50.0f;
+    radius = 0.0f;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Yellow};
@@ -45,12 +45,12 @@ Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weaponRadius) {
     }
 }
 
-Explosion::~Explosion() { delete this->shader; }
+Explosion::~Explosion() { delete shader; }
 
 void Explosion::draw() {
-    this->shader->bind();
-    this->radius += .1;
-    this->timer += .5;
+    shader->bind();
+    radius += .1;
+    timer += .5;
     // Please See OpenGLColors.h for definitions of colors
     if (timer > 0 && timer < 25) {
         glColor4f(colors1[0], colors1[1], colors1[2], 1.0 - timer / 150.0);
@@ -65,9 +65,9 @@ void Explosion::draw() {
     glPushMatrix();
     glTranslatef(this->x, this->y, this->z);
     // ASSUMING SCALE ON TERRAIN IS 150 I NEED TO GET ACTUAL VALUE
-    glutSolidSphere(this->radius * (weaponRadius * 5.56 + 22.22), 90, 180);
+    glutSolidSphere(radius * (weaponRadius * 5.56 + 22.22), 90, 180);
     glPopMatrix();
-    this->shader->unbind();
+    shader->unbind();
 }
 
 void Explosion::setColors1(GLfloat* colors1) {

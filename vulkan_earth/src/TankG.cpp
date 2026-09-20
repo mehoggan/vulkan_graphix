@@ -11,40 +11,40 @@ const int tank_g_speed = 75;
 
 TankG::TankG() = default;
 TankG::TankG(GLfloat x, GLfloat y, GLfloat z) {
-    this->initBody();
-    this->initHead();
-    this->initTurret();
-    this->initWheel();
-    this->initDuration();
+    initBody();
+    initHead();
+    initTurret();
+    initWheel();
+    initDuration();
 
-    this->turretOffset[0] = 0;
-    this->turretOffset[1] = 22;
-    this->turretOffset[2] = 12;
-    this->headOffset[0] = 0;
-    this->headOffset[1] = 0;
-    this->headOffset[2] = 0;
-    this->bodyOffset[0] = 0;
-    this->bodyOffset[1] = 120;
-    this->bodyOffset[2] = 0;
+    turretOffset[0] = 0;
+    turretOffset[1] = 22;
+    turretOffset[2] = 12;
+    headOffset[0] = 0;
+    headOffset[1] = 0;
+    headOffset[2] = 0;
+    bodyOffset[0] = 0;
+    bodyOffset[1] = 120;
+    bodyOffset[2] = 0;
 
     for (int i = 0; i < 3; i++) {
-        this->bodyScale[i] = 100;
-        this->headScale[i] = 100;
-        this->turretScale[i] = 100;
-        this->wheelScale[i] = 100;
+        bodyScale[i] = 100;
+        headScale[i] = 100;
+        turretScale[i] = 100;
+        wheelScale[i] = 100;
     }
 
-    this->power = tank_g_power;
-    this->armor = tank_g_armor;
-    this->speed = tank_g_speed;
-    this->currentPower = 10;
-    this->previousPower = 1000;
-    this->previousAngle = 1;
-    this->HP = this->armor * 100;
+    power = tank_g_power;
+    armor = tank_g_armor;
+    speed = tank_g_speed;
+    currentPower = 10;
+    previousPower = 1000;
+    previousAngle = 1;
+    HP = armor * 100;
 
-    this->vbo_shader_head = new VBOShaderLibrary();
-    this->vbo_shader_body = new VBOShaderLibrary();
-    this->vbo_shader_turret = new VBOShaderLibrary();
+    vbo_shader_head = new VBOShaderLibrary();
+    vbo_shader_body = new VBOShaderLibrary();
+    vbo_shader_turret = new VBOShaderLibrary();
     /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
     if (!(VBOShaderLibrary::InitGlew())) {
         exit(1);
@@ -72,9 +72,9 @@ TankG::TankG(GLfloat x, GLfloat y, GLfloat z) {
     projectileLandPos[1] = 9999999;
 }
 TankG::~TankG() {
-    delete this->vbo_shader_head;
-    delete this->vbo_shader_body;
-    delete this->vbo_shader_turret;
+    delete vbo_shader_head;
+    delete vbo_shader_body;
+    delete vbo_shader_turret;
 }
 
 // GETTERS
@@ -96,244 +96,244 @@ void TankG::drawTankHitBox() {
     glBegin(GL_QUADS);
     // top
     glColor4f(1.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 1.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 0.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(1.0, 1.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glEnd();
 
     glBegin(GL_QUADS);
     // right
     glColor4f(1.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 1.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glColor4f(0.0, 0.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glColor4f(1.0, 1.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glEnd();
 
     glBegin(GL_QUADS);
     // left
     glColor4f(1.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 1.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glColor4f(0.0, 0.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glColor4f(1.0, 1.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glEnd();
 
     glBegin(GL_QUADS);
     // front
     glColor4f(1.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 1.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 0.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glColor4f(0.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * at.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * at.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * at.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * at.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * at.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glEnd();
 
     glBegin(GL_QUADS);
     // back
     glColor4f(1.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 1.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * up.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * up.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * up.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * up.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * up.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * up.compoZ);
     glColor4f(0.0, 0.0, 1.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * left.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * left.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * left.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * left.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * left.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * left.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glColor4f(0.0, 0.0, 0.0, .75);
-    glVertex3f(tankPos.coordX + this->hitBoxLength / 2.0 * back.compoX +
-                       this->hitBoxWidth / 2.0 * right.compoX +
-                       this->hitBoxHeight / 2.0 * down.compoX,
-               tankPos.coordY + this->hitBoxLength / 2.0 * back.compoY +
-                       this->hitBoxWidth / 2.0 * right.compoY +
-                       this->hitBoxHeight / 2.0 * down.compoY,
-               tankPos.coordZ + this->hitBoxLength / 2.0 * back.compoZ +
-                       this->hitBoxWidth / 2.0 * right.compoZ +
-                       this->hitBoxHeight / 2.0 * down.compoZ);
+    glVertex3f(tankPos.coordX + hitBoxLength / 2.0 * back.compoX +
+                       hitBoxWidth / 2.0 * right.compoX +
+                       hitBoxHeight / 2.0 * down.compoX,
+               tankPos.coordY + hitBoxLength / 2.0 * back.compoY +
+                       hitBoxWidth / 2.0 * right.compoY +
+                       hitBoxHeight / 2.0 * down.compoY,
+               tankPos.coordZ + hitBoxLength / 2.0 * back.compoZ +
+                       hitBoxWidth / 2.0 * right.compoZ +
+                       hitBoxHeight / 2.0 * down.compoZ);
     glEnd();
 }
 
 void TankG::updateHitBox() {
-    this->tankPos.coordX = headMatrix[12];
-    this->tankPos.coordY = headMatrix[13];
-    this->tankPos.coordZ = headMatrix[14];
-    this->right.compoX = -headMatrix[0];
-    this->right.compoY = -headMatrix[1];
-    this->right.compoZ = -headMatrix[2];
-    this->left.compoX = headMatrix[0];
-    this->left.compoY = headMatrix[1];
-    this->left.compoZ = headMatrix[2];
-    this->up.compoX = headMatrix[4];
-    this->up.compoY = headMatrix[5];
-    this->up.compoZ = headMatrix[6];
-    this->down.compoX = -headMatrix[4];
-    this->down.compoY = -headMatrix[5];
-    this->down.compoZ = -headMatrix[6];
-    this->at.compoX = -headMatrix[8];
-    this->at.compoY = -headMatrix[9];
-    this->at.compoZ = -headMatrix[10];
-    this->back.compoX = headMatrix[8];
-    this->back.compoY = headMatrix[9];
-    this->back.compoZ = headMatrix[10];
+    tankPos.coordX = headMatrix[12];
+    tankPos.coordY = headMatrix[13];
+    tankPos.coordZ = headMatrix[14];
+    right.compoX = -headMatrix[0];
+    right.compoY = -headMatrix[1];
+    right.compoZ = -headMatrix[2];
+    left.compoX = headMatrix[0];
+    left.compoY = headMatrix[1];
+    left.compoZ = headMatrix[2];
+    up.compoX = headMatrix[4];
+    up.compoY = headMatrix[5];
+    up.compoZ = headMatrix[6];
+    down.compoX = -headMatrix[4];
+    down.compoY = -headMatrix[5];
+    down.compoZ = -headMatrix[6];
+    at.compoX = -headMatrix[8];
+    at.compoY = -headMatrix[9];
+    at.compoZ = -headMatrix[10];
+    back.compoX = headMatrix[8];
+    back.compoY = headMatrix[9];
+    back.compoZ = headMatrix[10];
 }

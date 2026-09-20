@@ -7,17 +7,17 @@ extern void playSFX(int sfx);
 
 WeaponRevive::WeaponRevive() = default;
 WeaponRevive::WeaponRevive(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 6;
-    this->packageNum = 1;
-    this->remaining = 1;
-    this->scale = 60;
-    this->imageFileName = "WeaponRevive.raw";
-    this->description = "Revive:     Revive/repair tanks in the target area";
-    this->price = 50;
-    this->radius = 6;
-    this->damage = 0;
-    this->specialNumber = 400;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 6;
+    packageNum = 1;
+    remaining = 1;
+    scale = 60;
+    imageFileName = "WeaponRevive.raw";
+    description = "Revive:     Revive/repair tanks in the target area";
+    price = 50;
+    radius = 6;
+    damage = 0;
+    specialNumber = 400;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Silver};
@@ -33,7 +33,7 @@ WeaponRevive::WeaponRevive(int ID) {
 WeaponRevive::~WeaponRevive() = default;
 
 WeaponRevive* WeaponRevive::getWeaponInstance() {
-    return new WeaponRevive(this->UNIQUEIDENTIFIER);
+    return new WeaponRevive(UNIQUEIDENTIFIER);
 }
 void WeaponRevive::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {

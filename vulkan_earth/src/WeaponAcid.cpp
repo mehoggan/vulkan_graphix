@@ -7,18 +7,17 @@ extern void playSFX(int sfx);
 
 WeaponAcid::WeaponAcid() = default;
 WeaponAcid::WeaponAcid(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 8;
-    this->packageNum = 2;
-    this->remaining = 2;
-    this->scale = 60;
-    this->imageFileName = "WeaponAcid.raw";
-    this->description =
-            "Acid:     Damage: 150, DOT: 10%% of total HP for 5 turns";
-    this->price = 100;
-    this->radius = 7;
-    this->damage = 150;
-    this->specialNumber = 5;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 8;
+    packageNum = 2;
+    remaining = 2;
+    scale = 60;
+    imageFileName = "WeaponAcid.raw";
+    description = "Acid:     Damage: 150, DOT: 10%% of total HP for 5 turns";
+    price = 100;
+    radius = 7;
+    damage = 150;
+    specialNumber = 5;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {LimeGreen};
@@ -34,7 +33,7 @@ WeaponAcid::WeaponAcid(int ID) {
 WeaponAcid::~WeaponAcid() = default;
 
 WeaponAcid* WeaponAcid::getWeaponInstance() {
-    return new WeaponAcid(this->UNIQUEIDENTIFIER);
+    return new WeaponAcid(UNIQUEIDENTIFIER);
 }
 void WeaponAcid::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {

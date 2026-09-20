@@ -4,18 +4,18 @@
 
 WeaponPadlock::WeaponPadlock() = default;
 WeaponPadlock::WeaponPadlock(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 8;
-    this->packageNum = 2;
-    this->remaining = 2;
-    this->scale = 60;
-    this->imageFileName = "WeaponPadlock.raw";
-    this->description =
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 8;
+    packageNum = 2;
+    remaining = 2;
+    scale = 60;
+    imageFileName = "WeaponPadlock.raw";
+    description =
             "Padlock:     Damage: 50, Locks target's inventory for 4 turns";
-    this->price = 40;
-    this->radius = 7;
-    this->damage = 50;
-    this->specialNumber = 4;
+    price = 40;
+    radius = 7;
+    damage = 50;
+    specialNumber = 4;
 
     GLfloat temp_colors1[3] = {DimGray};
     GLfloat temp_colors2[3] = {Violet};
@@ -31,7 +31,7 @@ WeaponPadlock::WeaponPadlock(int ID) {
 WeaponPadlock::~WeaponPadlock() = default;
 
 WeaponPadlock* WeaponPadlock::getWeaponInstance() {
-    return new WeaponPadlock(this->UNIQUEIDENTIFIER);
+    return new WeaponPadlock(UNIQUEIDENTIFIER);
 }
 void WeaponPadlock::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {

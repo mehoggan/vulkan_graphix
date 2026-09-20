@@ -45,43 +45,42 @@ ReadyMenu::ReadyMenu(GLfloat width,
     startMusicPlayed = false;
     this->global_settings = global_settings;
     this->player_factory = player_factory;
-    this->currentGameState = gameState;
+    currentGameState = gameState;
 
     numPlayers = MAX_NUM_PLAYERS;
     for (int i = 0; i < NUM_BUTTONS; i++) {
-        this->buttons[i] = nullptr;
+        buttons[i] = nullptr;
     }
     for (int i = 0; i < NUM_STAT_IMAGES; i++) {
-        this->statImages[i] = nullptr;
+        statImages[i] = nullptr;
     }
     for (int i = 0; i < NUM_CONTROL_ITEMS; i++) {
-        this->controlItems[i] = nullptr;
+        controlItems[i] = nullptr;
     }
 
-    this->buttonPressed = nullptr;
+    buttonPressed = nullptr;
     this->width = width;
     this->height = height;
     this->percentBorder = percentBorder;
-    this->pos[0] = this->pos[1] = this->pos[2] = 0;
-    this->color[0] = this->color[1] = this->color[2] = 1;
-    this->color[3] = 1;
-    this->tankPrvScrPos[0] = this->width * 0.07;
-    this->tankPrvScrPos[1] = this->height * 0.40;
-    this->tankPrvScrPos[2] = 0.1;
-    this->tankPrvScrWidth = this->width * 0.35;
-    this->tankPrvScrHeight = this->height * 0.45;
-    this->tankPrvScrColor[0] = this->tankPrvScrColor[1] =
-            this->tankPrvScrColor[2] = 0;
-    this->prvScrColorControl = 1;
+    pos[0] = pos[1] = pos[2] = 0;
+    color[0] = color[1] = color[2] = 1;
+    color[3] = 1;
+    tankPrvScrPos[0] = this->width * 0.07;
+    tankPrvScrPos[1] = this->height * 0.40;
+    tankPrvScrPos[2] = 0.1;
+    tankPrvScrWidth = this->width * 0.35;
+    tankPrvScrHeight = this->height * 0.45;
+    tankPrvScrColor[0] = tankPrvScrColor[1] = tankPrvScrColor[2] = 0;
+    prvScrColorControl = 1;
 
-    this->caption = "Player 1";
-    this->currentPlayerIndex = 0;
+    caption = "Player 1";
+    currentPlayerIndex = 0;
 
     /*BUTTONS AND CONTROL ITEMS*/
-    this->buttons[0] = new MainMenuButton(
+    buttons[0] = new MainMenuButton(
             0,
-            this->pos[0] - this->width * 0.35,
-            this->pos[1] + this->height * 0.35,
+            pos[0] - this->width * 0.35,
+            pos[1] + this->height * 0.35,
             1,
             this->player_factory->collectPlayerColor(currentPlayerIndex)[0],
             this->player_factory->collectPlayerColor(currentPlayerIndex)[1],
@@ -91,13 +90,13 @@ ReadyMenu::ReadyMenu(GLfloat width,
             "CPU",
             nullptr);
 
-    this->buttons[0]->pressButton();
+    buttons[0]->pressButton();
     Mix_HaltChannel(0);
-    this->buttons[0]->activateSubMenu();
-    this->buttons[1] = new MainMenuButton(
+    buttons[0]->activateSubMenu();
+    buttons[1] = new MainMenuButton(
             1,
-            this->pos[0] - this->width * 0.2,
-            this->pos[1] + this->height * 0.35,
+            pos[0] - this->width * 0.2,
+            pos[1] + this->height * 0.35,
             1,
             this->player_factory->collectPlayerColor(currentPlayerIndex)[0],
             this->player_factory->collectPlayerColor(currentPlayerIndex)[1],
@@ -106,31 +105,31 @@ ReadyMenu::ReadyMenu(GLfloat width,
             0.04 * (this->height),
             "HUMAN",
             nullptr);
-    this->buttons[2] = new MainMenuButton(2,
-                                          this->pos[0] + this->width * 0.125,
-                                          this->pos[1] - this->height * 0.35,
-                                          1,
-                                          0.65,
-                                          0.15,
-                                          0.15,
-                                          0.1 * (this->width),
-                                          0.04 * (this->height),
-                                          "Back",
-                                          nullptr);
-    this->buttons[3] = new MainMenuButton(3,
-                                          this->pos[0] + this->width * 0.275,
-                                          this->pos[1] - this->height * 0.35,
-                                          1,
-                                          0.75,
-                                          0.75,
-                                          0.75,
-                                          0.1 * (this->width),
-                                          0.04 * (this->height),
-                                          "Next",
-                                          nullptr);
-    this->controlItems[0] = new ControlItemSelectionBox(
-            this->pos[0] - this->width * 0.375,
-            this->pos[1] + this->height * 0.275,
+    buttons[2] = new MainMenuButton(2,
+                                    pos[0] + this->width * 0.125,
+                                    pos[1] - this->height * 0.35,
+                                    1,
+                                    0.65,
+                                    0.15,
+                                    0.15,
+                                    0.1 * (this->width),
+                                    0.04 * (this->height),
+                                    "Back",
+                                    nullptr);
+    buttons[3] = new MainMenuButton(3,
+                                    pos[0] + this->width * 0.275,
+                                    pos[1] - this->height * 0.35,
+                                    1,
+                                    0.75,
+                                    0.75,
+                                    0.75,
+                                    0.1 * (this->width),
+                                    0.04 * (this->height),
+                                    "Next",
+                                    nullptr);
+    controlItems[0] = new ControlItemSelectionBox(
+            pos[0] - this->width * 0.375,
+            pos[1] + this->height * 0.275,
             1,
             0.55,
             0.55,
@@ -139,9 +138,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             0.04 * (this->height),
             "AI",
             "Moron/Tosser/Cyborg/Shooter/Chooser/Poolshark/Spoiler/Unknown/");
-    this->controlItems[1] = new ControlItemSliderbar(
-            this->pos[0] - this->width * 0.35,
-            this->pos[1] - this->height * 0.24,
+    controlItems[1] = new ControlItemSliderbar(
+            pos[0] - this->width * 0.35,
+            pos[1] - this->height * 0.24,
             1,
             0.55,
             0.55,
@@ -151,9 +150,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             "Tank Type",
             "Rhinoxx/Hellfire/HeavyD/Panzer/Eggroid/Behemoth/Cubix/Predator/",
             0);
-    this->controlItems[2] =
-            new ControlItemSelectionBox(this->pos[0] - this->width * 0.175,
-                                        this->pos[1] + this->height * 0.275,
+    controlItems[2] =
+            new ControlItemSelectionBox(pos[0] - this->width * 0.175,
+                                        pos[1] + this->height * 0.275,
                                         1,
                                         0.55,
                                         0.55,
@@ -162,25 +161,24 @@ ReadyMenu::ReadyMenu(GLfloat width,
                                         0.04 * (this->height),
                                         "Team",
                                         "-/1/2/3/4/5/");
-    this->textField =
-            new ControlItemTextField(this->pos[0] - this->width * 0.375,
-                                     this->pos[1] + this->height * 0.275,
-                                     1,
-                                     1.0,
-                                     1.0,
-                                     1.0,
-                                     0.175 * (this->width),
-                                     0.04 * (this->height));
+    textField = new ControlItemTextField(pos[0] - this->width * 0.375,
+                                         pos[1] + this->height * 0.275,
+                                         1,
+                                         1.0,
+                                         1.0,
+                                         1.0,
+                                         0.175 * (this->width),
+                                         0.04 * (this->height));
 
     /*LABEL PLACEMENT*/
-    this->playerPageNum = new TextObject(this->caption,
-                                         pos[0] - this->width * 0.25,
-                                         pos[1] + this->height * 0.4,
-                                         (this->pos[2] + 1),
-                                         GLUT_BITMAP_TIMES_ROMAN_24,
-                                         0.0f,
-                                         0.0f,
-                                         0.0f);
+    playerPageNum = new TextObject(caption,
+                                   pos[0] - this->width * 0.25,
+                                   pos[1] + this->height * 0.4,
+                                   (pos[2] + 1),
+                                   GLUT_BITMAP_TIMES_ROMAN_24,
+                                   0.0f,
+                                   0.0f,
+                                   0.0f);
 
     for (int i = 0; i < NUM_TANK_STATS; i++) {
         std::string stat;
@@ -192,17 +190,17 @@ ReadyMenu::ReadyMenu(GLfloat width,
             stat = "Speed:";
         else
             stat = "Meh...:";
-        GLfloat stat_label_x_pos = this->pos[0] - this->width * 0.385;
+        GLfloat stat_label_x_pos = pos[0] - this->width * 0.385;
         GLfloat stat_label_y_pos =
-                this->pos[1] + this->height * 0.12 - this->height * (i * 0.07);
-        this->tankStatLabels[i] = new TextObject(stat,
-                                                 stat_label_x_pos,
-                                                 stat_label_y_pos,
-                                                 (this->pos[2] + 1),
-                                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                                 0.0f,
-                                                 0.0f,
-                                                 0.0f);
+                pos[1] + this->height * 0.12 - this->height * (i * 0.07);
+        tankStatLabels[i] = new TextObject(stat,
+                                           stat_label_x_pos,
+                                           stat_label_y_pos,
+                                           (pos[2] + 1),
+                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           0.0f,
+                                           0.0f,
+                                           0.0f);
     }
 
     // TANKS
@@ -221,7 +219,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
     }
 
     // STAT IMAGES
-    GLfloat img_start_pos_x = this->pos[0] - this->width * 0.325;
+    GLfloat img_start_pos_x = pos[0] - this->width * 0.325;
     for (int i = 0; i < NUM_STAT_IMAGES; i++) {
         // For Off Lights
         if (i < 30) {
@@ -229,9 +227,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             if (i < 10) {
                 statImages[i] = new ImageObject(
                         img_start_pos_x + this->width * (i % 10) * 0.03,
-                        this->pos[1] + height * 0.14 -
+                        pos[1] + height * 0.14 -
                                 this->height * ((i / 10) * 0.07),
-                        this->pos[2] + 0.5,
+                        pos[2] + 0.5,
                         this->width * 0.03,
                         this->height * 0.032,
                         0.0006 * (this->width),
@@ -243,9 +241,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             else if (i < 20) {
                 statImages[i] = new ImageObject(
                         img_start_pos_x + this->width * (i % 10) * 0.03,
-                        this->pos[1] + height * 0.14 -
+                        pos[1] + height * 0.14 -
                                 this->height * ((i / 10) * 0.07),
-                        this->pos[2] + 0.5,
+                        pos[2] + 0.5,
                         this->width * 0.03,
                         this->height * 0.032,
                         0.0006 * (this->width),
@@ -257,9 +255,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             else {
                 statImages[i] = new ImageObject(
                         img_start_pos_x + this->width * (i % 10) * 0.03,
-                        this->pos[1] + height * 0.14 -
+                        pos[1] + height * 0.14 -
                                 this->height * ((i / 10) * 0.07),
-                        this->pos[2] + 0.5,
+                        pos[2] + 0.5,
                         this->width * 0.03,
                         this->height * 0.032,
                         0.0006 * (this->width),
@@ -274,9 +272,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             if (i < 40) {
                 statImages[i] = new ImageObject(
                         img_start_pos_x + this->width * (i % 10) * 0.03,
-                        this->pos[1] + height * 0.14 -
+                        pos[1] + height * 0.14 -
                                 this->height * (((i - 30) / 10) * 0.07),
-                        this->pos[2] + 1,
+                        pos[2] + 1,
                         this->width * 0.03,
                         this->height * 0.032,
                         0.0006 * (this->width),
@@ -288,9 +286,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             else if (i < 50) {
                 statImages[i] = new ImageObject(
                         img_start_pos_x + this->width * (i % 10) * 0.03,
-                        this->pos[1] + height * 0.14 -
+                        pos[1] + height * 0.14 -
                                 this->height * (((i - 30) / 10) * 0.07),
-                        this->pos[2] + 1,
+                        pos[2] + 1,
                         this->width * 0.03,
                         this->height * 0.032,
                         0.0006 * (this->width),
@@ -302,9 +300,9 @@ ReadyMenu::ReadyMenu(GLfloat width,
             else {
                 statImages[i] = new ImageObject(
                         img_start_pos_x + this->width * (i % 10) * 0.03,
-                        this->pos[1] + height * 0.14 -
+                        pos[1] + height * 0.14 -
                                 this->height * (((i - 30) / 10) * 0.07),
-                        this->pos[2] + 1,
+                        pos[2] + 1,
                         this->width * 0.03,
                         this->height * 0.032,
                         0.0006 * (this->width),
@@ -315,48 +313,48 @@ ReadyMenu::ReadyMenu(GLfloat width,
         }
     }
 
-    this->updatePageInfo();
+    updatePageInfo();
 }
 
 ReadyMenu::~ReadyMenu() {
-    for (int i = 0; i < NUM_BUTTONS; i++) delete this->buttons[i];
-    for (int i = 0; i < NUM_STAT_IMAGES; i++) delete this->statImages[i];
-    for (int i = 0; i < NUM_CONTROL_ITEMS; i++) delete this->controlItems[i];
-    for (int i = 0; i < NUM_TANK_TYPES; i++) delete this->tanks[i];
-    for (int i = 0; i < NUM_TANK_STATS; i++) delete this->tankStatLabels[i];
-    delete this->textField;
-    delete this->playerPageNum;
+    for (int i = 0; i < NUM_BUTTONS; i++) delete buttons[i];
+    for (int i = 0; i < NUM_STAT_IMAGES; i++) delete statImages[i];
+    for (int i = 0; i < NUM_CONTROL_ITEMS; i++) delete controlItems[i];
+    for (int i = 0; i < NUM_TANK_TYPES; i++) delete tanks[i];
+    for (int i = 0; i < NUM_TANK_STATS; i++) delete tankStatLabels[i];
+    delete textField;
+    delete playerPageNum;
 }
 
 // GETTERS & SETTERS //
-GLfloat* ReadyMenu::getPos() { return &(this->pos[0]); }
+GLfloat* ReadyMenu::getPos() { return &(pos[0]); }
 GLfloat ReadyMenu::getWidth() { return this->width; }
 GLfloat ReadyMenu::getHeight() { return this->height; }
-GLfloat* ReadyMenu::getColor() { return &(this->color[0]); }
+GLfloat* ReadyMenu::getColor() { return &(color[0]); }
 void ReadyMenu::setWidth(GLfloat width) { this->width = width; }
 void ReadyMenu::setHeight(GLfloat height) { this->height = height; }
-void ReadyMenu::updateNumPlayers(int n) { this->numPlayers = n; }
+void ReadyMenu::updateNumPlayers(int n) { numPlayers = n; }
 void ReadyMenu::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-    this->color[0] = r;
-    this->color[1] = g;
-    this->color[2] = b;
-    this->color[3] = a;
+    color[0] = r;
+    color[1] = g;
+    color[2] = b;
+    color[3] = a;
 }
 
 void ReadyMenu::saveCurrentPlayerData() {
-    std::string aitype = this->controlItems[0]->collectData();
-    std::string name = this->textField->collectData();
-    std::string tank = this->controlItems[1]->collectData();
-    char team_label = (this->controlItems[2]->collectData()[0]);
+    std::string aitype = controlItems[0]->collectData();
+    std::string name = textField->collectData();
+    std::string tank = controlItems[1]->collectData();
+    char team_label = (controlItems[2]->collectData()[0]);
 
-    if (this->buttons[0]->isActive()) {
+    if (buttons[0]->isActive()) {
         this->player_factory->updatePlayerBasicStrings(
                 "CPU", aitype, "", team_label, tank, currentPlayerIndex);
     } else {
         this->player_factory->updatePlayerBasicStrings(
                 "HUMAN", "", name, team_label, tank, currentPlayerIndex);
-        this->textField->clearTextBuffer();
-        this->textField->deactivate();
+        textField->clearTextBuffer();
+        textField->deactivate();
     }
 }
 
@@ -369,14 +367,14 @@ void ReadyMenu::showPreviousPlayerPage() {
 
     } else {
         if (currentPlayerIndex == 1) {
-            this->buttons[2]->setColor(0.65, 0.15, 0.15);
-            this->textField->setTextBuffer("");
+            buttons[2]->setColor(0.65, 0.15, 0.15);
+            textField->setTextBuffer("");
         }
-        this->buttons[3]->setLabel("Next");
-        this->buttons[3]->setColor(0.75, 0.75, 0.75);
+        buttons[3]->setLabel("Next");
+        buttons[3]->setColor(0.75, 0.75, 0.75);
         currentPlayerIndex--;
         setPlayerPageNum(currentPlayerIndex);
-        this->textField->setTextBuffer("");
+        textField->setTextBuffer("");
         updatePageInfo();
     }
 }
@@ -386,16 +384,16 @@ void ReadyMenu::showNextPlayerPage() {
         Mix_FadeOutMusic(300);
         Mix_HaltMusic();
         *currentGameState = SHOP_MENU;
-        this->textField->setTextBuffer("");
+        textField->setTextBuffer("");
     } else {
         if (currentPlayerIndex + 1 == numPlayers - 1) {
-            this->buttons[3]->setLabel("Done");
-            this->buttons[3]->setColor(0.65, 0.15, 0.15);
+            buttons[3]->setLabel("Done");
+            buttons[3]->setColor(0.65, 0.15, 0.15);
         }
-        this->buttons[2]->setColor(0.75, 0.75, 0.75);
+        buttons[2]->setColor(0.75, 0.75, 0.75);
         currentPlayerIndex++;
         setPlayerPageNum(currentPlayerIndex);
-        this->textField->setTextBuffer("");
+        textField->setTextBuffer("");
         updatePageInfo();
     }
 }
@@ -410,37 +408,37 @@ void ReadyMenu::updatePageInfo() {
 
     // test to see if it's CPU
     if (player_type == "CPU") {
-        this->buttons[0]->pressButton();
+        buttons[0]->pressButton();
         Mix_HaltChannel(0);
-        this->buttons[0]->activateSubMenu();
-        this->buttons[1]->depressButton();
-        this->buttons[1]->deactivateSubMenu();
+        buttons[0]->activateSubMenu();
+        buttons[1]->depressButton();
+        buttons[1]->deactivateSubMenu();
 
         std::string ai_type =
                 this->player_factory->getPlayer(currentPlayerIndex)
                         ->getAI_Type();
         int i = 0;
-        while (this->controlItems[0]->collectData() != ai_type) {
-            this->controlItems[0]->setOptionText(i);
+        while (controlItems[0]->collectData() != ai_type) {
+            controlItems[0]->setOptionText(i);
             i++;
         }
     } else {
         std::string name = this->player_factory->getPlayer(currentPlayerIndex)
                                    ->getPlayerName();
-        this->buttons[1]->pressButton();
+        buttons[1]->pressButton();
         Mix_HaltChannel(0);
-        this->buttons[1]->activateSubMenu();
-        this->buttons[0]->depressButton();
-        this->buttons[0]->deactivateSubMenu();
+        buttons[1]->activateSubMenu();
+        buttons[0]->depressButton();
+        buttons[0]->deactivateSubMenu();
 
-        this->textField->setTextBuffer(name);
+        textField->setTextBuffer(name);
     }
 
     if (this->player_factory->getPlayer(currentPlayerIndex)->getTeamLabel() ==
         '-') {
-        this->controlItems[2]->setOptionText(0);
+        controlItems[2]->setOptionText(0);
     } else {
-        this->controlItems[2]->setOptionText(
+        controlItems[2]->setOptionText(
                 this->player_factory->getPlayer(currentPlayerIndex)
                         ->getTeamLabel() -
                 48);
@@ -449,41 +447,41 @@ void ReadyMenu::updatePageInfo() {
     std::string tank_type =
             this->player_factory->getPlayer(currentPlayerIndex)->getTankType();
     int i = 0;
-    while (this->controlItems[1]->collectData() != tank_type) {
-        this->controlItems[1]->setOptionText(i);
+    while (controlItems[1]->collectData() != tank_type) {
+        controlItems[1]->setOptionText(i);
         i++;
     }
 
-    this->buttons[0]->setColor(
+    buttons[0]->setColor(
             this->player_factory->collectPlayerColor(currentPlayerIndex)[0],
             this->player_factory->collectPlayerColor(currentPlayerIndex)[1],
             this->player_factory->collectPlayerColor(currentPlayerIndex)[2]);
-    this->buttons[1]->setColor(
+    buttons[1]->setColor(
             this->player_factory->collectPlayerColor(currentPlayerIndex)[0],
             this->player_factory->collectPlayerColor(currentPlayerIndex)[1],
             this->player_factory->collectPlayerColor(currentPlayerIndex)[2]);
 
-    this->tankPrvScrColor[0] =
+    tankPrvScrColor[0] =
             this->player_factory->collectPlayerColor(currentPlayerIndex)[0];
-    this->tankPrvScrColor[1] =
+    tankPrvScrColor[1] =
             this->player_factory->collectPlayerColor(currentPlayerIndex)[1];
-    this->tankPrvScrColor[2] =
+    tankPrvScrColor[2] =
             this->player_factory->collectPlayerColor(currentPlayerIndex)[2];
 }
 
 void ReadyMenu::setPlayerPageNum(int i) {
-    delete this->playerPageNum;
-    this->caption = "Player " + std::to_string(i + 1);
-    GLfloat label_x_pos = this->pos[0] - this->width * 0.25;
-    GLfloat label_y_pos = this->pos[1] + this->height * 0.4;
-    this->playerPageNum = new TextObject(this->caption,
-                                         label_x_pos,
-                                         label_y_pos,
-                                         (this->pos[2] + 1),
-                                         GLUT_BITMAP_TIMES_ROMAN_24,
-                                         0.0f,
-                                         0.0f,
-                                         0.0f);
+    delete playerPageNum;
+    caption = "Player " + std::to_string(i + 1);
+    GLfloat label_x_pos = pos[0] - this->width * 0.25;
+    GLfloat label_y_pos = pos[1] + this->height * 0.4;
+    playerPageNum = new TextObject(caption,
+                                   label_x_pos,
+                                   label_y_pos,
+                                   (pos[2] + 1),
+                                   GLUT_BITMAP_TIMES_ROMAN_24,
+                                   0.0f,
+                                   0.0f,
+                                   0.0f);
 }
 
 void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
@@ -492,16 +490,15 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF CLICK LANDS IN BUTTON I
             if (buttons[button_i]) {  // JUST TO MAKE SURE
-                if ((x >= this->buttons[button_i]->getXPos()) &&
-                    (x <= (this->buttons[button_i]->getXPos() +
-                           this->buttons[button_i]->getWidth())) &&
-                    (y <= this->buttons[button_i]->getYPos()) &&
-                    (y >= (this->buttons[button_i]->getYPos() -
-                           this->buttons[button_i]->getHeight()))) {
-                    buttons[button_i]->pressButton();  // PRESS BUTTON
-                    this->buttonPressed =
-                            buttons[button_i];  // KEEP TRACK OF WHICH BUTTON
-                                                // WAS PRESSED
+                if ((x >= buttons[button_i]->getXPos()) &&
+                    (x <= (buttons[button_i]->getXPos() +
+                           buttons[button_i]->getWidth())) &&
+                    (y <= buttons[button_i]->getYPos()) &&
+                    (y >= (buttons[button_i]->getYPos() -
+                           buttons[button_i]->getHeight()))) {
+                    buttons[button_i]->pressButton();   // PRESS BUTTON
+                    buttonPressed = buttons[button_i];  // KEEP TRACK OF WHICH
+                                                        // BUTTON WAS PRESSED
                 }
             }
         }
@@ -509,77 +506,74 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
              control_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                              // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                              // CLICKED A ARROW BUTTON???
-            if ((x >= this->controlItems[control_i]->getXPos()) &&
-                (x <= (this->controlItems[control_i]->getXPos() +
-                       this->controlItems[control_i]->getWidth())) &&
-                (y <= this->controlItems[control_i]->getYPos()) &&
-                (y >= (this->controlItems[control_i]->getYPos() -
-                       this->controlItems[control_i]->getHeight()))) {
-                this->controlItems[control_i]->mouseClickEvent(
+            if ((x >= controlItems[control_i]->getXPos()) &&
+                (x <= (controlItems[control_i]->getXPos() +
+                       controlItems[control_i]->getWidth())) &&
+                (y <= controlItems[control_i]->getYPos()) &&
+                (y >= (controlItems[control_i]->getYPos() -
+                       controlItems[control_i]->getHeight()))) {
+                controlItems[control_i]->mouseClickEvent(
                         x,
                         y,
                         buttonDown,
                         true);  // YOU PRESSED OVER A ARROWBUTTON
             }
         }
-        if ((x >= this->textField->getXPos()) &&
-            (x <=
-             (this->textField->getXPos() + this->textField->getWidth())) &&
-            (y <= this->textField->getYPos()) &&
-            (y >=
-             (this->textField->getYPos() - this->textField->getHeight()))) {
-            this->textField->mouseClickEvent(x, y, buttonDown, true);
+        if ((x >= textField->getXPos()) &&
+            (x <= (textField->getXPos() + textField->getWidth())) &&
+            (y <= textField->getYPos()) &&
+            (y >= (textField->getYPos() - textField->getHeight()))) {
+            textField->mouseClickEvent(x, y, buttonDown, true);
         } else {
-            this->textField->mouseClickEvent(x, y, buttonDown, false);
+            textField->mouseClickEvent(x, y, buttonDown, false);
         }
     }
 
     else if (!buttonDown) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
                              // GOES UP
-        if (this->textField->isTextFieldActive())
-            this->textField->deactivate();
-        if (this->buttonPressed !=
+        if (textField->isTextFieldActive()) textField->deactivate();
+        if (buttonPressed !=
             nullptr) {  // IF THE LEFT CLICK WAS VALID AND INSIDE A BUTTON
                         // CHECK TO SEE IF YOU ARE STILL OVER SAME BUTTON
-            if ((x >= this->buttonPressed->getXPos()) &&
-                (x <= (this->buttonPressed->getXPos() +
-                       this->buttonPressed->getWidth())) &&
-                (y <= this->buttonPressed->getYPos()) &&
-                (y >= (this->buttonPressed->getYPos() -
-                       this->buttonPressed->getHeight()))) {
-                if (this->buttonPressed->getUNIQUEIDENTIFIER() ==
+            if ((x >= buttonPressed->getXPos()) &&
+                (x <=
+                 (buttonPressed->getXPos() + buttonPressed->getWidth())) &&
+                (y <= buttonPressed->getYPos()) &&
+                (y >=
+                 (buttonPressed->getYPos() - buttonPressed->getHeight()))) {
+                if (buttonPressed->getUNIQUEIDENTIFIER() ==
                     0) {  // YOU CLICKED CPU TOGGLE BUTTON
-                    this->buttons[1]->depressButton();
-                    this->buttons[1]->deactivateSubMenu();
-                    this->buttons[0]->activateSubMenu();
-                    this->tanks[5]->getBaseHP();
-                    this->buttonPressed = nullptr;
-                } else if (this->buttonPressed->getUNIQUEIDENTIFIER() ==
+                    buttons[1]->depressButton();
+                    buttons[1]->deactivateSubMenu();
+                    buttons[0]->activateSubMenu();
+                    tanks[5]->getBaseHP();
+                    buttonPressed = nullptr;
+                } else if (buttonPressed->getUNIQUEIDENTIFIER() ==
                            1) {  // YOU CLICKED HUMAN TOGGLE BUTTON
-                    this->buttons[0]->deactivateSubMenu();
-                    this->buttons[0]->depressButton();
-                    this->buttons[1]->activateSubMenu();
-                    this->buttonPressed = nullptr;
-                } else if (this->buttonPressed->getUNIQUEIDENTIFIER() ==
+                    buttons[0]->deactivateSubMenu();
+                    buttons[0]->depressButton();
+                    buttons[1]->activateSubMenu();
+                    buttonPressed = nullptr;
+                } else if (buttonPressed->getUNIQUEIDENTIFIER() ==
                            2) {  // YOU CLICKED BACK BUTTON
-                    this->saveCurrentPlayerData();
-                    this->showPreviousPlayerPage();
-                    this->buttonPressed->depressButton();
-                    this->buttonPressed = nullptr;
-                } else if (this->buttonPressed->getUNIQUEIDENTIFIER() ==
+                    saveCurrentPlayerData();
+                    showPreviousPlayerPage();
+                    buttonPressed->depressButton();
+                    buttonPressed = nullptr;
+                } else if (buttonPressed->getUNIQUEIDENTIFIER() ==
                            3) {  // YOU CLICKED NEXT BUTTON
-                    this->saveCurrentPlayerData();
-                    this->showNextPlayerPage();
-                    this->buttonPressed->depressButton();
-                    this->buttonPressed = nullptr;
+                    saveCurrentPlayerData();
+                    showNextPlayerPage();
+                    buttonPressed->depressButton();
+                    buttonPressed = nullptr;
                 }
             } else {  // IF YOU RELEASE OUTSIDE ALL BUTTONS
-                if (!this->buttonPressed
+                if (!buttonPressed
                              ->isActive())  // IF THE BUTTON PRESSED IS NOT THE
                                             // BUTTON THAT'S TOGGLED
                 {
-                    this->buttonPressed->depressButton();
-                    this->buttonPressed = nullptr;
+                    buttonPressed->depressButton();
+                    buttonPressed = nullptr;
                 }
             }
         }
@@ -587,43 +581,41 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
              control_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                              // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                              // CLICKED A ARROW BUTTON???
-            if ((x >= this->controlItems[control_i]->getXPos()) &&
-                (x <= (this->controlItems[control_i]->getXPos() +
-                       this->controlItems[control_i]->getWidth())) &&
-                (y <= this->controlItems[control_i]->getYPos()) &&
-                (y >= (this->controlItems[control_i]->getYPos() -
-                       this->controlItems[control_i]->getHeight()))) {
-                if (control_i == 0 && this->buttons[control_i + 1]->isActive())
+            if ((x >= controlItems[control_i]->getXPos()) &&
+                (x <= (controlItems[control_i]->getXPos() +
+                       controlItems[control_i]->getWidth())) &&
+                (y <= controlItems[control_i]->getYPos()) &&
+                (y >= (controlItems[control_i]->getYPos() -
+                       controlItems[control_i]->getHeight()))) {
+                if (control_i == 0 && buttons[control_i + 1]->isActive())
                     ;  // IF HUMAN BUTTON IS TOGGLED, SELECTION BUTTON SHOULD
                        // DO NOTHING
                 else {
-                    this->controlItems[control_i]->mouseClickEvent(
+                    controlItems[control_i]->mouseClickEvent(
                             x, y, buttonDown, true);
                 }
             } else {
-                if (control_i == 0 && this->buttons[control_i + 1]->isActive())
+                if (control_i == 0 && buttons[control_i + 1]->isActive())
                     ;  // IF HUMAN BUTTON IS TOGGLED, SELECTION BUTTON SHOULD
                        // DO NOTHING
                 else {
-                    this->controlItems[control_i]->mouseClickEvent(
+                    controlItems[control_i]->mouseClickEvent(
                             x, y, buttonDown, false);
                 }
             }
         }
-        if ((x >= this->textField->getXPos()) &&
-            (x <=
-             (this->textField->getXPos() + this->textField->getWidth())) &&
-            (y <= this->textField->getYPos()) &&
-            (y >=
-             (this->textField->getYPos() - this->textField->getHeight()))) {
-            this->textField->mouseClickEvent(
+        if ((x >= textField->getXPos()) &&
+            (x <= (textField->getXPos() + textField->getWidth())) &&
+            (y <= textField->getYPos()) &&
+            (y >= (textField->getYPos() - textField->getHeight()))) {
+            textField->mouseClickEvent(
                     x, y, buttonDown, true);  // YOU PRESSED OVER A ARROWBUTTON
         }
     }
 }
 
 void ReadyMenu::updateMouse(int x, int y) {
-    this->controlItems[1]->updateMouse(x, y);
+    controlItems[1]->updateMouse(x, y);
 }
 
 void ReadyMenu::draw() {
@@ -711,109 +703,101 @@ void ReadyMenu::draw() {
     // Draw tank preview screen
     glBegin(GL_QUADS);
     glColor4f(0.45, 0.45, 0.45, 1);
-    glVertex3f(this->tankPrvScrPos[0],
-               this->tankPrvScrPos[1],
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] - 6,
-               this->tankPrvScrPos[1] + 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth + 6,
-               this->tankPrvScrPos[1] + 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth,
-               this->tankPrvScrPos[1],
-               this->tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0], tankPrvScrPos[1], tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] - 6, tankPrvScrPos[1] + 6, tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth + 6,
+               tankPrvScrPos[1] + 6,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth,
+               tankPrvScrPos[1],
+               tankPrvScrPos[2]);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(0.4, 0.4, 0.4, 1);
-    glVertex3f(this->tankPrvScrPos[0] - 6,
-               this->tankPrvScrPos[1] + 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] - 6,
-               this->tankPrvScrPos[1] - tankPrvScrHeight - 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0],
-               this->tankPrvScrPos[1] - tankPrvScrHeight,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0],
-               this->tankPrvScrPos[1],
-               this->tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] - 6, tankPrvScrPos[1] + 6, tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] - 6,
+               tankPrvScrPos[1] - tankPrvScrHeight - 6,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0],
+               tankPrvScrPos[1] - tankPrvScrHeight,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0], tankPrvScrPos[1], tankPrvScrPos[2]);
     glEnd();
 
     /* Middle pane replaced by viewport
     glBegin(GL_QUADS);
         glColor4f(tankPrvScrColor[0], tankPrvScrColor[1], tankPrvScrColor[2],
-    1); glVertex3f(this->tankPrvScrPos[0], this->tankPrvScrPos[1],
-    this->tankPrvScrPos[2]); glVertex3f(this->tankPrvScrPos[0],
-    this->tankPrvScrPos[1]-tankPrvScrHeight, this->tankPrvScrPos[2]);
-        glVertex3f(this->tankPrvScrPos[0]+tankPrvScrWidth,
-    this->tankPrvScrPos[1]-tankPrvScrHeight, this->tankPrvScrPos[2]);
-        glVertex3f(this->tankPrvScrPos[0]+tankPrvScrWidth,
-    this->tankPrvScrPos[1], this->tankPrvScrPos[2]); glEnd();*/
+    1); glVertex3f(tankPrvScrPos[0], tankPrvScrPos[1],
+    tankPrvScrPos[2]); glVertex3f(tankPrvScrPos[0],
+    tankPrvScrPos[1]-tankPrvScrHeight, tankPrvScrPos[2]);
+        glVertex3f(tankPrvScrPos[0]+tankPrvScrWidth,
+    tankPrvScrPos[1]-tankPrvScrHeight, tankPrvScrPos[2]);
+        glVertex3f(tankPrvScrPos[0]+tankPrvScrWidth,
+    tankPrvScrPos[1], tankPrvScrPos[2]); glEnd();*/
 
     glBegin(GL_QUADS);
     glColor4f(0.8, 0.8, 0.8, 1);
-    glVertex3f(this->tankPrvScrPos[0] - 6,
-               this->tankPrvScrPos[1] - tankPrvScrHeight - 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth + 6,
-               this->tankPrvScrPos[1] - tankPrvScrHeight - 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth,
-               this->tankPrvScrPos[1] - tankPrvScrHeight,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0],
-               this->tankPrvScrPos[1] - tankPrvScrHeight,
-               this->tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] - 6,
+               tankPrvScrPos[1] - tankPrvScrHeight - 6,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth + 6,
+               tankPrvScrPos[1] - tankPrvScrHeight - 6,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth,
+               tankPrvScrPos[1] - tankPrvScrHeight,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0],
+               tankPrvScrPos[1] - tankPrvScrHeight,
+               tankPrvScrPos[2]);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(0.85, 0.85, 0.85, 1);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth,
-               this->tankPrvScrPos[1],
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth + 6,
-               this->tankPrvScrPos[1] + 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth + 6,
-               this->tankPrvScrPos[1] - tankPrvScrHeight - 6,
-               this->tankPrvScrPos[2]);
-    glVertex3f(this->tankPrvScrPos[0] + tankPrvScrWidth,
-               this->tankPrvScrPos[1] + -tankPrvScrHeight,
-               this->tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth,
+               tankPrvScrPos[1],
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth + 6,
+               tankPrvScrPos[1] + 6,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth + 6,
+               tankPrvScrPos[1] - tankPrvScrHeight - 6,
+               tankPrvScrPos[2]);
+    glVertex3f(tankPrvScrPos[0] + tankPrvScrWidth,
+               tankPrvScrPos[1] + -tankPrvScrHeight,
+               tankPrvScrPos[2]);
     glEnd();
 
     for (int i = 0; i < NUM_TANK_STATS; i++) {
-        this->tankStatLabels[i]->draw();
+        tankStatLabels[i]->draw();
     }
     for (int i = 0; i < NUM_BUTTONS; i++) {
-        this->buttons[i]->draw();
+        buttons[i]->draw();
     }
-    if (this->buttons[0]->isActive()) {
-        this->controlItems[0]->draw();
+    if (buttons[0]->isActive()) {
+        controlItems[0]->draw();
     } else {
-        this->textField->draw();
+        textField->draw();
     }
-    this->controlItems[1]->draw();
-    this->controlItems[2]->draw();
-    this->playerPageNum->draw();
+    controlItems[1]->draw();
+    controlItems[2]->draw();
+    playerPageNum->draw();
 
     // Flashing color effect in the tank preview screen
-    if (0 <= this->tankPrvScrColor[0] &&
-        this->tankPrvScrColor[0] <= this->player_factory->collectPlayerColor(
-                                            currentPlayerIndex)[0] *
-                                            1.12)
+    if (0 <= tankPrvScrColor[0] &&
+        tankPrvScrColor[0] <= this->player_factory->collectPlayerColor(
+                                      currentPlayerIndex)[0] *
+                                      1.12)
         tankPrvScrColor[0] +=
                 (tankPrvScrColor[0] + 0.1) / 100 * prvScrColorControl;
-    if (0 <= this->tankPrvScrColor[1] &&
-        this->tankPrvScrColor[1] <= this->player_factory->collectPlayerColor(
-                                            currentPlayerIndex)[1] *
-                                            1.12)
+    if (0 <= tankPrvScrColor[1] &&
+        tankPrvScrColor[1] <= this->player_factory->collectPlayerColor(
+                                      currentPlayerIndex)[1] *
+                                      1.12)
         tankPrvScrColor[1] +=
                 (tankPrvScrColor[1] + 0.1) / 100 * prvScrColorControl;
-    if (0 <= this->tankPrvScrColor[2] &&
-        this->tankPrvScrColor[2] <= this->player_factory->collectPlayerColor(
-                                            currentPlayerIndex)[2] *
-                                            1.12)
+    if (0 <= tankPrvScrColor[2] &&
+        tankPrvScrColor[2] <= this->player_factory->collectPlayerColor(
+                                      currentPlayerIndex)[2] *
+                                      1.12)
         tankPrvScrColor[2] +=
                 (tankPrvScrColor[2] + 0.1) / 100 * prvScrColorControl;
     if (tankPrvScrColor[0] + tankPrvScrColor[1] + tankPrvScrColor[2] < 0) {
@@ -843,90 +827,81 @@ void ReadyMenu::draw() {
             statImages[i]->draw();
         } else {
             if (i < 40) {
-                if (this->controlItems[1]->collectData() == "Rhinoxx" &&
-                    i - 30 < this->tanks[0]->getBasePower()) {
+                if (controlItems[1]->collectData() == "Rhinoxx" &&
+                    i - 30 < tanks[0]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Hellfire" &&
-                           i - 30 < this->tanks[1]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "Hellfire" &&
+                           i - 30 < tanks[1]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "HeavyD" &&
-                           i - 30 < this->tanks[2]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "HeavyD" &&
+                           i - 30 < tanks[2]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Panzer" &&
-                           i - 30 < this->tanks[3]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "Panzer" &&
+                           i - 30 < tanks[3]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Eggroid" &&
-                           i - 30 < this->tanks[4]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "Eggroid" &&
+                           i - 30 < tanks[4]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Behemoth" &&
-                           i - 30 < this->tanks[5]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "Behemoth" &&
+                           i - 30 < tanks[5]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Cubix" &&
-                           i - 30 < this->tanks[6]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "Cubix" &&
+                           i - 30 < tanks[6]->getBasePower()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Predator" &&
-                           i - 30 < this->tanks[7]->getBasePower()) {
+                } else if (controlItems[1]->collectData() == "Predator" &&
+                           i - 30 < tanks[7]->getBasePower()) {
                     statImages[i]->draw();
                 }
             } else if (i < 50) {
-                if (this->controlItems[1]->collectData() == "Rhinoxx" &&
-                    i - 40 < this->tanks[0]->getBaseArmor()) {
+                if (controlItems[1]->collectData() == "Rhinoxx" &&
+                    i - 40 < tanks[0]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Hellfire" &&
-                           i - 40 < this->tanks[1]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "Hellfire" &&
+                           i - 40 < tanks[1]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "HeavyD" &&
-                           i - 40 < this->tanks[2]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "HeavyD" &&
+                           i - 40 < tanks[2]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Panzer" &&
-                           i - 40 < this->tanks[3]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "Panzer" &&
+                           i - 40 < tanks[3]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Eggroid" &&
-                           i - 40 < this->tanks[4]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "Eggroid" &&
+                           i - 40 < tanks[4]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Behemoth" &&
-                           i - 40 < this->tanks[5]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "Behemoth" &&
+                           i - 40 < tanks[5]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Cubix" &&
-                           i - 40 < this->tanks[6]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "Cubix" &&
+                           i - 40 < tanks[6]->getBaseArmor()) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Predator" &&
-                           i - 40 < this->tanks[7]->getBaseArmor()) {
+                } else if (controlItems[1]->collectData() == "Predator" &&
+                           i - 40 < tanks[7]->getBaseArmor()) {
                     statImages[i]->draw();
                 }
             } else {
-                if (this->controlItems[1]->collectData() == "Rhinoxx" &&
-                    i - 50 < this->tanks[0]->getBaseSpeed() / 10) {
+                if (controlItems[1]->collectData() == "Rhinoxx" &&
+                    i - 50 < tanks[0]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Hellfire" &&
-                           i - 50 < this->tanks[1]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "Hellfire" &&
+                           i - 50 < tanks[1]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "HeavyD" &&
-                           i - 50 < this->tanks[2]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "HeavyD" &&
+                           i - 50 < tanks[2]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Panzer" &&
-                           i - 50 < this->tanks[3]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "Panzer" &&
+                           i - 50 < tanks[3]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Eggroid" &&
-                           i - 50 < this->tanks[4]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "Eggroid" &&
+                           i - 50 < tanks[4]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Behemoth" &&
-                           i - 50 < this->tanks[5]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "Behemoth" &&
+                           i - 50 < tanks[5]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() == "Cubix" &&
-                           i - 50 < this->tanks[6]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "Cubix" &&
+                           i - 50 < tanks[6]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
-                } else if (this->controlItems[1]->collectData() ==
-                                   "Predator" &&
-                           i - 50 < this->tanks[7]->getBaseSpeed() / 10) {
+                } else if (controlItems[1]->collectData() == "Predator" &&
+                           i - 50 < tanks[7]->getBaseSpeed() / 10) {
                     statImages[i]->draw();
                 }
             }
@@ -941,7 +916,7 @@ void ReadyMenu::draw() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glViewport(this->tankPrvScrPos[0] + this->getWidth() / 2,
+    glViewport(tankPrvScrPos[0] + getWidth() / 2,
                tankPrvScrHeight + 1,
                tankPrvScrWidth,
                tankPrvScrHeight);
@@ -952,7 +927,7 @@ void ReadyMenu::draw() {
             199999999);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glScissor(this->tankPrvScrPos[0] + this->getWidth() / 2,
+    glScissor(tankPrvScrPos[0] + getWidth() / 2,
               tankPrvScrHeight + 1,
               tankPrvScrWidth,
               tankPrvScrHeight);
@@ -964,25 +939,24 @@ void ReadyMenu::draw() {
     gluLookAt(0, 200, 500, 0, 0, 0, 0.0f, 1.0f, 0.0f);
 
     // Draw Tanks
-    glTranslatef(
-            this->pos[0], this->pos[1] - tankPrvScrHeight * 0.2, this->pos[2]);
+    glTranslatef(pos[0], pos[1] - tankPrvScrHeight * 0.2, pos[2]);
     glRotatef(tankAngle, 0, 1, 0);
-    if (this->controlItems[1]->collectData() == "Rhinoxx")
-        this->tanks[0]->draw();
-    else if (this->controlItems[1]->collectData() == "Hellfire")
-        this->tanks[1]->draw();
-    else if (this->controlItems[1]->collectData() == "HeavyD")
-        this->tanks[2]->draw();
-    else if (this->controlItems[1]->collectData() == "Panzer")
-        this->tanks[3]->draw();
-    else if (this->controlItems[1]->collectData() == "Eggroid")
-        this->tanks[4]->draw();
-    else if (this->controlItems[1]->collectData() == "Behemoth")
-        this->tanks[5]->draw();
-    else if (this->controlItems[1]->collectData() == "Cubix")
-        this->tanks[6]->draw();
-    else if (this->controlItems[1]->collectData() == "Predator")
-        this->tanks[7]->draw();
+    if (controlItems[1]->collectData() == "Rhinoxx")
+        tanks[0]->draw();
+    else if (controlItems[1]->collectData() == "Hellfire")
+        tanks[1]->draw();
+    else if (controlItems[1]->collectData() == "HeavyD")
+        tanks[2]->draw();
+    else if (controlItems[1]->collectData() == "Panzer")
+        tanks[3]->draw();
+    else if (controlItems[1]->collectData() == "Eggroid")
+        tanks[4]->draw();
+    else if (controlItems[1]->collectData() == "Behemoth")
+        tanks[5]->draw();
+    else if (controlItems[1]->collectData() == "Cubix")
+        tanks[6]->draw();
+    else if (controlItems[1]->collectData() == "Predator")
+        tanks[7]->draw();
     else {
         printf("ERROR: Unkown tank type\n");
         glutSolidSphere(100, 30, 30);
@@ -1013,7 +987,7 @@ void ReadyMenu::draw() {
 }
 
 void ReadyMenu::keyTest(unsigned char key) {
-    if (this->textField->isTextFieldActive()) {
-        this->textField->keyHandler(key);
+    if (textField->isTextFieldActive()) {
+        textField->keyHandler(key);
     }
 }

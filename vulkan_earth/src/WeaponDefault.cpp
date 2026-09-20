@@ -4,17 +4,17 @@
 
 WeaponDefault::WeaponDefault() = default;
 WeaponDefault::WeaponDefault(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 12;
-    this->packageNum = 2;
-    this->remaining = 2;
-    this->scale = 60;
-    this->imageFileName = "TestImage.raw";
-    this->description = "Default     (Default Bomb) Damage:100";
-    this->price = 60;
-    this->radius = 5;
-    this->damage = 100;
-    this->specialNumber = 0;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 12;
+    packageNum = 2;
+    remaining = 2;
+    scale = 60;
+    imageFileName = "TestImage.raw";
+    description = "Default     (Default Bomb) Damage:100";
+    price = 60;
+    radius = 5;
+    damage = 100;
+    specialNumber = 0;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Yellow};
@@ -30,5 +30,5 @@ WeaponDefault::WeaponDefault(int ID) {
 WeaponDefault::~WeaponDefault() = default;
 
 WeaponDefault* WeaponDefault::getWeaponInstance() {
-    return new WeaponDefault(this->UNIQUEIDENTIFIER);
+    return new WeaponDefault(UNIQUEIDENTIFIER);
 }

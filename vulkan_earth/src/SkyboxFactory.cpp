@@ -8,7 +8,7 @@
 SkyboxFactory::SkyboxFactory() = default;
 
 SkyboxFactory::SkyboxFactory(int size_of_box) {
-    this->size = size_of_box;
+    size = size_of_box;
     int width = 1024;
     int height = 1024;
     int scale = 1024;
@@ -21,35 +21,35 @@ SkyboxFactory::SkyboxFactory(int size_of_box) {
     file0.read(reinterpret_cast<char*>(data0.data()), data0.size());
 
     /*
-    this->image1_X_start=(int)((width*3)/4);
-    this->image1_Y_start=(int)(0);
-    this->image1_X_end=(int)((width*3)/2);
-    this->image1_Y_end=(int)((height)/3);
+    image1_X_start=(int)((width*3)/4);
+    image1_Y_start=(int)(0);
+    image1_X_end=(int)((width*3)/2);
+    image1_Y_end=(int)((height)/3);
 
-    this->image2_X_start=(int)(0);
-    this->image2_Y_start=(int)((height*3)/3);
-    this->image2_X_end=(int)((width*3)/4);
-    this->image2_Y_end=(int)(2*(height)/3);
+    image2_X_start=(int)(0);
+    image2_Y_start=(int)((height*3)/3);
+    image2_X_end=(int)((width*3)/4);
+    image2_Y_end=(int)(2*(height)/3);
 
-    this->image3_X_start=(int)((width*3)/4);
-    this->image3_Y_start=(int)((height)/3);
-    this->image3_X_end=(int)((width*3)/2);
-    this->image3_Y_end=(int)(2*(height)/3);
+    image3_X_start=(int)((width*3)/4);
+    image3_Y_start=(int)((height)/3);
+    image3_X_end=(int)((width*3)/2);
+    image3_Y_end=(int)(2*(height)/3);
 
-    this->image4_X_start=(int)((width*3)/2);
-    this->image4_Y_start=(int)((height)/3);
-    this->image4_X_end=(int)(3*(width*3)/4);
-    this->image4_Y_end=(int)(2*(height)/3);
+    image4_X_start=(int)((width*3)/2);
+    image4_Y_start=(int)((height)/3);
+    image4_X_end=(int)(3*(width*3)/4);
+    image4_Y_end=(int)(2*(height)/3);
 
-    this->image5_X_start=(int)(3*(width*3)/4);
-    this->image5_Y_start=(int)((height)/3);
-    this->image5_X_end=(int)(width*3);
-    this->image5_Y_end=(int)(2*(height)/3);
+    image5_X_start=(int)(3*(width*3)/4);
+    image5_Y_start=(int)((height)/3);
+    image5_X_end=(int)(width*3);
+    image5_Y_end=(int)(2*(height)/3);
 
-    this->image6_X_start=(int)((width*3)/4);
-    this->image6_Y_start=(int)(2*(height)/3);
-    this->image6_X_end=(int)((width*3)/2);
-    this->image6_Y_end=(int)(height);
+    image6_X_start=(int)((width*3)/4);
+    image6_Y_start=(int)(2*(height)/3);
+    image6_X_end=(int)((width*3)/2);
+    image6_Y_end=(int)(height);
 
     int size_of_data = width*height*3;
     int index1=0;

@@ -4,21 +4,21 @@
 
 ItemDoubleAction::ItemDoubleAction() = default;
 ItemDoubleAction::ItemDoubleAction(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->packageNum = 1;
-    this->maxStack = 5;
-    this->remaining = 1;
-    this->imageFileName = "ItemDoubleAction.raw";
-    this->description =
+    UNIQUEIDENTIFIER = ID;
+    packageNum = 1;
+    maxStack = 5;
+    remaining = 1;
+    imageFileName = "ItemDoubleAction.raw";
+    description =
             "Double Action:     Allows the player to perform an action twice "
             "in one turn.";
-    this->price = 120;
-    this->specialNum = 1;
+    price = 120;
+    specialNum = 1;
 }
 ItemDoubleAction::~ItemDoubleAction() = default;
 
 ItemDoubleAction* ItemDoubleAction::getItemInstance() {
-    return new ItemDoubleAction(this->UNIQUEIDENTIFIER);
+    return new ItemDoubleAction(UNIQUEIDENTIFIER);
 }
 
 bool ItemDoubleAction::causeEffectToTank(Tank* tank) {

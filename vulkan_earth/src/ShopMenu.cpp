@@ -43,7 +43,7 @@ ShopMenu::ShopMenu(GLfloat width,
                    int* gameState) {
     this->global_settings = global_settings;
     this->player_factory = player_factory;
-    this->currentGameState = gameState;
+    currentGameState = gameState;
     numPlayers = global_settings->getPlayer_Count();
     currentPlayerIndex = 0;
     currentPlayerBalance = 0;
@@ -60,11 +60,11 @@ ShopMenu::ShopMenu(GLfloat width,
     this->width = width;
     this->height = height;
     this->percentBorder = percentBorder;
-    this->pos[0] = this->pos[1] = this->pos[2] = 0;
+    pos[0] = pos[1] = pos[2] = 0;
 
-    grids[0] = new ControlItemGrid(this->pos[0] - this->width * 0.4,
-                                   this->pos[1] + this->height * 0.28,
-                                   this->pos[2],
+    grids[0] = new ControlItemGrid(pos[0] - this->width * 0.4,
+                                   pos[1] + this->height * 0.28,
+                                   pos[2],
                                    this->width * 0.3,
                                    this->height * 0.3,
                                    SHOP_GRID_ROW,
@@ -74,9 +74,9 @@ ShopMenu::ShopMenu(GLfloat width,
                                    0.41,
                                    false,
                                    false);
-    grids[1] = new ControlItemGrid(this->pos[0] + this->width * 0.175,
-                                   this->pos[1] + this->height * 0.30,
-                                   this->pos[2],
+    grids[1] = new ControlItemGrid(pos[0] + this->width * 0.175,
+                                   pos[1] + this->height * 0.30,
+                                   pos[2],
                                    this->width * 0.12,
                                    this->height * 0.4,
                                    INVEN_GRID_ROW,
@@ -87,9 +87,9 @@ ShopMenu::ShopMenu(GLfloat width,
                                    true,
                                    true);
     buttons[0] = new ControlItemButton(nullptr,
-                                       this->pos[0] - this->width * 0.34,
-                                       this->pos[1] + this->height * 0.35,
-                                       this->pos[2] + 0.5,
+                                       pos[0] - this->width * 0.34,
+                                       pos[1] + this->height * 0.35,
+                                       pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
@@ -100,9 +100,9 @@ ShopMenu::ShopMenu(GLfloat width,
     buttons[0]->updateButtonState();
 
     buttons[1] = new ControlItemButton(nullptr,
-                                       this->pos[0] - this->width * 0.235,
-                                       this->pos[1] + this->height * 0.35,
-                                       this->pos[2] + 0.5,
+                                       pos[0] - this->width * 0.235,
+                                       pos[1] + this->height * 0.35,
+                                       pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
@@ -110,9 +110,9 @@ ShopMenu::ShopMenu(GLfloat width,
                                        0.04 * (this->height),
                                        "Item");
     buttons[2] = new ControlItemButton(nullptr,
-                                       this->pos[0] - this->width * 0.2,
-                                       this->pos[1] - this->height * 0.175,
-                                       this->pos[2] + 0.5,
+                                       pos[0] - this->width * 0.2,
+                                       pos[1] - this->height * 0.175,
+                                       pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
@@ -120,9 +120,9 @@ ShopMenu::ShopMenu(GLfloat width,
                                        0.04 * (this->height),
                                        "Buy");
     buttons[3] = new ControlItemButton(nullptr,
-                                       this->pos[0] + this->width * 0.275,
-                                       this->pos[1] - this->height * 0.175,
-                                       this->pos[2] + 0.5,
+                                       pos[0] + this->width * 0.275,
+                                       pos[1] - this->height * 0.175,
+                                       pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
@@ -130,9 +130,9 @@ ShopMenu::ShopMenu(GLfloat width,
                                        0.04 * (this->height),
                                        "Sell");
     buttons[4] = new ControlItemButton(nullptr,
-                                       this->pos[0] + this->width * 0.15,
-                                       this->pos[1] - this->height * 0.365,
-                                       this->pos[2] + 0.5,
+                                       pos[0] + this->width * 0.15,
+                                       pos[1] - this->height * 0.365,
+                                       pos[2] + 0.5,
                                        0.65,
                                        0.15,
                                        0.15,
@@ -141,125 +141,122 @@ ShopMenu::ShopMenu(GLfloat width,
                                        "Finish Shopping");
 
     /*LABEL PLACEMENT*/
-    this->labelWpn =
+    labelWpn =
             new TextObject("Weapon",
                            grids[1]->getXPos() + grids[1]->getWidth() * 0.05,
                            grids[1]->getYPos() + 15,
-                           (this->pos[2] + 1),
+                           (pos[2] + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
                            0.0f);
-    this->labelItem =
+    labelItem =
             new TextObject("Item",
                            grids[1]->getXPos() + grids[1]->getWidth() / 1.6,
                            grids[1]->getYPos() + 15,
-                           (this->pos[2] + 1),
+                           (pos[2] + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
                            0.0f);
-    this->labelPlayerNum = new TextObject("Player 1 Balance:",
-                                          this->pos[0] - this->width * 0.35,
-                                          this->pos[1] - this->height * 0.39,
-                                          (this->pos[2] + 1),
-                                          GLUT_BITMAP_TIMES_ROMAN_24,
-                                          0.0f,
-                                          0.0f,
-                                          0.0f);
-    this->labelDiscription = new TextObject("",
-                                            this->pos[0] - this->width * 0.4,
-                                            this->pos[1] - this->height * 0.1,
-                                            this->pos[2] + 1,
-                                            GLUT_BITMAP_TIMES_ROMAN_24,
-                                            0.0f,
-                                            0.0f,
-                                            0.0f);
-    this->labelBuyPrice = new TextObject("",
-                                         this->pos[0] - this->width * 0.35,
-                                         this->pos[1] - this->height * 0.2,
-                                         this->pos[2] + 1,
-                                         GLUT_BITMAP_TIMES_ROMAN_24,
-                                         0.0f,
-                                         0.0f,
-                                         0.0f);
-    this->labelSellPrice = new TextObject("$ 0",
-                                          this->pos[0] + this->width * 0.15,
-                                          this->pos[1] - this->height * 0.2,
-                                          this->pos[2] + 1,
-                                          GLUT_BITMAP_TIMES_ROMAN_24,
-                                          0.0f,
-                                          0.0f,
-                                          0.0f);
+    labelPlayerNum = new TextObject("Player 1 Balance:",
+                                    pos[0] - this->width * 0.35,
+                                    pos[1] - this->height * 0.39,
+                                    (pos[2] + 1),
+                                    GLUT_BITMAP_TIMES_ROMAN_24,
+                                    0.0f,
+                                    0.0f,
+                                    0.0f);
+    labelDiscription = new TextObject("",
+                                      pos[0] - this->width * 0.4,
+                                      pos[1] - this->height * 0.1,
+                                      pos[2] + 1,
+                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      0.0f,
+                                      0.0f,
+                                      0.0f);
+    labelBuyPrice = new TextObject("",
+                                   pos[0] - this->width * 0.35,
+                                   pos[1] - this->height * 0.2,
+                                   pos[2] + 1,
+                                   GLUT_BITMAP_TIMES_ROMAN_24,
+                                   0.0f,
+                                   0.0f,
+                                   0.0f);
+    labelSellPrice = new TextObject("$ 0",
+                                    pos[0] + this->width * 0.15,
+                                    pos[1] - this->height * 0.2,
+                                    pos[2] + 1,
+                                    GLUT_BITMAP_TIMES_ROMAN_24,
+                                    0.0f,
+                                    0.0f,
+                                    0.0f);
     std::string balance = "$ " + std::to_string(currentPlayerBalance);
-    this->labelPlayerBalance =
-            new TextObject(balance,
-                           this->pos[0] - this->width * 0.2,
-                           this->pos[1] - this->height * 0.39,
-                           (this->pos[2] + 1),
-                           GLUT_BITMAP_TIMES_ROMAN_24,
-                           0.0f,
-                           0.0f,
-                           0.0f);
+    labelPlayerBalance = new TextObject(balance,
+                                        pos[0] - this->width * 0.2,
+                                        pos[1] - this->height * 0.39,
+                                        (pos[2] + 1),
+                                        GLUT_BITMAP_TIMES_ROMAN_24,
+                                        0.0f,
+                                        0.0f,
+                                        0.0f);
 
     /*Weapons and Items Creation*/
-    this->shopWpns[0] = new WeaponMFB(0);
-    this->shopWpns[1] = new WeaponBFB(1);
-    this->shopWpns[2] = new WeaponAcid(2);
-    this->shopWpns[3] = new WeaponThor(3);
-    this->shopWpns[4] = new WeaponEMP(4);
-    this->shopWpns[5] = new WeaponPadlock(5);
-    this->shopWpns[6] = new WeaponRevive(6);
-    this->shopWpns[7] = new WeaponTeleport(7);
-    this->shopWpns[8] = new WeaponAtom(8);
-    this->shopWpns[9] = new WeaponNuke(9);
+    shopWpns[0] = new WeaponMFB(0);
+    shopWpns[1] = new WeaponBFB(1);
+    shopWpns[2] = new WeaponAcid(2);
+    shopWpns[3] = new WeaponThor(3);
+    shopWpns[4] = new WeaponEMP(4);
+    shopWpns[5] = new WeaponPadlock(5);
+    shopWpns[6] = new WeaponRevive(6);
+    shopWpns[7] = new WeaponTeleport(7);
+    shopWpns[8] = new WeaponAtom(8);
+    shopWpns[9] = new WeaponNuke(9);
 
-    this->shopItems[0] = new ItemSmallRepair(0);
-    this->shopItems[1] = new ItemBigRepair(1);
-    this->shopItems[2] = new ItemAntiAcid(2);
-    this->shopItems[3] = new ItemDoubleAction(3);
-    this->shopItems[4] = new ItemShield(4);
-    this->shopItems[5] = new ItemExtraBattery(5);
-    this->shopItems[6] = new ItemCloak(6);
-    this->shopItems[7] = new ItemFloat(7);
+    shopItems[0] = new ItemSmallRepair(0);
+    shopItems[1] = new ItemBigRepair(1);
+    shopItems[2] = new ItemAntiAcid(2);
+    shopItems[3] = new ItemDoubleAction(3);
+    shopItems[4] = new ItemShield(4);
+    shopItems[5] = new ItemExtraBattery(5);
+    shopItems[6] = new ItemCloak(6);
+    shopItems[7] = new ItemFloat(7);
 
     displayCurrentPlayerInfo();
 
     /*Images and remainsLabels Creation*/
     for (int i = 0; i < NUM_SALES_WEAPON; i++) {
-        this->imgShopWpns[i] =
-                new ImageObject(0,
-                                0,
-                                2.0f,
-                                100,
-                                100,
-                                .0006 * (this->width),
-                                256,
-                                256,
-                                shopWpns[i]->getImageFileName());
-        grids[0]->setImageSizeToCell(this->imgShopWpns[i], 0.8);
+        imgShopWpns[i] = new ImageObject(0,
+                                         0,
+                                         2.0f,
+                                         100,
+                                         100,
+                                         .0006 * (this->width),
+                                         256,
+                                         256,
+                                         shopWpns[i]->getImageFileName());
+        grids[0]->setImageSizeToCell(imgShopWpns[i], 0.8);
 
         std::string remain =
                 "x " + std::to_string(shopWpns[i]->getPackageNum());
-        this->labelShopWpnRemains[i] = new TextObject(
+        labelShopWpnRemains[i] = new TextObject(
                 remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
     }
     for (int i = 0; i < NUM_SALES_ITEM; i++) {
-        this->imgShopItems[i] =
-                new ImageObject(0,
-                                0,
-                                2.0f,
-                                100,
-                                100,
-                                .0006 * (this->width),
-                                256,
-                                256,
-                                shopItems[i]->getImageFileName());
-        grids[0]->setImageSizeToCell(this->imgShopItems[i], 0.8);
+        imgShopItems[i] = new ImageObject(0,
+                                          0,
+                                          2.0f,
+                                          100,
+                                          100,
+                                          .0006 * (this->width),
+                                          256,
+                                          256,
+                                          shopItems[i]->getImageFileName());
+        grids[0]->setImageSizeToCell(imgShopItems[i], 0.8);
 
         std::string remain =
                 "x " + std::to_string(shopItems[i]->getPackageNum());
-        this->labelShopItemRemains[i] = new TextObject(
+        labelShopItemRemains[i] = new TextObject(
                 remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
     }
 
@@ -268,14 +265,12 @@ ShopMenu::ShopMenu(GLfloat width,
     for (int r = 0; r < SHOP_GRID_ROW; r++) {
         for (int c = 0; c < SHOP_GRID_COL; c++) {
             if (index < NUM_SALES_WEAPON) {
-                grids[0]->placeImageToCell(this->imgShopWpns[index], r, c);
-                this->grids[0]->placeTextToCell(
-                        this->labelShopWpnRemains[index], r, c);
+                grids[0]->placeImageToCell(imgShopWpns[index], r, c);
+                grids[0]->placeTextToCell(labelShopWpnRemains[index], r, c);
             }
             if (index < NUM_SALES_ITEM) {
-                grids[0]->placeImageToCell(this->imgShopItems[index], r, c);
-                this->grids[0]->placeTextToCell(
-                        this->labelShopItemRemains[index], r, c);
+                grids[0]->placeImageToCell(imgShopItems[index], r, c);
+                grids[0]->placeTextToCell(labelShopItemRemains[index], r, c);
             }
             index++;
         }
@@ -294,25 +289,25 @@ ShopMenu::~ShopMenu() {
     delete labelBuyPrice;
     delete labelSellPrice;
     for (int i = 0; i < NUM_SALES_WEAPON; i++) {
-        delete this->shopWpns[i];
-        delete this->imgShopWpns[i];
-        delete this->labelShopWpnRemains[i];
+        delete shopWpns[i];
+        delete imgShopWpns[i];
+        delete labelShopWpnRemains[i];
     }
     for (int i = 0; i < NUM_SALES_ITEM; i++) {
-        delete this->shopItems[i];
-        delete this->imgShopItems[i];
-        delete this->labelShopItemRemains[i];
+        delete shopItems[i];
+        delete imgShopItems[i];
+        delete labelShopItemRemains[i];
     }
     for (int i = 0; i < INVEN_GRID_ROW; i++) {
-        delete this->imgInvenWpns[i];
-        delete this->labelInvenWpnRemains[i];
-        delete this->imgInvenItems[i];
-        delete this->labelInvenItemRemains[i];
+        delete imgInvenWpns[i];
+        delete labelInvenWpnRemains[i];
+        delete imgInvenItems[i];
+        delete labelInvenItemRemains[i];
     }
 }
 
 /*GETTERS & SETTERS*/
-void ShopMenu::updateNumPlayers(int n) { this->numPlayers = n; }
+void ShopMenu::updateNumPlayers(int n) { numPlayers = n; }
 
 void ShopMenu::saveCurrentPlayerInfo() {
     // save currentPlayerBalance and the inventory (Weapon, Item objects, and
@@ -324,57 +319,57 @@ void ShopMenu::saveCurrentPlayerInfo() {
 
     // clear inventory slots for the next player
     for (int i = 0; i < INVEN_GRID_ROW; i++) {
-        if (this->imgInvenWpns[i] != nullptr) {
-            delete this->imgInvenWpns[i];
-            delete this->labelInvenWpnRemains[i];
-            this->imgInvenWpns[i] = nullptr;
-            this->labelInvenWpnRemains[i] = nullptr;
-            this->invenWpns[i] = nullptr;
+        if (imgInvenWpns[i] != nullptr) {
+            delete imgInvenWpns[i];
+            delete labelInvenWpnRemains[i];
+            imgInvenWpns[i] = nullptr;
+            labelInvenWpnRemains[i] = nullptr;
+            invenWpns[i] = nullptr;
         }
-        if (this->imgInvenItems[i] != nullptr) {
-            delete this->imgInvenItems[i];
-            delete this->labelInvenItemRemains[i];
-            this->imgInvenItems[i] = nullptr;
-            this->labelInvenItemRemains[i] = nullptr;
-            this->invenItems[i] = nullptr;
+        if (imgInvenItems[i] != nullptr) {
+            delete imgInvenItems[i];
+            delete labelInvenItemRemains[i];
+            imgInvenItems[i] = nullptr;
+            labelInvenItemRemains[i] = nullptr;
+            invenItems[i] = nullptr;
         }
     }
 
-    this->buttons[1]->setToggled(false);
+    buttons[1]->setToggled(false);
     buttons[1]->updateButtonState();
-    this->buttons[0]->setToggled(true);
+    buttons[0]->setToggled(true);
     buttons[0]->updateButtonState();
 }
 
 void ShopMenu::displayCurrentPlayerInfo() {
-    while ((this->currentPlayerIndex < numPlayers) &&
+    while ((currentPlayerIndex < numPlayers) &&
            (this->player_factory->getPlayer(currentPlayerIndex)
                     ->getPlayer_Type() == "CPU")) {
-        this->currentPlayerIndex++;
+        currentPlayerIndex++;
     }
 
-    if (this->currentPlayerIndex < this->numPlayers) {
+    if (currentPlayerIndex < numPlayers) {
         for (int i = 0; i < INVEN_GRID_ROW; i++) {
-            this->invenWpns[i] = player_factory->getPlayer(currentPlayerIndex)
-                                         ->getCurrentWeapons()[i];
-            if (this->invenWpns[i]) {
-                this->imgInvenWpns[i] = new ImageObject(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        256,
-                        256,
-                        this->invenWpns[i]->getImageFileName());
-                this->grids[1]->setImageSizeToCell(this->imgInvenWpns[i], 0.8);
-                this->grids[1]->placeImageToCell(this->imgInvenWpns[i], i, 0);
+            invenWpns[i] = player_factory->getPlayer(currentPlayerIndex)
+                                   ->getCurrentWeapons()[i];
+            if (invenWpns[i]) {
+                imgInvenWpns[i] =
+                        new ImageObject(0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        256,
+                                        256,
+                                        invenWpns[i]->getImageFileName());
+                grids[1]->setImageSizeToCell(imgInvenWpns[i], 0.8);
+                grids[1]->placeImageToCell(imgInvenWpns[i], i, 0);
 
                 std::string remain =
                         "x " + std::to_string(invenWpns[i]->getRemaining());
-                delete this->labelInvenWpnRemains[i];
-                this->labelInvenWpnRemains[i] =
+                delete labelInvenWpnRemains[i];
+                labelInvenWpnRemains[i] =
                         new TextObject(remain,
                                        0,
                                        0,
@@ -383,32 +378,29 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0.6f,
                                        0.3f,
                                        0.4f);
-                this->grids[1]->placeTextToCell(
-                        this->labelInvenWpnRemains[i], i, 0);
+                grids[1]->placeTextToCell(labelInvenWpnRemains[i], i, 0);
             }
 
-            this->invenItems[i] = player_factory->getPlayer(currentPlayerIndex)
-                                          ->getCurrentItems()[i];
-            if (this->invenItems[i]) {
-                this->imgInvenItems[i] = new ImageObject(
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        256,
-                        256,
-                        this->invenItems[i]->getImageFileName());
-                this->grids[1]->setImageSizeToCell(this->imgInvenItems[i],
-                                                   0.8);
-                this->grids[1]->placeImageToCell(this->imgInvenItems[i], i, 1);
+            invenItems[i] = player_factory->getPlayer(currentPlayerIndex)
+                                    ->getCurrentItems()[i];
+            if (invenItems[i]) {
+                imgInvenItems[i] =
+                        new ImageObject(0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        256,
+                                        256,
+                                        invenItems[i]->getImageFileName());
+                grids[1]->setImageSizeToCell(imgInvenItems[i], 0.8);
+                grids[1]->placeImageToCell(imgInvenItems[i], i, 1);
 
                 std::string remain =
-                        "x " +
-                        std::to_string(this->invenItems[i]->getRemaining());
-                delete this->labelInvenItemRemains[i];
-                this->labelInvenItemRemains[i] =
+                        "x " + std::to_string(invenItems[i]->getRemaining());
+                delete labelInvenItemRemains[i];
+                labelInvenItemRemains[i] =
                         new TextObject(remain,
                                        0,
                                        0,
@@ -417,39 +409,36 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0.6f,
                                        0.3f,
                                        0.4f);
-                this->grids[1]->placeTextToCell(
-                        this->labelInvenItemRemains[i], i, 1);
+                grids[1]->placeTextToCell(labelInvenItemRemains[i], i, 1);
             }
         }
 
         // Set next player number label
-        delete this->labelPlayerNum;
+        delete labelPlayerNum;
         std::string str = "Player " + std::to_string(currentPlayerIndex + 1) +
                           " Balance:";
-        this->labelPlayerNum =
-                new TextObject(str,
-                               this->pos[0] - this->width * 0.35,
-                               this->pos[1] - this->height * 0.39,
-                               (this->pos[2] + 1),
-                               GLUT_BITMAP_TIMES_ROMAN_24,
-                               0.0f,
-                               0.0f,
-                               0.0f);
+        labelPlayerNum = new TextObject(str,
+                                        pos[0] - this->width * 0.35,
+                                        pos[1] - this->height * 0.39,
+                                        (pos[2] + 1),
+                                        GLUT_BITMAP_TIMES_ROMAN_24,
+                                        0.0f,
+                                        0.0f,
+                                        0.0f);
 
         // Set next player balance label
         currentPlayerBalance =
                 player_factory->getPlayer(currentPlayerIndex)->getCash();
-        delete this->labelPlayerBalance;
+        delete labelPlayerBalance;
         std::string balance = "$ " + std::to_string(currentPlayerBalance);
-        this->labelPlayerBalance =
-                new TextObject(balance,
-                               this->pos[0] - this->width * 0.2,
-                               this->pos[1] - this->height * 0.39,
-                               (this->pos[2] + 1),
-                               GLUT_BITMAP_TIMES_ROMAN_24,
-                               0.0f,
-                               0.0f,
-                               0.0f);
+        labelPlayerBalance = new TextObject(balance,
+                                            pos[0] - this->width * 0.2,
+                                            pos[1] - this->height * 0.39,
+                                            (pos[2] + 1),
+                                            GLUT_BITMAP_TIMES_ROMAN_24,
+                                            0.0f,
+                                            0.0f,
+                                            0.0f);
 
         // Set next player inventory
 
@@ -515,74 +504,70 @@ void ShopMenu::printDebugInfo() {
 
 void ShopMenu::updateBuyDiscriptLabel() {
     bool* selected_cells = grids[0]->getSelectedCells();
-    if (this->buttons[0]->isToggled()) {
+    if (buttons[0]->isToggled()) {
         for (int i = 0; i < NUM_SALES_WEAPON; i++) {
             if (selected_cells[i]) {
-                delete this->labelDiscription;
-                delete this->labelBuyPrice;
-                this->labelDiscription =
+                delete labelDiscription;
+                delete labelBuyPrice;
+                labelDiscription =
                         new TextObject(shopWpns[i]->getDescription(),
-                                       this->pos[0] - this->width * 0.4,
-                                       this->pos[1] - this->height * 0.1,
-                                       this->pos[2] + 1,
+                                       pos[0] - this->width * 0.4,
+                                       pos[1] - this->height * 0.1,
+                                       pos[2] + 1,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 std::string price =
-                        "$ " + std::to_string(this->shopWpns[i]->getPrice());
-                this->labelBuyPrice =
-                        new TextObject(price,
-                                       this->pos[0] - this->width * 0.35,
-                                       this->pos[1] - this->height * 0.2,
-                                       this->pos[2] + 1,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
-                                       0.0f,
-                                       0.0f,
-                                       0.0f);
+                        "$ " + std::to_string(shopWpns[i]->getPrice());
+                labelBuyPrice = new TextObject(price,
+                                               pos[0] - this->width * 0.35,
+                                               pos[1] - this->height * 0.2,
+                                               pos[2] + 1,
+                                               GLUT_BITMAP_TIMES_ROMAN_24,
+                                               0.0f,
+                                               0.0f,
+                                               0.0f);
                 break;
             } else {
-                delete this->labelDiscription;
-                delete this->labelBuyPrice;
-                this->labelDiscription =
+                delete labelDiscription;
+                delete labelBuyPrice;
+                labelDiscription =
                         new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-                this->labelBuyPrice =
-                        new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+                labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
             }
         }
     } else {
         for (int i = 0; i < NUM_SALES_ITEM; i++) {
             if (selected_cells[i]) {
-                delete this->labelDiscription;
-                delete this->labelBuyPrice;
-                this->labelDiscription =
+                delete labelDiscription;
+                delete labelBuyPrice;
+                labelDiscription =
                         new TextObject(shopItems[i]->getDescription(),
-                                       this->pos[0] - this->width * 0.4,
-                                       this->pos[1] - this->height * 0.1,
-                                       this->pos[2] + 1,
+                                       pos[0] - this->width * 0.4,
+                                       pos[1] - this->height * 0.1,
+                                       pos[2] + 1,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 std::string price =
-                        "$ " + std::to_string(this->shopItems[i]->getPrice());
-                this->labelBuyPrice =
-                        new TextObject(price,
-                                       this->pos[0] - this->width * 0.35,
-                                       this->pos[1] - this->height * 0.2,
-                                       this->pos[2] + 1,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
-                                       0.0f,
-                                       0.0f,
-                                       0.0f);
+                        "$ " + std::to_string(shopItems[i]->getPrice());
+                labelBuyPrice = new TextObject(price,
+                                               pos[0] - this->width * 0.35,
+                                               pos[1] - this->height * 0.2,
+                                               pos[2] + 1,
+                                               GLUT_BITMAP_TIMES_ROMAN_24,
+                                               0.0f,
+                                               0.0f,
+                                               0.0f);
                 break;
             } else {
-                delete this->labelDiscription;
-                delete this->labelBuyPrice;
-                this->labelDiscription =
+                delete labelDiscription;
+                delete labelBuyPrice;
+                labelDiscription =
                         new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-                this->labelBuyPrice =
-                        new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+                labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
             }
         }
     }
@@ -610,37 +595,36 @@ void ShopMenu::updateSellLabel() {
         }
     }
 
-    delete this->labelSellPrice;
+    delete labelSellPrice;
     std::string price = "$ " + std::to_string(total_sell);
-    this->labelSellPrice = new TextObject(price,
-                                          this->pos[0] + this->width * 0.15,
-                                          this->pos[1] - this->height * 0.2,
-                                          this->pos[2] + 1,
-                                          GLUT_BITMAP_TIMES_ROMAN_24,
-                                          0.0f,
-                                          0.0f,
-                                          0.0f);
+    labelSellPrice = new TextObject(price,
+                                    pos[0] + this->width * 0.15,
+                                    pos[1] - this->height * 0.2,
+                                    pos[2] + 1,
+                                    GLUT_BITMAP_TIMES_ROMAN_24,
+                                    0.0f,
+                                    0.0f,
+                                    0.0f);
 }
 
 void ShopMenu::buyHandler() {
     int inven_i;
     bool* selected_cells = grids[0]->getSelectedCells();
 
-    if (this->buttons[0]->isToggled()) {
+    if (buttons[0]->isToggled()) {
         for (int i = 0; i < NUM_SALES_WEAPON; i++) {
             if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < INVEN_GRID_ROW; inven_i++) {
-                    if ((this->invenWpns[inven_i] == nullptr) ||
-                        (this->shopWpns[i]->getUNIQUEIDENTIFIER() ==
-                         this->invenWpns[inven_i]->getUNIQUEIDENTIFIER()))
+                    if ((invenWpns[inven_i] == nullptr) ||
+                        (shopWpns[i]->getUNIQUEIDENTIFIER() ==
+                         invenWpns[inven_i]->getUNIQUEIDENTIFIER()))
                         break;
                 }
-                if ((this->currentPlayerBalance >=
-                     this->shopWpns[i]->getPrice()) &&
+                if ((currentPlayerBalance >= shopWpns[i]->getPrice()) &&
                     (inven_i < INVEN_GRID_ROW)) {
                     if ((invenWpns[inven_i] == nullptr)) {
                         playSFX(TRANSACTION);
-                        this->imgInvenWpns[inven_i] = new ImageObject(
+                        imgInvenWpns[inven_i] = new ImageObject(
                                 0,
                                 0,
                                 0,
@@ -649,40 +633,38 @@ void ShopMenu::buyHandler() {
                                 0,
                                 256,
                                 256,
-                                this->shopWpns[i]->getImageFileName());
-                        this->grids[1]->setImageSizeToCell(
-                                this->imgInvenWpns[inven_i], 0.8);
-                        this->grids[1]->placeImageToCell(
-                                this->imgInvenWpns[inven_i], inven_i, 0);
-                        this->invenWpns[inven_i] =
-                                this->shopWpns[i]->getWeaponInstance();
+                                shopWpns[i]->getImageFileName());
+                        grids[1]->setImageSizeToCell(imgInvenWpns[inven_i],
+                                                     0.8);
+                        grids[1]->placeImageToCell(
+                                imgInvenWpns[inven_i], inven_i, 0);
+                        invenWpns[inven_i] = shopWpns[i]->getWeaponInstance();
                         currentPlayerBalance -= shopWpns[i]->getPrice();
                     } else {
                         if (invenWpns[inven_i]->getRemaining() <
                             invenWpns[inven_i]->getMaxStack()) {
                             playSFX(TRANSACTION);
                             currentPlayerBalance -= shopWpns[i]->getPrice();
-                            this->invenWpns[inven_i]->setRemaining(
-                                    this->invenWpns[inven_i]->getRemaining() +
-                                    this->shopWpns[i]->getPackageNum());
-                            if (this->invenWpns[inven_i]->getRemaining() >
-                                this->invenWpns[inven_i]->getMaxStack())
-                                this->invenWpns[inven_i]->setRemaining(
-                                        this->invenWpns[inven_i]
-                                                ->getMaxStack());
+                            invenWpns[inven_i]->setRemaining(
+                                    invenWpns[inven_i]->getRemaining() +
+                                    shopWpns[i]->getPackageNum());
+                            if (invenWpns[inven_i]->getRemaining() >
+                                invenWpns[inven_i]->getMaxStack())
+                                invenWpns[inven_i]->setRemaining(
+                                        invenWpns[inven_i]->getMaxStack());
                         } else {
                             playSFX(INVALID_CLICK);
                         }
                     }
 
-                    delete this->labelPlayerBalance;
+                    delete labelPlayerBalance;
                     std::string balance =
                             "$ " + std::to_string(currentPlayerBalance);
-                    this->labelPlayerBalance =
+                    labelPlayerBalance =
                             new TextObject(balance,
-                                           this->pos[0] - this->width * 0.2,
-                                           this->pos[1] - this->height * 0.39,
-                                           (this->pos[2] + 1),
+                                           pos[0] - this->width * 0.2,
+                                           pos[1] - this->height * 0.39,
+                                           (pos[2] + 1),
                                            GLUT_BITMAP_TIMES_ROMAN_24,
                                            0.0f,
                                            0.0f,
@@ -691,8 +673,8 @@ void ShopMenu::buyHandler() {
                     std::string remain =
                             "x " +
                             std::to_string(invenWpns[inven_i]->getRemaining());
-                    delete this->labelInvenWpnRemains[inven_i];
-                    this->labelInvenWpnRemains[inven_i] =
+                    delete labelInvenWpnRemains[inven_i];
+                    labelInvenWpnRemains[inven_i] =
                             new TextObject(remain,
                                            0,
                                            0,
@@ -701,8 +683,8 @@ void ShopMenu::buyHandler() {
                                            0.6f,
                                            0.3f,
                                            0.4f);
-                    this->grids[1]->placeTextToCell(
-                            this->labelInvenWpnRemains[inven_i], inven_i, 0);
+                    grids[1]->placeTextToCell(
+                            labelInvenWpnRemains[inven_i], inven_i, 0);
                 } else {
                     playSFX(INVALID_CLICK);
                 }
@@ -713,17 +695,16 @@ void ShopMenu::buyHandler() {
         for (int i = 0; i < NUM_SALES_ITEM; i++) {
             if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < INVEN_GRID_ROW; inven_i++) {
-                    if ((this->invenItems[inven_i] == nullptr) ||
-                        (this->shopItems[i]->getUNIQUEIDENTIFIER() ==
-                         this->invenItems[inven_i]->getUNIQUEIDENTIFIER()))
+                    if ((invenItems[inven_i] == nullptr) ||
+                        (shopItems[i]->getUNIQUEIDENTIFIER() ==
+                         invenItems[inven_i]->getUNIQUEIDENTIFIER()))
                         break;
                 }
-                if (this->currentPlayerBalance >=
-                            this->shopItems[i]->getPrice() &&
+                if (currentPlayerBalance >= shopItems[i]->getPrice() &&
                     inven_i < INVEN_GRID_ROW) {
                     if (invenItems[inven_i] == nullptr) {
                         playSFX(TRANSACTION);
-                        this->imgInvenItems[inven_i] = new ImageObject(
+                        imgInvenItems[inven_i] = new ImageObject(
                                 0,
                                 0,
                                 0,
@@ -732,40 +713,38 @@ void ShopMenu::buyHandler() {
                                 0,
                                 256,
                                 256,
-                                this->shopItems[i]->getImageFileName());
-                        this->grids[1]->setImageSizeToCell(
-                                this->imgInvenItems[inven_i], 0.8);
-                        this->grids[1]->placeImageToCell(
-                                this->imgInvenItems[inven_i], inven_i, 1);
-                        this->invenItems[inven_i] =
-                                this->shopItems[i]->getItemInstance();
+                                shopItems[i]->getImageFileName());
+                        grids[1]->setImageSizeToCell(imgInvenItems[inven_i],
+                                                     0.8);
+                        grids[1]->placeImageToCell(
+                                imgInvenItems[inven_i], inven_i, 1);
+                        invenItems[inven_i] = shopItems[i]->getItemInstance();
                         currentPlayerBalance -= shopItems[i]->getPrice();
                     } else {
                         if (invenItems[inven_i]->getRemaining() <
                             invenItems[inven_i]->getMaxStack()) {
                             playSFX(TRANSACTION);
                             currentPlayerBalance -= shopItems[i]->getPrice();
-                            this->invenItems[inven_i]->setRemaining(
-                                    this->invenItems[inven_i]->getRemaining() +
-                                    this->shopItems[i]->getPackageNum());
-                            if (this->invenItems[inven_i]->getRemaining() >
-                                this->invenItems[inven_i]->getMaxStack())
-                                this->invenItems[inven_i]->setRemaining(
-                                        this->invenItems[inven_i]
-                                                ->getMaxStack());
+                            invenItems[inven_i]->setRemaining(
+                                    invenItems[inven_i]->getRemaining() +
+                                    shopItems[i]->getPackageNum());
+                            if (invenItems[inven_i]->getRemaining() >
+                                invenItems[inven_i]->getMaxStack())
+                                invenItems[inven_i]->setRemaining(
+                                        invenItems[inven_i]->getMaxStack());
                         } else {
                             playSFX(INVALID_CLICK);
                         }
                     }
 
-                    delete this->labelPlayerBalance;
+                    delete labelPlayerBalance;
                     std::string balance =
                             "$ " + std::to_string(currentPlayerBalance);
-                    this->labelPlayerBalance =
+                    labelPlayerBalance =
                             new TextObject(balance,
-                                           this->pos[0] - this->width * 0.2,
-                                           this->pos[1] - this->height * 0.39,
-                                           (this->pos[2] + 1),
+                                           pos[0] - this->width * 0.2,
+                                           pos[1] - this->height * 0.39,
+                                           (pos[2] + 1),
                                            GLUT_BITMAP_TIMES_ROMAN_24,
                                            0.0f,
                                            0.0f,
@@ -774,9 +753,9 @@ void ShopMenu::buyHandler() {
                     std::string remain =
                             "x " +
                             std::to_string(
-                                    this->invenItems[inven_i]->getRemaining());
-                    delete this->labelInvenItemRemains[inven_i];
-                    this->labelInvenItemRemains[inven_i] =
+                                    invenItems[inven_i]->getRemaining());
+                    delete labelInvenItemRemains[inven_i];
+                    labelInvenItemRemains[inven_i] =
                             new TextObject(remain,
                                            0,
                                            0,
@@ -785,8 +764,8 @@ void ShopMenu::buyHandler() {
                                            0.6f,
                                            0.3f,
                                            0.4f);
-                    this->grids[1]->placeTextToCell(
-                            this->labelInvenItemRemains[inven_i], inven_i, 1);
+                    grids[1]->placeTextToCell(
+                            labelInvenItemRemains[inven_i], inven_i, 1);
                 } else {
                     playSFX(INVALID_CLICK);
                 }
@@ -808,12 +787,12 @@ void ShopMenu::sellHandler() {
                                        invenWpns[i / 2]->getPackageNum()) /
                                       1.5) *
                                      invenWpns[i / 2]->getRemaining());
-            delete this->imgInvenWpns[i / 2];
-            delete this->labelInvenWpnRemains[i / 2];
-            delete this->invenWpns[i / 2];
-            this->imgInvenWpns[i / 2] = nullptr;
-            this->labelInvenWpnRemains[i / 2] = nullptr;
-            this->invenWpns[i / 2] = nullptr;
+            delete imgInvenWpns[i / 2];
+            delete labelInvenWpnRemains[i / 2];
+            delete invenWpns[i / 2];
+            imgInvenWpns[i / 2] = nullptr;
+            labelInvenWpnRemains[i / 2] = nullptr;
+            invenWpns[i / 2] = nullptr;
         }
         if (selected_cells[i] && invenItems[i / 2] != nullptr && i % 2 == 1) {
             total_sell +=
@@ -821,29 +800,28 @@ void ShopMenu::sellHandler() {
                                        invenItems[i / 2]->getPackageNum()) /
                                       1.5) *
                                      invenItems[i / 2]->getRemaining());
-            delete this->imgInvenItems[i / 2];
-            delete this->labelInvenItemRemains[i / 2];
-            delete this->invenItems[i / 2];
-            this->imgInvenItems[i / 2] = nullptr;
-            this->labelInvenItemRemains[i / 2] = nullptr;
-            this->invenItems[i / 2] = nullptr;
+            delete imgInvenItems[i / 2];
+            delete labelInvenItemRemains[i / 2];
+            delete invenItems[i / 2];
+            imgInvenItems[i / 2] = nullptr;
+            labelInvenItemRemains[i / 2] = nullptr;
+            invenItems[i / 2] = nullptr;
         }
     }
 
     if (total_sell != 0) {
         playSFX(TRANSACTION);
         currentPlayerBalance += total_sell;
-        delete this->labelPlayerBalance;
+        delete labelPlayerBalance;
         std::string balance = "$ " + std::to_string(currentPlayerBalance);
-        this->labelPlayerBalance =
-                new TextObject(balance,
-                               this->pos[0] - this->width * 0.2,
-                               this->pos[1] - this->height * 0.39,
-                               (this->pos[2] + 1),
-                               GLUT_BITMAP_TIMES_ROMAN_24,
-                               0.0f,
-                               0.0f,
-                               0.0f);
+        labelPlayerBalance = new TextObject(balance,
+                                            pos[0] - this->width * 0.2,
+                                            pos[1] - this->height * 0.39,
+                                            (pos[2] + 1),
+                                            GLUT_BITMAP_TIMES_ROMAN_24,
+                                            0.0f,
+                                            0.0f,
+                                            0.0f);
     }
 }
 
@@ -928,105 +906,105 @@ void ShopMenu::draw() {
     // Draw separating lines
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->pos[0] + this->width * 0.04 - 1,
-               this->pos[1] + this->height * 0.45,
-               this->pos[2] + 1);
-    glVertex3f(this->pos[0] + this->width * 0.04 - 1,
-               this->pos[1] - this->height * 0.277,
-               this->pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.04 - 1,
+               pos[1] + this->height * 0.45,
+               pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.04 - 1,
+               pos[1] - this->height * 0.277,
+               pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->pos[0] + this->width * 0.04,
-               this->pos[1] + this->height * 0.45,
-               this->pos[2] + 1);
-    glVertex3f(this->pos[0] + this->width * 0.04,
-               this->pos[1] - this->height * 0.277,
-               this->pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.04,
+               pos[1] + this->height * 0.45,
+               pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.04,
+               pos[1] - this->height * 0.277,
+               pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->pos[0] + this->width * 0.04 + 1,
-               this->pos[1] + this->height * 0.45,
-               this->pos[2] + 1);
-    glVertex3f(this->pos[0] + this->width * 0.04 + 1,
-               this->pos[1] - this->height * 0.277,
-               this->pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.04 + 1,
+               pos[1] + this->height * 0.45,
+               pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.04 + 1,
+               pos[1] - this->height * 0.277,
+               pos[2] + 1);
     glEnd();
 
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->pos[0] - this->width * 0.45,
-               this->pos[1] - this->height * 0.29 + 1,
-               this->pos[2] + 1);
-    glVertex3f(this->pos[0] + this->width * 0.45,
-               this->pos[1] - this->height * 0.29 + 1,
-               this->pos[2] + 1);
+    glVertex3f(pos[0] - this->width * 0.45,
+               pos[1] - this->height * 0.29 + 1,
+               pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.45,
+               pos[1] - this->height * 0.29 + 1,
+               pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->pos[0] - this->width * 0.45,
-               this->pos[1] - this->height * 0.29,
-               this->pos[2] + 1);
-    glVertex3f(this->pos[0] + this->width * 0.45,
-               this->pos[1] - this->height * 0.29,
-               this->pos[2] + 1);
+    glVertex3f(pos[0] - this->width * 0.45,
+               pos[1] - this->height * 0.29,
+               pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.45,
+               pos[1] - this->height * 0.29,
+               pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->pos[0] - this->width * 0.45,
-               this->pos[1] - this->height * 0.29 - 1,
-               this->pos[2] + 1);
-    glVertex3f(this->pos[0] + this->width * 0.45,
-               this->pos[1] - this->height * 0.29 - 1,
-               this->pos[2] + 1);
+    glVertex3f(pos[0] - this->width * 0.45,
+               pos[1] - this->height * 0.29 - 1,
+               pos[2] + 1);
+    glVertex3f(pos[0] + this->width * 0.45,
+               pos[1] - this->height * 0.29 - 1,
+               pos[2] + 1);
     glEnd();
 
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(this->grids[1]->getXPos() + this->grids[1]->getWidth() * 0.5,
-               this->grids[1]->getYPos() + 35,
-               this->pos[2] + 1);
-    glVertex3f(this->grids[1]->getXPos() + this->grids[1]->getWidth() * 0.5,
-               this->grids[1]->getYPos() + 5,
-               this->pos[2] + 1);
+    glVertex3f(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
+               grids[1]->getYPos() + 35,
+               pos[2] + 1);
+    glVertex3f(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
+               grids[1]->getYPos() + 5,
+               pos[2] + 1);
     glEnd();
 
-    this->grids[0]->draw();
-    this->grids[1]->draw();
-    this->buttons[0]->draw();
-    this->buttons[1]->draw();
-    this->buttons[2]->draw();
-    this->buttons[3]->draw();
-    this->buttons[4]->draw();
-    this->labelWpn->draw();
-    this->labelItem->draw();
-    this->labelPlayerNum->draw();
-    this->labelPlayerBalance->draw();
-    this->labelDiscription->draw();
-    this->labelBuyPrice->draw();
-    this->labelSellPrice->draw();
+    grids[0]->draw();
+    grids[1]->draw();
+    buttons[0]->draw();
+    buttons[1]->draw();
+    buttons[2]->draw();
+    buttons[3]->draw();
+    buttons[4]->draw();
+    labelWpn->draw();
+    labelItem->draw();
+    labelPlayerNum->draw();
+    labelPlayerBalance->draw();
+    labelDiscription->draw();
+    labelBuyPrice->draw();
+    labelSellPrice->draw();
 
-    if (this->buttons[0]->isToggled()) {
+    if (buttons[0]->isToggled()) {
         for (int i = 0; i < NUM_SALES_WEAPON; i++) {
-            this->imgShopWpns[i]->draw();
-            this->labelShopWpnRemains[i]->draw();
+            imgShopWpns[i]->draw();
+            labelShopWpnRemains[i]->draw();
         }
     } else {
         for (int i = 0; i < NUM_SALES_ITEM; i++) {
-            this->imgShopItems[i]->draw();
-            this->labelShopItemRemains[i]->draw();
+            imgShopItems[i]->draw();
+            labelShopItemRemains[i]->draw();
         }
     }
 
     for (int i = 0; i < INVEN_GRID_ROW; i++) {
-        if (this->imgInvenWpns[i] != nullptr) {
-            this->imgInvenWpns[i]->draw();
-            this->labelInvenWpnRemains[i]->draw();
+        if (imgInvenWpns[i] != nullptr) {
+            imgInvenWpns[i]->draw();
+            labelInvenWpnRemains[i]->draw();
         }
-        if (this->imgInvenItems[i] != nullptr) {
-            this->imgInvenItems[i]->draw();
-            this->labelInvenItemRemains[i]->draw();
+        if (imgInvenItems[i] != nullptr) {
+            imgInvenItems[i]->draw();
+            labelInvenItemRemains[i]->draw();
         }
     }
     glPopMatrix();
@@ -1044,10 +1022,10 @@ void ShopMenu::buttonTest(int x, int y, int buttonDown) {
          y >= ((buttons[0]->getYPos()) - (buttons[0]->getHeight())))) {
         if (buttonDown) playSFX(SMALL_CLICK);
         grids[0]->deselectAllCells();
-        delete this->labelDiscription;
-        delete this->labelBuyPrice;
-        this->labelDiscription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-        this->labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+        delete labelDiscription;
+        delete labelBuyPrice;
+        labelDiscription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+        labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
         buttons[0]->mouseClickEvent(x, y, buttonDown, true);
         if (buttons[0]->isToggled()) {
             buttons[1]->setToggled(false);
@@ -1062,10 +1040,10 @@ void ShopMenu::buttonTest(int x, int y, int buttonDown) {
          y >= ((buttons[1]->getYPos()) - (buttons[1]->getHeight())))) {
         if (buttonDown) playSFX(SMALL_CLICK);
         grids[0]->deselectAllCells();
-        delete this->labelDiscription;
-        delete this->labelBuyPrice;
-        this->labelDiscription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-        this->labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+        delete labelDiscription;
+        delete labelBuyPrice;
+        labelDiscription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+        labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
         buttons[1]->mouseClickEvent(x, y, buttonDown, true);
         if (buttons[1]->isToggled()) {
             buttons[0]->setToggled(false);

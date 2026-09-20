@@ -11,41 +11,41 @@ const int tank_f_speed = 20;
 
 TankF::TankF() = default;
 TankF::TankF(GLfloat x, GLfloat y, GLfloat z) {
-    this->initBody();
-    this->initHead();
-    this->initTurret();
-    this->initWheel();
-    this->initDuration();
+    initBody();
+    initHead();
+    initTurret();
+    initWheel();
+    initDuration();
 
-    this->turretOffset[0] = 0;
-    this->turretOffset[1] = 20;
-    this->turretOffset[2] = -20.0001;
-    this->headOffset[0] = 0;
-    this->headOffset[1] = 80;
-    this->headOffset[2] = 100;
-    this->bodyOffset[0] = 0;
-    this->bodyOffset[1] = 80;
-    this->bodyOffset[2] = 0;
+    turretOffset[0] = 0;
+    turretOffset[1] = 20;
+    turretOffset[2] = -20.0001;
+    headOffset[0] = 0;
+    headOffset[1] = 80;
+    headOffset[2] = 100;
+    bodyOffset[0] = 0;
+    bodyOffset[1] = 80;
+    bodyOffset[2] = 0;
 
     for (int i = 0; i < 3; i++) {
-        this->bodyScale[i] = 60;
-        this->headScale[i] = 60;
-        this->turretScale[i] = 60;
-        this->wheelScale[i] = 60;
+        bodyScale[i] = 60;
+        headScale[i] = 60;
+        turretScale[i] = 60;
+        wheelScale[i] = 60;
     }
 
-    this->power = tank_f_power;
-    this->armor = tank_f_armor;
-    this->speed = tank_f_speed;
-    this->currentPower = 10;
-    this->previousPower = 1000;
-    this->previousAngle = 1;
-    this->HP = this->armor * 100;
+    power = tank_f_power;
+    armor = tank_f_armor;
+    speed = tank_f_speed;
+    currentPower = 10;
+    previousPower = 1000;
+    previousAngle = 1;
+    HP = armor * 100;
 
-    this->vbo_shader_head = new VBOShaderLibrary();
-    this->vbo_shader_body = new VBOShaderLibrary();
-    this->vbo_shader_turret = new VBOShaderLibrary();
-    // this->vbo_shader_wheel=new VBOShaderLibrary();
+    vbo_shader_head = new VBOShaderLibrary();
+    vbo_shader_body = new VBOShaderLibrary();
+    vbo_shader_turret = new VBOShaderLibrary();
+    // vbo_shader_wheel=new VBOShaderLibrary();
     /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
     if (!(VBOShaderLibrary::InitGlew())) {
         exit(1);
@@ -77,10 +77,10 @@ TankF::TankF(GLfloat x, GLfloat y, GLfloat z) {
     projectileLandPos[1] = 9999999;
 }
 TankF::~TankF() {
-    delete this->vbo_shader_head;
-    delete this->vbo_shader_body;
-    delete this->vbo_shader_turret;
-    // delete this->vbo_shader_wheel;
+    delete vbo_shader_head;
+    delete vbo_shader_body;
+    delete vbo_shader_turret;
+    // delete vbo_shader_wheel;
 }
 
 // GETTERS

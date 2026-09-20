@@ -4,9 +4,9 @@
 Vertex::Vertex() = default;
 
 Vertex::Vertex(GLfloat x, GLfloat y, GLfloat z) {
-    this->coordX = x;
-    this->coordY = y;
-    this->coordZ = z;
+    coordX = x;
+    coordY = y;
+    coordZ = z;
 }
 
 Vertex::~Vertex() = default;

@@ -7,19 +7,19 @@ extern void playSFX(int sfx);
 
 ItemFloat::ItemFloat() = default;
 ItemFloat::ItemFloat(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->packageNum = 2;
-    this->maxStack = 10;
-    this->remaining = 2;
-    this->imageFileName = "ItemFloat.raw";
-    this->description = "Float:     Allows the player to float (uses 1 turn).";
-    this->price = 80;
-    this->specialNum = 5;
+    UNIQUEIDENTIFIER = ID;
+    packageNum = 2;
+    maxStack = 10;
+    remaining = 2;
+    imageFileName = "ItemFloat.raw";
+    description = "Float:     Allows the player to float (uses 1 turn).";
+    price = 80;
+    specialNum = 5;
 }
 ItemFloat::~ItemFloat() = default;
 
 ItemFloat* ItemFloat::getItemInstance() {
-    return new ItemFloat(this->UNIQUEIDENTIFIER);
+    return new ItemFloat(UNIQUEIDENTIFIER);
 }
 
 bool ItemFloat::causeEffectToTank(Tank* tank) {

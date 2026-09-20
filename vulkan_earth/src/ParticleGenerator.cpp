@@ -5,14 +5,14 @@
 ParticleGenerator::ParticleGenerator() = default;
 ParticleGenerator::ParticleGenerator(
         int spawn, int rate, int speed, int life, int type) {
-    this->max = 1000;
+    max = 1000;
     this->x = 0;
     this->y = 0;
     this->z = 0;
-    this->particlesPerEmission = spawn;
-    this->emissionRate = rate;
-    this->emissionSpeed = speed;
-    this->emissionLife = life;
+    particlesPerEmission = spawn;
+    emissionRate = rate;
+    emissionSpeed = speed;
+    emissionLife = life;
     this->type = type;
     for (int i = 0; i < max; i++) particleArray[i] = nullptr;
 }
@@ -21,20 +21,20 @@ void ParticleGenerator::update(GLfloat x, GLfloat y, GLfloat z) {
     this->x = x;
     this->y = y;
     this->z = z;
-    for (int i = 0; i < this->max; i++) {
-        if (this->particleArray[i] != nullptr) {
-            if (!this->particleArray[i]->update()) {
+    for (int i = 0; i < max; i++) {
+        if (particleArray[i] != nullptr) {
+            if (!particleArray[i]->update()) {
                 delete particleArray[i];
-                this->particleArray[i] = nullptr;
+                particleArray[i] = nullptr;
             }
         }
     }
-    this->addParticles();
+    addParticles();
 }
 void ParticleGenerator::draw() {
-    for (int i = 0; i < this->max; i++) {
-        if (this->particleArray[i] != nullptr) {
-            this->particleArray[i]->draw();
+    for (int i = 0; i < max; i++) {
+        if (particleArray[i] != nullptr) {
+            particleArray[i]->draw();
         }
     }
 }
@@ -88,9 +88,9 @@ void ParticleGenerator::addParticles() {
     }
 }
 void ParticleGenerator::killGenerator() {
-    for (int i = 0; i < this->max; i++) {
-        if (this->particleArray[i] != nullptr) {
-            delete this->particleArray[i];
+    for (int i = 0; i < max; i++) {
+        if (particleArray[i] != nullptr) {
+            delete particleArray[i];
         }
     }
 }

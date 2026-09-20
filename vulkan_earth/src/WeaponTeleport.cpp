@@ -7,18 +7,17 @@ extern void playSFX(int sfx);
 
 WeaponTeleport::WeaponTeleport() = default;
 WeaponTeleport::WeaponTeleport(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 15;
-    this->packageNum = 3;
-    this->remaining = 3;
-    this->scale = 60;
-    this->imageFileName = "WeaponTeleport.raw";
-    this->description =
-            "Teleport:     Teleport to where the projectile lands on.";
-    this->price = 50;
-    this->radius = 0;
-    this->damage = 0;
-    this->specialNumber = 0;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 15;
+    packageNum = 3;
+    remaining = 3;
+    scale = 60;
+    imageFileName = "WeaponTeleport.raw";
+    description = "Teleport:     Teleport to where the projectile lands on.";
+    price = 50;
+    radius = 0;
+    damage = 0;
+    specialNumber = 0;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Silver};
@@ -34,7 +33,7 @@ WeaponTeleport::WeaponTeleport(int ID) {
 WeaponTeleport::~WeaponTeleport() = default;
 
 WeaponTeleport* WeaponTeleport::getWeaponInstance() {
-    return new WeaponTeleport(this->UNIQUEIDENTIFIER);
+    return new WeaponTeleport(UNIQUEIDENTIFIER);
 }
 void WeaponTeleport::causeEffectToTank(GLfloat distance, Tank* tank) {}
 

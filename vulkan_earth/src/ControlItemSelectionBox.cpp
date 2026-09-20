@@ -27,31 +27,31 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;
-    this->color[0] = red;
-    this->color[1] = green;
-    this->color[2] = blue;
-    this->color[3] = 1.0;
+    color[0] = red;
+    color[1] = green;
+    color[2] = blue;
+    color[3] = 1.0;
     this->width = width;
     this->height = height;
     this->caption = caption;
-    this->menuInfo = menuString;
+    menuInfo = menuString;
 
     // split menuInfo on '/' into allOptions
     std::string current;
-    for (char ch : this->menuInfo) {
+    for (char ch : menuInfo) {
         if (ch == '/') {
-            this->allOptions.push_back(current);
+            allOptions.push_back(current);
             current.clear();
         } else {
             current += ch;
         }
     }
-    this->numberOfOptions = static_cast<int>(this->allOptions.size());
+    numberOfOptions = static_cast<int>(allOptions.size());
 
-    this->menuState = 0;
-    this->buttonState = 0;
-    this->optionText = nullptr;
-    this->setOptionText(menuState);  // set option to first option
+    menuState = 0;
+    buttonState = 0;
+    optionText = nullptr;
+    setOptionText(menuState);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
     for (char ch : this->caption) {
@@ -62,14 +62,14 @@ ControlItemSelectionBox::ControlItemSelectionBox(
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    this->label = new TextObject(this->caption,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 this->zPos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
+    label = new TextObject(this->caption,
+                           label_x_pos,
+                           label_y_pos,
+                           this->zPos,
+                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           0.0f,
+                           0.0f,
+                           0.0f);
 }
 
 ControlItemSelectionBox::~ControlItemSelectionBox() {
@@ -80,71 +80,56 @@ ControlItemSelectionBox::~ControlItemSelectionBox() {
 void ControlItemSelectionBox::draw() {
     // draw main button box
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - 0.2f,
-              this->color[1] - 0.2f,
-              this->color[2] - 0.2f,
-              this->color[3]);
+    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - 0.2f,
-              this->color[1] - 0.2f,
-              this->color[2] - 0.2f,
-              this->color[3]);
+    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0], this->color[1], this->color[2], this->color[3]);
+    glColor4f(color[0], color[1], color[2], color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + 0.4f,
-              this->color[1] + 0.4f,
-              this->color[2] + 0.4f,
-              this->color[3]);
+    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + 0.4f,
-              this->color[1] + 0.4f,
-              this->color[2] + 0.4f,
-              this->color[3]);
+    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos + -height, this->zPos);
     glEnd();
 
-    this->label->draw();
-    this->optionText->draw();
+    label->draw();
+    optionText->draw();
 
     // draw up arrow
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2,
-              this->color[1] + .2,
-              this->color[2] + .2); /*		3		*/
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2); /*		3		*/
     glVertex3f(xPos + 0.02 * width,
                (yPos - height / 2) + 0.05 * height,
                zPos + 1); /*	   / \		*/
     glVertex3f(xPos + 0.02 * width + height * 0.7,
                (yPos - height / 2) + 0.05 * height,
                zPos + 1); /*	  /   \		*/
-    if (this->buttonState == 1)
-        glColor3f(this->color[0] - .2,
-                  this->color[1] - .2,
-                  this->color[2] - .2); /*   1-----2	*/
+    if (buttonState == 1)
+        glColor3f(
+                color[0] - .2, color[1] - .2, color[2] - .2); /*   1-----2	*/
     glVertex3f(xPos + 0.02 * (width) + height * 0.35,
                yPos - 0.05 * height,
                zPos + 1);
@@ -152,19 +137,17 @@ void ControlItemSelectionBox::draw() {
 
     // draw down arrow
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2,
-              this->color[1] + .2,
-              this->color[2] + .2); /*	1-----2		*/
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2); /*	1-----2		*/
     glVertex3f(xPos + 0.02 * width,
                (yPos - height / 2) - 0.05 * height,
                zPos + 1); /*	 \   /		*/
     glVertex3f(xPos + 0.02 * width + height * 0.7,
                (yPos - height / 2) - 0.05 * height,
                zPos + 1); /*	  \ /		*/
-    if (this->buttonState == 2)
-        glColor3f(this->color[0] - .2,
-                  this->color[1] - .2,
-                  this->color[2] - .2); /*	   3		*/
+    if (buttonState == 2)
+        glColor3f(color[0] - .2,
+                  color[1] - .2,
+                  color[2] - .2); /*	   3		*/
     glVertex3f(xPos + 0.02 * width + height * 0.35,
                yPos - height + 0.05 * height,
                zPos + 1);
@@ -175,14 +158,12 @@ GLfloat ControlItemSelectionBox::getXPos() { return this->xPos; }
 GLfloat ControlItemSelectionBox::getYPos() { return this->yPos; }
 GLfloat ControlItemSelectionBox::getHeight() { return this->height; }
 GLfloat ControlItemSelectionBox::getWidth() { return this->width; }
-std::string ControlItemSelectionBox::collectData() {
-    return this->currentOption;
-}
+std::string ControlItemSelectionBox::collectData() { return currentOption; }
 
 void ControlItemSelectionBox::setOptionText(int index) {
-    this->currentOption = this->allOptions[index];
+    currentOption = allOptions[index];
     int real_length = 0;
-    for (char ch : this->currentOption) {
+    for (char ch : currentOption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat label_x_pos =
@@ -191,15 +172,15 @@ void ControlItemSelectionBox::setOptionText(int index) {
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
     delete optionText;
-    this->optionText = new TextObject(this->currentOption,
-                                      label_x_pos,
-                                      label_y_pos,
-                                      this->zPos,
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
-                                      0.0f,
-                                      0.0f,
-                                      0.0f);
-    this->menuState = index;
+    optionText = new TextObject(currentOption,
+                                label_x_pos,
+                                label_y_pos,
+                                this->zPos,
+                                GLUT_BITMAP_TIMES_ROMAN_24,
+                                0.0f,
+                                0.0f,
+                                0.0f);
+    menuState = index;
 }
 void ControlItemSelectionBox::setOptionText(const std::string& newText) {}
 
@@ -211,19 +192,18 @@ void ControlItemSelectionBox::mouseClickEvent(
         ((y <= this->yPos - 3) &&
          (y >= (this->yPos - height / 2) +
                        3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
-        if (state == 1) {  // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
-            this->buttonState = 1;  // THEN UP ARROW HAS BEEN PRESSED
+        if (state == 1) {     // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
+            buttonState = 1;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {
             if (stillOverControlItemSelectionBox) {  // ONCE YOU RELEASE MOUSE
                                                      // BUTTON
                 playSFX(SMALL_CLICK);
-                this->menuState++;
-                if (this->menuState ==
-                    this->numberOfOptions)  // wrap around check
-                    this->menuState -= numberOfOptions;
-                this->setOptionText(menuState);
+                menuState++;
+                if (menuState == numberOfOptions)  // wrap around check
+                    menuState -= numberOfOptions;
+                setOptionText(menuState);
             }
-            this->buttonState = 0;
+            buttonState = 0;
         }
     }
     if (((x >= this->xPos + 0.02 * (this->width)) &&
@@ -231,22 +211,22 @@ void ControlItemSelectionBox::mouseClickEvent(
         ((y <= (this->yPos - height / 2) - 3) &&
          (y >= (this->yPos - height) +
                        3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
-        if (state == 1) {  // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
-            this->buttonState = 2;  // THEN UP ARROW HAS BEEN PRESSED
+        if (state == 1) {     // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
+            buttonState = 2;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {
             if (stillOverControlItemSelectionBox) {  // ONCE YOU RELEASE MOUSE
                                                      // BUTTON
                 playSFX(SMALL_CLICK);
-                this->menuState--;
-                if (this->menuState < 0)  // wrap around check
-                    this->menuState += numberOfOptions;
-                this->setOptionText(menuState);
+                menuState--;
+                if (menuState < 0)  // wrap around check
+                    menuState += numberOfOptions;
+                setOptionText(menuState);
             }
-            this->buttonState = 0;
+            buttonState = 0;
         }
     }
     if (state == 0) {
-        this->buttonState = 0;
+        buttonState = 0;
     }
 }
 

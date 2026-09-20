@@ -32,17 +32,17 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;
-    this->color[0] = red;
-    this->color[1] = green;
-    this->color[2] = blue;
-    this->color[3] = 1.0;
+    color[0] = red;
+    color[1] = green;
+    color[2] = blue;
+    color[3] = 1.0;
     this->width = width;
     this->height = height;
     this->caption = caption;
 
-    this->toggled = false;
-    this->buttonState = 0;
-    this->menuState = 0;
+    toggled = false;
+    buttonState = 0;
+    menuState = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
@@ -54,57 +54,45 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    this->label = new TextObject(this->caption,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 this->zPos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
+    label = new TextObject(this->caption,
+                           label_x_pos,
+                           label_y_pos,
+                           this->zPos,
+                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           0.0f,
+                           0.0f,
+                           0.0f);
 }
 
-ControlItemButton::~ControlItemButton() { delete this->label; }
+ControlItemButton::~ControlItemButton() { delete label; }
 
 void ControlItemButton::draw() {
     glPushMatrix();
-    if (this->buttonState) {
+    if (buttonState) {
         glPushMatrix();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] - .4,
-                  this->color[1] - .4,
-                  this->color[2] - .4,
-                  this->color[3]);
+        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] - .4,
-                  this->color[1] - .4,
-                  this->color[2] - .4,
-                  this->color[3]);
+        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
         glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0],
-                  this->color[1],
-                  this->color[2],
-                  this->color[3]);
+        glColor4f(color[0], color[1], color[2], color[3]);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] + .2,
-                  this->color[1] + .2,
-                  this->color[2] + .2,
-                  this->color[3]);
+        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
         glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
         glVertex3f(
                 this->xPos + width + 3, this->yPos - height - 3, this->zPos);
@@ -112,10 +100,7 @@ void ControlItemButton::draw() {
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] + .2,
-                  this->color[1] + .2,
-                  this->color[2] + .2,
-                  this->color[3]);
+        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
         glVertex3f(
@@ -126,40 +111,28 @@ void ControlItemButton::draw() {
     } else {
         glPushMatrix();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] + .2,
-                  this->color[1] + .2,
-                  this->color[2] + .2,
-                  this->color[3]);
+        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] + .2,
-                  this->color[1] + .2,
-                  this->color[2] + .2,
-                  this->color[3]);
+        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
         glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
         glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0],
-                  this->color[1],
-                  this->color[2],
-                  this->color[3]);
+        glColor4f(color[0], color[1], color[2], color[3]);
         glVertex3f(this->xPos, this->yPos, this->zPos);
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] - .4,
-                  this->color[1] - .4,
-                  this->color[2] - .4,
-                  this->color[3]);
+        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
         glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
         glVertex3f(
                 this->xPos + width + 3, this->yPos - height - 3, this->zPos);
@@ -167,10 +140,7 @@ void ControlItemButton::draw() {
         glVertex3f(this->xPos, this->yPos - height, this->zPos);
         glEnd();
         glBegin(GL_QUADS);
-        glColor4f(this->color[0] - .4,
-                  this->color[1] - .4,
-                  this->color[2] - .4,
-                  this->color[3]);
+        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
         glVertex3f(this->xPos + width, this->yPos, this->zPos);
         glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
         glVertex3f(
@@ -179,7 +149,7 @@ void ControlItemButton::draw() {
         glEnd();
         glPopMatrix();
     }
-    this->label->draw();
+    label->draw();
     glPopMatrix();
 }
 
@@ -187,14 +157,14 @@ GLfloat ControlItemButton::getXPos() { return this->xPos; }
 GLfloat ControlItemButton::getYPos() { return this->yPos; }
 GLfloat ControlItemButton::getHeight() { return this->height; }
 GLfloat ControlItemButton::getWidth() { return this->width; }
-bool ControlItemButton::isToggled() { return this->toggled; }
+bool ControlItemButton::isToggled() { return toggled; }
 void ControlItemButton::updateButtonState() {
     if (toggled)
         buttonState = 1;
     else
         buttonState = 0;
 }
-void ControlItemButton::setToggled(bool t) { this->toggled = t; }
+void ControlItemButton::setToggled(bool t) { toggled = t; }
 void ControlItemButton::setOptionText(int index) {}
 void ControlItemButton::setOptionText(const std::string& newText) {}
 std::string ControlItemButton::collectData() { return "Button"; }
@@ -209,13 +179,13 @@ void ControlItemButton::mouseClickEvent(GLint x,
              y >= ((this->yPos) -
                    (this->height)))) {  // This if statement -->
                                         // stillOverControlItemButton
-            this->buttonState = 1;
-            this->toggled = true;
+            buttonState = 1;
+            toggled = true;
         } else {
-            this->buttonState = 0;
+            buttonState = 0;
         }
     } else {
-        this->buttonState = 0;
+        buttonState = 0;
     }
 }
 

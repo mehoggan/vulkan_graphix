@@ -13,12 +13,12 @@ Shader::Shader(const char* vsFile, const char* fsFile) {
 }
 
 Shader::~Shader() {
-    glDetachShader(this->shader_id, this->shader_fp);
-    glDetachShader(this->shader_id, this->shader_vp);
+    glDetachShader(shader_id, shader_fp);
+    glDetachShader(shader_id, shader_vp);
 
-    glDeleteShader(this->shader_fp);
-    glDeleteShader(this->shader_vp);
-    glDeleteProgram(this->shader_id);
+    glDeleteShader(shader_fp);
+    glDeleteShader(shader_vp);
+    glDeleteProgram(shader_id);
 }
 
 void Shader::validateShader(GLuint shader, const char* file) {
@@ -62,8 +62,8 @@ void Shader::validateProgram(GLuint program) {
 }
 
 void Shader::init(const char* vsFile, const char* fsFile) {
-    this->shader_vp = glCreateShader(GL_VERTEX_SHADER);
-    this->shader_fp = glCreateShader(GL_FRAGMENT_SHADER);
+    shader_vp = glCreateShader(GL_VERTEX_SHADER);
+    shader_fp = glCreateShader(GL_FRAGMENT_SHADER);
 
     std::string vs_text_str = textFileRead(vsFile);
     std::string fs_text_str = textFileRead(fsFile);
@@ -75,25 +75,25 @@ void Shader::init(const char* vsFile, const char* fsFile) {
     }
 
     const char* vs_text = vs_text_str.c_str();
-    glShaderSource(this->shader_vp, 1, &vs_text, nullptr);
-    glCompileShader(this->shader_vp);
+    glShaderSource(shader_vp, 1, &vs_text, nullptr);
+    glCompileShader(shader_vp);
     validateShader(shader_vp, vsFile);
 
     const char* fs_text = fs_text_str.c_str();
-    glShaderSource(this->shader_fp, 1, &fs_text, nullptr);
-    glCompileShader(this->shader_fp);
-    this->validateShader(shader_fp, fsFile);
+    glShaderSource(shader_fp, 1, &fs_text, nullptr);
+    glCompileShader(shader_fp);
+    validateShader(shader_fp, fsFile);
 
-    this->shader_id = glCreateProgram();
-    glAttachShader(this->shader_id, this->shader_fp);
-    glAttachShader(this->shader_id, this->shader_vp);
-    glLinkProgram(this->shader_id);
+    shader_id = glCreateProgram();
+    glAttachShader(shader_id, shader_fp);
+    glAttachShader(shader_id, shader_vp);
+    glLinkProgram(shader_id);
     validateProgram(shader_id);
 }
 
-unsigned int Shader::id() { return this->shader_id; }
+unsigned int Shader::id() { return shader_id; }
 
-void Shader::bind() { glUseProgram(this->shader_id); }
+void Shader::bind() { glUseProgram(shader_id); }
 
 void Shader::unbind() { glUseProgram(0); }
 

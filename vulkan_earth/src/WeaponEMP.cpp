@@ -7,18 +7,17 @@ extern void playSFX(int sfx);
 
 WeaponEMP::WeaponEMP() = default;
 WeaponEMP::WeaponEMP(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 8;
-    this->packageNum = 2;
-    this->remaining = 2;
-    this->scale = 40;
-    this->imageFileName = "WeaponEMP.raw";
-    this->description =
-            "EMP:     Disrupt tanks in the target area for 5 turns.";
-    this->price = 60;
-    this->radius = 12;
-    this->damage = 0;
-    this->specialNumber = 5;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 8;
+    packageNum = 2;
+    remaining = 2;
+    scale = 40;
+    imageFileName = "WeaponEMP.raw";
+    description = "EMP:     Disrupt tanks in the target area for 5 turns.";
+    price = 60;
+    radius = 12;
+    damage = 0;
+    specialNumber = 5;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Silver};
@@ -34,7 +33,7 @@ WeaponEMP::WeaponEMP(int ID) {
 WeaponEMP::~WeaponEMP() = default;
 
 WeaponEMP* WeaponEMP::getWeaponInstance() {
-    return new WeaponEMP(this->UNIQUEIDENTIFIER);
+    return new WeaponEMP(UNIQUEIDENTIFIER);
 }
 void WeaponEMP::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {

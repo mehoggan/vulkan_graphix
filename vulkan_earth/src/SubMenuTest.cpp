@@ -20,15 +20,15 @@ SubMenuTest::SubMenuTest(int ID,
                          GLint height,
                          const std::string& caption,
                          GLfloat percentBorder) {
-    this->UNIQUEIDENTIFIER = ID;
+    UNIQUEIDENTIFIER = ID;
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;
     this->percentBorder = percentBorder;
-    this->color[0] = red;
-    this->color[1] = green;
-    this->color[2] = blue;
-    this->color[3] = 1.0;
+    color[0] = red;
+    color[1] = green;
+    color[2] = blue;
+    color[3] = 1.0;
     this->width = width;
     this->height = height;
     this->caption = caption;
@@ -42,32 +42,32 @@ SubMenuTest::SubMenuTest(int ID,
     GLfloat label_y_pos = this->yPos - this->height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
-    this->label = new TextObject(this->caption,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 (this->zPos + 1),
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
+    label = new TextObject(this->caption,
+                           label_x_pos,
+                           label_y_pos,
+                           (this->zPos + 1),
+                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           0.0f,
+                           0.0f,
+                           0.0f);
 }
 
 SubMenuTest::~SubMenuTest() = default;
 
-int SubMenuTest::getUNIQUEIDENTIFIER() { return this->UNIQUEIDENTIFIER; }
-void SubMenuTest::setUNIQUEIDENTIFIER(int ID) { this->UNIQUEIDENTIFIER = ID; }
+int SubMenuTest::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
+void SubMenuTest::setUNIQUEIDENTIFIER(int ID) { UNIQUEIDENTIFIER = ID; }
 GLfloat SubMenuTest::getXPos() { return this->xPos; }
 void SubMenuTest::setXPos(GLfloat newXpos) { this->xPos = newXpos; }
 GLfloat SubMenuTest::getYPos() { return this->yPos; }
 void SubMenuTest::setYPos(GLfloat newYpos) { this->yPos = newYpos; }
 GLfloat SubMenuTest::getZPos() { return this->zPos; }
 void SubMenuTest::setZPos(GLfloat newZpos) { this->zPos = newZpos; }
-GLfloat SubMenuTest::getRed() { return this->color[0]; }
-void SubMenuTest::setRed(GLfloat red) { this->color[0] = red; }
-GLfloat SubMenuTest::getGreen() { return this->color[1]; }
-void SubMenuTest::setGreen(GLfloat green) { this->color[1] = green; }
-GLfloat SubMenuTest::getBlue() { return this->color[2]; }
-void SubMenuTest::setBlue(GLfloat blue) { this->color[2] = blue; }
+GLfloat SubMenuTest::getRed() { return color[0]; }
+void SubMenuTest::setRed(GLfloat red) { color[0] = red; }
+GLfloat SubMenuTest::getGreen() { return color[1]; }
+void SubMenuTest::setGreen(GLfloat green) { color[1] = green; }
+GLfloat SubMenuTest::getBlue() { return color[2]; }
+void SubMenuTest::setBlue(GLfloat blue) { color[2] = blue; }
 GLint SubMenuTest::getWidth() { return this->width; }
 void SubMenuTest::setWdith(GLint width) { this->width = width; }
 GLint SubMenuTest::getHeight() { return this->height; }
@@ -83,53 +83,41 @@ void SubMenuTest::setPercentBorder(GLfloat percent) {
 
 void SubMenuTest::draw() {
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + .2,
-              this->color[1] + .2,
-              this->color[2] + .2,
-              this->color[3]);
+    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + .2,
-              this->color[1] + .2,
-              this->color[2] + .2,
-              this->color[3]);
+    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0], this->color[1], this->color[2], this->color[3]);
+    glColor4f(color[0], color[1], color[2], color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - .4,
-              this->color[1] - .4,
-              this->color[2] - .4,
-              this->color[3]);
+    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - .4,
-              this->color[1] - .4,
-              this->color[2] - .4,
-              this->color[3]);
+    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos + -height, this->zPos);
     glEnd();
-    this->label->draw();
+    label->draw();
 }
 
 std::string SubMenuTest::collectData() { return "Test:"; }

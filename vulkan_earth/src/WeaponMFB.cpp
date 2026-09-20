@@ -4,17 +4,17 @@
 
 WeaponMFB::WeaponMFB() = default;
 WeaponMFB::WeaponMFB(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 12;
-    this->packageNum = 2;
-    this->remaining = 2;
-    this->scale = 60;
-    this->imageFileName = "WeaponMFB.raw";
-    this->description = "MFB:     (Medium Force Bomb) Damage:300";
-    this->price = 60;
-    this->radius = 15;
-    this->damage = 300;
-    this->specialNumber = 0;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 12;
+    packageNum = 2;
+    remaining = 2;
+    scale = 60;
+    imageFileName = "WeaponMFB.raw";
+    description = "MFB:     (Medium Force Bomb) Damage:300";
+    price = 60;
+    radius = 15;
+    damage = 300;
+    specialNumber = 0;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Yellow};
@@ -30,5 +30,5 @@ WeaponMFB::WeaponMFB(int ID) {
 WeaponMFB::~WeaponMFB() = default;
 
 WeaponMFB* WeaponMFB::getWeaponInstance() {
-    return new WeaponMFB(this->UNIQUEIDENTIFIER);
+    return new WeaponMFB(UNIQUEIDENTIFIER);
 }

@@ -18,16 +18,16 @@ Projectile::Projectile(GameState* parent,
                        GLfloat* turretMatrix,
                        GLfloat speed,
                        VBOShaderLibrary** projectileModels) {
-    this->defaultWeapon = new WeaponDefault(10);
+    defaultWeapon = new WeaponDefault(10);
     this->parent = parent;
-    this->scalar = 500;
-    pos[0] = turretMatrix[12] - this->scalar * turretMatrix[8];
-    pos[1] = turretMatrix[13] - this->scalar * turretMatrix[9];
-    pos[2] = turretMatrix[14] - this->scalar * turretMatrix[10];
+    scalar = 500;
+    pos[0] = turretMatrix[12] - scalar * turretMatrix[8];
+    pos[1] = turretMatrix[13] - scalar * turretMatrix[9];
+    pos[2] = turretMatrix[14] - scalar * turretMatrix[10];
 
-    this->Xo = pos[0];
-    this->Yo = pos[1];
-    this->Zo = pos[2];
+    Xo = pos[0];
+    Yo = pos[1];
+    Zo = pos[2];
 
     /*	THE COORD SYSTEM WE USE HAS X AND Z INVERSED X = -X and Z = -Z	*/
     vVec[0] = -turretMatrix[8] * speed;
@@ -51,8 +51,8 @@ Projectile::Projectile(GameState* parent,
             "Projectiles/projectileDefault.raw", 512, 512);
 
     rotate = 4;
-    this->timer = 0;
-    this->printed = false;
+    timer = 0;
+    printed = false;
 }
 
 Projectile::~Projectile() {
@@ -90,20 +90,20 @@ void Projectile::draw() {
 
 GLfloat* Projectile::getPos() { return pos; }
 
-void Projectile::chaseView() { this->chaseCam->view(); }
+void Projectile::chaseView() { chaseCam->view(); }
 
-Weapon* Projectile::getWeapon() { return this->weapon; }
-void Projectile::setWeapon(Weapon* wpn) { this->weapon = wpn; }
-Weapon* Projectile::getDefaultWeapon() { return this->defaultWeapon; }
+Weapon* Projectile::getWeapon() { return weapon; }
+void Projectile::setWeapon(Weapon* wpn) { weapon = wpn; }
+Weapon* Projectile::getDefaultWeapon() { return defaultWeapon; }
 int Projectile::getDefaultDamage() { return DEFAULT_DAMAGE; }
 int Projectile::getDefaultRadius() { return DEFAULT_RADIUS; }
-ChaseCam* Projectile::getChaseCam() { return this->chaseCam; }
+ChaseCam* Projectile::getChaseCam() { return chaseCam; }
 int Projectile::getRadius() { return DEFAULT_RADIUS; }
 int Projectile::getDamage() { return DEFAULT_DAMAGE; }
-GLfloat Projectile::getInitialPositionScalar() { return this->scalar; }
-GLfloat Projectile::getVox() { return this->vVec[0]; }
-GLfloat Projectile::getVoy() { return this->vVec[1]; }
-GLfloat Projectile::getVoz() { return this->vVec[2]; }
-GLfloat Projectile::getXo() { return this->Xo; }
-GLfloat Projectile::getYo() { return this->Yo; }
-GLfloat Projectile::getZo() { return this->Zo; }
+GLfloat Projectile::getInitialPositionScalar() { return scalar; }
+GLfloat Projectile::getVox() { return vVec[0]; }
+GLfloat Projectile::getVoy() { return vVec[1]; }
+GLfloat Projectile::getVoz() { return vVec[2]; }
+GLfloat Projectile::getXo() { return Xo; }
+GLfloat Projectile::getYo() { return Yo; }
+GLfloat Projectile::getZo() { return Zo; }

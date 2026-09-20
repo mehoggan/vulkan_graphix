@@ -11,39 +11,39 @@ const int tank_h_speed = 100;
 
 TankH::TankH() = default;
 TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
-    this->initBody();
-    this->initHead();
-    this->initTurret();
-    this->initWheel();
-    this->initDuration();
+    initBody();
+    initHead();
+    initTurret();
+    initWheel();
+    initDuration();
 
-    this->turretOffset[0] = 0;
-    this->turretOffset[1] = 0;
-    this->turretOffset[2] = -35;
-    this->headOffset[0] = 0;
-    this->headOffset[1] = 65;
-    this->headOffset[2] = 10;
-    this->bodyOffset[0] = 0;
-    this->bodyOffset[1] = 80;
-    this->bodyOffset[2] = 0;
+    turretOffset[0] = 0;
+    turretOffset[1] = 0;
+    turretOffset[2] = -35;
+    headOffset[0] = 0;
+    headOffset[1] = 65;
+    headOffset[2] = 10;
+    bodyOffset[0] = 0;
+    bodyOffset[1] = 80;
+    bodyOffset[2] = 0;
 
     for (int i = 0; i < 3; i++) {
-        this->bodyScale[i] = 70;
-        this->headScale[i] = 80;
-        this->turretScale[i] = 70;
+        bodyScale[i] = 70;
+        headScale[i] = 80;
+        turretScale[i] = 70;
     }
 
-    this->power = tank_h_power;
-    this->armor = tank_h_armor;
-    this->speed = tank_h_speed;
-    this->currentPower = 10;
-    this->previousPower = 1000;
-    this->previousAngle = 1;
-    this->HP = this->armor * 100;
+    power = tank_h_power;
+    armor = tank_h_armor;
+    speed = tank_h_speed;
+    currentPower = 10;
+    previousPower = 1000;
+    previousAngle = 1;
+    HP = armor * 100;
 
-    this->vbo_shader_head = new VBOShaderLibrary();
-    this->vbo_shader_body = new VBOShaderLibrary();
-    this->vbo_shader_turret = new VBOShaderLibrary();
+    vbo_shader_head = new VBOShaderLibrary();
+    vbo_shader_body = new VBOShaderLibrary();
+    vbo_shader_turret = new VBOShaderLibrary();
     /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
     if (!(VBOShaderLibrary::InitGlew())) {
         exit(1);
@@ -71,9 +71,9 @@ TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
     projectileLandPos[1] = 9999999;
 }
 TankH::~TankH() {
-    delete this->vbo_shader_head;
-    delete this->vbo_shader_body;
-    delete this->vbo_shader_turret;
+    delete vbo_shader_head;
+    delete vbo_shader_body;
+    delete vbo_shader_turret;
 }
 
 // GETTERS

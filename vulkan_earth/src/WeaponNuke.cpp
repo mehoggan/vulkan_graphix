@@ -7,17 +7,17 @@ extern void playSFX(int sfx);
 
 WeaponNuke::WeaponNuke() = default;
 WeaponNuke::WeaponNuke(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 1;
-    this->packageNum = 1;
-    this->remaining = 1;
-    this->scale = 70;
-    this->imageFileName = "WeaponNuke.raw";
-    this->description = "Nuke:     Do NOT use this weapon!!";
-    this->price = 500;
-    this->radius = 50;
-    this->damage = 800;
-    this->specialNumber = 0;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 1;
+    packageNum = 1;
+    remaining = 1;
+    scale = 70;
+    imageFileName = "WeaponNuke.raw";
+    description = "Nuke:     Do NOT use this weapon!!";
+    price = 500;
+    radius = 50;
+    damage = 800;
+    specialNumber = 0;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Silver};
@@ -33,7 +33,7 @@ WeaponNuke::WeaponNuke(int ID) {
 WeaponNuke::~WeaponNuke() = default;
 
 WeaponNuke* WeaponNuke::getWeaponInstance() {
-    return new WeaponNuke(this->UNIQUEIDENTIFIER);
+    return new WeaponNuke(UNIQUEIDENTIFIER);
 }
 
 void WeaponNuke::playExplosionSFX() { playSFX(EXPLOSION3); }

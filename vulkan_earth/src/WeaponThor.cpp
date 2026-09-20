@@ -7,17 +7,17 @@ extern void playSFX(int sfx);
 
 WeaponThor::WeaponThor() = default;
 WeaponThor::WeaponThor(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 6;
-    this->packageNum = 1;
-    this->remaining = 1;
-    this->scale = 70;
-    this->imageFileName = "WeaponThor.raw";
-    this->description = "Thor:     Damage: 200, Paralyze targets for 1 turn";
-    this->price = 80;
-    this->radius = 6;
-    this->damage = 200;
-    this->specialNumber = 1;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 6;
+    packageNum = 1;
+    remaining = 1;
+    scale = 70;
+    imageFileName = "WeaponThor.raw";
+    description = "Thor:     Damage: 200, Paralyze targets for 1 turn";
+    price = 80;
+    radius = 6;
+    damage = 200;
+    specialNumber = 1;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {MediumSlateBlue};
@@ -33,7 +33,7 @@ WeaponThor::WeaponThor(int ID) {
 WeaponThor::~WeaponThor() = default;
 
 WeaponThor* WeaponThor::getWeaponInstance() {
-    return new WeaponThor(this->UNIQUEIDENTIFIER);
+    return new WeaponThor(UNIQUEIDENTIFIER);
 }
 void WeaponThor::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {

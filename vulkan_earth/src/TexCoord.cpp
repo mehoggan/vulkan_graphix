@@ -4,8 +4,8 @@
 TexCoord::TexCoord() = default;
 
 TexCoord::TexCoord(GLfloat s, GLfloat t) {
-    this->texcoordS = s;
-    this->texcoordT = t;
+    texcoordS = s;
+    texcoordT = t;
 }
 
 TexCoord::~TexCoord() = default;

@@ -11,23 +11,23 @@ using namespace std;
 Weapon::Weapon() = default;
 Weapon::~Weapon() = default;
 /*GETTERS*/
-int Weapon::getUNIQUEIDENTIFIER() { return this->UNIQUEIDENTIFIER; }
+int Weapon::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
 float Weapon::getScale() { return this->scale; }
-int Weapon::getRemaining() { return this->remaining; }
-std::string Weapon::getImageFileName() { return this->imageFileName; }
-std::string Weapon::getDescription() { return this->description; }
-int Weapon::getPrice() { return this->price; }
-int Weapon::getPackageNum() { return this->packageNum; }
-int Weapon::getMaxStack() { return this->maxStack; }
-float Weapon::getRadius() { return this->radius; }
-int Weapon::getDamage() { return this->damage; }
-GLfloat* Weapon::getExplosionColor1() { return this->explosionColor1; }
-GLfloat* Weapon::getExplosionColor2() { return this->explosionColor2; }
-GLfloat* Weapon::getExplosionColor3() { return this->explosionColor3; }
-GLfloat* Weapon::getExplosionColor4() { return this->explosionColor4; }
+int Weapon::getRemaining() { return remaining; }
+std::string Weapon::getImageFileName() { return imageFileName; }
+std::string Weapon::getDescription() { return description; }
+int Weapon::getPrice() { return price; }
+int Weapon::getPackageNum() { return packageNum; }
+int Weapon::getMaxStack() { return maxStack; }
+float Weapon::getRadius() { return radius; }
+int Weapon::getDamage() { return damage; }
+GLfloat* Weapon::getExplosionColor1() { return explosionColor1; }
+GLfloat* Weapon::getExplosionColor2() { return explosionColor2; }
+GLfloat* Weapon::getExplosionColor3() { return explosionColor3; }
+GLfloat* Weapon::getExplosionColor4() { return explosionColor4; }
 /*SETTERS*/
 void Weapon::setScale(float scale) { this->scale = scale; }
-void Weapon::setRemaining(int r) { this->remaining = r; }
+void Weapon::setRemaining(int r) { remaining = r; }
 void Weapon::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->dealDamage(getDamage() * (1 - (distance / (getRadius() * 100))));

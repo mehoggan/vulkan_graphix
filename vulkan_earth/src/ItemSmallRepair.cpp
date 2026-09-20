@@ -7,19 +7,19 @@ extern void playSFX(int sfx);
 
 ItemSmallRepair::ItemSmallRepair() = default;
 ItemSmallRepair::ItemSmallRepair(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->packageNum = 3;
-    this->maxStack = 15;
-    this->remaining = 3;
-    this->imageFileName = "ItemSmallRepair.raw";
-    this->description = "Small Repair:     Heals 200 damage.";
-    this->price = 50;
-    this->specialNum = 200;
+    UNIQUEIDENTIFIER = ID;
+    packageNum = 3;
+    maxStack = 15;
+    remaining = 3;
+    imageFileName = "ItemSmallRepair.raw";
+    description = "Small Repair:     Heals 200 damage.";
+    price = 50;
+    specialNum = 200;
 }
 ItemSmallRepair::~ItemSmallRepair() = default;
 
 ItemSmallRepair* ItemSmallRepair::getItemInstance() {
-    return new ItemSmallRepair(this->UNIQUEIDENTIFIER);
+    return new ItemSmallRepair(UNIQUEIDENTIFIER);
 }
 
 bool ItemSmallRepair::causeEffectToTank(Tank* tank) {

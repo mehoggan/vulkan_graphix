@@ -14,8 +14,8 @@ Inventory::Inventory() = default;
 Inventory::Inventory(GLfloat x, GLfloat y, int w, int h) {
     xPos = x - x * 0.01;
     yPos = y - y * 0.01;
-    this->width = w + w * 0.01;
-    this->height = h + h * 0.01;
+    width = w + w * 0.01;
+    height = h + h * 0.01;
     invenGrid = new ControlItemGrid(-width / 4.0,
                                     height / 4.0,
                                     1,
@@ -94,7 +94,7 @@ void Inventory::setupInventory(Player* player) {
                                           256,
                                           256,
                                           weapons[i]->getImageFileName());
-            invenGrid->setImageSizeToCell(this->imgInven[i], 0.8);
+            invenGrid->setImageSizeToCell(imgInven[i], 0.8);
             std::string remain =
                     "x " + std::to_string(weapons[i]->getRemaining());
             remainings[i] = new TextObject(remain,
@@ -123,8 +123,8 @@ void Inventory::setupInventory(Player* player) {
             }
             imgInven[PLAYER_MAX_WEAPONS + i] = new ImageObject(
                     0, 0, 0, 0, 0, 0, 256, 256, items[i]->getImageFileName());
-            invenGrid->setImageSizeToCell(
-                    this->imgInven[PLAYER_MAX_WEAPONS + i], 0.8);
+            invenGrid->setImageSizeToCell(imgInven[PLAYER_MAX_WEAPONS + i],
+                                          0.8);
             std::string remain =
                     "x " + std::to_string(items[i]->getRemaining());
             remainings[PLAYER_MAX_WEAPONS + i] =

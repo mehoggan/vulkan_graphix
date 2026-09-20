@@ -7,19 +7,19 @@ extern void playSFX(int sfx);
 
 ItemBigRepair::ItemBigRepair() = default;
 ItemBigRepair::ItemBigRepair(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->packageNum = 3;
-    this->maxStack = 9;
-    this->remaining = 3;
-    this->imageFileName = "ItemBigRepair.raw";
-    this->description = "Big Repair:     Heals 700 damage (uses 1 turn).";
-    this->price = 100;
-    this->specialNum = 700;
+    UNIQUEIDENTIFIER = ID;
+    packageNum = 3;
+    maxStack = 9;
+    remaining = 3;
+    imageFileName = "ItemBigRepair.raw";
+    description = "Big Repair:     Heals 700 damage (uses 1 turn).";
+    price = 100;
+    specialNum = 700;
 }
 ItemBigRepair::~ItemBigRepair() = default;
 
 ItemBigRepair* ItemBigRepair::getItemInstance() {
-    return new ItemBigRepair(this->UNIQUEIDENTIFIER);
+    return new ItemBigRepair(UNIQUEIDENTIFIER);
 }
 
 bool ItemBigRepair::causeEffectToTank(Tank* tank) {

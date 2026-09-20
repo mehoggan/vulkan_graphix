@@ -19,7 +19,7 @@ ImageObject::ImageObject(GLfloat xPos,
     this->zPos = zPos;
     this->width = width;
     this->height = height;
-    this->borderSize = border;
+    borderSize = border;
 
     int img_width = iWidth;
     int img_height = iHeight;

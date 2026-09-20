@@ -28,12 +28,12 @@ ControlItemGrid::ControlItemGrid(GLfloat xPos,
     this->height = height;
     this->rows = rows;
     this->cols = cols;
-    this->cellWidth = width / (cols * 1.0);
-    this->cellHeight = height / (rows * 1.0);
-    this->activeCellColor[0] = activeCellColorRed;
-    this->activeCellColor[1] = activeCellColorGreen;
-    this->activeCellColor[2] = activeCellColorBlue;
-    this->activeCellColor[3] = 1;
+    cellWidth = width / (cols * 1.0);
+    cellHeight = height / (rows * 1.0);
+    activeCellColor[0] = activeCellColorRed;
+    activeCellColor[1] = activeCellColorGreen;
+    activeCellColor[2] = activeCellColorBlue;
+    activeCellColor[3] = 1;
     this->visibleLines = visibleLines;
     this->multiSelectable = multiSelectable;
 
@@ -137,17 +137,17 @@ void ControlItemGrid::draw() {
     // Check button placements
     /*
     for(int i=0 ; i<rows*cols ; i++){
-        this->buttons[i]->draw();
+        buttons[i]->draw();
     }
     //*/
 
     // Change the color of active cells
     for (int i = 0; i < rows * cols; i++) {
-        if (this->buttons[i]->isToggled()) {
+        if (buttons[i]->isToggled()) {
             glBegin(GL_QUADS);
-            glColor3f(this->activeCellColor[0],
-                      this->activeCellColor[1],
-                      this->activeCellColor[2]);
+            glColor3f(activeCellColor[0],
+                      activeCellColor[1],
+                      activeCellColor[2]);
             glVertex3f(buttons[i]->getXPos() + 3,
                        buttons[i]->getYPos() - 3,
                        this->zPos + 0.6);
@@ -183,10 +183,10 @@ void ControlItemGrid::mouseClickEvent(GLint x,
                 // find the button that's been clicked on and update the state
                 // of the button
                 for (int i = 0; i < rows * cols; i++) {
-                    this->buttons[i]->mouseClickEvent(x, y, state, true);
-                    if (this->buttons[i]->isToggled()) {
-                        this->selectedCells[i] = true;
-                        this->buttons[i]->updateButtonState();
+                    buttons[i]->mouseClickEvent(x, y, state, true);
+                    if (buttons[i]->isToggled()) {
+                        selectedCells[i] = true;
+                        buttons[i]->updateButtonState();
                         break;
                     }
                 }
@@ -200,17 +200,16 @@ void ControlItemGrid::mouseClickEvent(GLint x,
                         (y <= (buttons[i]->getYPos()) &&
                          y >= ((buttons[i]->getYPos()) -
                                (buttons[i]->getHeight())))) {
-                        this->buttons[i]->mouseClickEvent(x, y, state, true);
-                        if (this->buttons[i]->isToggled() &&
-                            !this->selectedCells[i]) {
-                            this->selectedCells[i] = true;
-                            this->buttons[i]->updateButtonState();
+                        buttons[i]->mouseClickEvent(x, y, state, true);
+                        if (buttons[i]->isToggled() && !selectedCells[i]) {
+                            selectedCells[i] = true;
+                            buttons[i]->updateButtonState();
                             break;
-                        } else if (this->buttons[i]->isToggled() &&
-                                   this->selectedCells[i]) {
-                            this->buttons[i]->setToggled(false);
-                            this->selectedCells[i] = false;
-                            this->buttons[i]->updateButtonState();
+                        } else if (buttons[i]->isToggled() &&
+                                   selectedCells[i]) {
+                            buttons[i]->setToggled(false);
+                            selectedCells[i] = false;
+                            buttons[i]->updateButtonState();
                             break;
                         }
                     }
@@ -225,7 +224,7 @@ GLfloat ControlItemGrid::getXPos() { return this->xPos; }
 GLfloat ControlItemGrid::getYPos() { return this->yPos; }
 GLfloat ControlItemGrid::getHeight() { return this->height; }
 GLfloat ControlItemGrid::getWidth() { return this->width; }
-bool* ControlItemGrid::getSelectedCells() { return &this->selectedCells[0]; }
+bool* ControlItemGrid::getSelectedCells() { return &selectedCells[0]; }
 
 void ControlItemGrid::selectCell(int row_index, int col_index) {
     // Check for valid indexing
@@ -244,15 +243,15 @@ void ControlItemGrid::selectCell(int row_index, int col_index) {
 
 void ControlItemGrid::deselectAllCells() {
     for (int i = 0; i < rows * cols; i++) {
-        this->buttons[i]->setToggled(false);
-        this->buttons[i]->updateButtonState();
+        buttons[i]->setToggled(false);
+        buttons[i]->updateButtonState();
         selectedCells[i] = false;
     }
 }
 
 void ControlItemGrid::setImageSizeToCell(ImageObject* img, float scale) {
-    img->setWidth(this->cellWidth * scale);
-    img->setHeight(this->cellHeight * scale);
+    img->setWidth(cellWidth * scale);
+    img->setHeight(cellHeight * scale);
 }
 
 void ControlItemGrid::placeImageToCell(ImageObject* img, int row, int col) {

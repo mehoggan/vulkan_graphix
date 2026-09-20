@@ -4,17 +4,17 @@
 
 WeaponAtom::WeaponAtom() = default;
 WeaponAtom::WeaponAtom(int ID) {
-    this->UNIQUEIDENTIFIER = ID;
-    this->maxStack = 5;
-    this->packageNum = 1;
-    this->remaining = 1;
-    this->scale = 30;
-    this->imageFileName = "WeaponAtom.raw";
-    this->description = "Atom:     Damage: 999, Very small radius.";
-    this->price = 200;
-    this->radius = 1;
-    this->damage = 999;
-    this->specialNumber = 0;
+    UNIQUEIDENTIFIER = ID;
+    maxStack = 5;
+    packageNum = 1;
+    remaining = 1;
+    scale = 30;
+    imageFileName = "WeaponAtom.raw";
+    description = "Atom:     Damage: 999, Very small radius.";
+    price = 200;
+    radius = 1;
+    damage = 999;
+    specialNumber = 0;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {Red};
@@ -30,5 +30,5 @@ WeaponAtom::WeaponAtom(int ID) {
 WeaponAtom::~WeaponAtom() = default;
 
 WeaponAtom* WeaponAtom::getWeaponInstance() {
-    return new WeaponAtom(this->UNIQUEIDENTIFIER);
+    return new WeaponAtom(UNIQUEIDENTIFIER);
 }

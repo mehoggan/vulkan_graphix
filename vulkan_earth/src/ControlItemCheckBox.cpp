@@ -25,16 +25,16 @@ ControlItemCheckBox::ControlItemCheckBox(GLfloat xPos,
     this->xPos = xPos;
     this->yPos = yPos;
     this->zPos = zPos;
-    this->color[0] = red;
-    this->color[1] = green;
-    this->color[2] = blue;
-    this->color[3] = 1.0;
+    color[0] = red;
+    color[1] = green;
+    color[2] = blue;
+    color[3] = 1.0;
     this->width = width;
     this->height = height;
     this->caption = caption;
 
-    this->buttonState = 0;
-    this->menuState = 0;
+    buttonState = 0;
+    menuState = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
@@ -47,62 +47,50 @@ ControlItemCheckBox::ControlItemCheckBox(GLfloat xPos,
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    this->label = new TextObject(this->caption,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 this->zPos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
+    label = new TextObject(this->caption,
+                           label_x_pos,
+                           label_y_pos,
+                           this->zPos,
+                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           0.0f,
+                           0.0f,
+                           0.0f);
 }
 
-ControlItemCheckBox::~ControlItemCheckBox() { delete this->label; }
+ControlItemCheckBox::~ControlItemCheckBox() { delete label; }
 
 void ControlItemCheckBox::draw() {
     // draw main button box
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - 0.2f,
-              this->color[1] - 0.2f,
-              this->color[2] - 0.2f,
-              this->color[3]);
+    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] - 0.2f,
-              this->color[1] - 0.2f,
-              this->color[2] - 0.2f,
-              this->color[3]);
+    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
     glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0], this->color[1], this->color[2], this->color[3]);
+    glColor4f(color[0], color[1], color[2], color[3]);
     glVertex3f(this->xPos, this->yPos, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + 0.4f,
-              this->color[1] + 0.4f,
-              this->color[2] + 0.4f,
-              this->color[3]);
+    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
     glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
     glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
     glVertex3f(this->xPos, this->yPos - height, this->zPos);
     glEnd();
     glBegin(GL_QUADS);
-    glColor4f(this->color[0] + 0.4f,
-              this->color[1] + 0.4f,
-              this->color[2] + 0.4f,
-              this->color[3]);
+    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
     glVertex3f(this->xPos + width, this->yPos, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
     glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
@@ -119,32 +107,30 @@ void ControlItemCheckBox::draw() {
 
     // square 1
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.9),
                (this->yPos - height * 0.1),
                this->zPos + 1);
     glVertex3f(this->xPos + (width - height * 0.9),
                (this->yPos - height / 2),
                this->zPos + 1);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
     glEnd();
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.9),
                (this->yPos - height * 0.1),
                this->zPos + 1);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height * 0.1),
                this->zPos + 1);
@@ -152,31 +138,29 @@ void ControlItemCheckBox::draw() {
 
     // square 2
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.9),
                (this->yPos - height / 2),
                this->zPos + 1);
     glVertex3f(this->xPos + (width - height * 0.9),
                (this->yPos - height * 0.9),
                this->zPos + 1);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
     glEnd();
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.9),
                (this->yPos - height * 0.9),
                this->zPos + 1);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height * 0.9),
                this->zPos + 1);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
@@ -184,14 +168,13 @@ void ControlItemCheckBox::draw() {
 
     // square 3
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height * 0.9),
                this->zPos + 1);
@@ -200,14 +183,13 @@ void ControlItemCheckBox::draw() {
                this->zPos + 1);
     glEnd();
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.1),
                (this->yPos - height * 0.9),
                this->zPos + 1);
@@ -218,30 +200,28 @@ void ControlItemCheckBox::draw() {
 
     // square 4
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height / 2),
                (this->yPos - height * 0.1),
                this->zPos + 1);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height) + (height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.1),
                (this->yPos - height * 0.1),
                this->zPos + 1);
     glEnd();
     glBegin(GL_TRIANGLES);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
-    if (this->buttonState == 1)
-        glColor3f(
-                this->color[0] - .2, this->color[1] - .2, this->color[2] - .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
+    if (buttonState == 1)
+        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
     glVertex3f(this->xPos + (width - height) + (height / 2),
                (this->yPos - height / 2),
                this->zPos + 1);
-    glColor3f(this->color[0] + .2, this->color[1] + .2, this->color[2] + .2);
+    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
     glVertex3f(this->xPos + (width - height * 0.1),
                (this->yPos - height / 2),
                this->zPos + 1);
@@ -283,7 +263,7 @@ void ControlItemCheckBox::draw() {
         glEnd();
     }
 
-    this->label->draw();
+    label->draw();
 }
 
 GLfloat ControlItemCheckBox::getXPos() { return this->xPos; }
@@ -291,7 +271,7 @@ GLfloat ControlItemCheckBox::getYPos() { return this->yPos; }
 GLfloat ControlItemCheckBox::getHeight() { return this->height; }
 GLfloat ControlItemCheckBox::getWidth() { return this->width; }
 std::string ControlItemCheckBox::collectData() {
-    if (this->menuState == 0)
+    if (menuState == 0)
         return "false";
     else
         return "true";
@@ -311,22 +291,22 @@ void ControlItemCheckBox::mouseClickEvent(GLint x,
         ((y <= (this->yPos - (this->height * 0.1))) &&
          (y >= (this->yPos - this->height * 0.9)))) {
         if (state == 1) {
-            this->buttonState = 1;
+            buttonState = 1;
         } else if (state == 0) {
             if (stillOverControlItemCheckBox) {
-                if (this->menuState == 1)
-                    this->menuState = 0;
+                if (menuState == 1)
+                    menuState = 0;
                 else
-                    this->menuState = 1;
+                    menuState = 1;
                 playSFX(SMALL_CLICK);
             }
 
-            this->buttonState = 0;
+            buttonState = 0;
         }
     }
 
     if (state == 0) {
-        this->buttonState = 0;
+        buttonState = 0;
     }
 }
 
