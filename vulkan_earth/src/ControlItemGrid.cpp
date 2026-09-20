@@ -40,15 +40,6 @@ ControlItemGrid::ControlItemGrid(GLfloat xPos,
     selectedCells = new bool[rows * cols];
     buttons = new ControlItemButton*[rows * cols];
 
-    /*
-    buttons =
-    (ControlItemButton**)malloc(sizeof(ControlItemButton)*(rows*cols)); for(int
-    i=0 ; i<rows*cols ; i++){ buttons[i] =
-    (ControlItemButton*)malloc(sizeof(ControlItemButton)*1);			//
-    <--------- THE LEAK!
-    }
-    */
-
     for (int i = 0; i < rows * cols; i++) selectedCells[i] = false;
 
     // create buttons and place them in the grid in the order:(0,0), (0,1),

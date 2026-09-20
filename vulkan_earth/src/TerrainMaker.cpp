@@ -3,7 +3,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <fstream>
 #include <iostream>
+#include <vector>
 #include "Normal.h"
 #include "Shader.h"
 #include "TexCoord.h"
@@ -13,10 +15,10 @@
 
 using namespace std;
 
-TerrainMaker::TerrainMaker() {}
+TerrainMaker::TerrainMaker() = default;
 
 TerrainMaker::TerrainMaker(int iScale, int iSize) {
-    srand(time(NULL));
+    srand(time(nullptr));
     this->scale = iScale;
     this->size = iSize;
     this->totalVertices = this->size * this->size;
@@ -24,18 +26,19 @@ TerrainMaker::TerrainMaker(int iScale, int iSize) {
     this->prepTerrain();
     this->initData();
     PFNGLGENBUFFERSARBPROC pglGenBuffersARB =
-            NULL;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pglBindBufferARB = NULL;  // VBO Bind Procedure
+            nullptr;  // VBO Name Generation Procedure
+    PFNGLBINDBUFFERARBPROC pglBindBufferARB = nullptr;  // VBO Bind Procedure
     PFNGLBUFFERDATAARBPROC pglBufferDataARB =
-            NULL;  // VBO Data Loading Procedure
+            nullptr;  // VBO Data Loading Procedure
     PFNGLBUFFERSUBDATAARBPROC pglBufferSubDataARB =
-            NULL;  // VBO Sub Data Loading Procedure
+            nullptr;  // VBO Sub Data Loading Procedure
     PFNGLDELETEBUFFERSARBPROC pglDeleteBuffersARB =
-            NULL;  // VBO Deletion Procedure
+            nullptr;  // VBO Deletion Procedure
     PFNGLGETBUFFERPARAMETERIVARBPROC pglGetBufferParameterivARB =
-            NULL;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pglMapBufferARB = NULL;      // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pglUnmapBufferARB = NULL;  // unmap VBO procedure
+            nullptr;  // return various parameters of VBO
+    PFNGLMAPBUFFERARBPROC pglMapBufferARB = nullptr;  // map VBO procedure
+    PFNGLUNMAPBUFFERARBPROC pglUnmapBufferARB =
+            nullptr;  // unmap VBO procedure
 
     this->shader = new Shader();
     this->shader->init("VertexShader.vs", "FragmentShader.vs");
@@ -43,7 +46,7 @@ TerrainMaker::TerrainMaker(int iScale, int iSize) {
     this->normal_texture = LoadTexture("bumpMap.raw", 256, 256);
 
     this->rotation_angle = 0.0;
-    vboQualify = NULL;
+    vboQualify = nullptr;
     this->verifyVBOs();
     this->wireframeActive = false;
 }
@@ -57,12 +60,6 @@ TerrainMaker::~TerrainMaker() {
     }
     delete vboQualify;
     delete shader;
-    delete[] materialSpecular;
-    delete[] materialShininess;
-    delete[] materialDiffuse;
-    delete[] normals;
-    delete[] vertices;
-    delete[] tex_coord;
     this->pglDeleteBuffersARB(1, &vertexVBOId);
     this->pglDeleteBuffersARB(1, &normalVBOId);
     this->pglDeleteBuffersARB(1, &textureVBOId);
@@ -94,13 +91,10 @@ GLuint TerrainMaker::selectTexture(char* tex) {
 
 GLuint TerrainMaker::LoadTexture(const char* filename, int width, int height) {
     GLuint texture;
-    unsigned char* data;
-    FILE* file;
-    file = fopen(filename, "rb");
-    if (file == NULL) return 0;
-    data = new unsigned char[width * height * 3];
-    fread(data, width * height * 3, 1, file);
-    fclose(file);
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) return 0;
+    std::vector<unsigned char> data(width * height * 3);
+    file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -116,8 +110,7 @@ GLuint TerrainMaker::LoadTexture(const char* filename, int width, int height) {
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
-                 data);
-    delete[] data;
+                 data.data());
     return texture;
 }
 
@@ -132,7 +125,7 @@ void TerrainMaker::draw() {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glEnableClientState(GL_VERTEX_ARRAY);
         this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexVBOId);
-        glVertexPointer(3, GL_FLOAT, 0, (void*)NULL);
+        glVertexPointer(3, GL_FLOAT, 0, nullptr);
         glDrawArrays(GL_TRIANGLES, 0, BUFFERSIZE);
         glDisableClientState(GL_VERTEX_ARRAY);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -185,13 +178,16 @@ void TerrainMaker::draw() {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexVBOId);
-        glVertexPointer(3, GL_FLOAT, 0, (void*)NULL);
-        glNormalPointer(GL_FLOAT, 0, (void*)(BUFFERSIZE * sizeof(Vertex)));
+        glVertexPointer(3, GL_FLOAT, 0, nullptr);
+        glNormalPointer(GL_FLOAT,
+                        0,
+                        reinterpret_cast<void*>(BUFFERSIZE * sizeof(Vertex)));
         glTexCoordPointer(
                 2,
                 GL_FLOAT,
                 0,
-                (void*)(BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal))));
+                reinterpret_cast<void*>(BUFFERSIZE *
+                                        (sizeof(Vertex) + sizeof(Normal))));
         glDrawArrays(GL_TRIANGLES, 0, BUFFERSIZE);
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -212,21 +208,12 @@ void TerrainMaker::draw() {
 }
 
 void TerrainMaker::initData() {
-    this->vertices = new Vertex[this->triStripBufferSize];
-    this->normals = new Normal[this->triStripBufferSize];
-    this->tex_coord = new TexCoord[this->triStripBufferSize];
-    this->materialSpecular = new GLfloat[4];
-    this->materialSpecular[0] = 1.0;
-    this->materialSpecular[1] = 1.0;
-    this->materialSpecular[2] = 1.0;
-    this->materialSpecular[3] = 1.0;
-    this->materialShininess = new GLfloat[1];
-    this->materialShininess[0] = 10000.0;
-    this->materialDiffuse = new GLfloat[4];
-    this->materialDiffuse[0] = 0.0;
-    this->materialDiffuse[1] = 1.0;
-    this->materialDiffuse[2] = 0.0;
-    this->materialDiffuse[3] = 1.0;
+    this->vertices.resize(this->triStripBufferSize);
+    this->normals.resize(this->triStripBufferSize);
+    this->tex_coord.resize(this->triStripBufferSize);
+    this->materialSpecular = {1.0, 1.0, 1.0, 1.0};
+    this->materialShininess = {10000.0};
+    this->materialDiffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
 void TerrainMaker::smoothShadeNormal(int x, int z, Normal* n) {
@@ -337,9 +324,10 @@ void TerrainMaker::prepareData(int steps,
             /************************************************************/
             Vertex v_i(j * SCALE, this->th[i][j] /*SCALE*/, i * SCALE);
             this->vertices[index++] = v_i;
-            TexCoord t_i(
-                    ((float)(i % (chunkSize - 1))) / (float)(chunkSize - 1),
-                    ((float)(j % (chunkSize - 1))) / (float)(chunkSize - 1));
+            TexCoord t_i((static_cast<float>(i % (chunkSize - 1))) /
+                                 static_cast<float>(chunkSize - 1),
+                         (static_cast<float>(j % (chunkSize - 1))) /
+                                 static_cast<float>(chunkSize - 1));
             this->tex_coord[indexTexture++] = t_i;
             Normal n_i(0, 0, 0);
             if (i == 0 && j == 0) {
@@ -356,10 +344,10 @@ void TerrainMaker::prepareData(int steps,
             Vertex v_j(
                     j * SCALE, this->th[i + 1][j] /*SCALE*/, (i + 1) * SCALE);
             this->vertices[index++] = v_j;
-            TexCoord t_j(
-                    ((float)(i % (chunkSize - 1)) + 1) /
-                            (float)(chunkSize - 1),
-                    ((float)(j % (chunkSize - 1))) / (float)(chunkSize - 1));
+            TexCoord t_j((static_cast<float>(i % (chunkSize - 1)) + 1) /
+                                 static_cast<float>(chunkSize - 1),
+                         (static_cast<float>(j % (chunkSize - 1))) /
+                                 static_cast<float>(chunkSize - 1));
             this->tex_coord[indexTexture++] = t_j;
             Normal n_j(0, 0, 0);
             if (i == SIZE - 2 && j == 0) {
@@ -376,10 +364,10 @@ void TerrainMaker::prepareData(int steps,
             Vertex v_k(
                     (j + 1) * SCALE, this->th[i][j + 1] /*SCALE*/, (i)*SCALE);
             this->vertices[index++] = v_k;
-            TexCoord t_k(
-                    ((float)(i % (chunkSize - 1))) / (float)(chunkSize - 1),
-                    ((float)(j % (chunkSize - 1)) + 1) /
-                            (float)(chunkSize - 1));
+            TexCoord t_k((static_cast<float>(i % (chunkSize - 1))) /
+                                 static_cast<float>(chunkSize - 1),
+                         (static_cast<float>(j % (chunkSize - 1)) + 1) /
+                                 static_cast<float>(chunkSize - 1));
             this->tex_coord[indexTexture++] = t_k;
             Normal n_k(0, 0, 0);
             if (i == 0 && j == SIZE - 2) {
@@ -396,10 +384,10 @@ void TerrainMaker::prepareData(int steps,
             Vertex v_x(
                     j * SCALE, this->th[i + 1][j] /*SCALE*/, (i + 1) * SCALE);
             this->vertices[index++] = v_x;
-            TexCoord t_x(
-                    ((float)(i % (chunkSize - 1)) + 1) /
-                            (float)(chunkSize - 1),
-                    ((float)(j % (chunkSize - 1))) / (float)(chunkSize - 1));
+            TexCoord t_x((static_cast<float>(i % (chunkSize - 1)) + 1) /
+                                 static_cast<float>(chunkSize - 1),
+                         (static_cast<float>(j % (chunkSize - 1))) /
+                                 static_cast<float>(chunkSize - 1));
             this->tex_coord[indexTexture++] = t_x;
             Normal n_x(0, 0, 0);
             if (i == SIZE - 2 && j == 0) {
@@ -417,10 +405,10 @@ void TerrainMaker::prepareData(int steps,
                        this->th[i + 1][j + 1] /*SCALE*/,
                        (i + 1) * SCALE);
             this->vertices[index++] = v_y;
-            TexCoord t_y(((float)(i % (chunkSize - 1)) + 1) /
-                                 (float)(chunkSize - 1),
-                         ((float)(j % (chunkSize - 1)) + 1) /
-                                 (float)(chunkSize - 1));
+            TexCoord t_y((static_cast<float>(i % (chunkSize - 1)) + 1) /
+                                 static_cast<float>(chunkSize - 1),
+                         (static_cast<float>(j % (chunkSize - 1)) + 1) /
+                                 static_cast<float>(chunkSize - 1));
             this->tex_coord[indexTexture++] = t_y;
             Normal n_y(0, 0, 0);
             if (i == SIZE - 2 && j == SIZE - 2) {
@@ -437,10 +425,10 @@ void TerrainMaker::prepareData(int steps,
             Vertex v_z(
                     (j + 1) * SCALE, this->th[i][j + 1] /*SCALE*/, (i)*SCALE);
             this->vertices[index++] = v_z;
-            TexCoord t_z(
-                    ((float)(i % (chunkSize - 1))) / (float)(chunkSize - 1),
-                    ((float)(j % (chunkSize - 1)) + 1) /
-                            (float)(chunkSize - 1));
+            TexCoord t_z((static_cast<float>(i % (chunkSize - 1))) /
+                                 static_cast<float>(chunkSize - 1),
+                         (static_cast<float>(j % (chunkSize - 1)) + 1) /
+                                 static_cast<float>(chunkSize - 1));
             this->tex_coord[indexTexture++] = t_z;
             Normal n_z(0, 0, 0);
             if (i == 0 && j == SIZE - 2) {
@@ -458,51 +446,59 @@ void TerrainMaker::prepareData(int steps,
     this->pglBufferDataARB(
             GL_ARRAY_BUFFER_ARB,
             BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
-            0,
+            nullptr,
             GL_DYNAMIC_DRAW_ARB);
 
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               0,
                               BUFFERSIZE * sizeof(Vertex),
-                              this->vertices);
+                              this->vertices.data());
 
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               BUFFERSIZE * sizeof(Vertex),
                               BUFFERSIZE * sizeof(Normal),
-                              this->normals);
+                              this->normals.data());
 
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal)),
                               BUFFERSIZE * sizeof(TexCoord),
-                              this->tex_coord);
+                              this->tex_coord.data());
 }
 
 void TerrainMaker::verifyVBOs() {
-    if (vboQualify) delete vboQualify;
+    delete vboQualify;
     vboQualify = new VBOQualifer();
     vboQualify->establishIfQualified();
     if (vboQualify->getQualified()) {
         if (vboQualify->isExtensionSupported("GL_ARB_vertex_buffer_object")) {
-            this->pglGenBuffersARB = (PFNGLGENBUFFERSARBPROC)glXGetProcAddress(
-                    (const GLubyte*)"glGenBuffersARB");
-            this->pglBindBufferARB = (PFNGLBINDBUFFERARBPROC)glXGetProcAddress(
-                    (const GLubyte*)"glBindBufferARB");
-            this->pglBufferDataARB = (PFNGLBUFFERDATAARBPROC)glXGetProcAddress(
-                    (const GLubyte*)"glBufferDataARB");
+            this->pglGenBuffersARB = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(
+                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                            "glGenBuffersARB")));
+            this->pglBindBufferARB = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(
+                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                            "glBindBufferARB")));
+            this->pglBufferDataARB = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(
+                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                            "glBufferDataARB")));
             this->pglBufferSubDataARB =
-                    (PFNGLBUFFERSUBDATAARBPROC)glXGetProcAddress(
-                            (const GLubyte*)"glBufferSubDataARB");
+                    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
+                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                                    "glBufferSubDataARB")));
             this->pglDeleteBuffersARB =
-                    (PFNGLDELETEBUFFERSARBPROC)glXGetProcAddress(
-                            (const GLubyte*)"glDeleteBuffersARB");
+                    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
+                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                                    "glDeleteBuffersARB")));
             this->pglGetBufferParameterivARB =
-                    (PFNGLGETBUFFERPARAMETERIVARBPROC)glXGetProcAddress(
-                            (const GLubyte*)"glGetBufferParameterivARB");
-            this->pglMapBufferARB = (PFNGLMAPBUFFERARBPROC)glXGetProcAddress(
-                    (const GLubyte*)"glMapBufferARB");
+                    reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
+                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                                    "glGetBufferParameterivARB")));
+            this->pglMapBufferARB = reinterpret_cast<PFNGLMAPBUFFERARBPROC>(
+                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                            "glMapBufferARB")));
             this->pglUnmapBufferARB =
-                    (PFNGLUNMAPBUFFERARBPROC)glXGetProcAddress(
-                            (const GLubyte*)"glUnmapBufferARB");
+                    reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
+                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                                    "glUnmapBufferARB")));
             if (this->pglGenBuffersARB && this->pglBindBufferARB &&
                 this->pglBufferDataARB && this->pglBufferSubDataARB &&
                 this->pglDeleteBuffersARB &&
@@ -554,7 +550,7 @@ void TerrainMaker::terrainGen(int steps,
         int random = (rand() % 100);
 
         if (random > randomJump) {
-            switch ((int)(rand() % 4)) {
+            switch ((rand() % 4)) {
                 case 0:
                     currentX--;
                     break;
@@ -570,18 +566,19 @@ void TerrainMaker::terrainGen(int steps,
             }
             if (((currentX >= this->size) || (currentX < 0)) ||
                 ((currentY >= this->size) || (currentY < 0))) {
-                currentX = (int)(rand() % this->size);
-                currentY = (int)(rand() % this->size);
+                currentX = (rand() % this->size);
+                currentY = (rand() % this->size);
             }
         } else {
-            currentX = (int)(rand() % this->size);
-            currentY = (int)(rand() % this->size);
+            currentX = (rand() % this->size);
+            currentY = (rand() % this->size);
         }
 
         for (int x = currentX - radius; x < currentX + radius; x++)
             for (int y = currentY - radius; y < currentY + radius; y++) {
-                distance = (float)sqrt(pow((double)(currentX - x), 2) +
-                                       pow((double)currentY - y, 2));
+                distance = static_cast<float>(
+                        sqrt(pow(static_cast<double>(currentX - x), 2) +
+                             pow(static_cast<double>(currentY) - y, 2)));
                 if ((distance < radius) &&
                     ((x >= 0 && x < this->size) && (y >= 0 && y < this->size)))
                     th[x][y] += increase;
@@ -706,12 +703,7 @@ void TerrainMaker::terrainSlope(int vertices) {
     }
 }
 
-void TerrainMaker::toggleWireframe() {
-    if (wireframeActive)
-        wireframeActive = false;
-    else
-        wireframeActive = true;
-}
+void TerrainMaker::toggleWireframe() { wireframeActive = !wireframeActive; }
 
 Normal TerrainMaker::getTriangleNormal(float x, float z) {
     /*	NORMAL ORIENTATION VECTOR CODE FOR TANK ORIENTATION	*/
@@ -732,9 +724,10 @@ Normal TerrainMaker::getTriangleNormal(float x, float z) {
              (u[2] * v[0] - u[0] * v[2]),
              (u[0] * v[1] - v[0] * u[1]));
 
-    GLfloat mag = (GLfloat)sqrt(pow((double)(n.compoX), 2.0) +
-                                pow((double)(n.compoY), 2.0) +
-                                pow((double)(n.compoZ), 2.0));
+    GLfloat mag = static_cast<GLfloat>(
+            sqrt(pow(static_cast<double>(n.compoX), 2.0) +
+                 pow(static_cast<double>(n.compoY), 2.0) +
+                 pow(static_cast<double>(n.compoZ), 2.0)));
     n.compoX /= mag;
     n.compoY /= mag;
     n.compoZ /= mag;
@@ -750,8 +743,8 @@ Normal TerrainMaker::getTriangleNormal(float x, float z) {
 }
 
 Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
-    int nX = (int)(x / this->scale);
-    int nZ = (int)(z / this->scale);
+    int nX = static_cast<int>(x / this->scale);
+    int nZ = static_cast<int>(z / this->scale);
     float dX = x / this->scale - nX;
     float dZ = z / this->scale - nZ;
 
@@ -774,8 +767,12 @@ Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
         }
     }
     float N[3];
-    float V[3] = {0, th[nZ][nX + 1] - th[nZ][nX], this->scale};
-    float U[3] = {this->scale, th[nZ + 1][nX] - th[nZ][nX], 0};
+    float V[3] = {0,
+                  static_cast<float>(th[nZ][nX + 1] - th[nZ][nX]),
+                  static_cast<float>(this->scale)};
+    float U[3] = {static_cast<float>(this->scale),
+                  static_cast<float>(th[nZ + 1][nX] - th[nZ][nX]),
+                  0};
 
     N[0] = (V[1] * U[2] - U[1] * V[2]);
     N[1] = (U[0] * V[2] - V[0] * U[2]);
@@ -797,8 +794,8 @@ Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
 GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
     if ((x >= 0 && x < (this->size - 1) * this->scale) &&
         (z >= 0 && z < (this->size - 1) * this->scale)) {
-        int vX = (int)(x / this->scale);
-        int vZ = (int)(z / this->scale);
+        int vX = static_cast<int>(x / this->scale);
+        int vZ = static_cast<int>(z / this->scale);
         float dX = x / this->scale - vX;
         float dZ = z / this->scale - vZ;
 
@@ -845,18 +842,18 @@ void TerrainMaker::collectVerticesForTriangleNormal(
 }
 
 void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
-    int x = (int)(fx / this->scale);
-    int z = (int)(fz / this->scale);
-    Vertex* bufferPtr =
-            (Vertex*)this->pglMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE);
-    int craterSize = (int)(blastSize * 1.5);
+    int x = static_cast<int>(fx / this->scale);
+    int z = static_cast<int>(fz / this->scale);
+    Vertex* bufferPtr = static_cast<Vertex*>(
+            this->pglMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
+    int craterSize = static_cast<int>(blastSize * 1.5);
 
     if (((x >= 0) && (x < size)) && ((z >= 0) && (z < size))) {
         GLfloat impactY = th[z][x];
         for (int i = x - craterSize; i < x + craterSize; i++) {
             for (int j = z - craterSize; j < z + craterSize; j++) {
-                GLfloat distance =
-                        sqrt((float)((x - i) * (x - i) + (z - j) * (z - j)));
+                GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
+                                                           (z - j) * (z - j)));
                 if ((((i >= 0) && (j >= 0)) &&
                      ((i < this->size) && (j < this->size))) &&
                     (distance <= blastSize)) {
@@ -914,8 +911,8 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
         for (int i = x - craterSize; i < x + craterSize; i++) {
             for (int j = z - craterSize; j < z + craterSize; j++) {
                 Normal adjustNormal;
-                GLfloat distance =
-                        sqrt((float)((x - i) * (x - i) + (z - j) * (z - j)));
+                GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
+                                                           (z - j) * (z - j)));
                 if ((i >= 0 && j >= 0 && i < this->size && j < this->size) &&
                     (distance <= blastSize)) {
                     this->smoothShadeNormal(j, i, &adjustNormal);

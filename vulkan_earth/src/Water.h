@@ -4,10 +4,11 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <vector>
+#include "Normal.h"
+#include "TexCoord.h"
 #include "VBOQualifer.h"
-class Vertex;
-class Normal;
-class TexCoord;
+#include "Vertex.h"
 class Shader;
 
 class Water {
@@ -55,17 +56,14 @@ private:
     int totalVertices;
     int triStripBufferSize;
     int** surfaceheight;
-    Vertex* vertices;
-    Normal* normals;
-    TexCoord* tex_coord;
+    std::vector<Vertex> vertices;
+    std::vector<Normal> normals;
+    std::vector<TexCoord> tex_coord;
     GLuint color_texture;
     GLuint normal_texture;
-    FILE* file;
-    unsigned char* data;
-    GLfloat* materialSpecular;
-    GLfloat* materialShininess;
-    GLfloat* materialDiffuse;
-    FILE* heightMapFile;
+    std::vector<GLfloat> materialSpecular;
+    std::vector<GLfloat> materialShininess;
+    std::vector<GLfloat> materialDiffuse;
     unsigned char* heightDataContainer;
     void configVBOs();
     unsigned int vertexVBOId;

@@ -38,7 +38,5 @@ private:
     GLint height;
     GLfloat borderSize;
     GLuint texture;
-    unsigned char* data;
-    FILE* file;
 };
 #endif

@@ -2,7 +2,9 @@
 #include <GL/glx.h>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iostream>
+#include <vector>
 #include "Normal.h"
 #include "Shader.h"
 #include "TexCoord.h"
@@ -55,12 +57,6 @@ Water::~Water() {
     }
     delete vboQualify;
     delete shader;
-    delete[] tex_coord;
-    delete[] materialSpecular;
-    delete[] materialShininess;
-    delete[] materialDiffuse;
-    delete[] normals;
-    delete[] vertices;
     this->pglDeleteBuffersARB(1, &vertexVBOId);
     this->pglDeleteBuffersARB(1, &normalVBOId);
     this->pglDeleteBuffersARB(1, &textureVBOId);
@@ -72,33 +68,19 @@ GLint Water::getScale() { return this->scale; }
 GLint Water::getActualSize() { return (this->size) * (this->scale); }
 
 void Water::initData() {
-    this->vertices = new Vertex[this->triStripBufferSize];
-    this->normals = new Normal[this->triStripBufferSize];
-    this->tex_coord = new TexCoord[this->triStripBufferSize];
-    this->materialSpecular = new GLfloat[4];
-    this->materialSpecular[0] = 0.0;
-    this->materialSpecular[1] = 0.0;
-    this->materialSpecular[2] = 0.0;
-    this->materialSpecular[3] = 0.0;
-    this->materialShininess = new GLfloat[1];
-    this->materialShininess[0] = 10000.0;
-    this->materialDiffuse = new GLfloat[4];
-    this->materialDiffuse[0] = 0.0;
-    this->materialDiffuse[1] = 1.0;
-    this->materialDiffuse[2] = 0.0;
-    this->materialDiffuse[3] = 1.0;
+    this->vertices.resize(this->triStripBufferSize);
+    this->normals.resize(this->triStripBufferSize);
+    this->tex_coord.resize(this->triStripBufferSize);
+    this->materialSpecular = {0.0, 0.0, 0.0, 0.0};
+    this->materialShininess = {10000.0};
+    this->materialDiffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
 GLuint Water::LoadTexture(const char* filename, int width, int height) {
     GLuint texture;
-    unsigned char* data;
-    FILE* file;
-    file = fopen(filename, "rb");
-    if (file == nullptr) {
-    }
-    this->data = new unsigned char[width * height * 3];
-    fread(this->data, width * height * 3, 1, file);
-    fclose(file);
+    std::vector<unsigned char> data(width * height * 3);
+    std::ifstream file(filename, std::ios::binary);
+    file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -114,8 +96,7 @@ GLuint Water::LoadTexture(const char* filename, int width, int height) {
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
-                 this->data);
-    free(this->data);
+                 data.data());
     return texture;
 }
 
@@ -154,12 +135,14 @@ void Water::draw() {
     glEnableClientState(GL_VERTEX_ARRAY);         // Enable Vertex Arrays
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);  // Enable Texture Arrays
     this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexVBOId);
-    glVertexPointer(3, GL_FLOAT, 0, (void*)nullptr);
-    glNormalPointer(GL_FLOAT, 0, (void*)(BUFFERSIZE * sizeof(Vertex)));
+    glVertexPointer(3, GL_FLOAT, 0, nullptr);
+    glNormalPointer(
+            GL_FLOAT, 0, reinterpret_cast<void*>(BUFFERSIZE * sizeof(Vertex)));
     glTexCoordPointer(2,
                       GL_FLOAT,
                       0,
-                      (void*)(BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal))));
+                      reinterpret_cast<void*>(
+                              BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal))));
     glDrawArrays(GL_TRIANGLES, 0, BUFFERSIZE);
     glDisableClientState(GL_VERTEX_ARRAY);         // Disable Vertex Arrays
     glDisableClientState(GL_NORMAL_ARRAY);         // Disable Vertex Arrays
@@ -923,13 +906,13 @@ void Water::prepareData() {
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               0,
                               BUFFERSIZE * sizeof(Vertex),
-                              this->vertices);
+                              this->vertices.data());
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               BUFFERSIZE * sizeof(Vertex),
                               BUFFERSIZE * sizeof(Normal),
-                              this->normals);
+                              this->normals.data());
     this->pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
                               BUFFERSIZE * (sizeof(Vertex) + sizeof(Normal)),
                               BUFFERSIZE * sizeof(TexCoord),
-                              this->tex_coord);
+                              this->tex_coord.data());
 }

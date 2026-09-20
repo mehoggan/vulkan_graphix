@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include "macro_crtdbg.h"
 
@@ -103,19 +104,15 @@ void Shader::unbind() { glUseProgram(0); }
 char* Shader::textFileRead(const char* fileName) {
     text = nullptr;
     if (fileName != nullptr) {
-        FILE* file;
-        file = fopen(fileName, "rt");
-        if (file != nullptr) {
-            fseek(file, 0, SEEK_END);
-            int count = ftell(file);
-            rewind(file);
+        std::ifstream file(fileName, std::ios::binary | std::ios::ate);
+        if (file) {
+            std::streamsize count = file.tellg();
+            file.seekg(0);
             if (count > 0) {
-                // text = (char*)malloc(sizeof(char) * (count + 1));
                 text = new char[count + 1];
-                count = fread(text, sizeof(char), count, file);
+                file.read(text, count);
                 text[count] = '\0';
             }
-            fclose(file);
             return text;
         }
     } else {

@@ -1,6 +1,8 @@
 #include "SkyboxFactory.h"
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <vector>
 #include "macro_crtdbg.h"
 
 SkyboxFactory::SkyboxFactory() = default;
@@ -10,27 +12,13 @@ SkyboxFactory::SkyboxFactory(int size_of_box) {
     int width = 1024;
     int height = 1024;
     int scale = 1024;
-    this->data0 = static_cast<unsigned char*>(malloc(width * height * 3));
-    this->data1 = static_cast<unsigned char*>(
-            malloc((width / 4) * (height / 3) * 3));
-    this->data2 = static_cast<unsigned char*>(
-            malloc((width / 4) * (height / 3) * 3));
-    this->data3 = static_cast<unsigned char*>(
-            malloc((width / 4) * (height / 3) * 3));
-    this->data4 = static_cast<unsigned char*>(
-            malloc((width / 4) * (height / 3) * 3));
-    this->data5 = static_cast<unsigned char*>(
-            malloc((width / 4) * (height / 3) * 3));
-    this->data6 = static_cast<unsigned char*>(
-            malloc((width / 4) * (height / 3) * 3));
-    int readResult;
-    file0 = fopen("SkyBox.raw", "r");
+    std::vector<unsigned char> data0(width * height * 3);
+    std::ifstream file0("SkyBox.raw", std::ios::binary);
     if (!file0) {
         std::cerr << "ERROR: File Not Found" << std::endl;
         exit(0);
     }
-    readResult = fread(data0, width * height * 3, 1, file0);
-    fclose(this->file0);
+    file0.read(reinterpret_cast<char*>(data0.data()), data0.size());
 
     /*
     this->image1_X_start=(int)((width*3)/4);
@@ -144,7 +132,7 @@ SkyboxFactory::SkyboxFactory(int size_of_box) {
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
-                 data0);
+                 data0.data());
 
     /*
     glGenTextures(1,&texture1);
@@ -206,16 +194,6 @@ SkyboxFactory::SkyboxFactory(int size_of_box) {
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP );
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (int)(width/4), (int)(height/3),
     0,GL_RGB, GL_UNSIGNED_BYTE, data6);
-    //*/
-
-    free(data0);
-    //*
-    free(data1);
-    free(data2);
-    free(data3);
-    free(data4);
-    free(data5);
-    free(data6);
     //*/
 }
 

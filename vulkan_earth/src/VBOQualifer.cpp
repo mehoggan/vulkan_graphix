@@ -41,21 +41,24 @@ bool VBOQualifer::getQualified() { return this->qualified; }
 bool VBOQualifer::establishIfQualified() {
     char* str = nullptr;
 
-    str = (char*)glGetString(GL_VENDOR);
+    str = const_cast<char*>(
+            reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
     if (str)
         this->vendor = str;
     else {
         this->qualified = false;
     }
 
-    str = (char*)glGetString(GL_RENDERER);
+    str = const_cast<char*>(
+            reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
     if (str)
         this->renderer = str;
     else {
         this->qualified = false;
     }
 
-    str = (char*)glGetString(GL_VERSION);
+    str = const_cast<char*>(
+            reinterpret_cast<const char*>(glGetString(GL_VERSION)));
     if (str)
         this->version = str;
     else {
@@ -63,7 +66,8 @@ bool VBOQualifer::establishIfQualified() {
     }
 
     this->extensions_supported = 0;
-    str = (char*)glGetString(GL_EXTENSIONS);
+    str = const_cast<char*>(
+            reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
     if (str) {
         char* tok = str;
         int index = 0;

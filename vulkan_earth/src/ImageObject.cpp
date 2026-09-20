@@ -1,5 +1,6 @@
 #include "ImageObject.h"
-#include <stdlib.h>
+#include <fstream>
+#include <vector>
 #include "macro_crtdbg.h"
 
 ImageObject::ImageObject() = default;
@@ -23,10 +24,9 @@ ImageObject::ImageObject(GLfloat xPos,
     int imgWidth = iWidth;
     int imgHeight = iHeight;
 
-    data = static_cast<unsigned char*>(malloc(imgWidth * imgHeight * 3));
-    file = fopen(filename, "rb");
-    fread(data, imgWidth * imgHeight * 3, 1, file);
-    fclose(file);
+    std::vector<unsigned char> data(imgWidth * imgHeight * 3);
+    std::ifstream file(filename, std::ios::binary);
+    file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -38,8 +38,7 @@ ImageObject::ImageObject(GLfloat xPos,
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
-                 data);
-    free(data);
+                 data.data());
 }
 
 ImageObject::~ImageObject() { glDeleteTextures(1, &texture); }

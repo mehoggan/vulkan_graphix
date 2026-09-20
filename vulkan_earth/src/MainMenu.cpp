@@ -333,7 +333,7 @@ MainMenu::MainMenu(GLfloat width,
                             150,
                             "vulkanEarthTitle.raw");
     global_settings->setCurrentTerrain(
-            ((SubMenuLandscape*)this->submenus[5])->tm);
+            (static_cast<SubMenuLandscape*>(this->submenus[5]))->tm);
 }
 
 MainMenu::~MainMenu() {
@@ -352,7 +352,7 @@ GLfloat* MainMenu::getColor() { return &(this->color[0]); }
 SubMenu* MainMenu::getSubMenuI(int I) { return this->submenus[I]; }
 SubMenu* MainMenu::getActiveSubMenu() { return this->activeSubMenu; }
 SubMenuLandscape* MainMenu::getSubMenuLandscape() {
-    return (SubMenuLandscape*)this->submenus[5];
+    return static_cast<SubMenuLandscape*>(this->submenus[5]);
 }
 
 void MainMenu::draw() {

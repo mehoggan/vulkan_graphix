@@ -3,8 +3,6 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 class SkyboxFactory {
 public:
@@ -23,14 +21,6 @@ private:
     GLuint texture5;
     GLuint texture6;
     float size;
-    unsigned char* data0;
-    unsigned char* data1;
-    unsigned char* data2;
-    unsigned char* data3;
-    unsigned char* data4;
-    unsigned char* data5;
-    unsigned char* data6;
-    FILE* file0;
     int image1_X_start;
     int image1_Y_start;
     int image1_X_end;

@@ -3,10 +3,10 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-
-class Normal;
-class TexCoord;
-class Vertex;
+#include <vector>
+#include "Normal.h"
+#include "TexCoord.h"
+#include "Vertex.h"
 
 class VBOShaderLibrary {
 public:
@@ -33,9 +33,9 @@ private:
     bool useShaders;
     int verticesLoaded;
     GLuint VBOId;
-    Vertex* vertices;
-    Normal* normals;
-    TexCoord* tex_coord;
+    std::vector<Vertex> vertices;
+    std::vector<Normal> normals;
+    std::vector<TexCoord> tex_coord;
     PFNGLGENBUFFERSARBPROC pglGenBuffersARB;  // VBO Name Generation Procedure
     PFNGLBINDBUFFERARBPROC pglBindBufferARB;  // VBO Bind Procedure
     PFNGLBUFFERDATAARBPROC pglBufferDataARB;  // VBO Data Loading Procedure
