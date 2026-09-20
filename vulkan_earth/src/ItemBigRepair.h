@@ -1,18 +1,18 @@
 #ifndef ITEM_BIG_REPAIR_H
 #define ITEM_BIG_REPAIR_H
 
+#include <GL/glew.h>
 #include <GL/freeglut.h>
+#include "Item.h"
 
-
-
-class ItemBigRepair : public Item{
+class ItemBigRepair : public Item {
 public:
-	ItemBigRepair();
-	ItemBigRepair(int ID);
-	~ItemBigRepair();
-	ItemBigRepair* getItemInstance();
-	bool causeEffectToTank(Tank* tank);
-	void playUseSFX();
+    ItemBigRepair();
+    ItemBigRepair(int ID);
+    ~ItemBigRepair() override;
+    ItemBigRepair* getItemInstance() override;
+    bool causeEffectToTank(Tank* tank) override;
+    void playUseSFX() override;
 };
 
 #endif

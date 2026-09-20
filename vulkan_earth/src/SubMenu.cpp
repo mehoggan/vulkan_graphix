@@ -1,14 +1,10 @@
 #include "SubMenu.h"
-#include "ImageObject.h"
 #include <string>
+#include "ImageObject.h"
 #include "macro_crtdbg.h"
 
 using namespace std;
 
-SubMenu::SubMenu(){
-}
+SubMenu::SubMenu() = default;
 
-SubMenu::~SubMenu(){
-}
-
-
+SubMenu::~SubMenu() = default;

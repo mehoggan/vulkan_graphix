@@ -1,13 +1,9 @@
 #include "WeaponTest.h"
-#include "ImageObject.h"
 #include <string>
+#include "ImageObject.h"
 
 using namespace std;
 
-WeaponTest::WeaponTest(){
-}
+WeaponTest::WeaponTest() = default;
 
-WeaponTest::~WeaponTest(){
-}
-
-
+WeaponTest::~WeaponTest() = default;

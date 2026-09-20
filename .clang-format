@@ -71,6 +71,8 @@ DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories:
+  - Regex:           '^<GL/glew\.h>'
+    Priority:        0
   - Regex:           '^<.*\.h>'
     Priority:        1
   - Regex:           '^<.*'
@@ -162,6 +164,8 @@ DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories:
+  - Regex:           '^<GL/glew\.h>'
+    Priority:        0
   - Regex:           '^<.*\.h>'
     Priority:        1
   - Regex:           '^<.*'

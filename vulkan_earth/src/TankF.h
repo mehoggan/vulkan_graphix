@@ -3,19 +3,20 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include "Tank.h"
 
-class TankF : public Tank{
+class TankF : public Tank {
 public:
-	TankF();
-	TankF(GLfloat x, GLfloat y, GLfloat z);
-	~TankF();
+    TankF();
+    TankF(GLfloat x, GLfloat y, GLfloat z);
+    ~TankF() override;
 
-	int getBaseHP();
-	int getBasePower();
-	int getBaseArmor();
-	int getBaseSpeed();
-	const char* getName();
-	void buildList();
+    int getBaseHP() override;
+    int getBasePower() override;
+    int getBaseArmor() override;
+    int getBaseSpeed() override;
+    const char* getName() override;
+    void buildList();
 };
 
 #endif

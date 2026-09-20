@@ -36,36 +36,42 @@ const int NUM_ARROW_BUTTONS = 2;
 
 class MainMenu {
 public:
-	MainMenu();
-	MainMenu(GLfloat width, GLfloat height, GLfloat percentBorder, GlobalSettings* global_settings, PlayerFactory* player_factory, int* gameState);
-	~MainMenu();
-	GLfloat* getPos();
-	GLfloat getHeight();
-	void setHeight(GLfloat height);
-	GLfloat getWidth();
-	void setWidth(GLfloat width);
-	GLfloat* getColor();
-	SubMenu* getSubMenuI(int I);
-	SubMenu* getActiveSubMenu();
-	void draw();
-	void buttonTest(int x, int y, int buttonDown);
-	void collectData();
-	SubMenuLandscape* getSubMenuLandscape();
+    MainMenu();
+    MainMenu(GLfloat width,
+             GLfloat height,
+             GLfloat percentBorder,
+             GlobalSettings* global_settings,
+             PlayerFactory* player_factory,
+             int* gameState);
+    ~MainMenu();
+    GLfloat* getPos();
+    GLfloat getHeight();
+    void setHeight(GLfloat height);
+    GLfloat getWidth();
+    void setWidth(GLfloat width);
+    GLfloat* getColor();
+    SubMenu* getSubMenuI(int I);
+    SubMenu* getActiveSubMenu();
+    void draw();
+    void buttonTest(int x, int y, int buttonDown);
+    void collectData();
+    SubMenuLandscape* getSubMenuLandscape();
+
 private:
-	GLfloat pos[3], width, height, color[4], border;
-	int* currentGameState;
-	GLfloat percentBorder;
-	MainMenuButton* buttons[NUM_BUTTON];
-	SubMenu* submenus[NUM_SUBMENUS];
-	ImageObject* images[NUM_IMAGES];
-	ControlItem* arrowsbutton[NUM_ARROW_BUTTONS];
-	TextObject* text;
-	MainMenuButton* buttonPressed;
-	SubMenu* activeSubMenu;
-	ControlItem* arrowButtonPressed;
-	char* options;
-	GlobalSettings* global_settings;
-	PlayerFactory* player_factory;
+    GLfloat pos[3], width, height, color[4], border;
+    int* currentGameState;
+    GLfloat percentBorder;
+    MainMenuButton* buttons[NUM_BUTTON];
+    SubMenu* submenus[NUM_SUBMENUS];
+    ImageObject* images[NUM_IMAGES];
+    ControlItem* arrowsbutton[NUM_ARROW_BUTTONS];
+    TextObject* text;
+    MainMenuButton* buttonPressed;
+    SubMenu* activeSubMenu;
+    ControlItem* arrowButtonPressed;
+    char* options;
+    GlobalSettings* global_settings;
+    PlayerFactory* player_factory;
 };
 
 #endif

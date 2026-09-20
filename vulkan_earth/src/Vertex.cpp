@@ -1,15 +1,12 @@
 #include "Vertex.h"
 #include "macro_crtdbg.h"
 
+Vertex::Vertex() = default;
 
-Vertex::Vertex(){
+Vertex::Vertex(GLfloat x, GLfloat y, GLfloat z) {
+    this->coordX = x;
+    this->coordY = y;
+    this->coordZ = z;
 }
 
-Vertex::Vertex(GLfloat x, GLfloat y, GLfloat z){
-	this->coordX = x;
-	this->coordY = y;
-	this->coordZ = z;
-}
-	
-Vertex::~Vertex(){
-}
+Vertex::~Vertex() = default;

@@ -1,31 +1,32 @@
-#include <iostream>
-#include <iomanip>
-#include <stdio.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "SpecialEffect.h"
+#include <stdio.h>
+#include <iomanip>
+#include <iostream>
 #include "Particle.h"
-#include "ParticleSmoke.h"
 #include "ParticleAcid.h"
 #include "ParticleFloat.h"
+#include "ParticleSmoke.h"
+#include "SpecialEffect.h"
 
 #ifndef PARTICLEGENERATOR_H
 #define PARTICLEGENERATOR_H
 
 class ParticleGenerator {
 public:
-	ParticleGenerator();
-	ParticleGenerator(int spawn,int rate,int speed,int life, int type);
+    ParticleGenerator();
+    ParticleGenerator(int spawn, int rate, int speed, int life, int type);
 
-	void update(GLfloat x, GLfloat y, GLfloat z);
-	void draw();
-	void addParticles();
-	void killGenerator();
+    void update(GLfloat x, GLfloat y, GLfloat z);
+    void draw();
+    void addParticles();
+    void killGenerator();
 
 private:
-	GLfloat x,y,z;
-	int max,particlesPerEmission,emissionRate,emissionSpeed,emissionLife,type;
-	Particle* particleArray[1000];
+    GLfloat x, y, z;
+    int max, particlesPerEmission, emissionRate, emissionSpeed, emissionLife,
+            type;
+    Particle* particleArray[1000];
 };
 
 #endif

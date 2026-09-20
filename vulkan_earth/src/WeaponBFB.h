@@ -1,15 +1,16 @@
 #ifndef WEAPON_BFB_H
 #define WEAPON_BFB_H
 
+#include <GL/glew.h>
 #include <GL/freeglut.h>
+#include "Weapon.h"
 
-class WeaponBFB : public Weapon{
+class WeaponBFB : public Weapon {
 public:
-	WeaponBFB();
-	WeaponBFB(int ID);
-	~WeaponBFB();
-	WeaponBFB* getWeaponInstance();
-
+    WeaponBFB();
+    WeaponBFB(int ID);
+    ~WeaponBFB() override;
+    WeaponBFB* getWeaponInstance() override;
 };
 
 #endif
