@@ -12,13 +12,13 @@
 class ParticleFloat : public Particle {
 public:
     ParticleFloat();
-    ParticleFloat(GLfloat x,
-                  GLfloat y,
-                  GLfloat z,
+    ParticleFloat(GLfloat new_x,
+                  GLfloat new_y,
+                  GLfloat new_z,
                   GLfloat dir_x,
                   GLfloat dir_y,
                   GLfloat dir_z,
-                  GLfloat speed,
+                  GLfloat new_speed,
                   int frames);
 
     bool update() override;

@@ -20,11 +20,11 @@ public:
     PlayerHuman(GLfloat red,
                 GLfloat green,
                 GLfloat blue,
-                const std::string& tank_type,
-                const std::string& ai_type,
-                const std::string& name,
-                char team_label,
-                const std::string& player_type,
+                const std::string& new_tank_type,
+                const std::string& new_ai_type,
+                const std::string& new_name,
+                char new_team_label,
+                const std::string& new_player_type,
                 int starting_cash);
     ~PlayerHuman() override;
     void updateTank(
@@ -32,19 +32,19 @@ public:
             override;
     Tank* getCurrentTank() override;
     std::string getTankType() override;
-    void setTankType(const std::string& tank_type) override;
+    void setTankType(const std::string& new_tank_type) override;
     Item** getCurrentItems() override;
     void setItems(Item** item_set) override;
     Weapon** getCurrentWeapons() override;
     void setWeapons(Weapon** weapon_set) override;
     std::string getAiType() override;
-    void setAiType(const std::string& ai_type) override;
+    void setAiType(const std::string& new_ai_type) override;
     std::string getPlayerType() override;
-    void setPlayerType(const std::string& player_type) override;
+    void setPlayerType(const std::string& new_player_type) override;
     std::string getPlayerName() override;
-    void setPlayerName(const std::string& name) override;
+    void setPlayerName(const std::string& new_name) override;
     int getCash() override;
-    void setCash(int money) override;
+    void setCash(int cash) override;
     float getCurrentWait() override;
     void setCurrentWait(float time) override;
     GLfloat getRed() override;

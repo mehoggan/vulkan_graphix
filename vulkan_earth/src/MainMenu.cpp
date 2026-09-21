@@ -30,14 +30,14 @@ extern void playMusic(int music);
 
 MainMenu::MainMenu() = default;
 
-MainMenu::MainMenu(GLfloat width,
-                   GLfloat height,
-                   GLfloat percent_border,
-                   GlobalSettings* global_settings,
-                   PlayerFactory* player_factory,
+MainMenu::MainMenu(GLfloat new_width,
+                   GLfloat new_height,
+                   GLfloat new_percent_border,
+                   GlobalSettings* new_global_settings,
+                   PlayerFactory* new_player_factory,
                    int* game_state) {
-    this->global_settings = global_settings;
-    this->player_factory = player_factory;
+    this->global_settings = new_global_settings;
+    this->player_factory = new_player_factory;
     current_game_state = game_state;
 
     for (int x = 0; x < num_button; x++) {
@@ -55,9 +55,9 @@ MainMenu::MainMenu(GLfloat width,
     button_pressed = nullptr;
     active_sub_menu = nullptr;
     arrow_button_pressed = nullptr;
-    this->width = width;
-    this->height = height;
-    this->percent_border = percent_border;
+    this->width = new_width;
+    this->height = new_height;
+    this->percent_border = new_percent_border;
     color[0] = color[1] = color[2] = 1;
     color[3] = 1;
     pos[0] = pos[1] = pos[2] = 0;
@@ -331,7 +331,7 @@ MainMenu::MainMenu(GLfloat width,
                                 800,
                                 150,
                                 "vulkanEarthTitle.raw");
-    global_settings->setCurrentTerrain(
+    new_global_settings->setCurrentTerrain(
             (static_cast<SubMenuLandscape*>(submenus[5]))->tm);
 }
 
@@ -344,9 +344,9 @@ MainMenu::~MainMenu() {
 
 GLfloat* MainMenu::getPos() { return &(pos[0]); }
 GLfloat MainMenu::getHeight() { return this->width; }
-void MainMenu::setHeight(GLfloat height) { this->height = height; }
+void MainMenu::setHeight(GLfloat new_height) { this->height = new_height; }
 GLfloat MainMenu::getWidth() { return this->height; }
-void MainMenu::setWidth(GLfloat width) { this->width = width; }
+void MainMenu::setWidth(GLfloat new_width) { this->width = new_width; }
 GLfloat* MainMenu::getColor() { return &(color[0]); }
 SubMenu* MainMenu::getSubMenuI(int i) { return submenus[i]; }
 SubMenu* MainMenu::getActiveSubMenu() { return active_sub_menu; }

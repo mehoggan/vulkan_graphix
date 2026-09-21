@@ -11,10 +11,10 @@ class TextObject {
 public:
     TextObject();
     TextObject(const std::string& input,
-               GLfloat pos_x,
-               GLfloat pos_y,
-               GLfloat pos_z,
-               void* font_size,
+               GLfloat new_pos_x,
+               GLfloat new_pos_y,
+               GLfloat new_pos_z,
+               void* new_font_size,
                GLfloat red,
                GLfloat green,
                GLfloat blue);

@@ -70,8 +70,8 @@ public:
     /*	ACCESS TO AI TO OUTSIDE WORLD		*/
     void aiMainLogisticFunction();
     Tank* getTarget();
-    void setTarget(Tank* target);
-    void setGameState(GameState* game_state);
+    void setTarget(Tank* new_target);
+    void setGameState(GameState* new_game_state);
     void setUpYawVectors();
     void setUpPitchVectors();
     void updateBalsticMatrix();
@@ -122,7 +122,7 @@ protected:
     void pitchUp(GLfloat degrees);
     void pitchDown(GLfloat degrees);
     bool draw_debug_linesand_planes;
-    char minimumYawAngle(GLfloat degrees1, GLfloat degrees2);
+    char minimumYawAngle(GLfloat right_degrees, GLfloat left_degrees);
     Vertex previous_projectile_landing_spot;
     GLfloat distance_off_from_target;
     GLfloat previous_distance_off_from_target;

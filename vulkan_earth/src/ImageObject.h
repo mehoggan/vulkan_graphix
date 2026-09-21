@@ -9,14 +9,14 @@
 class ImageObject {
 public:
     ImageObject();
-    ImageObject(GLfloat x_pos,
-                GLfloat y_pos,
-                GLfloat z_pos,
-                GLint width,
-                GLint height,
+    ImageObject(GLfloat new_x_pos,
+                GLfloat new_y_pos,
+                GLfloat new_z_pos,
+                GLint new_width,
+                GLint new_height,
                 GLfloat border,
-                GLint iwidth,
-                GLint iheight,
+                GLint i_width,
+                GLint i_height,
                 const std::string& filename);
     ~ImageObject();
     GLfloat getXpos();

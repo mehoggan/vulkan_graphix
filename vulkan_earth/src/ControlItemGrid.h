@@ -14,18 +14,18 @@ class TextObject;
 class ControlItemGrid : public ControlItem {
 public:
     ControlItemGrid();
-    ControlItemGrid(GLfloat x_pos,
-                    GLfloat y_pos,
-                    GLfloat z_pos,
-                    GLint width,
-                    GLint height,
-                    int rows,
-                    int cols,
+    ControlItemGrid(GLfloat new_x_pos,
+                    GLfloat new_y_pos,
+                    GLfloat new_z_pos,
+                    GLint new_width,
+                    GLint new_height,
+                    int new_rows,
+                    int new_cols,
                     GLfloat active_cell_color_red,
                     GLfloat active_cell_color_green,
                     GLfloat active_cell_color_blue,
-                    bool visible_lines,
-                    bool multi_selectable);
+                    bool new_visible_lines,
+                    bool new_multi_selectable);
     ~ControlItemGrid() override;
     void draw() override;
     void mouseClickEvent(GLint x,

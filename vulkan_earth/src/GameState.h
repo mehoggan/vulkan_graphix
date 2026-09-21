@@ -55,11 +55,11 @@ enum PossibleSpecialEffects { EXPLOSION };
 class GameState {
 public:
     GameState();
-    GameState(int width,
-              int height,
-              PlayerFactory* player_factory,
-              GlobalSettings* global_settings,
-              int* current_game_state);
+    GameState(int new_width,
+              int new_height,
+              PlayerFactory* new_player_factory,
+              GlobalSettings* new_global_settings,
+              int* new_current_game_state);
     ~GameState();
     void update();
     void draw();
@@ -73,7 +73,7 @@ public:
     void debugMode();
     void drawMinimap();
     void currentPlayerFire();
-    void timerEvent(GLfloat timer);
+    void timerEvent(GLfloat new_timer);
     bool getProjectileFired();
     void destroyProjectile();
     GLfloat calcAngleBetweenVectors(Vector one, Vector two);

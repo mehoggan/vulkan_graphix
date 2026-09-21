@@ -13,16 +13,16 @@ class TextObject;
 class ControlItemSelectionBox : public ControlItem {
 public:
     ControlItemSelectionBox();
-    ControlItemSelectionBox(GLfloat x_pos,
-                            GLfloat y_pos,
-                            GLfloat z_pos,
+    ControlItemSelectionBox(GLfloat new_x_pos,
+                            GLfloat new_y_pos,
+                            GLfloat new_z_pos,
                             GLfloat red,
                             GLfloat green,
                             GLfloat blue,
-                            GLint width,
-                            GLint height,
-                            const std::string& caption,
-                            const std::string& menu_info);
+                            GLint new_width,
+                            GLint new_height,
+                            const std::string& new_caption,
+                            const std::string& menu_string);
     ~ControlItemSelectionBox() override;
     void draw() override;
     void mouseClickEvent(GLint x,

@@ -24,13 +24,16 @@ public:
      * Constructors and De-constructor
      */
     Explosion();
-    Explosion(GLfloat x, GLfloat y, GLfloat z, int weapon_radius);
+    Explosion(GLfloat new_x,
+              GLfloat new_y,
+              GLfloat new_z,
+              int new_weapon_radius);
     ~Explosion() override;
     void draw() override;
-    void setColors1(GLfloat* colors1) override;
-    void setColors2(GLfloat* colors2) override;
-    void setColors3(GLfloat* colors3) override;
-    void setColors4(GLfloat* colors4) override;
+    void setColors1(GLfloat* new_colors1) override;
+    void setColors2(GLfloat* new_colors2) override;
+    void setColors3(GLfloat* new_colors3) override;
+    void setColors4(GLfloat* new_colors4) override;
     void setDefaultColors() override;
 
 private:

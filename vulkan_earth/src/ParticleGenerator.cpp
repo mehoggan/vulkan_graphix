@@ -4,7 +4,7 @@
 
 ParticleGenerator::ParticleGenerator() = default;
 ParticleGenerator::ParticleGenerator(
-        int spawn, int rate, int speed, int life, int type) {
+        int spawn, int rate, int speed, int life, int new_type) {
     max = 1000;
     this->x = 0;
     this->y = 0;
@@ -13,14 +13,14 @@ ParticleGenerator::ParticleGenerator(
     emission_rate = rate;
     emission_speed = speed;
     emission_life = life;
-    this->type = type;
+    this->type = new_type;
     for (int i = 0; i < max; i++) particle_array[i] = nullptr;
 }
 
-void ParticleGenerator::update(GLfloat x, GLfloat y, GLfloat z) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
+void ParticleGenerator::update(GLfloat new_x, GLfloat new_y, GLfloat new_z) {
+    this->x = new_x;
+    this->y = new_y;
+    this->z = new_z;
     for (int i = 0; i < max; i++) {
         if (particle_array[i] != nullptr) {
             if (!particle_array[i]->update()) {

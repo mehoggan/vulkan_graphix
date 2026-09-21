@@ -43,18 +43,18 @@ using namespace std;
 
 GameState::GameState() = default;
 
-GameState::GameState(int width,
-                     int height,
-                     PlayerFactory* player_factory,
-                     GlobalSettings* global_settings,
-                     int* current_game_state) {
+GameState::GameState(int new_width,
+                     int new_height,
+                     PlayerFactory* new_player_factory,
+                     GlobalSettings* new_global_settings,
+                     int* new_current_game_state) {
     scale_gravity = 30;
     balistic_scalar = 50;
     gravity = -9.8 * scale_gravity;
 
     this->timer = 0;
 
-    this->current_game_state = current_game_state;
+    this->current_game_state = new_current_game_state;
     need_help = false;
     start_music_played = false;
     prev_music_volume = 0;
@@ -73,17 +73,17 @@ GameState::GameState(int width,
     weapon_slot = new ImageObject(0,
                                   0,
                                   2,
-                                  width * 0.08,
-                                  height * 0.11,
+                                  new_width * 0.08,
+                                  new_height * 0.11,
                                   0,
                                   1024,
                                   1024,
                                   "TestImage.raw");
     srand(time(nullptr));
-    this->player_factory = player_factory;
-    this->global_settings = global_settings;
-    this->width = width;
-    this->height = height;
+    this->player_factory = new_player_factory;
+    this->global_settings = new_global_settings;
+    this->width = new_width;
+    this->height = new_height;
     player_cam = false;
     chase_cam_active = false;
     projectile = nullptr;
@@ -94,24 +94,24 @@ GameState::GameState(int width,
 
     game_sub_state = PASS_TIME;
     current_player_index = 0;
-    current_player = player_factory->getPlayer(current_player_index);
+    current_player = new_player_factory->getPlayer(current_player_index);
 
     // PLACE TANKS
-    for (int i = 0; i < global_settings->getPlayerCount(); i++) {
+    for (int i = 0; i < new_global_settings->getPlayerCount(); i++) {
         float x, y, z;
         int size = static_cast<int>(
-                global_settings->getCurrentTerrain()->getActualSize());
+                new_global_settings->getCurrentTerrain()->getActualSize());
         int scale = static_cast<int>(
-                global_settings->getCurrentTerrain()->getScale());
+                new_global_settings->getCurrentTerrain()->getScale());
 
         x = 5 + rand() % ((size / scale) - 10);
         z = 5 + rand() % ((size / scale) - 10);
 
-        Normal n =
-                global_settings->getCurrentTerrain()->getTriangleNormal(x, z);
+        Normal n = new_global_settings->getCurrentTerrain()->getTriangleNormal(
+                x, z);
 
-        if (player_factory->getPlayer(i)->getCurrentTank()) {
-            player_factory->getPlayer(i)->getCurrentTank()->orientTank(&n);
+        if (new_player_factory->getPlayer(i)->getCurrentTank()) {
+            new_player_factory->getPlayer(i)->getCurrentTank()->orientTank(&n);
         } else {
             cout << "I lost a tank, HOW???" << endl;
         }
@@ -119,16 +119,16 @@ GameState::GameState(int width,
         // delete n;
 
         /*	FINALLY POSITION TANKS	*/
-        y = global_settings->getCurrentTerrain()->getHeightAt(z * scale,
-                                                              x * scale);
-        player_factory->getPlayer(i)->getCurrentTank()->setTankPos(
+        y = new_global_settings->getCurrentTerrain()->getHeightAt(z * scale,
+                                                                  x * scale);
+        new_player_factory->getPlayer(i)->getCurrentTank()->setTankPos(
                 x * scale, y, z * scale);
-        number_of_players = global_settings->getPlayerCount();
+        number_of_players = new_global_settings->getPlayerCount();
     }
 
     //*
     if (this->global_settings) {
-    } else if (!global_settings) {
+    } else if (!new_global_settings) {
         printf("Quiting because Global Settings Does Not Exist\n");
         exit(0);
     } else if (!(this->global_settings->getCurrentTerrain())) {
@@ -169,8 +169,10 @@ GameState::GameState(int width,
     sfx_random = 0;
     projectile_fired = false;
 
-    inventory = new Inventory(
-            width * 0.25, height * 0.25, width * 0.5, height * 0.5);
+    inventory = new Inventory(new_width * 0.25,
+                              new_height * 0.25,
+                              new_width * 0.5,
+                              new_height * 0.5);
 
     // Creating models for projectile.
     // IMPORTANT: Be careful about the order. It should match with the order in
@@ -230,12 +232,12 @@ GameState::GameState(int width,
     projectile_models[9]->loadTexture(
             "Projectiles/projectileNuke.raw", 512, 512);
 
-    manual = new ImageObject(width * -0.175,
-                             height * 0.25,
+    manual = new ImageObject(new_width * -0.175,
+                             new_height * 0.25,
                              2,
-                             width * 0.35,
-                             height * 0.55,
-                             width * 0.004,
+                             new_width * 0.35,
+                             new_height * 0.55,
+                             new_width * 0.004,
                              1024,
                              1024,
                              "manual.raw");
@@ -308,7 +310,7 @@ GLfloat GameState::calcDistanceBetweenVertices(Vertex* v0, Vertex* v1) {
                                          2.0)));
 }
 
-void GameState::timerEvent(GLfloat timer) {}
+void GameState::timerEvent(GLfloat new_timer) {}
 
 void GameState::normalizeVector(Vector* v) {
     GLfloat mag = sqrt(v->compo_x * v->compo_x + v->compo_y * v->compo_y +
@@ -1748,7 +1750,7 @@ void GameState::handleSpecialEffectState() {
                             int size = static_cast<int>(
                                     global_settings->getCurrentTerrain()
                                             ->getActualSize());
-                            int scale = static_cast<int>(
+                            int scale_int = static_cast<int>(
                                     global_settings->getCurrentTerrain()
                                             ->getScale());
                             GLfloat new_height =
@@ -1759,8 +1761,10 @@ void GameState::handleSpecialEffectState() {
                             Normal n =
                                     this->global_settings->getCurrentTerrain()
                                             ->getTriangleNormal(
-                                                    body_matrix[12] / scale,
-                                                    body_matrix[14] / scale);
+                                                    body_matrix[12] /
+                                                            scale_int,
+                                                    body_matrix[14] /
+                                                            scale_int);
 
                             player_factory->getPlayer(p)
                                     ->getCurrentTank()

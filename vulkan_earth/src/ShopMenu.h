@@ -26,11 +26,11 @@ const int num_sales_item = 8;
 class ShopMenu {
 public:
     ShopMenu();
-    ShopMenu(GLfloat width,
-             GLfloat height,
-             GLfloat percent_border,
-             GlobalSettings* global_settings,
-             PlayerFactory* player_factory,
+    ShopMenu(GLfloat new_width,
+             GLfloat new_height,
+             GLfloat new_percent_border,
+             GlobalSettings* new_global_settings,
+             PlayerFactory* new_player_factory,
              int* game_state);
     ~ShopMenu();
     void draw();

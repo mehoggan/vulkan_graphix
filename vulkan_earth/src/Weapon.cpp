@@ -26,7 +26,7 @@ GLfloat* Weapon::getExplosionColor2() { return explosion_color2; }
 GLfloat* Weapon::getExplosionColor3() { return explosion_color3; }
 GLfloat* Weapon::getExplosionColor4() { return explosion_color4; }
 /*SETTERS*/
-void Weapon::setScale(float scale) { this->scale = scale; }
+void Weapon::setScale(float new_scale) { this->scale = new_scale; }
 void Weapon::setRemaining(int r) { remaining = r; }
 void Weapon::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {

@@ -18,16 +18,16 @@ class SubMenuSound : public SubMenu {
 public:
     SubMenuSound();
     SubMenuSound(int id,
-                 GLfloat x_pos,
-                 GLfloat y_pos,
-                 GLfloat z_pos,
+                 GLfloat new_x_pos,
+                 GLfloat new_y_pos,
+                 GLfloat new_z_pos,
                  GLfloat red,
                  GLfloat green,
                  GLfloat blue,
-                 GLint width,
-                 GLint height,
-                 const std::string& caption,
-                 GLfloat percent_border);
+                 GLint new_width,
+                 GLint new_height,
+                 const std::string& new_caption,
+                 GLfloat new_percent_border);
     ~SubMenuSound() override;
     int getUNIQUEIDENTIFIER() override;
     void setUNIQUEIDENTIFIER(int id) override;
@@ -44,18 +44,18 @@ public:
     GLfloat getBlue() override;
     void setBlue(GLfloat blue) override;
     GLint getWidth() override;
-    void setWdith(GLint width) override;
+    void setWdith(GLint new_width) override;
     GLint getHeight() override;
-    void setHeight(GLint height) override;
+    void setHeight(GLint new_height) override;
     std::string getCaption() override;
-    void setCaption(const std::string& caption) override;
+    void setCaption(const std::string& new_caption) override;
     GLfloat getPerecentBorder() override;
     void setPercentBorder(GLfloat percent) override;
     void draw() override;
     std::string collectData() override;
     void subMenuMouseTest(int x, int y, int button_down) override;
     void updateMouse(int x, int y) override;
-    void changeVolumes(ControlItem* the_sub_menu_item);
+    void changeVolumes(ControlItem* the_sub_menu_button);
 
 private:
     int uniqueidentifier;

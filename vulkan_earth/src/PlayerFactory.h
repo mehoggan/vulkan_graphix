@@ -14,9 +14,9 @@ const int max_number_of_players = 10;
 class PlayerFactory {
 public:
     PlayerFactory();
-    PlayerFactory(GlobalSettings* game_global_settings);
+    PlayerFactory(GlobalSettings* new_game_global_settings);
     ~PlayerFactory();
-    void setNumberofPlayers(int number_of_players);
+    void setNumberofPlayers(int new_number_of_players);
     int getNumberofPlayers();
     void initializePlayerDataBase();
     void updatePlayerBasicStrings(const std::string& player_type,

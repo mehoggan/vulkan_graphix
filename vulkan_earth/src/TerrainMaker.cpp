@@ -25,21 +25,6 @@ TerrainMaker::TerrainMaker(int i_scale, int i_size) {
     tri_strip_buffer_size = (this->size - 1) * (this->size - 1) * 6;
     prepTerrain();
     initData();
-    PFNGLGENBUFFERSARBPROC pgl_gen_buffers_arb =
-            nullptr;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb =
-            nullptr;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb =
-            nullptr;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC pgl_buffer_sub_data_arb =
-            nullptr;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC pgl_delete_buffers_arb =
-            nullptr;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC pgl_get_buffer_parameteriv_arb =
-            nullptr;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb = nullptr;  // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb =
-            nullptr;  // unmap VBO procedure
 
     shader = new Shader();
     shader->init("VertexShader.vs", "FragmentShader.vs");
@@ -116,8 +101,8 @@ GLuint TerrainMaker::loadTexture(const char* filename, int width, int height) {
 }
 
 void TerrainMaker::draw() {
-    int size = this->size;
-    int scale = this->scale;
+    int draw_size = this->size;
+    int draw_scale = this->scale;
     int buffersize = tri_strip_buffer_size;
     glEnable(GL_COLOR_MATERIAL);
 
@@ -134,17 +119,20 @@ void TerrainMaker::draw() {
         for (int i = 0; i < 255; i += 4) {
             for (int j = 0; j < 255; j += 4) {
                 glBegin(GL_LINES);
-                /*glVertex3f(i*scale,th[j][i],j*scale);
-                glVertex3f(	i*scale+500*normals[(i*255+j)*6].compoX,
+                /*glVertex3f(i*draw_scale,th[j][i],j*draw_scale);
+                glVertex3f(	i*draw_scale+500*normals[(i*255+j)*6].compoX,
                             th[j][i]+500*normals[(i*255+j)*6].compoY,
-                            j*scale+500*normals[(i*255+j)*6].compoZ);*/
-                glVertex3f(i * scale, th[j][i], j * scale);
-                glVertex3f(i * scale + 500 * getNormalAt(i * scale, j * scale)
-                                                       .compo_x,
-                           th[j][i] + 500 * getNormalAt(i * scale, j * scale)
+                            j*draw_scale+500*normals[(i*255+j)*6].compoZ);*/
+                glVertex3f(i * draw_scale, th[j][i], j * draw_scale);
+                glVertex3f(i * draw_scale + 500 * getNormalAt(i * draw_scale,
+                                                              j * draw_scale)
+                                                            .compo_x,
+                           th[j][i] + 500 * getNormalAt(i * draw_scale,
+                                                        j * draw_scale)
                                                       .compo_y,
-                           j * scale + 500 * getNormalAt(i * scale, j * scale)
-                                                       .compo_z);
+                           j * draw_scale + 500 * getNormalAt(i * draw_scale,
+                                                              j * draw_scale)
+                                                            .compo_z);
                 glEnd();
             }
         }
@@ -287,20 +275,20 @@ void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
     }
 }
 
-void TerrainMaker::prepareData(int steps,
-                               int increase,
-                               float radius,
-                               int random_jump,
+void TerrainMaker::prepareData(int new_steps,
+                               int new_increase,
+                               float new_radius,
+                               int new_random_jump,
                                int smoothness) {
     int chunk_size = this->size / 2;
-    this->steps = steps;
-    this->increase = increase;
-    this->radius = radius;
-    this->random_jump = random_jump;
+    this->steps = new_steps;
+    this->increase = new_increase;
+    this->radius = new_radius;
+    this->random_jump = new_random_jump;
     int buffersize = tri_strip_buffer_size;
-    int size = this->size;
-    int scale = this->scale;
-    terrainGen(steps, increase, radius, random_jump);
+    int prep_size = this->size;
+    int prep_scale = this->scale;
+    terrainGen(new_steps, new_increase, new_radius, new_random_jump);
     for (int i = -1; i < smoothness; i++) terrainSmoothe(10);
 
     //
@@ -316,12 +304,12 @@ void TerrainMaker::prepareData(int steps,
     int index = 0;
     int index_normals = 0;
     int index_texture = 0;
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - 1; j++) {
+    for (int i = 0; i < prep_size - 1; i++) {
+        for (int j = 0; j < prep_size - 1; j++) {
             /************************************************************/
             /*	V_I -- N_I												*/
             /************************************************************/
-            Vertex v_i(j * scale, th[i][j] /*SCALE*/, i * scale);
+            Vertex v_i(j * prep_scale, th[i][j] /*SCALE*/, i * prep_scale);
             this->vertices[index++] = v_i;
             TexCoord t_i((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
@@ -340,7 +328,9 @@ void TerrainMaker::prepareData(int steps,
             /************************************************************/
             /*	V_J -- N_J												*/
             /************************************************************/
-            Vertex v_j(j * scale, th[i + 1][j] /*SCALE*/, (i + 1) * scale);
+            Vertex v_j(j * prep_scale,
+                       th[i + 1][j] /*SCALE*/,
+                       (i + 1) * prep_scale);
             this->vertices[index++] = v_j;
             TexCoord t_j((static_cast<float>(i % (chunk_size - 1)) + 1) /
                                  static_cast<float>(chunk_size - 1),
@@ -348,9 +338,9 @@ void TerrainMaker::prepareData(int steps,
                                  static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_j;
             Normal n_j(0, 0, 0);
-            if (i == size - 2 && j == 0) {
+            if (i == prep_size - 2 && j == 0) {
             } else if (j == 0) {
-            } else if (i == size - 2) {
+            } else if (i == prep_size - 2) {
             } else {
                 smoothShadeNormal(j, i + 1, &n_j);
             }
@@ -359,7 +349,9 @@ void TerrainMaker::prepareData(int steps,
             /************************************************************/
             /*	V_K -- N_K												*/
             /************************************************************/
-            Vertex v_k((j + 1) * scale, th[i][j + 1] /*SCALE*/, (i)*scale);
+            Vertex v_k((j + 1) * prep_scale,
+                       th[i][j + 1] /*SCALE*/,
+                       (i)*prep_scale);
             this->vertices[index++] = v_k;
             TexCoord t_k((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
@@ -367,9 +359,9 @@ void TerrainMaker::prepareData(int steps,
                                  static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_k;
             Normal n_k(0, 0, 0);
-            if (i == 0 && j == size - 2) {
+            if (i == 0 && j == prep_size - 2) {
             } else if (i == 0) {
-            } else if (j == size - 2) {
+            } else if (j == prep_size - 2) {
             } else {
                 smoothShadeNormal(j + 1, i, &n_k);
             }
@@ -378,7 +370,9 @@ void TerrainMaker::prepareData(int steps,
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)							*/
             /************************************************************/
-            Vertex v_x(j * scale, th[i + 1][j] /*SCALE*/, (i + 1) * scale);
+            Vertex v_x(j * prep_scale,
+                       th[i + 1][j] /*SCALE*/,
+                       (i + 1) * prep_scale);
             this->vertices[index++] = v_x;
             TexCoord t_x((static_cast<float>(i % (chunk_size - 1)) + 1) /
                                  static_cast<float>(chunk_size - 1),
@@ -386,9 +380,9 @@ void TerrainMaker::prepareData(int steps,
                                  static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_x;
             Normal n_x(0, 0, 0);
-            if (i == size - 2 && j == 0) {
+            if (i == prep_size - 2 && j == 0) {
             } else if (j == 0) {
-            } else if (i == size - 2) {
+            } else if (i == prep_size - 2) {
             } else {
                 smoothShadeNormal(j, i + 1, &n_x);
             }
@@ -397,9 +391,9 @@ void TerrainMaker::prepareData(int steps,
             /************************************************************/
             /*	V_Y -- N_Y												*/
             /************************************************************/
-            Vertex v_y((j + 1) * scale,
+            Vertex v_y((j + 1) * prep_scale,
                        th[i + 1][j + 1] /*SCALE*/,
-                       (i + 1) * scale);
+                       (i + 1) * prep_scale);
             this->vertices[index++] = v_y;
             TexCoord t_y((static_cast<float>(i % (chunk_size - 1)) + 1) /
                                  static_cast<float>(chunk_size - 1),
@@ -407,9 +401,9 @@ void TerrainMaker::prepareData(int steps,
                                  static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_y;
             Normal n_y(0, 0, 0);
-            if (i == size - 2 && j == size - 2) {
-            } else if (i == size - 2) {
-            } else if (j == size - 2) {
+            if (i == prep_size - 2 && j == prep_size - 2) {
+            } else if (i == prep_size - 2) {
+            } else if (j == prep_size - 2) {
             } else {
                 smoothShadeNormal(j + 1, i + 1, &n_y);
             }
@@ -418,7 +412,9 @@ void TerrainMaker::prepareData(int steps,
             /************************************************************/
             /*	V_Z -- N_Z												*/
             /************************************************************/
-            Vertex v_z((j + 1) * scale, th[i][j + 1] /*SCALE*/, (i)*scale);
+            Vertex v_z((j + 1) * prep_scale,
+                       th[i][j + 1] /*SCALE*/,
+                       (i)*prep_scale);
             this->vertices[index++] = v_z;
             TexCoord t_z((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
@@ -426,9 +422,9 @@ void TerrainMaker::prepareData(int steps,
                                  static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_z;
             Normal n_z(0, 0, 0);
-            if (i == 0 && j == size - 2) {
+            if (i == 0 && j == prep_size - 2) {
             } else if (i == 0) {
-            } else if (j == size - 2) {
+            } else if (j == prep_size - 2) {
             } else {
                 smoothShadeNormal(j + 1, i, &n_z);
             }
@@ -524,10 +520,10 @@ void TerrainMaker::prepTerrain() {
     }
 }
 
-void TerrainMaker::terrainGen(int steps,
-                              int increase,
-                              float radius,
-                              int random_jump) {
+void TerrainMaker::terrainGen(int new_steps,
+                              int new_increase,
+                              float new_radius,
+                              int new_random_jump) {
     float current_x = this->size / 2;
     float current_y = this->size / 2;
     float distance = 0;
@@ -538,10 +534,10 @@ void TerrainMaker::terrainGen(int steps,
         }
     }
 
-    for (int current_step = 1; current_step < steps; current_step++) {
+    for (int current_step = 1; current_step < new_steps; current_step++) {
         int random = (rand() % 100);
 
-        if (random > random_jump) {
+        if (random > new_random_jump) {
             switch ((rand() % 4)) {
                 case 0:
                     current_x--;
@@ -566,14 +562,15 @@ void TerrainMaker::terrainGen(int steps,
             current_y = (rand() % this->size);
         }
 
-        for (int x = current_x - radius; x < current_x + radius; x++)
-            for (int y = current_y - radius; y < current_y + radius; y++) {
+        for (int x = current_x - new_radius; x < current_x + new_radius; x++)
+            for (int y = current_y - new_radius; y < current_y + new_radius;
+                 y++) {
                 distance = static_cast<float>(
                         sqrt(pow(static_cast<double>(current_x - x), 2) +
                              pow(static_cast<double>(current_y) - y, 2)));
-                if ((distance < radius) &&
+                if ((distance < new_radius) &&
                     ((x >= 0 && x < this->size) && (y >= 0 && y < this->size)))
-                    th[x][y] += increase;
+                    th[x][y] += new_increase;
             }
     }
 }
@@ -677,19 +674,19 @@ void TerrainMaker::terrainSmoothe(int box_width) {
     //*/
 }
 
-void TerrainMaker::terrainSlope(int vertices) {
+void TerrainMaker::terrainSlope(int new_vertices) {
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
-            if (i < vertices) {
-                th[i][j] -= (vertices - i) * this->scale;
-            } else if (i > this->size - vertices) {
-                th[i][j] -= (vertices - (this->size - i)) * this->scale;
+            if (i < new_vertices) {
+                th[i][j] -= (new_vertices - i) * this->scale;
+            } else if (i > this->size - new_vertices) {
+                th[i][j] -= (new_vertices - (this->size - i)) * this->scale;
             }
-            if (j < vertices) {
-                th[i][j] -= (vertices - j) * this->scale;
+            if (j < new_vertices) {
+                th[i][j] -= (new_vertices - j) * this->scale;
 
-            } else if (j > this->size - vertices) {
-                th[i][j] -= (vertices - (this->size - j)) * this->scale;
+            } else if (j > this->size - new_vertices) {
+                th[i][j] -= (new_vertices - (this->size - j)) * this->scale;
             }
         }
     }
@@ -849,13 +846,13 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
                 if ((((i >= 0) && (j >= 0)) &&
                      ((i < this->size) && (j < this->size))) &&
                     (distance <= blast_size)) {
-                    GLfloat x_dis, y_dis, z_dis, radius;
+                    GLfloat x_dis, y_dis, z_dis, dist_radius;
                     x_dis = abs(i - x);
                     z_dis = abs(j - z);
-                    radius = sqrt(x_dis * x_dis + z_dis * z_dis);
+                    dist_radius = sqrt(x_dis * x_dis + z_dis * z_dis);
 
                     GLfloat damage_depth =
-                            -((sqrt(radius * radius + x_dis * x_dis +
+                            -((sqrt(dist_radius * dist_radius + x_dis * x_dis +
                                     z_dis * z_dis) -
                                blast_size * 2) *
                               this->scale / 2);

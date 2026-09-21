@@ -41,11 +41,11 @@ PlayerCPU::PlayerCPU(GLfloat red, GLfloat green, GLfloat blue) {
 PlayerCPU::PlayerCPU(GLfloat red,
                      GLfloat green,
                      GLfloat blue,
-                     const std::string& tank_type,
-                     const std::string& ai_type,
-                     const std::string& name,
-                     char team_label,
-                     const std::string& player_type,
+                     const std::string& new_tank_type,
+                     const std::string& new_ai_type,
+                     const std::string& new_name,
+                     char new_team_label,
+                     const std::string& new_player_type,
                      int starting_cash) {
     color[0] = red;
     color[1] = green;
@@ -54,7 +54,7 @@ PlayerCPU::PlayerCPU(GLfloat red,
 
     current_cash = starting_cash;
     current_wait = 0;
-    this->team_label = team_label;
+    this->team_label = new_team_label;
 
     for (int i = 0; i < player_max_items; i++) {
         current_items[i] = nullptr;
@@ -64,10 +64,10 @@ PlayerCPU::PlayerCPU(GLfloat red,
     }
     loaded_weapon = nullptr;
 
-    this->ai_type = ai_type;
-    this->player_type = player_type;
-    this->name = name;
-    this->tank_type = tank_type;
+    this->ai_type = new_ai_type;
+    this->player_type = new_player_type;
+    this->name = new_name;
+    this->tank_type = new_tank_type;
     if (this->tank_type == "Rhinoxx")
         current_tank = new TankA(0, 0, 0);
     else if (this->tank_type == "Hellfire")
@@ -106,12 +106,12 @@ std::string PlayerCPU::getTankType() { return this->tank_type; }
 Item** PlayerCPU::getCurrentItems() { return current_items; }
 Weapon** PlayerCPU::getCurrentWeapons() { return current_weapons; }
 std::string PlayerCPU::getAiType() { return this->ai_type; }
-void PlayerCPU::setAiType(const std::string& ai_type) {
-    this->ai_type = ai_type;
+void PlayerCPU::setAiType(const std::string& new_ai_type) {
+    this->ai_type = new_ai_type;
 }
 std::string PlayerCPU::getPlayerType() { return this->player_type; }
-void PlayerCPU::setPlayerType(const std::string& player_type) {
-    this->player_type = player_type;
+void PlayerCPU::setPlayerType(const std::string& new_player_type) {
+    this->player_type = new_player_type;
 }
 GLfloat PlayerCPU::getRed() { return color[0]; }
 GLfloat PlayerCPU::getGreen() { return color[1]; }
@@ -125,8 +125,9 @@ char PlayerCPU::getTeamLabel() { return this->team_label; }
 void PlayerCPU::setTeamLabel(char t) { this->team_label = t; }
 Weapon* PlayerCPU::getLoadedWeapon() { return loaded_weapon; }
 void PlayerCPU::setLoadedWeapon(Weapon* wpn) { loaded_weapon = wpn; }
-void PlayerCPU::setPlayerName(const std::string& name) {
-    printf("\nYou're trying to set a name for CPU. It won't happen, sorry.\n");
+void PlayerCPU::setPlayerName(const std::string& new_name) {
+    printf("\nYou're trying to set a new_name for CPU. It won't happen, "
+           "sorry.\n");
     this->name = "CPU";
 }
 void PlayerCPU::setWeapons(Weapon** weapon_set) {
@@ -139,8 +140,8 @@ void PlayerCPU::setItems(Item** item_set) {
         current_items[i] = item_set[i];
     }
 }
-void PlayerCPU::setTankType(const std::string& tank_type) {
-    this->tank_type = tank_type;
+void PlayerCPU::setTankType(const std::string& new_tank_type) {
+    this->tank_type = new_tank_type;
     if (current_tank != nullptr) delete current_tank;
     if (this->tank_type == "Rhinoxx")
         current_tank = new TankA(0, 0, 0);

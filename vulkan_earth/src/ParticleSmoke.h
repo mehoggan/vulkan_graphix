@@ -12,13 +12,13 @@
 class ParticleSmoke : public Particle {
 public:
     ParticleSmoke();
-    ParticleSmoke(GLfloat x,
-                  GLfloat y,
-                  GLfloat z,
+    ParticleSmoke(GLfloat new_x,
+                  GLfloat new_y,
+                  GLfloat new_z,
                   GLfloat dir_x,
                   GLfloat dir_y,
                   GLfloat dir_z,
-                  GLfloat speed,
+                  GLfloat new_speed,
                   int frames);
 
     bool update() override;

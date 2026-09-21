@@ -9,44 +9,44 @@
 extern void playSFX(int sfx);
 
 ControlItemGrid::ControlItemGrid() = default;
-ControlItemGrid::ControlItemGrid(GLfloat x_pos,
-                                 GLfloat y_pos,
-                                 GLfloat z_pos,
-                                 GLint width,
-                                 GLint height,
-                                 int rows,
-                                 int cols,
+ControlItemGrid::ControlItemGrid(GLfloat new_x_pos,
+                                 GLfloat new_y_pos,
+                                 GLfloat new_z_pos,
+                                 GLint new_width,
+                                 GLint new_height,
+                                 int new_rows,
+                                 int new_cols,
                                  GLfloat active_cell_color_red,
                                  GLfloat active_cell_color_green,
                                  GLfloat active_cell_color_blue,
-                                 bool visible_lines,
-                                 bool multi_selectable) {
-    this->x_pos = x_pos;
-    this->y_pos = y_pos;
-    this->z_pos = z_pos;
-    this->width = width;
-    this->height = height;
-    this->rows = rows;
-    this->cols = cols;
-    cell_width = width / (cols * 1.0);
-    cell_height = height / (rows * 1.0);
+                                 bool new_visible_lines,
+                                 bool new_multi_selectable) {
+    this->x_pos = new_x_pos;
+    this->y_pos = new_y_pos;
+    this->z_pos = new_z_pos;
+    this->width = new_width;
+    this->height = new_height;
+    this->rows = new_rows;
+    this->cols = new_cols;
+    cell_width = new_width / (new_cols * 1.0);
+    cell_height = new_height / (new_rows * 1.0);
     active_cell_color[0] = active_cell_color_red;
     active_cell_color[1] = active_cell_color_green;
     active_cell_color[2] = active_cell_color_blue;
     active_cell_color[3] = 1;
-    this->visible_lines = visible_lines;
-    this->multi_selectable = multi_selectable;
+    this->visible_lines = new_visible_lines;
+    this->multi_selectable = new_multi_selectable;
 
-    selected_cells = new bool[rows * cols];
-    buttons = new ControlItemButton*[rows * cols];
+    selected_cells = new bool[new_rows * new_cols];
+    buttons = new ControlItemButton*[new_rows * new_cols];
 
-    for (int i = 0; i < rows * cols; i++) selected_cells[i] = false;
+    for (int i = 0; i < new_rows * new_cols; i++) selected_cells[i] = false;
 
     // create buttons and place them in the grid in the order:(0,0), (0,1),
     // (0,2), .....
     int button_i = 0;
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < cols; c++) {
+    for (int r = 0; r < new_rows; r++) {
+        for (int c = 0; c < new_cols; c++) {
             buttons[button_i] =
                     new ControlItemButton(nullptr,
                                           this->x_pos + cell_width * c,

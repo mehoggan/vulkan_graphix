@@ -40,11 +40,11 @@ PlayerHuman::PlayerHuman(GLfloat red, GLfloat green, GLfloat blue) {
 PlayerHuman::PlayerHuman(GLfloat red,
                          GLfloat green,
                          GLfloat blue,
-                         const std::string& tank_type,
-                         const std::string& ai_type,
-                         const std::string& name,
-                         char team_label,
-                         const std::string& player_type,
+                         const std::string& new_tank_type,
+                         const std::string& new_ai_type,
+                         const std::string& new_name,
+                         char new_team_label,
+                         const std::string& new_player_type,
                          int starting_cash) {
     color[0] = red;
     color[1] = green;
@@ -53,7 +53,7 @@ PlayerHuman::PlayerHuman(GLfloat red,
 
     current_cash = starting_cash;
     current_wait = 0;
-    this->team_label = team_label;
+    this->team_label = new_team_label;
 
     for (int i = 0; i < player_max_items; i++) {
         current_items[i] = nullptr;
@@ -63,10 +63,10 @@ PlayerHuman::PlayerHuman(GLfloat red,
     }
     loaded_weapon = nullptr;
 
-    this->ai_type = ai_type;
-    this->player_type = player_type;
-    this->name = name;
-    this->tank_type = tank_type;
+    this->ai_type = new_ai_type;
+    this->player_type = new_player_type;
+    this->name = new_name;
+    this->tank_type = new_tank_type;
     if (this->tank_type == "Rhinoxx")
         current_tank = new TankA(0, 0, 0);
     else if (this->tank_type == "Hellfire")
@@ -115,15 +115,17 @@ std::string PlayerHuman::getTankType() { return this->tank_type; }
 Item** PlayerHuman::getCurrentItems() { return current_items; }
 Weapon** PlayerHuman::getCurrentWeapons() { return current_weapons; }
 std::string PlayerHuman::getAiType() { return this->ai_type; }
-void PlayerHuman::setAiType(const std::string& ai_type) {
-    this->ai_type = ai_type;
+void PlayerHuman::setAiType(const std::string& new_ai_type) {
+    this->ai_type = new_ai_type;
 }
 std::string PlayerHuman::getPlayerType() { return this->player_type; }
-void PlayerHuman::setPlayerType(const std::string& player_type) {
-    this->player_type = player_type;
+void PlayerHuman::setPlayerType(const std::string& new_player_type) {
+    this->player_type = new_player_type;
 }
 std::string PlayerHuman::getPlayerName() { return this->name; }
-void PlayerHuman::setPlayerName(const std::string& name) { this->name = name; }
+void PlayerHuman::setPlayerName(const std::string& new_name) {
+    this->name = new_name;
+}
 int PlayerHuman::getCash() { return current_cash; }
 void PlayerHuman::setCash(int cash) { current_cash = cash; }
 GLfloat PlayerHuman::getRed() { return color[0]; }
@@ -141,8 +143,8 @@ void PlayerHuman::setItems(Item** item_set) {
         current_items[i] = item_set[i];
     }
 }
-void PlayerHuman::setTankType(const std::string& tank_type) {
-    this->tank_type = tank_type;
+void PlayerHuman::setTankType(const std::string& new_tank_type) {
+    this->tank_type = new_tank_type;
     delete current_tank;
     if (this->tank_type == "Rhinoxx")
         current_tank = new TankA(0, 0, 0);

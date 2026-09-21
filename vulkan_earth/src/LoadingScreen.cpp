@@ -6,8 +6,8 @@ LoadingScreen::LoadingScreen() = default;
 LoadingScreen::LoadingScreen(GLfloat x,
                              GLfloat y,
                              GLfloat z,
-                             GLint width,
-                             GLint height,
+                             GLint new_width,
+                             GLint new_height,
                              GLfloat red,
                              GLfloat green,
                              GLfloat blue,
@@ -15,18 +15,18 @@ LoadingScreen::LoadingScreen(GLfloat x,
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
-    this->width = width;
-    this->height = height;
+    this->width = new_width;
+    this->height = new_height;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = alpha;
-    image = new ImageObject(pos[0] + (width * 0.03),
-                            pos[1] - (height * 0.03),
+    image = new ImageObject(pos[0] + (new_width * 0.03),
+                            pos[1] - (new_height * 0.03),
                             pos[2] + 2,
-                            width * 0.94,
-                            height * 0.94,
-                            .006 * width,
+                            new_width * 0.94,
+                            new_height * 0.94,
+                            .006 * new_width,
                             1024,
                             1024,
                             "loading_screen.raw");

@@ -13,7 +13,7 @@ Player::Player() {
     state_of_ai = NEED_NEW_TARGET;
     prev_state_of_ai = NEED_NEW_TARGET;
     sub_state_of_ai = NOTHING;
-    bool draw_debug_linesand_planes = false;
+    draw_debug_linesand_planes = false;
     max_pitch_angle = 89.0f;
     previous_distance_off_from_target = 0;
     degrees_rotated = 0;
@@ -23,13 +23,13 @@ Player::Player() {
 
 Player::~Player() = default;
 
-void Player::setTarget(Tank* target) {
-    this->target = target;
+void Player::setTarget(Tank* new_target) {
+    this->target = new_target;
     updateBalsticMatrix();
 }
 
-void Player::setGameState(GameState* game_state) {
-    this->game_state = game_state;
+void Player::setGameState(GameState* new_game_state) {
+    this->game_state = new_game_state;
 }
 Tank* Player::getTarget() { return this->target; }
 Vertex Player::getEnemyPosition() { return enemy_position; }
@@ -263,7 +263,7 @@ void Player::setUpYawVectors() {
 
     // Get Vertices
     Vertex my_position(matrix[12], matrix[13], matrix[14]);
-    Vertex enemy_position(v.coord_x, v.coord_y, v.coord_z);
+    Vertex enemy_vertex(v.coord_x, v.coord_y, v.coord_z);
     Vertex projectile_endmark((matrix[12] - 10000 * matrix[8]),
                               (matrix[13]),
                               (matrix[14] - 10000 * matrix[10]));
@@ -289,9 +289,9 @@ void Player::setUpYawVectors() {
     ortho_right.compo_y = (right_ortho.coord_y - my_position.coord_y);
     ortho_right.compo_z = (right_ortho.coord_z - my_position.coord_z);
 
-    enemy_path.compo_x = (enemy_position.coord_x - my_position.coord_x);
+    enemy_path.compo_x = (enemy_vertex.coord_x - my_position.coord_x);
     enemy_path.compo_y = (my_position.coord_y - my_position.coord_y);
-    enemy_path.compo_z = (enemy_position.coord_z - my_position.coord_z);
+    enemy_path.compo_z = (enemy_vertex.coord_z - my_position.coord_z);
 
     projectile_path.compo_x =
             (projectile_endmark.coord_x - my_position.coord_x);
@@ -540,11 +540,11 @@ void Player::drawTestLinesandPlanes() {
         glColor3f(MediumGoldenrod);
         Vertex o3(
                 balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-        Vertex f3(o3.coord_x - 100000 * balistic_matrix[8],
-                  o3.coord_y,
-                  o3.coord_z - 100000 * balistic_matrix[10]);
+        Vertex path_end(o3.coord_x - 100000 * balistic_matrix[8],
+                        o3.coord_y,
+                        o3.coord_z - 100000 * balistic_matrix[10]);
         glVertex3f(o3.coord_x, o3.coord_y, o3.coord_z);
-        glVertex3f(f3.coord_x, f3.coord_y, f3.coord_z);
+        glVertex3f(path_end.coord_x, path_end.coord_y, path_end.coord_z);
         glEnd();
         /*	END	PROJECTILE PATH		*/
 

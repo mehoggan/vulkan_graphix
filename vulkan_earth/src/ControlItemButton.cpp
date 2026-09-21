@@ -17,28 +17,28 @@ extern void playSFX(int sfx);
 
 ControlItemButton::ControlItemButton() = default;
 
-ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
-                                     GLfloat x_pos,
-                                     GLfloat y_pos,
-                                     GLfloat z_pos,
+ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
+                                     GLfloat new_x_pos,
+                                     GLfloat new_y_pos,
+                                     GLfloat new_z_pos,
                                      GLfloat red,
                                      GLfloat green,
                                      GLfloat blue,
-                                     GLint width,
-                                     GLint height,
-                                     const std::string& caption) {
-    this->parent = parent;
+                                     GLint new_width,
+                                     GLint new_height,
+                                     const std::string& new_caption) {
+    this->parent = new_parent;
 
-    this->x_pos = x_pos;
-    this->y_pos = y_pos;
-    this->z_pos = z_pos;
+    this->x_pos = new_x_pos;
+    this->y_pos = new_y_pos;
+    this->z_pos = new_z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = width;
-    this->height = height;
-    this->caption = caption;
+    this->width = new_width;
+    this->height = new_height;
+    this->caption = new_caption;
 
     toggled = false;
     button_state = 0;

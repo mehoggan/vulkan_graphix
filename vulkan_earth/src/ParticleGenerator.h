@@ -15,9 +15,9 @@
 class ParticleGenerator {
 public:
     ParticleGenerator();
-    ParticleGenerator(int spawn, int rate, int speed, int life, int type);
+    ParticleGenerator(int spawn, int rate, int speed, int life, int new_type);
 
-    void update(GLfloat x, GLfloat y, GLfloat z);
+    void update(GLfloat new_x, GLfloat new_y, GLfloat new_z);
     void draw();
     void addParticles();
     void killGenerator();

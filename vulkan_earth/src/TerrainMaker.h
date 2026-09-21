@@ -19,17 +19,20 @@ public:
     ~TerrainMaker();
     void draw();
     void initData();
-    void prepareData(int steps,
-                     int increase,
-                     float radius,
-                     int random_jump,
+    void prepareData(int new_steps,
+                     int new_increase,
+                     float new_radius,
+                     int new_random_jump,
                      int smoothness);
     void smoothShadeNormal(int x, int z, Normal* n);
     void calcNormal(int x, int z, int flag, Normal* n);
     void verifyVBOs();
     void prepTerrain();
-    void terrainSlope(int vertices);
-    void terrainGen(int steps, int increase, float radius, int random_jump);
+    void terrainSlope(int new_vertices);
+    void terrainGen(int new_steps,
+                    int new_increase,
+                    float new_radius,
+                    int new_random_jump);
     void terrainSqDi(
             int left, int right, int top, int bottom, int seed, int subtract);
     void terrainSmoothe(int box_width);

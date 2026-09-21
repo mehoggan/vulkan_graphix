@@ -7,10 +7,10 @@ Vector::Vector() {
     this->compo_z = 0.0f;
 }
 
-Vector::Vector(GLfloat compo_x, GLfloat compo_y, GLfloat compo_z) {
-    this->compo_x = compo_x;
-    this->compo_y = compo_y;
-    this->compo_z = compo_z;
+Vector::Vector(GLfloat new_compo_x, GLfloat new_compo_y, GLfloat new_compo_z) {
+    this->compo_x = new_compo_x;
+    this->compo_y = new_compo_y;
+    this->compo_z = new_compo_z;
 }
 
 Vector::~Vector() = default;

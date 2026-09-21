@@ -12,14 +12,14 @@ class TextObject;
 class ControlItemTextField : public ControlItem {
 public:
     ControlItemTextField();
-    ControlItemTextField(GLfloat x_pos,
-                         GLfloat y_pos,
-                         GLfloat z_pos,
+    ControlItemTextField(GLfloat new_x_pos,
+                         GLfloat new_y_pos,
+                         GLfloat new_z_pos,
                          GLfloat red,
                          GLfloat green,
                          GLfloat blue,
-                         GLint width,
-                         GLint height);
+                         GLint new_width,
+                         GLint new_height);
     ~ControlItemTextField() override;
     void draw() override;
     void mouseClickEvent(GLint x,

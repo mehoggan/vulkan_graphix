@@ -13,28 +13,28 @@ using namespace std;
 SubMenuPhysics::SubMenuPhysics() = default;
 
 SubMenuPhysics::SubMenuPhysics(int id,
-                               GLfloat x_pos,
-                               GLfloat y_pos,
-                               GLfloat z_pos,
+                               GLfloat new_x_pos,
+                               GLfloat new_y_pos,
+                               GLfloat new_z_pos,
                                GLfloat red,
                                GLfloat green,
                                GLfloat blue,
-                               GLint width,
-                               GLint height,
-                               const std::string& caption,
-                               GLfloat percent_border) {
+                               GLint new_width,
+                               GLint new_height,
+                               const std::string& new_caption,
+                               GLfloat new_percent_border) {
     uniqueidentifier = id;
-    this->x_pos = x_pos;
-    this->y_pos = y_pos;
-    this->z_pos = z_pos;
-    this->percent_border = percent_border;
+    this->x_pos = new_x_pos;
+    this->y_pos = new_y_pos;
+    this->z_pos = new_z_pos;
+    this->percent_border = new_percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = width;
-    this->height = height;
-    this->caption = caption;
+    this->width = new_width;
+    this->height = new_height;
+    this->caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
@@ -109,12 +109,12 @@ void SubMenuPhysics::setGreen(GLfloat green) { color[1] = green; }
 GLfloat SubMenuPhysics::getBlue() { return color[2]; }
 void SubMenuPhysics::setBlue(GLfloat blue) { color[2] = blue; }
 GLint SubMenuPhysics::getWidth() { return this->width; }
-void SubMenuPhysics::setWdith(GLint width) { this->width = width; }
+void SubMenuPhysics::setWdith(GLint new_width) { this->width = new_width; }
 GLint SubMenuPhysics::getHeight() { return this->height; }
-void SubMenuPhysics::setHeight(GLint height) { this->height = height; }
+void SubMenuPhysics::setHeight(GLint new_height) { this->height = new_height; }
 std::string SubMenuPhysics::getCaption() { return this->caption; }
-void SubMenuPhysics::setCaption(const std::string& caption) {
-    this->caption = caption;
+void SubMenuPhysics::setCaption(const std::string& new_caption) {
+    this->caption = new_caption;
 }
 GLfloat SubMenuPhysics::getPerecentBorder() { return this->percent_border; }
 void SubMenuPhysics::setPercentBorder(GLfloat percent) {

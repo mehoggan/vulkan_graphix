@@ -17,10 +17,10 @@ class GameState;
 class Projectile {
 public:
     Projectile();
-    Projectile(GameState* parent,
+    Projectile(GameState* new_parent,
                GLfloat* turret_matrix,
-               GLfloat speed,
-               VBOShaderLibrary** projectile_models);
+               GLfloat new_speed,
+               VBOShaderLibrary** new_projectile_models);
     ~Projectile();
     void draw();
     // void update(GLfloat gravity);

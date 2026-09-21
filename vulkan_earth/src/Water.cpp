@@ -16,31 +16,16 @@ using namespace std;
 
 Water::Water() = default;
 
-Water::Water(int scale, int size) {
+Water::Water(int new_scale, int new_size) {
     srand(time(nullptr));
     vbo_qualify = nullptr;
     verifyVBOs();
     timer = 0.0;
-    this->scale = scale;
-    this->size = size;
+    this->scale = new_scale;
+    this->size = new_size;
     total_vertices = this->size * this->size;
     tri_strip_buffer_size = (this->size - 1) * (this->size - 1) * 6;
     initData();
-    PFNGLGENBUFFERSARBPROC pgl_gen_buffers_arb =
-            nullptr;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb =
-            nullptr;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb =
-            nullptr;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC pgl_buffer_sub_data_arb =
-            nullptr;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC pgl_delete_buffers_arb =
-            nullptr;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC pgl_get_buffer_parameteriv_arb =
-            nullptr;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb = nullptr;  // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb =
-            nullptr;  // unmap VBO procedure
     prepTerrain();
     shader = new Shader();
     shader->init("VertexWater.vs", "FragmentWater.vs");
@@ -102,8 +87,8 @@ GLuint Water::loadTexture(const char* filename, int width, int height) {
 }
 
 void Water::draw() {
-    int size = this->size;
-    int scale = this->scale;
+    int draw_size = this->size;
+    int draw_scale = this->scale;
     int buffersize = tri_strip_buffer_size;
 
     shader->bind();
@@ -294,8 +279,8 @@ void Water::prepTerrain() {
 
 void Water::prepareData() {
     int buffersize = tri_strip_buffer_size;
-    int size = this->size;
-    int scale = this->scale;
+    int prep_size = this->size;
+    int prep_scale = this->scale;
 
     //
     // 				v_k
@@ -310,15 +295,17 @@ void Water::prepareData() {
     int index = 0;
     int index_normals = 0;
     int index_texture = 0;
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - 1; j++) {
+    for (int i = 0; i < prep_size - 1; i++) {
+        for (int j = 0; j < prep_size - 1; j++) {
             /************************************************************/
             /*	V_I -- N_I		                            */
             /************************************************************/
-            Vertex v_i(j * scale, surfaceheight[i][j] /*SCALE*/, i * scale);
+            Vertex v_i(j * prep_scale,
+                       surfaceheight[i][j] /*SCALE*/,
+                       i * prep_scale);
             vertices[index++] = v_i;
-            TexCoord t_i(i / (static_cast<float>(size) - 1),
-                         (j) / (static_cast<float>(size) - 1));
+            TexCoord t_i(i / (static_cast<float>(prep_size) - 1),
+                         (j) / (static_cast<float>(prep_size) - 1));
             tex_coord[index_texture++] = t_i;
             Normal n_i(0, 0, 0);
             if (i == 0 && j == 0) {
@@ -410,15 +397,15 @@ void Water::prepareData() {
             /************************************************************/
             /*	V_J -- N_J		                 	    */
             /************************************************************/
-            Vertex v_j(j * scale,
+            Vertex v_j(j * prep_scale,
                        surfaceheight[i + 1][j] /*SCALE*/,
-                       (i + 1) * scale);
+                       (i + 1) * prep_scale);
             vertices[index++] = v_j;
-            TexCoord t_j((i + 1) / (static_cast<float>(size) - 1),
-                         (j) / (static_cast<float>(size) - 1));
+            TexCoord t_j((i + 1) / (static_cast<float>(prep_size) - 1),
+                         (j) / (static_cast<float>(prep_size) - 1));
             tex_coord[index_texture++] = t_j;
             Normal n_j(0, 0, 0);
-            if (i == size - 2 && j == 0) {
+            if (i == prep_size - 2 && j == 0) {
                 calcAverageofSixNormals(&v_j,
                                         static_cast<GLfloat>(j + 1),
                                         surfaceheight[i][j + 1],
@@ -460,7 +447,7 @@ void Water::prepareData() {
                                         surfaceheight[i + 1][j + 1],
                                         static_cast<GLfloat>(i + 1),
                                         &n_j);
-            } else if (i == size - 2) {
+            } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_j,
                                         static_cast<GLfloat>(j) + 1,
                                         surfaceheight[i][j + 1],
@@ -507,15 +494,15 @@ void Water::prepareData() {
             /************************************************************/
             /*	V_K -- N_K					    */
             /************************************************************/
-            Vertex v_k((j + 1) * scale,
+            Vertex v_k((j + 1) * prep_scale,
                        surfaceheight[i][j + 1] /*SCALE*/,
-                       (i)*scale);
+                       (i)*prep_scale);
             vertices[index++] = v_k;
-            TexCoord t_k(i / (static_cast<float>(size) - 1),
-                         (j + 1) / (static_cast<float>(size) - 1));
+            TexCoord t_k(i / (static_cast<float>(prep_size) - 1),
+                         (j + 1) / (static_cast<float>(prep_size) - 1));
             tex_coord[index_texture++] = t_k;
             Normal n_k(0, 0, 0);
-            if (i == 0 && j == size - 2) {
+            if (i == 0 && j == prep_size - 2) {
                 calcAverageofSixNormals(&v_k,
                                         v_k.coord_x,
                                         v_k.coord_y,
@@ -557,7 +544,7 @@ void Water::prepareData() {
                                         surfaceheight[i][j + 2],
                                         static_cast<GLfloat>(i),
                                         &n_k);
-            } else if (j == size - 2) {
+            } else if (j == prep_size - 2) {
                 calcAverageofSixNormals(&v_k,
                                         v_i.coord_x,
                                         v_i.coord_y,
@@ -604,15 +591,15 @@ void Water::prepareData() {
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)	            */
             /************************************************************/
-            Vertex v_x(j * scale,
+            Vertex v_x(j * prep_scale,
                        surfaceheight[i + 1][j] /*SCALE*/,
-                       (i + 1) * scale);
+                       (i + 1) * prep_scale);
             vertices[index++] = v_x;
-            TexCoord t_x((i + 1) / (static_cast<float>(size) - 1),
-                         (j) / (static_cast<float>(size) - 1));
+            TexCoord t_x((i + 1) / (static_cast<float>(prep_size) - 1),
+                         (j) / (static_cast<float>(prep_size) - 1));
             tex_coord[index_texture++] = t_x;
             Normal n_x(0, 0, 0);
-            if (i == size - 2 && j == 0) {
+            if (i == prep_size - 2 && j == 0) {
                 calcAverageofSixNormals(&v_x,
                                         static_cast<GLfloat>(j + 1),
                                         surfaceheight[i][j + 1],
@@ -654,7 +641,7 @@ void Water::prepareData() {
                                         surfaceheight[i + 1][j + 1],
                                         static_cast<GLfloat>(i + 1),
                                         &n_x);
-            } else if (i == size - 2) {
+            } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_x,
                                         static_cast<GLfloat>(j) + 1,
                                         surfaceheight[i][j + 1],
@@ -702,15 +689,15 @@ void Water::prepareData() {
             /************************************************************/
             /*	V_Y -- N_Y					    */
             /************************************************************/
-            Vertex v_y((j + 1) * scale,
+            Vertex v_y((j + 1) * prep_scale,
                        surfaceheight[i + 1][j + 1] /*SCALE*/,
-                       (i + 1) * scale);
+                       (i + 1) * prep_scale);
             vertices[index++] = v_y;
-            TexCoord t_y((i + 1) / (static_cast<float>(size) - 1),
-                         (j + 1) / (static_cast<float>(size) - 1));
+            TexCoord t_y((i + 1) / (static_cast<float>(prep_size) - 1),
+                         (j + 1) / (static_cast<float>(prep_size) - 1));
             tex_coord[index_texture++] = t_y;
             Normal n_y(0, 0, 0);
-            if (i == size - 2 && j == size - 2) {
+            if (i == prep_size - 2 && j == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
                                         v_y.coord_x,
                                         v_y.coord_y,
@@ -731,7 +718,7 @@ void Water::prepareData() {
                                         v_y.coord_y,
                                         v_y.coord_z,
                                         &n_y);
-            } else if (i == size - 2) {
+            } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
                                         static_cast<GLfloat>(j + 2),
                                         surfaceheight[i][j + 2],
@@ -752,7 +739,7 @@ void Water::prepareData() {
                                         surfaceheight[i + 1][j + 2],
                                         static_cast<GLfloat>(i + 1),
                                         &n_y);
-            } else if (j == size - 2) {
+            } else if (j == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
                                         v_y.coord_x,
                                         v_y.coord_y,
@@ -799,15 +786,15 @@ void Water::prepareData() {
             /************************************************************/
             /*	V_Z -- N_Z					    */
             /************************************************************/
-            Vertex v_z((j + 1) * scale,
+            Vertex v_z((j + 1) * prep_scale,
                        surfaceheight[i][j + 1] /*SCALE*/,
-                       (i)*scale);
+                       (i)*prep_scale);
             vertices[index++] = v_z;
-            TexCoord t_z(i / (static_cast<float>(size) - 1),
-                         (j + 1) / (static_cast<float>(size) - 1));
+            TexCoord t_z(i / (static_cast<float>(prep_size) - 1),
+                         (j + 1) / (static_cast<float>(prep_size) - 1));
             tex_coord[index_texture++] = t_z;
             Normal n_z(0, 0, 0);
-            if (i == 0 && j == size - 2) {
+            if (i == 0 && j == prep_size - 2) {
                 calcAverageofSixNormals(&v_z,
                                         v_z.coord_x,
                                         v_z.coord_y,
@@ -849,7 +836,7 @@ void Water::prepareData() {
                                         surfaceheight[i][j + 2],
                                         static_cast<GLfloat>(i),
                                         &n_z);
-            } else if (j == size - 2) {
+            } else if (j == prep_size - 2) {
                 calcAverageofSixNormals(&v_z,
                                         v_i.coord_x,
                                         v_i.coord_y,

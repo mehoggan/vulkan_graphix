@@ -14,28 +14,28 @@ using namespace std;
 SubMenuSound::SubMenuSound() = default;
 
 SubMenuSound::SubMenuSound(int id,
-                           GLfloat x_pos,
-                           GLfloat y_pos,
-                           GLfloat z_pos,
+                           GLfloat new_x_pos,
+                           GLfloat new_y_pos,
+                           GLfloat new_z_pos,
                            GLfloat red,
                            GLfloat green,
                            GLfloat blue,
-                           GLint width,
-                           GLint height,
-                           const std::string& caption,
-                           GLfloat percent_border) {
+                           GLint new_width,
+                           GLint new_height,
+                           const std::string& new_caption,
+                           GLfloat new_percent_border) {
     uniqueidentifier = id;
-    this->x_pos = x_pos;
-    this->y_pos = y_pos;
-    this->z_pos = z_pos;
-    this->percent_border = percent_border;
+    this->x_pos = new_x_pos;
+    this->y_pos = new_y_pos;
+    this->z_pos = new_z_pos;
+    this->percent_border = new_percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = width;
-    this->height = height;
-    this->caption = caption;
+    this->width = new_width;
+    this->height = new_height;
+    this->caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
@@ -113,12 +113,12 @@ void SubMenuSound::setGreen(GLfloat green) { color[1] = green; }
 GLfloat SubMenuSound::getBlue() { return color[2]; }
 void SubMenuSound::setBlue(GLfloat blue) { color[2] = blue; }
 GLint SubMenuSound::getWidth() { return this->width; }
-void SubMenuSound::setWdith(GLint width) { this->width = width; }
+void SubMenuSound::setWdith(GLint new_width) { this->width = new_width; }
 GLint SubMenuSound::getHeight() { return this->height; }
-void SubMenuSound::setHeight(GLint height) { this->height = height; }
+void SubMenuSound::setHeight(GLint new_height) { this->height = new_height; }
 std::string SubMenuSound::getCaption() { return this->caption; }
-void SubMenuSound::setCaption(const std::string& caption) {
-    this->caption = caption;
+void SubMenuSound::setCaption(const std::string& new_caption) {
+    this->caption = new_caption;
 }
 GLfloat SubMenuSound::getPerecentBorder() { return this->percent_border; }
 void SubMenuSound::setPercentBorder(GLfloat percent) {

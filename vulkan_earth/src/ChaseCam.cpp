@@ -3,9 +3,9 @@
 #include "math.h"
 
 ChaseCam::ChaseCam() = default;
-ChaseCam::ChaseCam(GLfloat* target_pos, GLfloat* target_at) {
-    this->target_pos = target_pos;
-    this->target_at = target_at;
+ChaseCam::ChaseCam(GLfloat* new_target_pos, GLfloat* new_target_at) {
+    this->target_pos = new_target_pos;
+    this->target_at = new_target_at;
     shake_cam_pos[0] = 0;
     shake_cam_pos[1] = 0;
     shake_cam_pos[2] = 0;

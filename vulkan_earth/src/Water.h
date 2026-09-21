@@ -14,7 +14,7 @@ class Shader;
 class Water {
 public:
     Water();
-    Water(int scale, int size);
+    Water(int new_scale, int new_size);
     ~Water();
     void draw();
     void initData();

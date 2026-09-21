@@ -15,7 +15,7 @@ public:
     virtual Weapon* getWeaponInstance() = 0;
     int getUNIQUEIDENTIFIER();
     float getScale();
-    void setScale(float scale);
+    void setScale(float new_scale);
     int getRemaining();
     void setRemaining(int r);
     std::string getImageFileName();

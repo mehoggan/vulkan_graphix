@@ -21,21 +21,6 @@
 using namespace std;
 
 VBOShaderLibrary::VBOShaderLibrary() {
-    PFNGLGENBUFFERSARBPROC pgl_gen_buffers_arb =
-            nullptr;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb =
-            nullptr;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb =
-            nullptr;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC pgl_buffer_sub_data_arb =
-            nullptr;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC pgl_delete_buffers_arb =
-            nullptr;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC pgl_get_buffer_parameteriv_arb =
-            nullptr;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb = nullptr;  // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb =
-            nullptr;  // unmap VBO procedure
     use_vb_os = false;
     use_textures = false;
     use_shaders = false;

@@ -14,12 +14,12 @@ using namespace std;
 
 Projectile::Projectile() = default;
 
-Projectile::Projectile(GameState* parent,
+Projectile::Projectile(GameState* new_parent,
                        GLfloat* turret_matrix,
-                       GLfloat speed,
-                       VBOShaderLibrary** projectile_models) {
+                       GLfloat new_speed,
+                       VBOShaderLibrary** new_projectile_models) {
     default_weapon = new WeaponDefault(10);
-    this->parent = parent;
+    this->parent = new_parent;
     scalar = 500;
     pos[0] = turret_matrix[12] - scalar * turret_matrix[8];
     pos[1] = turret_matrix[13] - scalar * turret_matrix[9];
@@ -30,13 +30,13 @@ Projectile::Projectile(GameState* parent,
     zo = pos[2];
 
     /*	THE COORD SYSTEM WE USE HAS X AND Z INVERSED X = -X and Z = -Z	*/
-    v_vec[0] = -turret_matrix[8] * speed;
-    v_vec[1] = -turret_matrix[9] * speed;
-    v_vec[2] = -turret_matrix[10] * speed;
+    v_vec[0] = -turret_matrix[8] * new_speed;
+    v_vec[1] = -turret_matrix[9] * new_speed;
+    v_vec[2] = -turret_matrix[10] * new_speed;
 
     chase_cam = new ChaseCam(pos, v_vec);
     weapon = nullptr;
-    this->projectile_models = projectile_models;
+    this->projectile_models = new_projectile_models;
 
     if (!(VBOShaderLibrary::initGlew())) {
         exit(1);

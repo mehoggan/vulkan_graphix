@@ -7,7 +7,7 @@
 class ChaseCam {
 public:
     ChaseCam();
-    ChaseCam(GLfloat* target_pos, GLfloat* target_at);
+    ChaseCam(GLfloat* new_target_pos, GLfloat* new_target_at);
     ~ChaseCam();
     void view();
     void setShakeCam(int magnitude);

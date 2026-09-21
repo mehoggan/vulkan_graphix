@@ -13,17 +13,17 @@ class TextObject;
 class ControlItemSliderbar : public ControlItem {
 public:
     ControlItemSliderbar();
-    ControlItemSliderbar(GLfloat x_pos,
-                         GLfloat y_pos,
-                         GLfloat z_pos,
+    ControlItemSliderbar(GLfloat new_x_pos,
+                         GLfloat new_y_pos,
+                         GLfloat new_z_pos,
                          GLfloat red,
                          GLfloat green,
                          GLfloat blue,
-                         GLint width,
-                         GLint height,
-                         const std::string& caption,
-                         const std::string& menu_info,
-                         int slider_starting_pos);
+                         GLint new_width,
+                         GLint new_height,
+                         const std::string& new_caption,
+                         const std::string& menu_string,
+                         int slider_starting_index);
     ~ControlItemSliderbar() override;
     void draw() override;
     void mouseClickEvent(GLint x,

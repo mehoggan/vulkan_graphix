@@ -9,7 +9,7 @@
 class Vector {
 public:
     Vector();
-    Vector(GLfloat compo_x, GLfloat compo_y, GLfloat compo_z);
+    Vector(GLfloat new_compo_x, GLfloat new_compo_y, GLfloat new_compo_z);
     ~Vector();
     GLfloat compo_x;
     GLfloat compo_y;

@@ -12,12 +12,6 @@ Tank::Tank() {
     hit_box_height = 200;
     hit_box_length = 400;
     hit_box_width = 300;
-    Vector right(0, 0, 0);
-    Vector up(0, 0, 0);
-    Vector at(0, 0, 0);
-    Vector left(0, 0, 0);
-    Vector down(0, 0, 0);
-    Vector back(0, 0, 0);
     tank_alive = true;
     smoke_gen = nullptr;
     acid_gen = nullptr;
@@ -439,7 +433,7 @@ void Tank::setWheelScale(float x, float y, float z) {
     wheel_scale[1] = y;
     wheel_scale[2] = z;
 }
-void Tank::setHP(int hp) { hp = hp; }
+void Tank::setHP(int new_hp) { hp = new_hp; }
 void Tank::setPower(int p) { power = p; }
 void Tank::setArmor(int a) { armor = a; }
 void Tank::setSpeed(int d) { speed = d; }
@@ -763,11 +757,11 @@ GLfloat Tank::getCurrentPower() { return current_power; }
 int Tank::getPreviousPower() { return this->previous_power; }
 int Tank::getPreviousAngle() { return this->previous_angle; }
 GLfloat* Tank::getProjectileLandPos() { return projectile_land_pos; }
-void Tank::setPreviousPower(int previous_power) {
-    this->previous_power = previous_power;
+void Tank::setPreviousPower(int new_previous_power) {
+    this->previous_power = new_previous_power;
 }
-void Tank::setPreviousAngle(int previous_angle) {
-    this->previous_angle = previous_angle;
+void Tank::setPreviousAngle(int new_previous_angle) {
+    this->previous_angle = new_previous_angle;
 }
 void Tank::setProjectileLandPos(GLfloat x, GLfloat y) {
     projectile_land_pos[0] = x;

@@ -5,20 +5,20 @@
 
 ImageObject::ImageObject() = default;
 
-ImageObject::ImageObject(GLfloat x_pos,
-                         GLfloat y_pos,
-                         GLfloat z_pos,
-                         GLint width,
-                         GLint height,
+ImageObject::ImageObject(GLfloat new_x_pos,
+                         GLfloat new_y_pos,
+                         GLfloat new_z_pos,
+                         GLint new_width,
+                         GLint new_height,
                          GLfloat border,
                          GLint i_width,
                          GLint i_height,
                          const std::string& filename) {
-    this->x_pos = x_pos;
-    this->y_pos = y_pos;
-    this->z_pos = z_pos;
-    this->width = width;
-    this->height = height;
+    this->x_pos = new_x_pos;
+    this->y_pos = new_y_pos;
+    this->z_pos = new_z_pos;
+    this->width = new_width;
+    this->height = new_height;
     border_size = border;
 
     int img_width = i_width;

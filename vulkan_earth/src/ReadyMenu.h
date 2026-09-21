@@ -31,26 +31,26 @@ const int player_attributes = 4;
 class ReadyMenu {
 public:
     ReadyMenu();
-    ReadyMenu(GLfloat width,
-              GLfloat height,
-              GLfloat percent_border,
-              GlobalSettings* global_settings,
-              PlayerFactory* player_factory,
+    ReadyMenu(GLfloat new_width,
+              GLfloat new_height,
+              GLfloat new_percent_border,
+              GlobalSettings* new_global_settings,
+              PlayerFactory* new_player_factory,
               int* game_state);
     ~ReadyMenu();
     GLfloat* getPos();
     GLfloat getHeight();
-    void setHeight(GLfloat height);
+    void setHeight(GLfloat new_height);
     GLfloat getWidth();
-    void setWidth(GLfloat width);
+    void setWidth(GLfloat new_width);
     GLfloat* getColor();
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-    void buttonTest(int x, int y, int button_state);
+    void buttonTest(int x, int y, int button_down);
     void keyTest(unsigned char key);
     void draw();
     void showPreviousPlayerPage();
     void showNextPlayerPage();
-    void setPlayerPageNum(int current_player_index);
+    void setPlayerPageNum(int i);
     void updatePageInfo();
     void updateMouse(int x, int y);
     void saveCurrentPlayerData();

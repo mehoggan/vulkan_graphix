@@ -14,16 +14,16 @@ class SubMenuLandscape;
 class ControlItemButton : public ControlItem {
 public:
     ControlItemButton();
-    ControlItemButton(SubMenuLandscape* parent,
-                      GLfloat x_pos,
-                      GLfloat y_pos,
-                      GLfloat z_pos,
+    ControlItemButton(SubMenuLandscape* new_parent,
+                      GLfloat new_x_pos,
+                      GLfloat new_y_pos,
+                      GLfloat new_z_pos,
                       GLfloat red,
                       GLfloat green,
                       GLfloat blue,
-                      GLint width,
-                      GLint height,
-                      const std::string& caption);
+                      GLint new_width,
+                      GLint new_height,
+                      const std::string& new_caption);
     ~ControlItemButton() override;
     void draw() override;
     void mouseClickEvent(GLint x,

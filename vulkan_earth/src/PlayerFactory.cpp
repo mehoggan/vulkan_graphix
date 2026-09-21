@@ -13,8 +13,8 @@
 
 PlayerFactory::PlayerFactory() = default;
 
-PlayerFactory::PlayerFactory(GlobalSettings* game_global_settings) {
-    this->game_global_settings = game_global_settings;
+PlayerFactory::PlayerFactory(GlobalSettings* new_game_global_settings) {
+    this->game_global_settings = new_game_global_settings;
     this->number_of_players = 2;
     prev_number_of_players = this->number_of_players;
     player_set = new Player*[max_number_of_players]; /*	10 IS THE MAXIMUM
@@ -78,8 +78,8 @@ PlayerFactory::~PlayerFactory() {
     delete[] player_set;
 }
 
-void PlayerFactory::setNumberofPlayers(int number_of_players) {
-    this->number_of_players = number_of_players;
+void PlayerFactory::setNumberofPlayers(int new_number_of_players) {
+    this->number_of_players = new_number_of_players;
 }
 int PlayerFactory::getNumberofPlayers() { return this->number_of_players; }
 

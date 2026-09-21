@@ -14,18 +14,21 @@
  * Constructors and De-constructors
  */
 Explosion::Explosion() = default;
-Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weapon_radius) {
+Explosion::Explosion(GLfloat new_x,
+                     GLfloat new_y,
+                     GLfloat new_z,
+                     int new_weapon_radius) {
     glPushMatrix();
     glLoadIdentity();
     glGetFloatv(GL_MODELVIEW_MATRIX, trans_matrix);
     glPopMatrix();
-    this->x = x;
-    this->y = y;
-    this->z = z;
+    this->x = new_x;
+    this->y = new_y;
+    this->z = new_z;
     trans_matrix[12] = this->x;
     trans_matrix[13] = this->y;
     trans_matrix[14] = this->z;
-    this->weapon_radius = weapon_radius;
+    this->weapon_radius = new_weapon_radius;
 
     shader = new Shader();
     shader->init("VertexExplosion.vs", "FragmentExplosion.vs");
@@ -70,25 +73,25 @@ void Explosion::draw() {
     shader->unbind();
 }
 
-void Explosion::setColors1(GLfloat* colors1) {
-    this->colors1[0] = colors1[0];
-    this->colors1[1] = colors1[1];
-    this->colors1[2] = colors1[2];
+void Explosion::setColors1(GLfloat* new_colors1) {
+    this->colors1[0] = new_colors1[0];
+    this->colors1[1] = new_colors1[1];
+    this->colors1[2] = new_colors1[2];
 }
-void Explosion::setColors2(GLfloat* colors2) {
-    this->colors2[0] = colors2[0];
-    this->colors2[1] = colors2[1];
-    this->colors2[2] = colors2[2];
+void Explosion::setColors2(GLfloat* new_colors2) {
+    this->colors2[0] = new_colors2[0];
+    this->colors2[1] = new_colors2[1];
+    this->colors2[2] = new_colors2[2];
 }
-void Explosion::setColors3(GLfloat* colors3) {
-    this->colors3[0] = colors3[0];
-    this->colors3[1] = colors3[1];
-    this->colors3[2] = colors3[2];
+void Explosion::setColors3(GLfloat* new_colors3) {
+    this->colors3[0] = new_colors3[0];
+    this->colors3[1] = new_colors3[1];
+    this->colors3[2] = new_colors3[2];
 }
-void Explosion::setColors4(GLfloat* colors4) {
-    this->colors4[0] = colors4[0];
-    this->colors4[1] = colors4[1];
-    this->colors4[2] = colors4[2];
+void Explosion::setColors4(GLfloat* new_colors4) {
+    this->colors4[0] = new_colors4[0];
+    this->colors4[1] = new_colors4[1];
+    this->colors4[2] = new_colors4[2];
 }
 void Explosion::setDefaultColors() {
     GLfloat temp_colors1[3] = {White};

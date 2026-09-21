@@ -29,8 +29,8 @@ public:
     void rotateWheel(GLfloat degrees);
     void adjustPower(GLfloat amount);
     GLfloat getCurrentPower();
-    void setPreviousPower(int previous_power);
-    void setPreviousAngle(int previous_angle);
+    void setPreviousPower(int new_previous_power);
+    void setPreviousAngle(int new_previous_angle);
     void setProjectileLandPos(GLfloat x, GLfloat y);
     int getPreviousPower();
     int getPreviousAngle();
@@ -76,7 +76,7 @@ public:
     void setWheelColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
     void setWheelScale(float x, float y, float z);
 
-    void setHP(int hp);
+    void setHP(int new_hp);
     void setPower(int p);
     void setArmor(int a);
     void setSpeed(int d);

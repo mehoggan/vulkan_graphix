@@ -35,16 +35,16 @@ extern void playSFX(int sfx);
 extern void playMusic(int music);
 
 ShopMenu::ShopMenu() = default;
-ShopMenu::ShopMenu(GLfloat width,
-                   GLfloat height,
-                   GLfloat percent_border,
-                   GlobalSettings* global_settings,
-                   PlayerFactory* player_factory,
+ShopMenu::ShopMenu(GLfloat new_width,
+                   GLfloat new_height,
+                   GLfloat new_percent_border,
+                   GlobalSettings* new_global_settings,
+                   PlayerFactory* new_player_factory,
                    int* game_state) {
-    this->global_settings = global_settings;
-    this->player_factory = player_factory;
+    this->global_settings = new_global_settings;
+    this->player_factory = new_player_factory;
     current_game_state = game_state;
-    num_players = global_settings->getPlayerCount();
+    num_players = new_global_settings->getPlayerCount();
     current_player_index = 0;
     current_player_balance = 0;
 
@@ -57,9 +57,9 @@ ShopMenu::ShopMenu(GLfloat width,
         img_inven_items[i] = nullptr;
     }
 
-    this->width = width;
-    this->height = height;
-    this->percent_border = percent_border;
+    this->width = new_width;
+    this->height = new_height;
+    this->percent_border = new_percent_border;
     pos[0] = pos[1] = pos[2] = 0;
 
     grids[0] = new ControlItemGrid(pos[0] - this->width * 0.4,
