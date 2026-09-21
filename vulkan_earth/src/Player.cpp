@@ -316,12 +316,12 @@ void Player::setUpPitchVectors() {
                             turret_matrix[13]);
     pitch_vector.compo_z = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
                             turret_matrix[14]);
-    up_vector.compo_x = (matrix[12] - matrix[12]);
+    up_vector.compo_x = ((matrix[12] + 1000 * matrix[4]) - matrix[12]);
     up_vector.compo_y = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
-    up_vector.compo_z = (matrix[14] - matrix[14]);
-    down_vector.compo_x = (matrix[12] - matrix[12]);
+    up_vector.compo_z = ((matrix[14] + 1000 * matrix[6]) - matrix[14]);
+    down_vector.compo_x = ((matrix[12] - 1000 * matrix[4]) - matrix[12]);
     down_vector.compo_y = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
-    down_vector.compo_z = (matrix[14] - matrix[14]);
+    down_vector.compo_z = ((matrix[14] - 1000 * matrix[6]) - matrix[14]);
 }
 
 bool Player::calculateProjectilePhysics(GLfloat xerr,
