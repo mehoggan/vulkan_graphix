@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Pre-commit checks for vulkan_earth/src.
+#
+# Codifies the verification pass used throughout the C++ modernization /
+# naming migration of vulkan_earth (see the git log around
+# "vulkan_earth Phase B/C" and "resolve every constructor/setter param-vs-
+# member shadow"):
+#   1. build            - staged .cpp files must still compile
+#   2. -Wshadow         - no local/parameter may shadow a member (this is
+#                          what makes `this->` removal and `X = X;`
+#                          assignments safe elsewhere in the file)
+#   3. self-assignment  - `x = x;` / `a.b = a.b;` (the exact shape of the
+#                          Tank::setHP and SubMenu*::setPercentBorder bugs
+#                          found during that migration)
+#   4. naming/length    - the project's .clang-tidy readability-identifier-
+#                          naming / readability-identifier-length rules
+#
+# Runs only against files staged under vulkan_earth/src, and only against
+# the exact content that will be committed (unstaged changes are stashed
+# out of the way for the duration of the checks). Missing tooling (bear,
+# clang-tidy, g++) degrades a check to a skipped warning rather than a
+# blocked commit, since this hook isn't installed by default (see
+# .githooks/README.md) and shouldn't brick a commit on a machine that
+# doesn't have the full toolchain.
+#
+# Bypass for a single commit: git commit --no-verify
+
+set -u
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT"
+
+mapfile -t STAGED_CPP < <(git diff --cached --name-only --diff-filter=ACM -- 'vulkan_earth/src/*.cpp')
+mapfile -t STAGED_ALL < <(git diff --cached --name-only --diff-filter=ACM -- 'vulkan_earth/src/*.cpp' 'vulkan_earth/src/*.h')
+
+if [ "${#STAGED_ALL[@]}" -eq 0 ]; then
+    exit 0
+fi
+
+STASHED=0
+if ! git diff --quiet -- vulkan_earth/src; then
+    git stash push --keep-index --quiet --include-untracked --message "pre-commit-autostash" -- vulkan_earth/src
+    STASHED=1
+fi
+cleanup() {
+    if [ "$STASHED" -eq 1 ]; then
+        git stash pop --quiet
+    fi
+}
+trap cleanup EXIT
+
+FAIL=0
+cd vulkan_earth/src
+BASENAMES=()
+for f in "${STAGED_CPP[@]}"; do
+    BASENAMES+=("$(basename "$f")")
+done
+BASENAMES_ALL=()
+for f in "${STAGED_ALL[@]}"; do
+    BASENAMES_ALL+=("$(basename "$f")")
+done
+
+# --- 1. self-assignment scan (no compiler needed, always runs) ---------
+echo "pre-commit: scanning for self-assignment (x = x;)..." >&2
+SELFASSIGN=$(python3 - "${BASENAMES_ALL[@]}" <<'PYEOF'
+import re, sys
+pat_bare = re.compile(r'(?<![>.\w])([a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
+pat_member = re.compile(r'\b([a-zA-Z_][a-zA-Z_0-9]*\.[a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
+found = 0
+for fname in sys.argv[1:]:
+    try:
+        with open(fname) as f:
+            lines = f.readlines()
+    except (IsADirectoryError, FileNotFoundError):
+        continue
+    for i, line in enumerate(lines, 1):
+        for pat in (pat_bare, pat_member):
+            for m in pat.finditer(line):
+                print(f'{fname}:{i}: {line.strip()}')
+                found += 1
+sys.exit(1 if found else 0)
+PYEOF
+)
+if [ -n "$SELFASSIGN" ]; then
+    echo "pre-commit: SELF-ASSIGNMENT FOUND (a setter/assignment that writes a value to itself instead of a member):" >&2
+    echo "$SELFASSIGN" >&2
+    FAIL=1
+fi
+
+# --- 2. -Wshadow (needs g++) --------------------------------------------
+if command -v g++ >/dev/null 2>&1; then
+    echo "pre-commit: checking for variable/parameter shadowing (-Wshadow)..." >&2
+    for fname in "${BASENAMES[@]}"; do
+        [ -f "$fname" ] || continue
+        OUT=$(g++ -std=gnu++20 -DHAVE_CONFIG_H -I. -I../.. -DFREEGLUT_STATIC \
+                -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT \
+                -I/opt/boost/include -Wshadow -fsyntax-only "$fname" 2>&1 \
+                | grep 'shadows' || true)
+        if [ -n "$OUT" ]; then
+            echo "pre-commit: SHADOW WARNING in $fname (this is what makes an unqualified 'this->member' removal or a bare assignment ambiguous):" >&2
+            echo "$OUT" >&2
+            FAIL=1
+        fi
+    done
+else
+    echo "pre-commit: g++ not found, skipping -Wshadow check" >&2
+fi
+
+# --- 3. naming/length (needs clang-tidy + a compile database, and at
+#        least one staged .cpp to serve as a translation-unit anchor -
+#        a header-only change is still covered by the build check below) -
+if ! command -v run-clang-tidy >/dev/null 2>&1; then
+    echo "pre-commit: run-clang-tidy not found, skipping naming/length check" >&2
+elif [ "${#STAGED_CPP[@]}" -eq 0 ]; then
+    echo "pre-commit: no staged .cpp file to anchor a naming/length check (header-only change; covered by the build check instead)" >&2
+else
+    if [ ! -f compile_commands.json ]; then
+        if command -v bear >/dev/null 2>&1; then
+            echo "pre-commit: no compile_commands.json, generating one (bear -- make)..." >&2
+            bear -- make -j4 >/tmp/precommit_bear.log 2>&1 || true
+        fi
+    fi
+    if [ -f compile_commands.json ]; then
+        echo "pre-commit: checking naming/length conventions (clang-tidy)..." >&2
+        NAMING_OUT=$(run-clang-tidy -checks='-*,readability-identifier-naming,readability-identifier-length' \
+                -header-filter='.*' "${BASENAMES[@]}" 2>&1 | grep 'warning:' || true)
+        if [ -n "$NAMING_OUT" ]; then
+            echo "pre-commit: NAMING/LENGTH VIOLATIONS (see CLAUDE.md's Clang-Tidy section for the project's exemption list):" >&2
+            echo "$NAMING_OUT" >&2
+            FAIL=1
+        fi
+    else
+        echo "pre-commit: no compile_commands.json available, skipping naming/length check" >&2
+    fi
+fi
+
+# --- 4. build (last: slowest check; runs for header-only changes too) --
+echo "pre-commit: building vulkan_earth (incremental)..." >&2
+if ! make -j4 >/tmp/precommit_build.log 2>&1; then
+    echo "pre-commit: BUILD FAILED:" >&2
+    tail -60 /tmp/precommit_build.log >&2
+    FAIL=1
+fi
+
+if [ "$FAIL" -ne 0 ]; then
+    echo "" >&2
+    echo "pre-commit: one or more checks failed (see above). Fix, or bypass with 'git commit --no-verify'." >&2
+    exit 1
+fi
+
+echo "pre-commit: all checks passed." >&2
+exit 0
