@@ -20,15 +20,15 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat new_x_pos,
                                            const std::string& new_caption,
                                            const std::string& menu_string,
                                            int slider_starting_index) {
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = new_width;
-    this->height = new_height;
+    width = new_width;
+    height = new_height;
 
     bar_width = new_width - new_width * 0.1;
     bar_x_pos = new_x_pos + (new_width - bar_width) / 2;
@@ -41,7 +41,7 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat new_x_pos,
     slider_width = new_width / 5 * 0.1;
     slider_height = new_height * 0.15;
 
-    this->caption = new_caption;
+    caption = new_caption;
     menu_info = menu_string;
     is_slider_clicked = false;
 
@@ -66,16 +66,16 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat new_x_pos,
     setOptionText(menu_state);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
-    for (char ch : this->caption) {
+    for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat label_x_pos = bar_x_pos;
-    GLfloat label_y_pos = this->y_pos - this->height * 0.45;
+    GLfloat label_y_pos = y_pos - height * 0.45;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    label = new TextObject(this->caption,
+    label = new TextObject(caption,
                            label_x_pos,
                            label_y_pos,
-                           this->z_pos,
+                           z_pos,
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
@@ -90,38 +90,38 @@ void ControlItemSliderbar::draw() {
     // draw main button box
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
 
     // draw bar lines
@@ -144,10 +144,10 @@ void ControlItemSliderbar::draw() {
         glBegin(GL_LINES);
         glColor3f(0, 0, 0);
         glVertex3f(bar_x_pos + (interval * i),
-                   bar_y_pos + this->height * 0.07,
+                   bar_y_pos + height * 0.07,
                    bar_z_pos);
         glVertex3f(bar_x_pos + (interval * i),
-                   bar_y_pos - this->height * 0.07,
+                   bar_y_pos - height * 0.07,
                    bar_z_pos);
         glEnd();
     }
@@ -268,10 +268,10 @@ void ControlItemSliderbar::draw() {
     option_text->draw();
 }
 
-GLfloat ControlItemSliderbar::getXPos() { return this->x_pos; }
-GLfloat ControlItemSliderbar::getYPos() { return this->y_pos; }
-GLfloat ControlItemSliderbar::getHeight() { return this->height; }
-GLfloat ControlItemSliderbar::getWidth() { return this->width; }
+GLfloat ControlItemSliderbar::getXPos() { return x_pos; }
+GLfloat ControlItemSliderbar::getYPos() { return y_pos; }
+GLfloat ControlItemSliderbar::getHeight() { return height; }
+GLfloat ControlItemSliderbar::getWidth() { return width; }
 GLfloat ControlItemSliderbar::getBarXPos() { return bar_x_pos; }
 GLfloat ControlItemSliderbar::getInterval() { return interval; }
 GLfloat ControlItemSliderbar::getSliderXPos() { return slider_x_pos; }
@@ -286,13 +286,13 @@ void ControlItemSliderbar::setOptionText(int index) {
     for (char ch : current_option) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = this->x_pos + (this->width / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->y_pos - this->height * 0.45;
+    GLfloat label_x_pos = x_pos + (width / 2) - (real_length / 2);
+    GLfloat label_y_pos = y_pos - height * 0.45;
     delete option_text;
     option_text = new TextObject(current_option,
                                  label_x_pos,
                                  label_y_pos,
-                                 this->z_pos,
+                                 z_pos,
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
                                  0.0f,

@@ -21,10 +21,10 @@ Water::Water(int new_scale, int new_size) {
     vbo_qualify = nullptr;
     verifyVBOs();
     timer = 0.0;
-    this->scale = new_scale;
-    this->size = new_size;
-    total_vertices = this->size * this->size;
-    tri_strip_buffer_size = (this->size - 1) * (this->size - 1) * 6;
+    scale = new_scale;
+    size = new_size;
+    total_vertices = size * size;
+    tri_strip_buffer_size = (size - 1) * (size - 1) * 6;
     initData();
     prepTerrain();
     shader = new Shader();
@@ -50,8 +50,8 @@ Water::~Water() {
     glDeleteTextures(1, &normal_texture);
 }
 
-GLint Water::getScale() { return this->scale; }
-GLint Water::getActualSize() { return (this->size) * (this->scale); }
+GLint Water::getScale() { return scale; }
+GLint Water::getActualSize() { return (size) * (scale); }
 
 void Water::initData() {
     vertices.resize(tri_strip_buffer_size);
@@ -87,8 +87,8 @@ GLuint Water::loadTexture(const char* filename, int width, int height) {
 }
 
 void Water::draw() {
-    int draw_size = this->size;
-    int draw_scale = this->scale;
+    int draw_size = size;
+    int draw_scale = scale;
     int buffersize = tri_strip_buffer_size;
 
     shader->bind();
@@ -266,9 +266,9 @@ void Water::verifyVBOs() {
 }
 
 void Water::prepTerrain() {
-    surfaceheight = new int*[this->size];
-    for (int i = 0; i < this->size; i++) {
-        surfaceheight[i] = new int[this->size];
+    surfaceheight = new int*[size];
+    for (int i = 0; i < size; i++) {
+        surfaceheight[i] = new int[size];
     }
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
@@ -279,8 +279,8 @@ void Water::prepTerrain() {
 
 void Water::prepareData() {
     int buffersize = tri_strip_buffer_size;
-    int prep_size = this->size;
-    int prep_scale = this->scale;
+    int prep_size = size;
+    int prep_scale = scale;
 
     //
     // 				v_k

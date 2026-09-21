@@ -36,8 +36,8 @@ MainMenu::MainMenu(GLfloat new_width,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
                    int* game_state) {
-    this->global_settings = new_global_settings;
-    this->player_factory = new_player_factory;
+    global_settings = new_global_settings;
+    player_factory = new_player_factory;
     current_game_state = game_state;
 
     for (int x = 0; x < num_button; x++) {
@@ -55,279 +55,261 @@ MainMenu::MainMenu(GLfloat new_width,
     button_pressed = nullptr;
     active_sub_menu = nullptr;
     arrow_button_pressed = nullptr;
-    this->width = new_width;
-    this->height = new_height;
-    this->percent_border = new_percent_border;
+    width = new_width;
+    height = new_height;
+    percent_border = new_percent_border;
     color[0] = color[1] = color[2] = 1;
     color[3] = 1;
     pos[0] = pos[1] = pos[2] = 0;
 
     /*	BUTTON 0 AND ITS SUBMENU	*/
-    submenus[0] = new SubMenuSelectTanks(
-            0,
-            (-1 * this->width / 2.0 + .30 * this->width),
-            ((this->height / 2.0) - .17 * this->height),
-            3.0f,
-            0.75f,
-            0.75f,
-            0.75f,
-            0.65f * this->width,
-            0.75 * this->height,
-            "Select Your Tanks",
-            .006);
-    buttons[0] =
-            new MainMenuButton(0,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .05 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Start",
-                               submenus[0]);
+    submenus[0] = new SubMenuSelectTanks(0,
+                                         (-1 * width / 2.0 + .30 * width),
+                                         ((height / 2.0) - .17 * height),
+                                         3.0f,
+                                         0.75f,
+                                         0.75f,
+                                         0.75f,
+                                         0.65f * width,
+                                         0.75 * height,
+                                         "Select Your Tanks",
+                                         .006);
+    buttons[0] = new MainMenuButton(0,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .05 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Start",
+                                    submenus[0]);
     /*	ARROW BUTTON 1 NUMBER OF PLAYERS	*/
-    arrowsbutton[0] = new ControlItemSelectionBox(
-            -1 * this->width / 2.0 + .05 * this->width,
-            ((this->height / 2.0) - .10 * this->height),
-            1.0f,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.2 * this->width,
-            0.04 * (this->height),
-            "# of Players",
-            "2/3/4/5/6/7/8/9/10/");
+    arrowsbutton[0] =
+            new ControlItemSelectionBox(-1 * width / 2.0 + .05 * width,
+                                        ((height / 2.0) - .10 * height),
+                                        1.0f,
+                                        0.5f,
+                                        0.5f,
+                                        0.5f,
+                                        0.2 * width,
+                                        0.04 * (height),
+                                        "# of Players",
+                                        "2/3/4/5/6/7/8/9/10/");
     /*	ARROW BUTTON 2	NUMBER OF ROUNDS	*/
-    arrowsbutton[1] = new ControlItemSelectionBox(
-            -1 * this->width / 2.0 + .05 * this->width,
-            ((this->height / 2.0) - .15 * this->height),
-            1.0f,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.2 * this->width,
-            0.04 * (this->height),
-            "# of Rounds",
-            "1/2/3/4/5/6/7/8/9/");
+    arrowsbutton[1] =
+            new ControlItemSelectionBox(-1 * width / 2.0 + .05 * width,
+                                        ((height / 2.0) - .15 * height),
+                                        1.0f,
+                                        0.5f,
+                                        0.5f,
+                                        0.5f,
+                                        0.2 * width,
+                                        0.04 * (height),
+                                        "# of Rounds",
+                                        "1/2/3/4/5/6/7/8/9/");
     /*	BUTTON 1 AND ITS SUBMENU	*/
-    submenus[1] =
-            new SubMenuSound(1,
-                             (-1 * this->width / 2.0 + .30 * this->width),
-                             ((this->height / 2.0) - .17 * this->height),
-                             3.0f,
-                             0.75f,
-                             0.75f,
-                             0.75f,
-                             0.65f * this->width,
-                             0.75 * this->height,
-                             "Sound Options Menu",
-                             .006);
-    buttons[1] =
-            new MainMenuButton(1,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .20 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Sound Options",
-                               submenus[1]);
+    submenus[1] = new SubMenuSound(1,
+                                   (-1 * width / 2.0 + .30 * width),
+                                   ((height / 2.0) - .17 * height),
+                                   3.0f,
+                                   0.75f,
+                                   0.75f,
+                                   0.75f,
+                                   0.65f * width,
+                                   0.75 * height,
+                                   "Sound Options Menu",
+                                   .006);
+    buttons[1] = new MainMenuButton(1,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .20 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Sound Options",
+                                    submenus[1]);
     /*	BUTTON 2 AND ITS SUBMENU	*/
-    submenus[2] =
-            new SubMenuHardware(2,
-                                (-1 * this->width / 2.0 + .30 * this->width),
-                                ((this->height / 2.0) - .17 * this->height),
-                                3.0f,
-                                0.75f,
-                                0.75f,
-                                0.75f,
-                                0.65f * this->width,
-                                0.75 * this->height,
-                                "Hardware Options Menu",
-                                .006);
-    buttons[2] =
-            new MainMenuButton(2,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .25 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Hardware Options",
-                               submenus[2]);
+    submenus[2] = new SubMenuHardware(2,
+                                      (-1 * width / 2.0 + .30 * width),
+                                      ((height / 2.0) - .17 * height),
+                                      3.0f,
+                                      0.75f,
+                                      0.75f,
+                                      0.75f,
+                                      0.65f * width,
+                                      0.75 * height,
+                                      "Hardware Options Menu",
+                                      .006);
+    buttons[2] = new MainMenuButton(2,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .25 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Hardware Options",
+                                    submenus[2]);
     /*	BUTTON 3 AND ITS SUBMENU	*/
-    submenus[3] =
-            new SubMenuEconomics(3,
-                                 (-1 * this->width / 2.0 + .30 * this->width),
-                                 ((this->height / 2.0) - .17 * this->height),
-                                 3.0f,
-                                 0.75f,
-                                 0.75f,
-                                 0.75f,
-                                 0.65f * this->width,
-                                 0.75 * this->height,
-                                 "Economics Options Menu",
-                                 .006);
-    buttons[3] =
-            new MainMenuButton(3,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .30 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Economics",
-                               submenus[3]);
+    submenus[3] = new SubMenuEconomics(3,
+                                       (-1 * width / 2.0 + .30 * width),
+                                       ((height / 2.0) - .17 * height),
+                                       3.0f,
+                                       0.75f,
+                                       0.75f,
+                                       0.75f,
+                                       0.65f * width,
+                                       0.75 * height,
+                                       "Economics Options Menu",
+                                       .006);
+    buttons[3] = new MainMenuButton(3,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .30 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Economics",
+                                    submenus[3]);
     /*	BUTTON 4 AND ITS SUBMENU	*/
-    submenus[4] =
-            new SubMenuPhysics(4,
-                               (-1 * this->width / 2.0 + .30 * this->width),
-                               ((this->height / 2.0) - .17 * this->height),
-                               3.0f,
-                               0.75f,
-                               0.75f,
-                               0.75f,
-                               0.65f * this->width,
-                               0.75 * this->height,
-                               "Physics Options Menu",
-                               .006);
-    buttons[4] =
-            new MainMenuButton(4,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .35 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Physics",
-                               submenus[4]);
+    submenus[4] = new SubMenuPhysics(4,
+                                     (-1 * width / 2.0 + .30 * width),
+                                     ((height / 2.0) - .17 * height),
+                                     3.0f,
+                                     0.75f,
+                                     0.75f,
+                                     0.75f,
+                                     0.65f * width,
+                                     0.75 * height,
+                                     "Physics Options Menu",
+                                     .006);
+    buttons[4] = new MainMenuButton(4,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .35 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Physics",
+                                    submenus[4]);
     /*	BUTTON 5 AND ITS SUBMENU	*/
-    submenus[5] =
-            new SubMenuLandscape(5,
-                                 (-1 * this->width / 2.0 + .30 * this->width),
-                                 ((this->height / 2.0) - .17 * this->height),
-                                 3.0f,
-                                 0.75f,
-                                 0.75f,
-                                 0.75f,
-                                 0.65f * this->width,
-                                 0.75 * this->height,
-                                 "Landscape Options Menu",
-                                 .006);
-    buttons[5] =
-            new MainMenuButton(5,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .40 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Landscape",
-                               submenus[5]);
+    submenus[5] = new SubMenuLandscape(5,
+                                       (-1 * width / 2.0 + .30 * width),
+                                       ((height / 2.0) - .17 * height),
+                                       3.0f,
+                                       0.75f,
+                                       0.75f,
+                                       0.75f,
+                                       0.65f * width,
+                                       0.75 * height,
+                                       "Landscape Options Menu",
+                                       .006);
+    buttons[5] = new MainMenuButton(5,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .40 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Landscape",
+                                    submenus[5]);
     /*	BUTTON 6 AND ITS SUBMENU	*/
-    submenus[6] = new SubMenuPlayOptions(
-            6,
-            (-1 * this->width / 2.0 + .30 * this->width),
-            ((this->height / 2.0) - .17 * this->height),
-            3.0f,
-            0.75f,
-            0.75f,
-            0.75f,
-            0.65f * this->width,
-            0.75 * this->height,
-            "Play Settings Options Menu",
-            .006);
-    buttons[6] =
-            new MainMenuButton(6,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .45 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Play Settings",
-                               submenus[6]);
+    submenus[6] = new SubMenuPlayOptions(6,
+                                         (-1 * width / 2.0 + .30 * width),
+                                         ((height / 2.0) - .17 * height),
+                                         3.0f,
+                                         0.75f,
+                                         0.75f,
+                                         0.75f,
+                                         0.65f * width,
+                                         0.75 * height,
+                                         "Play Settings Options Menu",
+                                         .006);
+    buttons[6] = new MainMenuButton(6,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .45 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Play Settings",
+                                    submenus[6]);
     /*	BUTTON 7 AND ITS SUBMENU	*/
-    submenus[7] =
-            new SubMenuWeapons(7,
-                               (-1 * this->width / 2.0 + .30 * this->width),
-                               ((this->height / 2.0) - .17 * this->height),
-                               3.0f,
-                               0.75f,
-                               0.75f,
-                               0.75f,
-                               0.65f * this->width,
-                               0.75 * this->height,
-                               "Weapons Option Menu",
-                               .006);
-    buttons[7] =
-            new MainMenuButton(7,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .50 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Weapons",
-                               submenus[7]);
+    submenus[7] = new SubMenuWeapons(7,
+                                     (-1 * width / 2.0 + .30 * width),
+                                     ((height / 2.0) - .17 * height),
+                                     3.0f,
+                                     0.75f,
+                                     0.75f,
+                                     0.75f,
+                                     0.65f * width,
+                                     0.75 * height,
+                                     "Weapons Option Menu",
+                                     .006);
+    buttons[7] = new MainMenuButton(7,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .50 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Weapons",
+                                    submenus[7]);
     /*	BUTTON 8 SAVE OPTIONS	*/
-    buttons[8] =
-            new MainMenuButton(8,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .55 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Save Settings",
-                               nullptr);
+    buttons[8] = new MainMenuButton(8,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .55 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Save Settings",
+                                    nullptr);
 
     /*	QUIT BUTTON AND IMAGES	*/
-    buttons[9] =
-            new MainMenuButton(9,
-                               (-1 * this->width / 2.0 + .05 * this->width),
-                               ((this->height / 2.0) - .87 * this->height),
-                               1.0f,
-                               0.75f,
-                               0.0f,
-                               0.0f,
-                               0.20f * (this->width),
-                               0.04f * (this->height),
-                               "Quit",
-                               nullptr);
-    images[0] = new ImageObject((-1 * this->width / 2.0 + .30 * this->width),
-                                ((this->height / 2.0) - .17 * this->height),
+    buttons[9] = new MainMenuButton(9,
+                                    (-1 * width / 2.0 + .05 * width),
+                                    ((height / 2.0) - .87 * height),
+                                    1.0f,
+                                    0.75f,
+                                    0.0f,
+                                    0.0f,
+                                    0.20f * (width),
+                                    0.04f * (height),
+                                    "Quit",
+                                    nullptr);
+    images[0] = new ImageObject((-1 * width / 2.0 + .30 * width),
+                                ((height / 2.0) - .17 * height),
                                 2.0f,
-                                0.65f * this->width,
-                                0.75 * this->height,
-                                .006 * (this->width),
+                                0.65f * width,
+                                0.75 * height,
+                                .006 * (width),
                                 1280,
                                 1024,
                                 "SplashScreen.raw");
-    images[1] = new ImageObject((-1 * this->width / 2.0 + .30 * this->width),
-                                ((this->height / 2.0) - .03 * this->height),
+    images[1] = new ImageObject((-1 * width / 2.0 + .30 * width),
+                                ((height / 2.0) - .03 * height),
                                 2.0f,
-                                0.65f * this->width,
-                                0.12 * this->height,
-                                .006 * (this->width),
+                                0.65f * width,
+                                0.12 * height,
+                                .006 * (width),
                                 800,
                                 150,
                                 "vulkanEarthTitle.raw");
@@ -343,10 +325,10 @@ MainMenu::~MainMenu() {
 }
 
 GLfloat* MainMenu::getPos() { return &(pos[0]); }
-GLfloat MainMenu::getHeight() { return this->width; }
-void MainMenu::setHeight(GLfloat new_height) { this->height = new_height; }
-GLfloat MainMenu::getWidth() { return this->height; }
-void MainMenu::setWidth(GLfloat new_width) { this->width = new_width; }
+GLfloat MainMenu::getHeight() { return width; }
+void MainMenu::setHeight(GLfloat new_height) { height = new_height; }
+GLfloat MainMenu::getWidth() { return height; }
+void MainMenu::setWidth(GLfloat new_width) { width = new_width; }
 GLfloat* MainMenu::getColor() { return &(color[0]); }
 SubMenu* MainMenu::getSubMenuI(int i) { return submenus[i]; }
 SubMenu* MainMenu::getActiveSubMenu() { return active_sub_menu; }
@@ -361,78 +343,62 @@ void MainMenu::draw() {
      * CORNER -> UPPER RIGHT	*/
     glBegin(GL_QUADS);
     glColor3f(0.85f, 0.85f, 0.85f);
-    glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*	|\ 	*/
-    glVertex3f(
-            -1 * (this->width / 2.0), -1 * (this->height / 2.0), 0); /*	| |	*/
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /*	|/ 	*/
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0);
+    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0);      /*	|\ 	*/
+    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*	| |	*/
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0); /*	|/ 	*/
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.80f, 0.80f, 0.80f);
-    glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*_____ */
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0); /*\	  / */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0); /*_____ */
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0); /*\	  / */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0); /* ---	*/
-    glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
+    glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.75f, 0.75f, 0.75f);
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0); /*_____ */
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /*|	  | */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0); /*_____ */
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0); /*|	  | */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
                0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.45f, 0.45f, 0.45f);
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /* ___  */
-    glVertex3f(-1 * (this->width / 2.0),
-               -1 * (this->height / 2.0),
-               0);                                                 /*/	  \ */
-    glVertex3f((this->width / 2.0), -1 * (this->height / 2.0), 0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0);                                          /* ___  */
+    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*/	  \ */
+    glVertex3f((width / 2.0), -1 * (height / 2.0), 0);      /*----- */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0); /*	 /| 	*/
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
-               0); /*	| | 	*/
-    glVertex3f(
-            (this->width / 2.0), -1 * (this->height / 2.0), 0); /* 	 \| 	*/
-    glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0);                                     /*	| | 	*/
+    glVertex3f((width / 2.0), -1 * (height / 2.0), 0); /* 	 \| 	*/
+    glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
 
     for (int i = 0; i < num_images; i++) {
@@ -510,16 +476,16 @@ void MainMenu::buttonTest(int x, int y, int button_down) {
                     if (button_pressed->getUNIQUEIDENTIFIER() == 0) {
                         collectData();  // ONE OF THE BUTTONS PRESSED WAS
                                         // START OR SAVE SETTINGS
-                        this->player_factory->setNumberofPlayers(
-                                this->global_settings->getPlayerCount());
-                        this->player_factory->initializePlayerDataBase();
-                        this->global_settings->setCurrentTerrain(
+                        player_factory->setNumberofPlayers(
+                                global_settings->getPlayerCount());
+                        player_factory->initializePlayerDataBase();
+                        global_settings->setCurrentTerrain(
                                 getSubMenuLandscape()->tm);
                     }
                     if (button_pressed->getUNIQUEIDENTIFIER() == 8) {
                         collectData();
-                        this->player_factory->setNumberofPlayers(
-                                this->global_settings->getPlayerCount());
+                        player_factory->setNumberofPlayers(
+                                global_settings->getPlayerCount());
                     } else {
                         button_pressed
                                 ->deactivateSubMenu();  // IF SO DEACTIVATE
@@ -544,10 +510,10 @@ void MainMenu::buttonTest(int x, int y, int button_down) {
                     if (button_pressed->getUNIQUEIDENTIFIER() == 0) {
                         collectData();  // ONE OF THE BUTTONS PRESSED WAS
                                         // START OR SAVE SETTINGS
-                        this->player_factory->setNumberofPlayers(
-                                this->global_settings->getPlayerCount());
-                        this->player_factory->initializePlayerDataBase();
-                        this->global_settings->setCurrentTerrain(
+                        player_factory->setNumberofPlayers(
+                                global_settings->getPlayerCount());
+                        player_factory->initializePlayerDataBase();
+                        global_settings->setCurrentTerrain(
                                 getSubMenuLandscape()->tm);
                         Mix_HaltMusic();
                         *current_game_state = READY_MENU;
@@ -639,5 +605,5 @@ void MainMenu::collectData() {
         playercount += "/";
     }
 
-    this->global_settings->setVariables(optionsarray, playercount);
+    global_settings->setVariables(optionsarray, playercount);
 }

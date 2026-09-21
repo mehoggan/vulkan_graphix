@@ -15,8 +15,8 @@ LoadingScreen::LoadingScreen(GLfloat x,
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
-    this->width = new_width;
-    this->height = new_height;
+    width = new_width;
+    height = new_height;
     color[0] = red;
     color[1] = green;
     color[2] = blue;

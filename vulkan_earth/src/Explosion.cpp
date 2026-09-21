@@ -22,13 +22,13 @@ Explosion::Explosion(GLfloat new_x,
     glLoadIdentity();
     glGetFloatv(GL_MODELVIEW_MATRIX, trans_matrix);
     glPopMatrix();
-    this->x = new_x;
-    this->y = new_y;
-    this->z = new_z;
-    trans_matrix[12] = this->x;
-    trans_matrix[13] = this->y;
-    trans_matrix[14] = this->z;
-    this->weapon_radius = new_weapon_radius;
+    x = new_x;
+    y = new_y;
+    z = new_z;
+    trans_matrix[12] = x;
+    trans_matrix[13] = y;
+    trans_matrix[14] = z;
+    weapon_radius = new_weapon_radius;
 
     shader = new Shader();
     shader->init("VertexExplosion.vs", "FragmentExplosion.vs");
@@ -66,7 +66,7 @@ void Explosion::draw() {
     }
 
     glPushMatrix();
-    glTranslatef(this->x, this->y, this->z);
+    glTranslatef(x, y, z);
     // ASSUMING SCALE ON TERRAIN IS 150 I NEED TO GET ACTUAL VALUE
     glutSolidSphere(radius * (weapon_radius * 5.56 + 22.22), 90, 180);
     glPopMatrix();
@@ -74,24 +74,24 @@ void Explosion::draw() {
 }
 
 void Explosion::setColors1(GLfloat* new_colors1) {
-    this->colors1[0] = new_colors1[0];
-    this->colors1[1] = new_colors1[1];
-    this->colors1[2] = new_colors1[2];
+    colors1[0] = new_colors1[0];
+    colors1[1] = new_colors1[1];
+    colors1[2] = new_colors1[2];
 }
 void Explosion::setColors2(GLfloat* new_colors2) {
-    this->colors2[0] = new_colors2[0];
-    this->colors2[1] = new_colors2[1];
-    this->colors2[2] = new_colors2[2];
+    colors2[0] = new_colors2[0];
+    colors2[1] = new_colors2[1];
+    colors2[2] = new_colors2[2];
 }
 void Explosion::setColors3(GLfloat* new_colors3) {
-    this->colors3[0] = new_colors3[0];
-    this->colors3[1] = new_colors3[1];
-    this->colors3[2] = new_colors3[2];
+    colors3[0] = new_colors3[0];
+    colors3[1] = new_colors3[1];
+    colors3[2] = new_colors3[2];
 }
 void Explosion::setColors4(GLfloat* new_colors4) {
-    this->colors4[0] = new_colors4[0];
-    this->colors4[1] = new_colors4[1];
-    this->colors4[2] = new_colors4[2];
+    colors4[0] = new_colors4[0];
+    colors4[1] = new_colors4[1];
+    colors4[2] = new_colors4[2];
 }
 void Explosion::setDefaultColors() {
     GLfloat temp_colors1[3] = {White};

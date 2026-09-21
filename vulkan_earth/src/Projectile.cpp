@@ -19,7 +19,7 @@ Projectile::Projectile(GameState* new_parent,
                        GLfloat new_speed,
                        VBOShaderLibrary** new_projectile_models) {
     default_weapon = new WeaponDefault(10);
-    this->parent = new_parent;
+    parent = new_parent;
     scalar = 500;
     pos[0] = turret_matrix[12] - scalar * turret_matrix[8];
     pos[1] = turret_matrix[13] - scalar * turret_matrix[9];
@@ -36,7 +36,7 @@ Projectile::Projectile(GameState* new_parent,
 
     chase_cam = new ChaseCam(pos, v_vec);
     weapon = nullptr;
-    this->projectile_models = new_projectile_models;
+    projectile_models = new_projectile_models;
 
     if (!(VBOShaderLibrary::initGlew())) {
         exit(1);

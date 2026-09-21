@@ -14,11 +14,11 @@ ImageObject::ImageObject(GLfloat new_x_pos,
                          GLint i_width,
                          GLint i_height,
                          const std::string& filename) {
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
-    this->width = new_width;
-    this->height = new_height;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
+    width = new_width;
+    height = new_height;
     border_size = border;
 
     int img_width = i_width;
@@ -44,16 +44,16 @@ ImageObject::ImageObject(GLfloat new_x_pos,
 ImageObject::~ImageObject() { glDeleteTextures(1, &texture); }
 
 /*GETTERS & SETTERS*/
-GLfloat ImageObject::getXpos() { return this->x_pos; }
-GLfloat ImageObject::getYpos() { return this->y_pos; }
-GLfloat ImageObject::getZpos() { return this->z_pos; }
-GLint ImageObject::getWidth() { return this->width; }
-GLint ImageObject::getHeight() { return this->height; }
-void ImageObject::setXpos(GLfloat x) { this->x_pos = x; }
-void ImageObject::setYpos(GLfloat y) { this->y_pos = y; }
-void ImageObject::setZpos(GLfloat z) { this->z_pos = z; }
-void ImageObject::setWidth(GLint w) { this->width = w; }
-void ImageObject::setHeight(GLint h) { this->height = h; }
+GLfloat ImageObject::getXpos() { return x_pos; }
+GLfloat ImageObject::getYpos() { return y_pos; }
+GLfloat ImageObject::getZpos() { return z_pos; }
+GLint ImageObject::getWidth() { return width; }
+GLint ImageObject::getHeight() { return height; }
+void ImageObject::setXpos(GLfloat x) { x_pos = x; }
+void ImageObject::setYpos(GLfloat y) { y_pos = y; }
+void ImageObject::setZpos(GLfloat z) { z_pos = z; }
+void ImageObject::setWidth(GLint w) { width = w; }
+void ImageObject::setHeight(GLint h) { height = h; }
 
 void ImageObject::draw() {
     glEnable(GL_TEXTURE_2D);
@@ -68,13 +68,13 @@ void ImageObject::draw() {
     // image plane
     glBegin(GL_QUADS);
     glTexCoord2f(0, 1);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
     glTexCoord2f(0, 0);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
     glTexCoord2f(1, 0);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
     glTexCoord2f(1, 1);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -84,46 +84,34 @@ void ImageObject::draw() {
         glBegin(GL_QUADS);
         glColor3f(0.45, 0.45, 0.45);
 
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos - border_size,
-                   this->y_pos + border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width + border_size,
-                   this->y_pos + border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
+        glVertex3f(x_pos - border_size, y_pos + border_size, z_pos);
+        glVertex3f(x_pos + width + border_size, y_pos + border_size, z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
 
-        glVertex3f(this->x_pos - border_size,
-                   this->y_pos + border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos - border_size,
-                   this->y_pos - height - border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+        glVertex3f(x_pos - border_size, y_pos + border_size, z_pos);
+        glVertex3f(x_pos - border_size, y_pos - height - border_size, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
         glEnd();
 
         // bottom and left borders
         glBegin(GL_QUADS);
         glColor3f(0.85, 0.85, 0.85);
 
-        glVertex3f(this->x_pos - border_size,
-                   this->y_pos - height - border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width + border_size,
-                   this->y_pos - height - border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+        glVertex3f(x_pos - border_size, y_pos - height - border_size, z_pos);
+        glVertex3f(x_pos + width + border_size,
+                   y_pos - height - border_size,
+                   z_pos);
+        glVertex3f(x_pos + width, y_pos - height, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
 
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos + width + border_size,
-                   this->y_pos + border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width + border_size,
-                   this->y_pos - height - border_size,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
+        glVertex3f(x_pos + width + border_size, y_pos + border_size, z_pos);
+        glVertex3f(x_pos + width + border_size,
+                   y_pos - height - border_size,
+                   z_pos);
+        glVertex3f(x_pos + width, y_pos + -height, z_pos);
         glEnd();
     }
     glPopMatrix();

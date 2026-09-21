@@ -24,14 +24,14 @@ Player::Player() {
 Player::~Player() = default;
 
 void Player::setTarget(Tank* new_target) {
-    this->target = new_target;
+    target = new_target;
     updateBalsticMatrix();
 }
 
 void Player::setGameState(GameState* new_game_state) {
-    this->game_state = new_game_state;
+    game_state = new_game_state;
 }
-Tank* Player::getTarget() { return this->target; }
+Tank* Player::getTarget() { return target; }
 Vertex Player::getEnemyPosition() { return enemy_position; }
 GLfloat* Player::getBalisticMatrix() { return balistic_matrix; }
 
@@ -43,7 +43,7 @@ void Player::aiMainLogisticFunction() {
     /*	THIS IS THE BRAINS	*/
     if (prev_state_of_ai == SHOT_LAST_ROUND) {
         previous_projectile_landing_spot =
-                this->game_state->getPositionOfLastProjectile();
+                game_state->getPositionOfLastProjectile();
         previous_distance_off_from_target = distance_off_from_target;
         distance_off_from_target =
                 sqrt(pow((previous_projectile_landing_spot.coord_x -
@@ -57,14 +57,14 @@ void Player::aiMainLogisticFunction() {
                          2));
     }
 
-    if (state_of_ai == NEED_NEW_TARGET || this->target == nullptr) {
+    if (state_of_ai == NEED_NEW_TARGET || target == nullptr) {
         /*	Game State Will Set Your Target For You	*/
         /*	You Need To Check Though That Your Tank	*/
         /*	Was Set									*/
         restoreTurretTo0Degrees();
         updateBalsticMatrix();
-        this->game_state->nearestEnemy();
-        if (this->target) {
+        game_state->nearestEnemy();
+        if (target) {
             setEnemyPosition();
             setUpYawVectors();
             state_of_ai = FIND_TARGET;
@@ -74,12 +74,10 @@ void Player::aiMainLogisticFunction() {
         playSFX(TANK_CONTROL2);
         updateBalsticMatrix();
         setUpYawVectors();
-        yaw_angle = this->game_state->calcAngleBetweenVectors(enemy_path,
-                                                              projectile_path);
-        rangle = this->game_state->calcAngleBetweenVectors(enemy_path,
-                                                           ortho_left);
-        langle = this->game_state->calcAngleBetweenVectors(enemy_path,
-                                                           ortho_right);
+        yaw_angle = game_state->calcAngleBetweenVectors(enemy_path,
+                                                        projectile_path);
+        rangle = game_state->calcAngleBetweenVectors(enemy_path, ortho_left);
+        langle = game_state->calcAngleBetweenVectors(enemy_path, ortho_right);
         if (degrees_rotated > 540) {
             state_of_ai = NEED_NEW_TARGET;
             degrees_rotated = 0;
@@ -116,8 +114,8 @@ void Player::aiMainLogisticFunction() {
         updateBalsticMatrix();
         setUpYawVectors();
         bool physics = false;
-        pitch_angle = this->game_state->calcAngleBetweenVectors(enemy_path,
-                                                                pitch_vector);
+        pitch_angle =
+                game_state->calcAngleBetweenVectors(enemy_path, pitch_vector);
         if (pitch_angle < max_pitch_angle && !physics) {
             if (getCurrentTank()->getCurrentPower() >= .4 && !physics) {
                 physics = calculateProjectilePhysics(600, 100, 600);
@@ -133,15 +131,15 @@ void Player::aiMainLogisticFunction() {
             Mix_HaltChannel(3);
         }
         if (!physics) {
-            yaw_angle = this->game_state->calcAngleBetweenVectors(
-                    enemy_path, projectile_path);
+            yaw_angle = game_state->calcAngleBetweenVectors(enemy_path,
+                                                            projectile_path);
             if (yaw_angle > .01) {
                 state_of_ai = FIND_TARGET;
                 Mix_HaltChannel(2);
             }
         }
         if (physics) {
-            this->game_state->currentPlayerFire();
+            game_state->currentPlayerFire();
             degrees_rotated = 0;
             prev_state_of_ai = SHOT_LAST_ROUND;
             state_of_ai = WALKING_IN;
@@ -153,7 +151,7 @@ void Player::aiMainLogisticFunction() {
         /*const GLfloat* velMatrix = getCurrentTank()->getTurretMatrix();
         GLfloat tankAttributePower = first_acquired_power;
         GLfloat powerBar = getCurrentTank()->getCurrentPower();
-        GLfloat scalar = this->game_state->getBalisticScalar();
+        GLfloat scalar = game_state->getBalisticScalar();
         GLfloat power = tankAttributePower*powerBar*scalar;
         GLfloat mag = sqrt	(
                                 pow((power*velMatrix[8]),2) +
@@ -162,7 +160,7 @@ void Player::aiMainLogisticFunction() {
                             );
         GLfloat ang = first_acquired_pitch;*/
         degrees_rotated = 0;
-        this->game_state->currentPlayerFire();
+        game_state->currentPlayerFire();
         prev_state_of_ai = SHOT_LAST_ROUND;
         state_of_ai = WALKING_IN;
     }
@@ -193,9 +191,9 @@ void Player::updateBalsticMatrix() {
 
 void Player::setEnemyPosition() {
     updateBalsticMatrix();
-    enemy_position.coord_x = this->target->getBodyMatrix()[12];
-    enemy_position.coord_y = this->target->getBodyMatrix()[13];
-    enemy_position.coord_z = this->target->getBodyMatrix()[14];
+    enemy_position.coord_x = target->getBodyMatrix()[12];
+    enemy_position.coord_y = target->getBodyMatrix()[13];
+    enemy_position.coord_z = target->getBodyMatrix()[14];
 }
 
 void Player::setUpYawVectors() {
@@ -332,17 +330,16 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
     GLfloat percent_errory = yerr;
     GLfloat percent_errorxz = xerr;
-    GLfloat numerator = this->game_state->getGlobalSettings()
+    GLfloat numerator = game_state->getGlobalSettings()
                                 ->getCurrentTerrain()
                                 ->getActualSize();
-    GLfloat denominator = this->game_state->getGlobalSettings()
-                                  ->getCurrentTerrain()
-                                  ->getScale();
+    GLfloat denominator =
+            game_state->getGlobalSettings()->getCurrentTerrain()->getScale();
     GLfloat terrain_size = numerator / denominator;
-    GLfloat g = this->game_state->getGravity();  // Note: gravity is negative
+    GLfloat g = game_state->getGravity();  // Note: gravity is negative
     GLfloat tank_attribute_power = getCurrentTank()->getPower();
     GLfloat power_bar = getCurrentTank()->getCurrentPower();
-    GLfloat balistic_scalar = this->game_state->getBalisticScalar();
+    GLfloat balistic_scalar = game_state->getBalisticScalar();
     GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
 
     /****************************************************************************************/
@@ -381,7 +378,7 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
             break;
         }
 
-        GLfloat terrain_height = this->game_state->getGlobalSettings()
+        GLfloat terrain_height = game_state->getGlobalSettings()
                                          ->getCurrentTerrain()
                                          ->getHeightAt(zf, xf);
         if (terrain_height >= yf) {
@@ -397,9 +394,9 @@ void Player::displayProjectilePhysiscs() {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
     GLfloat tank_attribute_power = getCurrentTank()->getPower();
     GLfloat power_bar = getCurrentTank()->getCurrentPower();
-    GLfloat balistic_scalar = this->game_state->getBalisticScalar();
+    GLfloat balistic_scalar = game_state->getBalisticScalar();
     GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
-    GLfloat g = this->game_state->getGravity();  // Note: gravity is negative
+    GLfloat g = game_state->getGravity();  // Note: gravity is negative
 
     GLfloat* turret_matrix = getCurrentTank()->getTurretMatrix();
     // MAKE SURE TO UPDATE 200 TO WHAT EVER SCALAR IS IN PROJECTILE.CPP
@@ -501,7 +498,7 @@ void Player::drawTestLinesandPlanes() {
     glEnd();
     /*	END BALISTIC AXES	*/
 
-    if (this->target) {
+    if (target) {
         /*	START ENEMY VECTOR AXES	*/
         glBegin(GL_LINES);
         glColor3f(LightSteelBlue);

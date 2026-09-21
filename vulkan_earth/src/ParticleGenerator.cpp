@@ -6,21 +6,21 @@ ParticleGenerator::ParticleGenerator() = default;
 ParticleGenerator::ParticleGenerator(
         int spawn, int rate, int speed, int life, int new_type) {
     max = 1000;
-    this->x = 0;
-    this->y = 0;
-    this->z = 0;
+    x = 0;
+    y = 0;
+    z = 0;
     particles_per_emission = spawn;
     emission_rate = rate;
     emission_speed = speed;
     emission_life = life;
-    this->type = new_type;
+    type = new_type;
     for (int i = 0; i < max; i++) particle_array[i] = nullptr;
 }
 
 void ParticleGenerator::update(GLfloat new_x, GLfloat new_y, GLfloat new_z) {
-    this->x = new_x;
-    this->y = new_y;
-    this->z = new_z;
+    x = new_x;
+    y = new_y;
+    z = new_z;
     for (int i = 0; i < max; i++) {
         if (particle_array[i] != nullptr) {
             if (!particle_array[i]->update()) {
@@ -49,7 +49,7 @@ void ParticleGenerator::addParticles() {
             dir_x /= mag;
             dir_y /= mag;
             dir_z /= mag;
-            switch (this->type) {
+            switch (type) {
                 case 0:
                     particle_array[i] = new ParticleSmoke(x,
                                                           y,

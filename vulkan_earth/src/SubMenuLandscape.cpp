@@ -34,17 +34,17 @@ SubMenuLandscape::SubMenuLandscape(int id,
                                    const std::string& new_caption,
                                    GLfloat new_percent_border) {
     uniqueidentifier = id;
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
-    this->percent_border = new_percent_border;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
+    percent_border = new_percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = new_width;
-    this->height = new_height;
-    this->caption = new_caption;
+    width = new_width;
+    height = new_height;
+    caption = new_caption;
 
     cam_x = -4000;
     cam_y = 10000;
@@ -58,71 +58,69 @@ SubMenuLandscape::SubMenuLandscape(int id,
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
-    for (char ch : this->caption) {
+    for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos =
-            this->x_pos + ((this->width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->y_pos - this->height / 20;
+    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
-    label = new TextObject(this->caption,
+    label = new TextObject(caption,
                            label_x_pos,
                            label_y_pos,
-                           (this->z_pos + 1),
+                           (z_pos + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
                            0.0f);
     button_pressed = nullptr;
 
-    sub_menu_button[0] = new ControlItemSliderbar(
-            this->x_pos + (this->width / 2) - (0.48 * this->width),
-            this->y_pos - (this->height * 0.7),
-            this->z_pos + 1,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.6f * this->width,
-            0.085 * (this->height),
-            "Smoothness",
-            "0/1/2/3/4/5/",
-            5);
-    sub_menu_button[1] = new ControlItemSliderbar(
-            this->x_pos + (this->width / 2) - (0.48 * this->width),
-            this->y_pos - (this->height * 0.8),
-            this->z_pos + 1,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.6f * this->width,
-            0.085 * (this->height),
-            "Hill Height",
-            "0/1/2/3/4/5/",
-            5);
-    sub_menu_button[2] = new ControlItemSliderbar(
-            this->x_pos + (this->width / 2) - (0.48 * this->width),
-            this->y_pos - (this->height * 0.9),
-            this->z_pos + 1,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.6f * this->width,
-            0.085 * (this->height),
-            "Terrain Selection",
-            "Rock/Snow/Ice/Mars/Desert/Lava/",
-            0);
-    sub_menu_button[3] =
-            new ControlItemButton(this,
-                                  this->x_pos + (0.655 * this->width),
-                                  this->y_pos - (this->height * 0.91),
-                                  this->z_pos + 1,
-                                  0.75f,
-                                  0.0f,
-                                  0.0f,
-                                  0.3f * this->width,
-                                  0.05 * (this->height),
-                                  "Sample");
+    sub_menu_button[0] =
+            new ControlItemSliderbar(x_pos + (width / 2) - (0.48 * width),
+                                     y_pos - (height * 0.7),
+                                     z_pos + 1,
+                                     0.5f,
+                                     0.5f,
+                                     0.5f,
+                                     0.6f * width,
+                                     0.085 * (height),
+                                     "Smoothness",
+                                     "0/1/2/3/4/5/",
+                                     5);
+    sub_menu_button[1] =
+            new ControlItemSliderbar(x_pos + (width / 2) - (0.48 * width),
+                                     y_pos - (height * 0.8),
+                                     z_pos + 1,
+                                     0.5f,
+                                     0.5f,
+                                     0.5f,
+                                     0.6f * width,
+                                     0.085 * (height),
+                                     "Hill Height",
+                                     "0/1/2/3/4/5/",
+                                     5);
+    sub_menu_button[2] =
+            new ControlItemSliderbar(x_pos + (width / 2) - (0.48 * width),
+                                     y_pos - (height * 0.9),
+                                     z_pos + 1,
+                                     0.5f,
+                                     0.5f,
+                                     0.5f,
+                                     0.6f * width,
+                                     0.085 * (height),
+                                     "Terrain Selection",
+                                     "Rock/Snow/Ice/Mars/Desert/Lava/",
+                                     0);
+    sub_menu_button[3] = new ControlItemButton(this,
+                                               x_pos + (0.655 * width),
+                                               y_pos - (height * 0.91),
+                                               z_pos + 1,
+                                               0.75f,
+                                               0.0f,
+                                               0.0f,
+                                               0.3f * width,
+                                               0.05 * (height),
+                                               "Sample");
 }
 
 SubMenuLandscape::~SubMenuLandscape() {
@@ -133,68 +131,66 @@ SubMenuLandscape::~SubMenuLandscape() {
 
 int SubMenuLandscape::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuLandscape::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuLandscape::getXPos() { return this->x_pos; }
-void SubMenuLandscape::setXPos(GLfloat new_xpos) { this->x_pos = new_xpos; }
-GLfloat SubMenuLandscape::getYPos() { return this->y_pos; }
-void SubMenuLandscape::setYPos(GLfloat new_ypos) { this->y_pos = new_ypos; }
-GLfloat SubMenuLandscape::getZPos() { return this->z_pos; }
-void SubMenuLandscape::setZPos(GLfloat new_zpos) { this->z_pos = new_zpos; }
+GLfloat SubMenuLandscape::getXPos() { return x_pos; }
+void SubMenuLandscape::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
+GLfloat SubMenuLandscape::getYPos() { return y_pos; }
+void SubMenuLandscape::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
+GLfloat SubMenuLandscape::getZPos() { return z_pos; }
+void SubMenuLandscape::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
 GLfloat SubMenuLandscape::getRed() { return color[0]; }
 void SubMenuLandscape::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuLandscape::getGreen() { return color[1]; }
 void SubMenuLandscape::setGreen(GLfloat green) { color[1] = green; }
 GLfloat SubMenuLandscape::getBlue() { return color[2]; }
 void SubMenuLandscape::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuLandscape::getWidth() { return this->width; }
-void SubMenuLandscape::setWdith(GLint new_width) { this->width = new_width; }
-GLint SubMenuLandscape::getHeight() { return this->height; }
-void SubMenuLandscape::setHeight(GLint new_height) {
-    this->height = new_height;
-}
-std::string SubMenuLandscape::getCaption() { return this->caption; }
+GLint SubMenuLandscape::getWidth() { return width; }
+void SubMenuLandscape::setWdith(GLint new_width) { width = new_width; }
+GLint SubMenuLandscape::getHeight() { return height; }
+void SubMenuLandscape::setHeight(GLint new_height) { height = new_height; }
+std::string SubMenuLandscape::getCaption() { return caption; }
 void SubMenuLandscape::setCaption(const std::string& new_caption) {
-    this->caption = new_caption;
+    caption = new_caption;
 }
-GLfloat SubMenuLandscape::getPerecentBorder() { return this->percent_border; }
+GLfloat SubMenuLandscape::getPerecentBorder() { return percent_border; }
 void SubMenuLandscape::setPercentBorder(GLfloat percent) {
-    this->percent_border = percent_border;
+    percent_border = percent;
 }
 
 void SubMenuLandscape::draw() {
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
     for (int i = 0; i < num_control_items_lnd; i++) {
@@ -203,68 +199,56 @@ void SubMenuLandscape::draw() {
         }
     }
 
-    GLfloat border_x = this->x_pos + 0.03 * this->width;
-    GLfloat border_y = this->y_pos - 0.07 * this->height;
+    GLfloat border_x = x_pos + 0.03 * width;
+    GLfloat border_y = y_pos - 0.07 * height;
 
     // top-left
     glBegin(GL_QUADS);
     glColor4f(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
-    glVertex3f(border_x, border_y, this->z_pos + 1);
-    glVertex3f(border_x - 3, border_y + 3, this->z_pos + 1);
-    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, this->z_pos + 1);
-    glVertex3f(border_x + 0.936 * width, border_y, this->z_pos + 1);
+    glVertex3f(border_x, border_y, z_pos + 1);
+    glVertex3f(border_x - 3, border_y + 3, z_pos + 1);
+    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, z_pos + 1);
+    glVertex3f(border_x + 0.936 * width, border_y, z_pos + 1);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
-    glVertex3f(border_x - 3, border_y + 3, this->z_pos + 1);
-    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, this->z_pos + 1);
-    glVertex3f(border_x, border_y - 0.597 * height, this->z_pos + 1);
-    glVertex3f(border_x, border_y, this->z_pos + 1);
+    glVertex3f(border_x - 3, border_y + 3, z_pos + 1);
+    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, z_pos + 1);
+    glVertex3f(border_x, border_y - 0.597 * height, z_pos + 1);
+    glVertex3f(border_x, border_y, z_pos + 1);
     glEnd();
 
     // bottom-right
     glBegin(GL_QUADS);
     glColor4f(color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
-    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, this->z_pos + 1);
+    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, z_pos + 1);
     glVertex3f(border_x + 0.936 * width + 3,
                border_y - 0.597 * height - 3,
-               this->z_pos + 1);
-    glVertex3f(border_x + 0.936 * width,
-               border_y - 0.597 * height,
-               this->z_pos + 1);
-    glVertex3f(border_x, border_y - 0.597 * height, this->z_pos + 1);
+               z_pos + 1);
+    glVertex3f(border_x + 0.936 * width, border_y - 0.597 * height, z_pos + 1);
+    glVertex3f(border_x, border_y - 0.597 * height, z_pos + 1);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
-    glVertex3f(border_x + 0.936 * width, border_y, this->z_pos + 1);
-    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, this->z_pos + 1);
+    glVertex3f(border_x + 0.936 * width, border_y, z_pos + 1);
+    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, z_pos + 1);
     glVertex3f(border_x + 0.936 * width + 3,
                border_y - 0.597 * height - 3,
-               this->z_pos + 1);
-    glVertex3f(border_x + 0.936 * width,
-               border_y + -0.597 * height,
-               this->z_pos + 1);
+               z_pos + 1);
+    glVertex3f(
+            border_x + 0.936 * width, border_y + -0.597 * height, z_pos + 1);
     glEnd();
 
     glMatrixMode(GL_PROJECTION);
     // glPushMatrix();
     glLoadIdentity();
-    glViewport(this->x_pos + 0.8 * this->width,
-               this->y_pos,
-               (0.9417 * width),
-               (0.6 * height));
-    gluPerspective(45.0,
-                   ((0.9417 * this->width) / (0.6 * this->height)),
-                   1,
-                   199999999);
+    glViewport(x_pos + 0.8 * width, y_pos, (0.9417 * width), (0.6 * height));
+    gluPerspective(45.0, ((0.9417 * width) / (0.6 * height)), 1, 199999999);
     // glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     // glPushMatrix();
     glLoadIdentity();
-    glScissor(this->x_pos + 0.8 * this->width,
-              this->y_pos,
-              (0.9417 * width),
-              (0.6 * height));
+    glScissor(x_pos + 0.8 * width, y_pos, (0.9417 * width), (0.6 * height));
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     gluLookAt(cam_x,
@@ -395,10 +379,10 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int button_down) {
 }
 
 void SubMenuLandscape::updateMouse(int x, int y) {
-    if (((x >= this->x_pos + 0.8 * this->width) &&
-         (x <= this->x_pos + 0.8 * this->width + (0.9417 * this->width))) &&
-        ((y >= this->y_pos - 0.15 * this->height) &&
-         (y <= this->y_pos - 0.15 * this->height + (0.6 * this->height)))) {
+    if (((x >= x_pos + 0.8 * width) &&
+         (x <= x_pos + 0.8 * width + (0.9417 * width))) &&
+        ((y >= y_pos - 0.15 * height) &&
+         (y <= y_pos - 0.15 * height + (0.6 * height)))) {
         float new_cam_x = cam_x, new_cam_y = cam_y, new_cam_z = cam_z;
         if (x < old_mouse_x) {
             new_cam_x =

@@ -21,21 +21,21 @@ ControlItemGrid::ControlItemGrid(GLfloat new_x_pos,
                                  GLfloat active_cell_color_blue,
                                  bool new_visible_lines,
                                  bool new_multi_selectable) {
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
-    this->width = new_width;
-    this->height = new_height;
-    this->rows = new_rows;
-    this->cols = new_cols;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
+    width = new_width;
+    height = new_height;
+    rows = new_rows;
+    cols = new_cols;
     cell_width = new_width / (new_cols * 1.0);
     cell_height = new_height / (new_rows * 1.0);
     active_cell_color[0] = active_cell_color_red;
     active_cell_color[1] = active_cell_color_green;
     active_cell_color[2] = active_cell_color_blue;
     active_cell_color[3] = 1;
-    this->visible_lines = new_visible_lines;
-    this->multi_selectable = new_multi_selectable;
+    visible_lines = new_visible_lines;
+    multi_selectable = new_multi_selectable;
 
     selected_cells = new bool[new_rows * new_cols];
     buttons = new ControlItemButton*[new_rows * new_cols];
@@ -47,17 +47,16 @@ ControlItemGrid::ControlItemGrid(GLfloat new_x_pos,
     int button_i = 0;
     for (int r = 0; r < new_rows; r++) {
         for (int c = 0; c < new_cols; c++) {
-            buttons[button_i] =
-                    new ControlItemButton(nullptr,
-                                          this->x_pos + cell_width * c,
-                                          this->y_pos - cell_height * r,
-                                          this->z_pos + 0.5,
-                                          0.7,
-                                          0.7,
-                                          0.7,
-                                          cell_width,
-                                          cell_height,
-                                          "ABC");
+            buttons[button_i] = new ControlItemButton(nullptr,
+                                                      x_pos + cell_width * c,
+                                                      y_pos - cell_height * r,
+                                                      z_pos + 0.5,
+                                                      0.7,
+                                                      0.7,
+                                                      0.7,
+                                                      cell_width,
+                                                      cell_height,
+                                                      "ABC");
             button_i++;
         }
     }
@@ -77,42 +76,38 @@ void ControlItemGrid::draw() {
     // Draw main body
     glBegin(GL_QUADS);
     glColor4f(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos + 0.4);
-    glVertex3f(this->x_pos - 4, this->y_pos + 4, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width + 4, this->y_pos + 4, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos + 0.4);
+    glVertex3f(x_pos, y_pos, z_pos + 0.4);
+    glVertex3f(x_pos - 4, y_pos + 4, z_pos + 0.4);
+    glVertex3f(x_pos + width + 4, y_pos + 4, z_pos + 0.4);
+    glVertex3f(x_pos + width, y_pos, z_pos + 0.4);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1);
-    glVertex3f(this->x_pos - 4, this->y_pos + 4, this->z_pos + 0.4);
-    glVertex3f(this->x_pos - 4, this->y_pos - height - 4, this->z_pos + 0.4);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos + 0.4);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos + 0.4);
+    glVertex3f(x_pos - 4, y_pos + 4, z_pos + 0.4);
+    glVertex3f(x_pos - 4, y_pos - height - 4, z_pos + 0.4);
+    glVertex3f(x_pos, y_pos - height, z_pos + 0.4);
+    glVertex3f(x_pos, y_pos, z_pos + 0.4);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(0.45, 0.45, 0.45, 1);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos + 0.4);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos + 0.4);
+    glVertex3f(x_pos, y_pos, z_pos + 0.4);
+    glVertex3f(x_pos, y_pos - height, z_pos + 0.4);
+    glVertex3f(x_pos + width, y_pos - height, z_pos + 0.4);
+    glVertex3f(x_pos + width, y_pos, z_pos + 0.4);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1);
-    glVertex3f(this->x_pos - 4, this->y_pos - height - 4, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width + 4,
-               this->y_pos - height - 4,
-               this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos + 0.4);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos + 0.4);
+    glVertex3f(x_pos - 4, y_pos - height - 4, z_pos + 0.4);
+    glVertex3f(x_pos + width + 4, y_pos - height - 4, z_pos + 0.4);
+    glVertex3f(x_pos + width, y_pos - height, z_pos + 0.4);
+    glVertex3f(x_pos, y_pos - height, z_pos + 0.4);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width + 4, this->y_pos + 4, this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width + 4,
-               this->y_pos - height - 4,
-               this->z_pos + 0.4);
-    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos + 0.4);
+    glVertex3f(x_pos + width, y_pos, z_pos + 0.4);
+    glVertex3f(x_pos + width + 4, y_pos + 4, z_pos + 0.4);
+    glVertex3f(x_pos + width + 4, y_pos - height - 4, z_pos + 0.4);
+    glVertex3f(x_pos + width, y_pos + -height, z_pos + 0.4);
     glEnd();
 
     // Draw cell lines if they are set to visible
@@ -121,18 +116,18 @@ void ControlItemGrid::draw() {
             for (int c = 0; c < cols; c++) {
                 glBegin(GL_LINE_LOOP);
                 glColor3f(0, 0, 0);
-                glVertex3f(this->x_pos + cell_width * c,
-                           this->y_pos - cell_height * r,
-                           this->z_pos + 0.5);
-                glVertex3f(this->x_pos + cell_width * c,
-                           this->y_pos - cell_height * (r + 1),
-                           this->z_pos + 0.5);
-                glVertex3f(this->x_pos + cell_width * (c + 1),
-                           this->y_pos - cell_height * (r + 1),
-                           this->z_pos + 0.5);
-                glVertex3f(this->x_pos + cell_width * (c + 1),
-                           this->y_pos - cell_height * r,
-                           this->z_pos + 0.5);
+                glVertex3f(x_pos + cell_width * c,
+                           y_pos - cell_height * r,
+                           z_pos + 0.5);
+                glVertex3f(x_pos + cell_width * c,
+                           y_pos - cell_height * (r + 1),
+                           z_pos + 0.5);
+                glVertex3f(x_pos + cell_width * (c + 1),
+                           y_pos - cell_height * (r + 1),
+                           z_pos + 0.5);
+                glVertex3f(x_pos + cell_width * (c + 1),
+                           y_pos - cell_height * r,
+                           z_pos + 0.5);
                 glEnd();
             }
     }
@@ -152,16 +147,16 @@ void ControlItemGrid::draw() {
                       active_cell_color[2]);
             glVertex3f(buttons[i]->getXPos() + 3,
                        buttons[i]->getYPos() - 3,
-                       this->z_pos + 0.6);
+                       z_pos + 0.6);
             glVertex3f(buttons[i]->getXPos() + 3,
                        buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
-                       this->z_pos + 0.6);
+                       z_pos + 0.6);
             glVertex3f(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
                        buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
-                       this->z_pos + 0.6);
+                       z_pos + 0.6);
             glVertex3f(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
                        buttons[i]->getYPos() - 3,
-                       this->z_pos + 0.6);
+                       z_pos + 0.6);
             glEnd();
         }
     }
@@ -222,10 +217,10 @@ void ControlItemGrid::mouseClickEvent(GLint x,
 }
 
 // GETTERS & SETTERS
-GLfloat ControlItemGrid::getXPos() { return this->x_pos; }
-GLfloat ControlItemGrid::getYPos() { return this->y_pos; }
-GLfloat ControlItemGrid::getHeight() { return this->height; }
-GLfloat ControlItemGrid::getWidth() { return this->width; }
+GLfloat ControlItemGrid::getXPos() { return x_pos; }
+GLfloat ControlItemGrid::getYPos() { return y_pos; }
+GLfloat ControlItemGrid::getHeight() { return height; }
+GLfloat ControlItemGrid::getWidth() { return width; }
 bool* ControlItemGrid::getSelectedCells() { return &selected_cells[0]; }
 
 void ControlItemGrid::selectCell(int row_index, int col_index) {
@@ -257,17 +252,17 @@ void ControlItemGrid::setImageSizeToCell(ImageObject* img, float scale) {
 }
 
 void ControlItemGrid::placeImageToCell(ImageObject* img, int row, int col) {
-    img->setXpos(this->x_pos + (cell_width * col) +
+    img->setXpos(x_pos + (cell_width * col) +
                  ((cell_width - img->getWidth()) / 2.0));
-    img->setYpos(this->y_pos - (cell_height * row) -
+    img->setYpos(y_pos - (cell_height * row) -
                  ((cell_height - img->getHeight()) / 2.0));
-    img->setZpos(this->z_pos + 1);
+    img->setZpos(z_pos + 1);
 }
 
 void ControlItemGrid::placeTextToCell(TextObject* text, int row, int col) {
-    text->setXpos(this->x_pos + (cell_width * col) + (cell_width * 0.1));
-    text->setYpos(this->y_pos - (cell_height * row) - (cell_height * 0.85));
-    text->setZpos(this->z_pos + 2);
+    text->setXpos(x_pos + (cell_width * col) + (cell_width * 0.1));
+    text->setYpos(y_pos - (cell_height * row) - (cell_height * 0.85));
+    text->setZpos(z_pos + 2);
 }
 
 // DUMMY FUNCTIONS

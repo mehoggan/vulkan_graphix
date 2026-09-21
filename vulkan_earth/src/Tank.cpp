@@ -453,24 +453,24 @@ void Tank::updateHitBox() {
     tank_pos.coord_x = body_matrix[12];
     tank_pos.coord_y = body_matrix[13];
     tank_pos.coord_z = body_matrix[14];
-    this->right.compo_x = -body_matrix[0];
-    this->right.compo_y = -body_matrix[1];
-    this->right.compo_z = -body_matrix[2];
-    this->left.compo_x = body_matrix[0];
-    this->left.compo_y = body_matrix[1];
-    this->left.compo_z = body_matrix[2];
-    this->up.compo_x = body_matrix[4];
-    this->up.compo_y = body_matrix[5];
-    this->up.compo_z = body_matrix[6];
-    this->down.compo_x = -body_matrix[4];
-    this->down.compo_y = -body_matrix[5];
-    this->down.compo_z = -body_matrix[6];
-    this->at.compo_x = -body_matrix[8];
-    this->at.compo_y = -body_matrix[9];
-    this->at.compo_z = -body_matrix[10];
-    this->back.compo_x = body_matrix[8];
-    this->back.compo_y = body_matrix[9];
-    this->back.compo_z = body_matrix[10];
+    right.compo_x = -body_matrix[0];
+    right.compo_y = -body_matrix[1];
+    right.compo_z = -body_matrix[2];
+    left.compo_x = body_matrix[0];
+    left.compo_y = body_matrix[1];
+    left.compo_z = body_matrix[2];
+    up.compo_x = body_matrix[4];
+    up.compo_y = body_matrix[5];
+    up.compo_z = body_matrix[6];
+    down.compo_x = -body_matrix[4];
+    down.compo_y = -body_matrix[5];
+    down.compo_z = -body_matrix[6];
+    at.compo_x = -body_matrix[8];
+    at.compo_y = -body_matrix[9];
+    at.compo_z = -body_matrix[10];
+    back.compo_x = body_matrix[8];
+    back.compo_y = body_matrix[9];
+    back.compo_z = body_matrix[10];
 }
 
 void Tank::keyHandler() {}
@@ -754,14 +754,14 @@ void Tank::drawTankHitBox() {
 }
 
 GLfloat Tank::getCurrentPower() { return current_power; }
-int Tank::getPreviousPower() { return this->previous_power; }
-int Tank::getPreviousAngle() { return this->previous_angle; }
+int Tank::getPreviousPower() { return previous_power; }
+int Tank::getPreviousAngle() { return previous_angle; }
 GLfloat* Tank::getProjectileLandPos() { return projectile_land_pos; }
 void Tank::setPreviousPower(int new_previous_power) {
-    this->previous_power = new_previous_power;
+    previous_power = new_previous_power;
 }
 void Tank::setPreviousAngle(int new_previous_angle) {
-    this->previous_angle = new_previous_angle;
+    previous_angle = new_previous_angle;
 }
 void Tank::setProjectileLandPos(GLfloat x, GLfloat y) {
     projectile_land_pos[0] = x;

@@ -15,12 +15,12 @@ TextObject::TextObject(const std::string& input,
                        GLfloat green,
                        GLfloat blue) {
     output = input;
-    this->pos_x = new_pos_x;
-    this->pos_y = new_pos_y;
-    this->pos_z = new_pos_z + 1;
-    this->font_size = new_font_size;
+    pos_x = new_pos_x;
+    pos_y = new_pos_y;
+    pos_z = new_pos_z + 1;
+    font_size = new_font_size;
     if (glutGet(GLUT_WINDOW_WIDTH) < 1300) {
-        this->font_size = GLUT_BITMAP_9_BY_15;
+        font_size = GLUT_BITMAP_9_BY_15;
     }
     color[0] = red;
     color[1] = green;
@@ -31,17 +31,17 @@ TextObject::TextObject(const std::string& input,
 TextObject::~TextObject() = default;
 
 const std::string& TextObject::getOutput() { return output; }
-void TextObject::setXpos(GLfloat x) { this->pos_x = x; }
-void TextObject::setYpos(GLfloat y) { this->pos_y = y; }
-void TextObject::setZpos(GLfloat z) { this->pos_z = z; }
+void TextObject::setXpos(GLfloat x) { pos_x = x; }
+void TextObject::setYpos(GLfloat y) { pos_y = y; }
+void TextObject::setZpos(GLfloat z) { pos_z = z; }
 
 GLvoid TextObject::draw() {
-    GLfloat x_pos = this->pos_x;
+    GLfloat x_pos = pos_x;
     glColor3f(color[0], color[1], color[2]);
     for (char ch : output) {
-        int step = glutBitmapWidth(this->font_size, ch);
-        glRasterPos3f(x_pos, this->pos_y, this->pos_z);
-        glutBitmapCharacter(this->font_size, ch);
+        int step = glutBitmapWidth(font_size, ch);
+        glRasterPos3f(x_pos, pos_y, pos_z);
+        glutBitmapCharacter(font_size, ch);
         x_pos += step;
     }
 }

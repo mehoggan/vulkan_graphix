@@ -27,18 +27,18 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
                                      GLint new_width,
                                      GLint new_height,
                                      const std::string& new_caption) {
-    this->parent = new_parent;
+    parent = new_parent;
 
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = new_width;
-    this->height = new_height;
-    this->caption = new_caption;
+    width = new_width;
+    height = new_height;
+    caption = new_caption;
 
     toggled = false;
     button_state = 0;
@@ -46,19 +46,17 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
-    for (char ch : this->caption) {
+    for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos =
-            this->x_pos + ((this->width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->y_pos +
-                          ((this->y_pos - (this->y_pos + this->height)) / 2) -
-                          this->height / 4;
+    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    GLfloat label_y_pos =
+            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    label = new TextObject(this->caption,
+    label = new TextObject(caption,
                            label_x_pos,
                            label_y_pos,
-                           this->z_pos,
+                           z_pos,
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
@@ -73,84 +71,76 @@ void ControlItemButton::draw() {
         glPushMatrix();
         glBegin(GL_QUADS);
         glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
+        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0], color[1], color[2], color[3]);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
+        glVertex3f(x_pos + width, y_pos - height, z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-        glVertex3f(this->x_pos + width + 3,
-                   this->y_pos - height - 3,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos + width, y_pos - height, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos + width + 3,
-                   this->y_pos - height - 3,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos + width, y_pos + -height, z_pos);
         glEnd();
         glPopMatrix();
     } else {
         glPushMatrix();
         glBegin(GL_QUADS);
         glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
+        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0], color[1], color[2], color[3]);
-        glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+        glVertex3f(x_pos, y_pos, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
+        glVertex3f(x_pos + width, y_pos - height, z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-        glVertex3f(this->x_pos + width + 3,
-                   this->y_pos - height - 3,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-        glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos + width, y_pos - height, z_pos);
+        glVertex3f(x_pos, y_pos - height, z_pos);
         glEnd();
         glBegin(GL_QUADS);
         glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-        glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-        glVertex3f(this->x_pos + width + 3,
-                   this->y_pos - height - 3,
-                   this->z_pos);
-        glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+        glVertex3f(x_pos + width, y_pos, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+        glVertex3f(x_pos + width, y_pos + -height, z_pos);
         glEnd();
         glPopMatrix();
     }
@@ -158,10 +148,10 @@ void ControlItemButton::draw() {
     glPopMatrix();
 }
 
-GLfloat ControlItemButton::getXPos() { return this->x_pos; }
-GLfloat ControlItemButton::getYPos() { return this->y_pos; }
-GLfloat ControlItemButton::getHeight() { return this->height; }
-GLfloat ControlItemButton::getWidth() { return this->width; }
+GLfloat ControlItemButton::getXPos() { return x_pos; }
+GLfloat ControlItemButton::getYPos() { return y_pos; }
+GLfloat ControlItemButton::getHeight() { return height; }
+GLfloat ControlItemButton::getWidth() { return width; }
 bool ControlItemButton::isToggled() { return toggled; }
 void ControlItemButton::updateButtonState() {
     if (toggled)
@@ -179,11 +169,10 @@ void ControlItemButton::mouseClickEvent(GLint x,
                                         GLint state,
                                         bool still_over_control_item_button) {
     if (state) {
-        if ((x >= (this->x_pos) && x <= ((this->x_pos) + (this->width))) &&
-            (y <= (this->y_pos) &&
-             y >= ((this->y_pos) -
-                   (this->height)))) {  // This if statement -->
-                                        // stillOverControlItemButton
+        if ((x >= (x_pos) && x <= ((x_pos) + (width))) &&
+            (y <= (y_pos) &&
+             y >= ((y_pos) - (height)))) {  // This if statement -->
+                                            // stillOverControlItemButton
             button_state = 1;
             toggled = true;
         } else {

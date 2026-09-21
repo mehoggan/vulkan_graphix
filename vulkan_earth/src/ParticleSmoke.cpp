@@ -9,13 +9,13 @@ ParticleSmoke::ParticleSmoke(GLfloat new_x,
                              GLfloat dir_z,
                              GLfloat new_speed,
                              int frames) {
-    this->x = new_x;
-    this->y = new_y;
-    this->z = new_z;
+    x = new_x;
+    y = new_y;
+    z = new_z;
     dir[0] = dir_x;
     dir[1] = dir_y;
     dir[2] = dir_z;
-    this->speed = new_speed;
+    speed = new_speed;
     active_frames = frames;
     current_frame = 0;
     size = 2;

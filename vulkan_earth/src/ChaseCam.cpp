@@ -4,8 +4,8 @@
 
 ChaseCam::ChaseCam() = default;
 ChaseCam::ChaseCam(GLfloat* new_target_pos, GLfloat* new_target_at) {
-    this->target_pos = new_target_pos;
-    this->target_at = new_target_at;
+    target_pos = new_target_pos;
+    target_at = new_target_at;
     shake_cam_pos[0] = 0;
     shake_cam_pos[1] = 0;
     shake_cam_pos[2] = 0;
@@ -15,20 +15,19 @@ ChaseCam::ChaseCam(GLfloat* new_target_pos, GLfloat* new_target_at) {
 ChaseCam::~ChaseCam() = default;
 
 void ChaseCam::view() {
-    GLfloat mag = sqrt(this->target_at[0] * this->target_at[0] +
-                       this->target_at[1] * this->target_at[1] +
-                       this->target_at[2] * this->target_at[2]);
-    gluLookAt(
-            target_pos[0] - 500 * this->target_at[0] / mag * (back_factor) +
-                    shake_cam_pos[0],
-            target_pos[1] + up_factor + shake_cam_pos[1],
-            target_pos[2] - 500 * this->target_at[2] / mag + shake_cam_pos[2],
-            target_pos[0] + 200 * this->target_at[0] / mag + shake_cam_pos[0],
-            target_pos[1] + 200 * this->target_at[0] / mag + shake_cam_pos[1],
-            target_pos[2] + 200 * this->target_at[2] / mag + shake_cam_pos[2],
-            0,
-            1,
-            0);
+    GLfloat mag =
+            sqrt(target_at[0] * target_at[0] + target_at[1] * target_at[1] +
+                 target_at[2] * target_at[2]);
+    gluLookAt(target_pos[0] - 500 * target_at[0] / mag * (back_factor) +
+                      shake_cam_pos[0],
+              target_pos[1] + up_factor + shake_cam_pos[1],
+              target_pos[2] - 500 * target_at[2] / mag + shake_cam_pos[2],
+              target_pos[0] + 200 * target_at[0] / mag + shake_cam_pos[0],
+              target_pos[1] + 200 * target_at[0] / mag + shake_cam_pos[1],
+              target_pos[2] + 200 * target_at[2] / mag + shake_cam_pos[2],
+              0,
+              1,
+              0);
     updateShakeCam();
 }
 

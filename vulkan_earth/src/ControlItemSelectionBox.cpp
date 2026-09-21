@@ -24,16 +24,16 @@ ControlItemSelectionBox::ControlItemSelectionBox(
         GLint new_height,
         const std::string& new_caption,
         const std::string& menu_string) {
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = new_width;
-    this->height = new_height;
-    this->caption = new_caption;
+    width = new_width;
+    height = new_height;
+    caption = new_caption;
     menu_info = menu_string;
 
     // split menuInfo on '/' into allOptions
@@ -54,18 +54,17 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     setOptionText(menu_state);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
-    for (char ch : this->caption) {
+    for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = this->x_pos + (this->width / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->y_pos +
-                          ((this->y_pos - (this->y_pos + this->height)) / 2) -
-                          this->height / 4;
+    GLfloat label_x_pos = x_pos + (width / 2) - (real_length / 2);
+    GLfloat label_y_pos =
+            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    label = new TextObject(this->caption,
+    label = new TextObject(caption,
                            label_x_pos,
                            label_y_pos,
-                           this->z_pos,
+                           z_pos,
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
@@ -81,38 +80,38 @@ void ControlItemSelectionBox::draw() {
     // draw main button box
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
 
     label->draw();
@@ -154,10 +153,10 @@ void ControlItemSelectionBox::draw() {
     glEnd();
 }
 
-GLfloat ControlItemSelectionBox::getXPos() { return this->x_pos; }
-GLfloat ControlItemSelectionBox::getYPos() { return this->y_pos; }
-GLfloat ControlItemSelectionBox::getHeight() { return this->height; }
-GLfloat ControlItemSelectionBox::getWidth() { return this->width; }
+GLfloat ControlItemSelectionBox::getXPos() { return x_pos; }
+GLfloat ControlItemSelectionBox::getYPos() { return y_pos; }
+GLfloat ControlItemSelectionBox::getHeight() { return height; }
+GLfloat ControlItemSelectionBox::getWidth() { return width; }
 std::string ControlItemSelectionBox::collectData() { return current_option; }
 
 void ControlItemSelectionBox::setOptionText(int index) {
@@ -166,16 +165,14 @@ void ControlItemSelectionBox::setOptionText(int index) {
     for (char ch : current_option) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos =
-            this->x_pos + this->width - real_length - this->width / 50;
-    GLfloat label_y_pos = this->y_pos +
-                          ((this->y_pos - (this->y_pos + this->height)) / 2) -
-                          this->height / 4;
+    GLfloat label_x_pos = x_pos + width - real_length - width / 50;
+    GLfloat label_y_pos =
+            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     delete option_text;
     option_text = new TextObject(current_option,
                                  label_x_pos,
                                  label_y_pos,
-                                 this->z_pos,
+                                 z_pos,
                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                  0.0f,
                                  0.0f,
@@ -190,10 +187,10 @@ void ControlItemSelectionBox::mouseClickEvent(
         GLint state,
         bool still_over_control_item_selection_box) {
     // up arrow test
-    if ((x >= (this->x_pos + 0.02 * (this->width)) &&
-         (x <= this->x_pos + 0.02 * (this->width) + 0.1 * (this->width))) &&
-        ((y <= this->y_pos - 3) &&
-         (y >= (this->y_pos - height / 2) +
+    if ((x >= (x_pos + 0.02 * (width)) &&
+         (x <= x_pos + 0.02 * (width) + 0.1 * (width))) &&
+        ((y <= y_pos - 3) &&
+         (y >= (y_pos - height / 2) +
                        3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
         if (state == 1) {  // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
             button_state = 1;  // THEN UP ARROW HAS BEEN PRESSED
@@ -210,11 +207,11 @@ void ControlItemSelectionBox::mouseClickEvent(
             button_state = 0;
         }
     }
-    if (((x >= this->x_pos + 0.02 * (this->width)) &&
-         (x <= this->x_pos + 0.02 * (this->width) + 0.1 * (this->width))) &&
-        ((y <= (this->y_pos - height / 2) - 3) &&
-         (y >= (this->y_pos - height) +
-                       3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
+    if (((x >= x_pos + 0.02 * (width)) &&
+         (x <= x_pos + 0.02 * (width) + 0.1 * (width))) &&
+        ((y <= (y_pos - height / 2) - 3) &&
+         (y >=
+          (y_pos - height) + 3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
         if (state == 1) {  // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
             button_state = 2;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {

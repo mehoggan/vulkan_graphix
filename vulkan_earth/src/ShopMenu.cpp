@@ -41,8 +41,8 @@ ShopMenu::ShopMenu(GLfloat new_width,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
                    int* game_state) {
-    this->global_settings = new_global_settings;
-    this->player_factory = new_player_factory;
+    global_settings = new_global_settings;
+    player_factory = new_player_factory;
     current_game_state = game_state;
     num_players = new_global_settings->getPlayerCount();
     current_player_index = 0;
@@ -57,16 +57,16 @@ ShopMenu::ShopMenu(GLfloat new_width,
         img_inven_items[i] = nullptr;
     }
 
-    this->width = new_width;
-    this->height = new_height;
-    this->percent_border = new_percent_border;
+    width = new_width;
+    height = new_height;
+    percent_border = new_percent_border;
     pos[0] = pos[1] = pos[2] = 0;
 
-    grids[0] = new ControlItemGrid(pos[0] - this->width * 0.4,
-                                   pos[1] + this->height * 0.28,
+    grids[0] = new ControlItemGrid(pos[0] - width * 0.4,
+                                   pos[1] + height * 0.28,
                                    pos[2],
-                                   this->width * 0.3,
-                                   this->height * 0.3,
+                                   width * 0.3,
+                                   height * 0.3,
                                    shop_grid_row,
                                    shop_grid_col,
                                    0.72,
@@ -74,11 +74,11 @@ ShopMenu::ShopMenu(GLfloat new_width,
                                    0.41,
                                    false,
                                    false);
-    grids[1] = new ControlItemGrid(pos[0] + this->width * 0.175,
-                                   pos[1] + this->height * 0.30,
+    grids[1] = new ControlItemGrid(pos[0] + width * 0.175,
+                                   pos[1] + height * 0.30,
                                    pos[2],
-                                   this->width * 0.12,
-                                   this->height * 0.4,
+                                   width * 0.12,
+                                   height * 0.4,
                                    inven_grid_row,
                                    inven_grid_col,
                                    0.25,
@@ -87,57 +87,57 @@ ShopMenu::ShopMenu(GLfloat new_width,
                                    true,
                                    true);
     buttons[0] = new ControlItemButton(nullptr,
-                                       pos[0] - this->width * 0.34,
-                                       pos[1] + this->height * 0.35,
+                                       pos[0] - width * 0.34,
+                                       pos[1] + height * 0.35,
                                        pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
-                                       0.075 * (this->width),
-                                       0.04 * (this->height),
+                                       0.075 * (width),
+                                       0.04 * (height),
                                        "Weapon");
     buttons[0]->setToggled(true);
     buttons[0]->updateButtonState();
 
     buttons[1] = new ControlItemButton(nullptr,
-                                       pos[0] - this->width * 0.235,
-                                       pos[1] + this->height * 0.35,
+                                       pos[0] - width * 0.235,
+                                       pos[1] + height * 0.35,
                                        pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
-                                       0.075 * (this->width),
-                                       0.04 * (this->height),
+                                       0.075 * (width),
+                                       0.04 * (height),
                                        "Item");
     buttons[2] = new ControlItemButton(nullptr,
-                                       pos[0] - this->width * 0.2,
-                                       pos[1] - this->height * 0.175,
+                                       pos[0] - width * 0.2,
+                                       pos[1] - height * 0.175,
                                        pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
-                                       0.075 * (this->width),
-                                       0.04 * (this->height),
+                                       0.075 * (width),
+                                       0.04 * (height),
                                        "Buy");
     buttons[3] = new ControlItemButton(nullptr,
-                                       pos[0] + this->width * 0.275,
-                                       pos[1] - this->height * 0.175,
+                                       pos[0] + width * 0.275,
+                                       pos[1] - height * 0.175,
                                        pos[2] + 0.5,
                                        0.75,
                                        0.75,
                                        0.75,
-                                       0.075 * (this->width),
-                                       0.04 * (this->height),
+                                       0.075 * (width),
+                                       0.04 * (height),
                                        "Sell");
     buttons[4] = new ControlItemButton(nullptr,
-                                       pos[0] + this->width * 0.15,
-                                       pos[1] - this->height * 0.365,
+                                       pos[0] + width * 0.15,
+                                       pos[1] - height * 0.365,
                                        pos[2] + 0.5,
                                        0.65,
                                        0.15,
                                        0.15,
-                                       0.135 * (this->width),
-                                       0.04 * (this->height),
+                                       0.135 * (width),
+                                       0.04 * (height),
                                        "Finish Shopping");
 
     /*LABEL PLACEMENT*/
@@ -160,32 +160,32 @@ ShopMenu::ShopMenu(GLfloat new_width,
                            0.0f,
                            0.0f);
     label_player_num = new TextObject("Player 1 Balance:",
-                                      pos[0] - this->width * 0.35,
-                                      pos[1] - this->height * 0.39,
+                                      pos[0] - width * 0.35,
+                                      pos[1] - height * 0.39,
                                       (pos[2] + 1),
                                       GLUT_BITMAP_TIMES_ROMAN_24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
     label_discription = new TextObject("",
-                                       pos[0] - this->width * 0.4,
-                                       pos[1] - this->height * 0.1,
+                                       pos[0] - width * 0.4,
+                                       pos[1] - height * 0.1,
                                        pos[2] + 1,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
     label_buy_price = new TextObject("",
-                                     pos[0] - this->width * 0.35,
-                                     pos[1] - this->height * 0.2,
+                                     pos[0] - width * 0.35,
+                                     pos[1] - height * 0.2,
                                      pos[2] + 1,
                                      GLUT_BITMAP_TIMES_ROMAN_24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
     label_sell_price = new TextObject("$ 0",
-                                      pos[0] + this->width * 0.15,
-                                      pos[1] - this->height * 0.2,
+                                      pos[0] + width * 0.15,
+                                      pos[1] - height * 0.2,
                                       pos[2] + 1,
                                       GLUT_BITMAP_TIMES_ROMAN_24,
                                       0.0f,
@@ -193,8 +193,8 @@ ShopMenu::ShopMenu(GLfloat new_width,
                                       0.0f);
     std::string balance = "$ " + std::to_string(current_player_balance);
     label_player_balance = new TextObject(balance,
-                                          pos[0] - this->width * 0.2,
-                                          pos[1] - this->height * 0.39,
+                                          pos[0] - width * 0.2,
+                                          pos[1] - height * 0.39,
                                           (pos[2] + 1),
                                           GLUT_BITMAP_TIMES_ROMAN_24,
                                           0.0f,
@@ -231,7 +231,7 @@ ShopMenu::ShopMenu(GLfloat new_width,
                                            2.0f,
                                            100,
                                            100,
-                                           .0006 * (this->width),
+                                           .0006 * (width),
                                            256,
                                            256,
                                            shop_wpns[i]->getImageFileName());
@@ -248,7 +248,7 @@ ShopMenu::ShopMenu(GLfloat new_width,
                                             2.0f,
                                             100,
                                             100,
-                                            .0006 * (this->width),
+                                            .0006 * (width),
                                             256,
                                             256,
                                             shop_items[i]->getImageFileName());
@@ -313,12 +313,10 @@ void ShopMenu::updateNumPlayers(int n) { num_players = n; }
 void ShopMenu::saveCurrentPlayerInfo() {
     // save currentPlayerBalance and the inventory (Weapon, Item objects, and
     // remainings)
-    this->player_factory->getPlayer(current_player_index)
+    player_factory->getPlayer(current_player_index)
             ->setCash(current_player_balance);
-    this->player_factory->getPlayer(current_player_index)
-            ->setWeapons(inven_wpns);
-    this->player_factory->getPlayer(current_player_index)
-            ->setItems(inven_items);
+    player_factory->getPlayer(current_player_index)->setWeapons(inven_wpns);
+    player_factory->getPlayer(current_player_index)->setItems(inven_items);
 
     // clear inventory slots for the next player
     for (int i = 0; i < inven_grid_row; i++) {
@@ -346,8 +344,8 @@ void ShopMenu::saveCurrentPlayerInfo() {
 
 void ShopMenu::displayCurrentPlayerInfo() {
     while ((current_player_index < num_players) &&
-           (this->player_factory->getPlayer(current_player_index)
-                    ->getPlayerType() == "CPU")) {
+           (player_factory->getPlayer(current_player_index)->getPlayerType() ==
+            "CPU")) {
         current_player_index++;
     }
 
@@ -422,8 +420,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
                           std::to_string(current_player_index + 1) +
                           " Balance:";
         label_player_num = new TextObject(str,
-                                          pos[0] - this->width * 0.35,
-                                          pos[1] - this->height * 0.39,
+                                          pos[0] - width * 0.35,
+                                          pos[1] - height * 0.39,
                                           (pos[2] + 1),
                                           GLUT_BITMAP_TIMES_ROMAN_24,
                                           0.0f,
@@ -436,8 +434,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
         delete label_player_balance;
         std::string balance = "$ " + std::to_string(current_player_balance);
         label_player_balance = new TextObject(balance,
-                                              pos[0] - this->width * 0.2,
-                                              pos[1] - this->height * 0.39,
+                                              pos[0] - width * 0.2,
+                                              pos[1] - height * 0.39,
                                               (pos[2] + 1),
                                               GLUT_BITMAP_TIMES_ROMAN_24,
                                               0.0f,
@@ -515,8 +513,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
                 delete label_buy_price;
                 label_discription =
                         new TextObject(shop_wpns[i]->getDescription(),
-                                       pos[0] - this->width * 0.4,
-                                       pos[1] - this->height * 0.1,
+                                       pos[0] - width * 0.4,
+                                       pos[1] - height * 0.1,
                                        pos[2] + 1,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.0f,
@@ -525,8 +523,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
                 std::string price =
                         "$ " + std::to_string(shop_wpns[i]->getPrice());
                 label_buy_price = new TextObject(price,
-                                                 pos[0] - this->width * 0.35,
-                                                 pos[1] - this->height * 0.2,
+                                                 pos[0] - width * 0.35,
+                                                 pos[1] - height * 0.2,
                                                  pos[2] + 1,
                                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                                  0.0f,
@@ -549,8 +547,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
                 delete label_buy_price;
                 label_discription =
                         new TextObject(shop_items[i]->getDescription(),
-                                       pos[0] - this->width * 0.4,
-                                       pos[1] - this->height * 0.1,
+                                       pos[0] - width * 0.4,
+                                       pos[1] - height * 0.1,
                                        pos[2] + 1,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.0f,
@@ -559,8 +557,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
                 std::string price =
                         "$ " + std::to_string(shop_items[i]->getPrice());
                 label_buy_price = new TextObject(price,
-                                                 pos[0] - this->width * 0.35,
-                                                 pos[1] - this->height * 0.2,
+                                                 pos[0] - width * 0.35,
+                                                 pos[1] - height * 0.2,
                                                  pos[2] + 1,
                                                  GLUT_BITMAP_TIMES_ROMAN_24,
                                                  0.0f,
@@ -604,8 +602,8 @@ void ShopMenu::updateSellLabel() {
     delete label_sell_price;
     std::string price = "$ " + std::to_string(total_sell);
     label_sell_price = new TextObject(price,
-                                      pos[0] + this->width * 0.15,
-                                      pos[1] - this->height * 0.2,
+                                      pos[0] + width * 0.15,
+                                      pos[1] - height * 0.2,
                                       pos[2] + 1,
                                       GLUT_BITMAP_TIMES_ROMAN_24,
                                       0.0f,
@@ -669,8 +667,8 @@ void ShopMenu::buyHandler() {
                             "$ " + std::to_string(current_player_balance);
                     label_player_balance =
                             new TextObject(balance,
-                                           pos[0] - this->width * 0.2,
-                                           pos[1] - this->height * 0.39,
+                                           pos[0] - width * 0.2,
+                                           pos[1] - height * 0.39,
                                            (pos[2] + 1),
                                            GLUT_BITMAP_TIMES_ROMAN_24,
                                            0.0f,
@@ -752,8 +750,8 @@ void ShopMenu::buyHandler() {
                             "$ " + std::to_string(current_player_balance);
                     label_player_balance =
                             new TextObject(balance,
-                                           pos[0] - this->width * 0.2,
-                                           pos[1] - this->height * 0.39,
+                                           pos[0] - width * 0.2,
+                                           pos[1] - height * 0.39,
                                            (pos[2] + 1),
                                            GLUT_BITMAP_TIMES_ROMAN_24,
                                            0.0f,
@@ -825,8 +823,8 @@ void ShopMenu::sellHandler() {
         delete label_player_balance;
         std::string balance = "$ " + std::to_string(current_player_balance);
         label_player_balance = new TextObject(balance,
-                                              pos[0] - this->width * 0.2,
-                                              pos[1] - this->height * 0.39,
+                                              pos[0] - width * 0.2,
+                                              pos[1] - height * 0.39,
                                               (pos[2] + 1),
                                               GLUT_BITMAP_TIMES_ROMAN_24,
                                               0.0f,
@@ -842,135 +840,95 @@ void ShopMenu::draw() {
      * CORNER -> UPPER RIGHT	*/
     glBegin(GL_QUADS);
     glColor3f(0.85f, 0.85f, 0.85f);
-    glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*	|\ 	*/
-    glVertex3f(
-            -1 * (this->width / 2.0), -1 * (this->height / 2.0), 0); /*	| |	*/
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /*	|/ 	*/
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0);
+    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0);      /*	|\ 	*/
+    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*	| |	*/
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0); /*	|/ 	*/
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.80f, 0.80f, 0.80f);
-    glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*_____ */
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0); /*\	  / */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0); /*_____ */
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0); /*\	  / */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0); /* ---	*/
-    glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
+    glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.75f, 0.75f, 0.75f);
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0); /*_____ */
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /*|	  | */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0); /*_____ */
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0); /*|	  | */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
                0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.45f, 0.45f, 0.45f);
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /* ___  */
-    glVertex3f(-1 * (this->width / 2.0),
-               -1 * (this->height / 2.0),
-               0);                                                 /*/	  \ */
-    glVertex3f((this->width / 2.0), -1 * (this->height / 2.0), 0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0);                                          /* ___  */
+    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*/	  \ */
+    glVertex3f((width / 2.0), -1 * (height / 2.0), 0);      /*----- */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0); /*	 /| 	*/
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
-               0); /*	| | 	*/
-    glVertex3f(
-            (this->width / 2.0), -1 * (this->height / 2.0), 0); /* 	 \| 	*/
-    glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0);                                     /*	| | 	*/
+    glVertex3f((width / 2.0), -1 * (height / 2.0), 0); /* 	 \| 	*/
+    glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
 
     // Draw separating lines
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(pos[0] + this->width * 0.04 - 1,
-               pos[1] + this->height * 0.45,
-               pos[2] + 1);
-    glVertex3f(pos[0] + this->width * 0.04 - 1,
-               pos[1] - this->height * 0.277,
-               pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.04 - 1, pos[1] + height * 0.45, pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.04 - 1, pos[1] - height * 0.277, pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(pos[0] + this->width * 0.04,
-               pos[1] + this->height * 0.45,
-               pos[2] + 1);
-    glVertex3f(pos[0] + this->width * 0.04,
-               pos[1] - this->height * 0.277,
-               pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.04, pos[1] + height * 0.45, pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.04, pos[1] - height * 0.277, pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(pos[0] + this->width * 0.04 + 1,
-               pos[1] + this->height * 0.45,
-               pos[2] + 1);
-    glVertex3f(pos[0] + this->width * 0.04 + 1,
-               pos[1] - this->height * 0.277,
-               pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.04 + 1, pos[1] + height * 0.45, pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.04 + 1, pos[1] - height * 0.277, pos[2] + 1);
     glEnd();
 
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(pos[0] - this->width * 0.45,
-               pos[1] - this->height * 0.29 + 1,
-               pos[2] + 1);
-    glVertex3f(pos[0] + this->width * 0.45,
-               pos[1] - this->height * 0.29 + 1,
-               pos[2] + 1);
+    glVertex3f(pos[0] - width * 0.45, pos[1] - height * 0.29 + 1, pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.45, pos[1] - height * 0.29 + 1, pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(pos[0] - this->width * 0.45,
-               pos[1] - this->height * 0.29,
-               pos[2] + 1);
-    glVertex3f(pos[0] + this->width * 0.45,
-               pos[1] - this->height * 0.29,
-               pos[2] + 1);
+    glVertex3f(pos[0] - width * 0.45, pos[1] - height * 0.29, pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.45, pos[1] - height * 0.29, pos[2] + 1);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(0, 0, 0);
-    glVertex3f(pos[0] - this->width * 0.45,
-               pos[1] - this->height * 0.29 - 1,
-               pos[2] + 1);
-    glVertex3f(pos[0] + this->width * 0.45,
-               pos[1] - this->height * 0.29 - 1,
-               pos[2] + 1);
+    glVertex3f(pos[0] - width * 0.45, pos[1] - height * 0.29 - 1, pos[2] + 1);
+    glVertex3f(pos[0] + width * 0.45, pos[1] - height * 0.29 - 1, pos[2] + 1);
     glEnd();
 
     glBegin(GL_LINES);

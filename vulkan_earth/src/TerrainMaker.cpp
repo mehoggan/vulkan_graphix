@@ -19,10 +19,10 @@ TerrainMaker::TerrainMaker() = default;
 
 TerrainMaker::TerrainMaker(int i_scale, int i_size) {
     srand(time(nullptr));
-    this->scale = i_scale;
-    this->size = i_size;
-    total_vertices = this->size * this->size;
-    tri_strip_buffer_size = (this->size - 1) * (this->size - 1) * 6;
+    scale = i_scale;
+    size = i_size;
+    total_vertices = size * size;
+    tri_strip_buffer_size = (size - 1) * (size - 1) * 6;
     prepTerrain();
     initData();
 
@@ -53,8 +53,8 @@ TerrainMaker::~TerrainMaker() {
     glDeleteTextures(1, &normal_texture);
 }
 
-GLint TerrainMaker::getScale() { return this->scale; }
-GLint TerrainMaker::getActualSize() { return (this->size) * (this->scale); }
+GLint TerrainMaker::getScale() { return scale; }
+GLint TerrainMaker::getActualSize() { return (size) * (scale); }
 
 GLuint TerrainMaker::selectTexture(const std::string& tex) {
     glDeleteTextures(1, &color_texture);
@@ -101,8 +101,8 @@ GLuint TerrainMaker::loadTexture(const char* filename, int width, int height) {
 }
 
 void TerrainMaker::draw() {
-    int draw_size = this->size;
-    int draw_scale = this->scale;
+    int draw_size = size;
+    int draw_scale = scale;
     int buffersize = tri_strip_buffer_size;
     glEnable(GL_COLOR_MATERIAL);
 
@@ -194,7 +194,7 @@ void TerrainMaker::draw() {
 }
 
 void TerrainMaker::initData() {
-    this->vertices.resize(tri_strip_buffer_size);
+    vertices.resize(tri_strip_buffer_size);
     normals.resize(tri_strip_buffer_size);
     tex_coord.resize(tri_strip_buffer_size);
     material_specular = {1.0, 1.0, 1.0, 1.0};
@@ -231,8 +231,7 @@ void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
     float v1[3], v2[3];
     bool can_calculate = true;
     if (flag == 1) {
-        if (((x - 1) >= 0) && ((z - 1) >= 0) && (x < this->size) &&
-            (z < this->size)) {
+        if (((x - 1) >= 0) && ((z - 1) >= 0) && (x < size) && (z < size)) {
             v1[0] = ((x - 1) * scale) - (x * scale);
             v1[1] = (th[x - 1][z - 1]) - th[x][z];
             v1[2] = ((z - 1) * scale) - (z * scale);
@@ -244,8 +243,7 @@ void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
             can_calculate = false;
         }
     } else {
-        if ((((x - 1) >= 0) && (x < this->size)) && ((z + 1) < this->size) &&
-            (z > 0)) {
+        if ((((x - 1) >= 0) && (x < size)) && ((z + 1) < size) && (z > 0)) {
             v1[0] = ((x - 1) * scale) - (x * scale);
             v1[1] = (th[x - 1][z]) - th[x][z];
             v1[2] = 0;
@@ -280,14 +278,14 @@ void TerrainMaker::prepareData(int new_steps,
                                float new_radius,
                                int new_random_jump,
                                int smoothness) {
-    int chunk_size = this->size / 2;
-    this->steps = new_steps;
-    this->increase = new_increase;
-    this->radius = new_radius;
-    this->random_jump = new_random_jump;
+    int chunk_size = size / 2;
+    steps = new_steps;
+    increase = new_increase;
+    radius = new_radius;
+    random_jump = new_random_jump;
     int buffersize = tri_strip_buffer_size;
-    int prep_size = this->size;
-    int prep_scale = this->scale;
+    int prep_size = size;
+    int prep_scale = scale;
     terrainGen(new_steps, new_increase, new_radius, new_random_jump);
     for (int i = -1; i < smoothness; i++) terrainSmoothe(10);
 
@@ -310,7 +308,7 @@ void TerrainMaker::prepareData(int new_steps,
             /*	V_I -- N_I												*/
             /************************************************************/
             Vertex v_i(j * prep_scale, th[i][j] /*SCALE*/, i * prep_scale);
-            this->vertices[index++] = v_i;
+            vertices[index++] = v_i;
             TexCoord t_i((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
                          (static_cast<float>(j % (chunk_size - 1))) /
@@ -331,7 +329,7 @@ void TerrainMaker::prepareData(int new_steps,
             Vertex v_j(j * prep_scale,
                        th[i + 1][j] /*SCALE*/,
                        (i + 1) * prep_scale);
-            this->vertices[index++] = v_j;
+            vertices[index++] = v_j;
             TexCoord t_j((static_cast<float>(i % (chunk_size - 1)) + 1) /
                                  static_cast<float>(chunk_size - 1),
                          (static_cast<float>(j % (chunk_size - 1))) /
@@ -352,7 +350,7 @@ void TerrainMaker::prepareData(int new_steps,
             Vertex v_k((j + 1) * prep_scale,
                        th[i][j + 1] /*SCALE*/,
                        (i)*prep_scale);
-            this->vertices[index++] = v_k;
+            vertices[index++] = v_k;
             TexCoord t_k((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
                          (static_cast<float>(j % (chunk_size - 1)) + 1) /
@@ -373,7 +371,7 @@ void TerrainMaker::prepareData(int new_steps,
             Vertex v_x(j * prep_scale,
                        th[i + 1][j] /*SCALE*/,
                        (i + 1) * prep_scale);
-            this->vertices[index++] = v_x;
+            vertices[index++] = v_x;
             TexCoord t_x((static_cast<float>(i % (chunk_size - 1)) + 1) /
                                  static_cast<float>(chunk_size - 1),
                          (static_cast<float>(j % (chunk_size - 1))) /
@@ -394,7 +392,7 @@ void TerrainMaker::prepareData(int new_steps,
             Vertex v_y((j + 1) * prep_scale,
                        th[i + 1][j + 1] /*SCALE*/,
                        (i + 1) * prep_scale);
-            this->vertices[index++] = v_y;
+            vertices[index++] = v_y;
             TexCoord t_y((static_cast<float>(i % (chunk_size - 1)) + 1) /
                                  static_cast<float>(chunk_size - 1),
                          (static_cast<float>(j % (chunk_size - 1)) + 1) /
@@ -415,7 +413,7 @@ void TerrainMaker::prepareData(int new_steps,
             Vertex v_z((j + 1) * prep_scale,
                        th[i][j + 1] /*SCALE*/,
                        (i)*prep_scale);
-            this->vertices[index++] = v_z;
+            vertices[index++] = v_z;
             TexCoord t_z((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
                          (static_cast<float>(j % (chunk_size - 1)) + 1) /
@@ -443,7 +441,7 @@ void TerrainMaker::prepareData(int new_steps,
     pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
                             0,
                             buffersize * sizeof(Vertex),
-                            this->vertices.data());
+                            vertices.data());
 
     pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
                             buffersize * sizeof(Vertex),
@@ -509,9 +507,9 @@ void TerrainMaker::verifyVBOs() {
 }
 
 void TerrainMaker::prepTerrain() {
-    th = new int*[this->size];
-    for (int i = 0; i < this->size; i++) {
-        th[i] = new int[this->size];
+    th = new int*[size];
+    for (int i = 0; i < size; i++) {
+        th[i] = new int[size];
     }
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
@@ -524,12 +522,12 @@ void TerrainMaker::terrainGen(int new_steps,
                               int new_increase,
                               float new_radius,
                               int new_random_jump) {
-    float current_x = this->size / 2;
-    float current_y = this->size / 2;
+    float current_x = size / 2;
+    float current_y = size / 2;
     float distance = 0;
 
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
             th[i][j] = 0;
         }
     }
@@ -552,14 +550,14 @@ void TerrainMaker::terrainGen(int new_steps,
                     current_y++;
                     break;
             }
-            if (((current_x >= this->size) || (current_x < 0)) ||
-                ((current_y >= this->size) || (current_y < 0))) {
-                current_x = (rand() % this->size);
-                current_y = (rand() % this->size);
+            if (((current_x >= size) || (current_x < 0)) ||
+                ((current_y >= size) || (current_y < 0))) {
+                current_x = (rand() % size);
+                current_y = (rand() % size);
             }
         } else {
-            current_x = (rand() % this->size);
-            current_y = (rand() % this->size);
+            current_x = (rand() % size);
+            current_y = (rand() % size);
         }
 
         for (int x = current_x - new_radius; x < current_x + new_radius; x++)
@@ -569,7 +567,7 @@ void TerrainMaker::terrainGen(int new_steps,
                         sqrt(pow(static_cast<double>(current_x - x), 2) +
                              pow(static_cast<double>(current_y) - y, 2)));
                 if ((distance < new_radius) &&
-                    ((x >= 0 && x < this->size) && (y >= 0 && y < this->size)))
+                    ((x >= 0 && x < size) && (y >= 0 && y < size)))
                     th[x][y] += new_increase;
             }
     }
@@ -638,14 +636,13 @@ void TerrainMaker::terrainSqDi(
 }
 
 void TerrainMaker::terrainSmoothe(int box_width) {
-    for (int y = 0; y < this->size; y++) {
-        for (int x = 0; x < this->size; x++) {
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
             int sum = 0;
             for (int i = y - (box_width / 2); i < y + (box_width / 2); i++) {
                 for (int j = x - (box_width / 2); j < x + (box_width / 2);
                      j++) {
-                    if ((i >= 0 && i < this->size) &&
-                        (j >= 0 && j < this->size)) {
+                    if ((i >= 0 && i < size) && (j >= 0 && j < size)) {
                         sum += th[i][j];
                     }
                 }
@@ -655,18 +652,18 @@ void TerrainMaker::terrainSmoothe(int box_width) {
     }
 
     //*
-    for (int y = 0; y < this->size; y++) {
-        for (int x = 0; x < this->size; x++) {
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
             if (x == 0 || y == 0) {
                 th[y][x] = 0;
             }
-            if (x == 0 || y == this->size - 1) {
+            if (x == 0 || y == size - 1) {
                 th[y][x] = 0;
             }
-            if (x == this->size - 1 || y == 0) {
+            if (x == size - 1 || y == 0) {
                 th[y][x] = 0;
             }
-            if (x == this->size - 1 || y == this->size - 1) {
+            if (x == size - 1 || y == size - 1) {
                 th[y][x] = 0;
             }
         }
@@ -675,18 +672,18 @@ void TerrainMaker::terrainSmoothe(int box_width) {
 }
 
 void TerrainMaker::terrainSlope(int new_vertices) {
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
             if (i < new_vertices) {
-                th[i][j] -= (new_vertices - i) * this->scale;
-            } else if (i > this->size - new_vertices) {
-                th[i][j] -= (new_vertices - (this->size - i)) * this->scale;
+                th[i][j] -= (new_vertices - i) * scale;
+            } else if (i > size - new_vertices) {
+                th[i][j] -= (new_vertices - (size - i)) * scale;
             }
             if (j < new_vertices) {
-                th[i][j] -= (new_vertices - j) * this->scale;
+                th[i][j] -= (new_vertices - j) * scale;
 
-            } else if (j > this->size - new_vertices) {
-                th[i][j] -= (new_vertices - (this->size - j)) * this->scale;
+            } else if (j > size - new_vertices) {
+                th[i][j] -= (new_vertices - (size - j)) * scale;
             }
         }
     }
@@ -732,10 +729,10 @@ Normal TerrainMaker::getTriangleNormal(float x, float z) {
 }
 
 Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
-    int n_x = static_cast<int>(x / this->scale);
-    int n_z = static_cast<int>(z / this->scale);
-    float d_x = x / this->scale - n_x;
-    float d_z = z / this->scale - n_z;
+    int n_x = static_cast<int>(x / scale);
+    int n_z = static_cast<int>(z / scale);
+    float d_x = x / scale - n_x;
+    float d_z = z / scale - n_z;
 
     if (d_x > 0) {
         if (abs(d_x) > 0.5) {
@@ -758,8 +755,8 @@ Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
     float n[3];
     float v[3] = {0,
                   static_cast<float>(th[n_z][n_x + 1] - th[n_z][n_x]),
-                  static_cast<float>(this->scale)};
-    float u[3] = {static_cast<float>(this->scale),
+                  static_cast<float>(scale)};
+    float u[3] = {static_cast<float>(scale),
                   static_cast<float>(th[n_z + 1][n_x] - th[n_z][n_x]),
                   0};
 
@@ -773,20 +770,20 @@ Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
     n[2] /= mag;
     return Normal(n[0], n[1], n[2]);
     /*int i;
-    for(i=0;i<(this->size-1)*(this->size-1)*6;i++){
-        if((this->vertices[i].coordX==nX*this->scale)&&(this->vertices[i].coordZ==nZ*this->scale))
+    for(i=0;i<(size-1)*(size-1)*6;i++){
+        if((vertices[i].coordX==nX*scale)&&(vertices[i].coordZ==nZ*scale))
     break;
     }
     return &normals[i];*/
 }
 
 GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
-    if ((x >= 0 && x < (this->size - 1) * this->scale) &&
-        (z >= 0 && z < (this->size - 1) * this->scale)) {
-        int v_x = static_cast<int>(x / this->scale);
-        int v_z = static_cast<int>(z / this->scale);
-        float d_x = x / this->scale - v_x;
-        float d_z = z / this->scale - v_z;
+    if ((x >= 0 && x < (size - 1) * scale) &&
+        (z >= 0 && z < (size - 1) * scale)) {
+        int v_x = static_cast<int>(x / scale);
+        int v_z = static_cast<int>(z / scale);
+        float d_x = x / scale - v_x;
+        float d_z = z / scale - v_z;
 
         if (d_x < 0) {
             if (abs(d_x) < 0.5) {
@@ -813,7 +810,7 @@ GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
 
 void TerrainMaker::collectVerticesForTriangleNormal(
         int x, int z, Vertex* three_vertices_array[3]) {
-    if ((x >= 0 && x < this->size) && (z >= 0 && z < this->size)) {
+    if ((x >= 0 && x < size) && (z >= 0 && z < size)) {
         three_vertices_array[0]->coord_x = x;
         three_vertices_array[0]->coord_y = th[z][x];
         three_vertices_array[0]->coord_z = z;
@@ -831,8 +828,8 @@ void TerrainMaker::collectVerticesForTriangleNormal(
 }
 
 void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
-    int x = static_cast<int>(fx / this->scale);
-    int z = static_cast<int>(fz / this->scale);
+    int x = static_cast<int>(fx / scale);
+    int z = static_cast<int>(fz / scale);
     Vertex* buffer_ptr = static_cast<Vertex*>(
             pgl_map_buffer_arb(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
     int crater_size = static_cast<int>(blast_size * 1.5);
@@ -843,8 +840,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
             for (int j = z - crater_size; j < z + crater_size; j++) {
                 GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
                                                            (z - j) * (z - j)));
-                if ((((i >= 0) && (j >= 0)) &&
-                     ((i < this->size) && (j < this->size))) &&
+                if ((((i >= 0) && (j >= 0)) && ((i < size) && (j < size))) &&
                     (distance <= blast_size)) {
                     GLfloat x_dis, y_dis, z_dis, dist_radius;
                     x_dis = abs(i - x);
@@ -855,7 +851,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
                             -((sqrt(dist_radius * dist_radius + x_dis * x_dis +
                                     z_dis * z_dis) -
                                blast_size * 2) *
-                              this->scale / 2);
+                              scale / 2);
                     GLfloat adjust_height = th[j][i];
                     if (adjust_height > (impact_y + (damage_depth))) {
                         adjust_height -= damage_depth;
@@ -871,24 +867,23 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
                                 (th[j - 1][i] + th[j][i - 1] + th[j][i]) / 3;
                     }
                     th[j][i] = adjust_height;  // local
-                    buffer_ptr[(j * (this->size - 1) + i) * 6].coord_y =
+                    buffer_ptr[(j * (size - 1) + i) * 6].coord_y =
                             adjust_height;  // VBO
                     if ((j - 1) > 0) {
-                        buffer_ptr[((j - 1) * (this->size - 1) + i) * 6 + 1]
+                        buffer_ptr[((j - 1) * (size - 1) + i) * 6 + 1]
                                 .coord_y = adjust_height;  // VBO
-                        buffer_ptr[((j - 1) * (this->size - 1) + i) * 6 + 3]
+                        buffer_ptr[((j - 1) * (size - 1) + i) * 6 + 3]
                                 .coord_y = adjust_height;  // VBO
                         if ((i - 1) > 0) {
-                            buffer_ptr[((j - 1) * (this->size - 1) + (i - 1)) *
-                                               6 +
+                            buffer_ptr[((j - 1) * (size - 1) + (i - 1)) * 6 +
                                        4]
                                     .coord_y = adjust_height;  // VBO
                         }
                     }
                     if ((i - 1) > 0) {
-                        buffer_ptr[((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                        buffer_ptr[((j) * (size - 1) + (i - 1)) * 6 + 2]
                                 .coord_y = adjust_height;  // VBO
-                        buffer_ptr[((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                        buffer_ptr[((j) * (size - 1) + (i - 1)) * 6 + 5]
                                 .coord_y = adjust_height;  // VBO
                     }
                 }
@@ -903,70 +898,67 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
                 Normal adjust_normal;
                 GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
                                                            (z - j) * (z - j)));
-                if ((i >= 0 && j >= 0 && i < this->size && j < this->size) &&
+                if ((i >= 0 && j >= 0 && i < size && j < size) &&
                     (distance <= blast_size)) {
                     smoothShadeNormal(j, i, &adjust_normal);
-                    buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
+                    buffer_ptr[normal_offset + (j * (size - 1) + i) * 6]
                             .coord_x = adjust_normal.compo_x;  // VBO
-                    buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
+                    buffer_ptr[normal_offset + (j * (size - 1) + i) * 6]
                             .coord_y = adjust_normal.compo_y;  // VBO
-                    buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
+                    buffer_ptr[normal_offset + (j * (size - 1) + i) * 6]
                             .coord_z = adjust_normal.compo_z;  // VBO
                     if ((j - 1) > 0) {
                         buffer_ptr[normal_offset +
-                                   ((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                   ((j - 1) * (size - 1) + i) * 6 + 1]
                                 .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                   ((j - 1) * (size - 1) + i) * 6 + 1]
                                 .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j - 1) * (this->size - 1) + i) * 6 + 1]
+                                   ((j - 1) * (size - 1) + i) * 6 + 1]
                                 .coord_z = adjust_normal.compo_z;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                   ((j - 1) * (size - 1) + i) * 6 + 3]
                                 .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                   ((j - 1) * (size - 1) + i) * 6 + 3]
                                 .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j - 1) * (this->size - 1) + i) * 6 + 3]
+                                   ((j - 1) * (size - 1) + i) * 6 + 3]
                                 .coord_z = adjust_normal.compo_z;  // VBO
                         if ((i - 1) > 0) {
                             buffer_ptr[normal_offset +
-                                       ((j - 1) * (this->size - 1) + (i - 1)) *
-                                               6 +
+                                       ((j - 1) * (size - 1) + (i - 1)) * 6 +
                                        4]
                                     .coord_x = adjust_normal.compo_x;  // VBO
                             buffer_ptr[normal_offset +
-                                       ((j - 1) * (this->size - 1) + (i - 1)) *
-                                               6 +
+                                       ((j - 1) * (size - 1) + (i - 1)) * 6 +
                                        4]
                                     .coord_y = adjust_normal.compo_y;  // VBO
                             buffer_ptr[normal_offset +
-                                       ((j - 1) * (this->size - 1) + (i - 1)) *
-                                               6 +
+                                       ((j - 1) * (size - 1) + (i - 1)) * 6 +
                                        4]
                                     .coord_z = adjust_normal.compo_z;  // VBO
                         }
                     }
                     if ((i - 1) > 0) {
                         buffer_ptr[normal_offset +
-                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                   ((j) * (size - 1) + (i - 1)) * 6 + 2]
                                 .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                   ((j) * (size - 1) + (i - 1)) * 6 + 2]
                                 .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
+                                   ((j) * (size - 1) + (i - 1)) * 6 + 2]
                                 .coord_z = adjust_normal.compo_z;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                   ((j) * (size - 1) + (i - 1)) * 6 + 5]
                                 .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                   ((j) * (size - 1) + (i - 1)) * 6 + 5]
                                 .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
-                                   ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
+                                   ((j) * (size - 1) + (i - 1)) * 6 + 5]
                                 .coord_z = adjust_normal.compo_z;  // VBO
                     }
                 }

@@ -43,8 +43,8 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
                      PlayerFactory* new_player_factory,
                      int* game_state) {
     start_music_played = false;
-    this->global_settings = new_global_settings;
-    this->player_factory = new_player_factory;
+    global_settings = new_global_settings;
+    player_factory = new_player_factory;
     current_game_state = game_state;
 
     num_players = max_num_players;
@@ -59,17 +59,17 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
     }
 
     button_pressed = nullptr;
-    this->width = new_width;
-    this->height = new_height;
-    this->percent_border = new_percent_border;
+    width = new_width;
+    height = new_height;
+    percent_border = new_percent_border;
     pos[0] = pos[1] = pos[2] = 0;
     color[0] = color[1] = color[2] = 1;
     color[3] = 1;
-    tank_prv_scr_pos[0] = this->width * 0.07;
-    tank_prv_scr_pos[1] = this->height * 0.40;
+    tank_prv_scr_pos[0] = width * 0.07;
+    tank_prv_scr_pos[1] = height * 0.40;
     tank_prv_scr_pos[2] = 0.1;
-    tank_prv_scr_width = this->width * 0.35;
-    tank_prv_scr_height = this->height * 0.45;
+    tank_prv_scr_width = width * 0.35;
+    tank_prv_scr_height = height * 0.45;
     tank_prv_scr_color[0] = tank_prv_scr_color[1] = tank_prv_scr_color[2] = 0;
     prv_scr_color_control = 1;
 
@@ -79,14 +79,14 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
     /*BUTTONS AND CONTROL ITEMS*/
     buttons[0] = new MainMenuButton(
             0,
-            pos[0] - this->width * 0.35,
-            pos[1] + this->height * 0.35,
+            pos[0] - width * 0.35,
+            pos[1] + height * 0.35,
             1,
-            this->player_factory->collectPlayerColor(current_player_index)[0],
-            this->player_factory->collectPlayerColor(current_player_index)[1],
-            this->player_factory->collectPlayerColor(current_player_index)[2],
-            0.1 * (this->width),
-            0.04 * (this->height),
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2],
+            0.1 * (width),
+            0.04 * (height),
             "CPU",
             nullptr);
 
@@ -95,85 +95,84 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
     buttons[0]->activateSubMenu();
     buttons[1] = new MainMenuButton(
             1,
-            pos[0] - this->width * 0.2,
-            pos[1] + this->height * 0.35,
+            pos[0] - width * 0.2,
+            pos[1] + height * 0.35,
             1,
-            this->player_factory->collectPlayerColor(current_player_index)[0],
-            this->player_factory->collectPlayerColor(current_player_index)[1],
-            this->player_factory->collectPlayerColor(current_player_index)[2],
-            0.1 * (this->width),
-            0.04 * (this->height),
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2],
+            0.1 * (width),
+            0.04 * (height),
             "HUMAN",
             nullptr);
     buttons[2] = new MainMenuButton(2,
-                                    pos[0] + this->width * 0.125,
-                                    pos[1] - this->height * 0.35,
+                                    pos[0] + width * 0.125,
+                                    pos[1] - height * 0.35,
                                     1,
                                     0.65,
                                     0.15,
                                     0.15,
-                                    0.1 * (this->width),
-                                    0.04 * (this->height),
+                                    0.1 * (width),
+                                    0.04 * (height),
                                     "Back",
                                     nullptr);
     buttons[3] = new MainMenuButton(3,
-                                    pos[0] + this->width * 0.275,
-                                    pos[1] - this->height * 0.35,
+                                    pos[0] + width * 0.275,
+                                    pos[1] - height * 0.35,
                                     1,
                                     0.75,
                                     0.75,
                                     0.75,
-                                    0.1 * (this->width),
-                                    0.04 * (this->height),
+                                    0.1 * (width),
+                                    0.04 * (height),
                                     "Next",
                                     nullptr);
     control_items[0] = new ControlItemSelectionBox(
-            pos[0] - this->width * 0.375,
-            pos[1] + this->height * 0.275,
+            pos[0] - width * 0.375,
+            pos[1] + height * 0.275,
             1,
             0.55,
             0.55,
             0.55,
-            0.175 * (this->width),
-            0.04 * (this->height),
+            0.175 * (width),
+            0.04 * (height),
             "AI",
             "Moron/Tosser/Cyborg/Shooter/Chooser/Poolshark/Spoiler/Unknown/");
     control_items[1] = new ControlItemSliderbar(
-            pos[0] - this->width * 0.35,
-            pos[1] - this->height * 0.24,
+            pos[0] - width * 0.35,
+            pos[1] - height * 0.24,
             1,
             0.55,
             0.55,
             0.55,
-            0.7 * (this->width),
-            0.06 * (this->height),
+            0.7 * (width),
+            0.06 * (height),
             "Tank Type",
             "Rhinoxx/Hellfire/HeavyD/Panzer/Eggroid/Behemoth/Cubix/Predator/",
             0);
-    control_items[2] =
-            new ControlItemSelectionBox(pos[0] - this->width * 0.175,
-                                        pos[1] + this->height * 0.275,
-                                        1,
-                                        0.55,
-                                        0.55,
-                                        0.55,
-                                        0.1 * (this->width),
-                                        0.04 * (this->height),
-                                        "Team",
-                                        "-/1/2/3/4/5/");
-    text_field = new ControlItemTextField(pos[0] - this->width * 0.375,
-                                          pos[1] + this->height * 0.275,
+    control_items[2] = new ControlItemSelectionBox(pos[0] - width * 0.175,
+                                                   pos[1] + height * 0.275,
+                                                   1,
+                                                   0.55,
+                                                   0.55,
+                                                   0.55,
+                                                   0.1 * (width),
+                                                   0.04 * (height),
+                                                   "Team",
+                                                   "-/1/2/3/4/5/");
+    text_field = new ControlItemTextField(pos[0] - width * 0.375,
+                                          pos[1] + height * 0.275,
                                           1,
                                           1.0,
                                           1.0,
                                           1.0,
-                                          0.175 * (this->width),
-                                          0.04 * (this->height));
+                                          0.175 * (width),
+                                          0.04 * (height));
 
     /*LABEL PLACEMENT*/
     player_page_num = new TextObject(caption,
-                                     pos[0] - this->width * 0.25,
-                                     pos[1] + this->height * 0.4,
+                                     pos[0] - width * 0.25,
+                                     pos[1] + height * 0.4,
                                      (pos[2] + 1),
                                      GLUT_BITMAP_TIMES_ROMAN_24,
                                      0.0f,
@@ -190,9 +189,9 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             stat = "Speed:";
         else
             stat = "Meh...:";
-        GLfloat stat_label_x_pos = pos[0] - this->width * 0.385;
+        GLfloat stat_label_x_pos = pos[0] - width * 0.385;
         GLfloat stat_label_y_pos =
-                pos[1] + this->height * 0.12 - this->height * (i * 0.07);
+                pos[1] + height * 0.12 - height * (i * 0.07);
         tank_stat_labels[i] = new TextObject(stat,
                                              stat_label_x_pos,
                                              stat_label_y_pos,
@@ -219,20 +218,20 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
     }
 
     // STAT IMAGES
-    GLfloat img_start_pos_x = pos[0] - this->width * 0.325;
+    GLfloat img_start_pos_x = pos[0] - width * 0.325;
     for (int i = 0; i < num_stat_images; i++) {
         // For Off Lights
         if (i < 30) {
             // For Power Lights
             if (i < 10) {
                 stat_images[i] = new ImageObject(
-                        img_start_pos_x + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + width * (i % 10) * 0.03,
                         pos[1] + new_height * 0.14 -
-                                this->height * ((i / 10) * 0.07),
+                                height * ((i / 10) * 0.07),
                         pos[2] + 0.5,
-                        this->width * 0.03,
-                        this->height * 0.032,
-                        0.0006 * (this->width),
+                        width * 0.03,
+                        height * 0.032,
+                        0.0006 * (width),
                         64,
                         64,
                         "lightOff.raw");
@@ -240,13 +239,13 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             // For Armor Lights
             else if (i < 20) {
                 stat_images[i] = new ImageObject(
-                        img_start_pos_x + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + width * (i % 10) * 0.03,
                         pos[1] + new_height * 0.14 -
-                                this->height * ((i / 10) * 0.07),
+                                height * ((i / 10) * 0.07),
                         pos[2] + 0.5,
-                        this->width * 0.03,
-                        this->height * 0.032,
-                        0.0006 * (this->width),
+                        width * 0.03,
+                        height * 0.032,
+                        0.0006 * (width),
                         64,
                         64,
                         "lightOff.raw");
@@ -254,13 +253,13 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             // For Speed Lights
             else {
                 stat_images[i] = new ImageObject(
-                        img_start_pos_x + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + width * (i % 10) * 0.03,
                         pos[1] + new_height * 0.14 -
-                                this->height * ((i / 10) * 0.07),
+                                height * ((i / 10) * 0.07),
                         pos[2] + 0.5,
-                        this->width * 0.03,
-                        this->height * 0.032,
-                        0.0006 * (this->width),
+                        width * 0.03,
+                        height * 0.032,
+                        0.0006 * (width),
                         64,
                         64,
                         "lightOff.raw");
@@ -271,13 +270,13 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             // For Power Lights
             if (i < 40) {
                 stat_images[i] = new ImageObject(
-                        img_start_pos_x + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + width * (i % 10) * 0.03,
                         pos[1] + new_height * 0.14 -
-                                this->height * (((i - 30) / 10) * 0.07),
+                                height * (((i - 30) / 10) * 0.07),
                         pos[2] + 1,
-                        this->width * 0.03,
-                        this->height * 0.032,
-                        0.0006 * (this->width),
+                        width * 0.03,
+                        height * 0.032,
+                        0.0006 * (width),
                         64,
                         64,
                         "lightRed.raw");
@@ -285,13 +284,13 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             // For Armor Lights
             else if (i < 50) {
                 stat_images[i] = new ImageObject(
-                        img_start_pos_x + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + width * (i % 10) * 0.03,
                         pos[1] + new_height * 0.14 -
-                                this->height * (((i - 30) / 10) * 0.07),
+                                height * (((i - 30) / 10) * 0.07),
                         pos[2] + 1,
-                        this->width * 0.03,
-                        this->height * 0.032,
-                        0.0006 * (this->width),
+                        width * 0.03,
+                        height * 0.032,
+                        0.0006 * (width),
                         64,
                         64,
                         "lightBlue.raw");
@@ -299,13 +298,13 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             // For Speed Lights
             else {
                 stat_images[i] = new ImageObject(
-                        img_start_pos_x + this->width * (i % 10) * 0.03,
+                        img_start_pos_x + width * (i % 10) * 0.03,
                         pos[1] + new_height * 0.14 -
-                                this->height * (((i - 30) / 10) * 0.07),
+                                height * (((i - 30) / 10) * 0.07),
                         pos[2] + 1,
-                        this->width * 0.03,
-                        this->height * 0.032,
-                        0.0006 * (this->width),
+                        width * 0.03,
+                        height * 0.032,
+                        0.0006 * (width),
                         64,
                         64,
                         "lightGreen.raw");
@@ -328,11 +327,11 @@ ReadyMenu::~ReadyMenu() {
 
 // GETTERS & SETTERS //
 GLfloat* ReadyMenu::getPos() { return &(pos[0]); }
-GLfloat ReadyMenu::getWidth() { return this->width; }
-GLfloat ReadyMenu::getHeight() { return this->height; }
+GLfloat ReadyMenu::getWidth() { return width; }
+GLfloat ReadyMenu::getHeight() { return height; }
 GLfloat* ReadyMenu::getColor() { return &(color[0]); }
-void ReadyMenu::setWidth(GLfloat new_width) { this->width = new_width; }
-void ReadyMenu::setHeight(GLfloat new_height) { this->height = new_height; }
+void ReadyMenu::setWidth(GLfloat new_width) { width = new_width; }
+void ReadyMenu::setHeight(GLfloat new_height) { height = new_height; }
 void ReadyMenu::updateNumPlayers(int n) { num_players = n; }
 void ReadyMenu::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
     color[0] = r;
@@ -348,10 +347,10 @@ void ReadyMenu::saveCurrentPlayerData() {
     char team_label = (control_items[2]->collectData()[0]);
 
     if (buttons[0]->isActive()) {
-        this->player_factory->updatePlayerBasicStrings(
+        player_factory->updatePlayerBasicStrings(
                 "CPU", aitype, "", team_label, tank, current_player_index);
     } else {
-        this->player_factory->updatePlayerBasicStrings(
+        player_factory->updatePlayerBasicStrings(
                 "HUMAN", "", name, team_label, tank, current_player_index);
         text_field->clearTextBuffer();
         text_field->deactivate();
@@ -403,8 +402,7 @@ void ReadyMenu::updatePageInfo() {
         tanks[i]->changeHeadTexture(current_player_index);
     }
     std::string player_type =
-            this->player_factory->getPlayer(current_player_index)
-                    ->getPlayerType();
+            player_factory->getPlayer(current_player_index)->getPlayerType();
 
     // test to see if it's CPU
     if (player_type == "CPU") {
@@ -415,17 +413,15 @@ void ReadyMenu::updatePageInfo() {
         buttons[1]->deactivateSubMenu();
 
         std::string ai_type =
-                this->player_factory->getPlayer(current_player_index)
-                        ->getAiType();
+                player_factory->getPlayer(current_player_index)->getAiType();
         int i = 0;
         while (control_items[0]->collectData() != ai_type) {
             control_items[0]->setOptionText(i);
             i++;
         }
     } else {
-        std::string name =
-                this->player_factory->getPlayer(current_player_index)
-                        ->getPlayerName();
+        std::string name = player_factory->getPlayer(current_player_index)
+                                   ->getPlayerName();
         buttons[1]->pressButton();
         Mix_HaltChannel(0);
         buttons[1]->activateSubMenu();
@@ -435,19 +431,18 @@ void ReadyMenu::updatePageInfo() {
         text_field->setTextBuffer(name);
     }
 
-    if (this->player_factory->getPlayer(current_player_index)
-                ->getTeamLabel() == '-') {
+    if (player_factory->getPlayer(current_player_index)->getTeamLabel() ==
+        '-') {
         control_items[2]->setOptionText(0);
     } else {
         control_items[2]->setOptionText(
-                this->player_factory->getPlayer(current_player_index)
+                player_factory->getPlayer(current_player_index)
                         ->getTeamLabel() -
                 48);
     }
 
     std::string tank_type =
-            this->player_factory->getPlayer(current_player_index)
-                    ->getTankType();
+            player_factory->getPlayer(current_player_index)->getTankType();
     int i = 0;
     while (control_items[1]->collectData() != tank_type) {
         control_items[1]->setOptionText(i);
@@ -455,27 +450,27 @@ void ReadyMenu::updatePageInfo() {
     }
 
     buttons[0]->setColor(
-            this->player_factory->collectPlayerColor(current_player_index)[0],
-            this->player_factory->collectPlayerColor(current_player_index)[1],
-            this->player_factory->collectPlayerColor(current_player_index)[2]);
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2]);
     buttons[1]->setColor(
-            this->player_factory->collectPlayerColor(current_player_index)[0],
-            this->player_factory->collectPlayerColor(current_player_index)[1],
-            this->player_factory->collectPlayerColor(current_player_index)[2]);
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2]);
 
     tank_prv_scr_color[0] =
-            this->player_factory->collectPlayerColor(current_player_index)[0];
+            player_factory->collectPlayerColor(current_player_index)[0];
     tank_prv_scr_color[1] =
-            this->player_factory->collectPlayerColor(current_player_index)[1];
+            player_factory->collectPlayerColor(current_player_index)[1];
     tank_prv_scr_color[2] =
-            this->player_factory->collectPlayerColor(current_player_index)[2];
+            player_factory->collectPlayerColor(current_player_index)[2];
 }
 
 void ReadyMenu::setPlayerPageNum(int i) {
     delete player_page_num;
     caption = "Player " + std::to_string(i + 1);
-    GLfloat label_x_pos = pos[0] - this->width * 0.25;
-    GLfloat label_y_pos = pos[1] + this->height * 0.4;
+    GLfloat label_x_pos = pos[0] - width * 0.25;
+    GLfloat label_y_pos = pos[1] + height * 0.4;
     player_page_num = new TextObject(caption,
                                      label_x_pos,
                                      label_y_pos,
@@ -634,78 +629,62 @@ void ReadyMenu::draw() {
      * CORNER -> UPPER RIGHT	*/
     glBegin(GL_QUADS);
     glColor3f(0.85f, 0.85f, 0.85f);
-    glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*	|\ 	*/
-    glVertex3f(
-            -1 * (this->width / 2.0), -1 * (this->height / 2.0), 0); /*	| |	*/
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /*	|/ 	*/
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0);
+    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0);      /*	|\ 	*/
+    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*	| |	*/
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0); /*	|/ 	*/
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.80f, 0.80f, 0.80f);
-    glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*_____ */
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0); /*\	  / */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0); /*_____ */
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0); /*\	  / */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0); /* ---	*/
-    glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
+    glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.75f, 0.75f, 0.75f);
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            (this->height / 2.0) - (this->percent_border * (this->height)),
-            0); /*_____ */
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /*|	  | */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
+               0); /*_____ */
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0); /*|	  | */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
                0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.45f, 0.45f, 0.45f);
-    glVertex3f(
-            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
-            -1 * (this->height / 2.0) +
-                    (this->percent_border * (this->height)),
-            0); /* ___  */
-    glVertex3f(-1 * (this->width / 2.0),
-               -1 * (this->height / 2.0),
-               0);                                                 /*/	  \ */
-    glVertex3f((this->width / 2.0), -1 * (this->height / 2.0), 0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
+    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0);                                          /* ___  */
+    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*/	  \ */
+    glVertex3f((width / 2.0), -1 * (height / 2.0), 0);      /*----- */
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               (this->height / 2.0) - (this->percent_border * (this->height)),
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               (height / 2.0) - (percent_border * (height)),
                0); /*	 /| 	*/
-    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
-               -1 * (this->height / 2.0) +
-                       (this->percent_border * (this->height)),
-               0); /*	| | 	*/
-    glVertex3f(
-            (this->width / 2.0), -1 * (this->height / 2.0), 0); /* 	 \| 	*/
-    glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
+    glVertex3f((width / 2.0) - (percent_border * (height)),
+               -1 * (height / 2.0) + (percent_border * (height)),
+               0);                                     /*	| | 	*/
+    glVertex3f((width / 2.0), -1 * (height / 2.0), 0); /* 	 \| 	*/
+    glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
 
     // Draw tank preview screen
@@ -795,21 +774,21 @@ void ReadyMenu::draw() {
 
     // Flashing color effect in the tank preview screen
     if (0 <= tank_prv_scr_color[0] &&
-        tank_prv_scr_color[0] <= this->player_factory->collectPlayerColor(
-                                         current_player_index)[0] *
-                                         1.12)
+        tank_prv_scr_color[0] <=
+                player_factory->collectPlayerColor(current_player_index)[0] *
+                        1.12)
         tank_prv_scr_color[0] +=
                 (tank_prv_scr_color[0] + 0.1) / 100 * prv_scr_color_control;
     if (0 <= tank_prv_scr_color[1] &&
-        tank_prv_scr_color[1] <= this->player_factory->collectPlayerColor(
-                                         current_player_index)[1] *
-                                         1.12)
+        tank_prv_scr_color[1] <=
+                player_factory->collectPlayerColor(current_player_index)[1] *
+                        1.12)
         tank_prv_scr_color[1] +=
                 (tank_prv_scr_color[1] + 0.1) / 100 * prv_scr_color_control;
     if (0 <= tank_prv_scr_color[2] &&
-        tank_prv_scr_color[2] <= this->player_factory->collectPlayerColor(
-                                         current_player_index)[2] *
-                                         1.12)
+        tank_prv_scr_color[2] <=
+                player_factory->collectPlayerColor(current_player_index)[2] *
+                        1.12)
         tank_prv_scr_color[2] +=
                 (tank_prv_scr_color[2] + 0.1) / 100 * prv_scr_color_control;
     if (tank_prv_scr_color[0] + tank_prv_scr_color[1] + tank_prv_scr_color[2] <
@@ -820,19 +799,19 @@ void ReadyMenu::draw() {
     }
 
     if (tank_prv_scr_color[0] + tank_prv_scr_color[1] + tank_prv_scr_color[2] >
-        (this->player_factory->collectPlayerColor(current_player_index)[0] +
-         this->player_factory->collectPlayerColor(current_player_index)[1] +
-         this->player_factory->collectPlayerColor(current_player_index)[2]) *
+        (player_factory->collectPlayerColor(current_player_index)[0] +
+         player_factory->collectPlayerColor(current_player_index)[1] +
+         player_factory->collectPlayerColor(current_player_index)[2]) *
                 1.12) {
-        tank_prv_scr_color[0] = this->player_factory->collectPlayerColor(
-                                        current_player_index)[0] *
-                                1.11;
-        tank_prv_scr_color[1] = this->player_factory->collectPlayerColor(
-                                        current_player_index)[1] *
-                                1.11;
-        tank_prv_scr_color[2] = this->player_factory->collectPlayerColor(
-                                        current_player_index)[2] *
-                                1.11;
+        tank_prv_scr_color[0] =
+                player_factory->collectPlayerColor(current_player_index)[0] *
+                1.11;
+        tank_prv_scr_color[1] =
+                player_factory->collectPlayerColor(current_player_index)[1] *
+                1.11;
+        tank_prv_scr_color[2] =
+                player_factory->collectPlayerColor(current_player_index)[2] *
+                1.11;
         prv_scr_color_control = -1;
     }
     // Draw Stat Images

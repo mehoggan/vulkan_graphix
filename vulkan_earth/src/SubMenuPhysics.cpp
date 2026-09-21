@@ -24,69 +24,68 @@ SubMenuPhysics::SubMenuPhysics(int id,
                                const std::string& new_caption,
                                GLfloat new_percent_border) {
     uniqueidentifier = id;
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
-    this->percent_border = new_percent_border;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
+    percent_border = new_percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = new_width;
-    this->height = new_height;
-    this->caption = new_caption;
+    width = new_width;
+    height = new_height;
+    caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
     int real_length = 0;
-    for (char ch : this->caption) {
+    for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos =
-            this->x_pos + ((this->width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->y_pos - this->height / 20;
+    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
-    label = new TextObject(this->caption,
+    label = new TextObject(caption,
                            label_x_pos,
                            label_y_pos,
-                           (this->z_pos + 1),
+                           (z_pos + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
                            0.0f);
     button_pressed = nullptr;
-    sub_menu_button[0] = new ControlItemSelectionBox(
-            this->x_pos + (this->width / 2) - (0.3 * this->width),
-            this->y_pos - (this->height * 0.2),
-            this->z_pos + 1,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.6f * this->width,
-            0.06 * (this->height),
-            "Air Viscosity",
-            "Low/Medium/High/");
-    sub_menu_button[1] = new ControlItemSelectionBox(
-            this->x_pos + (this->width / 2) - (0.3 * this->width),
-            this->y_pos - (this->height * 0.27),
-            this->z_pos + 1,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.6f * this->width,
-            0.06 * (this->height),
-            "Gravity",
-            "0.1/0.2/0.5/1.0/1.5/2.0/");
-    sub_menu_button[2] = new ControlItemCheckBox(
-            this->x_pos + (this->width / 2) - (0.3 * this->width),
-            this->y_pos - (this->height * 0.34),
-            this->z_pos + 1,
-            0.5f,
-            0.5f,
-            0.5f,
-            0.6f * this->width,
-            0.06 * (this->height),
-            "Tanks Fall");
+    sub_menu_button[0] =
+            new ControlItemSelectionBox(x_pos + (width / 2) - (0.3 * width),
+                                        y_pos - (height * 0.2),
+                                        z_pos + 1,
+                                        0.5f,
+                                        0.5f,
+                                        0.5f,
+                                        0.6f * width,
+                                        0.06 * (height),
+                                        "Air Viscosity",
+                                        "Low/Medium/High/");
+    sub_menu_button[1] =
+            new ControlItemSelectionBox(x_pos + (width / 2) - (0.3 * width),
+                                        y_pos - (height * 0.27),
+                                        z_pos + 1,
+                                        0.5f,
+                                        0.5f,
+                                        0.5f,
+                                        0.6f * width,
+                                        0.06 * (height),
+                                        "Gravity",
+                                        "0.1/0.2/0.5/1.0/1.5/2.0/");
+    sub_menu_button[2] =
+            new ControlItemCheckBox(x_pos + (width / 2) - (0.3 * width),
+                                    y_pos - (height * 0.34),
+                                    z_pos + 1,
+                                    0.5f,
+                                    0.5f,
+                                    0.5f,
+                                    0.6f * width,
+                                    0.06 * (height),
+                                    "Tanks Fall");
 }
 
 SubMenuPhysics::~SubMenuPhysics() {
@@ -96,66 +95,66 @@ SubMenuPhysics::~SubMenuPhysics() {
 
 int SubMenuPhysics::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuPhysics::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuPhysics::getXPos() { return this->x_pos; }
-void SubMenuPhysics::setXPos(GLfloat new_xpos) { this->x_pos = new_xpos; }
-GLfloat SubMenuPhysics::getYPos() { return this->y_pos; }
-void SubMenuPhysics::setYPos(GLfloat new_ypos) { this->y_pos = new_ypos; }
-GLfloat SubMenuPhysics::getZPos() { return this->z_pos; }
-void SubMenuPhysics::setZPos(GLfloat new_zpos) { this->z_pos = new_zpos; }
+GLfloat SubMenuPhysics::getXPos() { return x_pos; }
+void SubMenuPhysics::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
+GLfloat SubMenuPhysics::getYPos() { return y_pos; }
+void SubMenuPhysics::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
+GLfloat SubMenuPhysics::getZPos() { return z_pos; }
+void SubMenuPhysics::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
 GLfloat SubMenuPhysics::getRed() { return color[0]; }
 void SubMenuPhysics::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuPhysics::getGreen() { return color[1]; }
 void SubMenuPhysics::setGreen(GLfloat green) { color[1] = green; }
 GLfloat SubMenuPhysics::getBlue() { return color[2]; }
 void SubMenuPhysics::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuPhysics::getWidth() { return this->width; }
-void SubMenuPhysics::setWdith(GLint new_width) { this->width = new_width; }
-GLint SubMenuPhysics::getHeight() { return this->height; }
-void SubMenuPhysics::setHeight(GLint new_height) { this->height = new_height; }
-std::string SubMenuPhysics::getCaption() { return this->caption; }
+GLint SubMenuPhysics::getWidth() { return width; }
+void SubMenuPhysics::setWdith(GLint new_width) { width = new_width; }
+GLint SubMenuPhysics::getHeight() { return height; }
+void SubMenuPhysics::setHeight(GLint new_height) { height = new_height; }
+std::string SubMenuPhysics::getCaption() { return caption; }
 void SubMenuPhysics::setCaption(const std::string& new_caption) {
-    this->caption = new_caption;
+    caption = new_caption;
 }
-GLfloat SubMenuPhysics::getPerecentBorder() { return this->percent_border; }
+GLfloat SubMenuPhysics::getPerecentBorder() { return percent_border; }
 void SubMenuPhysics::setPercentBorder(GLfloat percent) {
-    this->percent_border = percent_border;
+    percent_border = percent;
 }
 
 void SubMenuPhysics::draw() {
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
     for (int i = 0; i < num_control_items_phy; i++) {

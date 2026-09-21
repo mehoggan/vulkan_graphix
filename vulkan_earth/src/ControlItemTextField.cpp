@@ -23,15 +23,15 @@ ControlItemTextField::ControlItemTextField(GLfloat new_x_pos,
                                            GLfloat blue,
                                            GLint new_width,
                                            GLint new_height) {
-    this->x_pos = new_x_pos;
-    this->y_pos = new_y_pos;
-    this->z_pos = new_z_pos;
+    x_pos = new_x_pos;
+    y_pos = new_y_pos;
+    z_pos = new_z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
-    this->width = new_width;
-    this->height = new_height;
+    width = new_width;
+    height = new_height;
     current_text = nullptr;
     text_field_active = false;
     clearTextBuffer();
@@ -52,38 +52,38 @@ void ControlItemTextField::draw() {
 
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.6f, color[1] - 0.6f, color[2] - 0.6f, color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.6f, color[1] - 0.6f, color[2] - 0.6f, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(x_pos, y_pos, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.3f, color[1] - 0.3f, color[2] - 0.3f, color[3]);
-    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
-    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos - height, z_pos);
+    glVertex3f(x_pos, y_pos - height, z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - 0.3f, color[1] - 0.3f, color[2] - 0.3f, color[3]);
-    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
-    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
-    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
+    glVertex3f(x_pos + width, y_pos, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
+    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
+    glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
 
     if (text_field_active) {
@@ -97,18 +97,18 @@ void ControlItemTextField::draw() {
             }
             glBegin(GL_QUADS);
             glColor3f(0, 0, 0);
-            glVertex3f(this->x_pos + 0.02 * this->width + real_length,
-                       this->y_pos - 0.15 * height,
-                       this->z_pos + 0.1);
-            glVertex3f(this->x_pos + 0.02 * this->width + real_length,
-                       this->y_pos - this->height + 0.15 * height,
-                       this->z_pos + 0.1);
-            glVertex3f(this->x_pos + 0.02 * this->width + real_length + 2,
-                       this->y_pos - this->height + 0.15 * height,
-                       this->z_pos + 0.1);
-            glVertex3f(this->x_pos + 0.02 * this->width + real_length + 2,
-                       this->y_pos - 0.15 * height,
-                       this->z_pos + 0.1);
+            glVertex3f(x_pos + 0.02 * width + real_length,
+                       y_pos - 0.15 * height,
+                       z_pos + 0.1);
+            glVertex3f(x_pos + 0.02 * width + real_length,
+                       y_pos - height + 0.15 * height,
+                       z_pos + 0.1);
+            glVertex3f(x_pos + 0.02 * width + real_length + 2,
+                       y_pos - height + 0.15 * height,
+                       z_pos + 0.1);
+            glVertex3f(x_pos + 0.02 * width + real_length + 2,
+                       y_pos - 0.15 * height,
+                       z_pos + 0.1);
             glEnd();
         }
     }
@@ -116,10 +116,10 @@ void ControlItemTextField::draw() {
     if (current_text) current_text->draw();
 }
 
-GLfloat ControlItemTextField::getXPos() { return this->x_pos; }
-GLfloat ControlItemTextField::getYPos() { return this->y_pos; }
-GLfloat ControlItemTextField::getHeight() { return this->height; }
-GLfloat ControlItemTextField::getWidth() { return this->width; }
+GLfloat ControlItemTextField::getXPos() { return x_pos; }
+GLfloat ControlItemTextField::getYPos() { return y_pos; }
+GLfloat ControlItemTextField::getHeight() { return height; }
+GLfloat ControlItemTextField::getWidth() { return width; }
 bool ControlItemTextField::isTextFieldActive() { return text_field_active; }
 std::string ControlItemTextField::collectData() {
     return current_text->getOutput();
@@ -134,14 +134,13 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
     for (char ch : new_text) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = this->x_pos + 0.02 * this->width;
-    GLfloat label_y_pos = this->y_pos +
-                          ((this->y_pos - (this->y_pos + this->height)) / 2) -
-                          this->height / 4;
+    GLfloat label_x_pos = x_pos + 0.02 * width;
+    GLfloat label_y_pos =
+            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     current_text = new TextObject(new_text,
                                   label_x_pos,
                                   label_y_pos,
-                                  this->z_pos + 0.1,
+                                  z_pos + 0.1,
                                   GLUT_BITMAP_TIMES_ROMAN_24,
                                   0.0f,
                                   0.0f,
