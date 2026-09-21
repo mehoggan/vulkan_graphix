@@ -288,7 +288,7 @@ void Player::setUpYawVectors() {
     ortho_right.compo_z = (right_ortho.coord_z - my_position.coord_z);
 
     enemy_path.compo_x = (enemy_vertex.coord_x - my_position.coord_x);
-    enemy_path.compo_y = (my_position.coord_y - my_position.coord_y);
+    enemy_path.compo_y = (enemy_vertex.coord_y - my_position.coord_y);
     enemy_path.compo_z = (enemy_vertex.coord_z - my_position.coord_z);
 
     projectile_path.compo_x =
