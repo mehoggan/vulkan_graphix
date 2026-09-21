@@ -201,7 +201,7 @@ SkyboxFactory::~SkyboxFactory() = default;
 
 void SkyboxFactory::draw() {
     int start = -size / 2;
-    int end = size / 2;
+    int bound = size / 2;
     int scale = 100;
     //	 11 16 20 o--------------o 07 12 19
     //			 /|			    /|
@@ -220,59 +220,59 @@ void SkyboxFactory::draw() {
     glTexCoord2f(0, 1);
     glVertex3f(start * scale, start * scale, start * scale);  // 1
     glTexCoord2f(0, 0);
-    glVertex3f(end * scale, start * scale, start * scale);  // 2
+    glVertex3f(bound * scale, start * scale, start * scale);  // 2
     glTexCoord2f(1, 0);
-    glVertex3f(end * scale, end * scale / 2, start * scale);  // 3
+    glVertex3f(bound * scale, bound * scale / 2, start * scale);  // 3
     glTexCoord2f(1, 1);
-    glVertex3f(start * scale, end * scale / 2, start * scale);  // 4
+    glVertex3f(start * scale, bound * scale / 2, start * scale);  // 4
     glEnd();
 
     // glBindTexture(GL_TEXTURE_2D,texture2);
     glBegin(GL_QUADS);  // right
     glTexCoord2f(0, 1);
-    glVertex3f(end * scale, start * scale, start * scale);  // 5
+    glVertex3f(bound * scale, start * scale, start * scale);  // 5
     glTexCoord2f(0, 0);
-    glVertex3f(end * scale, start * scale, end * scale);  // 6
+    glVertex3f(bound * scale, start * scale, bound * scale);  // 6
     glTexCoord2f(1, 0);
-    glVertex3f(end * scale, end * scale / 2, end * scale);  // 7
+    glVertex3f(bound * scale, bound * scale / 2, bound * scale);  // 7
     glTexCoord2f(1, 1);
-    glVertex3f(end * scale, end * scale / 2, start * scale);  // 8
+    glVertex3f(bound * scale, bound * scale / 2, start * scale);  // 8
     glEnd();
 
     // glBindTexture(GL_TEXTURE_2D,texture3);
     glBegin(GL_QUADS);  // back
     glTexCoord2f(0, 1);
-    glVertex3f(end * scale, start * scale, end * scale);  // 9
+    glVertex3f(bound * scale, start * scale, bound * scale);  // 9
     glTexCoord2f(0, 0);
-    glVertex3f(start * scale, start * scale, end * scale);  // 10
+    glVertex3f(start * scale, start * scale, bound * scale);  // 10
     glTexCoord2f(1, 0);
-    glVertex3f(start * scale, end * scale / 2, end * scale);  // 11
+    glVertex3f(start * scale, bound * scale / 2, bound * scale);  // 11
     glTexCoord2f(1, 1);
-    glVertex3f(end * scale, end * scale / 2, end * scale);  // 12
+    glVertex3f(bound * scale, bound * scale / 2, bound * scale);  // 12
     glEnd();
 
     // glBindTexture(GL_TEXTURE_2D,texture4);
     glBegin(GL_QUADS);  // left
     glTexCoord2f(0, 1);
-    glVertex3f(start * scale, start * scale, end * scale);  // 13
+    glVertex3f(start * scale, start * scale, bound * scale);  // 13
     glTexCoord2f(0, 0);
     glVertex3f(start * scale, start * scale, start * scale);  // 14
     glTexCoord2f(1, 0);
-    glVertex3f(start * scale, end * scale / 2, start * scale);  // 15
+    glVertex3f(start * scale, bound * scale / 2, start * scale);  // 15
     glTexCoord2f(1, 1);
-    glVertex3f(start * scale, end * scale / 2, end * scale);  // 16
+    glVertex3f(start * scale, bound * scale / 2, bound * scale);  // 16
     glEnd();
 
     // glBindTexture(GL_TEXTURE_2D,texture5);
     glBegin(GL_QUADS);  // top
     glTexCoord2f(0, 1);
-    glVertex3f(start * scale, end * scale / 2, start * scale);  // 17
+    glVertex3f(start * scale, bound * scale / 2, start * scale);  // 17
     glTexCoord2f(0, 0);
-    glVertex3f(end * scale, end * scale / 2, start * scale);  // 18
+    glVertex3f(bound * scale, bound * scale / 2, start * scale);  // 18
     glTexCoord2f(1, 0);
-    glVertex3f(end * scale, end * scale / 2, end * scale);  // 19
+    glVertex3f(bound * scale, bound * scale / 2, bound * scale);  // 19
     glTexCoord2f(1, 1);
-    glVertex3f(start * scale, end * scale / 2, end * scale);  // 20
+    glVertex3f(start * scale, bound * scale / 2, bound * scale);  // 20
     glEnd();
 
     // glBindTexture(GL_TEXTURE_2D,texture6);
@@ -280,11 +280,11 @@ void SkyboxFactory::draw() {
     glTexCoord2f(0, 1);
     glVertex3f(start * scale, start * scale, start * scale);  // 21
     glTexCoord2f(0, 0);
-    glVertex3f(start * scale, start * scale, end * scale);  // 22
+    glVertex3f(start * scale, start * scale, bound * scale);  // 22
     glTexCoord2f(1, 0);
-    glVertex3f(end * scale, start * scale, end * scale);  // 23
+    glVertex3f(bound * scale, start * scale, bound * scale);  // 23
     glTexCoord2f(1, 1);
-    glVertex3f(end * scale, start * scale, start * scale);  // 24
+    glVertex3f(bound * scale, start * scale, start * scale);  // 24
     glEnd();
 
     glDisable(GL_TEXTURE_2D);

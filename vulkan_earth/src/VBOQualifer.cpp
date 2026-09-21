@@ -28,36 +28,36 @@ VBOQualifer::~VBOQualifer() = default;
 bool VBOQualifer::getQualified() { return qualified; }
 
 bool VBOQualifer::establishIfQualified() {
-    const char* str = nullptr;
+    const char* gl_string = nullptr;
 
-    str = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-    if (str)
-        vendor = str;
+    gl_string = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    if (gl_string)
+        vendor = gl_string;
     else {
         qualified = false;
     }
 
-    str = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-    if (str)
-        renderer = str;
+    gl_string = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    if (gl_string)
+        renderer = gl_string;
     else {
         qualified = false;
     }
 
-    str = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    if (str)
-        version = str;
+    gl_string = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    if (gl_string)
+        version = gl_string;
     else {
         qualified = false;
     }
 
-    str = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
-    if (!str) {
+    gl_string = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    if (!gl_string) {
         qualified = false;
         exit(0);
     }
 
-    std::string extensions_str = str;
+    std::string extensions_str = gl_string;
     std::string current;
     for (char ch : extensions_str) {
         if (ch != ' ') {

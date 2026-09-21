@@ -130,11 +130,11 @@ GLfloat Tank::calcAngleBetweenVectors(Vector one, Vector two) {
     normalizeVector(&one);
     normalizeVector(&two);
     errno = 0;
-    GLfloat tt = 3.141592653f;
+    GLfloat pi_value = 3.141592653f;
     GLfloat u[3] = {one.compo_x, one.compo_y, one.compo_z};
     GLfloat v[3] = {two.compo_x, two.compo_y, two.compo_z};
     GLfloat angle =
-            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / tt);
+            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / pi_value);
     if (errno) {
         return .01;
     }

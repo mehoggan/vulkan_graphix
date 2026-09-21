@@ -235,14 +235,14 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
     } else if (content_loaded && ogl_file) {
         std::streamsize read_file_size = ogl_file.tellg();
         ogl_file.seekg(0);
-        string str(read_file_size, '\0');
-        ogl_file.read(str.data(), read_file_size);
-        str.resize(ogl_file.gcount());
+        string file_content(read_file_size, '\0');
+        ogl_file.read(file_content.data(), read_file_size);
+        file_content.resize(ogl_file.gcount());
 
-        stringstream strstr(str);
-        istream_iterator<std::string> it(strstr);
-        istream_iterator<std::string> end;
-        vector<string> results(it, end);
+        stringstream strstr(file_content);
+        istream_iterator<std::string> token_it(strstr);
+        istream_iterator<std::string> token_end;
+        vector<string> results(token_it, token_end);
 
         vector<float> vert_vec(0);
         vector<float> texcoord_vec(0);
@@ -578,16 +578,16 @@ bool VBOShaderLibrary::getVBOPointerFunctions() {
 
 /*	STATIC FUNCTION */
 bool VBOShaderLibrary::initGlew() {
-    bool rtn = false;
-    GLenum err = glewInit();
-    if (GLEW_OK != err) {
-        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    bool init_ok = false;
+    GLenum glew_err = glewInit();
+    if (GLEW_OK != glew_err) {
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(glew_err));
     } else {
         // fprintf(stdout, "Status: Using GLEW (%s)\n",
         // glewGetString(GLEW_VERSION));
-        rtn = true;
+        init_ok = true;
     }
-    return rtn;
+    return init_ok;
 }
 
 /*	STATIC FUNCTION */

@@ -416,10 +416,10 @@ void ShopMenu::displayCurrentPlayerInfo() {
 
         // Set next player number label
         delete label_player_num;
-        std::string str = "Player " +
-                          std::to_string(current_player_index + 1) +
-                          " Balance:";
-        label_player_num = new TextObject(str,
+        std::string label_text = "Player " +
+                                 std::to_string(current_player_index + 1) +
+                                 " Balance:";
+        label_player_num = new TextObject(label_text,
                                           pos[0] - width * 0.35,
                                           pos[1] - height * 0.39,
                                           (pos[2] + 1),

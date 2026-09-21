@@ -638,16 +638,16 @@ void TerrainMaker::terrainSqDi(
 void TerrainMaker::terrainSmoothe(int box_width) {
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
-            int sum = 0;
+            int height_sum = 0;
             for (int i = y - (box_width / 2); i < y + (box_width / 2); i++) {
                 for (int j = x - (box_width / 2); j < x + (box_width / 2);
                      j++) {
                     if ((i >= 0 && i < size) && (j >= 0 && j < size)) {
-                        sum += th[i][j];
+                        height_sum += th[i][j];
                     }
                 }
             }
-            th[y][x] = sum / (box_width * box_width);
+            th[y][x] = height_sum / (box_width * box_width);
         }
     }
 
@@ -827,9 +827,11 @@ void TerrainMaker::collectVerticesForTriangleNormal(
     }
 }
 
-void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
-    int x = static_cast<int>(fx / scale);
-    int z = static_cast<int>(fz / scale);
+void TerrainMaker::makeCrater(GLfloat impact_x,
+                              GLfloat impact_z,
+                              GLfloat blast_size) {
+    int x = static_cast<int>(impact_x / scale);
+    int z = static_cast<int>(impact_z / scale);
     Vertex* buffer_ptr = static_cast<Vertex*>(
             pgl_map_buffer_arb(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
     int crater_size = static_cast<int>(blast_size * 1.5);

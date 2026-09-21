@@ -54,7 +54,7 @@ public:
     void setTeamLabel(char t) override;
     Weapon* getLoadedWeapon() override;
     void setLoadedWeapon(Weapon* wpn) override;
-    void selectTarget(PlayerFactory* pf);
+    void selectTarget(PlayerFactory* player_factory_ref);
     Tank* getCurrentTarget(int i);
     Vector getEnemyPosition();
     GLfloat* getBalisticMatrix();

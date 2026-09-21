@@ -324,11 +324,11 @@ GLfloat GameState::calcAngleBetweenVectors(Vector one, Vector two) {
     normalizeVector(&one);
     normalizeVector(&two);
     errno = 0;
-    GLfloat tt = 3.141592653f;
+    GLfloat pi_value = 3.141592653f;
     GLfloat u[3] = {one.compo_x, one.compo_y, one.compo_z};
     GLfloat v[3] = {two.compo_x, two.compo_y, two.compo_z};
     GLfloat angle =
-            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / tt);
+            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / pi_value);
     if (errno) {
         return .01;
     }
@@ -1668,12 +1668,12 @@ void GameState::constructProjectile() {
             current_player->getCurrentTank()->getTurretMatrix();
     GLfloat scalar = 700.0f;
     // YOU DON'T HAVE PROJECTILE SO SCALAR NEEDS TO BE MODIFIED IN TWO PLACES
-    GLfloat pos[3] = {turret_matrix[12] - scalar * turret_matrix[8],
-                      turret_matrix[13] - scalar * turret_matrix[9],
-                      turret_matrix[14] - scalar * turret_matrix[10]};
+    GLfloat land_pos[3] = {turret_matrix[12] - scalar * turret_matrix[8],
+                           turret_matrix[13] - scalar * turret_matrix[9],
+                           turret_matrix[14] - scalar * turret_matrix[10]};
 
-    if (pos[1] <
-        global_settings->getCurrentTerrain()->getHeightAt(pos[2], pos[0])) {
+    if (land_pos[1] < global_settings->getCurrentTerrain()->getHeightAt(
+                              land_pos[2], land_pos[0])) {
         projectile = nullptr;
     } else {
         projectile = new Projectile(

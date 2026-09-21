@@ -65,9 +65,11 @@ CheckOptions:
   - key:             readability-identifier-length.MinimumVariableNameLength
     value:           4
   - key:             readability-identifier-length.IgnoredVariableNames
-    value:           '^(x|y|z|w|r|g|b|a|dx|dy|dz|nx|ny|nz|u|v|PI)$'
+    value:           '^(x|y|z|w|r|g|b|a|dx|dy|dz|nx|ny|nz|ux|uy|uz|u|v|s|t|n|p|d|h|c|m|i|id|ch|mag|pi|PI|sfx|[a-z]{1,2}[0-9]|[a-z]+_[a-z]|vo[xyz]|[xyz][ef]|[xyz]o)$'
   - key:             readability-identifier-length.IgnoredParameterNames
-    value:           '^(x|y|z|w|r|g|b|a|dx|dy|dz|nx|ny|nz|u|v)$'
+    value:           '^(x|y|z|w|r|g|b|a|dx|dy|dz|nx|ny|nz|ux|uy|uz|u|v|s|t|n|p|d|h|c|m|i|id|ch|mag|[a-z]{1,2}[0-9]|[a-z]+_[a-z]|vo[xyz]|[xyz][ef]|[xyz]o)$'
+  - key:             readability-identifier-length.IgnoredLoopCounterNames
+    value:           '^([ijk_]|x|y|z|p|r|c)$'
   - key:             readability-identifier-naming.FunctionCase
     value:           camelBack
   - key:             readability-identifier-naming.VariableCase
