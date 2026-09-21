@@ -121,7 +121,7 @@ void PlayerFactory::initializePlayerDataBase() {
 void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                                              const std::string& ai_type,
                                              const std::string& name,
-                                             char teamLabel,
+                                             char team_label,
                                              const std::string& tank_type,
                                              int player_number) {
     if (player_type == "CPU") {
@@ -133,7 +133,7 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                 tank_type,
                 ai_type,
                 name,
-                teamLabel,
+                team_label,
                 player_type,
                 atoi(this->game_global_settings->getCash_At_Start().c_str()));
     } else if (player_type == "HUMAN") {
@@ -146,14 +146,14 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                     tank_type,
                     ai_type,
                     name,
-                    teamLabel,
+                    team_label,
                     player_type,
                     atoi(this->game_global_settings->getCash_At_Start()
                                  .c_str()));
         } else {
             player_set[player_number]->setPlayer_Type(player_type);
             player_set[player_number]->setPlayerName(name);
-            player_set[player_number]->setTeamLabel(teamLabel);
+            player_set[player_number]->setTeamLabel(team_label);
             player_set[player_number]->setTankType(tank_type);
         }
     }

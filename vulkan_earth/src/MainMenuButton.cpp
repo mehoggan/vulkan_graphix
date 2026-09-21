@@ -12,10 +12,10 @@ extern void playSFX(int sfx);
 
 MainMenuButton::MainMenuButton() = default;
 
-MainMenuButton::MainMenuButton(int ID,
-                               GLfloat xPos,
-                               GLfloat yPos,
-                               GLfloat zPos,
+MainMenuButton::MainMenuButton(int id,
+                               GLfloat x_pos,
+                               GLfloat y_pos,
+                               GLfloat z_pos,
                                GLfloat red,
                                GLfloat green,
                                GLfloat blue,
@@ -23,12 +23,12 @@ MainMenuButton::MainMenuButton(int ID,
                                GLint height,
                                const std::string& caption,
                                SubMenu* submenu) {
-    UNIQUEIDENTIFIER = ID;
+    UNIQUEIDENTIFIER = id;
     pressed = false;
     active = false;
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;

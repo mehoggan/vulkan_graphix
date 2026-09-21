@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 WeaponPadlock::WeaponPadlock() = default;
-WeaponPadlock::WeaponPadlock(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponPadlock::WeaponPadlock(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 8;
     packageNum = 2;
     remaining = 2;

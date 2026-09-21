@@ -323,12 +323,12 @@ void Player::setUpPitchVectors() {
     down_vector.compoZ = (matrix[14] - matrix[14]);
 }
 
-bool Player::calculateProjectilePhysics(GLfloat Xerr,
-                                        GLfloat Yerr,
-                                        GLfloat Zerr) {
+bool Player::calculateProjectilePhysics(GLfloat xerr,
+                                        GLfloat yerr,
+                                        GLfloat zerr) {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
-    GLfloat percent_errory = Yerr;
-    GLfloat percent_errorxz = Xerr;
+    GLfloat percent_errory = yerr;
+    GLfloat percent_errorxz = xerr;
     GLfloat numerator = this->game_state->getGlobalSettings()
                                 ->getCurrentTerrain()
                                 ->getActualSize();

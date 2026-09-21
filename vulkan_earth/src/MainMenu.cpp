@@ -32,13 +32,13 @@ MainMenu::MainMenu() = default;
 
 MainMenu::MainMenu(GLfloat width,
                    GLfloat height,
-                   GLfloat percentBorder,
+                   GLfloat percent_border,
                    GlobalSettings* global_settings,
                    PlayerFactory* player_factory,
-                   int* gameState) {
+                   int* game_state) {
     this->global_settings = global_settings;
     this->player_factory = player_factory;
-    currentGameState = gameState;
+    currentGameState = game_state;
 
     for (int x = 0; x < NUM_BUTTON; x++) {
         buttons[x] = nullptr;
@@ -57,7 +57,7 @@ MainMenu::MainMenu(GLfloat width,
     arrowButtonPressed = nullptr;
     this->width = width;
     this->height = height;
-    this->percentBorder = percentBorder;
+    this->percentBorder = percent_border;
     color[0] = color[1] = color[2] = 1;
     color[3] = 1;
     pos[0] = pos[1] = pos[2] = 0;
@@ -348,7 +348,7 @@ void MainMenu::setHeight(GLfloat height) { this->height = height; }
 GLfloat MainMenu::getWidth() { return this->height; }
 void MainMenu::setWidth(GLfloat width) { this->width = width; }
 GLfloat* MainMenu::getColor() { return &(color[0]); }
-SubMenu* MainMenu::getSubMenuI(int I) { return submenus[I]; }
+SubMenu* MainMenu::getSubMenuI(int i) { return submenus[i]; }
 SubMenu* MainMenu::getActiveSubMenu() { return activeSubMenu; }
 SubMenuLandscape* MainMenu::getSubMenuLandscape() {
     return static_cast<SubMenuLandscape*>(submenus[5]);
@@ -451,8 +451,8 @@ void MainMenu::draw() {
     glPopMatrix();
 }
 
-void MainMenu::buttonTest(int x, int y, int buttonDown) {
-    if (buttonDown) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
+void MainMenu::buttonTest(int x, int y, int button_down) {
+    if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
         for (int button_i = 0; button_i < NUM_BUTTON;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF CLICK LANDS IN BUTTON I
@@ -481,15 +481,15 @@ void MainMenu::buttonTest(int x, int y, int buttonDown) {
                         arrowsbutton[button_i]->mouseClickEvent(
                                 x,
                                 y,
-                                buttonDown,
+                                button_down,
                                 true);  // YOU PRESSED OVER A ARROWBUTTON
                         arrowButtonPressed = arrowsbutton[button_i];
                     }
                 }
             }
         }
-    } else if (!buttonDown) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
-                               // GOES UP
+    } else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
+                                // GOES UP
         if (buttonPressed !=
             nullptr) {  // IF THE LEFT CLICK WAS VALID AND INSIDE A BUTTON
                         // CHECK TO SEE IF YOU ARE STILL OVER SAME BUTTON
@@ -600,14 +600,14 @@ void MainMenu::buttonTest(int x, int y, int buttonDown) {
                 arrowButtonPressed->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                 // RELEASE THE MOUSE
             } else {
                 arrowButtonPressed->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                  // RELEASE THE MOUSE
                 arrowButtonPressed = nullptr;
@@ -616,7 +616,7 @@ void MainMenu::buttonTest(int x, int y, int buttonDown) {
     }
     // Sub Menu Button Test
     if (activeSubMenu != nullptr) {
-        activeSubMenu->subMenuMouseTest(x, y, buttonDown);
+        activeSubMenu->subMenuMouseTest(x, y, button_down);
     }
 }
 

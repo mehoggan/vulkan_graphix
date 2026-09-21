@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 ItemAntiAcid::ItemAntiAcid() = default;
-ItemAntiAcid::ItemAntiAcid(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemAntiAcid::ItemAntiAcid(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 3;
     maxStack = 12;
     remaining = 3;

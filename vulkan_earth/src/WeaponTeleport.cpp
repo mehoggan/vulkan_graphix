@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 WeaponTeleport::WeaponTeleport() = default;
-WeaponTeleport::WeaponTeleport(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponTeleport::WeaponTeleport(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 15;
     packageNum = 3;
     remaining = 3;

@@ -15,17 +15,17 @@ extern void playSFX(int sfx);
 
 ControlItemTextField::ControlItemTextField() = default;
 
-ControlItemTextField::ControlItemTextField(GLfloat xPos,
-                                           GLfloat yPos,
-                                           GLfloat zPos,
+ControlItemTextField::ControlItemTextField(GLfloat x_pos,
+                                           GLfloat y_pos,
+                                           GLfloat z_pos,
                                            GLfloat red,
                                            GLfloat green,
                                            GLfloat blue,
                                            GLint width,
                                            GLint height) {
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -127,18 +127,18 @@ std::string ControlItemTextField::collectData() {
 void ControlItemTextField::deactivate() { textFieldActive = false; }
 void ControlItemTextField::setOptionText(int index) {}
 
-void ControlItemTextField::setOptionText(const std::string& newText) {
+void ControlItemTextField::setOptionText(const std::string& new_text) {
     delete currentText;
 
     int real_length = 0;
-    for (char ch : newText) {
+    for (char ch : new_text) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
     GLfloat label_x_pos = this->xPos + 0.02 * this->width;
     GLfloat label_y_pos = this->yPos +
                           ((this->yPos - (this->yPos + this->height)) / 2) -
                           this->height / 4;
-    currentText = new TextObject(newText,
+    currentText = new TextObject(new_text,
                                  label_x_pos,
                                  label_y_pos,
                                  this->zPos + 0.1,
@@ -149,9 +149,12 @@ void ControlItemTextField::setOptionText(const std::string& newText) {
 }
 
 void ControlItemTextField::mouseClickEvent(
-        GLint x, GLint y, GLint state, bool stillOverControlItemTextField) {
+        GLint x,
+        GLint y,
+        GLint state,
+        bool still_over_control_item_text_field) {
     if (state == 0)
-        if (stillOverControlItemTextField) textFieldActive = true;
+        if (still_over_control_item_text_field) textFieldActive = true;
 }
 
 void ControlItemTextField::updateMouse(int x, int y) {}
@@ -188,13 +191,13 @@ void ControlItemTextField::clearTextBuffer() {
     currentLength = 0;
 }
 
-void ControlItemTextField::setTextBuffer(const std::string& newText) {
-    setOptionText(newText);
+void ControlItemTextField::setTextBuffer(const std::string& new_text) {
+    setOptionText(new_text);
     clearTextBuffer();
     int new_length = 0;
-    for (size_t i = 0; i < newText.size() && i < currentChars.size(); i++) {
-        currentChars[i] = newText[i];
-        if (newText[i] != ' ') new_length++;
+    for (size_t i = 0; i < new_text.size() && i < currentChars.size(); i++) {
+        currentChars[i] = new_text[i];
+        if (new_text[i] != ' ') new_length++;
     }
     currentLength = new_length;
 }

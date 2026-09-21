@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 ItemCloak::ItemCloak() = default;
-ItemCloak::ItemCloak(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemCloak::ItemCloak(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 2;
     maxStack = 10;
     remaining = 2;

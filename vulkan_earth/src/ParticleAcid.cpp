@@ -4,17 +4,17 @@ ParticleAcid::ParticleAcid() = default;
 ParticleAcid::ParticleAcid(GLfloat x,
                            GLfloat y,
                            GLfloat z,
-                           GLfloat dirX,
-                           GLfloat dirY,
-                           GLfloat dirZ,
+                           GLfloat dir_x,
+                           GLfloat dir_y,
+                           GLfloat dir_z,
                            GLfloat speed,
                            int frames) {
     this->x = x;
     this->y = y;
     this->z = z;
-    dir[0] = dirX;
-    dir[1] = dirY;
-    dir[2] = dirZ;
+    dir[0] = dir_x;
+    dir[1] = dir_y;
+    dir[2] = dir_z;
     this->speed = speed;
     activeFrames = frames;
     currentFrame = 0;

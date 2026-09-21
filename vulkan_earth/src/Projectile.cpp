@@ -15,28 +15,28 @@ using namespace std;
 Projectile::Projectile() = default;
 
 Projectile::Projectile(GameState* parent,
-                       GLfloat* turretMatrix,
+                       GLfloat* turret_matrix,
                        GLfloat speed,
-                       VBOShaderLibrary** projectileModels) {
+                       VBOShaderLibrary** projectile_models) {
     defaultWeapon = new WeaponDefault(10);
     this->parent = parent;
     scalar = 500;
-    pos[0] = turretMatrix[12] - scalar * turretMatrix[8];
-    pos[1] = turretMatrix[13] - scalar * turretMatrix[9];
-    pos[2] = turretMatrix[14] - scalar * turretMatrix[10];
+    pos[0] = turret_matrix[12] - scalar * turret_matrix[8];
+    pos[1] = turret_matrix[13] - scalar * turret_matrix[9];
+    pos[2] = turret_matrix[14] - scalar * turret_matrix[10];
 
     Xo = pos[0];
     Yo = pos[1];
     Zo = pos[2];
 
     /*	THE COORD SYSTEM WE USE HAS X AND Z INVERSED X = -X and Z = -Z	*/
-    vVec[0] = -turretMatrix[8] * speed;
-    vVec[1] = -turretMatrix[9] * speed;
-    vVec[2] = -turretMatrix[10] * speed;
+    vVec[0] = -turret_matrix[8] * speed;
+    vVec[1] = -turret_matrix[9] * speed;
+    vVec[2] = -turret_matrix[10] * speed;
 
     chaseCam = new ChaseCam(pos, vVec);
     weapon = nullptr;
-    this->projectileModels = projectileModels;
+    this->projectileModels = projectile_models;
 
     if (!(VBOShaderLibrary::InitGlew())) {
         exit(1);
@@ -67,10 +67,10 @@ Projectile::~Projectile() {
 //	vVec[1]+=gravity;
 // }
 
-void Projectile::update(GLfloat X, GLfloat Y, GLfloat Z) {
-    pos[0] = X;
-    pos[1] = Y;
-    pos[2] = Z;
+void Projectile::update(GLfloat x, GLfloat y, GLfloat z) {
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
 }
 
 void Projectile::draw() {

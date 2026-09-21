@@ -57,12 +57,12 @@ LoadingScreen* loading_screen;
 // (unlike Windows, where it's the primary display's resolution). Ask
 // RandR for the primary monitor's real geometry instead, so the window
 // created from it stays confined to that one monitor.
-static void primaryMonitorGeometry(int* posX,
-                                   int* posY,
+static void primaryMonitorGeometry(int* pos_x,
+                                   int* pos_y,
                                    int* width,
                                    int* height) {
-    *posX = 0;
-    *posY = 0;
+    *pos_x = 0;
+    *pos_y = 0;
     *width = 1280;
     *height = 800;
     Display* display = XOpenDisplay(nullptr);
@@ -80,8 +80,8 @@ static void primaryMonitorGeometry(int* posX,
             XRRCrtcInfo* crtc =
                     XRRGetCrtcInfo(display, resources, output->crtc);
             if (crtc) {
-                *posX = crtc->x;
-                *posY = crtc->y;
+                *pos_x = crtc->x;
+                *pos_y = crtc->y;
                 *width = crtc->width;
                 *height = crtc->height;
                 XRRFreeCrtcInfo(crtc);

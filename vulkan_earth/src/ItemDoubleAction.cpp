@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 ItemDoubleAction::ItemDoubleAction() = default;
-ItemDoubleAction::ItemDoubleAction(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemDoubleAction::ItemDoubleAction(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 1;
     maxStack = 5;
     remaining = 1;

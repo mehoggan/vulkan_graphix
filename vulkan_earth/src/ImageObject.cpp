@@ -5,24 +5,24 @@
 
 ImageObject::ImageObject() = default;
 
-ImageObject::ImageObject(GLfloat xPos,
-                         GLfloat yPos,
-                         GLfloat zPos,
+ImageObject::ImageObject(GLfloat x_pos,
+                         GLfloat y_pos,
+                         GLfloat z_pos,
                          GLint width,
                          GLint height,
                          GLfloat border,
-                         GLint iWidth,
-                         GLint iHeight,
+                         GLint i_width,
+                         GLint i_height,
                          const std::string& filename) {
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     this->width = width;
     this->height = height;
     borderSize = border;
 
-    int img_width = iWidth;
-    int img_height = iHeight;
+    int img_width = i_width;
+    int img_height = i_height;
 
     std::vector<unsigned char> data(img_width * img_height * 3);
     std::ifstream file(filename, std::ios::binary);

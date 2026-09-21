@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 ItemShield::ItemShield() = default;
-ItemShield::ItemShield(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemShield::ItemShield(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 1;
     maxStack = 5;
     remaining = 1;

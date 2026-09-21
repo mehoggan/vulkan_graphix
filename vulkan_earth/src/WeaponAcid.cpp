@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 WeaponAcid::WeaponAcid() = default;
-WeaponAcid::WeaponAcid(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponAcid::WeaponAcid(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 8;
     packageNum = 2;
     remaining = 2;

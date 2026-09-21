@@ -187,7 +187,7 @@ std::string GlobalSettings::getScale() { return scale; }
 std::string GlobalSettings::getTrace_Path() { return trace_path; }
 int GlobalSettings::getPlayer_Count() { return player_count; }
 int GlobalSettings::getRound_Count() { return round_count; }
-void GlobalSettings::setCurrentTerrain(TerrainMaker* newTerrain) {
-    currentTerrain = newTerrain;
+void GlobalSettings::setCurrentTerrain(TerrainMaker* new_terrain) {
+    currentTerrain = new_terrain;
 }
 TerrainMaker* GlobalSettings::getCurrentTerrain() { return currentTerrain; }

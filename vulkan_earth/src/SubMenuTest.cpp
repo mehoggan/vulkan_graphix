@@ -9,22 +9,22 @@ using namespace std;
 
 SubMenuTest::SubMenuTest() = default;
 
-SubMenuTest::SubMenuTest(int ID,
-                         GLfloat xPos,
-                         GLfloat yPos,
-                         GLfloat zPos,
+SubMenuTest::SubMenuTest(int id,
+                         GLfloat x_pos,
+                         GLfloat y_pos,
+                         GLfloat z_pos,
                          GLfloat red,
                          GLfloat green,
                          GLfloat blue,
                          GLint width,
                          GLint height,
                          const std::string& caption,
-                         GLfloat percentBorder) {
-    UNIQUEIDENTIFIER = ID;
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
-    this->percentBorder = percentBorder;
+                         GLfloat percent_border) {
+    UNIQUEIDENTIFIER = id;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
+    this->percentBorder = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -55,13 +55,13 @@ SubMenuTest::SubMenuTest(int ID,
 SubMenuTest::~SubMenuTest() = default;
 
 int SubMenuTest::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuTest::setUNIQUEIDENTIFIER(int ID) { UNIQUEIDENTIFIER = ID; }
+void SubMenuTest::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
 GLfloat SubMenuTest::getXPos() { return this->xPos; }
-void SubMenuTest::setXPos(GLfloat newXpos) { this->xPos = newXpos; }
+void SubMenuTest::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
 GLfloat SubMenuTest::getYPos() { return this->yPos; }
-void SubMenuTest::setYPos(GLfloat newYpos) { this->yPos = newYpos; }
+void SubMenuTest::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
 GLfloat SubMenuTest::getZPos() { return this->zPos; }
-void SubMenuTest::setZPos(GLfloat newZpos) { this->zPos = newZpos; }
+void SubMenuTest::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
 GLfloat SubMenuTest::getRed() { return color[0]; }
 void SubMenuTest::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuTest::getGreen() { return color[1]; }

@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 WeaponBFB::WeaponBFB() = default;
-WeaponBFB::WeaponBFB(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponBFB::WeaponBFB(int id) {
+    UNIQUEIDENTIFIER = id;
     remaining = 2;
     scale = 100;
     imageFileName = "WeaponBFB.raw";

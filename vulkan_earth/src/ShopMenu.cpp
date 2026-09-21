@@ -37,13 +37,13 @@ extern void playMusic(int music);
 ShopMenu::ShopMenu() = default;
 ShopMenu::ShopMenu(GLfloat width,
                    GLfloat height,
-                   GLfloat percentBorder,
+                   GLfloat percent_border,
                    GlobalSettings* global_settings,
                    PlayerFactory* player_factory,
-                   int* gameState) {
+                   int* game_state) {
     this->global_settings = global_settings;
     this->player_factory = player_factory;
-    currentGameState = gameState;
+    currentGameState = game_state;
     numPlayers = global_settings->getPlayer_Count();
     currentPlayerIndex = 0;
     currentPlayerBalance = 0;
@@ -59,7 +59,7 @@ ShopMenu::ShopMenu(GLfloat width,
 
     this->width = width;
     this->height = height;
-    this->percentBorder = percentBorder;
+    this->percentBorder = percent_border;
     pos[0] = pos[1] = pos[2] = 0;
 
     grids[0] = new ControlItemGrid(pos[0] - this->width * 0.4,
@@ -1010,23 +1010,23 @@ void ShopMenu::draw() {
     glPopMatrix();
 }
 
-void ShopMenu::buttonTest(int x, int y, int buttonDown) {
-    grids[0]->mouseClickEvent(x, y, buttonDown, true);
+void ShopMenu::buttonTest(int x, int y, int button_down) {
+    grids[0]->mouseClickEvent(x, y, button_down, true);
     updateBuyDiscriptLabel();
-    grids[1]->mouseClickEvent(x, y, buttonDown, true);
+    grids[1]->mouseClickEvent(x, y, button_down, true);
     updateSellLabel();
 
     if ((x >= (buttons[0]->getXPos()) &&
          x <= ((buttons[0]->getXPos()) + (buttons[0]->getWidth()))) &&
         (y <= (buttons[0]->getYPos()) &&
          y >= ((buttons[0]->getYPos()) - (buttons[0]->getHeight())))) {
-        if (buttonDown) playSFX(SMALL_CLICK);
+        if (button_down) playSFX(SMALL_CLICK);
         grids[0]->deselectAllCells();
         delete labelDiscription;
         delete labelBuyPrice;
         labelDiscription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
         labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-        buttons[0]->mouseClickEvent(x, y, buttonDown, true);
+        buttons[0]->mouseClickEvent(x, y, button_down, true);
         if (buttons[0]->isToggled()) {
             buttons[1]->setToggled(false);
             buttons[0]->updateButtonState();
@@ -1038,13 +1038,13 @@ void ShopMenu::buttonTest(int x, int y, int buttonDown) {
          x <= ((buttons[1]->getXPos()) + (buttons[1]->getWidth()))) &&
         (y <= (buttons[1]->getYPos()) &&
          y >= ((buttons[1]->getYPos()) - (buttons[1]->getHeight())))) {
-        if (buttonDown) playSFX(SMALL_CLICK);
+        if (button_down) playSFX(SMALL_CLICK);
         grids[0]->deselectAllCells();
         delete labelDiscription;
         delete labelBuyPrice;
         labelDiscription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
         labelBuyPrice = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-        buttons[1]->mouseClickEvent(x, y, buttonDown, true);
+        buttons[1]->mouseClickEvent(x, y, button_down, true);
         if (buttons[1]->isToggled()) {
             buttons[0]->setToggled(false);
             buttons[0]->updateButtonState();
@@ -1052,20 +1052,20 @@ void ShopMenu::buttonTest(int x, int y, int buttonDown) {
         }
     }
 
-    buttons[2]->mouseClickEvent(x, y, buttonDown, true);
+    buttons[2]->mouseClickEvent(x, y, button_down, true);
     if (buttons[2]->isToggled()) {
         buyHandler();
         buttons[2]->setToggled(false);
     }
 
-    buttons[3]->mouseClickEvent(x, y, buttonDown, true);
+    buttons[3]->mouseClickEvent(x, y, button_down, true);
     if (buttons[3]->isToggled()) {
         sellHandler();
         grids[1]->deselectAllCells();
         buttons[3]->setToggled(false);
     }
 
-    buttons[4]->mouseClickEvent(x, y, buttonDown, true);
+    buttons[4]->mouseClickEvent(x, y, button_down, true);
     if (buttons[4]->isToggled()) {
         playSFX(BIG_CLICK);
         grids[0]->deselectAllCells();

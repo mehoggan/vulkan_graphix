@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 ItemBigRepair::ItemBigRepair() = default;
-ItemBigRepair::ItemBigRepair(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemBigRepair::ItemBigRepair(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 3;
     maxStack = 9;
     remaining = 3;

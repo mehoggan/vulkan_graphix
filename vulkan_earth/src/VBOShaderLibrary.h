@@ -16,9 +16,9 @@ public:
     void drawClientData();
     bool loadShaders(const char* vsFileName, const char* fsFileName);
     bool loadClientData(const std::string& modelFile);
-    bool loadClientData(float* vertices,
-                        float* normals,
-                        float* tex_coord,
+    bool loadClientData(float* vertex_data,
+                        float* normal_data,
+                        float* tex_coord_data,
                         int number_of_vertices);
     void SwapTexture(const char* filename, int width, int height);
     void LoadTexture(const char* filename, int width, int height);

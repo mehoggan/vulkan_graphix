@@ -8,8 +8,8 @@ using namespace std;
 
 Shader::Shader() = default;
 
-Shader::Shader(const char* vsFile, const char* fsFile) {
-    init(vsFile, fsFile);
+Shader::Shader(const char* vs_file, const char* fs_file) {
+    init(vs_file, fs_file);
 }
 
 Shader::~Shader() {
@@ -61,12 +61,12 @@ void Shader::validateProgram(GLuint program) {
     }
 }
 
-void Shader::init(const char* vsFile, const char* fsFile) {
+void Shader::init(const char* vs_file, const char* fs_file) {
     shader_vp = glCreateShader(GL_VERTEX_SHADER);
     shader_fp = glCreateShader(GL_FRAGMENT_SHADER);
 
-    std::string vs_text_str = textFileRead(vsFile);
-    std::string fs_text_str = textFileRead(fsFile);
+    std::string vs_text_str = textFileRead(vs_file);
+    std::string fs_text_str = textFileRead(fs_file);
 
     if (vs_text_str.empty() || fs_text_str.empty()) {
         cerr << "Either vertex shader or fragment shader file not found."
@@ -77,12 +77,12 @@ void Shader::init(const char* vsFile, const char* fsFile) {
     const char* vs_text = vs_text_str.c_str();
     glShaderSource(shader_vp, 1, &vs_text, nullptr);
     glCompileShader(shader_vp);
-    validateShader(shader_vp, vsFile);
+    validateShader(shader_vp, vs_file);
 
     const char* fs_text = fs_text_str.c_str();
     glShaderSource(shader_fp, 1, &fs_text, nullptr);
     glCompileShader(shader_fp);
-    validateShader(shader_fp, fsFile);
+    validateShader(shader_fp, fs_file);
 
     shader_id = glCreateProgram();
     glAttachShader(shader_id, shader_fp);
@@ -97,12 +97,12 @@ void Shader::bind() { glUseProgram(shader_id); }
 
 void Shader::unbind() { glUseProgram(0); }
 
-std::string Shader::textFileRead(const char* fileName) {
+std::string Shader::textFileRead(const char* file_name) {
     std::string text;
-    if (fileName == nullptr) {
+    if (file_name == nullptr) {
         exit(0);
     }
-    std::ifstream file(fileName, std::ios::binary | std::ios::ate);
+    std::ifstream file(file_name, std::ios::binary | std::ios::ate);
     if (file) {
         std::streamsize count = file.tellg();
         file.seekg(0);

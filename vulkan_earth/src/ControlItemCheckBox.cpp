@@ -13,18 +13,18 @@ extern void playSFX(int sfx);
 
 ControlItemCheckBox::ControlItemCheckBox() = default;
 
-ControlItemCheckBox::ControlItemCheckBox(GLfloat xPos,
-                                         GLfloat yPos,
-                                         GLfloat zPos,
+ControlItemCheckBox::ControlItemCheckBox(GLfloat x_pos,
+                                         GLfloat y_pos,
+                                         GLfloat z_pos,
                                          GLfloat red,
                                          GLfloat green,
                                          GLfloat blue,
                                          GLint width,
                                          GLint height,
                                          const std::string& caption) {
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -278,14 +278,15 @@ std::string ControlItemCheckBox::collectData() {
 }
 
 void ControlItemCheckBox::setOptionText(int index) {}
-void ControlItemCheckBox::setOptionText(const std::string& newText) {}
+void ControlItemCheckBox::setOptionText(const std::string& new_text) {}
 
 // NOTE: I use this->height for the x value check, this is intentional to
 // maintain a square
-void ControlItemCheckBox::mouseClickEvent(GLint x,
-                                          GLint y,
-                                          GLint state,
-                                          bool stillOverControlItemCheckBox) {
+void ControlItemCheckBox::mouseClickEvent(
+        GLint x,
+        GLint y,
+        GLint state,
+        bool still_over_control_item_check_box) {
     if ((x >= (this->xPos + this->width - (this->height * 0.9)) &&
          (x <= this->xPos + this->width - (this->height * 0.1))) &&
         ((y <= (this->yPos - (this->height * 0.1))) &&
@@ -293,7 +294,7 @@ void ControlItemCheckBox::mouseClickEvent(GLint x,
         if (state == 1) {
             buttonState = 1;
         } else if (state == 0) {
-            if (stillOverControlItemCheckBox) {
+            if (still_over_control_item_check_box) {
                 if (menuState == 1)
                     menuState = 0;
                 else

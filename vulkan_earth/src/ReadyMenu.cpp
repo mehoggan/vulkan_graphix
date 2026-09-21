@@ -38,14 +38,14 @@ using namespace std;
 ReadyMenu::ReadyMenu() = default;
 ReadyMenu::ReadyMenu(GLfloat width,
                      GLfloat height,
-                     GLfloat percentBorder,
+                     GLfloat percent_border,
                      GlobalSettings* global_settings,
                      PlayerFactory* player_factory,
-                     int* gameState) {
+                     int* game_state) {
     startMusicPlayed = false;
     this->global_settings = global_settings;
     this->player_factory = player_factory;
-    currentGameState = gameState;
+    currentGameState = game_state;
 
     numPlayers = MAX_NUM_PLAYERS;
     for (int i = 0; i < NUM_BUTTONS; i++) {
@@ -61,7 +61,7 @@ ReadyMenu::ReadyMenu(GLfloat width,
     buttonPressed = nullptr;
     this->width = width;
     this->height = height;
-    this->percentBorder = percentBorder;
+    this->percentBorder = percent_border;
     pos[0] = pos[1] = pos[2] = 0;
     color[0] = color[1] = color[2] = 1;
     color[3] = 1;
@@ -484,8 +484,8 @@ void ReadyMenu::setPlayerPageNum(int i) {
                                    0.0f);
 }
 
-void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
-    if (buttonDown) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
+void ReadyMenu::buttonTest(int x, int y, int button_down) {
+    if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
         for (int button_i = 0; button_i < NUM_BUTTONS;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF CLICK LANDS IN BUTTON I
@@ -515,7 +515,7 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
                 controlItems[control_i]->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         true);  // YOU PRESSED OVER A ARROWBUTTON
             }
         }
@@ -523,14 +523,14 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
             (x <= (textField->getXPos() + textField->getWidth())) &&
             (y <= textField->getYPos()) &&
             (y >= (textField->getYPos() - textField->getHeight()))) {
-            textField->mouseClickEvent(x, y, buttonDown, true);
+            textField->mouseClickEvent(x, y, button_down, true);
         } else {
-            textField->mouseClickEvent(x, y, buttonDown, false);
+            textField->mouseClickEvent(x, y, button_down, false);
         }
     }
 
-    else if (!buttonDown) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
-                             // GOES UP
+    else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
+                              // GOES UP
         if (textField->isTextFieldActive()) textField->deactivate();
         if (buttonPressed !=
             nullptr) {  // IF THE LEFT CLICK WAS VALID AND INSIDE A BUTTON
@@ -592,7 +592,7 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
                        // DO NOTHING
                 else {
                     controlItems[control_i]->mouseClickEvent(
-                            x, y, buttonDown, true);
+                            x, y, button_down, true);
                 }
             } else {
                 if (control_i == 0 && buttons[control_i + 1]->isActive())
@@ -600,7 +600,7 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
                        // DO NOTHING
                 else {
                     controlItems[control_i]->mouseClickEvent(
-                            x, y, buttonDown, false);
+                            x, y, button_down, false);
                 }
             }
         }
@@ -609,7 +609,10 @@ void ReadyMenu::buttonTest(int x, int y, int buttonDown) {
             (y <= textField->getYPos()) &&
             (y >= (textField->getYPos() - textField->getHeight()))) {
             textField->mouseClickEvent(
-                    x, y, buttonDown, true);  // YOU PRESSED OVER A ARROWBUTTON
+                    x,
+                    y,
+                    button_down,
+                    true);  // YOU PRESSED OVER A ARROWBUTTON
         }
     }
 }

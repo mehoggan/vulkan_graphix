@@ -144,8 +144,12 @@ flag without a real bug being present.
 
 Key naming conventions:
 - Functions: `camelBack`
-- Variables: `lower_case`
-- Minimum variable name length: 4 characters
+- Variables, members, and parameters: `lower_case`
+- Minimum variable name length: 4 characters, except `x`/`y`/`z`/`w`,
+  `r`/`g`/`b`/`a`, `dx`/`dy`/`dz`, `nx`/`ny`/`nz`, `u`/`v`, and `PI` —
+  the coordinate/color/texture-component vocabulary the Vulkan/OpenGL
+  APIs this project calls into use directly, exempted the same way
+  loop counters (`i`/`j`/`k`) already are by clang-tidy's own default
 - Short namespace length: 40 lines
 
 ### CPPLINT

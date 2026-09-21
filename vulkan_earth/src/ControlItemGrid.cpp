@@ -9,33 +9,33 @@
 extern void playSFX(int sfx);
 
 ControlItemGrid::ControlItemGrid() = default;
-ControlItemGrid::ControlItemGrid(GLfloat xPos,
-                                 GLfloat yPos,
-                                 GLfloat zPos,
+ControlItemGrid::ControlItemGrid(GLfloat x_pos,
+                                 GLfloat y_pos,
+                                 GLfloat z_pos,
                                  GLint width,
                                  GLint height,
                                  int rows,
                                  int cols,
-                                 GLfloat activeCellColorRed,
-                                 GLfloat activeCellColorGreen,
-                                 GLfloat activeCellColorBlue,
-                                 bool visibleLines,
-                                 bool multiSelectable) {
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+                                 GLfloat active_cell_color_red,
+                                 GLfloat active_cell_color_green,
+                                 GLfloat active_cell_color_blue,
+                                 bool visible_lines,
+                                 bool multi_selectable) {
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     this->width = width;
     this->height = height;
     this->rows = rows;
     this->cols = cols;
     cellWidth = width / (cols * 1.0);
     cellHeight = height / (rows * 1.0);
-    activeCellColor[0] = activeCellColorRed;
-    activeCellColor[1] = activeCellColorGreen;
-    activeCellColor[2] = activeCellColorBlue;
+    activeCellColor[0] = active_cell_color_red;
+    activeCellColor[1] = active_cell_color_green;
+    activeCellColor[2] = active_cell_color_blue;
     activeCellColor[3] = 1;
-    this->visibleLines = visibleLines;
-    this->multiSelectable = multiSelectable;
+    this->visibleLines = visible_lines;
+    this->multiSelectable = multi_selectable;
 
     selectedCells = new bool[rows * cols];
     buttons = new ControlItemButton*[rows * cols];
@@ -169,7 +169,7 @@ void ControlItemGrid::draw() {
 void ControlItemGrid::mouseClickEvent(GLint x,
                                       GLint y,
                                       GLint state,
-                                      bool stillOverArrowButton) {
+                                      bool still_over_arrow_button) {
     if (state == 1) {
         // If THE CLICK OCUURED INSIDE OF THE GRID
         if ((xPos <= x && x <= xPos + width) &&
@@ -270,6 +270,6 @@ void ControlItemGrid::placeTextToCell(TextObject* text, int row, int col) {
 
 // DUMMY FUNCTIONS
 void ControlItemGrid::setOptionText(int index) {}
-void ControlItemGrid::setOptionText(const std::string& newText) {}
+void ControlItemGrid::setOptionText(const std::string& new_text) {}
 void ControlItemGrid::updateMouse(int x, int y) {}
 std::string ControlItemGrid::collectData() { return ""; }

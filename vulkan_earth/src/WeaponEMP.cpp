@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 WeaponEMP::WeaponEMP() = default;
-WeaponEMP::WeaponEMP(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponEMP::WeaponEMP(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 8;
     packageNum = 2;
     remaining = 2;

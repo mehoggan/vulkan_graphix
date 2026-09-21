@@ -247,10 +247,10 @@ void Tank::rotateTurret(GLfloat degrees) {
     }
 }
 
-bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
+bool Tank::checkCollision(GLfloat x, GLfloat y, GLfloat z) {
     // First check distance from tank, then check each face of hit box
-    if (sqrt(pow((X - tankPos.coordX), 2) + pow((Y - tankPos.coordY), 2) +
-             pow((Z - tankPos.coordZ), 2)) < 50000000) {
+    if (sqrt(pow((x - tankPos.coordX), 2) + pow((y - tankPos.coordY), 2) +
+             pow((z - tankPos.coordZ), 2)) < 50000000) {
         // top
         GLfloat plane_x = tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
                           hitBoxWidth / 2.0 * right.compoX +
@@ -263,7 +263,7 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                           hitBoxHeight / 2.0 * up.compoZ;
         GLfloat d = up.compoX * plane_x + up.compoY * plane_y +
                     up.compoZ * plane_z;
-        if (up.compoX * X + up.compoY * Y + up.compoZ * Z - d <= 0) {
+        if (up.compoX * x + up.compoY * y + up.compoZ * z - d <= 0) {
             // right
             plane_x = tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
                       hitBoxWidth / 2.0 * right.compoX +
@@ -276,7 +276,7 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                       hitBoxHeight / 2.0 * up.compoZ;
             d = right.compoX * plane_x + right.compoY * plane_y +
                 right.compoZ * plane_z;
-            if (right.compoX * X + right.compoY * Y + right.compoZ * Z - d <=
+            if (right.compoX * x + right.compoY * y + right.compoZ * z - d <=
                 0) {
                 // left
                 plane_x = tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
@@ -290,7 +290,7 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                           hitBoxHeight / 2.0 * up.compoZ;
                 d = left.compoX * plane_x + left.compoY * plane_y +
                     left.compoZ * plane_z;
-                if (left.compoX * X + left.compoY * Y + left.compoZ * Z - d <=
+                if (left.compoX * x + left.compoY * y + left.compoZ * z - d <=
                     0) {
                     // front
                     plane_x = tankPos.coordX + hitBoxLength / 2.0 * at.compoX +
@@ -304,7 +304,7 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                               hitBoxHeight / 2.0 * up.compoZ;
                     d = at.compoX * plane_x + at.compoY * plane_y +
                         at.compoZ * plane_z;
-                    if (at.compoX * X + at.compoY * Y + at.compoZ * Z - d <=
+                    if (at.compoX * x + at.compoY * y + at.compoZ * z - d <=
                         0) {
                         // back
                         plane_x = tankPos.coordX +
@@ -321,8 +321,8 @@ bool Tank::checkCollision(GLfloat X, GLfloat Y, GLfloat Z) {
                                   hitBoxHeight / 2.0 * up.compoZ;
                         d = back.compoX * plane_x + back.compoY * plane_y +
                             back.compoZ * plane_z;
-                        if (back.compoX * X + back.compoY * Y +
-                                    back.compoZ * Z - d <=
+                        if (back.compoX * x + back.compoY * y +
+                                    back.compoZ * z - d <=
                             0) {
                             cout << "COLLISION WITH TANK DETECTED" << endl;
                             return true;
@@ -752,11 +752,11 @@ GLfloat Tank::getCurrentPower() { return currentPower; }
 int Tank::getPreviousPower() { return this->previousPower; }
 int Tank::getPreviousAngle() { return this->previousAngle; }
 GLfloat* Tank::getProjectileLandPos() { return projectileLandPos; }
-void Tank::setPreviousPower(int previousPower) {
-    this->previousPower = previousPower;
+void Tank::setPreviousPower(int previous_power) {
+    this->previousPower = previous_power;
 }
-void Tank::setPreviousAngle(int previousAngle) {
-    this->previousAngle = previousAngle;
+void Tank::setPreviousAngle(int previous_angle) {
+    this->previousAngle = previous_angle;
 }
 void Tank::setProjectileLandPos(GLfloat x, GLfloat y) {
     projectileLandPos[0] = x;
@@ -775,26 +775,26 @@ void Tank::rotateWheel(GLfloat degrees) {
     }
 }
 
-void Tank::changeHeadTexture(int currentPlayerIndex) {
-    if (currentPlayerIndex == 0)
+void Tank::changeHeadTexture(int current_player_index) {
+    if (current_player_index == 0)
         vbo_shader_head->SwapTexture("player1Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 1)
+    else if (current_player_index == 1)
         vbo_shader_head->SwapTexture("player2Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 2)
+    else if (current_player_index == 2)
         vbo_shader_head->SwapTexture("player3Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 3)
+    else if (current_player_index == 3)
         vbo_shader_head->SwapTexture("player4Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 4)
+    else if (current_player_index == 4)
         vbo_shader_head->SwapTexture("player5Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 5)
+    else if (current_player_index == 5)
         vbo_shader_head->SwapTexture("player6Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 6)
+    else if (current_player_index == 6)
         vbo_shader_head->SwapTexture("player7Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 7)
+    else if (current_player_index == 7)
         vbo_shader_head->SwapTexture("player8Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 8)
+    else if (current_player_index == 8)
         vbo_shader_head->SwapTexture("player9Head.raw", 1024, 1024);
-    else if (currentPlayerIndex == 9)
+    else if (current_player_index == 9)
         vbo_shader_head->SwapTexture("player10Head.raw", 1024, 1024);
     else {
         printf("\nERROR <Tank::changeHeadTexture(int)>: Wrong parameter "

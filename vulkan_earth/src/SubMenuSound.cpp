@@ -13,22 +13,22 @@ using namespace std;
 
 SubMenuSound::SubMenuSound() = default;
 
-SubMenuSound::SubMenuSound(int ID,
-                           GLfloat xPos,
-                           GLfloat yPos,
-                           GLfloat zPos,
+SubMenuSound::SubMenuSound(int id,
+                           GLfloat x_pos,
+                           GLfloat y_pos,
+                           GLfloat z_pos,
                            GLfloat red,
                            GLfloat green,
                            GLfloat blue,
                            GLint width,
                            GLint height,
                            const std::string& caption,
-                           GLfloat percentBorder) {
-    UNIQUEIDENTIFIER = ID;
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
-    this->percentBorder = percentBorder;
+                           GLfloat percent_border) {
+    UNIQUEIDENTIFIER = id;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
+    this->percentBorder = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -98,13 +98,13 @@ SubMenuSound::~SubMenuSound() {
 }
 
 int SubMenuSound::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuSound::setUNIQUEIDENTIFIER(int ID) { UNIQUEIDENTIFIER = ID; }
+void SubMenuSound::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
 GLfloat SubMenuSound::getXPos() { return this->xPos; }
-void SubMenuSound::setXPos(GLfloat newXpos) { this->xPos = newXpos; }
+void SubMenuSound::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
 GLfloat SubMenuSound::getYPos() { return this->yPos; }
-void SubMenuSound::setYPos(GLfloat newYpos) { this->yPos = newYpos; }
+void SubMenuSound::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
 GLfloat SubMenuSound::getZPos() { return this->zPos; }
-void SubMenuSound::setZPos(GLfloat newZpos) { this->zPos = newZpos; }
+void SubMenuSound::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
 GLfloat SubMenuSound::getRed() { return color[0]; }
 void SubMenuSound::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuSound::getGreen() { return color[1]; }
@@ -170,8 +170,8 @@ void SubMenuSound::draw() {
 
 std::string SubMenuSound::collectData() { return "Sound:"; }
 
-void SubMenuSound::subMenuMouseTest(int x, int y, int buttonDown) {
-    if (buttonDown) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
+void SubMenuSound::subMenuMouseTest(int x, int y, int button_down) {
+    if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
         for (int button_i = 0; button_i < NUM_CONTROL_ITEMS_SND;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
@@ -185,13 +185,13 @@ void SubMenuSound::subMenuMouseTest(int x, int y, int buttonDown) {
                 subMenuButton[button_i]->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         true);  // YOU PRESSED OVER A ARROWBUTTON
                 buttonPressed = subMenuButton[button_i];
             }
         }
-    } else if (!buttonDown) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
-                               // GOES UP
+    } else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
+                                // GOES UP
         if (buttonPressed !=
             nullptr) {  // IF YOU MANAGED TO CLICK INSIDE AN ARROW BUTTON
                         // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
@@ -204,7 +204,7 @@ void SubMenuSound::subMenuMouseTest(int x, int y, int buttonDown) {
                 buttonPressed->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                 // RELEASE THE MOUSE
                 changeVolumes(buttonPressed);
@@ -212,7 +212,7 @@ void SubMenuSound::subMenuMouseTest(int x, int y, int buttonDown) {
                 buttonPressed->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                  // RELEASE THE MOUSE
                 buttonPressed = nullptr;
@@ -227,18 +227,18 @@ void SubMenuSound::updateMouse(int x, int y) {
     changeVolumes(buttonPressed);
 }
 
-void SubMenuSound::changeVolumes(ControlItem* TheSubMenuButton) {
+void SubMenuSound::changeVolumes(ControlItem* the_sub_menu_button) {
     // SFX volume handler
-    if (TheSubMenuButton == subMenuButton[0]) {
-        int new_volume = atoi(TheSubMenuButton->collectData().c_str());
+    if (the_sub_menu_button == subMenuButton[0]) {
+        int new_volume = atoi(the_sub_menu_button->collectData().c_str());
         Mix_Volume(-1,
                    128 / 100 *
                            new_volume);  //-1 is to apply to all allocated
                                          // channels, 128 is the maximum volume
     }
     // Music volume handler
-    else if (TheSubMenuButton == subMenuButton[1]) {
-        int new_volume = atoi(TheSubMenuButton->collectData().c_str());
+    else if (the_sub_menu_button == subMenuButton[1]) {
+        int new_volume = atoi(the_sub_menu_button->collectData().c_str());
         Mix_VolumeMusic(128 / 100 *
                         new_volume);  // music has its special channel, so
                                       // don't need to specify which channel.

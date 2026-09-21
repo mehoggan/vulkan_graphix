@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 WeaponMFB::WeaponMFB() = default;
-WeaponMFB::WeaponMFB(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponMFB::WeaponMFB(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 12;
     packageNum = 2;
     remaining = 2;

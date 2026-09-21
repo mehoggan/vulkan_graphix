@@ -7,17 +7,17 @@ using namespace std;
 TextObject::TextObject() = default;
 
 TextObject::TextObject(const std::string& input,
-                       GLfloat posX,
-                       GLfloat posY,
-                       GLfloat posZ,
+                       GLfloat pos_x,
+                       GLfloat pos_y,
+                       GLfloat pos_z,
                        void* font_size,
                        GLfloat red,
                        GLfloat green,
                        GLfloat blue) {
     output = input;
-    this->posX = posX;
-    this->posY = posY;
-    this->posZ = posZ + 1;
+    this->posX = pos_x;
+    this->posY = pos_y;
+    this->posZ = pos_z + 1;
     this->font_size = font_size;
     if (glutGet(GLUT_WINDOW_WIDTH) < 1300) {
         this->font_size = GLUT_BITMAP_9_BY_15;

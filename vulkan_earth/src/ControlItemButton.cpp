@@ -18,9 +18,9 @@ extern void playSFX(int sfx);
 ControlItemButton::ControlItemButton() = default;
 
 ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
-                                     GLfloat xPos,
-                                     GLfloat yPos,
-                                     GLfloat zPos,
+                                     GLfloat x_pos,
+                                     GLfloat y_pos,
+                                     GLfloat z_pos,
                                      GLfloat red,
                                      GLfloat green,
                                      GLfloat blue,
@@ -29,9 +29,9 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* parent,
                                      const std::string& caption) {
     this->parent = parent;
 
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -166,13 +166,13 @@ void ControlItemButton::updateButtonState() {
 }
 void ControlItemButton::setToggled(bool t) { toggled = t; }
 void ControlItemButton::setOptionText(int index) {}
-void ControlItemButton::setOptionText(const std::string& newText) {}
+void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
 
 void ControlItemButton::mouseClickEvent(GLint x,
                                         GLint y,
                                         GLint state,
-                                        bool stillOverControlItemButton) {
+                                        bool still_over_control_item_button) {
     if (state) {
         if ((x >= (this->xPos) && x <= ((this->xPos) + (this->width))) &&
             (y <= (this->yPos) &&

@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 ItemExtraBattery::ItemExtraBattery() = default;
-ItemExtraBattery::ItemExtraBattery(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemExtraBattery::ItemExtraBattery(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 3;
     maxStack = 9;
     remaining = 3;

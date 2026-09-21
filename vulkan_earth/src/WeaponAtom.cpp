@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 WeaponAtom::WeaponAtom() = default;
-WeaponAtom::WeaponAtom(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponAtom::WeaponAtom(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 5;
     packageNum = 1;
     remaining = 1;

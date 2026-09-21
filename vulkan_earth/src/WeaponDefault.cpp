@@ -3,8 +3,8 @@
 #include "macro_crtdbg.h"
 
 WeaponDefault::WeaponDefault() = default;
-WeaponDefault::WeaponDefault(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponDefault::WeaponDefault(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 12;
     packageNum = 2;
     remaining = 2;

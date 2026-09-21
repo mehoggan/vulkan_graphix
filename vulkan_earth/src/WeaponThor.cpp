@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 WeaponThor::WeaponThor() = default;
-WeaponThor::WeaponThor(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponThor::WeaponThor(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 6;
     packageNum = 1;
     remaining = 1;

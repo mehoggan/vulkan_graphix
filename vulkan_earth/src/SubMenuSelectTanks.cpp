@@ -12,22 +12,22 @@ using namespace std;
 
 SubMenuSelectTanks::SubMenuSelectTanks() = default;
 
-SubMenuSelectTanks::SubMenuSelectTanks(int ID,
-                                       GLfloat xPos,
-                                       GLfloat yPos,
-                                       GLfloat zPos,
+SubMenuSelectTanks::SubMenuSelectTanks(int id,
+                                       GLfloat x_pos,
+                                       GLfloat y_pos,
+                                       GLfloat z_pos,
                                        GLfloat red,
                                        GLfloat green,
                                        GLfloat blue,
                                        GLint width,
                                        GLint height,
                                        const std::string& caption,
-                                       GLfloat percentBorder) {
-    UNIQUEIDENTIFIER = ID;
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
-    this->percentBorder = percentBorder;
+                                       GLfloat percent_border) {
+    UNIQUEIDENTIFIER = id;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
+    this->percentBorder = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -58,13 +58,13 @@ SubMenuSelectTanks::SubMenuSelectTanks(int ID,
 SubMenuSelectTanks::~SubMenuSelectTanks() { delete label; }
 
 int SubMenuSelectTanks::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuSelectTanks::setUNIQUEIDENTIFIER(int ID) { UNIQUEIDENTIFIER = ID; }
+void SubMenuSelectTanks::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
 GLfloat SubMenuSelectTanks::getXPos() { return this->xPos; }
-void SubMenuSelectTanks::setXPos(GLfloat newXpos) { this->xPos = newXpos; }
+void SubMenuSelectTanks::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
 GLfloat SubMenuSelectTanks::getYPos() { return this->yPos; }
-void SubMenuSelectTanks::setYPos(GLfloat newYpos) { this->yPos = newYpos; }
+void SubMenuSelectTanks::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
 GLfloat SubMenuSelectTanks::getZPos() { return this->zPos; }
-void SubMenuSelectTanks::setZPos(GLfloat newZpos) { this->zPos = newZpos; }
+void SubMenuSelectTanks::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
 GLfloat SubMenuSelectTanks::getRed() { return color[0]; }
 void SubMenuSelectTanks::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuSelectTanks::getGreen() { return color[1]; }
@@ -130,7 +130,7 @@ void SubMenuSelectTanks::draw() {
 
 std::string SubMenuSelectTanks::collectData() { return "SelectTanks:"; }
 
-void SubMenuSelectTanks::subMenuMouseTest(int x, int y, int buttonDown) {
+void SubMenuSelectTanks::subMenuMouseTest(int x, int y, int button_down) {
     /*
     if(buttonDown){
     //FIRST CONDITION IS LEFT MOUSE BUTTON DOWN for(int

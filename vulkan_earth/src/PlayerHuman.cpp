@@ -40,20 +40,20 @@ PlayerHuman::PlayerHuman(GLfloat red, GLfloat green, GLfloat blue) {
 PlayerHuman::PlayerHuman(GLfloat red,
                          GLfloat green,
                          GLfloat blue,
-                         const std::string& tankType,
+                         const std::string& tank_type,
                          const std::string& ai_type,
                          const std::string& name,
-                         char teamLabel,
+                         char team_label,
                          const std::string& player_type,
-                         int startingCash) {
+                         int starting_cash) {
     color[0] = red;
     color[1] = green;
     color[2] = blue;
     color[3] = 1.0;
 
-    currentCash = startingCash;
+    currentCash = starting_cash;
     currentWait = 0;
-    this->teamLabel = teamLabel;
+    this->teamLabel = team_label;
 
     for (int i = 0; i < PLAYER_MAX_ITEMS; i++) {
         currentItems[i] = nullptr;
@@ -66,7 +66,7 @@ PlayerHuman::PlayerHuman(GLfloat red,
     this->ai_type = ai_type;
     this->player_type = player_type;
     this->name = name;
-    this->tankType = tankType;
+    this->tankType = tank_type;
     if (this->tankType == "Rhinoxx")
         currentTank = new TankA(0, 0, 0);
     else if (this->tankType == "Hellfire")
@@ -136,13 +136,13 @@ void PlayerHuman::setTeamLabel(char t) { this->teamLabel = t; }
 Weapon* PlayerHuman::getLoadedWeapon() { return loadedWeapon; }
 void PlayerHuman::setLoadedWeapon(Weapon* wpn) { loadedWeapon = wpn; }
 GLfloat* PlayerHuman::getBalisticMatrix() { return balisticMatrix; }
-void PlayerHuman::setItems(Item** itemSet) {
+void PlayerHuman::setItems(Item** item_set) {
     for (int i = 0; i < PLAYER_MAX_ITEMS; i++) {
-        currentItems[i] = itemSet[i];
+        currentItems[i] = item_set[i];
     }
 }
-void PlayerHuman::setTankType(const std::string& tankType) {
-    this->tankType = tankType;
+void PlayerHuman::setTankType(const std::string& tank_type) {
+    this->tankType = tank_type;
     delete currentTank;
     if (this->tankType == "Rhinoxx")
         currentTank = new TankA(0, 0, 0);
@@ -166,8 +166,8 @@ void PlayerHuman::setTankType(const std::string& tankType) {
         currentTank = nullptr;
     }
 }
-void PlayerHuman::setWeapons(Weapon** weaponSet) {
+void PlayerHuman::setWeapons(Weapon** weapon_set) {
     for (int i = 0; i < PLAYER_MAX_WEAPONS; i++) {
-        currentWeapons[i] = weaponSet[i];
+        currentWeapons[i] = weapon_set[i];
     }
 }

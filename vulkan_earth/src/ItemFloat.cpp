@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 ItemFloat::ItemFloat() = default;
-ItemFloat::ItemFloat(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemFloat::ItemFloat(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 2;
     maxStack = 10;
     remaining = 2;

@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 ItemSmallRepair::ItemSmallRepair() = default;
-ItemSmallRepair::ItemSmallRepair(int ID) {
-    UNIQUEIDENTIFIER = ID;
+ItemSmallRepair::ItemSmallRepair(int id) {
+    UNIQUEIDENTIFIER = id;
     packageNum = 3;
     maxStack = 15;
     remaining = 3;

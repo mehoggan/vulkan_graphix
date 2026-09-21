@@ -14,19 +14,19 @@ extern void playSFX(int sfx);
 ControlItemSelectionBox::ControlItemSelectionBox() = default;
 
 ControlItemSelectionBox::ControlItemSelectionBox(
-        GLfloat xPos,
-        GLfloat yPos,
-        GLfloat zPos,
+        GLfloat x_pos,
+        GLfloat y_pos,
+        GLfloat z_pos,
         GLfloat red,
         GLfloat green,
         GLfloat blue,
         GLint width,
         GLint height,
         const std::string& caption,
-        const std::string& menuString) {
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+        const std::string& menu_string) {
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -34,7 +34,7 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     this->width = width;
     this->height = height;
     this->caption = caption;
-    menuInfo = menuString;
+    menuInfo = menu_string;
 
     // split menuInfo on '/' into allOptions
     std::string current;
@@ -182,10 +182,13 @@ void ControlItemSelectionBox::setOptionText(int index) {
                                 0.0f);
     menuState = index;
 }
-void ControlItemSelectionBox::setOptionText(const std::string& newText) {}
+void ControlItemSelectionBox::setOptionText(const std::string& new_text) {}
 
 void ControlItemSelectionBox::mouseClickEvent(
-        GLint x, GLint y, GLint state, bool stillOverControlItemSelectionBox) {
+        GLint x,
+        GLint y,
+        GLint state,
+        bool still_over_control_item_selection_box) {
     // up arrow test
     if ((x >= (this->xPos + 0.02 * (this->width)) &&
          (x <= this->xPos + 0.02 * (this->width) + 0.1 * (this->width))) &&
@@ -195,8 +198,9 @@ void ControlItemSelectionBox::mouseClickEvent(
         if (state == 1) {     // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
             buttonState = 1;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {
-            if (stillOverControlItemSelectionBox) {  // ONCE YOU RELEASE MOUSE
-                                                     // BUTTON
+            if (still_over_control_item_selection_box) {  // ONCE YOU RELEASE
+                                                          // MOUSE
+                                                          // BUTTON
                 playSFX(SMALL_CLICK);
                 menuState++;
                 if (menuState == numberOfOptions)  // wrap around check
@@ -214,8 +218,9 @@ void ControlItemSelectionBox::mouseClickEvent(
         if (state == 1) {     // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
             buttonState = 2;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {
-            if (stillOverControlItemSelectionBox) {  // ONCE YOU RELEASE MOUSE
-                                                     // BUTTON
+            if (still_over_control_item_selection_box) {  // ONCE YOU RELEASE
+                                                          // MOUSE
+                                                          // BUTTON
                 playSFX(SMALL_CLICK);
                 menuState--;
                 if (menuState < 0)  // wrap around check

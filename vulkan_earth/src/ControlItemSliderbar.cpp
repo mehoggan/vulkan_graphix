@@ -9,20 +9,20 @@
 extern void playSFX(int sfx);
 
 ControlItemSliderbar::ControlItemSliderbar() = default;
-ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
-                                           GLfloat yPos,
-                                           GLfloat zPos,
+ControlItemSliderbar::ControlItemSliderbar(GLfloat x_pos,
+                                           GLfloat y_pos,
+                                           GLfloat z_pos,
                                            GLfloat red,
                                            GLfloat green,
                                            GLfloat blue,
                                            GLint width,
                                            GLint height,
                                            const std::string& caption,
-                                           const std::string& menuString,
-                                           int sliderStartingIndex) {
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
+                                           const std::string& menu_string,
+                                           int slider_starting_index) {
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -31,18 +31,18 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
     this->height = height;
 
     barWidth = width - width * 0.1;
-    barXPos = xPos + (width - barWidth) / 2;
-    barYPos = yPos - height / 1.5;
-    barZPos = zPos + 0.5;
+    barXPos = x_pos + (width - barWidth) / 2;
+    barYPos = y_pos - height / 1.5;
+    barZPos = z_pos + 0.5;
 
     sliderXPos = barXPos - barWidth * 0.012;
-    sliderYPos = yPos - height / 1.7;
+    sliderYPos = y_pos - height / 1.7;
     sliderZPos = barZPos + 0.5;
     sliderWidth = width / 5 * 0.1;
     sliderHeight = height * 0.15;
 
     this->caption = caption;
-    menuInfo = menuString;
+    menuInfo = menu_string;
     isSliderClicked = false;
 
     // split menuInfo on '/' into allOptions
@@ -60,7 +60,7 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat xPos,
                            1.0);  // if it's divided by an integer, the whole
                                   // thing becomes an integer value???
 
-    menuState = sliderStartingIndex;
+    menuState = slider_starting_index;
     buttonState = 0;
     optionText = nullptr;
     setOptionText(menuState);  // set option to first option
@@ -262,7 +262,7 @@ GLfloat ControlItemSliderbar::getSliderXPos() { return sliderXPos; }
 void ControlItemSliderbar::setSliderXPos(GLfloat x) { sliderXPos = x; }
 std::string ControlItemSliderbar::collectData() { return currentOption; }
 
-void ControlItemSliderbar::setOptionText(const std::string& newText) {}
+void ControlItemSliderbar::setOptionText(const std::string& new_text) {}
 
 void ControlItemSliderbar::setOptionText(int index) {
     currentOption = allOptions[index];
@@ -286,7 +286,10 @@ void ControlItemSliderbar::setOptionText(int index) {
 }
 
 void ControlItemSliderbar::mouseClickEvent(
-        GLint x, GLint y, GLint state, bool stillOverControlItemSliderbar) {
+        GLint x,
+        GLint y,
+        GLint state,
+        bool still_over_control_item_sliderbar) {
     if (state == 1) {
         // check if the click is on the slider
         if ((sliderXPos < x && x < sliderXPos + sliderWidth) &&

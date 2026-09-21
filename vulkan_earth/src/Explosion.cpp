@@ -14,7 +14,7 @@
  * Constructors and De-constructors
  */
 Explosion::Explosion() = default;
-Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weaponRadius) {
+Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weapon_radius) {
     glPushMatrix();
     glLoadIdentity();
     glGetFloatv(GL_MODELVIEW_MATRIX, transMatrix);
@@ -25,7 +25,7 @@ Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weaponRadius) {
     transMatrix[12] = this->x;
     transMatrix[13] = this->y;
     transMatrix[14] = this->z;
-    this->weaponRadius = weaponRadius;
+    this->weaponRadius = weapon_radius;
 
     shader = new Shader();
     shader->init("VertexExplosion.vs", "FragmentExplosion.vs");

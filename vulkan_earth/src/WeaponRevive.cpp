@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 WeaponRevive::WeaponRevive() = default;
-WeaponRevive::WeaponRevive(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponRevive::WeaponRevive(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 6;
     packageNum = 1;
     remaining = 1;

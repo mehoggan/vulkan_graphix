@@ -22,22 +22,22 @@ extern void playSFX(int sfx);
 
 SubMenuLandscape::SubMenuLandscape() = default;
 
-SubMenuLandscape::SubMenuLandscape(int ID,
-                                   GLfloat xPos,
-                                   GLfloat yPos,
-                                   GLfloat zPos,
+SubMenuLandscape::SubMenuLandscape(int id,
+                                   GLfloat x_pos,
+                                   GLfloat y_pos,
+                                   GLfloat z_pos,
                                    GLfloat red,
                                    GLfloat green,
                                    GLfloat blue,
                                    GLint width,
                                    GLint height,
                                    const std::string& caption,
-                                   GLfloat percentBorder) {
-    UNIQUEIDENTIFIER = ID;
-    this->xPos = xPos;
-    this->yPos = yPos;
-    this->zPos = zPos;
-    this->percentBorder = percentBorder;
+                                   GLfloat percent_border) {
+    UNIQUEIDENTIFIER = id;
+    this->xPos = x_pos;
+    this->yPos = y_pos;
+    this->zPos = z_pos;
+    this->percentBorder = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -131,13 +131,13 @@ SubMenuLandscape::~SubMenuLandscape() {
 }
 
 int SubMenuLandscape::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuLandscape::setUNIQUEIDENTIFIER(int ID) { UNIQUEIDENTIFIER = ID; }
+void SubMenuLandscape::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
 GLfloat SubMenuLandscape::getXPos() { return this->xPos; }
-void SubMenuLandscape::setXPos(GLfloat newXpos) { this->xPos = newXpos; }
+void SubMenuLandscape::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
 GLfloat SubMenuLandscape::getYPos() { return this->yPos; }
-void SubMenuLandscape::setYPos(GLfloat newYpos) { this->yPos = newYpos; }
+void SubMenuLandscape::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
 GLfloat SubMenuLandscape::getZPos() { return this->zPos; }
-void SubMenuLandscape::setZPos(GLfloat newZpos) { this->zPos = newZpos; }
+void SubMenuLandscape::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
 GLfloat SubMenuLandscape::getRed() { return color[0]; }
 void SubMenuLandscape::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuLandscape::getGreen() { return color[1]; }
@@ -304,8 +304,8 @@ std::string SubMenuLandscape::collectData() {
     return optionsarray;
 }
 
-void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
-    if (buttonDown) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
+void SubMenuLandscape::subMenuMouseTest(int x, int y, int button_down) {
+    if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
         for (int button_i = 0; button_i < NUM_CONTROL_ITEMS_LND;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
@@ -319,7 +319,7 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
                 subMenuButton[button_i]->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         true);  // YOU PRESSED OVER A ARROWBUTTON
                 buttonPressed = subMenuButton[button_i];
                 numberpressed = button_i;
@@ -327,8 +327,8 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
         }
         oldMouseX = x;
         oldMouseY = y;
-    } else if (!buttonDown) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
-                               // GOES UP
+    } else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
+                                // GOES UP
         if (buttonPressed !=
             nullptr) {  // IF YOU MANAGED TO CLICK INSIDE AN ARROW BUTTON
                         // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
@@ -361,7 +361,7 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
                                     5,             // int randomJump % (1-100)
                                     i1);           // int smoothness
                     tm->selectTexture(subMenuButton[2]->collectData());
-                    buttonPressed->mouseClickEvent(x, y, buttonDown, false);
+                    buttonPressed->mouseClickEvent(x, y, button_down, false);
                     numberpressed = -1;
                     buttonPressed = nullptr;
                     playSFX(SMALL_CLICK);
@@ -369,7 +369,7 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
                     buttonPressed->mouseClickEvent(
                             x,
                             y,
-                            buttonDown,
+                            button_down,
                             true);  // IF YOU ARE THEN TELL THE ARROW BUTTON
                                     // YOU RELEASE THE MOUSE
                     numberpressed = -1;
@@ -379,7 +379,7 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int buttonDown) {
                 buttonPressed->mouseClickEvent(
                         x,
                         y,
-                        buttonDown,
+                        button_down,
                         false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                  // RELEASE THE MOUSE
                 buttonPressed = nullptr;

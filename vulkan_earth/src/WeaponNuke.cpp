@@ -6,8 +6,8 @@
 extern void playSFX(int sfx);
 
 WeaponNuke::WeaponNuke() = default;
-WeaponNuke::WeaponNuke(int ID) {
-    UNIQUEIDENTIFIER = ID;
+WeaponNuke::WeaponNuke(int id) {
+    UNIQUEIDENTIFIER = id;
     maxStack = 1;
     packageNum = 1;
     remaining = 1;

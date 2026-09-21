@@ -47,14 +47,14 @@ GameState::GameState(int width,
                      int height,
                      PlayerFactory* player_factory,
                      GlobalSettings* global_settings,
-                     int* currentGameState) {
+                     int* current_game_state) {
     SCALE_GRAVITY = 30;
     BALISTIC_SCALAR = 50;
     gravity = -9.8 * SCALE_GRAVITY;
 
     this->timer = 0;
 
-    this->currentGameState = currentGameState;
+    this->currentGameState = current_game_state;
     needHelp = false;
     startMusicPlayed = false;
     prevMusicVolume = 0;
@@ -2144,8 +2144,8 @@ GLfloat GameState::getBalisticScalar() { return BALISTIC_SCALAR; }
 Vertex GameState::getPositionOfLastProjectile() {
     return position_of_last_projectile;
 }
-void GameState::setPositionOfLastProjectile(GLfloat X, GLfloat Y, GLfloat Z) {
-    position_of_last_projectile.coordX = X;
-    position_of_last_projectile.coordY = Y;
-    position_of_last_projectile.coordZ = Z;
+void GameState::setPositionOfLastProjectile(GLfloat x, GLfloat y, GLfloat z) {
+    position_of_last_projectile.coordX = x;
+    position_of_last_projectile.coordY = y;
+    position_of_last_projectile.coordZ = z;
 }

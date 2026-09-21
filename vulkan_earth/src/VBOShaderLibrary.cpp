@@ -125,14 +125,14 @@ void VBOShaderLibrary::drawClientData() {
     }
 }
 
-bool VBOShaderLibrary::loadShaders(const char* vsFileName,
-                                   const char* fsFileName) {
+bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
+                                   const char* fs_file_name) {
     bool shader_status = true;
     useShaders = true;
     shader_vp = glCreateShader(GL_VERTEX_SHADER);
     shader_fp = glCreateShader(GL_FRAGMENT_SHADER);
 
-    std::ifstream vs_file(vsFileName, std::ios::binary | std::ios::ate);
+    std::ifstream vs_file(vs_file_name, std::ios::binary | std::ios::ate);
     if (vs_file) {
         std::streamsize count = vs_file.tellg();
         vs_file.seekg(0);
@@ -148,7 +148,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
         // useShaders = false;
     }
 
-    std::ifstream fs_file(fsFileName, std::ios::binary | std::ios::ate);
+    std::ifstream fs_file(fs_file_name, std::ios::binary | std::ios::ate);
     if (fs_file) {
         std::streamsize count = fs_file.tellg();
         fs_file.seekg(0);
@@ -183,7 +183,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     GLsizei length1 = 0;
     glGetShaderInfoLog(shader_vp, vertex_buffer_size, &length1, buffer1);
     if (length1 > 0) {
-        cerr << "(" << vsFileName << ") -- " << buffer1 << endl;
+        cerr << "(" << vs_file_name << ") -- " << buffer1 << endl;
         // shader_status = false;
         // useShaders = false;
     }
@@ -199,7 +199,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     GLsizei length2 = 0;
     glGetShaderInfoLog(shader_fp, fragment_buffer_size, &length2, buffer2);
     if (length2 > 0) {
-        cerr << "(" << fsFileName << ") -- " << buffer2 << endl;
+        cerr << "(" << fs_file_name << ") -- " << buffer2 << endl;
         // shader_status = false;
         // useShaders = false;
     }
@@ -238,14 +238,14 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     return shader_status;
 }
 
-bool VBOShaderLibrary::loadClientData(const std::string& modelFile) {
+bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
     bool content_loaded = true;
     unsigned int c;
     bool done = false;
 
-    std::ifstream ogl_file(modelFile, std::ios::binary | std::ios::ate);
+    std::ifstream ogl_file(model_file, std::ios::binary | std::ios::ate);
     if (!ogl_file) {
-        printf("ERROR: File %s not found\n", modelFile.c_str());
+        printf("ERROR: File %s not found\n", model_file.c_str());
         content_loaded = false;
     } else if (content_loaded && ogl_file) {
         std::streamsize read_file_size = ogl_file.tellg();
@@ -386,9 +386,9 @@ bool VBOShaderLibrary::loadClientData(const std::string& modelFile) {
     return content_loaded;
 }
 
-bool VBOShaderLibrary::loadClientData(float* V,
-                                      float* N,
-                                      float* T,
+bool VBOShaderLibrary::loadClientData(float* vertex_data,
+                                      float* normal_data,
+                                      float* tex_coord_data,
                                       int number_of_vertices) {
     bool content_loaded = true;
     try {
@@ -399,7 +399,7 @@ bool VBOShaderLibrary::loadClientData(float* V,
         // cout << "Vertices Data " << endl;
         int vert_index = 0;
         for (int x = 0; x < number_of_vertices * 3; x += 3) {
-            Vertex v(V[x], V[x + 1], V[x + 2]);
+            Vertex v(vertex_data[x], vertex_data[x + 1], vertex_data[x + 2]);
             vertices[vert_index] = v;
             // cout	<< "<" << vertices[vert_index].coordX << ", "
             //		<< vertices[vert_index].coordY << ", "
@@ -410,7 +410,7 @@ bool VBOShaderLibrary::loadClientData(float* V,
         // cout << "Normal Data" << endl;
         int norm_index = 0;
         for (int y = 0; y < number_of_vertices * 3; y += 3) {
-            Normal n(N[y], N[y + 1], N[y + 2]);
+            Normal n(normal_data[y], normal_data[y + 1], normal_data[y + 2]);
             normals[norm_index] = n;
             // cout	<< "<" << normals[norm_index].compoX << ", "
             //		<< normals[norm_index].compoY << ", "
@@ -421,7 +421,7 @@ bool VBOShaderLibrary::loadClientData(float* V,
         // cout << "TexCoord Data " << endl;
         int tex_coord_index = 0;
         for (int z = 0; z < number_of_vertices * 2; z += 2) {
-            TexCoord t(T[z], T[z + 1]);
+            TexCoord t(tex_coord_data[z], tex_coord_data[z + 1]);
             tex_coord[tex_coord_index] = t;
             // cout	<< "<" << tex_coord[tex_coord_index].texcoordS << ", "
             //		<< tex_coord[tex_coord_index].texcoordT

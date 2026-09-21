@@ -182,25 +182,26 @@ void Inventory::setupInventory(Player* player) {
     }
 }
 
-void Inventory::handleInventory(Player* currentPlayer, int invenIndex) {
+void Inventory::handleInventory(Player* current_player, int inven_index) {
     // IF PLAYER HAS SHOT WITH A SPECIAL WEAPON
-    if (invenIndex < PLAYER_MAX_WEAPONS) {
-        if (currentPlayer->getLoadedWeapon() != nullptr) {
-            if (currentPlayer->getLoadedWeapon()->getRemaining() > 1) {
-                currentPlayer->getLoadedWeapon()->setRemaining(
-                        currentPlayer->getLoadedWeapon()->getRemaining() - 1);
+    if (inven_index < PLAYER_MAX_WEAPONS) {
+        if (current_player->getLoadedWeapon() != nullptr) {
+            if (current_player->getLoadedWeapon()->getRemaining() > 1) {
+                current_player->getLoadedWeapon()->setRemaining(
+                        current_player->getLoadedWeapon()->getRemaining() - 1);
             } else {
                 int index;
                 for (index = 0; index < PLAYER_MAX_WEAPONS; index++) {
-                    if (currentPlayer->getCurrentWeapons()[index] == nullptr) {
+                    if (current_player->getCurrentWeapons()[index] ==
+                        nullptr) {
                         // do nothing
-                    } else if (currentPlayer->getCurrentWeapons()[index]
+                    } else if (current_player->getCurrentWeapons()[index]
                                        ->getUNIQUEIDENTIFIER() ==
-                               currentPlayer->getLoadedWeapon()
+                               current_player->getLoadedWeapon()
                                        ->getUNIQUEIDENTIFIER()) {
-                        delete currentPlayer->getLoadedWeapon();
-                        currentPlayer->getCurrentWeapons()[index] = nullptr;
-                        currentPlayer->setLoadedWeapon(nullptr);
+                        delete current_player->getLoadedWeapon();
+                        current_player->getCurrentWeapons()[index] = nullptr;
+                        current_player->setLoadedWeapon(nullptr);
                         break;
                     }
                 }
@@ -209,19 +210,20 @@ void Inventory::handleInventory(Player* currentPlayer, int invenIndex) {
     }
     // IF PLAYER HAS USED AN ITEM
     else {
-        if (currentPlayer->getCurrentItems()[invenIndex - PLAYER_MAX_WEAPONS]
+        if (current_player->getCurrentItems()[inven_index - PLAYER_MAX_WEAPONS]
                     ->getRemaining() > 1) {
-            currentPlayer->getCurrentItems()[invenIndex - PLAYER_MAX_WEAPONS]
+            current_player->getCurrentItems()[inven_index - PLAYER_MAX_WEAPONS]
                     ->setRemaining(
-                            currentPlayer
-                                    ->getCurrentItems()[invenIndex -
+                            current_player
+                                    ->getCurrentItems()[inven_index -
                                                         PLAYER_MAX_WEAPONS]
                                     ->getRemaining() -
                             1);
         } else {
-            delete currentPlayer
-                    ->getCurrentItems()[invenIndex - PLAYER_MAX_WEAPONS];
-            currentPlayer->getCurrentItems()[invenIndex - PLAYER_MAX_WEAPONS] =
+            delete current_player
+                    ->getCurrentItems()[inven_index - PLAYER_MAX_WEAPONS];
+            current_player
+                    ->getCurrentItems()[inven_index - PLAYER_MAX_WEAPONS] =
                     nullptr;
         }
     }

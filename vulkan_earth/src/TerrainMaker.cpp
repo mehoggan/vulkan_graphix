@@ -17,10 +17,10 @@ using namespace std;
 
 TerrainMaker::TerrainMaker() = default;
 
-TerrainMaker::TerrainMaker(int iScale, int iSize) {
+TerrainMaker::TerrainMaker(int i_scale, int i_size) {
     srand(time(nullptr));
-    this->scale = iScale;
-    this->size = iSize;
+    this->scale = i_scale;
+    this->size = i_size;
     totalVertices = this->size * this->size;
     triStripBufferSize = (this->size - 1) * (this->size - 1) * 6;
     prepTerrain();
@@ -290,17 +290,17 @@ void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
 void TerrainMaker::prepareData(int steps,
                                int increase,
                                float radius,
-                               int randomJump,
+                               int random_jump,
                                int smoothness) {
     int chunk_size = this->size / 2;
     this->steps = steps;
     this->increase = increase;
     this->radius = radius;
-    this->randomJump = randomJump;
+    this->randomJump = random_jump;
     int buffersize = triStripBufferSize;
     int size = this->size;
     int scale = this->scale;
-    terrainGen(steps, increase, radius, randomJump);
+    terrainGen(steps, increase, radius, random_jump);
     for (int i = -1; i < smoothness; i++) terrainSmoothe(10);
 
     //
@@ -525,7 +525,7 @@ void TerrainMaker::prepTerrain() {
 void TerrainMaker::terrainGen(int steps,
                               int increase,
                               float radius,
-                              int randomJump) {
+                              int random_jump) {
     float current_x = this->size / 2;
     float current_y = this->size / 2;
     float distance = 0;
@@ -539,7 +539,7 @@ void TerrainMaker::terrainGen(int steps,
     for (int current_step = 1; current_step < steps; current_step++) {
         int random = (rand() % 100);
 
-        if (random > randomJump) {
+        if (random > random_jump) {
             switch ((rand() % 4)) {
                 case 0:
                     current_x--;
@@ -831,12 +831,12 @@ void TerrainMaker::collectVerticesForTriangleNormal(
     }
 }
 
-void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
+void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
     int x = static_cast<int>(fx / this->scale);
     int z = static_cast<int>(fz / this->scale);
     Vertex* buffer_ptr = static_cast<Vertex*>(
             pglMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
-    int crater_size = static_cast<int>(blastSize * 1.5);
+    int crater_size = static_cast<int>(blast_size * 1.5);
 
     if (((x >= 0) && (x < size)) && ((z >= 0) && (z < size))) {
         GLfloat impact_y = th[z][x];
@@ -846,7 +846,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
                                                            (z - j) * (z - j)));
                 if ((((i >= 0) && (j >= 0)) &&
                      ((i < this->size) && (j < this->size))) &&
-                    (distance <= blastSize)) {
+                    (distance <= blast_size)) {
                     GLfloat x_dis, y_dis, z_dis, radius;
                     x_dis = abs(i - x);
                     z_dis = abs(j - z);
@@ -855,7 +855,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
                     GLfloat damage_depth =
                             -((sqrt(radius * radius + x_dis * x_dis +
                                     z_dis * z_dis) -
-                               blastSize * 2) *
+                               blast_size * 2) *
                               this->scale / 2);
                     GLfloat adjust_height = th[j][i];
                     if (adjust_height > (impact_y + (damage_depth))) {
@@ -905,7 +905,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blastSize) {
                 GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
                                                            (z - j) * (z - j)));
                 if ((i >= 0 && j >= 0 && i < this->size && j < this->size) &&
-                    (distance <= blastSize)) {
+                    (distance <= blast_size)) {
                     smoothShadeNormal(j, i, &adjust_normal);
                     buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
                             .coordX = adjust_normal.compoX;  // VBO
