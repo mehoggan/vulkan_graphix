@@ -8,7 +8,7 @@
 class WeaponPadlock : public Weapon {
 public:
     WeaponPadlock();
-    WeaponPadlock(int ID);
+    WeaponPadlock(int id);
     ~WeaponPadlock() override;
     WeaponPadlock* getWeaponInstance() override;
     void causeEffectToTank(GLfloat distance, Tank* tank) override;

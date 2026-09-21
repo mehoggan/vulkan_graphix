@@ -15,13 +15,13 @@ public:
     ~ItemTest() override = 0;
     /*	GETTERS AND SETTERS	*/
     virtual int getUNIQUEIDENTIFIER() = 0;
-    virtual void setUNIQUEIDENTIFIER(int ID) = 0;
+    virtual void setUNIQUEIDENTIFIER(int id) = 0;
     virtual GLfloat getXPos() = 0;
-    virtual void setXPos(GLfloat newXpos) = 0;
+    virtual void setXPos(GLfloat new_xpos) = 0;
     virtual GLfloat getYPos() = 0;
-    virtual void setYPos(GLfloat newYpos) = 0;
+    virtual void setYPos(GLfloat new_ypos) = 0;
     virtual GLfloat getZPos() = 0;
-    virtual void setZPos(GLfloat newZpos) = 0;
+    virtual void setZPos(GLfloat new_zpos) = 0;
     virtual GLfloat getRed() = 0;
     virtual void setRed(GLfloat red) = 0;
     virtual GLfloat getGreen() = 0;

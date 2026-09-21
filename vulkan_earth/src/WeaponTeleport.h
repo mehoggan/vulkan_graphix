@@ -8,7 +8,7 @@
 class WeaponTeleport : public Weapon {
 public:
     WeaponTeleport();
-    WeaponTeleport(int ID);
+    WeaponTeleport(int id);
     ~WeaponTeleport() override;
     WeaponTeleport* getWeaponInstance() override;
     void causeEffectToTank(GLfloat distance, Tank* tank) override;

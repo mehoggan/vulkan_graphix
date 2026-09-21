@@ -8,7 +8,7 @@
 class WeaponRevive : public Weapon {
 public:
     WeaponRevive();
-    WeaponRevive(int ID);
+    WeaponRevive(int id);
     ~WeaponRevive() override;
     WeaponRevive* getWeaponInstance() override;
     void causeEffectToTank(GLfloat distance, Tank* tank) override;

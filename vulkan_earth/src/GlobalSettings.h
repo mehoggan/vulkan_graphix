@@ -3,8 +3,8 @@
 
 #include <string>
 
-const int NUM_OPTIONS = 23;
-const int MAX_NUM_PLAYERS = 10;
+const int num_options = 23;
+const int max_num_players = 10;
 
 class TerrainMaker;
 
@@ -14,36 +14,36 @@ public:
     ~GlobalSettings();
     void setVariables(const std::string& global_options,
                       const std::string& round_and_player_count);
-    std::string getGame_Speed();
-    std::string getInterest_Rate();
-    std::string getCash_At_Start();
-    std::string getComputers_Buy();
-    std::string getFree_Market();
-    std::string getScoring_Mode();
-    std::string getAir_Viscosity();
+    std::string getGameSpeed();
+    std::string getInterestRate();
+    std::string getCashAtStart();
+    std::string getComputersBuy();
+    std::string getFreeMarket();
+    std::string getScoringMode();
+    std::string getAirViscosity();
     std::string getGravity();
-    std::string getTanks_Fall();
+    std::string getTanksFall();
     std::string getHillyness();
-    std::string getHill_Height();
-    std::string getHill_Girth();
+    std::string getHillHeight();
+    std::string getHillGirth();
     std::string getTeams();
-    std::string getStatus_bar();
-    std::string getPlay_Order();
-    std::string getFast_Computers();
-    std::string getTalking_Tanks();
-    std::string getTalk_Probability();
-    std::string getArms_Level();
-    std::string getBomb_Icon();
+    std::string getStatusBar();
+    std::string getPlayOrder();
+    std::string getFastComputers();
+    std::string getTalkingTanks();
+    std::string getTalkProbability();
+    std::string getArmsLevel();
+    std::string getBombIcon();
     std::string getTunneling();
     std::string getScale();
-    std::string getTrace_Path();
-    int getPlayer_Count();
-    int getRound_Count();
-    void setCurrentTerrain(TerrainMaker* newTerrain);
+    std::string getTracePath();
+    int getPlayerCount();
+    int getRoundCount();
+    void setCurrentTerrain(TerrainMaker* new_terrain);
     TerrainMaker* getCurrentTerrain();
 
 private:
-    std::string options[NUM_OPTIONS];
+    std::string options[num_options];
 
     /*	HARDWARE SUBMENU	*/
     std::string game_speed;
@@ -81,7 +81,7 @@ private:
     void printSelf(int index);
     void copyData();
 
-    TerrainMaker* currentTerrain;
+    TerrainMaker* current_terrain;
 };
 
 #endif /*	GLOBAL_SETTINGS_H	*/

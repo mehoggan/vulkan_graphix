@@ -36,16 +36,16 @@ VBOShaderLibrary::VBOShaderLibrary() {
     PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb = nullptr;  // map VBO procedure
     PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb =
             nullptr;  // unmap VBO procedure
-    useVBOs = false;
-    useTextures = false;
-    useShaders = false;
+    use_vb_os = false;
+    use_textures = false;
+    use_shaders = false;
     color_texture = 0;
     normal_texture = 0;
-    verticesLoaded = 0;
+    vertices_loaded = 0;
 }
 
 VBOShaderLibrary::~VBOShaderLibrary() {
-    pglDeleteBuffersARB(1, &VBOId);
+    pgl_delete_buffers_arb(1, &vbo_id);
     glDetachShader(shader_id, shader_fp);
     glDetachShader(shader_id, shader_vp);
     glDeleteShader(shader_fp);
@@ -56,19 +56,19 @@ VBOShaderLibrary::~VBOShaderLibrary() {
 }
 
 void VBOShaderLibrary::drawClientData() {
-    if (useShaders) {
+    if (use_shaders) {
         glUseProgram(shader_id);
     }
-    if (useTextures) {
+    if (use_textures) {
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        if (!useShaders) {
+        if (!use_shaders) {
             glBindTexture(GL_TEXTURE_2D, color_texture);
         }
-        if (useShaders) {
+        if (use_shaders) {
             glEnable(GL_TEXTURE_2D);
             glActiveTexture(GL_TEXTURE0);
             int texture_location =
@@ -84,10 +84,10 @@ void VBOShaderLibrary::drawClientData() {
             glBindTexture(GL_TEXTURE_2D, normal_texture);
         }
     }
-    if (useVBOs) {
+    if (use_vb_os) {
         glColor3f(1.0, 0.0, 0.0);
-        int size = verticesLoaded;
-        pglBindBufferARB(GL_ARRAY_BUFFER_ARB, VBOId);
+        int size = vertices_loaded;
+        pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vbo_id);
 
         glEnableClientState(GL_NORMAL_ARRAY);
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -107,9 +107,9 @@ void VBOShaderLibrary::drawClientData() {
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
-    if (useTextures) {
+    if (use_textures) {
         glBindTexture(GL_TEXTURE_2D, 0);
-        if (useShaders) {
+        if (use_shaders) {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, 0);
             glDisable(GL_TEXTURE_2D);
@@ -120,7 +120,7 @@ void VBOShaderLibrary::drawClientData() {
         }
         glDisable(GL_TEXTURE_2D);
     }
-    if (useShaders) {
+    if (use_shaders) {
         glUseProgram(0);
     }
 }
@@ -128,7 +128,7 @@ void VBOShaderLibrary::drawClientData() {
 bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
                                    const char* fs_file_name) {
     bool shader_status = true;
-    useShaders = true;
+    use_shaders = true;
     shader_vp = glCreateShader(GL_VERTEX_SHADER);
     shader_fp = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -137,8 +137,8 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
         std::streamsize count = vs_file.tellg();
         vs_file.seekg(0);
         if (count > 0) {
-            vsText.resize(count);
-            vs_file.read(vsText.data(), count);
+            vs_text.resize(count);
+            vs_file.read(vs_text.data(), count);
         } else {
             // shader_status = false;
             // useShaders = false;
@@ -153,8 +153,8 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
         std::streamsize count = fs_file.tellg();
         fs_file.seekg(0);
         if (count > 0) {
-            fsText.resize(count);
-            fs_file.read(fsText.data(), count);
+            fs_text.resize(count);
+            fs_file.read(fs_text.data(), count);
         } else {
             // shader_status = false;
             // useShaders = false;
@@ -165,7 +165,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     }
 
     /*	ERROR: NO CODE IN SHADERS	*/
-    if (vsText.empty() || fsText.empty()) {
+    if (vs_text.empty() || fs_text.empty()) {
         cerr << "ERROR: Either vertex shader or fragment shader file not "
                 "found."
              << endl;
@@ -174,7 +174,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     }
 
     /*	COMPILE AND VALIDATE THE VERTEX SHADER	*/
-    const char* temp_vs_text = vsText.c_str();
+    const char* temp_vs_text = vs_text.c_str();
     glShaderSource(shader_vp, 1, &temp_vs_text, nullptr);
     glCompileShader(shader_vp);
     const unsigned int vertex_buffer_size = 2048;
@@ -190,7 +190,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     memset(buffer1, 0, vertex_buffer_size);
 
     /*	COMPILE AND VALIDATE THE FRAGMENT SHADER	*/
-    const char* temp_fs_text = fsText.c_str();
+    const char* temp_fs_text = fs_text.c_str();
     glShaderSource(shader_fp, 1, &temp_fs_text, nullptr);
     glCompileShader(shader_fp);
     const unsigned int fragment_buffer_size = 2048;
@@ -308,13 +308,13 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
             iss7 >> v3 >> std::dec;
             vert_vec.push_back(v3);
 
-            verticesLoaded++;
+            vertices_loaded++;
             line_number += 3;
         }
 
-        vertices.resize(verticesLoaded);
-        normals.resize(verticesLoaded);
-        tex_coord.resize(verticesLoaded);
+        vertices.resize(vertices_loaded);
+        normals.resize(vertices_loaded);
+        tex_coord.resize(vertices_loaded);
 
         int vert_index = 0;
         int vert_insert_index = 0;
@@ -348,32 +348,32 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
         }
 
         try {
-            int size = verticesLoaded;
-            pglGenBuffersARB(1, &VBOId);
-            pglBindBufferARB(GL_ARRAY_BUFFER_ARB, VBOId);
-            pglBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                             size * (sizeof(Vertex) + sizeof(Normal) +
-                                     sizeof(TexCoord)),
-                             nullptr,
-                             GL_DYNAMIC_DRAW_ARB);
-            pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                                0,
-                                size * sizeof(Vertex),
-                                vertices.data());
-            pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                                size * sizeof(Vertex),
-                                size * sizeof(Normal),
-                                normals.data());
-            pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                                size * (sizeof(Vertex) + sizeof(Normal)),
-                                size * sizeof(TexCoord),
-                                tex_coord.data());
+            int size = vertices_loaded;
+            pgl_gen_buffers_arb(1, &vbo_id);
+            pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vbo_id);
+            pgl_buffer_data_arb(GL_ARRAY_BUFFER_ARB,
+                                size * (sizeof(Vertex) + sizeof(Normal) +
+                                        sizeof(TexCoord)),
+                                nullptr,
+                                GL_DYNAMIC_DRAW_ARB);
+            pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                                    0,
+                                    size * sizeof(Vertex),
+                                    vertices.data());
+            pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                                    size * sizeof(Vertex),
+                                    size * sizeof(Normal),
+                                    normals.data());
+            pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                                    size * (sizeof(Vertex) + sizeof(Normal)),
+                                    size * sizeof(TexCoord),
+                                    tex_coord.data());
             // cout << "VBOs Initialized" << endl;
-            useVBOs = true;
+            use_vb_os = true;
         } catch (...) {
             cerr << "ERROR: When Loading VBOs" << endl;
             content_loaded = false;
-            useVBOs = false;
+            use_vb_os = false;
         }
 
         vertices.clear();
@@ -430,33 +430,33 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
         }
         // cout << endl;
 
-        verticesLoaded = number_of_vertices;
-        int size = verticesLoaded;
-        pglGenBuffersARB(1, &VBOId);
-        pglBindBufferARB(GL_ARRAY_BUFFER_ARB, VBOId);
-        pglBufferDataARB(
+        vertices_loaded = number_of_vertices;
+        int size = vertices_loaded;
+        pgl_gen_buffers_arb(1, &vbo_id);
+        pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vbo_id);
+        pgl_buffer_data_arb(
                 GL_ARRAY_BUFFER_ARB,
                 size * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
                 nullptr,
                 GL_DYNAMIC_DRAW_ARB);
-        pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                            0,
-                            size * sizeof(Vertex),
-                            vertices.data());
-        pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                            size * sizeof(Vertex),
-                            size * sizeof(Normal),
-                            normals.data());
-        pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                            size * (sizeof(Vertex) + sizeof(Normal)),
-                            size * sizeof(TexCoord),
-                            tex_coord.data());
+        pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                                0,
+                                size * sizeof(Vertex),
+                                vertices.data());
+        pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                                size * sizeof(Vertex),
+                                size * sizeof(Normal),
+                                normals.data());
+        pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                                size * (sizeof(Vertex) + sizeof(Normal)),
+                                size * sizeof(TexCoord),
+                                tex_coord.data());
         // cout << "VBOs Initialized" << endl;
-        useVBOs = true;
+        use_vb_os = true;
     } catch (...) {
         cerr << "ERROR: When Loading VBOs" << endl;
         content_loaded = false;
-        useVBOs = false;
+        use_vb_os = false;
     }
     vertices.clear();
     vertices.shrink_to_fit();
@@ -467,18 +467,18 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
     return content_loaded;
 }
 
-void VBOShaderLibrary::SwapTexture(const char* filename,
+void VBOShaderLibrary::swapTexture(const char* filename,
                                    int width,
                                    int height) {
     if (!color_texture) {
         cerr << "ERROR: You must first load a texture" << endl;
     } else {
         glDeleteTextures(1, &color_texture);
-        LoadTexture(filename, width, height);
+        loadTexture(filename, width, height);
     }
 }
 
-void VBOShaderLibrary::LoadTexture(const char* filename,
+void VBOShaderLibrary::loadTexture(const char* filename,
                                    int width,
                                    int height) {
     std::ifstream file(filename, std::ios::binary);
@@ -504,23 +504,23 @@ void VBOShaderLibrary::LoadTexture(const char* filename,
                      GL_RGB,
                      GL_UNSIGNED_BYTE,
                      data.data());
-        useTextures = true;
+        use_textures = true;
         // cout << "Done Loading Image" << endl;
     }
 }
 
-void VBOShaderLibrary::SwapTextureNormals(const char* filename,
+void VBOShaderLibrary::swapTextureNormals(const char* filename,
                                           int width,
                                           int height) {
     if (!color_texture) {
         cerr << "ERROR: You must first load a normal texture" << endl;
     } else {
         glDeleteTextures(1, &color_texture);
-        LoadTexture(filename, width, height);
+        loadTexture(filename, width, height);
     }
 }
 
-void VBOShaderLibrary::LoadTextureNormals(const char* filename,
+void VBOShaderLibrary::loadTextureNormals(const char* filename,
                                           int width,
                                           int height) {
     std::ifstream file(filename, std::ios::binary);
@@ -546,42 +546,42 @@ void VBOShaderLibrary::LoadTextureNormals(const char* filename,
                      GL_RGB,
                      GL_UNSIGNED_BYTE,
                      data.data());
-        useTextures = true;
+        use_textures = true;
         // cout << "Done Loading Image" << endl;
     }
 }
 
 bool VBOShaderLibrary::getVBOPointerFunctions() {
     bool status = true;
-    pglGenBuffersARB =
+    pgl_gen_buffers_arb =
             reinterpret_cast<PFNGLGENBUFFERSARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glGenBuffersARB")));
-    pglBindBufferARB =
+    pgl_bind_buffer_arb =
             reinterpret_cast<PFNGLBINDBUFFERARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glBindBufferARB")));
-    pglBufferDataARB =
+    pgl_buffer_data_arb =
             reinterpret_cast<PFNGLBUFFERDATAARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glBufferDataARB")));
-    pglBufferSubDataARB =
+    pgl_buffer_sub_data_arb =
             reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glBufferSubDataARB")));
-    pglDeleteBuffersARB =
+    pgl_delete_buffers_arb =
             reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glDeleteBuffersARB")));
-    pglGetBufferParameterivARB =
+    pgl_get_buffer_parameteriv_arb =
             reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
                     glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                             "glGetBufferParameterivARB")));
-    pglMapBufferARB =
+    pgl_map_buffer_arb =
             reinterpret_cast<PFNGLMAPBUFFERARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glMapBufferARB")));
-    pglUnmapBufferARB =
+    pgl_unmap_buffer_arb =
             reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(glXGetProcAddress(
                     reinterpret_cast<const GLubyte*>("glUnmapBufferARB")));
-    if (!pglGenBuffersARB || !pglBindBufferARB || !pglBufferDataARB ||
-        !pglBufferSubDataARB || !pglDeleteBuffersARB ||
-        !pglGetBufferParameterivARB || !pglMapBufferARB ||
-        !pglUnmapBufferARB) {
+    if (!pgl_gen_buffers_arb || !pgl_bind_buffer_arb || !pgl_buffer_data_arb ||
+        !pgl_buffer_sub_data_arb || !pgl_delete_buffers_arb ||
+        !pgl_get_buffer_parameteriv_arb || !pgl_map_buffer_arb ||
+        !pgl_unmap_buffer_arb) {
         printf("ERROR: VBO Initializtion Failed");
         status = false;
     }
@@ -592,7 +592,7 @@ bool VBOShaderLibrary::getVBOPointerFunctions() {
 }
 
 /*	STATIC FUNCTION */
-bool VBOShaderLibrary::InitGlew() {
+bool VBOShaderLibrary::initGlew() {
     bool rtn = false;
     GLenum err = glewInit();
     if (GLEW_OK != err) {
@@ -606,7 +606,7 @@ bool VBOShaderLibrary::InitGlew() {
 }
 
 /*	STATIC FUNCTION */
-bool VBOShaderLibrary::AreVBOsSupported() {
+bool VBOShaderLibrary::areVbOsSupported() {
     bool qualified = true;
 
     const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));

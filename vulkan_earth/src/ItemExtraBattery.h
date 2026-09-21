@@ -8,7 +8,7 @@
 class ItemExtraBattery : public Item {
 public:
     ItemExtraBattery();
-    ItemExtraBattery(int ID);
+    ItemExtraBattery(int id);
     ~ItemExtraBattery() override;
     ItemExtraBattery* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

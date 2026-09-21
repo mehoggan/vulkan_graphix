@@ -17,15 +17,15 @@ Explosion::Explosion() = default;
 Explosion::Explosion(GLfloat x, GLfloat y, GLfloat z, int weapon_radius) {
     glPushMatrix();
     glLoadIdentity();
-    glGetFloatv(GL_MODELVIEW_MATRIX, transMatrix);
+    glGetFloatv(GL_MODELVIEW_MATRIX, trans_matrix);
     glPopMatrix();
     this->x = x;
     this->y = y;
     this->z = z;
-    transMatrix[12] = this->x;
-    transMatrix[13] = this->y;
-    transMatrix[14] = this->z;
-    this->weaponRadius = weapon_radius;
+    trans_matrix[12] = this->x;
+    trans_matrix[13] = this->y;
+    trans_matrix[14] = this->z;
+    this->weapon_radius = weapon_radius;
 
     shader = new Shader();
     shader->init("VertexExplosion.vs", "FragmentExplosion.vs");
@@ -65,7 +65,7 @@ void Explosion::draw() {
     glPushMatrix();
     glTranslatef(this->x, this->y, this->z);
     // ASSUMING SCALE ON TERRAIN IS 150 I NEED TO GET ACTUAL VALUE
-    glutSolidSphere(radius * (weaponRadius * 5.56 + 22.22), 90, 180);
+    glutSolidSphere(radius * (weapon_radius * 5.56 + 22.22), 90, 180);
     glPopMatrix();
     shader->unbind();
 }

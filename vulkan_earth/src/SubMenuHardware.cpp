@@ -23,11 +23,11 @@ SubMenuHardware::SubMenuHardware(int id,
                                  GLint height,
                                  const std::string& caption,
                                  GLfloat percent_border) {
-    UNIQUEIDENTIFIER = id;
-    this->xPos = x_pos;
-    this->yPos = y_pos;
-    this->zPos = z_pos;
-    this->percentBorder = percent_border;
+    uniqueidentifier = id;
+    this->x_pos = x_pos;
+    this->y_pos = y_pos;
+    this->z_pos = z_pos;
+    this->percent_border = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -41,23 +41,24 @@ SubMenuHardware::SubMenuHardware(int id,
     for (char ch : this->caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->yPos - this->height / 20;
+    GLfloat label_x_pos =
+            this->x_pos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->y_pos - this->height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(this->caption,
                            label_x_pos,
                            label_y_pos,
-                           (this->zPos + 1),
+                           (this->z_pos + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
                            0.0f);
-    buttonPressed = nullptr;
-    subMenuButton[0] = new ControlItemSelectionBox(
-            this->xPos + (this->width / 2) - (0.3 * this->width),
-            this->yPos - (this->height * 0.2),
-            this->zPos + 1,
+    button_pressed = nullptr;
+    sub_menu_button[0] = new ControlItemSelectionBox(
+            this->x_pos + (this->width / 2) - (0.3 * this->width),
+            this->y_pos - (this->height * 0.2),
+            this->z_pos + 1,
             0.5f,
             0.5f,
             0.5f,
@@ -69,17 +70,17 @@ SubMenuHardware::SubMenuHardware(int id,
 
 SubMenuHardware::~SubMenuHardware() {
     delete label;
-    for (int i = 0; i < NUM_CONTROL_ITEMS_HW; i++) delete subMenuButton[i];
+    for (int i = 0; i < num_control_items_hw; i++) delete sub_menu_button[i];
 }
 
-int SubMenuHardware::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuHardware::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
-GLfloat SubMenuHardware::getXPos() { return this->xPos; }
-void SubMenuHardware::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
-GLfloat SubMenuHardware::getYPos() { return this->yPos; }
-void SubMenuHardware::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
-GLfloat SubMenuHardware::getZPos() { return this->zPos; }
-void SubMenuHardware::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
+int SubMenuHardware::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuHardware::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+GLfloat SubMenuHardware::getXPos() { return this->x_pos; }
+void SubMenuHardware::setXPos(GLfloat new_xpos) { this->x_pos = new_xpos; }
+GLfloat SubMenuHardware::getYPos() { return this->y_pos; }
+void SubMenuHardware::setYPos(GLfloat new_ypos) { this->y_pos = new_ypos; }
+GLfloat SubMenuHardware::getZPos() { return this->z_pos; }
+void SubMenuHardware::setZPos(GLfloat new_zpos) { this->z_pos = new_zpos; }
 GLfloat SubMenuHardware::getRed() { return color[0]; }
 void SubMenuHardware::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuHardware::getGreen() { return color[1]; }
@@ -94,60 +95,60 @@ std::string SubMenuHardware::getCaption() { return this->caption; }
 void SubMenuHardware::setCaption(const std::string& caption) {
     this->caption = caption;
 }
-GLfloat SubMenuHardware::getPerecentBorder() { return this->percentBorder; }
+GLfloat SubMenuHardware::getPerecentBorder() { return this->percent_border; }
 void SubMenuHardware::setPercentBorder(GLfloat percent) {
-    this->percentBorder = percentBorder;
+    this->percent_border = percent_border;
 }
 
 void SubMenuHardware::draw() {
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
-    glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
+    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
+    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos + -height, this->zPos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < NUM_CONTROL_ITEMS_HW; i++) {
-        if (subMenuButton[i]) {
-            subMenuButton[i]->draw();
+    for (int i = 0; i < num_control_items_hw; i++) {
+        if (sub_menu_button[i]) {
+            sub_menu_button[i]->draw();
         }
     }
 }
 
 std::string SubMenuHardware::collectData() {
     std::string optionsarray = "/Hardware/";
-    for (int x = 0; x < NUM_CONTROL_ITEMS_HW; x++) {
-        if (subMenuButton[x]) {
-            optionsarray += subMenuButton[x]->collectData();
+    for (int x = 0; x < num_control_items_hw; x++) {
+        if (sub_menu_button[x]) {
+            optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
         }
     }
@@ -156,49 +157,49 @@ std::string SubMenuHardware::collectData() {
 
 void SubMenuHardware::subMenuMouseTest(int x, int y, int button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < NUM_CONTROL_ITEMS_HW;
+        for (int button_i = 0; button_i < num_control_items_hw;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
-            if ((x >= subMenuButton[button_i]->getXPos()) &&
-                (x <= (subMenuButton[button_i]->getXPos() +
-                       subMenuButton[button_i]->getWidth())) &&
-                (y <= subMenuButton[button_i]->getYPos()) &&
-                (y >= (subMenuButton[button_i]->getYPos() -
-                       subMenuButton[button_i]->getHeight()))) {
-                subMenuButton[button_i]->mouseClickEvent(
+            if ((x >= sub_menu_button[button_i]->getXPos()) &&
+                (x <= (sub_menu_button[button_i]->getXPos() +
+                       sub_menu_button[button_i]->getWidth())) &&
+                (y <= sub_menu_button[button_i]->getYPos()) &&
+                (y >= (sub_menu_button[button_i]->getYPos() -
+                       sub_menu_button[button_i]->getHeight()))) {
+                sub_menu_button[button_i]->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         true);  // YOU PRESSED OVER A ARROWBUTTON
-                buttonPressed = subMenuButton[button_i];
+                button_pressed = sub_menu_button[button_i];
             }
         }
     } else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
                                 // GOES UP
-        if (buttonPressed !=
+        if (button_pressed !=
             nullptr) {  // IF YOU MANAGED TO CLICK INSIDE AN ARROW BUTTON
                         // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
-            if ((x >= buttonPressed->getXPos()) &&
+            if ((x >= button_pressed->getXPos()) &&
                 (x <=
-                 (buttonPressed->getXPos() + buttonPressed->getWidth())) &&
-                (y <= buttonPressed->getYPos()) &&
+                 (button_pressed->getXPos() + button_pressed->getWidth())) &&
+                (y <= button_pressed->getYPos()) &&
                 (y >=
-                 (buttonPressed->getYPos() - buttonPressed->getHeight()))) {
-                buttonPressed->mouseClickEvent(
+                 (button_pressed->getYPos() - button_pressed->getHeight()))) {
+                button_pressed->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                 // RELEASE THE MOUSE
             } else {
-                buttonPressed->mouseClickEvent(
+                button_pressed->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                  // RELEASE THE MOUSE
-                buttonPressed = nullptr;
+                button_pressed = nullptr;
             }
         }
     }

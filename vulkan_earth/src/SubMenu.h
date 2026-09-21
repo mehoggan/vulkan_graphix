@@ -10,27 +10,27 @@ class TextObject;
 class SubMenu {
 public:
     SubMenu();
-    SubMenu(int ID,
-            GLfloat xPos,
-            GLfloat yPos,
-            GLfloat zPos,
+    SubMenu(int id,
+            GLfloat x_pos,
+            GLfloat y_pos,
+            GLfloat z_pos,
             GLfloat red,
             GLfloat green,
             GLfloat blue,
             GLint width,
             GLint height,
             const std::string& caption,
-            GLfloat percentBorder);
+            GLfloat percent_border);
     virtual ~SubMenu() = 0;
     /*	GETTERS AND SETTERS	*/
     virtual int getUNIQUEIDENTIFIER() = 0;
-    virtual void setUNIQUEIDENTIFIER(int ID) = 0;
+    virtual void setUNIQUEIDENTIFIER(int id) = 0;
     virtual GLfloat getXPos() = 0;
-    virtual void setXPos(GLfloat newXpos) = 0;
+    virtual void setXPos(GLfloat new_xpos) = 0;
     virtual GLfloat getYPos() = 0;
-    virtual void setYPos(GLfloat newYpos) = 0;
+    virtual void setYPos(GLfloat new_ypos) = 0;
     virtual GLfloat getZPos() = 0;
-    virtual void setZPos(GLfloat newZpos) = 0;
+    virtual void setZPos(GLfloat new_zpos) = 0;
     virtual GLfloat getRed() = 0;
     virtual void setRed(GLfloat red) = 0;
     virtual GLfloat getGreen() = 0;
@@ -49,7 +49,7 @@ public:
     /*	ACTUAL ACTIONS A SUBMENU CAN MAKE	*/
     virtual void draw() = 0;
     virtual std::string collectData() = 0;
-    virtual void subMenuMouseTest(int x, int y, int buttonDown) = 0;
+    virtual void subMenuMouseTest(int x, int y, int button_down) = 0;
     virtual void updateMouse(int x, int y) = 0;
     /*	END OF ACTIONS A SUBMENU CAN MAKE	*/
 };

@@ -8,7 +8,7 @@
 class WeaponBFB : public Weapon {
 public:
     WeaponBFB();
-    WeaponBFB(int ID);
+    WeaponBFB(int id);
     ~WeaponBFB() override;
     WeaponBFB* getWeaponInstance() override;
 };

@@ -8,7 +8,7 @@
 class WeaponAtom : public Weapon {
 public:
     WeaponAtom();
-    WeaponAtom(int ID);
+    WeaponAtom(int id);
     ~WeaponAtom() override;
     WeaponAtom* getWeaponInstance() override;
 };

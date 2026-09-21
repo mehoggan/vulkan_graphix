@@ -7,37 +7,37 @@ extern void playSFX(int sfx);
 
 WeaponAcid::WeaponAcid() = default;
 WeaponAcid::WeaponAcid(int id) {
-    UNIQUEIDENTIFIER = id;
-    maxStack = 8;
-    packageNum = 2;
+    uniqueidentifier = id;
+    max_stack = 8;
+    package_num = 2;
     remaining = 2;
     scale = 60;
-    imageFileName = "WeaponAcid.raw";
+    image_file_name = "WeaponAcid.raw";
     description = "Acid:     Damage: 150, DOT: 10%% of total HP for 5 turns";
     price = 100;
     radius = 7;
     damage = 150;
-    specialNumber = 5;
+    special_number = 5;
 
     GLfloat temp_colors1[3] = {White};
     GLfloat temp_colors2[3] = {LimeGreen};
     GLfloat temp_colors3[3] = {PaleGreen};
     GLfloat temp_colors4[3] = {SeaGreen};
     for (int i = 0; i < 3; i++) {
-        explosionColor1[i] = temp_colors1[i];
-        explosionColor2[i] = temp_colors2[i];
-        explosionColor3[i] = temp_colors3[i];
-        explosionColor4[i] = temp_colors4[i];
+        explosion_color1[i] = temp_colors1[i];
+        explosion_color2[i] = temp_colors2[i];
+        explosion_color3[i] = temp_colors3[i];
+        explosion_color4[i] = temp_colors4[i];
     }
 }
 WeaponAcid::~WeaponAcid() = default;
 
 WeaponAcid* WeaponAcid::getWeaponInstance() {
-    return new WeaponAcid(UNIQUEIDENTIFIER);
+    return new WeaponAcid(uniqueidentifier);
 }
 void WeaponAcid::causeEffectToTank(GLfloat distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
-        tank->setDurationAcid(specialNumber);
+        tank->setDurationAcid(special_number);
         tank->dealDamage(getDamage() * (1 - (distance / (getRadius() * 100))));
     }
 }

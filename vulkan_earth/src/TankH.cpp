@@ -17,37 +17,37 @@ TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
     initWheel();
     initDuration();
 
-    turretOffset[0] = 0;
-    turretOffset[1] = 0;
-    turretOffset[2] = -35;
-    headOffset[0] = 0;
-    headOffset[1] = 65;
-    headOffset[2] = 10;
-    bodyOffset[0] = 0;
-    bodyOffset[1] = 80;
-    bodyOffset[2] = 0;
+    turret_offset[0] = 0;
+    turret_offset[1] = 0;
+    turret_offset[2] = -35;
+    head_offset[0] = 0;
+    head_offset[1] = 65;
+    head_offset[2] = 10;
+    body_offset[0] = 0;
+    body_offset[1] = 80;
+    body_offset[2] = 0;
 
     for (int i = 0; i < 3; i++) {
-        bodyScale[i] = 70;
-        headScale[i] = 80;
-        turretScale[i] = 70;
+        body_scale[i] = 70;
+        head_scale[i] = 80;
+        turret_scale[i] = 70;
     }
 
     power = tank_h_power;
     armor = tank_h_armor;
     speed = tank_h_speed;
-    currentPower = 10;
-    previousPower = 1000;
-    previousAngle = 1;
-    HP = armor * 100;
+    current_power = 10;
+    previous_power = 1000;
+    previous_angle = 1;
+    hp = armor * 100;
 
     vbo_shader_head = new VBOShaderLibrary();
     vbo_shader_body = new VBOShaderLibrary();
     vbo_shader_turret = new VBOShaderLibrary();
     /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
-    if (!(VBOShaderLibrary::InitGlew())) {
+    if (!(VBOShaderLibrary::initGlew())) {
         exit(1);
-    } else if (!(VBOShaderLibrary::AreVBOsSupported())) {
+    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
         exit(1);
     }
 
@@ -63,12 +63,12 @@ TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
     vbo_shader_body->loadShaders("VertexTank.vs", "FragmentTank.vs");
     vbo_shader_head->loadShaders("VertexTank.vs", "FragmentTank.vs");
 
-    vbo_shader_turret->LoadTexture("TestImage.raw", 1024, 1024);
-    vbo_shader_body->LoadTexture("TestImage.raw", 1024, 1024);
-    vbo_shader_head->LoadTexture("TestImage.raw", 1024, 1024);
+    vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
+    vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
+    vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
 
-    projectileLandPos[0] = 9999999;
-    projectileLandPos[1] = 9999999;
+    projectile_land_pos[0] = 9999999;
+    projectile_land_pos[1] = 9999999;
 }
 TankH::~TankH() {
     delete vbo_shader_head;

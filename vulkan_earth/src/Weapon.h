@@ -34,21 +34,21 @@ public:
     virtual void playExplosionSFX();
 
 protected:
-    int UNIQUEIDENTIFIER;
-    GLfloat explosionColor1[3];
-    GLfloat explosionColor2[3];
-    GLfloat explosionColor3[3];
-    GLfloat explosionColor4[3];
+    int uniqueidentifier;
+    GLfloat explosion_color1[3];
+    GLfloat explosion_color2[3];
+    GLfloat explosion_color3[3];
+    GLfloat explosion_color4[3];
     float radius;
     int damage;
     float scale;
-    std::string imageFileName;
+    std::string image_file_name;
     std::string description;
     int price;
-    int packageNum;
-    int maxStack;
+    int package_num;
+    int max_stack;
     int remaining;
-    int specialNumber;
+    int special_number;
 };
 
 #endif  //	WEAPON_H

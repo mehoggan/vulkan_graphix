@@ -292,33 +292,33 @@ void SkyboxFactory::draw() {
 
 void SkyboxFactory::printData() {
     printf("Checking Coordinates:\n");
-    printf("(%d,%d)\n", image1_X_start, image1_Y_start);
-    printf("(%d,%d)\n", image1_X_end, image1_Y_start);
-    printf("(%d,%d)\n", image1_X_start, image1_Y_end);
-    printf("(%d,%d)\n", image1_X_end, image1_Y_end);
+    printf("(%d,%d)\n", image1_x_start, image1_y_start);
+    printf("(%d,%d)\n", image1_x_end, image1_y_start);
+    printf("(%d,%d)\n", image1_x_start, image1_y_end);
+    printf("(%d,%d)\n", image1_x_end, image1_y_end);
 
-    printf("(%d,%d)\n", image2_X_start, image2_Y_start);
-    printf("(%d,%d)\n", image2_X_end, image2_Y_start);
-    printf("(%d,%d)\n", image2_X_start, image2_Y_end);
-    printf("(%d,%d)\n", image2_X_end, image2_Y_end);
+    printf("(%d,%d)\n", image2_x_start, image2_y_start);
+    printf("(%d,%d)\n", image2_x_end, image2_y_start);
+    printf("(%d,%d)\n", image2_x_start, image2_y_end);
+    printf("(%d,%d)\n", image2_x_end, image2_y_end);
 
-    printf("(%d,%d)\n", image3_X_start, image3_Y_start);
-    printf("(%d,%d)\n", image3_X_end, image3_Y_start);
-    printf("(%d,%d)\n", image3_X_start, image3_Y_end);
-    printf("(%d,%d)\n", image3_X_end, image3_Y_end);
+    printf("(%d,%d)\n", image3_x_start, image3_y_start);
+    printf("(%d,%d)\n", image3_x_end, image3_y_start);
+    printf("(%d,%d)\n", image3_x_start, image3_y_end);
+    printf("(%d,%d)\n", image3_x_end, image3_y_end);
 
-    printf("(%d,%d)\n", image4_X_start, image4_Y_start);
-    printf("(%d,%d)\n", image4_X_end, image4_Y_start);
-    printf("(%d,%d)\n", image4_X_start, image4_Y_end);
-    printf("(%d,%d)\n", image4_X_end, image4_Y_end);
+    printf("(%d,%d)\n", image4_x_start, image4_y_start);
+    printf("(%d,%d)\n", image4_x_end, image4_y_start);
+    printf("(%d,%d)\n", image4_x_start, image4_y_end);
+    printf("(%d,%d)\n", image4_x_end, image4_y_end);
 
-    printf("(%d,%d)\n", image5_X_start, image5_Y_start);
-    printf("(%d,%d)\n", image5_X_end, image5_Y_start);
-    printf("(%d,%d)\n", image5_X_start, image5_Y_end);
-    printf("(%d,%d)\n", image5_X_end, image5_Y_end);
+    printf("(%d,%d)\n", image5_x_start, image5_y_start);
+    printf("(%d,%d)\n", image5_x_end, image5_y_start);
+    printf("(%d,%d)\n", image5_x_start, image5_y_end);
+    printf("(%d,%d)\n", image5_x_end, image5_y_end);
 
-    printf("(%d,%d)\n", image6_X_start, image6_Y_start);
-    printf("(%d,%d)\n", image6_X_end, image6_Y_start);
-    printf("(%d,%d)\n", image6_X_start, image6_Y_end);
-    printf("(%d,%d)\n", image6_X_end, image6_Y_end);
+    printf("(%d,%d)\n", image6_x_start, image6_y_start);
+    printf("(%d,%d)\n", image6_x_end, image6_y_start);
+    printf("(%d,%d)\n", image6_x_start, image6_y_end);
+    printf("(%d,%d)\n", image6_x_end, image6_y_end);
 }

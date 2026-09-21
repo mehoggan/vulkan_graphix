@@ -8,18 +8,18 @@
 // #include "macro_crtdbg.h"
 
 VBOQualifer::VBOQualifer() {
-    redBits = 0;
-    greenBits = 0;
-    blueBits = 0;
-    alphaBits = 0;
-    depthBits = 0;
-    stencilBits = 0;
-    maxTextureSize = 0;
-    maxLights = 0;
-    maxClipPlanes = 0;
-    maxModelViewStacks = 0;
-    maxAttribStacks = 0;
-    maxTextureStacks = 0;
+    red_bits = 0;
+    green_bits = 0;
+    blue_bits = 0;
+    alpha_bits = 0;
+    depth_bits = 0;
+    stencil_bits = 0;
+    max_texture_size = 0;
+    max_lights = 0;
+    max_clip_planes = 0;
+    max_model_view_stacks = 0;
+    max_attrib_stacks = 0;
+    max_texture_stacks = 0;
     qualified = true;
 }
 
@@ -72,19 +72,19 @@ bool VBOQualifer::establishIfQualified() {
     }
     extensions_supported = static_cast<int>(extensions.size());
 
-    glGetIntegerv(GL_RED_BITS, &redBits);
-    glGetIntegerv(GL_GREEN_BITS, &greenBits);
-    glGetIntegerv(GL_BLUE_BITS, &blueBits);
-    glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
-    glGetIntegerv(GL_DEPTH_BITS, &depthBits);
-    glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
-    glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    glGetIntegerv(GL_MAX_CLIP_PLANES, &maxClipPlanes);
-    glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &maxModelViewStacks);
-    glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &maxProjectionStacks);
-    glGetIntegerv(GL_MAX_ATTRIB_STACK_DEPTH, &maxAttribStacks);
-    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &maxTextureStacks);
+    glGetIntegerv(GL_RED_BITS, &red_bits);
+    glGetIntegerv(GL_GREEN_BITS, &green_bits);
+    glGetIntegerv(GL_BLUE_BITS, &blue_bits);
+    glGetIntegerv(GL_ALPHA_BITS, &alpha_bits);
+    glGetIntegerv(GL_DEPTH_BITS, &depth_bits);
+    glGetIntegerv(GL_STENCIL_BITS, &stencil_bits);
+    glGetIntegerv(GL_MAX_LIGHTS, &max_lights);
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
+    glGetIntegerv(GL_MAX_CLIP_PLANES, &max_clip_planes);
+    glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &max_model_view_stacks);
+    glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &max_projection_stacks);
+    glGetIntegerv(GL_MAX_ATTRIB_STACK_DEPTH, &max_attrib_stacks);
+    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &max_texture_stacks);
 
     return qualified;
 }

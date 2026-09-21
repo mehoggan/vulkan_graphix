@@ -16,25 +16,25 @@ class Item;
 class GlobalSettings;
 class PlayerFactory;
 
-const int SHOP_GRID_ROW = 3;
-const int SHOP_GRID_COL = 4;
-const int INVEN_GRID_ROW = 5;
-const int INVEN_GRID_COL = 2;
-const int NUM_SALES_WEAPON = 10;
-const int NUM_SALES_ITEM = 8;
+const int shop_grid_row = 3;
+const int shop_grid_col = 4;
+const int inven_grid_row = 5;
+const int inven_grid_col = 2;
+const int num_sales_weapon = 10;
+const int num_sales_item = 8;
 
 class ShopMenu {
 public:
     ShopMenu();
     ShopMenu(GLfloat width,
              GLfloat height,
-             GLfloat percentBorder,
+             GLfloat percent_border,
              GlobalSettings* global_settings,
              PlayerFactory* player_factory,
-             int* gameState);
+             int* game_state);
     ~ShopMenu();
     void draw();
-    void buttonTest(int x, int y, int buttonDown);
+    void buttonTest(int x, int y, int button_down);
     void saveCurrentPlayerInfo();
     void displayCurrentPlayerInfo();
     void updateBuyDiscriptLabel();
@@ -46,32 +46,32 @@ public:
 private:
     void printDebugInfo();
     GLfloat pos[3], width, height, color[4], border;
-    GLfloat percentBorder;
-    int* currentGameState;
-    int numPlayers;
-    int currentPlayerIndex;
-    int currentPlayerBalance;
+    GLfloat percent_border;
+    int* current_game_state;
+    int num_players;
+    int current_player_index;
+    int current_player_balance;
     ControlItemButton* buttons[5];
     ControlItemGrid* grids[2];
-    TextObject* labelWpn;
-    TextObject* labelItem;
-    TextObject* labelPlayerNum;
-    TextObject* labelPlayerBalance;
-    TextObject* labelDiscription;
-    TextObject* labelBuyPrice;
-    TextObject* labelSellPrice;
-    TextObject* labelShopWpnRemains[NUM_SALES_WEAPON];
-    TextObject* labelShopItemRemains[NUM_SALES_ITEM];
-    TextObject* labelInvenWpnRemains[INVEN_GRID_ROW];
-    TextObject* labelInvenItemRemains[INVEN_GRID_ROW];
-    ImageObject* imgShopWpns[NUM_SALES_WEAPON];
-    ImageObject* imgShopItems[NUM_SALES_WEAPON];
-    ImageObject* imgInvenWpns[INVEN_GRID_ROW];
-    ImageObject* imgInvenItems[INVEN_GRID_ROW];
-    Weapon* shopWpns[NUM_SALES_WEAPON];
-    Item* shopItems[NUM_SALES_ITEM];
-    Weapon* invenWpns[INVEN_GRID_ROW];
-    Item* invenItems[INVEN_GRID_ROW];
+    TextObject* label_wpn;
+    TextObject* label_item;
+    TextObject* label_player_num;
+    TextObject* label_player_balance;
+    TextObject* label_discription;
+    TextObject* label_buy_price;
+    TextObject* label_sell_price;
+    TextObject* label_shop_wpn_remains[num_sales_weapon];
+    TextObject* label_shop_item_remains[num_sales_item];
+    TextObject* label_inven_wpn_remains[inven_grid_row];
+    TextObject* label_inven_item_remains[inven_grid_row];
+    ImageObject* img_shop_wpns[num_sales_weapon];
+    ImageObject* img_shop_items[num_sales_weapon];
+    ImageObject* img_inven_wpns[inven_grid_row];
+    ImageObject* img_inven_items[inven_grid_row];
+    Weapon* shop_wpns[num_sales_weapon];
+    Item* shop_items[num_sales_item];
+    Weapon* inven_wpns[inven_grid_row];
+    Item* inven_items[inven_grid_row];
     GlobalSettings* global_settings;
     PlayerFactory* player_factory;
 };

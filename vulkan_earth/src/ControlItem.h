@@ -15,7 +15,7 @@ public:
     virtual void mouseClickEvent(GLint x,
                                  GLint y,
                                  GLint state,
-                                 bool stillOverArrowButton) = 0;
+                                 bool still_over_arrow_button) = 0;
     virtual void updateMouse(int x, int y) = 0;
     virtual GLfloat getXPos() = 0;
     virtual GLfloat getYPos() = 0;
@@ -23,6 +23,6 @@ public:
     virtual GLfloat getWidth() = 0;
     virtual std::string collectData() = 0;
     virtual void setOptionText(int index) = 0;
-    virtual void setOptionText(const std::string& newText) = 0;
+    virtual void setOptionText(const std::string& new_text) = 0;
 };
 #endif  // CONTROL_ITEM_H

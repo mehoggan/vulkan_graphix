@@ -23,11 +23,11 @@ SubMenuSelectTanks::SubMenuSelectTanks(int id,
                                        GLint height,
                                        const std::string& caption,
                                        GLfloat percent_border) {
-    UNIQUEIDENTIFIER = id;
-    this->xPos = x_pos;
-    this->yPos = y_pos;
-    this->zPos = z_pos;
-    this->percentBorder = percent_border;
+    uniqueidentifier = id;
+    this->x_pos = x_pos;
+    this->y_pos = y_pos;
+    this->z_pos = z_pos;
+    this->percent_border = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -41,14 +41,15 @@ SubMenuSelectTanks::SubMenuSelectTanks(int id,
     for (char ch : this->caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->yPos - this->height / 20;
+    GLfloat label_x_pos =
+            this->x_pos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->y_pos - this->height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(this->caption,
                            label_x_pos,
                            label_y_pos,
-                           (this->zPos + 1),
+                           (this->z_pos + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
@@ -57,14 +58,14 @@ SubMenuSelectTanks::SubMenuSelectTanks(int id,
 
 SubMenuSelectTanks::~SubMenuSelectTanks() { delete label; }
 
-int SubMenuSelectTanks::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuSelectTanks::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
-GLfloat SubMenuSelectTanks::getXPos() { return this->xPos; }
-void SubMenuSelectTanks::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
-GLfloat SubMenuSelectTanks::getYPos() { return this->yPos; }
-void SubMenuSelectTanks::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
-GLfloat SubMenuSelectTanks::getZPos() { return this->zPos; }
-void SubMenuSelectTanks::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
+int SubMenuSelectTanks::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuSelectTanks::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+GLfloat SubMenuSelectTanks::getXPos() { return this->x_pos; }
+void SubMenuSelectTanks::setXPos(GLfloat new_xpos) { this->x_pos = new_xpos; }
+GLfloat SubMenuSelectTanks::getYPos() { return this->y_pos; }
+void SubMenuSelectTanks::setYPos(GLfloat new_ypos) { this->y_pos = new_ypos; }
+GLfloat SubMenuSelectTanks::getZPos() { return this->z_pos; }
+void SubMenuSelectTanks::setZPos(GLfloat new_zpos) { this->z_pos = new_zpos; }
 GLfloat SubMenuSelectTanks::getRed() { return color[0]; }
 void SubMenuSelectTanks::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuSelectTanks::getGreen() { return color[1]; }
@@ -79,50 +80,52 @@ std::string SubMenuSelectTanks::getCaption() { return this->caption; }
 void SubMenuSelectTanks::setCaption(const std::string& caption) {
     this->caption = caption;
 }
-GLfloat SubMenuSelectTanks::getPerecentBorder() { return this->percentBorder; }
+GLfloat SubMenuSelectTanks::getPerecentBorder() {
+    return this->percent_border;
+}
 void SubMenuSelectTanks::setPercentBorder(GLfloat percent) {
-    this->percentBorder = percentBorder;
+    this->percent_border = percent_border;
 }
 
 void SubMenuSelectTanks::draw() {
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
-    glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
+    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
+    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos + -height, this->zPos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < NUM_CONTROL_ITEMS_ST; i++) {
-        if (subMenuButton[i]) {
+    for (int i = 0; i < num_control_items_st; i++) {
+        if (sub_menu_button[i]) {
             // subMenuButton[i]->draw();
         }
     }

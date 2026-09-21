@@ -7,23 +7,23 @@ extern void playSFX(int sfx);
 
 ItemExtraBattery::ItemExtraBattery() = default;
 ItemExtraBattery::ItemExtraBattery(int id) {
-    UNIQUEIDENTIFIER = id;
-    packageNum = 3;
-    maxStack = 9;
+    uniqueidentifier = id;
+    package_num = 3;
+    max_stack = 9;
     remaining = 3;
-    imageFileName = "ItemExtraBattery.raw";
+    image_file_name = "ItemExtraBattery.raw";
     description = "Extra Battery:     Recovers from the damage of EMP.";
     price = 50;
-    specialNum = 0;
+    special_num = 0;
 }
 ItemExtraBattery::~ItemExtraBattery() = default;
 
 ItemExtraBattery* ItemExtraBattery::getItemInstance() {
-    return new ItemExtraBattery(UNIQUEIDENTIFIER);
+    return new ItemExtraBattery(uniqueidentifier);
 }
 
 bool ItemExtraBattery::causeEffectToTank(Tank* tank) {
-    tank->setDurationEMP(specialNum);
+    tank->setDurationEMP(special_num);
     return false;
 }
 

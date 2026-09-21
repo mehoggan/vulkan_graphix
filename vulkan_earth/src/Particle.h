@@ -16,7 +16,7 @@ public:
 
 protected:
     GLfloat size, x, y, z, speed, dir[3], red, green, blue;
-    int activeFrames, currentFrame;
+    int active_frames, current_frame;
 };
 
 #endif

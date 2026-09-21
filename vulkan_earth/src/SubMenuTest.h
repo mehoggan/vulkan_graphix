@@ -12,26 +12,26 @@ class SubMenu;
 class SubMenuTest : public SubMenu {
 public:
     SubMenuTest();
-    SubMenuTest(int ID,
-                GLfloat xPos,
-                GLfloat yPos,
-                GLfloat zPos,
+    SubMenuTest(int id,
+                GLfloat x_pos,
+                GLfloat y_pos,
+                GLfloat z_pos,
                 GLfloat red,
                 GLfloat green,
                 GLfloat blue,
                 GLint width,
                 GLint height,
                 const std::string& caption,
-                GLfloat percentBorder);
+                GLfloat percent_border);
     ~SubMenuTest() override;
     int getUNIQUEIDENTIFIER() override;
-    void setUNIQUEIDENTIFIER(int ID) override;
+    void setUNIQUEIDENTIFIER(int id) override;
     GLfloat getXPos() override;
-    void setXPos(GLfloat newXpos) override;
+    void setXPos(GLfloat new_xpos) override;
     GLfloat getYPos() override;
-    void setYPos(GLfloat newYpos) override;
+    void setYPos(GLfloat new_ypos) override;
     GLfloat getZPos() override;
-    void setZPos(GLfloat newZpos) override;
+    void setZPos(GLfloat new_zpos) override;
     GLfloat getRed() override;
     void setRed(GLfloat red) override;
     GLfloat getGreen() override;
@@ -50,15 +50,15 @@ public:
     std::string collectData() override;
 
 private:
-    int UNIQUEIDENTIFIER;
-    GLfloat xPos;
-    GLfloat yPos;
-    GLfloat zPos;
+    int uniqueidentifier;
+    GLfloat x_pos;
+    GLfloat y_pos;
+    GLfloat z_pos;
     GLfloat color[4];
     GLint width;
     GLint height;
     std::string caption;
-    GLfloat percentBorder;
+    GLfloat percent_border;
     TextObject* label;
 };
 

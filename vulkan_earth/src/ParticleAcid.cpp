@@ -16,8 +16,8 @@ ParticleAcid::ParticleAcid(GLfloat x,
     dir[1] = dir_y;
     dir[2] = dir_z;
     this->speed = speed;
-    activeFrames = frames;
-    currentFrame = 0;
+    active_frames = frames;
+    current_frame = 0;
     size = 2;
     red = 0;
     green = 1;
@@ -28,6 +28,6 @@ bool ParticleAcid::update() {
     x += dir[0] * speed;
     y += dir[1] * speed;
     z += dir[2] * speed;
-    currentFrame++;
-    return currentFrame != activeFrames;
+    current_frame++;
+    return current_frame != active_frames;
 }

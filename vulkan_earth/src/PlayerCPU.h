@@ -20,29 +20,29 @@ public:
     PlayerCPU(GLfloat red,
               GLfloat green,
               GLfloat blue,
-              const std::string& tankType,
+              const std::string& tank_type,
               const std::string& ai_type,
               const std::string& name,
-              char teamName,
+              char team_name,
               const std::string& player_type,
-              int startingCash);
+              int starting_cash);
     ~PlayerCPU() override;
     void updateTank(
             /* Pass in all paramaters that are associated with a tank */)
             override;
     Tank* getCurrentTank() override;
     std::string getTankType() override;
-    void setTankType(const std::string& tankType) override;
+    void setTankType(const std::string& tank_type) override;
     Item** getCurrentItems() override;
-    void setItems(Item** itemSet) override;
+    void setItems(Item** item_set) override;
     Weapon** getCurrentWeapons() override;
-    void setWeapons(Weapon** weaponSet) override;
-    std::string getAI_Type() override;
-    void setAI_Type(const std::string& ai_type) override;
-    std::string getPlayer_Type() override;
+    void setWeapons(Weapon** weapon_set) override;
+    std::string getAiType() override;
+    void setAiType(const std::string& ai_type) override;
+    std::string getPlayerType() override;
     std::string getPlayerName() override;
     void setPlayerName(const std::string& name) override;
-    void setPlayer_Type(const std::string& player_type) override;
+    void setPlayerType(const std::string& player_type) override;
     int getCash() override;
     void setCash(int money) override;
     float getCurrentWait() override;
@@ -56,18 +56,18 @@ public:
     void setLoadedWeapon(Weapon* wpn) override;
 
 private:
-    Tank* currentTank;
-    int currentCash;
-    std::string tankType;
-    Item* currentItems[PLAYER_MAX_ITEMS];
-    Weapon* currentWeapons[PLAYER_MAX_WEAPONS];
+    Tank* current_tank;
+    int current_cash;
+    std::string tank_type;
+    Item* current_items[player_max_items];
+    Weapon* current_weapons[player_max_weapons];
     std::string ai_type;
     std::string name;
     std::string player_type;
     GLfloat color[4];
-    float currentWait;
-    char teamLabel;
-    Weapon* loadedWeapon;
+    float current_wait;
+    char team_label;
+    Weapon* loaded_weapon;
 };
 
 #endif /*	PLAYER_CPU_H	*/

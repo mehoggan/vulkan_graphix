@@ -8,7 +8,7 @@
 class ItemShield : public Item {
 public:
     ItemShield();
-    ItemShield(int ID);
+    ItemShield(int id);
     ~ItemShield() override;
     ItemShield* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

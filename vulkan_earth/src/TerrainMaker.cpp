@@ -21,8 +21,8 @@ TerrainMaker::TerrainMaker(int i_scale, int i_size) {
     srand(time(nullptr));
     this->scale = i_scale;
     this->size = i_size;
-    totalVertices = this->size * this->size;
-    triStripBufferSize = (this->size - 1) * (this->size - 1) * 6;
+    total_vertices = this->size * this->size;
+    tri_strip_buffer_size = (this->size - 1) * (this->size - 1) * 6;
     prepTerrain();
     initData();
     PFNGLGENBUFFERSARBPROC pgl_gen_buffers_arb =
@@ -43,13 +43,13 @@ TerrainMaker::TerrainMaker(int i_scale, int i_size) {
 
     shader = new Shader();
     shader->init("VertexShader.vs", "FragmentShader.vs");
-    color_texture = LoadTexture("Rocky.raw", 2048, 2048);
-    normal_texture = LoadTexture("bumpMap.raw", 256, 256);
+    color_texture = loadTexture("Rocky.raw", 2048, 2048);
+    normal_texture = loadTexture("bumpMap.raw", 256, 256);
 
     rotation_angle = 0.0;
-    vboQualify = nullptr;
+    vbo_qualify = nullptr;
     verifyVBOs();
-    wireframeActive = false;
+    wireframe_active = false;
 }
 
 TerrainMaker::~TerrainMaker() {
@@ -59,11 +59,11 @@ TerrainMaker::~TerrainMaker() {
         }
         delete th;
     }
-    delete vboQualify;
+    delete vbo_qualify;
     delete shader;
-    pglDeleteBuffersARB(1, &vertexVBOId);
-    pglDeleteBuffersARB(1, &normalVBOId);
-    pglDeleteBuffersARB(1, &textureVBOId);
+    pgl_delete_buffers_arb(1, &vertex_vbo_id);
+    pgl_delete_buffers_arb(1, &normal_vbo_id);
+    pgl_delete_buffers_arb(1, &texture_vbo_id);
     glDeleteTextures(1, &color_texture);
     glDeleteTextures(1, &normal_texture);
 }
@@ -75,22 +75,22 @@ GLuint TerrainMaker::selectTexture(const std::string& tex) {
     glDeleteTextures(1, &color_texture);
 
     if (tex == "Rock")
-        return LoadTexture("Rocky.raw", 2048, 2048);
+        return loadTexture("Rocky.raw", 2048, 2048);
     else if (tex == "Snow")
-        return LoadTexture("Snowy.raw", 2048, 2048);
+        return loadTexture("Snowy.raw", 2048, 2048);
     else if (tex == "Ice")
-        return LoadTexture("Icy.raw", 2048, 2048);
+        return loadTexture("Icy.raw", 2048, 2048);
     else if (tex == "Mars")
-        return LoadTexture("RedPlanet.raw", 2048, 2048);
+        return loadTexture("RedPlanet.raw", 2048, 2048);
     else if (tex == "Desert")
-        return LoadTexture("Desert.raw", 2048, 2048);
+        return loadTexture("Desert.raw", 2048, 2048);
     else if (tex == "Lava")
-        return LoadTexture("LavaRock.raw", 2048, 2048);
+        return loadTexture("LavaRock.raw", 2048, 2048);
     else
         return 0;
 }
 
-GLuint TerrainMaker::LoadTexture(const char* filename, int width, int height) {
+GLuint TerrainMaker::loadTexture(const char* filename, int width, int height) {
     GLuint texture;
     std::ifstream file(filename, std::ios::binary);
     if (!file) return 0;
@@ -118,14 +118,14 @@ GLuint TerrainMaker::LoadTexture(const char* filename, int width, int height) {
 void TerrainMaker::draw() {
     int size = this->size;
     int scale = this->scale;
-    int buffersize = triStripBufferSize;
+    int buffersize = tri_strip_buffer_size;
     glEnable(GL_COLOR_MATERIAL);
 
-    if (wireframeActive) {
+    if (wireframe_active) {
         glColor4f(0, 0, 0, .75);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glEnableClientState(GL_VERTEX_ARRAY);
-        pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexVBOId);
+        pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vertex_vbo_id);
         glVertexPointer(3, GL_FLOAT, 0, nullptr);
         glDrawArrays(GL_TRIANGLES, 0, buffersize);
         glDisableClientState(GL_VERTEX_ARRAY);
@@ -139,13 +139,12 @@ void TerrainMaker::draw() {
                             th[j][i]+500*normals[(i*255+j)*6].compoY,
                             j*scale+500*normals[(i*255+j)*6].compoZ);*/
                 glVertex3f(i * scale, th[j][i], j * scale);
-                glVertex3f(
-                        i * scale +
-                                500 * getNormalAt(i * scale, j * scale).compoX,
-                        th[j][i] +
-                                500 * getNormalAt(i * scale, j * scale).compoY,
-                        j * scale + 500 * getNormalAt(i * scale, j * scale)
-                                                    .compoZ);
+                glVertex3f(i * scale + 500 * getNormalAt(i * scale, j * scale)
+                                                       .compo_x,
+                           th[j][i] + 500 * getNormalAt(i * scale, j * scale)
+                                                      .compo_y,
+                           j * scale + 500 * getNormalAt(i * scale, j * scale)
+                                                       .compo_z);
                 glEnd();
             }
         }
@@ -176,7 +175,7 @@ void TerrainMaker::draw() {
         glEnableClientState(GL_NORMAL_ARRAY);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexVBOId);
+        pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vertex_vbo_id);
         glVertexPointer(3, GL_FLOAT, 0, nullptr);
         glNormalPointer(GL_FLOAT,
                         0,
@@ -207,37 +206,37 @@ void TerrainMaker::draw() {
 }
 
 void TerrainMaker::initData() {
-    this->vertices.resize(triStripBufferSize);
-    normals.resize(triStripBufferSize);
-    tex_coord.resize(triStripBufferSize);
-    materialSpecular = {1.0, 1.0, 1.0, 1.0};
-    materialShininess = {10000.0};
-    materialDiffuse = {0.0, 1.0, 0.0, 1.0};
+    this->vertices.resize(tri_strip_buffer_size);
+    normals.resize(tri_strip_buffer_size);
+    tex_coord.resize(tri_strip_buffer_size);
+    material_specular = {1.0, 1.0, 1.0, 1.0};
+    material_shininess = {10000.0};
+    material_diffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
 void TerrainMaker::smoothShadeNormal(int x, int z, Normal* n) {
     calcNormal(x, z - 1, 0, n);
-    Normal n0(n->compoX, n->compoY, n->compoZ);
+    Normal n0(n->compo_x, n->compo_y, n->compo_z);
     calcNormal(x, z, 0, n);
-    Normal n1(n->compoX, n->compoY, n->compoZ);
+    Normal n1(n->compo_x, n->compo_y, n->compo_z);
     calcNormal(x, z, 1, n);
-    Normal n2(n->compoX, n->compoY, n->compoZ);
+    Normal n2(n->compo_x, n->compo_y, n->compo_z);
     calcNormal(x + 1, z + 1, 1, n);
-    Normal n3(n->compoX, n->compoY, n->compoZ);
+    Normal n3(n->compo_x, n->compo_y, n->compo_z);
     calcNormal(x + 1, z, 1, n);
-    Normal n4(n->compoX, n->compoY, n->compoZ);
+    Normal n4(n->compo_x, n->compo_y, n->compo_z);
     calcNormal(x + 1, z, 0, n);
-    Normal n5(n->compoX, n->compoY, n->compoZ);
+    Normal n5(n->compo_x, n->compo_y, n->compo_z);
 
-    n->compoX = (n0.compoX + n1.compoX + n2.compoX + n3.compoX + n4.compoX +
-                 n5.compoX) /
-                6;
-    n->compoY = (n0.compoY + n1.compoY + n2.compoY + n3.compoY + n4.compoY +
-                 n5.compoY) /
-                6;
-    n->compoZ = (n0.compoZ + n1.compoZ + n2.compoZ + n3.compoZ + n4.compoZ +
-                 n5.compoZ) /
-                6;
+    n->compo_x = (n0.compo_x + n1.compo_x + n2.compo_x + n3.compo_x +
+                  n4.compo_x + n5.compo_x) /
+                 6;
+    n->compo_y = (n0.compo_y + n1.compo_y + n2.compo_y + n3.compo_y +
+                  n4.compo_y + n5.compo_y) /
+                 6;
+    n->compo_z = (n0.compo_z + n1.compo_z + n2.compo_z + n3.compo_z +
+                  n4.compo_z + n5.compo_z) /
+                 6;
 }
 
 void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
@@ -272,18 +271,19 @@ void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
     }
 
     if (can_calculate) {
-        n->compoX = v1[1] * v2[2] - v1[2] * v2[1];
-        n->compoY = v1[2] * v2[0] - v1[0] * v2[2];
-        n->compoZ = v1[0] * v2[1] - v1[1] * v2[0];
-        float mag = sqrt((n->compoX * n->compoX) + (n->compoY * n->compoY) +
-                         (n->compoZ * n->compoZ));
-        n->compoX /= mag;
-        n->compoY /= mag;
-        n->compoZ /= mag;
+        n->compo_x = v1[1] * v2[2] - v1[2] * v2[1];
+        n->compo_y = v1[2] * v2[0] - v1[0] * v2[2];
+        n->compo_z = v1[0] * v2[1] - v1[1] * v2[0];
+        float mag =
+                sqrt((n->compo_x * n->compo_x) + (n->compo_y * n->compo_y) +
+                     (n->compo_z * n->compo_z));
+        n->compo_x /= mag;
+        n->compo_y /= mag;
+        n->compo_z /= mag;
     } else {
-        n->compoX = 0;
-        n->compoY = 1;
-        n->compoZ = 0;
+        n->compo_x = 0;
+        n->compo_y = 1;
+        n->compo_z = 0;
     }
 }
 
@@ -296,8 +296,8 @@ void TerrainMaker::prepareData(int steps,
     this->steps = steps;
     this->increase = increase;
     this->radius = radius;
-    this->randomJump = random_jump;
-    int buffersize = triStripBufferSize;
+    this->random_jump = random_jump;
+    int buffersize = tri_strip_buffer_size;
     int size = this->size;
     int scale = this->scale;
     terrainGen(steps, increase, radius, random_jump);
@@ -436,65 +436,67 @@ void TerrainMaker::prepareData(int steps,
         }
     }
 
-    pglGenBuffersARB(1, &vertexVBOId);  // Create VBO for Vertices
-    pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexVBOId);
-    pglBufferDataARB(
+    pgl_gen_buffers_arb(1, &vertex_vbo_id);  // Create VBO for Vertices
+    pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vertex_vbo_id);
+    pgl_buffer_data_arb(
             GL_ARRAY_BUFFER_ARB,
             buffersize * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
             nullptr,
             GL_DYNAMIC_DRAW_ARB);
 
-    pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                        0,
-                        buffersize * sizeof(Vertex),
-                        this->vertices.data());
+    pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                            0,
+                            buffersize * sizeof(Vertex),
+                            this->vertices.data());
 
-    pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                        buffersize * sizeof(Vertex),
-                        buffersize * sizeof(Normal),
-                        normals.data());
+    pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                            buffersize * sizeof(Vertex),
+                            buffersize * sizeof(Normal),
+                            normals.data());
 
-    pglBufferSubDataARB(GL_ARRAY_BUFFER_ARB,
-                        buffersize * (sizeof(Vertex) + sizeof(Normal)),
-                        buffersize * sizeof(TexCoord),
-                        tex_coord.data());
+    pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
+                            buffersize * (sizeof(Vertex) + sizeof(Normal)),
+                            buffersize * sizeof(TexCoord),
+                            tex_coord.data());
 }
 
 void TerrainMaker::verifyVBOs() {
-    delete vboQualify;
-    vboQualify = new VBOQualifer();
-    vboQualify->establishIfQualified();
-    if (vboQualify->getQualified()) {
-        if (vboQualify->isExtensionSupported("GL_ARB_vertex_buffer_object")) {
-            pglGenBuffersARB = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(
+    delete vbo_qualify;
+    vbo_qualify = new VBOQualifer();
+    vbo_qualify->establishIfQualified();
+    if (vbo_qualify->getQualified()) {
+        if (vbo_qualify->isExtensionSupported("GL_ARB_vertex_buffer_object")) {
+            pgl_gen_buffers_arb = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(
                     glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                             "glGenBuffersARB")));
-            pglBindBufferARB = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(
+            pgl_bind_buffer_arb = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(
                     glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                             "glBindBufferARB")));
-            pglBufferDataARB = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(
+            pgl_buffer_data_arb = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(
                     glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                             "glBufferDataARB")));
-            pglBufferSubDataARB = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                            "glBufferSubDataARB")));
-            pglDeleteBuffersARB = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                            "glDeleteBuffersARB")));
-            pglGetBufferParameterivARB =
+            pgl_buffer_sub_data_arb =
+                    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
+                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                                    "glBufferSubDataARB")));
+            pgl_delete_buffers_arb =
+                    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
+                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                                    "glDeleteBuffersARB")));
+            pgl_get_buffer_parameteriv_arb =
                     reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
                             glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                                     "glGetBufferParameterivARB")));
-            pglMapBufferARB = reinterpret_cast<PFNGLMAPBUFFERARBPROC>(
+            pgl_map_buffer_arb = reinterpret_cast<PFNGLMAPBUFFERARBPROC>(
                     glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                             "glMapBufferARB")));
-            pglUnmapBufferARB = reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
+            pgl_unmap_buffer_arb = reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
                     glXGetProcAddress(reinterpret_cast<const GLubyte*>(
                             "glUnmapBufferARB")));
-            if (pglGenBuffersARB && pglBindBufferARB && pglBufferDataARB &&
-                pglBufferSubDataARB && pglDeleteBuffersARB &&
-                pglGetBufferParameterivARB && pglMapBufferARB &&
-                pglUnmapBufferARB) {
+            if (pgl_gen_buffers_arb && pgl_bind_buffer_arb &&
+                pgl_buffer_data_arb && pgl_buffer_sub_data_arb &&
+                pgl_delete_buffers_arb && pgl_get_buffer_parameteriv_arb &&
+                pgl_map_buffer_arb && pgl_unmap_buffer_arb) {
             } else {
                 stdMessageBox(
                         "Pointers to Buffer Functions Failed to be Obtained");
@@ -693,7 +695,7 @@ void TerrainMaker::terrainSlope(int vertices) {
     }
 }
 
-void TerrainMaker::toggleWireframe() { wireframeActive = !wireframeActive; }
+void TerrainMaker::toggleWireframe() { wireframe_active = !wireframe_active; }
 
 Normal TerrainMaker::getTriangleNormal(float x, float z) {
     /*	NORMAL ORIENTATION VECTOR CODE FOR TANK ORIENTATION	*/
@@ -703,33 +705,33 @@ Normal TerrainMaker::getTriangleNormal(float x, float z) {
     Vertex* vert_collection[3] = {v0, v1, v2};
     collectVerticesForTriangleNormal(x, z, vert_collection);
 
-    GLfloat u[3] = {(v1->coordX - v0->coordX),
-                    (v1->coordY / 100 - v0->coordY / 100),
-                    (v1->coordZ - v0->coordZ)};
-    GLfloat v[3] = {(v2->coordX - v0->coordX),
-                    (v2->coordY / 100 - v0->coordY / 100),
-                    (v2->coordZ - v0->coordZ)};
+    GLfloat u[3] = {(v1->coord_x - v0->coord_x),
+                    (v1->coord_y / 100 - v0->coord_y / 100),
+                    (v1->coord_z - v0->coord_z)};
+    GLfloat v[3] = {(v2->coord_x - v0->coord_x),
+                    (v2->coord_y / 100 - v0->coord_y / 100),
+                    (v2->coord_z - v0->coord_z)};
 
     Normal n((u[1] * v[2] - v[1] * u[2]),
              (u[2] * v[0] - u[0] * v[2]),
              (u[0] * v[1] - v[0] * u[1]));
 
     GLfloat mag = static_cast<GLfloat>(
-            sqrt(pow(static_cast<double>(n.compoX), 2.0) +
-                 pow(static_cast<double>(n.compoY), 2.0) +
-                 pow(static_cast<double>(n.compoZ), 2.0)));
-    n.compoX /= mag;
-    n.compoY /= mag;
-    n.compoZ /= mag;
-    if (n.compoY < 0) {
-        n.compoX *= -1;
-        n.compoY *= -1;
-        n.compoZ *= -1;
+            sqrt(pow(static_cast<double>(n.compo_x), 2.0) +
+                 pow(static_cast<double>(n.compo_y), 2.0) +
+                 pow(static_cast<double>(n.compo_z), 2.0)));
+    n.compo_x /= mag;
+    n.compo_y /= mag;
+    n.compo_z /= mag;
+    if (n.compo_y < 0) {
+        n.compo_x *= -1;
+        n.compo_y *= -1;
+        n.compo_z *= -1;
     }
     delete vert_collection[0];
     delete vert_collection[1];
     delete vert_collection[2];
-    return Normal(n.compoX, n.compoY, n.compoZ);
+    return Normal(n.compo_x, n.compo_y, n.compo_z);
 }
 
 Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
@@ -815,17 +817,17 @@ GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
 void TerrainMaker::collectVerticesForTriangleNormal(
         int x, int z, Vertex* three_vertices_array[3]) {
     if ((x >= 0 && x < this->size) && (z >= 0 && z < this->size)) {
-        three_vertices_array[0]->coordX = x;
-        three_vertices_array[0]->coordY = th[z][x];
-        three_vertices_array[0]->coordZ = z;
+        three_vertices_array[0]->coord_x = x;
+        three_vertices_array[0]->coord_y = th[z][x];
+        three_vertices_array[0]->coord_z = z;
 
-        three_vertices_array[1]->coordX = x + 1;
-        three_vertices_array[1]->coordY = th[z][x + 1];
-        three_vertices_array[1]->coordZ = z;
+        three_vertices_array[1]->coord_x = x + 1;
+        three_vertices_array[1]->coord_y = th[z][x + 1];
+        three_vertices_array[1]->coord_z = z;
 
-        three_vertices_array[2]->coordX = x;
-        three_vertices_array[2]->coordY = th[z + 1][x];
-        three_vertices_array[2]->coordZ = z + 1;
+        three_vertices_array[2]->coord_x = x;
+        three_vertices_array[2]->coord_y = th[z + 1][x];
+        three_vertices_array[2]->coord_z = z + 1;
     } else {
         cout << "Tank out of bounds" << endl;
     }
@@ -835,7 +837,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
     int x = static_cast<int>(fx / this->scale);
     int z = static_cast<int>(fz / this->scale);
     Vertex* buffer_ptr = static_cast<Vertex*>(
-            pglMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
+            pgl_map_buffer_arb(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
     int crater_size = static_cast<int>(blast_size * 1.5);
 
     if (((x >= 0) && (x < size)) && ((z >= 0) && (z < size))) {
@@ -872,25 +874,25 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
                                 (th[j - 1][i] + th[j][i - 1] + th[j][i]) / 3;
                     }
                     th[j][i] = adjust_height;  // local
-                    buffer_ptr[(j * (this->size - 1) + i) * 6].coordY =
+                    buffer_ptr[(j * (this->size - 1) + i) * 6].coord_y =
                             adjust_height;  // VBO
                     if ((j - 1) > 0) {
                         buffer_ptr[((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordY = adjust_height;  // VBO
+                                .coord_y = adjust_height;  // VBO
                         buffer_ptr[((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordY = adjust_height;  // VBO
+                                .coord_y = adjust_height;  // VBO
                         if ((i - 1) > 0) {
                             buffer_ptr[((j - 1) * (this->size - 1) + (i - 1)) *
                                                6 +
                                        4]
-                                    .coordY = adjust_height;  // VBO
+                                    .coord_y = adjust_height;  // VBO
                         }
                     }
                     if ((i - 1) > 0) {
                         buffer_ptr[((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordY = adjust_height;  // VBO
+                                .coord_y = adjust_height;  // VBO
                         buffer_ptr[((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordY = adjust_height;  // VBO
+                                .coord_y = adjust_height;  // VBO
                     }
                 }
             }
@@ -898,7 +900,7 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
 
         // adjust normals
 
-        int normal_offset = triStripBufferSize;
+        int normal_offset = tri_strip_buffer_size;
         for (int i = x - crater_size; i < x + crater_size; i++) {
             for (int j = z - crater_size; j < z + crater_size; j++) {
                 Normal adjust_normal;
@@ -908,73 +910,73 @@ void TerrainMaker::makeCrater(GLfloat fx, GLfloat fz, GLfloat blast_size) {
                     (distance <= blast_size)) {
                     smoothShadeNormal(j, i, &adjust_normal);
                     buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
-                            .coordX = adjust_normal.compoX;  // VBO
+                            .coord_x = adjust_normal.compo_x;  // VBO
                     buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
-                            .coordY = adjust_normal.compoY;  // VBO
+                            .coord_y = adjust_normal.compo_y;  // VBO
                     buffer_ptr[normal_offset + (j * (this->size - 1) + i) * 6]
-                            .coordZ = adjust_normal.compoZ;  // VBO
+                            .coord_z = adjust_normal.compo_z;  // VBO
                     if ((j - 1) > 0) {
                         buffer_ptr[normal_offset +
                                    ((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordX = adjust_normal.compoX;  // VBO
+                                .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordY = adjust_normal.compoY;  // VBO
+                                .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j - 1) * (this->size - 1) + i) * 6 + 1]
-                                .coordZ = adjust_normal.compoZ;  // VBO
+                                .coord_z = adjust_normal.compo_z;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordX = adjust_normal.compoX;  // VBO
+                                .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordY = adjust_normal.compoY;  // VBO
+                                .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j - 1) * (this->size - 1) + i) * 6 + 3]
-                                .coordZ = adjust_normal.compoZ;  // VBO
+                                .coord_z = adjust_normal.compo_z;  // VBO
                         if ((i - 1) > 0) {
                             buffer_ptr[normal_offset +
                                        ((j - 1) * (this->size - 1) + (i - 1)) *
                                                6 +
                                        4]
-                                    .coordX = adjust_normal.compoX;  // VBO
+                                    .coord_x = adjust_normal.compo_x;  // VBO
                             buffer_ptr[normal_offset +
                                        ((j - 1) * (this->size - 1) + (i - 1)) *
                                                6 +
                                        4]
-                                    .coordY = adjust_normal.compoY;  // VBO
+                                    .coord_y = adjust_normal.compo_y;  // VBO
                             buffer_ptr[normal_offset +
                                        ((j - 1) * (this->size - 1) + (i - 1)) *
                                                6 +
                                        4]
-                                    .coordZ = adjust_normal.compoZ;  // VBO
+                                    .coord_z = adjust_normal.compo_z;  // VBO
                         }
                     }
                     if ((i - 1) > 0) {
                         buffer_ptr[normal_offset +
                                    ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordX = adjust_normal.compoX;  // VBO
+                                .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordY = adjust_normal.compoY;  // VBO
+                                .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j) * (this->size - 1) + (i - 1)) * 6 + 2]
-                                .coordZ = adjust_normal.compoZ;  // VBO
+                                .coord_z = adjust_normal.compo_z;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordX = adjust_normal.compoX;  // VBO
+                                .coord_x = adjust_normal.compo_x;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordY = adjust_normal.compoY;  // VBO
+                                .coord_y = adjust_normal.compo_y;  // VBO
                         buffer_ptr[normal_offset +
                                    ((j) * (this->size - 1) + (i - 1)) * 6 + 5]
-                                .coordZ = adjust_normal.compoZ;  // VBO
+                                .coord_z = adjust_normal.compo_z;  // VBO
                     }
                 }
             }
         }
     }
-    pglUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
+    pgl_unmap_buffer_arb(GL_ARRAY_BUFFER_ARB);
 }
 
 /************************************************************************/

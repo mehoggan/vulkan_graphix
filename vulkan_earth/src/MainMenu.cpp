@@ -38,26 +38,26 @@ MainMenu::MainMenu(GLfloat width,
                    int* game_state) {
     this->global_settings = global_settings;
     this->player_factory = player_factory;
-    currentGameState = game_state;
+    current_game_state = game_state;
 
-    for (int x = 0; x < NUM_BUTTON; x++) {
+    for (int x = 0; x < num_button; x++) {
         buttons[x] = nullptr;
     }
-    for (int x = 0; x < NUM_SUBMENUS; x++) {
+    for (int x = 0; x < num_submenus; x++) {
         submenus[x] = nullptr;
     }
-    for (int x = 0; x < NUM_IMAGES; x++) {
+    for (int x = 0; x < num_images; x++) {
         images[x] = nullptr;
     }
-    for (int x = 0; x < NUM_ARROW_BUTTONS; x++) {
+    for (int x = 0; x < num_arrow_buttons; x++) {
         arrowsbutton[x] = nullptr;
     }
-    buttonPressed = nullptr;
-    activeSubMenu = nullptr;
-    arrowButtonPressed = nullptr;
+    button_pressed = nullptr;
+    active_sub_menu = nullptr;
+    arrow_button_pressed = nullptr;
     this->width = width;
     this->height = height;
-    this->percentBorder = percent_border;
+    this->percent_border = percent_border;
     color[0] = color[1] = color[2] = 1;
     color[3] = 1;
     pos[0] = pos[1] = pos[2] = 0;
@@ -336,10 +336,10 @@ MainMenu::MainMenu(GLfloat width,
 }
 
 MainMenu::~MainMenu() {
-    for (int i = 0; i < NUM_IMAGES; i++) delete images[i];
-    for (int i = 0; i < NUM_BUTTON; i++) delete buttons[i];
-    for (int i = 0; i < NUM_SUBMENUS; i++) delete submenus[i];
-    for (int i = 0; i < NUM_ARROW_BUTTONS; i++) delete arrowsbutton[i];
+    for (int i = 0; i < num_images; i++) delete images[i];
+    for (int i = 0; i < num_button; i++) delete buttons[i];
+    for (int i = 0; i < num_submenus; i++) delete submenus[i];
+    for (int i = 0; i < num_arrow_buttons; i++) delete arrowsbutton[i];
 }
 
 GLfloat* MainMenu::getPos() { return &(pos[0]); }
@@ -349,13 +349,13 @@ GLfloat MainMenu::getWidth() { return this->height; }
 void MainMenu::setWidth(GLfloat width) { this->width = width; }
 GLfloat* MainMenu::getColor() { return &(color[0]); }
 SubMenu* MainMenu::getSubMenuI(int i) { return submenus[i]; }
-SubMenu* MainMenu::getActiveSubMenu() { return activeSubMenu; }
+SubMenu* MainMenu::getActiveSubMenu() { return active_sub_menu; }
 SubMenuLandscape* MainMenu::getSubMenuLandscape() {
     return static_cast<SubMenuLandscape*>(submenus[5]);
 }
 
 void MainMenu::draw() {
-    playMusic(MAINMENU);
+    playMusic(mainmenu);
     glPushMatrix();
     /*	ALWAYS START AT UPPER LEFT CORNER -> LOWER LEFT CORNER -> LOWER RIGHT
      * CORNER -> UPPER RIGHT	*/
@@ -365,84 +365,87 @@ void MainMenu::draw() {
     glVertex3f(
             -1 * (this->width / 2.0), -1 * (this->height / 2.0), 0); /*	| |	*/
     glVertex3f(
-            -1 * (this->width / 2.0) + (this->percentBorder * (this->height)),
-            -1 * (this->height / 2.0) + (this->percentBorder * (this->height)),
+            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
+            -1 * (this->height / 2.0) +
+                    (this->percent_border * (this->height)),
             0); /*	|/ 	*/
     glVertex3f(
-            -1 * (this->width / 2.0) + (this->percentBorder * (this->height)),
-            (this->height / 2.0) - (this->percentBorder * (this->height)),
+            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
+            (this->height / 2.0) - (this->percent_border * (this->height)),
             0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.80f, 0.80f, 0.80f);
     glVertex3f(-1 * (this->width / 2.0), (this->height / 2.0), 0); /*_____ */
     glVertex3f(
-            -1 * (this->width / 2.0) + (this->percentBorder * (this->height)),
-            (this->height / 2.0) - (this->percentBorder * (this->height)),
+            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
+            (this->height / 2.0) - (this->percent_border * (this->height)),
             0); /*\	  / */
-    glVertex3f((this->width / 2.0) - (this->percentBorder * (this->height)),
-               (this->height / 2.0) - (this->percentBorder * (this->height)),
+    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
+               (this->height / 2.0) - (this->percent_border * (this->height)),
                0); /* ---	*/
     glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.75f, 0.75f, 0.75f);
     glVertex3f(
-            -1 * (this->width / 2.0) + (this->percentBorder * (this->height)),
-            (this->height / 2.0) - (this->percentBorder * (this->height)),
+            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
+            (this->height / 2.0) - (this->percent_border * (this->height)),
             0); /*_____ */
     glVertex3f(
-            -1 * (this->width / 2.0) + (this->percentBorder * (this->height)),
-            -1 * (this->height / 2.0) + (this->percentBorder * (this->height)),
+            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
+            -1 * (this->height / 2.0) +
+                    (this->percent_border * (this->height)),
             0); /*|	  | */
-    glVertex3f(
-            (this->width / 2.0) - (this->percentBorder * (this->height)),
-            -1 * (this->height / 2.0) + (this->percentBorder * (this->height)),
-            0); /*----- */
-    glVertex3f((this->width / 2.0) - (this->percentBorder * (this->height)),
-               (this->height / 2.0) - (this->percentBorder * (this->height)),
+    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
+               -1 * (this->height / 2.0) +
+                       (this->percent_border * (this->height)),
+               0); /*----- */
+    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
+               (this->height / 2.0) - (this->percent_border * (this->height)),
                0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.45f, 0.45f, 0.45f);
     glVertex3f(
-            -1 * (this->width / 2.0) + (this->percentBorder * (this->height)),
-            -1 * (this->height / 2.0) + (this->percentBorder * (this->height)),
+            -1 * (this->width / 2.0) + (this->percent_border * (this->height)),
+            -1 * (this->height / 2.0) +
+                    (this->percent_border * (this->height)),
             0); /* ___  */
     glVertex3f(-1 * (this->width / 2.0),
                -1 * (this->height / 2.0),
                0);                                                 /*/	  \ */
     glVertex3f((this->width / 2.0), -1 * (this->height / 2.0), 0); /*----- */
-    glVertex3f(
-            (this->width / 2.0) - (this->percentBorder * (this->height)),
-            -1 * (this->height / 2.0) + (this->percentBorder * (this->height)),
-            0);
+    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
+               -1 * (this->height / 2.0) +
+                       (this->percent_border * (this->height)),
+               0);
     glEnd();
     glBegin(GL_QUADS);
     glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((this->width / 2.0) - (this->percentBorder * (this->height)),
-               (this->height / 2.0) - (this->percentBorder * (this->height)),
+    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
+               (this->height / 2.0) - (this->percent_border * (this->height)),
                0); /*	 /| 	*/
-    glVertex3f(
-            (this->width / 2.0) - (this->percentBorder * (this->height)),
-            -1 * (this->height / 2.0) + (this->percentBorder * (this->height)),
-            0); /*	| | 	*/
+    glVertex3f((this->width / 2.0) - (this->percent_border * (this->height)),
+               -1 * (this->height / 2.0) +
+                       (this->percent_border * (this->height)),
+               0); /*	| | 	*/
     glVertex3f(
             (this->width / 2.0), -1 * (this->height / 2.0), 0); /* 	 \| 	*/
     glVertex3f((this->width / 2.0), (this->height / 2.0), 0);
     glEnd();
 
-    for (int i = 0; i < NUM_IMAGES; i++) {
+    for (int i = 0; i < num_images; i++) {
         if (images[i]) {
             images[i]->draw();
         }
     }
-    for (int i = 0; i < NUM_ARROW_BUTTONS; i++) {
+    for (int i = 0; i < num_arrow_buttons; i++) {
         if (arrowsbutton[i]) {
             arrowsbutton[i]->draw();
         }
     }
-    for (int x = 0; x < NUM_BUTTON; x++) {
+    for (int x = 0; x < num_button; x++) {
         if (buttons[x]) {
             buttons[x]->draw();
         }
@@ -453,7 +456,7 @@ void MainMenu::draw() {
 
 void MainMenu::buttonTest(int x, int y, int button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < NUM_BUTTON;
+        for (int button_i = 0; button_i < num_button;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF CLICK LANDS IN BUTTON I
             if (buttons[button_i]) {  // JUST TO MAKE SURE
@@ -463,12 +466,12 @@ void MainMenu::buttonTest(int x, int y, int button_down) {
                     (y <= buttons[button_i]->getYPos()) &&
                     (y >= (buttons[button_i]->getYPos() -
                            buttons[button_i]->getHeight()))) {
-                    buttons[button_i]->pressButton();   // PRESS BUTTON
-                    buttonPressed = buttons[button_i];  // KEEP TRACK OF WHICH
-                                                        // BUTTON WAS PRESSED
+                    buttons[button_i]->pressButton();    // PRESS BUTTON
+                    button_pressed = buttons[button_i];  // KEEP TRACK OF WHICH
+                                                         // BUTTON WAS PRESSED
                 }
             }
-            if (button_i < NUM_ARROW_BUTTONS) {
+            if (button_i < num_arrow_buttons) {
                 if (arrowsbutton[button_i]) {  // IF YOU DID NOT CLICK A BUTTON
                                                // PERHAPS YOU CLICKED A ARROW
                                                // BUTTON???
@@ -483,146 +486,147 @@ void MainMenu::buttonTest(int x, int y, int button_down) {
                                 y,
                                 button_down,
                                 true);  // YOU PRESSED OVER A ARROWBUTTON
-                        arrowButtonPressed = arrowsbutton[button_i];
+                        arrow_button_pressed = arrowsbutton[button_i];
                     }
                 }
             }
         }
     } else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
                                 // GOES UP
-        if (buttonPressed !=
+        if (button_pressed !=
             nullptr) {  // IF THE LEFT CLICK WAS VALID AND INSIDE A BUTTON
                         // CHECK TO SEE IF YOU ARE STILL OVER SAME BUTTON
-            if ((x >= buttonPressed->getXPos()) &&
+            if ((x >= button_pressed->getXPos()) &&
                 (x <=
-                 (buttonPressed->getXPos() + buttonPressed->getWidth())) &&
-                (y <= buttonPressed->getYPos()) &&
+                 (button_pressed->getXPos() + button_pressed->getWidth())) &&
+                (y <= button_pressed->getYPos()) &&
                 (y >=
-                 (buttonPressed->getYPos() - buttonPressed->getHeight()))) {
-                if (buttonPressed
+                 (button_pressed->getYPos() - button_pressed->getHeight()))) {
+                if (button_pressed
                             ->isActive()) {  // IF OVER SAME BUTTON MAKE SURE
                                              // IT WAS NOT ALREADY ACTIVATED
                                              // SOME BUTTONS HAVE EXTRA ACTIONS
                                              // LIKE SAVING DATA TO XML FILES
-                    if (buttonPressed->getUNIQUEIDENTIFIER() == 0) {
+                    if (button_pressed->getUNIQUEIDENTIFIER() == 0) {
                         collectData();  // ONE OF THE BUTTONS PRESSED WAS
                                         // START OR SAVE SETTINGS
                         this->player_factory->setNumberofPlayers(
-                                this->global_settings->getPlayer_Count());
+                                this->global_settings->getPlayerCount());
                         this->player_factory->initializePlayerDataBase();
                         this->global_settings->setCurrentTerrain(
                                 getSubMenuLandscape()->tm);
                     }
-                    if (buttonPressed->getUNIQUEIDENTIFIER() == 8) {
+                    if (button_pressed->getUNIQUEIDENTIFIER() == 8) {
                         collectData();
                         this->player_factory->setNumberofPlayers(
-                                this->global_settings->getPlayer_Count());
+                                this->global_settings->getPlayerCount());
                     } else {
-                        buttonPressed
+                        button_pressed
                                 ->deactivateSubMenu();  // IF SO DEACTIVATE
                                                         // SUBMENU ATTACHED TO
                                                         // BUTTON
-                        activeSubMenu = nullptr;  // GET RID OF ACTIVE SUBMENU
-                        buttonPressed
+                        active_sub_menu =
+                                nullptr;  // GET RID OF ACTIVE SUBMENU
+                        button_pressed
                                 ->depressButton();  // DEPRESS THE BUTTON
                                                     // (CHANGE DRAWING MODE)
                     }
                 } else {  // IF BUTTON WAS NOT ALREADY ACTIVATED
                           // SOME BUTTONS HAVE EXTRA ACTIONS LIKE SAVING DATA
                           // TO XML FILES
-                    if (buttonPressed->getUNIQUEIDENTIFIER() ==
-                        QUIT) {  // IF QUIT BUTTON PRESSED (QUIT DEFINED AT
+                    if (button_pressed->getUNIQUEIDENTIFIER() ==
+                        quit) {  // IF QUIT BUTTON PRESSED (QUIT DEFINED AT
                                  // VERY TOP)
-                        buttonPressed
+                        button_pressed
                                 ->depressButton();  // DEPRESS THE QUIT BUTTON
-                        *(currentGameState) = QUIT_GAME;
+                        *(current_game_state) = QUIT_GAME;
                     }
-                    if (buttonPressed->getUNIQUEIDENTIFIER() == 0) {
+                    if (button_pressed->getUNIQUEIDENTIFIER() == 0) {
                         collectData();  // ONE OF THE BUTTONS PRESSED WAS
                                         // START OR SAVE SETTINGS
                         this->player_factory->setNumberofPlayers(
-                                this->global_settings->getPlayer_Count());
+                                this->global_settings->getPlayerCount());
                         this->player_factory->initializePlayerDataBase();
                         this->global_settings->setCurrentTerrain(
                                 getSubMenuLandscape()->tm);
                         Mix_HaltMusic();
-                        *currentGameState = READY_MENU;
+                        *current_game_state = READY_MENU;
                     }
-                    if (buttonPressed->getUNIQUEIDENTIFIER() == 8) {
+                    if (button_pressed->getUNIQUEIDENTIFIER() == 8) {
                         collectData();
                     } else {
-                        for (int i = 0; i < NUM_BUTTON;
+                        for (int i = 0; i < num_button;
                              i++) {            // DEACTIVATE ALL OTHER MENUS
                             if (buttons[i]) {  // SAFEGUARD AGAINST NULL
                                                // POINTER
                                 buttons[i]->deactivateSubMenu();
                             }
                         }
-                        if (buttonPressed->getUNIQUEIDENTIFIER() != 0) {
-                            buttonPressed
+                        if (button_pressed->getUNIQUEIDENTIFIER() != 0) {
+                            button_pressed
                                     ->activateSubMenu();  // ACTIVATE THE
                                                           // SUBMENU ASSOCIATED
                                                           // WITH THE BUTTON
                                                           // PRESSED ABOVE
-                            activeSubMenu =
-                                    buttonPressed
+                            active_sub_menu =
+                                    button_pressed
                                             ->getSubMenu();  // SET THE ACTIVE
                                                              // SUBMENU
                         }
                     }
                 }
-                buttonPressed
+                button_pressed
                         ->depressButton();  // WHENEVER YOU RELEASE MOUSEBUTTON
                                             // DEPRESS THE BUTTON YOU MIGHT
                                             // HAVE PUSHED
-                buttonPressed =
+                button_pressed =
                         nullptr;  // YOU HANDLED THE BUTTON NOW CLEAR IT
             } else {              // IF YOU RELEASE OUTSIDE ALL BUTTONS
-                buttonPressed->depressButton();  // DEPRESS BUTTON YOU
-                                                 // MIGHT HAVE CLICKED
-                buttonPressed = nullptr;         // NO BUTTON REALLY CLICKED
-                                                 // (MUST REMAIN OVER BUTTON)
+                button_pressed->depressButton();  // DEPRESS BUTTON YOU
+                                                  // MIGHT HAVE CLICKED
+                button_pressed = nullptr;         // NO BUTTON REALLY CLICKED
+                                                  // (MUST REMAIN OVER BUTTON)
 
                 // WTF, THIS CAUSED A BUG! WHY WAS IT THERE?!
                 // activeSubMenu=NULL;
                 // //GET RID OF ACTIVE SUBMENU JUST IN CASE (in case of what?)
             }
-        } else if (arrowButtonPressed !=
+        } else if (arrow_button_pressed !=
                    nullptr) {  // IF YOU MANAGED TO CLICK INSIDE AN ARROW
                                // BUTTON
                                // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
-            if ((x >= arrowButtonPressed->getXPos()) &&
-                (x <= (arrowButtonPressed->getXPos() +
-                       arrowButtonPressed->getWidth())) &&
-                (y <= arrowButtonPressed->getYPos()) &&
-                (y >= (arrowButtonPressed->getYPos() -
-                       arrowButtonPressed->getHeight()))) {
-                arrowButtonPressed->mouseClickEvent(
+            if ((x >= arrow_button_pressed->getXPos()) &&
+                (x <= (arrow_button_pressed->getXPos() +
+                       arrow_button_pressed->getWidth())) &&
+                (y <= arrow_button_pressed->getYPos()) &&
+                (y >= (arrow_button_pressed->getYPos() -
+                       arrow_button_pressed->getHeight()))) {
+                arrow_button_pressed->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                 // RELEASE THE MOUSE
             } else {
-                arrowButtonPressed->mouseClickEvent(
+                arrow_button_pressed->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                  // RELEASE THE MOUSE
-                arrowButtonPressed = nullptr;
+                arrow_button_pressed = nullptr;
             }
         }
     }
     // Sub Menu Button Test
-    if (activeSubMenu != nullptr) {
-        activeSubMenu->subMenuMouseTest(x, y, button_down);
+    if (active_sub_menu != nullptr) {
+        active_sub_menu->subMenuMouseTest(x, y, button_down);
     }
 }
 
 void MainMenu::collectData() {
     std::string optionsarray;
-    for (int x = 2; x < NUM_SUBMENUS;
+    for (int x = 2; x < num_submenus;
          x++) {  // SOUND AND START GAME ARE 1 AND 0 RESPECTIVLY
         if (submenus[x]) {
             optionsarray += submenus[x]->collectData();

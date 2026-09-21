@@ -9,7 +9,7 @@
 class Player;
 class GlobalSettings;
 
-const int MAX_NUMBER_OF_PLAYERS = 10;
+const int max_number_of_players = 10;
 
 class PlayerFactory {
 public:
@@ -22,7 +22,7 @@ public:
     void updatePlayerBasicStrings(const std::string& player_type,
                                   const std::string& ai_type,
                                   const std::string& name,
-                                  char teamLabel,
+                                  char team_label,
                                   const std::string& tank_type,
                                   int player_number);
     GLfloat* collectPlayerColor(int i);
@@ -33,7 +33,7 @@ private:
     GlobalSettings* game_global_settings;
     int number_of_players;
     int prev_number_of_players;
-    GLfloat playerColor[10][4];
+    GLfloat player_color[10][4];
 };
 
 #endif /*	PLAYER_FACTORY_H	*/

@@ -13,23 +13,23 @@ class TextObject;
 class ControlItemSliderbar : public ControlItem {
 public:
     ControlItemSliderbar();
-    ControlItemSliderbar(GLfloat xPos,
-                         GLfloat yPos,
-                         GLfloat zPos,
+    ControlItemSliderbar(GLfloat x_pos,
+                         GLfloat y_pos,
+                         GLfloat z_pos,
                          GLfloat red,
                          GLfloat green,
                          GLfloat blue,
                          GLint width,
                          GLint height,
                          const std::string& caption,
-                         const std::string& menuInfo,
-                         int sliderStartingPos);
+                         const std::string& menu_info,
+                         int slider_starting_pos);
     ~ControlItemSliderbar() override;
     void draw() override;
     void mouseClickEvent(GLint x,
                          GLint y,
                          GLint state,
-                         bool stillOverControlItemSliderbar) override;
+                         bool still_over_control_item_sliderbar) override;
     GLfloat getXPos() override;
     GLfloat getYPos() override;
     GLfloat getHeight() override;
@@ -43,34 +43,34 @@ public:
 
 private:
     void setOptionText(int index) override;
-    void setOptionText(const std::string& newText) override;
-    GLfloat xPos;
-    GLfloat yPos;
-    GLfloat zPos;
-    GLfloat barXPos;
-    GLfloat barYPos;
-    GLfloat barZPos;
-    GLint barWidth;
-    GLfloat sliderXPos;
-    GLfloat sliderYPos;
-    GLfloat sliderZPos;
-    GLint sliderWidth;
-    GLint sliderHeight;
+    void setOptionText(const std::string& new_text) override;
+    GLfloat x_pos;
+    GLfloat y_pos;
+    GLfloat z_pos;
+    GLfloat bar_x_pos;
+    GLfloat bar_y_pos;
+    GLfloat bar_z_pos;
+    GLint bar_width;
+    GLfloat slider_x_pos;
+    GLfloat slider_y_pos;
+    GLfloat slider_z_pos;
+    GLint slider_width;
+    GLint slider_height;
     GLfloat color[4];
     GLint width;
     GLint height;
     GLfloat interval;
-    TextObject* optionText;
+    TextObject* option_text;
     TextObject* label;
     std::string caption;
-    std::string menuInfo;
-    std::string currentOption;
-    int menuState;
-    int buttonState;  // 0 = no button pressed, 1 = up button pressed, 2 = down
-                      // button pressed
-    int numberOfOptions;
-    std::vector<std::string> allOptions;
-    bool isSliderClicked;
+    std::string menu_info;
+    std::string current_option;
+    int menu_state;
+    int button_state;  // 0 = no button pressed, 1 = up button pressed, 2 =
+                       // down button pressed
+    int number_of_options;
+    std::vector<std::string> all_options;
+    bool is_slider_clicked;
 };
 
 #endif

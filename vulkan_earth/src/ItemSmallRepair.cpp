@@ -7,23 +7,23 @@ extern void playSFX(int sfx);
 
 ItemSmallRepair::ItemSmallRepair() = default;
 ItemSmallRepair::ItemSmallRepair(int id) {
-    UNIQUEIDENTIFIER = id;
-    packageNum = 3;
-    maxStack = 15;
+    uniqueidentifier = id;
+    package_num = 3;
+    max_stack = 15;
     remaining = 3;
-    imageFileName = "ItemSmallRepair.raw";
+    image_file_name = "ItemSmallRepair.raw";
     description = "Small Repair:     Heals 200 damage.";
     price = 50;
-    specialNum = 200;
+    special_num = 200;
 }
 ItemSmallRepair::~ItemSmallRepair() = default;
 
 ItemSmallRepair* ItemSmallRepair::getItemInstance() {
-    return new ItemSmallRepair(UNIQUEIDENTIFIER);
+    return new ItemSmallRepair(uniqueidentifier);
 }
 
 bool ItemSmallRepair::causeEffectToTank(Tank* tank) {
-    tank->setHP(tank->getHP() + specialNum);
+    tank->setHP(tank->getHP() + special_num);
     if (tank->getHP() > tank->getArmor() * 100) {
         tank->setHP(tank->getArmor() * 100);
     }

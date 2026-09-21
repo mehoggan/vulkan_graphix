@@ -8,7 +8,7 @@
 class WeaponMFB : public Weapon {
 public:
     WeaponMFB();
-    WeaponMFB(int ID);
+    WeaponMFB(int id);
     ~WeaponMFB() override;
     WeaponMFB* getWeaponInstance() override;
 };

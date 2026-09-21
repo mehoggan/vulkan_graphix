@@ -8,7 +8,7 @@
 class ItemBigRepair : public Item {
 public:
     ItemBigRepair();
-    ItemBigRepair(int ID);
+    ItemBigRepair(int id);
     ~ItemBigRepair() override;
     ItemBigRepair* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

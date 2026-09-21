@@ -8,7 +8,7 @@
 class ItemFloat : public Item {
 public:
     ItemFloat();
-    ItemFloat(int ID);
+    ItemFloat(int id);
     ~ItemFloat() override;
     ItemFloat* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

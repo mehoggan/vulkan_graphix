@@ -9,11 +9,11 @@
 class Vector {
 public:
     Vector();
-    Vector(GLfloat compoX, GLfloat compoY, GLfloat compoZ);
+    Vector(GLfloat compo_x, GLfloat compo_y, GLfloat compo_z);
     ~Vector();
-    GLfloat compoX;
-    GLfloat compoY;
-    GLfloat compoZ;
+    GLfloat compo_x;
+    GLfloat compo_y;
+    GLfloat compo_z;
 };
 
 #endif /*	VECTOR_H	*/

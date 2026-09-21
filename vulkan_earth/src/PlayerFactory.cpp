@@ -17,59 +17,59 @@ PlayerFactory::PlayerFactory(GlobalSettings* game_global_settings) {
     this->game_global_settings = game_global_settings;
     this->number_of_players = 2;
     prev_number_of_players = this->number_of_players;
-    player_set = new Player*[MAX_NUMBER_OF_PLAYERS]; /*	10 IS THE MAXIMUM
+    player_set = new Player*[max_number_of_players]; /*	10 IS THE MAXIMUM
                                                         NUMBER OF PLAYERS	*/
-    for (int p = 0; p < MAX_NUMBER_OF_PLAYERS; p++) {
+    for (int p = 0; p < max_number_of_players; p++) {
         player_set[p] = nullptr;
     }
     for (int p = 0; p < this->number_of_players; p++) {
         if (!(player_set[p])) {
             player_set[p] = new PlayerCPU(
-                    playerColor[p][0],
-                    playerColor[p][1],
-                    playerColor[p][2],
+                    player_color[p][0],
+                    player_color[p][1],
+                    player_color[p][2],
                     "Rhinoxx",
                     "Shooter",
                     "",
                     '-',
                     "CPU",
-                    atoi(this->game_global_settings->getCash_At_Start()
+                    atoi(this->game_global_settings->getCashAtStart()
                                  .c_str()));
         }
     }
     // Set Players' Colors
-    playerColor[0][0] = 0.95;
-    playerColor[0][1] = 0.25;
-    playerColor[0][2] = 0.25;
-    playerColor[1][0] = 0.85;
-    playerColor[1][1] = 0.45;
-    playerColor[1][2] = 0.25;
-    playerColor[2][0] = 0.75;
-    playerColor[2][1] = 0.75;
-    playerColor[2][2] = 0.15;
-    playerColor[3][0] = 0.25;
-    playerColor[3][1] = 0.85;
-    playerColor[3][2] = 0.25;
-    playerColor[4][0] = 0.05;
-    playerColor[4][1] = 0.55;
-    playerColor[4][2] = 0.05;
-    playerColor[5][0] = 0.25;
-    playerColor[5][1] = 0.25;
-    playerColor[5][2] = 0.95;
-    playerColor[6][0] = 0.25;
-    playerColor[6][1] = 0.15;
-    playerColor[6][2] = 0.65;
-    playerColor[7][0] = 0.75;
-    playerColor[7][1] = 0.25;
-    playerColor[7][2] = 0.75;
-    playerColor[8][0] = 0.25;
-    playerColor[8][1] = 0.25;
-    playerColor[8][2] = 0.25;
-    playerColor[9][0] = 0.95;
-    playerColor[9][1] = 0.95;
-    playerColor[9][2] = 0.95;
+    player_color[0][0] = 0.95;
+    player_color[0][1] = 0.25;
+    player_color[0][2] = 0.25;
+    player_color[1][0] = 0.85;
+    player_color[1][1] = 0.45;
+    player_color[1][2] = 0.25;
+    player_color[2][0] = 0.75;
+    player_color[2][1] = 0.75;
+    player_color[2][2] = 0.15;
+    player_color[3][0] = 0.25;
+    player_color[3][1] = 0.85;
+    player_color[3][2] = 0.25;
+    player_color[4][0] = 0.05;
+    player_color[4][1] = 0.55;
+    player_color[4][2] = 0.05;
+    player_color[5][0] = 0.25;
+    player_color[5][1] = 0.25;
+    player_color[5][2] = 0.95;
+    player_color[6][0] = 0.25;
+    player_color[6][1] = 0.15;
+    player_color[6][2] = 0.65;
+    player_color[7][0] = 0.75;
+    player_color[7][1] = 0.25;
+    player_color[7][2] = 0.75;
+    player_color[8][0] = 0.25;
+    player_color[8][1] = 0.25;
+    player_color[8][2] = 0.25;
+    player_color[9][0] = 0.95;
+    player_color[9][1] = 0.95;
+    player_color[9][2] = 0.95;
     for (int x = 0; x < 10; x++) {
-        playerColor[x][3] = 1.0;
+        player_color[x][3] = 1.0;
     }
 }
 
@@ -103,15 +103,15 @@ void PlayerFactory::initializePlayerDataBase() {
         for (int p = prev_number_of_players; p < (this->number_of_players);
              p++) {
             player_set[p] = new PlayerCPU(
-                    playerColor[p][0],
-                    playerColor[p][1],
-                    playerColor[p][2],
+                    player_color[p][0],
+                    player_color[p][1],
+                    player_color[p][2],
                     "Rhinoxx",
                     "Shooter",
                     "",
                     '-',
                     "CPU",
-                    atoi(this->game_global_settings->getCash_At_Start()
+                    atoi(this->game_global_settings->getCashAtStart()
                                  .c_str()));
         }
         prev_number_of_players = this->number_of_players;
@@ -127,31 +127,31 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
     if (player_type == "CPU") {
         delete player_set[player_number];
         player_set[player_number] = new PlayerCPU(
-                playerColor[player_number][0],
-                playerColor[player_number][1],
-                playerColor[player_number][2],
+                player_color[player_number][0],
+                player_color[player_number][1],
+                player_color[player_number][2],
                 tank_type,
                 ai_type,
                 name,
                 team_label,
                 player_type,
-                atoi(this->game_global_settings->getCash_At_Start().c_str()));
+                atoi(this->game_global_settings->getCashAtStart().c_str()));
     } else if (player_type == "HUMAN") {
-        if (player_set[player_number]->getPlayer_Type() == "CPU") {
+        if (player_set[player_number]->getPlayerType() == "CPU") {
             delete player_set[player_number];
             player_set[player_number] = new PlayerHuman(
-                    playerColor[player_number][0],
-                    playerColor[player_number][1],
-                    playerColor[player_number][2],
+                    player_color[player_number][0],
+                    player_color[player_number][1],
+                    player_color[player_number][2],
                     tank_type,
                     ai_type,
                     name,
                     team_label,
                     player_type,
-                    atoi(this->game_global_settings->getCash_At_Start()
+                    atoi(this->game_global_settings->getCashAtStart()
                                  .c_str()));
         } else {
-            player_set[player_number]->setPlayer_Type(player_type);
+            player_set[player_number]->setPlayerType(player_type);
             player_set[player_number]->setPlayerName(name);
             player_set[player_number]->setTeamLabel(team_label);
             player_set[player_number]->setTankType(tank_type);
@@ -163,6 +163,6 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                 player_number);
     }
 }
-GLfloat* PlayerFactory::collectPlayerColor(int i) { return playerColor[i]; }
+GLfloat* PlayerFactory::collectPlayerColor(int i) { return player_color[i]; }
 
 Player* PlayerFactory::getPlayer(int i) { return player_set[i]; }

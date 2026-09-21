@@ -42,7 +42,7 @@ GlobalSettings::~GlobalSettings() = default;
 
 void GlobalSettings::setVariables(const std::string& global_options,
                                   const std::string& round_and_player_count) {
-    for (int i = 0; i < NUM_OPTIONS; i++) {
+    for (int i = 0; i < num_options; i++) {
         options[i].clear();
     }
 
@@ -162,32 +162,32 @@ void GlobalSettings::printSelf(int index) {
     printf("trace path = %s\n", trace_path.c_str());
 }
 
-std::string GlobalSettings::getGame_Speed() { return game_speed; }
-std::string GlobalSettings::getInterest_Rate() { return interest_rate; }
-std::string GlobalSettings::getCash_At_Start() { return cash_at_start; }
-std::string GlobalSettings::getComputers_Buy() { return computers_buy; }
-std::string GlobalSettings::getFree_Market() { return free_market; }
-std::string GlobalSettings::getScoring_Mode() { return scoring_mode; }
-std::string GlobalSettings::getAir_Viscosity() { return air_viscosity; }
+std::string GlobalSettings::getGameSpeed() { return game_speed; }
+std::string GlobalSettings::getInterestRate() { return interest_rate; }
+std::string GlobalSettings::getCashAtStart() { return cash_at_start; }
+std::string GlobalSettings::getComputersBuy() { return computers_buy; }
+std::string GlobalSettings::getFreeMarket() { return free_market; }
+std::string GlobalSettings::getScoringMode() { return scoring_mode; }
+std::string GlobalSettings::getAirViscosity() { return air_viscosity; }
 std::string GlobalSettings::getGravity() { return gravity; }
-std::string GlobalSettings::getTanks_Fall() { return tanks_fall; }
+std::string GlobalSettings::getTanksFall() { return tanks_fall; }
 std::string GlobalSettings::getHillyness() { return hillyness; }
-std::string GlobalSettings::getHill_Height() { return hill_height; }
-std::string GlobalSettings::getHill_Girth() { return hill_girth; }
+std::string GlobalSettings::getHillHeight() { return hill_height; }
+std::string GlobalSettings::getHillGirth() { return hill_girth; }
 std::string GlobalSettings::getTeams() { return teams; }
-std::string GlobalSettings::getStatus_bar() { return status_bar; }
-std::string GlobalSettings::getPlay_Order() { return play_order; }
-std::string GlobalSettings::getFast_Computers() { return fast_computers; }
-std::string GlobalSettings::getTalking_Tanks() { return talking_tanks; }
-std::string GlobalSettings::getTalk_Probability() { return talk_probability; }
-std::string GlobalSettings::getArms_Level() { return arms_level; }
-std::string GlobalSettings::getBomb_Icon() { return bomb_icon; }
+std::string GlobalSettings::getStatusBar() { return status_bar; }
+std::string GlobalSettings::getPlayOrder() { return play_order; }
+std::string GlobalSettings::getFastComputers() { return fast_computers; }
+std::string GlobalSettings::getTalkingTanks() { return talking_tanks; }
+std::string GlobalSettings::getTalkProbability() { return talk_probability; }
+std::string GlobalSettings::getArmsLevel() { return arms_level; }
+std::string GlobalSettings::getBombIcon() { return bomb_icon; }
 std::string GlobalSettings::getTunneling() { return tunneling; }
 std::string GlobalSettings::getScale() { return scale; }
-std::string GlobalSettings::getTrace_Path() { return trace_path; }
-int GlobalSettings::getPlayer_Count() { return player_count; }
-int GlobalSettings::getRound_Count() { return round_count; }
+std::string GlobalSettings::getTracePath() { return trace_path; }
+int GlobalSettings::getPlayerCount() { return player_count; }
+int GlobalSettings::getRoundCount() { return round_count; }
 void GlobalSettings::setCurrentTerrain(TerrainMaker* new_terrain) {
-    currentTerrain = new_terrain;
+    current_terrain = new_terrain;
 }
-TerrainMaker* GlobalSettings::getCurrentTerrain() { return currentTerrain; }
+TerrainMaker* GlobalSettings::getCurrentTerrain() { return current_terrain; }

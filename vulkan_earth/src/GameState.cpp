@@ -48,56 +48,56 @@ GameState::GameState(int width,
                      PlayerFactory* player_factory,
                      GlobalSettings* global_settings,
                      int* current_game_state) {
-    SCALE_GRAVITY = 30;
-    BALISTIC_SCALAR = 50;
-    gravity = -9.8 * SCALE_GRAVITY;
+    scale_gravity = 30;
+    balistic_scalar = 50;
+    gravity = -9.8 * scale_gravity;
 
     this->timer = 0;
 
-    this->currentGameState = current_game_state;
-    needHelp = false;
-    startMusicPlayed = false;
-    prevMusicVolume = 0;
-    specialEffectTimer = 0;
-    radiusOfCurrentExplosion = 0;
-    specialEffectType = 0;
+    this->current_game_state = current_game_state;
+    need_help = false;
+    start_music_played = false;
+    prev_music_volume = 0;
+    special_effect_timer = 0;
+    radius_of_current_explosion = 0;
+    special_effect_type = 0;
     special_effects = nullptr;
-    drawHitBox = false;
+    draw_hit_box = false;
 
     for (int x = 0; x < 256; x++) {
-        keyMonitor[x] = 0;
+        key_monitor[x] = 0;
     }
 
-    selectedWeaponImg = nullptr;
-    selectedWeaponRemain = nullptr;
-    weaponSlot = new ImageObject(0,
-                                 0,
-                                 2,
-                                 width * 0.08,
-                                 height * 0.11,
-                                 0,
-                                 1024,
-                                 1024,
-                                 "TestImage.raw");
+    selected_weapon_img = nullptr;
+    selected_weapon_remain = nullptr;
+    weapon_slot = new ImageObject(0,
+                                  0,
+                                  2,
+                                  width * 0.08,
+                                  height * 0.11,
+                                  0,
+                                  1024,
+                                  1024,
+                                  "TestImage.raw");
     srand(time(nullptr));
     this->player_factory = player_factory;
     this->global_settings = global_settings;
     this->width = width;
     this->height = height;
-    playerCam = false;
-    chaseCamActive = false;
+    player_cam = false;
+    chase_cam_active = false;
     projectile = nullptr;
-    worldCam = new WorldCam(
+    world_cam = new WorldCam(
             0,
             20000,
             this->global_settings->getCurrentTerrain()->getActualSize() / 2);
 
-    gameSubState = PASS_TIME;
-    currentPlayerIndex = 0;
-    currentPlayer = player_factory->getPlayer(currentPlayerIndex);
+    game_sub_state = PASS_TIME;
+    current_player_index = 0;
+    current_player = player_factory->getPlayer(current_player_index);
 
     // PLACE TANKS
-    for (int i = 0; i < global_settings->getPlayer_Count(); i++) {
+    for (int i = 0; i < global_settings->getPlayerCount(); i++) {
         float x, y, z;
         int size = static_cast<int>(
                 global_settings->getCurrentTerrain()->getActualSize());
@@ -123,7 +123,7 @@ GameState::GameState(int width,
                                                               x * scale);
         player_factory->getPlayer(i)->getCurrentTank()->setTankPos(
                 x * scale, y, z * scale);
-        numberOfPlayers = global_settings->getPlayer_Count();
+        number_of_players = global_settings->getPlayerCount();
     }
 
     //*
@@ -150,23 +150,23 @@ GameState::GameState(int width,
     /************************************************************************************/
 
     offset = this->global_settings->getCurrentTerrain()->getActualSize() / 2.0;
-    cameraX = 4000;
-    cameraY = 15000;
-    cameraZ = 4000;
+    camera_x = 4000;
+    camera_y = 15000;
+    camera_z = 4000;
     //
-    camera_radius = sqrt((pow(static_cast<double>(cameraX - offset), 2.0)) +
-                         (pow(static_cast<double>(cameraY), 2.0)) +
-                         (pow(static_cast<double>(cameraZ - offset), 2.0)));
-    plane_radius = sqrt((pow(static_cast<double>(cameraX - offset), 2.0)) +
-                        (pow(static_cast<double>(cameraZ - offset), 2.0)));
-    currentTankTheta = 0.0;
-    currentWorldTheta = 0.0;
-    currentTankPhi =
+    camera_radius = sqrt((pow(static_cast<double>(camera_x - offset), 2.0)) +
+                         (pow(static_cast<double>(camera_y), 2.0)) +
+                         (pow(static_cast<double>(camera_z - offset), 2.0)));
+    plane_radius = sqrt((pow(static_cast<double>(camera_x - offset), 2.0)) +
+                        (pow(static_cast<double>(camera_z - offset), 2.0)));
+    current_tank_theta = 0.0;
+    current_world_theta = 0.0;
+    current_tank_phi =
             45.0;  // NOTE THIS NEEDS TO BE UPDATED TO FIRST PLAYERS ANGLE
 
     skybox_factory = new SkyboxFactory(2048);
     ocean = new Water(400, 512);
-    sfxRandom = 0;
+    sfx_random = 0;
     projectile_fired = false;
 
     inventory = new Inventory(
@@ -175,59 +175,59 @@ GameState::GameState(int width,
     // Creating models for projectile.
     // IMPORTANT: Be careful about the order. It should match with the order in
     // that the weapons are created in the ShopMenu constructor
-    if (!(VBOShaderLibrary::InitGlew())) {
+    if (!(VBOShaderLibrary::initGlew())) {
         exit(1);
-    } else if (!(VBOShaderLibrary::AreVBOsSupported())) {
+    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
         exit(1);
     }
-    for (int i = 0; i < MAX_PROJECTILE_MODELS; i++) {
-        projectileModels[i] = new VBOShaderLibrary();
-        projectileModels[i]->getVBOPointerFunctions();
-        projectileModels[i]->loadShaders("VertexTank.vs", "FragmentTank.vs");
+    for (int i = 0; i < max_projectile_models; i++) {
+        projectile_models[i] = new VBOShaderLibrary();
+        projectile_models[i]->getVBOPointerFunctions();
+        projectile_models[i]->loadShaders("VertexTank.vs", "FragmentTank.vs");
     }
 
-    projectileModels[10]->loadClientData("Projectiles/projectileDefault.ogl");
-    projectileModels[10]->LoadTexture(
+    projectile_models[10]->loadClientData("Projectiles/projectileDefault.ogl");
+    projectile_models[10]->loadTexture(
             "Projectiles/projectileDefault.raw", 512, 512);
 
-    projectileModels[0]->loadClientData("Projectiles/projectileBFB.ogl");
-    projectileModels[0]->LoadTexture(
+    projectile_models[0]->loadClientData("Projectiles/projectileBFB.ogl");
+    projectile_models[0]->loadTexture(
             "Projectiles/projectileMFB.raw", 512, 512);
 
-    projectileModels[1]->loadClientData("Projectiles/projectileBFB.ogl");
-    projectileModels[1]->LoadTexture(
+    projectile_models[1]->loadClientData("Projectiles/projectileBFB.ogl");
+    projectile_models[1]->loadTexture(
             "Projectiles/projectileBFB.raw", 512, 512);
 
-    projectileModels[2]->loadClientData("Projectiles/projectileAcid.ogl");
-    projectileModels[2]->LoadTexture(
+    projectile_models[2]->loadClientData("Projectiles/projectileAcid.ogl");
+    projectile_models[2]->loadTexture(
             "Projectiles/projectileAcid.raw", 512, 512);
 
-    projectileModels[3]->loadClientData("Projectiles/projectileThor.ogl");
-    projectileModels[3]->LoadTexture(
+    projectile_models[3]->loadClientData("Projectiles/projectileThor.ogl");
+    projectile_models[3]->loadTexture(
             "Projectiles/projectileThor.raw", 512, 512);
 
-    projectileModels[4]->loadClientData("Projectiles/projectileEMP.ogl");
-    projectileModels[4]->LoadTexture(
+    projectile_models[4]->loadClientData("Projectiles/projectileEMP.ogl");
+    projectile_models[4]->loadTexture(
             "Projectiles/projectileEMP.raw", 512, 512);
 
-    projectileModels[5]->loadClientData("Projectiles/projectileDefault.ogl");
-    projectileModels[5]->LoadTexture(
+    projectile_models[5]->loadClientData("Projectiles/projectileDefault.ogl");
+    projectile_models[5]->loadTexture(
             "Projectiles/projectilePadlock.raw", 512, 512);
 
-    projectileModels[6]->loadClientData("Projectiles/projectileDefault.ogl");
-    projectileModels[6]->LoadTexture(
+    projectile_models[6]->loadClientData("Projectiles/projectileDefault.ogl");
+    projectile_models[6]->loadTexture(
             "Projectiles/projectileRevive.raw", 512, 512);
 
-    projectileModels[7]->loadClientData("Projectiles/projectileDefault.ogl");
-    projectileModels[7]->LoadTexture(
+    projectile_models[7]->loadClientData("Projectiles/projectileDefault.ogl");
+    projectile_models[7]->loadTexture(
             "Projectiles/projectileTeleport.raw", 512, 512);
 
-    projectileModels[8]->loadClientData("Projectiles/projectileDefault.ogl");
-    projectileModels[8]->LoadTexture(
+    projectile_models[8]->loadClientData("Projectiles/projectileDefault.ogl");
+    projectile_models[8]->loadTexture(
             "Projectiles/projectileAtom.raw", 512, 512);
 
-    projectileModels[9]->loadClientData("Projectiles/projectileNuke.ogl");
-    projectileModels[9]->LoadTexture(
+    projectile_models[9]->loadClientData("Projectiles/projectileNuke.ogl");
+    projectile_models[9]->loadTexture(
             "Projectiles/projectileNuke.raw", 512, 512);
 
     manual = new ImageObject(width * -0.175,
@@ -242,17 +242,17 @@ GameState::GameState(int width,
 
     /* AI VARIABLES	*/
     tank_reachable = new bool*[this->player_factory->getNumberofPlayers()];
-    tankList = new Tank**[this->player_factory->getNumberofPlayers()];
+    tank_list = new Tank**[this->player_factory->getNumberofPlayers()];
     distance_to_target =
             new GLfloat*[this->player_factory->getNumberofPlayers()];
     for (int i = 0; i < this->player_factory->getNumberofPlayers(); i++) {
-        tankList[i] = new Tank*[this->player_factory->getNumberofPlayers()];
+        tank_list[i] = new Tank*[this->player_factory->getNumberofPlayers()];
         distance_to_target[i] =
                 new GLfloat[this->player_factory->getNumberofPlayers()];
         tank_reachable[i] =
                 new bool[this->player_factory->getNumberofPlayers()];
         for (int j = 0; j < this->player_factory->getNumberofPlayers(); j++) {
-            tankList[i][j] =
+            tank_list[i][j] =
                     this->player_factory->getPlayer(j)->getCurrentTank();
             distance_to_target[i][j] = 1E+37;  // MAX FLOAT
             tank_reachable[i][j] = true;
@@ -276,13 +276,13 @@ GameState::~GameState() {
     Mix_HaltMusic();
     delete ocean;
     delete skybox_factory;
-    delete worldCam;
+    delete world_cam;
     delete inventory;
-    delete selectedWeaponImg;
-    delete selectedWeaponRemain;
-    delete weaponSlot;
-    for (int x = 0; x < MAX_PROJECTILE_MODELS; x++) {
-        delete projectileModels[x];
+    delete selected_weapon_img;
+    delete selected_weapon_remain;
+    delete weapon_slot;
+    for (int x = 0; x < max_projectile_models; x++) {
+        delete projectile_models[x];
     }
     delete manual;
     for (int i = 0; i < this->player_factory->getNumberofPlayers(); i++) {
@@ -290,9 +290,9 @@ GameState::~GameState() {
     }
     delete[] tank_reachable;
     for (int i = 0; i < this->player_factory->getNumberofPlayers(); i++) {
-        delete[] tankList[i];
+        delete[] tank_list[i];
     }
-    delete[] tankList;
+    delete[] tank_list;
     for (int i = 0; i < this->player_factory->getNumberofPlayers(); i++) {
         delete[] distance_to_target[i];
     }
@@ -300,34 +300,34 @@ GameState::~GameState() {
 }
 
 GLfloat GameState::calcDistanceBetweenVertices(Vertex* v0, Vertex* v1) {
-    return static_cast<GLfloat>(sqrt(pow((static_cast<double>(v0->coordX) -
-                                          static_cast<double>(v1->coordX)),
+    return static_cast<GLfloat>(sqrt(pow((static_cast<double>(v0->coord_x) -
+                                          static_cast<double>(v1->coord_x)),
                                          2.0) +
-                                     pow((static_cast<double>(v0->coordZ) -
-                                          static_cast<double>(v1->coordZ)),
+                                     pow((static_cast<double>(v0->coord_z) -
+                                          static_cast<double>(v1->coord_z)),
                                          2.0)));
 }
 
 void GameState::timerEvent(GLfloat timer) {}
 
-void GameState::NormalizeVector(Vector* v) {
-    GLfloat mag = sqrt(v->compoX * v->compoX + v->compoY * v->compoY +
-                       v->compoZ * v->compoZ);
+void GameState::normalizeVector(Vector* v) {
+    GLfloat mag = sqrt(v->compo_x * v->compo_x + v->compo_y * v->compo_y +
+                       v->compo_z * v->compo_z);
     if (mag != 0) {
-        v->compoX /= mag;
-        v->compoY /= mag;
-        v->compoZ /= mag;
+        v->compo_x /= mag;
+        v->compo_y /= mag;
+        v->compo_z /= mag;
     }
 }
 
 //!!!!!//
 GLfloat GameState::calcAngleBetweenVectors(Vector one, Vector two) {
-    NormalizeVector(&one);
-    NormalizeVector(&two);
+    normalizeVector(&one);
+    normalizeVector(&two);
     errno = 0;
     GLfloat tt = 3.141592653f;
-    GLfloat u[3] = {one.compoX, one.compoY, one.compoZ};
-    GLfloat v[3] = {two.compoX, two.compoY, two.compoZ};
+    GLfloat u[3] = {one.compo_x, one.compo_y, one.compo_z};
+    GLfloat v[3] = {two.compo_x, two.compo_y, two.compo_z};
     GLfloat angle =
             acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / tt);
     if (errno) {
@@ -341,62 +341,62 @@ void GameState::calcNormalVector(Vertex* v0,
                                  Vertex* v1,
                                  Vertex* v2,
                                  Normal* n) {
-    GLfloat u[3] = {(v1->coordX - v0->coordX),
-                    (v1->coordY / 100 - v0->coordY / 100),
-                    (v1->coordZ - v0->coordZ)};
-    GLfloat v[3] = {(v2->coordX - v0->coordX),
-                    (v2->coordY / 100 - v0->coordY / 100),
-                    (v2->coordZ - v0->coordZ)};
+    GLfloat u[3] = {(v1->coord_x - v0->coord_x),
+                    (v1->coord_y / 100 - v0->coord_y / 100),
+                    (v1->coord_z - v0->coord_z)};
+    GLfloat v[3] = {(v2->coord_x - v0->coord_x),
+                    (v2->coord_y / 100 - v0->coord_y / 100),
+                    (v2->coord_z - v0->coord_z)};
 
-    n->compoX = u[1] * v[2] - v[1] * u[2];
-    n->compoY = u[2] * v[0] - u[0] * v[2];
-    n->compoZ = u[0] * v[1] - v[0] * u[1];
+    n->compo_x = u[1] * v[2] - v[1] * u[2];
+    n->compo_y = u[2] * v[0] - u[0] * v[2];
+    n->compo_z = u[0] * v[1] - v[0] * u[1];
 
     GLfloat mag = static_cast<GLfloat>(
-            sqrt(pow(static_cast<double>(n->compoX), 2.0) +
-                 pow(static_cast<double>(n->compoY), 2.0) +
-                 pow(static_cast<double>(n->compoZ), 2.0)));
+            sqrt(pow(static_cast<double>(n->compo_x), 2.0) +
+                 pow(static_cast<double>(n->compo_y), 2.0) +
+                 pow(static_cast<double>(n->compo_z), 2.0)));
     if (mag != 0) {
-        n->compoX /= mag;
-        n->compoY /= mag;
-        n->compoZ /= mag;
+        n->compo_x /= mag;
+        n->compo_y /= mag;
+        n->compo_z /= mag;
     }
 }
 
 void GameState::update() {
     // Game logic
-    if (gameSubState == PLAYER_CONTROL) {
+    if (game_sub_state == PLAYER_CONTROL) {
         // QUICK FIX FOR TURRET
 
-        if (player_factory->getPlayer(currentPlayerIndex)->getCurrentWait() >
+        if (player_factory->getPlayer(current_player_index)->getCurrentWait() >
             0) {
-            gameSubState = PASS_TIME;
+            game_sub_state = PASS_TIME;
         }
 
-        if (currentPlayer->getPlayer_Type() == "CPU") {
+        if (current_player->getPlayerType() == "CPU") {
             handlePlayerControlUpdates();
-            if (currentPlayer->getCurrentTank()->isAlive()) {
+            if (current_player->getCurrentTank()->isAlive()) {
                 controlAI();
             } else {
-                cout << "Tank " << currentPlayerIndex << " is dead" << endl;
+                cout << "Tank " << current_player_index << " is dead" << endl;
             }
             updateWorldCam();
-        } else if (currentPlayer->getPlayer_Type() == "HUMAN") {
+        } else if (current_player->getPlayerType() == "HUMAN") {
             handlePlayerControlUpdates();
             updateWorldCam();
         }
     }
     // else
-    if (gameSubState == PASS_TIME) {
+    if (game_sub_state == PASS_TIME) {
         handlePassTime();
     }
 
     // projectile update/collision/special effect
-    if (gameSubState == PROJECTILE) {
+    if (game_sub_state == PROJECTILE) {
         handleProjectileState();
         updateWorldCam();
     }
-    if (gameSubState == SPECIAL_EFFECT) {
+    if (game_sub_state == SPECIAL_EFFECT) {
         handleSpecialEffectState();
     }
 }
@@ -405,17 +405,17 @@ void GameState::draw() {
     playBackgroundSounds();
     update();
 
-    if (gameSubState == PROJECTILE || gameSubState == SPECIAL_EFFECT) {
-        if (chaseCamActive) projectile->chaseView();
+    if (game_sub_state == PROJECTILE || game_sub_state == SPECIAL_EFFECT) {
+        if (chase_cam_active) projectile->chaseView();
     }
-    if (!chaseCamActive) {
-        if (!playerCam) {
-            worldCam->view();
+    if (!chase_cam_active) {
+        if (!player_cam) {
+            world_cam->view();
         } else {
             const GLfloat* turret_matrix =
-                    currentPlayer->getCurrentTank()->getTurretMatrix();
+                    current_player->getCurrentTank()->getTurretMatrix();
             const GLfloat* head_matrix =
-                    currentPlayer->getCurrentTank()->getHeadMatrix();
+                    current_player->getCurrentTank()->getHeadMatrix();
             gluLookAt(head_matrix[12] + head_matrix[8] * 4000,
                       head_matrix[13] + 2000,
                       head_matrix[14] + head_matrix[10] * 4000,
@@ -431,13 +431,13 @@ void GameState::draw() {
     this->global_settings->getCurrentTerrain()->draw();
     skybox_factory->draw();
 
-    if (currentPlayer->getPlayer_Type() == "CPU") {
-        if (currentPlayer->getDrawDebugLinesandPlanes()) {
-            currentPlayer->drawTestLinesandPlanes();
+    if (current_player->getPlayerType() == "CPU") {
+        if (current_player->getDrawDebugLinesandPlanes()) {
+            current_player->drawTestLinesandPlanes();
         }
     }
 
-    if (gameSubState != SPECIAL_EFFECT) {
+    if (game_sub_state != SPECIAL_EFFECT) {
         if (projectile) {
             projectile->draw();
         }
@@ -449,15 +449,15 @@ void GameState::draw() {
     glPopMatrix();
 
     // DRAW TANKS
-    glColor3f(player_factory->getPlayer(currentPlayerIndex)->getRed(),
-              player_factory->getPlayer(currentPlayerIndex)->getGreen(),
-              player_factory->getPlayer(currentPlayerIndex)->getBlue());
-    for (int i = 0; i < global_settings->getPlayer_Count(); i++) {
+    glColor3f(player_factory->getPlayer(current_player_index)->getRed(),
+              player_factory->getPlayer(current_player_index)->getGreen(),
+              player_factory->getPlayer(current_player_index)->getBlue());
+    for (int i = 0; i < global_settings->getPlayerCount(); i++) {
         if (this->player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationCloak() == 0) {
             this->player_factory->getPlayer(i)->getCurrentTank()->draw();
-            if (drawHitBox) {
+            if (draw_hit_box) {
                 this->player_factory->getPlayer(i)
                         ->getCurrentTank()
                         ->drawTankHitBox();
@@ -468,28 +468,28 @@ void GameState::draw() {
     // DRAW EXPLOSION/SPECIAL EFFECT
     // specialEffectsCount =
     // (int)(SPECIAL_EFFECT_TIME_LIMIT/TIME_DIVISORS);
-    if (gameSubState == SPECIAL_EFFECT) {
-        if (specialEffectType == EXPLOSION) {
-            for (int x = 0; x < specialEffectsCount; x++) {
-                if (specialEffectTimer > 0) {
+    if (game_sub_state == SPECIAL_EFFECT) {
+        if (special_effect_type == EXPLOSION) {
+            for (int x = 0; x < special_effects_count; x++) {
+                if (special_effect_timer > 0) {
                     special_effects[0]->draw();
                 }
-                if (specialEffectTimer > 10) {
+                if (special_effect_timer > 10) {
                     special_effects[1]->draw();
                 }
-                if (specialEffectTimer > 20) {
+                if (special_effect_timer > 20) {
                     special_effects[2]->draw();
                 }
             }
         }
     }
 
-    if (gameSubState == PLAYER_CONTROL) {
-        if (currentPlayer->getPlayer_Type() == "CPU") {
+    if (game_sub_state == PLAYER_CONTROL) {
+        if (current_player->getPlayerType() == "CPU") {
             const GLfloat* turret_matrix =
-                    currentPlayer->getCurrentTank()->getTurretMatrix();
+                    current_player->getCurrentTank()->getTurretMatrix();
             const GLfloat* body_matrix =
-                    currentPlayer->getCurrentTank()->getBodyMatrix();
+                    current_player->getCurrentTank()->getBodyMatrix();
             glLineWidth(1000);
             glBegin(GL_LINES);
             glVertex3f(
@@ -500,23 +500,23 @@ void GameState::draw() {
         }
     }
 
-    if (currentPlayer->getCurrentTank()->getDurationEMP() > 0) {
+    if (current_player->getCurrentTank()->getDurationEMP() > 0) {
         // the current player is in effect of EMP, so do not draw HUD and
         // minimap. He doesn't deserve them.
     } else {
         drawHUD();
         drawMinimap();
     }
-    if (gameSubState == INVENTORY) {
+    if (game_sub_state == INVENTORY) {
         inventory->draw();
-    } else if (gameSubState == HELP) {
+    } else if (game_sub_state == HELP) {
         drawHelp();
     }
 }
 
 void GameState::drawHUD() {
-    if (playerCam || chaseCamActive) {
-        worldCam->setShakeCam(0);
+    if (player_cam || chase_cam_active) {
+        world_cam->setShakeCam(0);
     }
     glPushMatrix();
     glDisable(GL_BLEND);
@@ -527,18 +527,18 @@ void GameState::drawHUD() {
     glTranslatef(0.0f, 0.0f, -800.0f);
 
     float new_x = GLUT_SCREEN_WIDTH / 2 +
-                  800 * tan(30 * PI / 180);  // this is wrong, change later
-    float new_y = GLUT_SCREEN_HEIGHT / 2 + 800 * tan(30 * PI / 180);
+                  800 * tan(30 * pi / 180);  // this is wrong, change later
+    float new_y = GLUT_SCREEN_HEIGHT / 2 + 800 * tan(30 * pi / 180);
 
     // Current Player Name
-    if (gameSubState == PLAYER_CONTROL) {
-        glColor3f(player_factory->getPlayer(currentPlayerIndex)->getRed(),
-                  player_factory->getPlayer(currentPlayerIndex)->getGreen(),
-                  player_factory->getPlayer(currentPlayerIndex)->getBlue());
-        drawHUDText(
-                player_factory->getPlayer(currentPlayerIndex)->getPlayerName(),
-                0,
-                0.75 * new_y);
+    if (game_sub_state == PLAYER_CONTROL) {
+        glColor3f(player_factory->getPlayer(current_player_index)->getRed(),
+                  player_factory->getPlayer(current_player_index)->getGreen(),
+                  player_factory->getPlayer(current_player_index)->getBlue());
+        drawHUDText(player_factory->getPlayer(current_player_index)
+                            ->getPlayerName(),
+                    0,
+                    0.75 * new_y);
     }
 
     // List of Players and health/delay/team
@@ -589,9 +589,9 @@ void GameState::drawHUD() {
     }
 
     // Power Output
-    if (gameSubState == PLAYER_CONTROL) {
+    if (game_sub_state == PLAYER_CONTROL) {
         // Text
-        GLfloat power_ratio = player_factory->getPlayer(currentPlayerIndex)
+        GLfloat power_ratio = player_factory->getPlayer(current_player_index)
                                       ->getCurrentTank()
                                       ->getCurrentPower() /
                               10.0;
@@ -611,7 +611,7 @@ void GameState::drawHUD() {
         drawHUDText("Power:", 0.7 * new_x, -0.65 * new_y);
         drawHUDText((sprintf(buffer1,
                              "%d",
-                             player_factory->getPlayer(currentPlayerIndex)
+                             player_factory->getPlayer(current_player_index)
                                      ->getCurrentTank()
                                      ->getPreviousPower()),
                      buffer1),
@@ -623,17 +623,17 @@ void GameState::drawHUD() {
         memset(buffer2, 0, 128);
         glColor3f(1, 1, 1);
         drawHUDText("Angle:", 0.7 * new_x, -0.8 * new_y);
-        drawHUDText(
-                (sprintf(buffer2,
-                         "%d",
-                         static_cast<int>(
-                                 player_factory->getPlayer(currentPlayerIndex)
-                                         ->getCurrentTank()
-                                         ->getTurretDegrees() +
-                                 1)),
-                 buffer2),
-                0.95 * new_x,
-                -0.8 * new_y);
+        drawHUDText((sprintf(buffer2,
+                             "%d",
+                             static_cast<int>(
+                                     player_factory
+                                             ->getPlayer(current_player_index)
+                                             ->getCurrentTank()
+                                             ->getTurretDegrees() +
+                                     1)),
+                     buffer2),
+                    0.95 * new_x,
+                    -0.8 * new_y);
         // show previous angle
         char buffer3[128];
         memset(buffer3, 0, 128);
@@ -641,7 +641,7 @@ void GameState::drawHUD() {
         drawHUDText("Angle:", 0.7 * new_x, -0.75 * new_y);
         drawHUDText((sprintf(buffer3,
                              "%d",
-                             player_factory->getPlayer(currentPlayerIndex)
+                             player_factory->getPlayer(current_player_index)
                                      ->getCurrentTank()
                                      ->getPreviousAngle()),
                      buffer3),
@@ -649,23 +649,23 @@ void GameState::drawHUD() {
                     -0.75 * new_y);
 
         // Show Weapon Slot
-        weaponSlot->setXpos(-new_x * 0.7);
-        weaponSlot->setYpos(-0.6 * new_y);
-        weaponSlot->setZpos(2);
-        weaponSlot->draw();
-        if (currentPlayer->getLoadedWeapon() != nullptr) {
-            selectedWeaponImg->setXpos(weaponSlot->getXpos() * 0.965);
-            selectedWeaponImg->setYpos(weaponSlot->getYpos() * 0.985);
-            selectedWeaponImg->setZpos(20);
-            selectedWeaponRemain->setXpos(weaponSlot->getXpos() * 0.965);
-            selectedWeaponRemain->setYpos(weaponSlot->getYpos() * 1.3);
-            selectedWeaponRemain->setZpos(22);
-            selectedWeaponImg->draw();
-            selectedWeaponRemain->draw();
+        weapon_slot->setXpos(-new_x * 0.7);
+        weapon_slot->setYpos(-0.6 * new_y);
+        weapon_slot->setZpos(2);
+        weapon_slot->draw();
+        if (current_player->getLoadedWeapon() != nullptr) {
+            selected_weapon_img->setXpos(weapon_slot->getXpos() * 0.965);
+            selected_weapon_img->setYpos(weapon_slot->getYpos() * 0.985);
+            selected_weapon_img->setZpos(20);
+            selected_weapon_remain->setXpos(weapon_slot->getXpos() * 0.965);
+            selected_weapon_remain->setYpos(weapon_slot->getYpos() * 1.3);
+            selected_weapon_remain->setZpos(22);
+            selected_weapon_img->draw();
+            selected_weapon_remain->draw();
         }
 
         // Display Need Help?
-        if (needHelp) {
+        if (need_help) {
             glColor3f(1, 1, 0);
             drawHUDText("Press F1 for help", -1.3 * new_x, -0.5 * new_y);
         }
@@ -715,11 +715,11 @@ void GameState::drawHUD() {
         // Graphic meter: Health
         GLfloat health_ratio =
                 static_cast<float>(
-                        player_factory->getPlayer(currentPlayerIndex)
+                        player_factory->getPlayer(current_player_index)
                                 ->getCurrentTank()
                                 ->getHP()) /
                 static_cast<float>(
-                        player_factory->getPlayer(currentPlayerIndex)
+                        player_factory->getPlayer(current_player_index)
                                 ->getCurrentTank()
                                 ->getArmor() *
                         100);
@@ -782,60 +782,64 @@ void GameState::drawHUDText(const std::string& input, GLfloat x, GLfloat y) {
 }
 
 void GameState::updateMouse(int x, int y) {
-    if (playerCam) {
+    if (player_cam) {
         float t_height =
                 this->global_settings->getCurrentTerrain()->getHeightAt(
-                        currentPlayer->getCurrentTank()->getHeadMatrix()[12] -
-                                50 * currentPlayer->getCurrentTank()
+                        current_player->getCurrentTank()->getHeadMatrix()[12] -
+                                50 * current_player->getCurrentTank()
                                                 ->getHeadMatrix()[8],
-                        currentPlayer->getCurrentTank()->getHeadMatrix()[14] -
-                                50 * currentPlayer->getCurrentTank()
+                        current_player->getCurrentTank()->getHeadMatrix()[14] -
+                                50 * current_player->getCurrentTank()
                                                 ->getHeadMatrix()[10]);
         float tank_radius = 400.0f;
 
-        if (y < oldMouseY) {
-            cameraY -= 10;
-        } else if (y > oldMouseY) {
-            cameraY += 10;
+        if (y < old_mouse_y) {
+            camera_y -= 10;
+        } else if (y > old_mouse_y) {
+            camera_y += 10;
         }
 
     } else {
-        if (currentWorldTheta >= 360.0) {
-            currentWorldTheta -= 360.0;
-        } else if (currentWorldTheta < 0.0) {
-            currentWorldTheta += 360.0;
+        if (current_world_theta >= 360.0) {
+            current_world_theta -= 360.0;
+        } else if (current_world_theta < 0.0) {
+            current_world_theta += 360.0;
         }
-        if (x < oldMouseX) {
-            currentWorldTheta -= 1.0;
-            cameraX = (plane_radius) * (cos(currentWorldTheta * (PI / 180))) +
-                      offset;
-            cameraZ = (plane_radius) * (sin(currentWorldTheta * (PI / 180))) +
-                      offset;
-        } else if (x > oldMouseX) {
-            currentWorldTheta += 1.0;
-            cameraX = (plane_radius) * (cos(currentWorldTheta * (PI / 180))) +
-                      offset;
-            cameraZ = (plane_radius) * (sin(currentWorldTheta * (PI / 180))) +
-                      offset;
+        if (x < old_mouse_x) {
+            current_world_theta -= 1.0;
+            camera_x =
+                    (plane_radius) * (cos(current_world_theta * (pi / 180))) +
+                    offset;
+            camera_z =
+                    (plane_radius) * (sin(current_world_theta * (pi / 180))) +
+                    offset;
+        } else if (x > old_mouse_x) {
+            current_world_theta += 1.0;
+            camera_x =
+                    (plane_radius) * (cos(current_world_theta * (pi / 180))) +
+                    offset;
+            camera_z =
+                    (plane_radius) * (sin(current_world_theta * (pi / 180))) +
+                    offset;
         }
     }
-    oldMouseX = x;
-    oldMouseY = y;
+    old_mouse_x = x;
+    old_mouse_y = y;
 }
 
 void GameState::useTurn() {
-    gameSubState = PLAYER_CONTROL;
-    if (currentPlayer->getCurrentTank()->getDurationDoubleAction() == 0) {
-        currentPlayer->getCurrentTank()->setDurationAllPassTurn();
-        currentPlayer->setCurrentWait(
-                150 - currentPlayer->getCurrentTank()->getBaseSpeed());
+    game_sub_state = PLAYER_CONTROL;
+    if (current_player->getCurrentTank()->getDurationDoubleAction() == 0) {
+        current_player->getCurrentTank()->setDurationAllPassTurn();
+        current_player->setCurrentWait(
+                150 - current_player->getCurrentTank()->getBaseSpeed());
     } else {
-        currentPlayer->getCurrentTank()->setDurationDoubleAction(
-                currentPlayer->getCurrentTank()->getDurationDoubleAction() -
+        current_player->getCurrentTank()->setDurationDoubleAction(
+                current_player->getCurrentTank()->getDurationDoubleAction() -
                 1);
     }
 
-    if (playerCam) {
+    if (player_cam) {
         toggleCamera();
     }
 }
@@ -877,27 +881,28 @@ int GameState::getWinner() {
 }
 
 void GameState::toggleCamera() {
-    if (gameSubState == PROJECTILE) {
-        if (chaseCamActive) {
-            chaseCamActive = false;
+    if (game_sub_state == PROJECTILE) {
+        if (chase_cam_active) {
+            chase_cam_active = false;
             Mix_HaltChannel(1);
-            playerCam = false;
+            player_cam = false;
         } else {
-            chaseCamActive = true;
+            chase_cam_active = true;
             Mix_HaltChannel(1);
             playSFX(BOMB_FLY);
-            playerCam = false;
+            player_cam = false;
         }
-    } else if (playerCam) {
-        currentTankTheta = 0.0f;
-        playerCam = false;
+    } else if (player_cam) {
+        current_tank_theta = 0.0f;
+        player_cam = false;
     } else {
-        playerCam = true;
-        cameraX = currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                  currentPlayer->getCurrentTank()->getHeadMatrix()[8] * 1000;
-        cameraY = currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 350;
-        cameraZ = currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                  currentPlayer->getCurrentTank()->getHeadMatrix()[10] * 1000;
+        player_cam = true;
+        camera_x = current_player->getCurrentTank()->getHeadMatrix()[12] +
+                   current_player->getCurrentTank()->getHeadMatrix()[8] * 1000;
+        camera_y = current_player->getCurrentTank()->getHeadMatrix()[13] + 350;
+        camera_z =
+                current_player->getCurrentTank()->getHeadMatrix()[14] +
+                current_player->getCurrentTank()->getHeadMatrix()[10] * 1000;
     }
 }
 
@@ -905,50 +910,50 @@ void GameState::debugMode() {
     /*THIS IS DEBUG TEXT REMOVE LATER THIS JUST HELPS TO SEE IF TANKS ARE
      * ORIENTED CORRECTLY*/
     //*
-    Normal n = currentPlayer->getCurrentTank()->getAlignmentVector();
+    Normal n = current_player->getCurrentTank()->getAlignmentVector();
     glColor3f(0.00, 0.50, 0.50);
     glBegin(GL_LINES);
-    glVertex3f(currentPlayer->getCurrentTank()->getHeadMatrix()[12],
-               currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 100,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[14]);
-    glVertex3f(currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                       800 * n.compoX,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 100 +
-                       800 * n.compoY,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                       800 * n.compoZ);
+    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12],
+               current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
+               current_player->getCurrentTank()->getHeadMatrix()[14]);
+    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12] +
+                       800 * n.compo_x,
+               current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
+                       800 * n.compo_y,
+               current_player->getCurrentTank()->getHeadMatrix()[14] +
+                       800 * n.compo_z);
     glEnd();
     //*/
     //*/
     glColor3f(0.00, 0.00, 1.00);
     glBegin(GL_LINES);
-    glVertex3f(currentPlayer->getCurrentTank()->getHeadMatrix()[12],
-               currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 100,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[14]);
-    glVertex3f(currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                       1000 * (currentPlayer->getCurrentTank()
+    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12],
+               current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
+               current_player->getCurrentTank()->getHeadMatrix()[14]);
+    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12] +
+                       1000 * (current_player->getCurrentTank()
                                        ->getHeadMatrix()[4]),
-               currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 100 +
-                       1000 * (currentPlayer->getCurrentTank()
+               current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
+                       1000 * (current_player->getCurrentTank()
                                        ->getHeadMatrix()[5]),
-               currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                       1000 * (currentPlayer->getCurrentTank()
+               current_player->getCurrentTank()->getHeadMatrix()[14] +
+                       1000 * (current_player->getCurrentTank()
                                        ->getHeadMatrix()[6]));
     glEnd();
     //*/
     //*/
-    Normal m = currentPlayer->getCurrentTank()->getRotateAbout();
+    Normal m = current_player->getCurrentTank()->getRotateAbout();
     glColor3f(0.75, 0.50, 0.50);
     glBegin(GL_LINES);
-    glVertex3f(currentPlayer->getCurrentTank()->getHeadMatrix()[12],
-               currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 100,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[14]);
-    glVertex3f(currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                       1000 * m.compoX,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 100 +
-                       1000 * m.compoY,
-               currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                       1000 * m.compoZ);
+    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12],
+               current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
+               current_player->getCurrentTank()->getHeadMatrix()[14]);
+    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12] +
+                       1000 * m.compo_x,
+               current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
+                       1000 * m.compo_y,
+               current_player->getCurrentTank()->getHeadMatrix()[14] +
+                       1000 * m.compo_z);
     glEnd();
     //*/
     /*END OF TANK ORIENTATION DEBUGGING*/
@@ -1071,67 +1076,67 @@ void GameState::drawMinimap() {
     }
     // Draw Current Player Tank's Aiming Line
     glBegin(GL_QUADS);
-    glColor4f(player_factory->collectPlayerColor(currentPlayerIndex)[0],
-              player_factory->collectPlayerColor(currentPlayerIndex)[1],
-              player_factory->collectPlayerColor(currentPlayerIndex)[2],
+    glColor4f(player_factory->collectPlayerColor(current_player_index)[0],
+              player_factory->collectPlayerColor(current_player_index)[1],
+              player_factory->collectPlayerColor(current_player_index)[2],
               0.50);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[0] * 60,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[2] * 60);
+            current_player->getCurrentTank()->getHeadMatrix()[12] +
+                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
+            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+            current_player->getCurrentTank()->getHeadMatrix()[14] +
+                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[0] * 60 -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[8] *
+            current_player->getCurrentTank()->getHeadMatrix()[12] +
+                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
+                    current_player->getCurrentTank()->getHeadMatrix()[8] *
                             24000,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[2] * 60 -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[10] *
+            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+            current_player->getCurrentTank()->getHeadMatrix()[14] +
+                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
+                    current_player->getCurrentTank()->getHeadMatrix()[10] *
                             24000);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getHeadMatrix()[12] -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[0] * 60 -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[8] *
+            current_player->getCurrentTank()->getHeadMatrix()[12] -
+                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
+                    current_player->getCurrentTank()->getHeadMatrix()[8] *
                             24000,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[14] -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[2] * 60 -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[10] *
+            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+            current_player->getCurrentTank()->getHeadMatrix()[14] -
+                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
+                    current_player->getCurrentTank()->getHeadMatrix()[10] *
                             24000);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getHeadMatrix()[12] -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[0] * 60,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            currentPlayer->getCurrentTank()->getHeadMatrix()[14] -
-                    currentPlayer->getCurrentTank()->getHeadMatrix()[2] * 60);
+            current_player->getCurrentTank()->getHeadMatrix()[12] -
+                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
+            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+            current_player->getCurrentTank()->getHeadMatrix()[14] -
+                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60);
     glEnd();
 
     // Draw Lines of Sight of World Camera
-    if (!playerCam && !chaseCamActive) {
+    if (!player_cam && !chase_cam_active) {
         glBegin(GL_LINE_LOOP);
         glColor4f(1, 1, 1, 0.8);
         glVertex3f(
-                worldCam->getMatrix()[12] - worldCam->getMatrix()[13] * 0.38,
+                world_cam->getMatrix()[12] - world_cam->getMatrix()[13] * 0.38,
                 10000,
-                worldCam->getMatrix()[14] + worldCam->getMatrix()[13] -
+                world_cam->getMatrix()[14] + world_cam->getMatrix()[13] -
                         15000 / width);
         glVertex3f(
-                worldCam->getMatrix()[12] - worldCam->getMatrix()[13] * 0.38,
+                world_cam->getMatrix()[12] - world_cam->getMatrix()[13] * 0.38,
                 10000,
-                worldCam->getMatrix()[14] - worldCam->getMatrix()[13] +
+                world_cam->getMatrix()[14] - world_cam->getMatrix()[13] +
                         15000 / width);
         glVertex3f(
-                worldCam->getMatrix()[12] + worldCam->getMatrix()[13] * 0.82,
+                world_cam->getMatrix()[12] + world_cam->getMatrix()[13] * 0.82,
                 10000,
-                worldCam->getMatrix()[14] - worldCam->getMatrix()[13] +
+                world_cam->getMatrix()[14] - world_cam->getMatrix()[13] +
                         15000 / width - 1350);
         glVertex3f(
-                worldCam->getMatrix()[12] + worldCam->getMatrix()[13] * 0.82,
+                world_cam->getMatrix()[12] + world_cam->getMatrix()[13] * 0.82,
                 10000,
-                worldCam->getMatrix()[14] + worldCam->getMatrix()[13] -
+                world_cam->getMatrix()[14] + world_cam->getMatrix()[13] -
                         15000 / width + 1350);
         glEnd();
     }
@@ -1157,30 +1162,30 @@ void GameState::drawMinimap() {
 
     // Draw Projectile Land Mark
     glBegin(GL_LINES);
-    glColor3f(player_factory->collectPlayerColor(currentPlayerIndex)[0],
-              player_factory->collectPlayerColor(currentPlayerIndex)[1],
-              player_factory->collectPlayerColor(currentPlayerIndex)[2]);
+    glColor3f(player_factory->collectPlayerColor(current_player_index)[0],
+              player_factory->collectPlayerColor(current_player_index)[1],
+              player_factory->collectPlayerColor(current_player_index)[2]);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[0] - 900,
+            current_player->getCurrentTank()->getProjectileLandPos()[0] - 900,
             10000,
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[1] - 900);
+            current_player->getCurrentTank()->getProjectileLandPos()[1] - 900);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[0] + 900,
+            current_player->getCurrentTank()->getProjectileLandPos()[0] + 900,
             10000,
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[1] + 900);
+            current_player->getCurrentTank()->getProjectileLandPos()[1] + 900);
     glEnd();
     glBegin(GL_LINES);
-    glColor3f(player_factory->collectPlayerColor(currentPlayerIndex)[0],
-              player_factory->collectPlayerColor(currentPlayerIndex)[1],
-              player_factory->collectPlayerColor(currentPlayerIndex)[2]);
+    glColor3f(player_factory->collectPlayerColor(current_player_index)[0],
+              player_factory->collectPlayerColor(current_player_index)[1],
+              player_factory->collectPlayerColor(current_player_index)[2]);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[0] + 900,
+            current_player->getCurrentTank()->getProjectileLandPos()[0] + 900,
             10000,
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[1] - 900);
+            current_player->getCurrentTank()->getProjectileLandPos()[1] - 900);
     glVertex3f(
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[0] - 900,
+            current_player->getCurrentTank()->getProjectileLandPos()[0] - 900,
             10000,
-            currentPlayer->getCurrentTank()->getProjectileLandPos()[1] + 900);
+            current_player->getCurrentTank()->getProjectileLandPos()[1] + 900);
     glEnd();
 
     int win_width = glutGet(GLUT_WINDOW_WIDTH);
@@ -1201,111 +1206,111 @@ void GameState::drawMinimap() {
 }
 
 void GameState::playBackgroundSounds() {
-    if (this->global_settings->getHill_Girth() == "Rock") {
-        sfxRandom = rand() % 3000;  // set the frequency of the wave sound
-        if (sfxRandom == 0)
+    if (this->global_settings->getHillGirth() == "Rock") {
+        sfx_random = rand() % 3000;  // set the frequency of the wave sound
+        if (sfx_random == 0)
             playSFX(WAVE1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(WAVE2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(WAVE3);
         else
             playSFX(WAVE1);
-        sfxRandom = (rand() * 9) % 5000;
-        if (sfxRandom == 0)
+        sfx_random = (rand() * 9) % 5000;
+        if (sfx_random == 0)
             playSFX(SEAGULLS1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(SEAGULLS2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(SEAGULLS3);
-        else if (sfxRandom == 3)
+        else if (sfx_random == 3)
             playSFX(SEAGULLS4);
-        else if (sfxRandom == 4)
+        else if (sfx_random == 4)
             playSFX(SEAGULLS5);
 
-        playMusic(GAMESTATE_ROCK);
-    } else if (this->global_settings->getHill_Girth() == "Snow") {
-        sfxRandom = rand() % 3000;  // set the frequency of the wave sound
-        if (sfxRandom == 0)
+        playMusic(gamestate_rock);
+    } else if (this->global_settings->getHillGirth() == "Snow") {
+        sfx_random = rand() % 3000;  // set the frequency of the wave sound
+        if (sfx_random == 0)
             playSFX(WAVE1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(WAVE2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(WAVE3);
         else
             playSFX(WAVE1);
-        sfxRandom = (rand() * 9) % 5000;
-        if (sfxRandom == 0)
+        sfx_random = (rand() * 9) % 5000;
+        if (sfx_random == 0)
             playSFX(SEAGULLS1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(SEAGULLS2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(SEAGULLS3);
-        else if (sfxRandom == 3)
+        else if (sfx_random == 3)
             playSFX(SEAGULLS4);
-        else if (sfxRandom == 4)
+        else if (sfx_random == 4)
             playSFX(SEAGULLS5);
 
-        playMusic(GAMESTATE_SNOW);
-    } else if (this->global_settings->getHill_Girth() == "Ice") {
-        sfxRandom = rand() % 3000;  // set the frequency of the wave sound
-        if (sfxRandom == 0)
+        playMusic(gamestate_snow);
+    } else if (this->global_settings->getHillGirth() == "Ice") {
+        sfx_random = rand() % 3000;  // set the frequency of the wave sound
+        if (sfx_random == 0)
             playSFX(WAVE1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(WAVE2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(WAVE3);
         else
             playSFX(WAVE1);
 
-        playMusic(GAMESTATE_ICE);
-    } else if (this->global_settings->getHill_Girth() == "Desert") {
-        sfxRandom = rand() % 3000;  // set the frequency of the wave sound
-        if (sfxRandom == 0)
+        playMusic(gamestate_ice);
+    } else if (this->global_settings->getHillGirth() == "Desert") {
+        sfx_random = rand() % 3000;  // set the frequency of the wave sound
+        if (sfx_random == 0)
             playSFX(WAVE1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(WAVE2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(WAVE3);
         else
             playSFX(WAVE1);
-        sfxRandom = (rand() * 9) % 5000;
-        if (sfxRandom == 0)
+        sfx_random = (rand() * 9) % 5000;
+        if (sfx_random == 0)
             playSFX(SEAGULLS1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(SEAGULLS2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(SEAGULLS3);
-        else if (sfxRandom == 3)
+        else if (sfx_random == 3)
             playSFX(SEAGULLS4);
-        else if (sfxRandom == 4)
+        else if (sfx_random == 4)
             playSFX(SEAGULLS5);
 
-        if (atoi(this->global_settings->getHill_Height().c_str()) < 2 &&
+        if (atoi(this->global_settings->getHillHeight().c_str()) < 2 &&
             atoi(this->global_settings->getHillyness().c_str()) > 4) {
-            if (!startMusicPlayed) {
-                playMusic(GAMESTATE_BEACH_START);
-                startMusicPlayed = true;
+            if (!start_music_played) {
+                playMusic(gamestate_beach_start);
+                start_music_played = true;
             } else {
-                playMusic(GAMESTATE_BEACH_LOOP);
+                playMusic(gamestate_beach_loop);
             }
         } else {
-            playMusic(GAMESTATE_DESERT);
+            playMusic(gamestate_desert);
         }
-    } else if (this->global_settings->getHill_Girth() == "Mars") {
-        sfxRandom = rand() % 3000;  // set the frequency of the wave sound
-        if (sfxRandom == 0)
+    } else if (this->global_settings->getHillGirth() == "Mars") {
+        sfx_random = rand() % 3000;  // set the frequency of the wave sound
+        if (sfx_random == 0)
             playSFX(WAVE1);
-        else if (sfxRandom == 1)
+        else if (sfx_random == 1)
             playSFX(WAVE2);
-        else if (sfxRandom == 2)
+        else if (sfx_random == 2)
             playSFX(WAVE3);
         else
             playSFX(WAVE1);
 
-        playMusic(GAMESTATE_MARS);
-    } else if (this->global_settings->getHill_Girth() == "Lava") {
-        playMusic(GAMESTATE_LAVA);
+        playMusic(gamestate_mars);
+    } else if (this->global_settings->getHillGirth() == "Lava") {
+        playMusic(gamestate_lava);
     }
 }
 
@@ -1349,91 +1354,93 @@ void GameState::drawHelp() {
 }
 
 void GameState::handlePlayerControlUpdates() {
-    if (keyMonitor[1]) {
+    if (key_monitor[1]) {
         playSFX(TANK_CONTROL2);
-        if (currentPlayer->getPlayer_Type() == "CPU") {
-            currentPlayer->updateBalsticMatrix();
-            currentPlayer->setUpYawVectors();
+        if (current_player->getPlayerType() == "CPU") {
+            current_player->updateBalsticMatrix();
+            current_player->setUpYawVectors();
         }
-        this->player_factory->getPlayer(currentPlayerIndex)
+        this->player_factory->getPlayer(current_player_index)
                 ->getCurrentTank()
-                ->rotateHead(-0.1 - 0.4 * keyMonitor[1] / 50);
-        if (currentPlayer->getCurrentTank()->getName() == "Rhinoxx" ||
-            currentPlayer->getCurrentTank()->getName() == "HeavyD") {
-            currentPlayer->getCurrentTank()->rotateWheel(-.1);
+                ->rotateHead(-0.1 - 0.4 * key_monitor[1] / 50);
+        if (current_player->getCurrentTank()->getName() == "Rhinoxx" ||
+            current_player->getCurrentTank()->getName() == "HeavyD") {
+            current_player->getCurrentTank()->rotateWheel(-.1);
         }
-        cameraX = currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                  currentPlayer->getCurrentTank()->getHeadMatrix()[8] * 1000;
-        cameraZ = currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                  currentPlayer->getCurrentTank()->getHeadMatrix()[10] * 1000;
-    } else if (keyMonitor[3]) {
+        camera_x = current_player->getCurrentTank()->getHeadMatrix()[12] +
+                   current_player->getCurrentTank()->getHeadMatrix()[8] * 1000;
+        camera_z =
+                current_player->getCurrentTank()->getHeadMatrix()[14] +
+                current_player->getCurrentTank()->getHeadMatrix()[10] * 1000;
+    } else if (key_monitor[3]) {
         playSFX(TANK_CONTROL2);
-        if (currentPlayer->getPlayer_Type() == "CPU") {
-            currentPlayer->updateBalsticMatrix();
-            currentPlayer->setUpYawVectors();
+        if (current_player->getPlayerType() == "CPU") {
+            current_player->updateBalsticMatrix();
+            current_player->setUpYawVectors();
         }
-        this->player_factory->getPlayer(currentPlayerIndex)
+        this->player_factory->getPlayer(current_player_index)
                 ->getCurrentTank()
-                ->rotateHead(0.1 + 0.4 * keyMonitor[3] / 50);
-        if (currentPlayer->getCurrentTank()->getName() == "Rhinoxx" ||
-            currentPlayer->getCurrentTank()->getName() == "HeavyD") {
-            currentPlayer->getCurrentTank()->rotateWheel(.1);
+                ->rotateHead(0.1 + 0.4 * key_monitor[3] / 50);
+        if (current_player->getCurrentTank()->getName() == "Rhinoxx" ||
+            current_player->getCurrentTank()->getName() == "HeavyD") {
+            current_player->getCurrentTank()->rotateWheel(.1);
         }
-        cameraX = currentPlayer->getCurrentTank()->getHeadMatrix()[12] +
-                  currentPlayer->getCurrentTank()->getHeadMatrix()[8] * 1000;
-        cameraZ = currentPlayer->getCurrentTank()->getHeadMatrix()[14] +
-                  currentPlayer->getCurrentTank()->getHeadMatrix()[10] * 1000;
+        camera_x = current_player->getCurrentTank()->getHeadMatrix()[12] +
+                   current_player->getCurrentTank()->getHeadMatrix()[8] * 1000;
+        camera_z =
+                current_player->getCurrentTank()->getHeadMatrix()[14] +
+                current_player->getCurrentTank()->getHeadMatrix()[10] * 1000;
     } else {
-        if (currentPlayer->getPlayer_Type() != "CPU") {
+        if (current_player->getPlayerType() != "CPU") {
             Mix_HaltChannel(3);
         }
     }
 
-    if (keyMonitor[2]) {
-        if ((this->player_factory->getPlayer(currentPlayerIndex)
+    if (key_monitor[2]) {
+        if ((this->player_factory->getPlayer(current_player_index)
                      ->getCurrentTank()
                      ->getTurretDegrees() +
-             0.1 + 0.4 * keyMonitor[2] / 50) < 90) {
+             0.1 + 0.4 * key_monitor[2] / 50) < 90) {
             playSFX(TANK_CONTROL1);
-            this->player_factory->getPlayer(currentPlayerIndex)
+            this->player_factory->getPlayer(current_player_index)
                     ->getCurrentTank()
-                    ->rotateTurret(0.1 + 0.4 * keyMonitor[2] / 50);
+                    ->rotateTurret(0.1 + 0.4 * key_monitor[2] / 50);
         } else {
             Mix_HaltChannel(2);
             if (Mix_Playing(4) == 0) playSFX(TANK_STUCK);
         }
-    } else if (keyMonitor[4]) {
-        if ((this->player_factory->getPlayer(currentPlayerIndex)
+    } else if (key_monitor[4]) {
+        if ((this->player_factory->getPlayer(current_player_index)
                      ->getCurrentTank()
                      ->getTurretDegrees() -
-             0.1 - 0.4 * keyMonitor[4] / 50) >= 0) {
+             0.1 - 0.4 * key_monitor[4] / 50) >= 0) {
             playSFX(TANK_CONTROL1);
-            this->player_factory->getPlayer(currentPlayerIndex)
+            this->player_factory->getPlayer(current_player_index)
                     ->getCurrentTank()
-                    ->rotateTurret(-0.1 - 0.4 * keyMonitor[4] / 50);
+                    ->rotateTurret(-0.1 - 0.4 * key_monitor[4] / 50);
         } else {
             Mix_HaltChannel(2);
             if (Mix_Playing(4) == 0) playSFX(TANK_STUCK);
         }
     } else {
-        if (currentPlayer->getPlayer_Type() != "CPU") {
+        if (current_player->getPlayerType() != "CPU") {
             Mix_HaltChannel(2);
         }
     }
 
-    if (keyMonitor['-'])
-        this->player_factory->getPlayer(currentPlayerIndex)
+    if (key_monitor['-'])
+        this->player_factory->getPlayer(current_player_index)
                 ->getCurrentTank()
-                ->adjustPower(-0.01 - 0.01 * keyMonitor['-']);
-    if (keyMonitor['='])
-        this->player_factory->getPlayer(currentPlayerIndex)
+                ->adjustPower(-0.01 - 0.01 * key_monitor['-']);
+    if (key_monitor['='])
+        this->player_factory->getPlayer(current_player_index)
                 ->getCurrentTank()
-                ->adjustPower(0.01 + 0.01 * keyMonitor['=']);
+                ->adjustPower(0.01 + 0.01 * key_monitor['=']);
 }
 
 void GameState::destroyProjectile() {
     projectile_fired = false;
-    chaseCamActive = false;
+    chase_cam_active = false;
     delete projectile;
     projectile = nullptr;
 }
@@ -1441,37 +1448,40 @@ void GameState::destroyProjectile() {
 bool GameState::getProjectileFired() { return projectile_fired; }
 
 void GameState::updateWorldCam() {
-    if (keyMonitor['w']) worldCam->moveCam(20 + 20 * keyMonitor['w'], 0, 0);
-    if (keyMonitor['a']) worldCam->moveCam(0, 0, -20 - 20 * keyMonitor['a']);
-    if (keyMonitor['s']) worldCam->moveCam(-20 - 20 * keyMonitor['s'], 0, 0);
-    if (keyMonitor['d']) worldCam->moveCam(0, 0, 20 + 20 * keyMonitor['d']);
-    if (keyMonitor['r']) worldCam->moveCam(0, -20 - 20 * keyMonitor['r'], 0);
-    if (keyMonitor['f']) worldCam->moveCam(0, 20 + 20 * keyMonitor['f'], 0);
+    if (key_monitor['w']) world_cam->moveCam(20 + 20 * key_monitor['w'], 0, 0);
+    if (key_monitor['a'])
+        world_cam->moveCam(0, 0, -20 - 20 * key_monitor['a']);
+    if (key_monitor['s'])
+        world_cam->moveCam(-20 - 20 * key_monitor['s'], 0, 0);
+    if (key_monitor['d']) world_cam->moveCam(0, 0, 20 + 20 * key_monitor['d']);
+    if (key_monitor['r'])
+        world_cam->moveCam(0, -20 - 20 * key_monitor['r'], 0);
+    if (key_monitor['f']) world_cam->moveCam(0, 20 + 20 * key_monitor['f'], 0);
 }
 
 void GameState::createSpecialEffect() {
-    GLfloat power_ratio = player_factory->getPlayer(currentPlayerIndex)
+    GLfloat power_ratio = player_factory->getPlayer(current_player_index)
                                   ->getCurrentTank()
                                   ->getCurrentPower() /
                           10.0;
-    player_factory->getPlayer(currentPlayerIndex)
+    player_factory->getPlayer(current_player_index)
             ->getCurrentTank()
             ->setPreviousPower(static_cast<int>(power_ratio * 1000));
-    player_factory->getPlayer(currentPlayerIndex)
+    player_factory->getPlayer(current_player_index)
             ->getCurrentTank()
             ->setPreviousAngle(
-                    static_cast<int>(
-                            this->player_factory->getPlayer(currentPlayerIndex)
-                                    ->getCurrentTank()
-                                    ->getTurretDegrees()) +
+                    static_cast<int>(this->player_factory
+                                             ->getPlayer(current_player_index)
+                                             ->getCurrentTank()
+                                             ->getTurretDegrees()) +
                     1);
-    player_factory->getPlayer(currentPlayerIndex)
+    player_factory->getPlayer(current_player_index)
             ->getCurrentTank()
             ->setProjectileLandPos(projectile->getPos()[0],
                                    projectile->getPos()[2]);
-    specialEffectX = projectile->getPos()[0];
-    specialEffectY = projectile->getPos()[1];
-    specialEffectZ = projectile->getPos()[2];
+    special_effect_x = projectile->getPos()[0];
+    special_effect_y = projectile->getPos()[1];
+    special_effect_z = projectile->getPos()[2];
     // Teleport weapon effect handling
     if (projectile->getWeapon()->getImageFileName() == "WeaponTeleport.raw") {
         int size = this->global_settings->getCurrentTerrain()->getActualSize();
@@ -1484,9 +1494,9 @@ void GameState::createSpecialEffect() {
                     static_cast<int>(projectile->getPos()[1] / 100.0) * 100;
             int new_z =
                     static_cast<int>(projectile->getPos()[2] / 100.0) * 100;
-            currentPlayer->getCurrentTank()->setTankPos(new_x, new_y, new_z);
+            current_player->getCurrentTank()->setTankPos(new_x, new_y, new_z);
             const GLfloat* body_matrix =
-                    currentPlayer->getCurrentTank()->getBodyMatrix();
+                    current_player->getCurrentTank()->getBodyMatrix();
             GLfloat new_height =
                     this->global_settings->getCurrentTerrain()->getHeightAt(
                             body_matrix[14], body_matrix[12]);
@@ -1495,24 +1505,24 @@ void GameState::createSpecialEffect() {
             Normal n = this->global_settings->getCurrentTerrain()
                                ->getTriangleNormal(body_matrix[12] / scale,
                                                    body_matrix[14] / scale);
-            currentPlayer->getCurrentTank()->orientTank(&n);
-            currentPlayer->getCurrentTank()->setTankPos(
+            current_player->getCurrentTank()->orientTank(&n);
+            current_player->getCurrentTank()->setTankPos(
                     body_matrix[12], new_height, body_matrix[14]);
         }
     }
     projectile->getWeapon()->playExplosionSFX();
-    radiusOfCurrentExplosion = projectile->getWeapon()->getRadius();
-    specialEffectType = EXPLOSION;
+    radius_of_current_explosion = projectile->getWeapon()->getRadius();
+    special_effect_type = EXPLOSION;
 
-    if (specialEffectType == EXPLOSION) {
-        specialEffectsCount = (SPECIAL_EFFECT_TIME_LIMIT / TIME_DIVISORS);
-        special_effects = new SpecialEffect*[specialEffectsCount];
-        for (int x = 0; x < specialEffectsCount; x++) {
-            special_effects[x] =
-                    new Explosion(specialEffectX,
-                                  specialEffectY,
-                                  specialEffectZ,
-                                  static_cast<int>(radiusOfCurrentExplosion));
+    if (special_effect_type == EXPLOSION) {
+        special_effects_count = (special_effect_time_limit / time_divisors);
+        special_effects = new SpecialEffect*[special_effects_count];
+        for (int x = 0; x < special_effects_count; x++) {
+            special_effects[x] = new Explosion(
+                    special_effect_x,
+                    special_effect_y,
+                    special_effect_z,
+                    static_cast<int>(radius_of_current_explosion));
             if (projectile->getWeapon() != nullptr) {
                 special_effects[x]->setColors1(
                         projectile->getWeapon()->getExplosionColor1());
@@ -1525,7 +1535,7 @@ void GameState::createSpecialEffect() {
             }
         }
     }
-    gameSubState = SPECIAL_EFFECT;
+    game_sub_state = SPECIAL_EFFECT;
 }
 
 void GameState::handleProjectileState() {
@@ -1536,7 +1546,7 @@ void GameState::handleProjectileState() {
                     projectile->getPos()[2], projectile->getPos()[0])) {
             collision_occured = true;
         } else {
-            for (int i = 0; i < numberOfPlayers; i++) {
+            for (int i = 0; i < number_of_players; i++) {
                 if (this->player_factory->getPlayer(i)
                             ->getCurrentTank()
                             ->checkCollision(projectile->getPos()[0],
@@ -1560,7 +1570,7 @@ void GameState::handleProjectileState() {
             this->timer = this->timer + .02f;
             GLfloat scalar = projectile->getInitialPositionScalar();
             GLfloat* physics_matrix =
-                    currentPlayer->getCurrentTank()->getTurretMatrix();
+                    current_player->getCurrentTank()->getTurretMatrix();
             GLfloat xo = projectile->getXo();
             GLfloat yo = projectile->getYo();
             GLfloat zo = projectile->getZo();
@@ -1578,14 +1588,14 @@ void GameState::handleProjectileState() {
         }
     } else {
         GLfloat tank_attribute_power =
-                player_factory->getPlayer(currentPlayerIndex)
+                player_factory->getPlayer(current_player_index)
                         ->getCurrentTank()
                         ->getPower();
-        GLfloat power_bar = player_factory->getPlayer(currentPlayerIndex)
+        GLfloat power_bar = player_factory->getPlayer(current_player_index)
                                     ->getCurrentTank()
                                     ->getCurrentPower();
         const GLfloat* turret_matrix =
-                player_factory->getPlayer(currentPlayerIndex)
+                player_factory->getPlayer(current_player_index)
                         ->getCurrentTank()
                         ->getTurretMatrix();
         GLfloat matrix[16];
@@ -1598,48 +1608,48 @@ void GameState::handleProjectileState() {
         projectile = new Projectile(
                 this,
                 matrix,
-                tank_attribute_power * power_bar * BALISTIC_SCALAR,
-                projectileModels);
-        if (currentPlayer->getLoadedWeapon() != nullptr) {
-            projectile->setWeapon(currentPlayer->getLoadedWeapon());
+                tank_attribute_power * power_bar * balistic_scalar,
+                projectile_models);
+        if (current_player->getLoadedWeapon() != nullptr) {
+            projectile->setWeapon(current_player->getLoadedWeapon());
         } else {
             projectile->setWeapon(projectile->getDefaultWeapon());
         }
-        specialEffectType = EXPLOSION;
+        special_effect_type = EXPLOSION;
         createSpecialEffect();
     }
 }
 
 void GameState::currentPlayerFire() {
-    if (currentPlayer->getPlayer_Type() == "HUMAN") {
+    if (current_player->getPlayerType() == "HUMAN") {
         // just in case
         if (projectile) {
             destroyProjectile();
         }
-        gameSubState = PROJECTILE;
+        game_sub_state = PROJECTILE;
         constructProjectile();
         if (projectile) {
-            if (currentPlayer->getLoadedWeapon() != nullptr) {
-                projectile->setWeapon(currentPlayer->getLoadedWeapon());
+            if (current_player->getLoadedWeapon() != nullptr) {
+                projectile->setWeapon(current_player->getLoadedWeapon());
             } else {
                 projectile->setWeapon(projectile->getDefaultWeapon());
             }
         }
-    } else if (currentPlayer->getPlayer_Type() == "CPU") {
+    } else if (current_player->getPlayerType() == "CPU") {
         if (projectile) {
             destroyProjectile();
         }
-        gameSubState = PROJECTILE;
+        game_sub_state = PROJECTILE;
         constructProjectile();
-        if (currentPlayer->getLoadedWeapon() != nullptr) {
+        if (current_player->getLoadedWeapon() != nullptr) {
             if (projectile) {
-                projectile->setWeapon(currentPlayer->getLoadedWeapon());
-                chaseCamActive = true;
+                projectile->setWeapon(current_player->getLoadedWeapon());
+                chase_cam_active = true;
             }
         } else {
             if (projectile) {
                 projectile->setWeapon(projectile->getDefaultWeapon());
-                chaseCamActive = true;
+                chase_cam_active = true;
             }
         }
     }
@@ -1650,15 +1660,15 @@ void GameState::currentPlayerFire() {
 
 void GameState::constructProjectile() {
     GLfloat tank_attribute_power =
-            player_factory->getPlayer(currentPlayerIndex)
+            player_factory->getPlayer(current_player_index)
                     ->getCurrentTank()
                     ->getPower();
-    GLfloat power_bar = player_factory->getPlayer(currentPlayerIndex)
+    GLfloat power_bar = player_factory->getPlayer(current_player_index)
                                 ->getCurrentTank()
                                 ->getCurrentPower();
 
     const GLfloat* turret_matrix =
-            currentPlayer->getCurrentTank()->getTurretMatrix();
+            current_player->getCurrentTank()->getTurretMatrix();
     GLfloat scalar = 700.0f;
     // YOU DON'T HAVE PROJECTILE SO SCALAR NEEDS TO BE MODIFIED IN TWO PLACES
     GLfloat pos[3] = {turret_matrix[12] - scalar * turret_matrix[8],
@@ -1671,26 +1681,26 @@ void GameState::constructProjectile() {
     } else {
         projectile = new Projectile(
                 this,
-                player_factory->getPlayer(currentPlayerIndex)
+                player_factory->getPlayer(current_player_index)
                         ->getCurrentTank()
                         ->getTurretMatrix(),
-                tank_attribute_power * power_bar * BALISTIC_SCALAR,
-                projectileModels);
+                tank_attribute_power * power_bar * balistic_scalar,
+                projectile_models);
     }
 }
 
 void GameState::handleSpecialEffectState() {
-    specialEffectTimer++;
-    if (specialEffectTimer < SPECIAL_EFFECT_TIME_LIMIT) {
-        if (specialEffectTimer == 1) {
+    special_effect_timer++;
+    if (special_effect_timer < special_effect_time_limit) {
+        if (special_effect_timer == 1) {
             if (projectile->getWeapon()->getImageFileName() !=
                 "WeaponRevive.raw") {
                 this->global_settings->getCurrentTerrain()->makeCrater(
                         projectile->getPos()[0],
                         projectile->getPos()[2],
-                        radiusOfCurrentExplosion);
+                        radius_of_current_explosion);
             }
-            int total_players = this->global_settings->getPlayer_Count();
+            int total_players = this->global_settings->getPlayerCount();
             for (int p = 0; p < total_players; p++) {
                 if (this->player_factory->getPlayer(p)->getCurrentTank() !=
                     nullptr) {
@@ -1706,7 +1716,7 @@ void GameState::handleSpecialEffectState() {
                     GLfloat distance = calcDistanceBetweenVertices(&v0, &v1);
                     GLfloat scale = this->global_settings->getCurrentTerrain()
                                             ->getScale();
-                    if (distance < radiusOfCurrentExplosion * scale) {
+                    if (distance < radius_of_current_explosion * scale) {
                         // PLACEHOLDER BELOW, pass the tank into the weapon and
                         // call dealDamage (or whatever) from there
                         projectile->getWeapon()->causeEffectToTank(
@@ -1772,8 +1782,8 @@ void GameState::handleSpecialEffectState() {
         int shake_it_baby = rand() % 30;
         projectile->getChaseCam()->setShakeCam(20 + shake_it_baby);
     } else {
-        if (specialEffectType == EXPLOSION) {
-            for (int x = 0; x < specialEffectsCount; x++) {
+        if (special_effect_type == EXPLOSION) {
+            for (int x = 0; x < special_effects_count; x++) {
                 if (special_effects[x]) {
                     delete special_effects[x];
                 }
@@ -1784,29 +1794,29 @@ void GameState::handleSpecialEffectState() {
         projectile->getChaseCam()->setShakeCam(0);
         projectile->getChaseCam()->resetFactor();
         destroyProjectile();
-        specialEffectX = 0;
-        specialEffectY = 0;
-        specialEffectZ = 0;
-        specialEffectTimer = 0;
-        specialEffectsCount = 0;
-        radiusOfCurrentExplosion = 0;
+        special_effect_x = 0;
+        special_effect_y = 0;
+        special_effect_z = 0;
+        special_effect_timer = 0;
+        special_effects_count = 0;
+        radius_of_current_explosion = 0;
         useTurn();
-        gameSubState = PASS_TIME;
+        game_sub_state = PASS_TIME;
         int inven_index = 0;
-        inventory->handleInventory(currentPlayer, inven_index);
+        inventory->handleInventory(current_player, inven_index);
     }
 }
 
 void GameState::handleKeyboardInput(int key, bool key_status) {
-    if (currentPlayer->getPlayer_Type() == "CPU") {
+    if (current_player->getPlayerType() == "CPU") {
         handleNonInventoryKeyboard(key, key_status);
     }
-    if (currentPlayer->getPlayer_Type() ==
+    if (current_player->getPlayerType() ==
         "HUMAN") {  // TEMP TEST FOR CPU PLAYERS REMOVE CPU'S DON'T USE
                     // KEYBOARDS
-        if (gameSubState == INVENTORY) {
+        if (game_sub_state == INVENTORY) {
             handleInventoryKeyboard(key, key_status);
-        } else if (gameSubState != INVENTORY) {
+        } else if (game_sub_state != INVENTORY) {
             handleNonInventoryKeyboard(key, key_status);
         }
     }
@@ -1815,51 +1825,51 @@ void GameState::handleKeyboardInput(int key, bool key_status) {
 void GameState::handleInventoryKeyboard(int key, bool key_status) {
     if (key_status) {
         if (key == 27 || key == 'i') {
-            Mix_VolumeMusic(prevMusicVolume * 3);
-            gameSubState = PLAYER_CONTROL;
+            Mix_VolumeMusic(prev_music_volume * 3);
+            game_sub_state = PLAYER_CONTROL;
         } else if (key == 13) {
-            Mix_VolumeMusic(prevMusicVolume * 3);
+            Mix_VolumeMusic(prev_music_volume * 3);
             int index = inventory->getSelectedIndex();
             // UN/LOAD A WEAPON
-            if (index < PLAYER_MAX_WEAPONS &&
-                currentPlayer->getCurrentWeapons()[index] != nullptr) {
+            if (index < player_max_weapons &&
+                current_player->getCurrentWeapons()[index] != nullptr) {
                 // UNLOADING
-                if (currentPlayer->getLoadedWeapon() != nullptr &&
-                    currentPlayer->getLoadedWeapon()->getUNIQUEIDENTIFIER() ==
-                            currentPlayer->getCurrentWeapons()[index]
+                if (current_player->getLoadedWeapon() != nullptr &&
+                    current_player->getLoadedWeapon()->getUNIQUEIDENTIFIER() ==
+                            current_player->getCurrentWeapons()[index]
                                     ->getUNIQUEIDENTIFIER()) {
                     playSFX(WEAPON_UNLOAD);
-                    delete selectedWeaponImg;
-                    delete selectedWeaponRemain;
-                    currentPlayer->setLoadedWeapon(nullptr);
-                    selectedWeaponImg = nullptr;
-                    selectedWeaponRemain = nullptr;
+                    delete selected_weapon_img;
+                    delete selected_weapon_remain;
+                    current_player->setLoadedWeapon(nullptr);
+                    selected_weapon_img = nullptr;
+                    selected_weapon_remain = nullptr;
                 }
                 // LOADING
                 else {
                     playSFX(WEAPON_LOAD);
-                    if (selectedWeaponImg != nullptr) {
-                        delete selectedWeaponImg;
-                        delete selectedWeaponRemain;
+                    if (selected_weapon_img != nullptr) {
+                        delete selected_weapon_img;
+                        delete selected_weapon_remain;
                     }
-                    currentPlayer->setLoadedWeapon(
-                            currentPlayer->getCurrentWeapons()[index]);
-                    selectedWeaponImg =
-                            new ImageObject(weaponSlot->getXpos() * 1.01,
-                                            weaponSlot->getYpos() * 1.01,
+                    current_player->setLoadedWeapon(
+                            current_player->getCurrentWeapons()[index]);
+                    selected_weapon_img =
+                            new ImageObject(weapon_slot->getXpos() * 1.01,
+                                            weapon_slot->getYpos() * 1.01,
                                             2,
-                                            weaponSlot->getWidth() * 0.9,
-                                            weaponSlot->getHeight() * 0.9,
+                                            weapon_slot->getWidth() * 0.9,
+                                            weapon_slot->getHeight() * 0.9,
                                             0,
                                             256,
                                             256,
-                                            currentPlayer->getLoadedWeapon()
+                                            current_player->getLoadedWeapon()
                                                     ->getImageFileName());
                     std::string remain =
                             "x " +
-                            std::to_string(currentPlayer->getLoadedWeapon()
+                            std::to_string(current_player->getLoadedWeapon()
                                                    ->getRemaining());
-                    selectedWeaponRemain =
+                    selected_weapon_remain =
                             new TextObject(remain,
                                            0,
                                            0,
@@ -1871,27 +1881,27 @@ void GameState::handleInventoryKeyboard(int key, bool key_status) {
                 }
             }
             // USE AN ITEM
-            else if (PLAYER_MAX_WEAPONS <= index &&
-                     index < PLAYER_MAX_WEAPONS + PLAYER_MAX_ITEMS &&
-                     currentPlayer->getCurrentItems()[index -
-                                                      PLAYER_MAX_WEAPONS] !=
+            else if (player_max_weapons <= index &&
+                     index < player_max_weapons + player_max_items &&
+                     current_player->getCurrentItems()[index -
+                                                       player_max_weapons] !=
                              nullptr) {
                 // If causeEffectToTank(...) returns true, that means player
                 // has used an item which costs 1 turn
-                if (currentPlayer
-                            ->getCurrentItems()[index - PLAYER_MAX_WEAPONS]
+                if (current_player
+                            ->getCurrentItems()[index - player_max_weapons]
                             ->causeEffectToTank(
-                                    currentPlayer->getCurrentTank())) {
+                                    current_player->getCurrentTank())) {
                     useTurn();
                 }
-                currentPlayer->getCurrentItems()[index - PLAYER_MAX_WEAPONS]
+                current_player->getCurrentItems()[index - player_max_weapons]
                         ->playUseSFX();
-                inventory->handleInventory(currentPlayer, index);
+                inventory->handleInventory(current_player, index);
                 while (Mix_Playing(0));
-                inventory->setupInventory(currentPlayer);
+                inventory->setupInventory(current_player);
                 Mix_HaltChannel(0);
             }
-            gameSubState = PLAYER_CONTROL;
+            game_sub_state = PLAYER_CONTROL;
         } else {
             inventory->keyHandler(key);
         }
@@ -1902,144 +1912,144 @@ void GameState::handleNonInventoryKeyboard(int key, bool key_status) {
     if ((key == 'c') && (key_status))
         toggleCamera();
     else if ((key == ' ') && (key_status) &&
-             (gameSubState == PLAYER_CONTROL)) {
+             (game_sub_state == PLAYER_CONTROL)) {
         currentPlayerFire();
     } else if ((key == 5) && (key_status) &&
-               (gameSubState == PLAYER_CONTROL)) {
-        prevMusicVolume = Mix_VolumeMusic(-1);
-        prevMusicVolume = Mix_VolumeMusic(prevMusicVolume / 3);
+               (game_sub_state == PLAYER_CONTROL)) {
+        prev_music_volume = Mix_VolumeMusic(-1);
+        prev_music_volume = Mix_VolumeMusic(prev_music_volume / 3);
         playSFX(MANUAL);
-        gameSubState = HELP;
-        needHelp = false;
-    } else if ((key == 5) && (key_status) && (gameSubState == HELP)) {
-        Mix_VolumeMusic(prevMusicVolume * 3);
-        gameSubState = PLAYER_CONTROL;
-        needHelp = false;
+        game_sub_state = HELP;
+        need_help = false;
+    } else if ((key == 5) && (key_status) && (game_sub_state == HELP)) {
+        Mix_VolumeMusic(prev_music_volume * 3);
+        game_sub_state = PLAYER_CONTROL;
+        need_help = false;
     } else if ((key == 6) && (key_status)) {
         Mix_HaltMusic();
         Mix_HaltChannel(-1);
-        *currentGameState = MAIN_MENU;
+        *current_game_state = MAIN_MENU;
     } else if ((key == 'i') && (key_status) &&
-               (gameSubState == PLAYER_CONTROL)) {
-        if (currentPlayer->getPlayer_Type() == "HUMAN" &&
-            currentPlayer->getCurrentTank()->getDurationPadlock() == 0) {
+               (game_sub_state == PLAYER_CONTROL)) {
+        if (current_player->getPlayerType() == "HUMAN" &&
+            current_player->getCurrentTank()->getDurationPadlock() == 0) {
             Mix_HaltChannel(2);
             Mix_HaltChannel(3);
-            keyMonitor[1] = 0;
-            keyMonitor[2] = 0;
-            keyMonitor[3] = 0;
-            keyMonitor[4] = 0;
-            prevMusicVolume = Mix_VolumeMusic(
+            key_monitor[1] = 0;
+            key_monitor[2] = 0;
+            key_monitor[3] = 0;
+            key_monitor[4] = 0;
+            prev_music_volume = Mix_VolumeMusic(
                     -1);  // -1 returns the current volume. Other numbers will
                           // change the volume, and it returns the volume
                           // before changed
-            prevMusicVolume = Mix_VolumeMusic(prevMusicVolume / 3);
+            prev_music_volume = Mix_VolumeMusic(prev_music_volume / 3);
             playSFX(INVENTORY_ACCESS);
-            gameSubState = INVENTORY;
+            game_sub_state = INVENTORY;
         } else {
             // playSFX(INVENTORY_INVALID);
         }
     } else if (key == 'b' && !key_status) {
-        drawHitBox = !drawHitBox;
+        draw_hit_box = !draw_hit_box;
     } else if (key == 'p' && !key_status) {
-        if (currentPlayer->getPlayer_Type() == "CPU") {
-            if (currentPlayer->getDrawDebugLinesandPlanes())
-                currentPlayer->setDrawDebugLinesandPlanes(false);
+        if (current_player->getPlayerType() == "CPU") {
+            if (current_player->getDrawDebugLinesandPlanes())
+                current_player->setDrawDebugLinesandPlanes(false);
             else
-                currentPlayer->setDrawDebugLinesandPlanes(true);
+                current_player->setDrawDebugLinesandPlanes(true);
         }
     } else {
         if (key_status) {
-            needHelp = key > 6 && key != 'w' && key != 'a' && key != 's' &&
-                       key != 'd' && key != 'r' && key != 'f' && key != 'c' &&
-                       key != '-' && key != '=';
-            keyMonitor[key] += 1;
+            need_help = key > 6 && key != 'w' && key != 'a' && key != 's' &&
+                        key != 'd' && key != 'r' && key != 'f' && key != 'c' &&
+                        key != '-' && key != '=';
+            key_monitor[key] += 1;
         } else {
-            keyMonitor[key] = 0;
+            key_monitor[key] = 0;
         }
     }
 }
 
 void GameState::handlePassTime() {
-    if ((player_factory->getPlayer(currentPlayerIndex)->getCurrentWait() <=
+    if ((player_factory->getPlayer(current_player_index)->getCurrentWait() <=
          0) &&
-        (player_factory->getPlayer(currentPlayerIndex)
+        (player_factory->getPlayer(current_player_index)
                  ->getCurrentTank()
                  ->isAlive())) {
-        gameSubState = PLAYER_CONTROL;
-        currentPlayer = player_factory->getPlayer(currentPlayerIndex);
+        game_sub_state = PLAYER_CONTROL;
+        current_player = player_factory->getPlayer(current_player_index);
     } else {
         do {
-            player_factory->getPlayer(currentPlayerIndex)
+            player_factory->getPlayer(current_player_index)
                     ->setCurrentWait(
-                            player_factory->getPlayer(currentPlayerIndex)
+                            player_factory->getPlayer(current_player_index)
                                     ->getCurrentWait() -
                             1);
-            if (!player_factory->getPlayer(currentPlayerIndex)
+            if (!player_factory->getPlayer(current_player_index)
                          ->getCurrentTank()
                          ->isAlive()) {
-                player_factory->getPlayer(currentPlayerIndex)
+                player_factory->getPlayer(current_player_index)
                         ->setCurrentWait(-1);
             }
-            currentPlayerIndex++;
-            if (currentPlayerIndex ==
-                this->global_settings->getPlayer_Count()) {
-                currentPlayerIndex = 0;
+            current_player_index++;
+            if (current_player_index ==
+                this->global_settings->getPlayerCount()) {
+                current_player_index = 0;
             }
-            currentPlayer = player_factory->getPlayer(currentPlayerIndex);
-        } while (player_factory->getPlayer(currentPlayerIndex)
+            current_player = player_factory->getPlayer(current_player_index);
+        } while (player_factory->getPlayer(current_player_index)
                          ->getCurrentWait() != 0);
     }
 
     // STATUS EFFECT (ACID)
-    if (currentPlayer->getCurrentTank()->getDurationAcid() > 0) {
+    if (current_player->getCurrentTank()->getDurationAcid() > 0) {
         playSFX(EFFECT_ACID);
-        currentPlayer->getCurrentTank()->dealDamage(
-                currentPlayer->getCurrentTank()->getBaseArmor() * 100 * 10 /
+        current_player->getCurrentTank()->dealDamage(
+                current_player->getCurrentTank()->getBaseArmor() * 100 * 10 /
                 100);
-        if (currentPlayer->getCurrentTank()->getHP() <= 0) {
+        if (current_player->getCurrentTank()->getHP() <= 0) {
             useTurn();  // skip turn if acid killed him at the beginning of the
                         // turn
         }
         // playSFX(ACID_EFFECT);
     }
     // STATUS EFFECT (PARALYZED)
-    if (currentPlayer->getCurrentTank()->getDurationParalyze() > 0) {
+    if (current_player->getCurrentTank()->getDurationParalyze() > 0) {
         useTurn();
     } else {
-        if (currentPlayer->getPlayer_Type() == "HUMAN") {
-            inventory->setupInventory(currentPlayer);
+        if (current_player->getPlayerType() == "HUMAN") {
+            inventory->setupInventory(current_player);
             Mix_HaltChannel(0);
-            if (selectedWeaponImg != nullptr) {
-                delete selectedWeaponImg;
-                delete selectedWeaponRemain;
+            if (selected_weapon_img != nullptr) {
+                delete selected_weapon_img;
+                delete selected_weapon_remain;
             }
-            if (currentPlayer->getLoadedWeapon() != nullptr) {
-                selectedWeaponImg = new ImageObject(
-                        weaponSlot->getXpos() * 1.01,
-                        weaponSlot->getYpos() * 1.01,
+            if (current_player->getLoadedWeapon() != nullptr) {
+                selected_weapon_img = new ImageObject(
+                        weapon_slot->getXpos() * 1.01,
+                        weapon_slot->getYpos() * 1.01,
                         2,
-                        weaponSlot->getWidth() * 0.9,
-                        weaponSlot->getHeight() * 0.9,
+                        weapon_slot->getWidth() * 0.9,
+                        weapon_slot->getHeight() * 0.9,
                         0,
                         256,
                         256,
-                        currentPlayer->getLoadedWeapon()->getImageFileName());
+                        current_player->getLoadedWeapon()->getImageFileName());
                 std::string remain =
-                        "x " + std::to_string(currentPlayer->getLoadedWeapon()
+                        "x " + std::to_string(current_player->getLoadedWeapon()
                                                       ->getRemaining());
-                selectedWeaponRemain =
+                selected_weapon_remain =
                         new TextObject(remain,
-                                       weaponSlot->getXpos() * 1.1,
-                                       weaponSlot->getYpos() * 1.3,
+                                       weapon_slot->getXpos() * 1.1,
+                                       weapon_slot->getYpos() * 1.3,
                                        3,
                                        GLUT_BITMAP_TIMES_ROMAN_24,
                                        0.6,
                                        0.2,
                                        0.4);
             } else {
-                selectedWeaponImg = nullptr;
-                selectedWeaponRemain = nullptr;
+                selected_weapon_img = nullptr;
+                selected_weapon_remain = nullptr;
             }
         }
     }
@@ -2066,7 +2076,7 @@ void GameState::resetTables(int index) {
 void GameState::printTables() {
     for (int i = 0; i < this->player_factory->getNumberofPlayers(); i++) {
         for (int j = 0; j < this->player_factory->getNumberofPlayers(); j++) {
-            cout << " || " << tankList[i][j] << " | " << tank_reachable[i][j]
+            cout << " || " << tank_list[i][j] << " | " << tank_reachable[i][j]
                  << " | " << distance_to_target[i][j] << " || ";
         }
         cout << endl;
@@ -2075,20 +2085,21 @@ void GameState::printTables() {
 
 void GameState::controlAI() {
     // printTables();
-    currentPlayer->aiMainLogisticFunction();
+    current_player->aiMainLogisticFunction();
 }
 
 void GameState::nearestEnemy() {
-    if (currentPlayer != nullptr && currentPlayer->getPlayer_Type() == "CPU") {
+    if (current_player != nullptr &&
+        current_player->getPlayerType() == "CPU") {
         /*	RECALULATE ALL DISTANCE	*/
         const GLfloat* tank_matrix =
-                currentPlayer->getCurrentTank()->getBodyMatrix();
-        for (int i = 0; i < numberOfPlayers; i++) {
-            if (tankList[currentPlayerIndex][i] !=
-                        currentPlayer->getCurrentTank() &&
-                tankList[i] != nullptr) {
+                current_player->getCurrentTank()->getBodyMatrix();
+        for (int i = 0; i < number_of_players; i++) {
+            if (tank_list[current_player_index][i] !=
+                        current_player->getCurrentTank() &&
+                tank_list[i] != nullptr) {
                 const GLfloat* target_matrix =
-                        tankList[currentPlayerIndex][i]->getBodyMatrix();
+                        tank_list[current_player_index][i]->getBodyMatrix();
                 GLfloat distance =
                         sqrt((tank_matrix[12] - target_matrix[12]) *
                                      (tank_matrix[12] - target_matrix[12]) +
@@ -2096,41 +2107,42 @@ void GameState::nearestEnemy() {
                                      (tank_matrix[13] - target_matrix[13]) +
                              (tank_matrix[14] - target_matrix[14]) *
                                      (tank_matrix[14] - target_matrix[14]));
-                distance_to_target[currentPlayerIndex][i] = distance;
+                distance_to_target[current_player_index][i] = distance;
             }
         }
 
         /*	FIND THE MINIMUM DISTANCE/ REACHABLE TARGET	*/
         int minimum_reachable_tank_index = -1;
         GLfloat minimum_distance = 1E+37;
-        for (int i = 0; i < numberOfPlayers; i++) {
-            if (tankList[currentPlayerIndex][i] !=
-                        currentPlayer->getCurrentTank() &&
-                tankList[currentPlayerIndex][i] != nullptr) {
-                if (distance_to_target[currentPlayerIndex][i] <
+        for (int i = 0; i < number_of_players; i++) {
+            if (tank_list[current_player_index][i] !=
+                        current_player->getCurrentTank() &&
+                tank_list[current_player_index][i] != nullptr) {
+                if (distance_to_target[current_player_index][i] <
                             minimum_distance &&
-                    tank_reachable[currentPlayerIndex][i] &&
-                    tankList[currentPlayerIndex][i]->isAlive() &&
-                    tankList[currentPlayerIndex][i]->getDurationCloak() == 0 &&
-                    (player_factory->getPlayer(currentPlayerIndex)
+                    tank_reachable[current_player_index][i] &&
+                    tank_list[current_player_index][i]->isAlive() &&
+                    tank_list[current_player_index][i]->getDurationCloak() ==
+                            0 &&
+                    (player_factory->getPlayer(current_player_index)
                                      ->getTeamLabel() !=
                              player_factory->getPlayer(i)->getTeamLabel() ||
-                     player_factory->getPlayer(currentPlayerIndex)
+                     player_factory->getPlayer(current_player_index)
                                      ->getTeamLabel() == '-')) {
                     minimum_reachable_tank_index = i;
                     minimum_distance =
-                            distance_to_target[currentPlayerIndex][i];
+                            distance_to_target[current_player_index][i];
                 }
             }
         }
         /*	CHECK IF TANK FOUND	*/
         if (minimum_reachable_tank_index == -1) {
-            currentPlayer->setTarget(nullptr);
+            current_player->setTarget(nullptr);
         } else {
-            currentPlayer->setTarget(tankList[currentPlayerIndex]
-                                             [minimum_reachable_tank_index]);
-            tank_reachable[currentPlayerIndex][minimum_reachable_tank_index] =
-                    false;
+            current_player->setTarget(tank_list[current_player_index]
+                                               [minimum_reachable_tank_index]);
+            tank_reachable[current_player_index]
+                          [minimum_reachable_tank_index] = false;
         }
     }
 }
@@ -2140,12 +2152,12 @@ GlobalSettings* GameState::getGlobalSettings() {
 }
 GLfloat GameState::getGravity() { return gravity; }
 PlayerFactory* GameState::getPlayerFactory() { return this->player_factory; }
-GLfloat GameState::getBalisticScalar() { return BALISTIC_SCALAR; }
+GLfloat GameState::getBalisticScalar() { return balistic_scalar; }
 Vertex GameState::getPositionOfLastProjectile() {
     return position_of_last_projectile;
 }
 void GameState::setPositionOfLastProjectile(GLfloat x, GLfloat y, GLfloat z) {
-    position_of_last_projectile.coordX = x;
-    position_of_last_projectile.coordY = y;
-    position_of_last_projectile.coordZ = z;
+    position_of_last_projectile.coord_x = x;
+    position_of_last_projectile.coord_y = y;
+    position_of_last_projectile.coord_z = z;
 }

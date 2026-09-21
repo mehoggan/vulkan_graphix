@@ -24,9 +24,9 @@ public:
 
 private:
     GLfloat x, y, z;
-    int max, particlesPerEmission, emissionRate, emissionSpeed, emissionLife,
-            type;
-    Particle* particleArray[1000];
+    int max, particles_per_emission, emission_rate, emission_speed,
+            emission_life, type;
+    Particle* particle_array[1000];
 };
 
 #endif

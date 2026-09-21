@@ -18,36 +18,36 @@ Projectile::Projectile(GameState* parent,
                        GLfloat* turret_matrix,
                        GLfloat speed,
                        VBOShaderLibrary** projectile_models) {
-    defaultWeapon = new WeaponDefault(10);
+    default_weapon = new WeaponDefault(10);
     this->parent = parent;
     scalar = 500;
     pos[0] = turret_matrix[12] - scalar * turret_matrix[8];
     pos[1] = turret_matrix[13] - scalar * turret_matrix[9];
     pos[2] = turret_matrix[14] - scalar * turret_matrix[10];
 
-    Xo = pos[0];
-    Yo = pos[1];
-    Zo = pos[2];
+    xo = pos[0];
+    yo = pos[1];
+    zo = pos[2];
 
     /*	THE COORD SYSTEM WE USE HAS X AND Z INVERSED X = -X and Z = -Z	*/
-    vVec[0] = -turret_matrix[8] * speed;
-    vVec[1] = -turret_matrix[9] * speed;
-    vVec[2] = -turret_matrix[10] * speed;
+    v_vec[0] = -turret_matrix[8] * speed;
+    v_vec[1] = -turret_matrix[9] * speed;
+    v_vec[2] = -turret_matrix[10] * speed;
 
-    chaseCam = new ChaseCam(pos, vVec);
+    chase_cam = new ChaseCam(pos, v_vec);
     weapon = nullptr;
-    this->projectileModels = projectile_models;
+    this->projectile_models = projectile_models;
 
-    if (!(VBOShaderLibrary::InitGlew())) {
+    if (!(VBOShaderLibrary::initGlew())) {
         exit(1);
-    } else if (!(VBOShaderLibrary::AreVBOsSupported())) {
+    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
         exit(1);
     }
-    projectileDefault = new VBOShaderLibrary();
-    projectileDefault->getVBOPointerFunctions();
-    projectileDefault->loadClientData("Projectiles/projectileDefault.ogl");
-    projectileDefault->loadShaders("VertexTank.vs", "FragmentTank.vs");
-    projectileDefault->LoadTexture(
+    projectile_default = new VBOShaderLibrary();
+    projectile_default->getVBOPointerFunctions();
+    projectile_default->loadClientData("Projectiles/projectileDefault.ogl");
+    projectile_default->loadShaders("VertexTank.vs", "FragmentTank.vs");
+    projectile_default->loadTexture(
             "Projectiles/projectileDefault.raw", 512, 512);
 
     rotate = 4;
@@ -56,8 +56,8 @@ Projectile::Projectile(GameState* parent,
 }
 
 Projectile::~Projectile() {
-    delete chaseCam;
-    delete projectileDefault;
+    delete chase_cam;
+    delete projectile_default;
 }
 
 // void Projectile::update(GLfloat gravity) {
@@ -79,10 +79,10 @@ void Projectile::draw() {
     glRotatef(rotate, -1, .3, -.4);
     if (weapon == nullptr) {
         glScalef(60, 60, 60);
-        projectileDefault->drawClientData();
+        projectile_default->drawClientData();
     } else {
         glScalef(weapon->getScale(), weapon->getScale(), weapon->getScale());
-        projectileModels[weapon->getUNIQUEIDENTIFIER()]->drawClientData();
+        projectile_models[weapon->getUNIQUEIDENTIFIER()]->drawClientData();
     }
     glPopMatrix();
     rotate += 4;
@@ -90,20 +90,20 @@ void Projectile::draw() {
 
 GLfloat* Projectile::getPos() { return pos; }
 
-void Projectile::chaseView() { chaseCam->view(); }
+void Projectile::chaseView() { chase_cam->view(); }
 
 Weapon* Projectile::getWeapon() { return weapon; }
 void Projectile::setWeapon(Weapon* wpn) { weapon = wpn; }
-Weapon* Projectile::getDefaultWeapon() { return defaultWeapon; }
-int Projectile::getDefaultDamage() { return DEFAULT_DAMAGE; }
-int Projectile::getDefaultRadius() { return DEFAULT_RADIUS; }
-ChaseCam* Projectile::getChaseCam() { return chaseCam; }
-int Projectile::getRadius() { return DEFAULT_RADIUS; }
-int Projectile::getDamage() { return DEFAULT_DAMAGE; }
+Weapon* Projectile::getDefaultWeapon() { return default_weapon; }
+int Projectile::getDefaultDamage() { return default_damage; }
+int Projectile::getDefaultRadius() { return default_radius; }
+ChaseCam* Projectile::getChaseCam() { return chase_cam; }
+int Projectile::getRadius() { return default_radius; }
+int Projectile::getDamage() { return default_damage; }
 GLfloat Projectile::getInitialPositionScalar() { return scalar; }
-GLfloat Projectile::getVox() { return vVec[0]; }
-GLfloat Projectile::getVoy() { return vVec[1]; }
-GLfloat Projectile::getVoz() { return vVec[2]; }
-GLfloat Projectile::getXo() { return Xo; }
-GLfloat Projectile::getYo() { return Yo; }
-GLfloat Projectile::getZo() { return Zo; }
+GLfloat Projectile::getVox() { return v_vec[0]; }
+GLfloat Projectile::getVoy() { return v_vec[1]; }
+GLfloat Projectile::getVoz() { return v_vec[2]; }
+GLfloat Projectile::getXo() { return xo; }
+GLfloat Projectile::getYo() { return yo; }
+GLfloat Projectile::getZo() { return zo; }

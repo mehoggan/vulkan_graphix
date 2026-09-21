@@ -8,7 +8,7 @@
 class ItemAntiAcid : public Item {
 public:
     ItemAntiAcid();
-    ItemAntiAcid(int ID);
+    ItemAntiAcid(int id);
     ~ItemAntiAcid() override;
     ItemAntiAcid* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

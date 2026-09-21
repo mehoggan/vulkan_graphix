@@ -21,21 +21,21 @@ public:
     ~Inventory();
     void draw();
     void setupInventory(Player* player);
-    void handleInventory(Player* currentPlayer, int invenIndex);
+    void handleInventory(Player* current_player, int inven_index);
     void keyHandler(int key);
     int getSelectedIndex();
 
 private:
-    GLfloat xPos, yPos;
+    GLfloat x_pos, y_pos;
     int width, height;
-    ControlItemGrid* invenGrid;
+    ControlItemGrid* inven_grid;
     TextObject* title;
     TextObject* descript;
     TextObject* explain;
-    ImageObject* imgInven[PLAYER_MAX_WEAPONS + PLAYER_MAX_ITEMS];
-    TextObject* remainings[PLAYER_MAX_WEAPONS + PLAYER_MAX_ITEMS];
-    Weapon* weapons[PLAYER_MAX_WEAPONS];
-    Item* items[PLAYER_MAX_ITEMS];
-    int selectCellRow, selectCellCol;
+    ImageObject* img_inven[player_max_weapons + player_max_items];
+    TextObject* remainings[player_max_weapons + player_max_items];
+    Weapon* weapons[player_max_weapons];
+    Item* items[player_max_items];
+    int select_cell_row, select_cell_col;
 };
 #endif INVENTORY_H

@@ -24,14 +24,14 @@ public:
     virtual void playUseSFX();
 
 protected:
-    int UNIQUEIDENTIFIER;
-    std::string imageFileName;
+    int uniqueidentifier;
+    std::string image_file_name;
     std::string description;
     int price;
-    int packageNum;
-    int maxStack;
+    int package_num;
+    int max_stack;
     int remaining;
-    int specialNum;
+    int special_num;
 };
 
 #endif  //	ITEM_H

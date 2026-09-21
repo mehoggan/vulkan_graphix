@@ -37,10 +37,10 @@ const float f3 = *(float*)&raw3;
 const unsigned long long raw4 = 0xff800000;  //-INF
 const float f4 = *(float*)&raw4;
 
-const double PI = 3.141592653589793238462643383279502884;
-const int MAX_PROJECTILE_MODELS = 11;
-const int SPECIAL_EFFECT_TIME_LIMIT = 150;
-const int TIME_DIVISORS = 50;
+const double pi = 3.141592653589793238462643383279502884;
+const int max_projectile_models = 11;
+const int special_effect_time_limit = 150;
+const int time_divisors = 50;
 
 enum PossibleGameSubStates {
     PLAYER_CONTROL,
@@ -59,7 +59,7 @@ public:
               int height,
               PlayerFactory* player_factory,
               GlobalSettings* global_settings,
-              int* currentGameState);
+              int* current_game_state);
     ~GameState();
     void update();
     void draw();
@@ -79,7 +79,7 @@ public:
     GLfloat calcAngleBetweenVectors(Vector one, Vector two);
     void calcNormalVector(Vertex* v0, Vertex* v1, Vertex* v2, Normal* n);
     GLfloat calcDistanceBetweenVertices(Vertex* v0, Vertex* v1);
-    void NormalizeVector(Vector* v);
+    void normalizeVector(Vector* v);
     void playBackgroundSounds();
     void drawHelp();
     GlobalSettings* getGlobalSettings();
@@ -89,7 +89,7 @@ public:
     // Looks into table for given player
     void nearestEnemy();
     Vertex getPositionOfLastProjectile();
-    void setPositionOfLastProjectile(GLfloat X, GLfloat Y, GLfloat Z);
+    void setPositionOfLastProjectile(GLfloat x, GLfloat y, GLfloat z);
 
 private:
     void createSpecialEffect();
@@ -98,65 +98,65 @@ private:
     void updateWorldCam();
     void handleProjectileState();
     void handleSpecialEffectState();
-    void handleInventory(int invenIndex);
+    void handleInventory(int inven_index);
     void handlePassTime();
     void handleNonInventoryKeyboard(int key, bool key_status);
     void handleInventoryKeyboard(int key, bool key_status);
 
     PlayerFactory* player_factory;
     GlobalSettings* global_settings;
-    Player* currentPlayer;
-    WorldCam* worldCam;
-    PossibleGameSubStates gameSubState;
-    int currentPlayerIndex;
+    Player* current_player;
+    WorldCam* world_cam;
+    PossibleGameSubStates game_sub_state;
+    int current_player_index;
     int width;
     int height;
-    float cameraX;
-    float cameraY;
-    float cameraZ;
-    int oldMouseX;
-    int oldMouseY;
+    float camera_x;
+    float camera_y;
+    float camera_z;
+    int old_mouse_x;
+    int old_mouse_y;
     float camera_radius;
     float plane_radius;
-    float currentWorldTheta;
-    float currentTankPhi;
-    float currentTankTheta;
+    float current_world_theta;
+    float current_tank_phi;
+    float current_tank_theta;
     float offset;
     SkyboxFactory* skybox_factory;
     Water* ocean;
-    int sfxRandom;
-    bool playerCam;
-    bool chaseCamActive;
-    int keyMonitor[256];
-    int numberOfPlayers;
+    int sfx_random;
+    bool player_cam;
+    bool chase_cam_active;
+    int key_monitor[256];
+    int number_of_players;
 
     GLfloat gravity;
     Projectile* projectile;
-    GLfloat SCALE_GRAVITY;
-    GLfloat BALISTIC_SCALAR;
+    GLfloat scale_gravity;
+    GLfloat balistic_scalar;
     bool projectile_fired;
     Inventory* inventory;
-    ImageObject* weaponSlot;
-    ImageObject* selectedWeaponImg;
-    TextObject* selectedWeaponRemain;
-    VBOShaderLibrary* projectileModels[MAX_PROJECTILE_MODELS];
+    ImageObject* weapon_slot;
+    ImageObject* selected_weapon_img;
+    TextObject* selected_weapon_remain;
+    VBOShaderLibrary* projectile_models[max_projectile_models];
 
     SpecialEffect** special_effects;
-    GLfloat radiusIncrease1;
-    int specialEffectTimer;
-    GLfloat specialEffectX;
-    GLfloat specialEffectY;
-    GLfloat specialEffectZ;
-    GLfloat radiusOfCurrentExplosion;
-    int specialEffectType;
-    int specialEffectsCount;
-    bool startMusicPlayed;
-    int prevMusicVolume;
-    bool needHelp;
+    GLfloat radius_increase1;
+    int special_effect_timer;
+    GLfloat special_effect_x;
+    GLfloat special_effect_y;
+    GLfloat special_effect_z;
+    GLfloat radius_of_current_explosion;
+    int special_effect_type;
+    int special_effects_count;
+    bool start_music_played;
+    int prev_music_volume;
+    bool need_help;
     ImageObject* manual;
-    int* currentGameState;
+    int* current_game_state;
 
-    bool drawHitBox;
+    bool draw_hit_box;
 
     /*	AI VARIABLES AND MEMBER FUNCTIONS	*/
     GLfloat timer;  // Should match frames per second
@@ -166,7 +166,7 @@ private:
     void printTables();
     bool** tank_reachable;
     GLfloat** distance_to_target;
-    Tank*** tankList;
+    Tank*** tank_list;
     Vertex position_of_last_projectile;
     ofstream myfile;
     /*	END OF AI */

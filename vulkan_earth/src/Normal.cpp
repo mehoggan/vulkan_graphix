@@ -4,9 +4,9 @@
 Normal::Normal() = default;
 
 Normal::Normal(GLfloat x, GLfloat y, GLfloat z) {
-    compoX = x;
-    compoY = y;
-    compoZ = z;
+    compo_x = x;
+    compo_y = y;
+    compo_z = z;
 }
 
 Normal::~Normal() = default;

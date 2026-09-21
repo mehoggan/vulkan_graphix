@@ -27,22 +27,22 @@ class PlayerFactory;
 
 using namespace std;
 
-const int QUIT = 9;
+const int quit = 9;
 
-const int NUM_BUTTON = 10;
-const int NUM_SUBMENUS = 8;
-const int NUM_IMAGES = 2;
-const int NUM_ARROW_BUTTONS = 2;
+const int num_button = 10;
+const int num_submenus = 8;
+const int num_images = 2;
+const int num_arrow_buttons = 2;
 
 class MainMenu {
 public:
     MainMenu();
     MainMenu(GLfloat width,
              GLfloat height,
-             GLfloat percentBorder,
+             GLfloat percent_border,
              GlobalSettings* global_settings,
              PlayerFactory* player_factory,
-             int* gameState);
+             int* game_state);
     ~MainMenu();
     GLfloat* getPos();
     GLfloat getHeight();
@@ -50,25 +50,25 @@ public:
     GLfloat getWidth();
     void setWidth(GLfloat width);
     GLfloat* getColor();
-    SubMenu* getSubMenuI(int I);
+    SubMenu* getSubMenuI(int i);
     SubMenu* getActiveSubMenu();
     void draw();
-    void buttonTest(int x, int y, int buttonDown);
+    void buttonTest(int x, int y, int button_down);
     void collectData();
     SubMenuLandscape* getSubMenuLandscape();
 
 private:
     GLfloat pos[3], width, height, color[4], border;
-    int* currentGameState;
-    GLfloat percentBorder;
-    MainMenuButton* buttons[NUM_BUTTON];
-    SubMenu* submenus[NUM_SUBMENUS];
-    ImageObject* images[NUM_IMAGES];
-    ControlItem* arrowsbutton[NUM_ARROW_BUTTONS];
+    int* current_game_state;
+    GLfloat percent_border;
+    MainMenuButton* buttons[num_button];
+    SubMenu* submenus[num_submenus];
+    ImageObject* images[num_images];
+    ControlItem* arrowsbutton[num_arrow_buttons];
     TextObject* text;
-    MainMenuButton* buttonPressed;
-    SubMenu* activeSubMenu;
-    ControlItem* arrowButtonPressed;
+    MainMenuButton* button_pressed;
+    SubMenu* active_sub_menu;
+    ControlItem* arrow_button_pressed;
     GlobalSettings* global_settings;
     PlayerFactory* player_factory;
 };

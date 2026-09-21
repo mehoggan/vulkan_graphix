@@ -8,7 +8,7 @@
 class ItemSmallRepair : public Item {
 public:
     ItemSmallRepair();
-    ItemSmallRepair(int ID);
+    ItemSmallRepair(int id);
     ~ItemSmallRepair() override;
     ItemSmallRepair* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

@@ -11,9 +11,9 @@ class TextObject {
 public:
     TextObject();
     TextObject(const std::string& input,
-               GLfloat posX,
-               GLfloat posY,
-               GLfloat posZ,
+               GLfloat pos_x,
+               GLfloat pos_y,
+               GLfloat pos_z,
                void* font_size,
                GLfloat red,
                GLfloat green,
@@ -27,9 +27,9 @@ public:
 
 private:
     std::string output;
-    GLfloat posX;
-    GLfloat posY;
-    GLfloat posZ;
+    GLfloat pos_x;
+    GLfloat pos_y;
+    GLfloat pos_z;
     GLfloat color[4];
     void* font_size;
 };

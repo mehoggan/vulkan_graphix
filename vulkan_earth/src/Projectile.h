@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <string>
 
-const int DEFAULT_DAMAGE = 100;
-const int DEFAULT_RADIUS = 5;
+const int default_damage = 100;
+const int default_radius = 5;
 
 class ChaseCam;
 class Weapon;
@@ -18,13 +18,13 @@ class Projectile {
 public:
     Projectile();
     Projectile(GameState* parent,
-               GLfloat* turretMatrix,
+               GLfloat* turret_matrix,
                GLfloat speed,
-               VBOShaderLibrary** projectileModels);
+               VBOShaderLibrary** projectile_models);
     ~Projectile();
     void draw();
     // void update(GLfloat gravity);
-    void update(GLfloat X, GLfloat Y, GLfloat Z);
+    void update(GLfloat x, GLfloat y, GLfloat z);
     void chaseView();
     GLfloat* getPos();
     Weapon* getWeapon();
@@ -44,24 +44,24 @@ public:
     GLfloat getInitialPositionScalar();
 
 private:
-    ChaseCam* chaseCam;
+    ChaseCam* chase_cam;
     GLfloat pos[3];
-    GLfloat vVec[3];
+    GLfloat v_vec[3];
     GLfloat speed;
     GLfloat wind;  // implement later
     Weapon* weapon;
-    Weapon* defaultWeapon;
-    VBOShaderLibrary* projectileDefault;
-    VBOShaderLibrary** projectileModels;
+    Weapon* default_weapon;
+    VBOShaderLibrary* projectile_default;
+    VBOShaderLibrary** projectile_models;
     float rotate;
     float y_not;
     GLfloat scalar;
     int timer;
     bool printed;
     GameState* parent;
-    GLfloat Xo;
-    GLfloat Yo;
-    GLfloat Zo;
+    GLfloat xo;
+    GLfloat yo;
+    GLfloat zo;
 };
 
 #endif /*	PROJECTILE_H_	*/

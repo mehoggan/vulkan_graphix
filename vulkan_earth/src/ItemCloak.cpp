@@ -4,23 +4,23 @@
 
 ItemCloak::ItemCloak() = default;
 ItemCloak::ItemCloak(int id) {
-    UNIQUEIDENTIFIER = id;
-    packageNum = 2;
-    maxStack = 10;
+    uniqueidentifier = id;
+    package_num = 2;
+    max_stack = 10;
     remaining = 2;
-    imageFileName = "ItemCloak.raw";
+    image_file_name = "ItemCloak.raw";
     description =
             "Cloak:     Makes the player's tank disappear (users 1 turn).";
     price = 100;
-    specialNum = 5;
+    special_num = 5;
 }
 ItemCloak::~ItemCloak() = default;
 
 ItemCloak* ItemCloak::getItemInstance() {
-    return new ItemCloak(UNIQUEIDENTIFIER);
+    return new ItemCloak(uniqueidentifier);
 }
 
 bool ItemCloak::causeEffectToTank(Tank* tank) {
-    tank->setDurationCloak(specialNum + 1);
+    tank->setDurationCloak(special_num + 1);
     return true;
 }

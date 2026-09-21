@@ -10,7 +10,7 @@ public:
     TexCoord();
     TexCoord(GLfloat s, GLfloat t);
     ~TexCoord();
-    GLfloat texcoordS;
-    GLfloat texcoordT;
+    GLfloat texcoord_s;
+    GLfloat texcoord_t;
 };
 #endif  // TEX_COORD_H

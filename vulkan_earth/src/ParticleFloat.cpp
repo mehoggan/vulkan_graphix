@@ -16,8 +16,8 @@ ParticleFloat::ParticleFloat(GLfloat x,
     dir[1] = dir_y;
     dir[2] = dir_z;
     this->speed = speed;
-    activeFrames = frames;
-    currentFrame = 0;
+    active_frames = frames;
+    current_frame = 0;
     size = 4;
     red = 1;
     green = 1;
@@ -28,6 +28,6 @@ bool ParticleFloat::update() {
     x += dir[0] * speed;
     y += dir[1] * speed / 10;
     z += dir[2] * speed;
-    currentFrame++;
-    return currentFrame != activeFrames;
+    current_frame++;
+    return current_frame != active_frames;
 }

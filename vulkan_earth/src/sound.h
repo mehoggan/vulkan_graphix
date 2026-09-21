@@ -51,20 +51,20 @@ enum SFX {
     MANUAL
 };
 
-const int MAX_SFX_FILES = 100;
+const int max_sfx_files = 100;
 
-const int MAINMENU = 0;
-const int READYMENU_START = 1;
-const int READYMENU_LOOP = 2;
-const int SHOPMENU = 3;
-const int GAMESTATE_ROCK = 4;
-const int GAMESTATE_SNOW = 5;
-const int GAMESTATE_ICE = 6;
-const int GAMESTATE_MARS = 7;
-const int GAMESTATE_BEACH_START = 8;
-const int GAMESTATE_BEACH_LOOP = 9;
-const int GAMESTATE_DESERT = 10;
-const int GAMESTATE_LAVA = 11;
-const int TOTAL_MUSIC_FILES = 12;
+const int mainmenu = 0;
+const int readymenu_start = 1;
+const int readymenu_loop = 2;
+const int shopmenu = 3;
+const int gamestate_rock = 4;
+const int gamestate_snow = 5;
+const int gamestate_ice = 6;
+const int gamestate_mars = 7;
+const int gamestate_beach_start = 8;
+const int gamestate_beach_loop = 9;
+const int gamestate_desert = 10;
+const int gamestate_lava = 11;
+const int total_music_files = 12;
 
 #endif

@@ -7,25 +7,25 @@ extern void playSFX(int sfx);
 
 ItemShield::ItemShield() = default;
 ItemShield::ItemShield(int id) {
-    UNIQUEIDENTIFIER = id;
-    packageNum = 1;
-    maxStack = 5;
+    uniqueidentifier = id;
+    package_num = 1;
+    max_stack = 5;
     remaining = 1;
-    imageFileName = "ItemShield.raw";
+    image_file_name = "ItemShield.raw";
     description =
             "Shield:     Neutralize the damage taken for 5 times (uses 1 "
             "turn).";
     price = 150;
-    specialNum = 5;
+    special_num = 5;
 }
 ItemShield::~ItemShield() = default;
 
 ItemShield* ItemShield::getItemInstance() {
-    return new ItemShield(UNIQUEIDENTIFIER);
+    return new ItemShield(uniqueidentifier);
 }
 
 bool ItemShield::causeEffectToTank(Tank* tank) {
-    tank->setDurationShield(specialNum);
+    tank->setDurationShield(special_num);
     return true;
 }
 

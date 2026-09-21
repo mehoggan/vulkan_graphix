@@ -10,11 +10,11 @@
 extern void playSFX(int sfx);
 
 Player::Player() {
-    state_of_AI = NEED_NEW_TARGET;
-    prev_state_of_AI = NEED_NEW_TARGET;
-    sub_state_of_AI = NOTHING;
+    state_of_ai = NEED_NEW_TARGET;
+    prev_state_of_ai = NEED_NEW_TARGET;
+    sub_state_of_ai = NOTHING;
     bool draw_debug_linesand_planes = false;
-    maxPitchAngle = 89.0f;
+    max_pitch_angle = 89.0f;
     previous_distance_off_from_target = 0;
     degrees_rotated = 0;
     first_acquired_power = 0;
@@ -32,8 +32,8 @@ void Player::setGameState(GameState* game_state) {
     this->game_state = game_state;
 }
 Tank* Player::getTarget() { return this->target; }
-Vertex Player::getEnemyPosition() { return enemyPosition; }
-GLfloat* Player::getBalisticMatrix() { return balisticMatrix; }
+Vertex Player::getEnemyPosition() { return enemy_position; }
+GLfloat* Player::getBalisticMatrix() { return balistic_matrix; }
 
 /*	SAVE FOR LATER NEED IN CALCULATING PHYSICS	*/
 /*	STATES = {	NEED_NEW_TARGET, FIND_TARGET,					*/
@@ -41,23 +41,23 @@ GLfloat* Player::getBalisticMatrix() { return balisticMatrix; }
 /*				ROTATING_LEFT, ROTATING_RIGHT };				*/
 void Player::aiMainLogisticFunction() {
     /*	THIS IS THE BRAINS	*/
-    if (prev_state_of_AI == SHOT_LAST_ROUND) {
+    if (prev_state_of_ai == SHOT_LAST_ROUND) {
         previous_projectile_landing_spot =
                 this->game_state->getPositionOfLastProjectile();
         previous_distance_off_from_target = distance_off_from_target;
         distance_off_from_target =
-                sqrt(pow((previous_projectile_landing_spot.coordX -
-                          enemyPosition.coordX),
+                sqrt(pow((previous_projectile_landing_spot.coord_x -
+                          enemy_position.coord_x),
                          2) +
-                     pow((previous_projectile_landing_spot.coordY -
-                          enemyPosition.coordY),
+                     pow((previous_projectile_landing_spot.coord_y -
+                          enemy_position.coord_y),
                          2) +
-                     pow((previous_projectile_landing_spot.coordZ -
-                          enemyPosition.coordZ),
+                     pow((previous_projectile_landing_spot.coord_z -
+                          enemy_position.coord_z),
                          2));
     }
 
-    if (state_of_AI == NEED_NEW_TARGET || this->target == nullptr) {
+    if (state_of_ai == NEED_NEW_TARGET || this->target == nullptr) {
         /*	Game State Will Set Your Target For You	*/
         /*	You Need To Check Though That Your Tank	*/
         /*	Was Set									*/
@@ -67,50 +67,50 @@ void Player::aiMainLogisticFunction() {
         if (this->target) {
             setEnemyPosition();
             setUpYawVectors();
-            state_of_AI = FIND_TARGET;
+            state_of_ai = FIND_TARGET;
         }
     }
-    if (state_of_AI == FIND_TARGET) {
+    if (state_of_ai == FIND_TARGET) {
         playSFX(TANK_CONTROL2);
         updateBalsticMatrix();
         setUpYawVectors();
         yaw_angle = this->game_state->calcAngleBetweenVectors(enemy_path,
                                                               projectile_path);
-        _rangle = this->game_state->calcAngleBetweenVectors(enemy_path,
-                                                            ortho_left);
-        _langle = this->game_state->calcAngleBetweenVectors(enemy_path,
-                                                            ortho_right);
+        rangle = this->game_state->calcAngleBetweenVectors(enemy_path,
+                                                           ortho_left);
+        langle = this->game_state->calcAngleBetweenVectors(enemy_path,
+                                                           ortho_right);
         if (degrees_rotated > 540) {
-            state_of_AI = NEED_NEW_TARGET;
+            state_of_ai = NEED_NEW_TARGET;
             degrees_rotated = 0;
         }
         if (yaw_angle > 5) {
-            if (minimumYawAngle(_rangle, _langle) == 'r') {
+            if (minimumYawAngle(rangle, langle) == 'r') {
                 yawRight(0.4f);
-            } else if (minimumYawAngle(_rangle, _langle) == 'l') {
+            } else if (minimumYawAngle(rangle, langle) == 'l') {
                 yawLeft(0.4f);
             }
             degrees_rotated += 0.4;
         } else if (yaw_angle <= 5 && yaw_angle > 1) {
-            if (minimumYawAngle(_rangle, _langle) == 'r') {
+            if (minimumYawAngle(rangle, langle) == 'r') {
                 yawRight(0.2f);
-            } else if (minimumYawAngle(_rangle, _langle) == 'l') {
+            } else if (minimumYawAngle(rangle, langle) == 'l') {
                 yawLeft(0.2f);
             }
             degrees_rotated += 0.2;
         } else if (yaw_angle <= 1 && yaw_angle > .1) {
-            if (minimumYawAngle(_rangle, _langle) == 'r') {
+            if (minimumYawAngle(rangle, langle) == 'r') {
                 yawRight(0.09f);
-            } else if (minimumYawAngle(_rangle, _langle) == 'l') {
+            } else if (minimumYawAngle(rangle, langle) == 'l') {
                 yawLeft(0.09f);
             }
             degrees_rotated += 0.09;
         } else {
-            state_of_AI = HOMING_IN_ON_TARGET;
+            state_of_ai = HOMING_IN_ON_TARGET;
             Mix_HaltChannel(3);
         }
     }
-    if (state_of_AI == HOMING_IN_ON_TARGET) {
+    if (state_of_ai == HOMING_IN_ON_TARGET) {
         playSFX(TANK_CONTROL1);
         setUpPitchVectors();
         updateBalsticMatrix();
@@ -118,7 +118,7 @@ void Player::aiMainLogisticFunction() {
         bool physics = false;
         pitch_angle = this->game_state->calcAngleBetweenVectors(enemy_path,
                                                                 pitch_vector);
-        if (pitch_angle < maxPitchAngle && !physics) {
+        if (pitch_angle < max_pitch_angle && !physics) {
             if (getCurrentTank()->getCurrentPower() >= .4 && !physics) {
                 physics = calculateProjectilePhysics(600, 100, 600);
                 getCurrentTank()->adjustPower(-.09990238);
@@ -127,8 +127,8 @@ void Player::aiMainLogisticFunction() {
                 pitchUp(2.0f);
             }
         }
-        if (pitch_angle > maxPitchAngle) {
-            state_of_AI = TARGET_NOT_REACHABLE;
+        if (pitch_angle > max_pitch_angle) {
+            state_of_ai = TARGET_NOT_REACHABLE;
             Mix_HaltChannel(2);
             Mix_HaltChannel(3);
         }
@@ -136,20 +136,20 @@ void Player::aiMainLogisticFunction() {
             yaw_angle = this->game_state->calcAngleBetweenVectors(
                     enemy_path, projectile_path);
             if (yaw_angle > .01) {
-                state_of_AI = FIND_TARGET;
+                state_of_ai = FIND_TARGET;
                 Mix_HaltChannel(2);
             }
         }
         if (physics) {
             this->game_state->currentPlayerFire();
             degrees_rotated = 0;
-            prev_state_of_AI = SHOT_LAST_ROUND;
-            state_of_AI = WALKING_IN;
+            prev_state_of_ai = SHOT_LAST_ROUND;
+            state_of_ai = WALKING_IN;
             first_acquired_power = getCurrentTank()->getCurrentPower();
             first_acquired_pitch = pitch_angle;
         }
     }
-    if (state_of_AI == WALKING_IN) {
+    if (state_of_ai == WALKING_IN) {
         /*const GLfloat* velMatrix = getCurrentTank()->getTurretMatrix();
         GLfloat tankAttributePower = first_acquired_power;
         GLfloat powerBar = getCurrentTank()->getCurrentPower();
@@ -163,11 +163,11 @@ void Player::aiMainLogisticFunction() {
         GLfloat ang = first_acquired_pitch;*/
         degrees_rotated = 0;
         this->game_state->currentPlayerFire();
-        prev_state_of_AI = SHOT_LAST_ROUND;
-        state_of_AI = WALKING_IN;
+        prev_state_of_ai = SHOT_LAST_ROUND;
+        state_of_ai = WALKING_IN;
     }
-    if (state_of_AI == TARGET_NOT_REACHABLE) {
-        state_of_AI = NEED_NEW_TARGET;
+    if (state_of_ai == TARGET_NOT_REACHABLE) {
+        state_of_ai = NEED_NEW_TARGET;
     }
 }
 
@@ -183,19 +183,19 @@ char Player::minimumYawAngle(GLfloat right_degrees, GLfloat left_degrees) {
 
 void Player::updateBalsticMatrix() {
     for (int x = 0; x < 16; x++) {
-        balisticMatrix[x] = getCurrentTank()->getTurretMatrix()[x];
+        balistic_matrix[x] = getCurrentTank()->getTurretMatrix()[x];
     }
-    balisticMatrix[1] = 0;
-    balisticMatrix[4] = 0;
-    balisticMatrix[6] = 0;
-    balisticMatrix[9] = 0;
+    balistic_matrix[1] = 0;
+    balistic_matrix[4] = 0;
+    balistic_matrix[6] = 0;
+    balistic_matrix[9] = 0;
 }
 
 void Player::setEnemyPosition() {
     updateBalsticMatrix();
-    enemyPosition.coordX = this->target->getBodyMatrix()[12];
-    enemyPosition.coordY = this->target->getBodyMatrix()[13];
-    enemyPosition.coordZ = this->target->getBodyMatrix()[14];
+    enemy_position.coord_x = this->target->getBodyMatrix()[12];
+    enemy_position.coord_y = this->target->getBodyMatrix()[13];
+    enemy_position.coord_z = this->target->getBodyMatrix()[14];
 }
 
 void Player::setUpYawVectors() {
@@ -219,34 +219,34 @@ void Player::setUpYawVectors() {
      */
     /********************************************************************************************************************/
     Vector v1(matrix[8], 0, matrix[10]);
-    Vector w1(v1.compoX, v1.compoY, v1.compoZ);
+    Vector w1(v1.compo_x, v1.compo_y, v1.compo_z);
     // Test for linear independence
     Vector v2(0, 0, 0);
-    if (v1.compoY == 0 && v1.compoZ == 0) {
-        v2.compoX = 0;
-        v2.compoY = 0;
-        v2.compoZ = 1;
+    if (v1.compo_y == 0 && v1.compo_z == 0) {
+        v2.compo_x = 0;
+        v2.compo_y = 0;
+        v2.compo_z = 1;
     } else {
-        v2.compoX = -v1.compoX;
-        v2.compoY = v1.compoY;
-        v2.compoZ = v1.compoZ;
+        v2.compo_x = -v1.compo_x;
+        v2.compo_y = v1.compo_y;
+        v2.compo_z = v1.compo_z;
     }
     GLfloat magnitude_w1 =
-            sqrt((w1.compoX * w1.compoX) + (w1.compoY * w1.compoY) +
-                 (w1.compoZ * w1.compoZ));
-    GLfloat scalar = (w1.compoX * v2.compoX + w1.compoY * v2.compoY +
-                      w1.compoZ * v2.compoZ) /
+            sqrt((w1.compo_x * w1.compo_x) + (w1.compo_y * w1.compo_y) +
+                 (w1.compo_z * w1.compo_z));
+    GLfloat scalar = (w1.compo_x * v2.compo_x + w1.compo_y * v2.compo_y +
+                      w1.compo_z * v2.compo_z) /
                      (pow(static_cast<double>(magnitude_w1), 2.0));
-    w1.compoX *= scalar;
-    w1.compoY *= scalar;
-    w1.compoZ *= scalar;
-    Vector w2((v2.compoX - w1.compoX),
-              (v2.compoY - w1.compoY),
-              (v2.compoZ - w1.compoZ));
-    if ((w1.compoX <= 0 && w1.compoZ <= 0) ||
-        (w1.compoX >= 0 && w1.compoZ >= 0)) {
-        w2.compoX *= -1;
-        w2.compoZ *= -1;
+    w1.compo_x *= scalar;
+    w1.compo_y *= scalar;
+    w1.compo_z *= scalar;
+    Vector w2((v2.compo_x - w1.compo_x),
+              (v2.compo_y - w1.compo_y),
+              (v2.compo_z - w1.compo_z));
+    if ((w1.compo_x <= 0 && w1.compo_z <= 0) ||
+        (w1.compo_x >= 0 && w1.compo_z >= 0)) {
+        w2.compo_x *= -1;
+        w2.compo_z *= -1;
     }
     /********************************************************************************************************************/
     /*	End Gram-Schmidt Orthogonalization
@@ -263,7 +263,7 @@ void Player::setUpYawVectors() {
 
     // Get Vertices
     Vertex my_position(matrix[12], matrix[13], matrix[14]);
-    Vertex enemy_position(v.coordX, v.coordY, v.coordZ);
+    Vertex enemy_position(v.coord_x, v.coord_y, v.coord_z);
     Vertex projectile_endmark((matrix[12] - 10000 * matrix[8]),
                               (matrix[13]),
                               (matrix[14] - 10000 * matrix[10]));
@@ -273,54 +273,57 @@ void Player::setUpYawVectors() {
     Vertex right_mark((matrix[12] - 1000 * matrix[0]),
                       (matrix[13]),
                       (matrix[14] - 1000 * matrix[2]));
-    Vertex left_ortho((matrix[12] + 1000 * w2.compoX),
+    Vertex left_ortho((matrix[12] + 1000 * w2.compo_x),
                       (matrix[13]),
-                      (matrix[14] + 1000 * w2.compoZ));
-    Vertex right_ortho((matrix[12] - 1000 * w2.compoX),
+                      (matrix[14] + 1000 * w2.compo_z));
+    Vertex right_ortho((matrix[12] - 1000 * w2.compo_x),
                        (matrix[13]),
-                       (matrix[14] - 1000 * w2.compoZ));
+                       (matrix[14] - 1000 * w2.compo_z));
 
     // Produce Member Vectors
-    ortho_left.compoX = (left_ortho.coordX - my_position.coordX);
-    ortho_left.compoY = (left_ortho.coordY - my_position.coordY);
-    ortho_left.compoZ = (left_ortho.coordZ - my_position.coordZ);
+    ortho_left.compo_x = (left_ortho.coord_x - my_position.coord_x);
+    ortho_left.compo_y = (left_ortho.coord_y - my_position.coord_y);
+    ortho_left.compo_z = (left_ortho.coord_z - my_position.coord_z);
 
-    ortho_right.compoX = (right_ortho.coordX - my_position.coordX);
-    ortho_right.compoY = (right_ortho.coordY - my_position.coordY);
-    ortho_right.compoZ = (right_ortho.coordZ - my_position.coordZ);
+    ortho_right.compo_x = (right_ortho.coord_x - my_position.coord_x);
+    ortho_right.compo_y = (right_ortho.coord_y - my_position.coord_y);
+    ortho_right.compo_z = (right_ortho.coord_z - my_position.coord_z);
 
-    enemy_path.compoX = (enemy_position.coordX - my_position.coordX);
-    enemy_path.compoY = (my_position.coordY - my_position.coordY);
-    enemy_path.compoZ = (enemy_position.coordZ - my_position.coordZ);
+    enemy_path.compo_x = (enemy_position.coord_x - my_position.coord_x);
+    enemy_path.compo_y = (my_position.coord_y - my_position.coord_y);
+    enemy_path.compo_z = (enemy_position.coord_z - my_position.coord_z);
 
-    projectile_path.compoX = (projectile_endmark.coordX - my_position.coordX);
-    projectile_path.compoY = (projectile_endmark.coordY - my_position.coordY);
-    projectile_path.compoZ = (projectile_endmark.coordZ - my_position.coordZ);
+    projectile_path.compo_x =
+            (projectile_endmark.coord_x - my_position.coord_x);
+    projectile_path.compo_y =
+            (projectile_endmark.coord_y - my_position.coord_y);
+    projectile_path.compo_z =
+            (projectile_endmark.coord_z - my_position.coord_z);
 
-    left_vector.compoX = (left_mark.coordX - my_position.coordX);
-    left_vector.compoY = (left_mark.coordY - my_position.coordY);
-    left_vector.compoZ = (left_mark.coordZ - my_position.coordZ);
+    left_vector.compo_x = (left_mark.coord_x - my_position.coord_x);
+    left_vector.compo_y = (left_mark.coord_y - my_position.coord_y);
+    left_vector.compo_z = (left_mark.coord_z - my_position.coord_z);
 
-    right_vector.compoX = (right_mark.coordX - my_position.coordX);
-    right_vector.compoY = (right_mark.coordY - my_position.coordY);
-    right_vector.compoZ = (right_mark.coordZ - my_position.coordZ);
+    right_vector.compo_x = (right_mark.coord_x - my_position.coord_x);
+    right_vector.compo_y = (right_mark.coord_y - my_position.coord_y);
+    right_vector.compo_z = (right_mark.coord_z - my_position.coord_z);
 }
 
 void Player::setUpPitchVectors() {
     const GLfloat* matrix = getBalisticMatrix();
     GLfloat* turret_matrix = getCurrentTank()->getTurretMatrix();
-    pitch_vector.compoX = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
-                           turret_matrix[12]);
-    pitch_vector.compoY = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
-                           turret_matrix[13]);
-    pitch_vector.compoZ = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
-                           turret_matrix[14]);
-    up_vector.compoX = (matrix[12] - matrix[12]);
-    up_vector.compoY = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
-    up_vector.compoZ = (matrix[14] - matrix[14]);
-    down_vector.compoX = (matrix[12] - matrix[12]);
-    down_vector.compoY = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
-    down_vector.compoZ = (matrix[14] - matrix[14]);
+    pitch_vector.compo_x = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
+                            turret_matrix[12]);
+    pitch_vector.compo_y = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
+                            turret_matrix[13]);
+    pitch_vector.compo_z = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
+                            turret_matrix[14]);
+    up_vector.compo_x = (matrix[12] - matrix[12]);
+    up_vector.compo_y = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
+    up_vector.compo_z = (matrix[14] - matrix[14]);
+    down_vector.compo_x = (matrix[12] - matrix[12]);
+    down_vector.compo_y = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
+    down_vector.compo_z = (matrix[14] - matrix[14]);
 }
 
 bool Player::calculateProjectilePhysics(GLfloat xerr,
@@ -361,9 +364,9 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
     GLfloat xf = xo;
     GLfloat yf = yo;
     GLfloat zf = zo;
-    GLfloat xe = getEnemyPosition().coordX;
-    GLfloat ye = getEnemyPosition().coordY;
-    GLfloat ze = getEnemyPosition().coordZ;
+    GLfloat xe = getEnemyPosition().coord_x;
+    GLfloat ye = getEnemyPosition().coord_y;
+    GLfloat ze = getEnemyPosition().coord_z;
     GLfloat t = 0;
     bool on_target = false;
     while (yf > 0) {
@@ -409,9 +412,9 @@ void Player::displayProjectilePhysiscs() {
     GLfloat xf = xo;
     GLfloat yf = yo;
     GLfloat zf = zo;
-    GLfloat xe = getEnemyPosition().coordX;
-    GLfloat ye = getEnemyPosition().coordY;
-    GLfloat ze = getEnemyPosition().coordZ;
+    GLfloat xe = getEnemyPosition().coord_x;
+    GLfloat ye = getEnemyPosition().coord_y;
+    GLfloat ze = getEnemyPosition().coord_z;
 
     GLfloat t = 0;
     while (yf > 0) {
@@ -434,7 +437,7 @@ void Player::displayProjectilePhysiscs() {
          << endl;
 }
 
-int Player::getAIState() { return state_of_AI; }
+int Player::getAIState() { return state_of_ai; }
 
 void Player::restoreTurretTo0Degrees() {
     GLfloat restore_angle = getCurrentTank()->getTurretDegrees();
@@ -462,36 +465,39 @@ void Player::drawTestLinesandPlanes() {
     /*	START BALISTIC AXES	*/
     glBegin(GL_LINES);
     glColor3f(Red);
-    Vertex xyzri(balisticMatrix[12], balisticMatrix[13], balisticMatrix[14]);
-    Vertex xyzrf(scalar * balisticMatrix[0],
-                 scalar * balisticMatrix[1],
-                 scalar * balisticMatrix[2]);
-    glVertex3f(xyzri.coordX, xyzri.coordY, xyzri.coordZ);
-    glVertex3f(xyzri.coordX + xyzrf.coordX,
-               xyzri.coordY + xyzrf.coordY,
-               xyzri.coordZ + xyzrf.coordZ);
+    Vertex xyzri(
+            balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
+    Vertex xyzrf(scalar * balistic_matrix[0],
+                 scalar * balistic_matrix[1],
+                 scalar * balistic_matrix[2]);
+    glVertex3f(xyzri.coord_x, xyzri.coord_y, xyzri.coord_z);
+    glVertex3f(xyzri.coord_x + xyzrf.coord_x,
+               xyzri.coord_y + xyzrf.coord_y,
+               xyzri.coord_z + xyzrf.coord_z);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(Green);
-    Vertex xyzui(balisticMatrix[12], balisticMatrix[13], balisticMatrix[14]);
-    Vertex xyzuf(scalar * balisticMatrix[4],
-                 scalar * balisticMatrix[5],
-                 scalar * balisticMatrix[6]);
-    glVertex3f(xyzui.coordX, xyzui.coordY, xyzui.coordZ);
-    glVertex3f(xyzui.coordX + xyzuf.coordX,
-               xyzui.coordY + xyzuf.coordY,
-               xyzui.coordZ + xyzuf.coordZ);
+    Vertex xyzui(
+            balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
+    Vertex xyzuf(scalar * balistic_matrix[4],
+                 scalar * balistic_matrix[5],
+                 scalar * balistic_matrix[6]);
+    glVertex3f(xyzui.coord_x, xyzui.coord_y, xyzui.coord_z);
+    glVertex3f(xyzui.coord_x + xyzuf.coord_x,
+               xyzui.coord_y + xyzuf.coord_y,
+               xyzui.coord_z + xyzuf.coord_z);
     glEnd();
     glBegin(GL_LINES);
     glColor3f(Blue);
-    Vertex xyzai(balisticMatrix[12], balisticMatrix[13], balisticMatrix[14]);
-    Vertex xyzaf(scalar * balisticMatrix[8],
-                 scalar * balisticMatrix[9],
-                 scalar * balisticMatrix[10]);
-    glVertex3f(xyzai.coordX, xyzai.coordY, xyzai.coordZ);
-    glVertex3f(xyzai.coordX + xyzaf.coordX,
-               xyzai.coordY + xyzaf.coordY,
-               xyzai.coordZ + xyzaf.coordZ);
+    Vertex xyzai(
+            balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
+    Vertex xyzaf(scalar * balistic_matrix[8],
+                 scalar * balistic_matrix[9],
+                 scalar * balistic_matrix[10]);
+    glVertex3f(xyzai.coord_x, xyzai.coord_y, xyzai.coord_z);
+    glVertex3f(xyzai.coord_x + xyzaf.coord_x,
+               xyzai.coord_y + xyzaf.coord_y,
+               xyzai.coord_z + xyzaf.coord_z);
     glEnd();
     /*	END BALISTIC AXES	*/
 
@@ -500,11 +506,11 @@ void Player::drawTestLinesandPlanes() {
         glBegin(GL_LINES);
         glColor3f(LightSteelBlue);
         Vertex mypos(
-                balisticMatrix[12], balisticMatrix[13], balisticMatrix[14]);
+                balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
         Vertex enemypos(
-                enemyPosition.coordX, mypos.coordY, enemyPosition.coordZ);
-        glVertex3f(mypos.coordX, mypos.coordY, mypos.coordZ);
-        glVertex3f(enemypos.coordX, enemypos.coordY, enemypos.coordZ);
+                enemy_position.coord_x, mypos.coord_y, enemy_position.coord_z);
+        glVertex3f(mypos.coord_x, mypos.coord_y, mypos.coord_z);
+        glVertex3f(enemypos.coord_x, enemypos.coord_y, enemypos.coord_z);
         glEnd();
         /*	END ENEMY VECTOR AXES	*/
         ///*	START PERP VECTORS	*/
@@ -532,12 +538,13 @@ void Player::drawTestLinesandPlanes() {
         /*	START PROJECTILE PATH	*/
         glBegin(GL_LINES);
         glColor3f(MediumGoldenrod);
-        Vertex o3(balisticMatrix[12], balisticMatrix[13], balisticMatrix[14]);
-        Vertex f3(o3.coordX - 100000 * balisticMatrix[8],
-                  o3.coordY,
-                  o3.coordZ - 100000 * balisticMatrix[10]);
-        glVertex3f(o3.coordX, o3.coordY, o3.coordZ);
-        glVertex3f(f3.coordX, f3.coordY, f3.coordZ);
+        Vertex o3(
+                balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
+        Vertex f3(o3.coord_x - 100000 * balistic_matrix[8],
+                  o3.coord_y,
+                  o3.coord_z - 100000 * balistic_matrix[10]);
+        glVertex3f(o3.coord_x, o3.coord_y, o3.coord_z);
+        glVertex3f(f3.coord_x, f3.coord_y, f3.coord_z);
         glEnd();
         /*	END	PROJECTILE PATH		*/
 
@@ -577,7 +584,9 @@ void Player::drawTestLinesandPlanes() {
     }
 }
 
-bool Player::getDrawDebugLinesandPlanes() { return drawDebugLinesandPlanes; }
+bool Player::getDrawDebugLinesandPlanes() {
+    return draw_debug_linesand_planes;
+}
 void Player::setDrawDebugLinesandPlanes(bool flag) {
-    drawDebugLinesandPlanes = flag;
+    draw_debug_linesand_planes = flag;
 }

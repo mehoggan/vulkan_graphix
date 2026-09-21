@@ -17,7 +17,7 @@ public:
 
 private:
     GLfloat matrix[16];
-    int shakeCamPos[3];
+    int shake_cam_pos[3];
 };
 
 #endif

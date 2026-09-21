@@ -15,9 +15,9 @@ public:
     ParticleFloat(GLfloat x,
                   GLfloat y,
                   GLfloat z,
-                  GLfloat dirX,
-                  GLfloat dirY,
-                  GLfloat dirZ,
+                  GLfloat dir_x,
+                  GLfloat dir_y,
+                  GLfloat dir_z,
                   GLfloat speed,
                   int frames);
 

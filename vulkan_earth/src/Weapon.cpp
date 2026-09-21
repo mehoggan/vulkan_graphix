@@ -11,20 +11,20 @@ using namespace std;
 Weapon::Weapon() = default;
 Weapon::~Weapon() = default;
 /*GETTERS*/
-int Weapon::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
+int Weapon::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 float Weapon::getScale() { return this->scale; }
 int Weapon::getRemaining() { return remaining; }
-std::string Weapon::getImageFileName() { return imageFileName; }
+std::string Weapon::getImageFileName() { return image_file_name; }
 std::string Weapon::getDescription() { return description; }
 int Weapon::getPrice() { return price; }
-int Weapon::getPackageNum() { return packageNum; }
-int Weapon::getMaxStack() { return maxStack; }
+int Weapon::getPackageNum() { return package_num; }
+int Weapon::getMaxStack() { return max_stack; }
 float Weapon::getRadius() { return radius; }
 int Weapon::getDamage() { return damage; }
-GLfloat* Weapon::getExplosionColor1() { return explosionColor1; }
-GLfloat* Weapon::getExplosionColor2() { return explosionColor2; }
-GLfloat* Weapon::getExplosionColor3() { return explosionColor3; }
-GLfloat* Weapon::getExplosionColor4() { return explosionColor4; }
+GLfloat* Weapon::getExplosionColor1() { return explosion_color1; }
+GLfloat* Weapon::getExplosionColor2() { return explosion_color2; }
+GLfloat* Weapon::getExplosionColor3() { return explosion_color3; }
+GLfloat* Weapon::getExplosionColor4() { return explosion_color4; }
 /*SETTERS*/
 void Weapon::setScale(float scale) { this->scale = scale; }
 void Weapon::setRemaining(int r) { remaining = r; }

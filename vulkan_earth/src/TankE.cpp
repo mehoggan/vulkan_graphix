@@ -17,43 +17,43 @@ TankE::TankE(GLfloat x, GLfloat y, GLfloat z) {
     initWheel();
     initDuration();
 
-    turretOffset[0] = 0;
-    turretOffset[1] = 0;
-    turretOffset[2] = 0;
-    headOffset[0] = 0;
-    headOffset[1] = 100;
-    headOffset[2] = 0;
-    bodyOffset[0] = 0;
-    bodyOffset[1] = 80;
-    bodyOffset[2] = 0;
+    turret_offset[0] = 0;
+    turret_offset[1] = 0;
+    turret_offset[2] = 0;
+    head_offset[0] = 0;
+    head_offset[1] = 100;
+    head_offset[2] = 0;
+    body_offset[0] = 0;
+    body_offset[1] = 80;
+    body_offset[2] = 0;
 
-    hitBoxHeight = 200;
-    hitBoxLength = 300;
-    hitBoxWidth = 300;
+    hit_box_height = 200;
+    hit_box_length = 300;
+    hit_box_width = 300;
 
     for (int i = 0; i < 3; i++) {
-        bodyScale[i] = 40;
-        headScale[i] = 40;
-        turretScale[i] = 40;
-        wheelScale[i] = 40;
+        body_scale[i] = 40;
+        head_scale[i] = 40;
+        turret_scale[i] = 40;
+        wheel_scale[i] = 40;
     }
 
     power = tank_e_power;
     armor = tank_e_armor;
     speed = tank_e_speed;
-    currentPower = 10;
-    previousPower = 1000;
-    previousAngle = 1;
-    HP = armor * 100;
+    current_power = 10;
+    previous_power = 1000;
+    previous_angle = 1;
+    hp = armor * 100;
 
     vbo_shader_head = new VBOShaderLibrary();
     vbo_shader_body = new VBOShaderLibrary();
     vbo_shader_turret = new VBOShaderLibrary();
     // vbo_shader_wheel=new VBOShaderLibrary();
     /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
-    if (!(VBOShaderLibrary::InitGlew())) {
+    if (!(VBOShaderLibrary::initGlew())) {
         exit(1);
-    } else if (!(VBOShaderLibrary::AreVBOsSupported())) {
+    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
         exit(1);
     }
 
@@ -72,13 +72,13 @@ TankE::TankE(GLfloat x, GLfloat y, GLfloat z) {
     vbo_shader_head->loadShaders("VertexTank.vs", "FragmentTank.vs");
     // vbo_shader_wheel->loadShaders("VertexTank.vs","FragmentTank.vs");
 
-    vbo_shader_turret->LoadTexture("TestImage.raw", 1024, 1024);
-    vbo_shader_body->LoadTexture("TestImage.raw", 1024, 1024);
-    vbo_shader_head->LoadTexture("TestImage.raw", 1024, 1024);
+    vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
+    vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
+    vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
     // vbo_shader_wheel->LoadTexture("TestImage.raw",1024,1024);
 
-    projectileLandPos[0] = 9999999;
-    projectileLandPos[1] = 9999999;
+    projectile_land_pos[0] = 9999999;
+    projectile_land_pos[1] = 9999999;
 }
 TankE::~TankE() {
     delete vbo_shader_head;

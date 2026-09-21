@@ -1,8 +1,8 @@
 #include "sound.h"
 #include "macro_crtdbg.h"
 
-Mix_Chunk* sfx[MAX_SFX_FILES];
-Mix_Music* music[TOTAL_MUSIC_FILES];
+Mix_Chunk* sfx[max_sfx_files];
+Mix_Music* music[total_music_files];
 
 void initSound() {
     int audio_rate = 48000;
@@ -19,10 +19,10 @@ void initSound() {
         printf("Unable to initialize audio: %s\n", Mix_GetError());
     }
 
-    for (int i = 0; i < MAX_SFX_FILES; i++) {
+    for (int i = 0; i < max_sfx_files; i++) {
         sfx[i] = nullptr;
     }
-    for (int i = 0; i < TOTAL_MUSIC_FILES; i++) {
+    for (int i = 0; i < total_music_files; i++) {
         music[i] = nullptr;
     }
 
@@ -83,7 +83,7 @@ void initSound() {
     music[9] = Mix_LoadMUS("Sounds/Music/gamestate_beach_loop.mp3");
     music[10] = Mix_LoadMUS("Sounds/Music/gamestate_desert.mp3");
     music[11] = Mix_LoadMUS("Sounds/Music/gamestate_lava.mp3");
-    for (int i = 0; i < TOTAL_MUSIC_FILES; i++) {
+    for (int i = 0; i < total_music_files; i++) {
         if (music[i] == nullptr) {
             printf("Unable to load music: %s\n", Mix_GetError());
         }
@@ -195,29 +195,29 @@ void playSFX(int type) {
 }
 
 void playMusic(int type) {
-    if (type == MAINMENU) {
+    if (type == mainmenu) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == READYMENU_START) {
+    } else if (type == readymenu_start) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], 0);
-    } else if (type == READYMENU_LOOP) {
+    } else if (type == readymenu_loop) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == SHOPMENU) {
+    } else if (type == shopmenu) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_ROCK) {
+    } else if (type == gamestate_rock) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_BEACH_START) {
+    } else if (type == gamestate_beach_start) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], 0);
-    } else if (type == GAMESTATE_BEACH_LOOP) {
+    } else if (type == gamestate_beach_loop) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_MARS) {
+    } else if (type == gamestate_mars) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_SNOW) {
+    } else if (type == gamestate_snow) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_ICE) {
+    } else if (type == gamestate_ice) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_LAVA) {
+    } else if (type == gamestate_lava) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
-    } else if (type == GAMESTATE_DESERT) {
+    } else if (type == gamestate_desert) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
     }
 }

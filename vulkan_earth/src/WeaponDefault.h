@@ -8,7 +8,7 @@
 class WeaponDefault : public Weapon {
 public:
     WeaponDefault();
-    WeaponDefault(int ID);
+    WeaponDefault(int id);
     ~WeaponDefault() override;
     WeaponDefault* getWeaponInstance() override;
 };

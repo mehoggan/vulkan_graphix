@@ -1,8 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-const int PLAYER_MAX_WEAPONS = 5;
-const int PLAYER_MAX_ITEMS = 5;
+const int player_max_weapons = 5;
+const int player_max_items = 5;
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -43,16 +43,16 @@ public:
     virtual void updateTank(
             /* Pass in all paramaters that are associated with a tank */) = 0;
     virtual std::string getTankType() = 0;
-    virtual void setTankType(const std::string& tankType) = 0;
+    virtual void setTankType(const std::string& tank_type) = 0;
     virtual Tank* getCurrentTank() = 0;
     virtual Item** getCurrentItems() = 0;
-    virtual void setItems(Item** itemSet) = 0;
+    virtual void setItems(Item** item_set) = 0;
     virtual Weapon** getCurrentWeapons() = 0;
-    virtual void setWeapons(Weapon** weaponSet) = 0;
-    virtual std::string getAI_Type() = 0;
-    virtual void setAI_Type(const std::string& ai_type) = 0;
-    virtual std::string getPlayer_Type() = 0;
-    virtual void setPlayer_Type(const std::string& player_type) = 0;
+    virtual void setWeapons(Weapon** weapon_set) = 0;
+    virtual std::string getAiType() = 0;
+    virtual void setAiType(const std::string& ai_type) = 0;
+    virtual std::string getPlayerType() = 0;
+    virtual void setPlayerType(const std::string& player_type) = 0;
     virtual std::string getPlayerName() = 0;
     virtual void setPlayerName(const std::string& name) = 0;
     virtual int getCash() = 0;
@@ -75,7 +75,7 @@ public:
     void setUpYawVectors();
     void setUpPitchVectors();
     void updateBalsticMatrix();
-    bool calculateProjectilePhysics(GLfloat Xerr, GLfloat Yerr, GLfloat Zerr);
+    bool calculateProjectilePhysics(GLfloat xerr, GLfloat yerr, GLfloat zerr);
     void displayProjectilePhysiscs();
     GLfloat* getBalisticMatrix();
     Vertex getEnemyPosition();
@@ -94,7 +94,7 @@ public:
 protected:
     GameState* game_state;
     Tank* target;
-    Vertex enemyPosition;
+    Vertex enemy_position;
     Vector projectile_path;
     Vector enemy_path;
     Vector right_vector;
@@ -105,23 +105,23 @@ protected:
     Vector ortho_right;
     Vector ortho_left;
     GLfloat yaw_angle;
-    GLfloat _rangle;
-    GLfloat _langle;
+    GLfloat rangle;
+    GLfloat langle;
     GLfloat pitch_angle;
-    GLfloat _uangle;
-    GLfloat _dangle;
-    GLfloat balisticMatrix[16];
-    GLfloat maxPitchAngle;
-    int state_of_AI;
-    int prev_state_of_AI;
-    int sub_state_of_AI;
+    GLfloat uangle;
+    GLfloat dangle;
+    GLfloat balistic_matrix[16];
+    GLfloat max_pitch_angle;
+    int state_of_ai;
+    int prev_state_of_ai;
+    int sub_state_of_ai;
     /*	AI ACTIONS	*/
     void restoreTurretTo0Degrees();
     void yawLeft(GLfloat degrees);
     void yawRight(GLfloat degrees);
     void pitchUp(GLfloat degrees);
     void pitchDown(GLfloat degrees);
-    bool drawDebugLinesandPlanes;
+    bool draw_debug_linesand_planes;
     char minimumYawAngle(GLfloat degrees1, GLfloat degrees2);
     Vertex previous_projectile_landing_spot;
     GLfloat distance_off_from_target;

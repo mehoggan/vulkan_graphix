@@ -8,7 +8,7 @@
 class WeaponNuke : public Weapon {
 public:
     WeaponNuke();
-    WeaponNuke(int ID);
+    WeaponNuke(int id);
     ~WeaponNuke() override;
     WeaponNuke* getWeaponInstance() override;
     void playExplosionSFX() override;

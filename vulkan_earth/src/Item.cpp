@@ -11,13 +11,13 @@ using namespace std;
 Item::Item() = default;
 Item::~Item() = default;
 /*GETTERS*/
-int Item::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
+int Item::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 int Item::getRemaining() { return remaining; }
-std::string Item::getImageFileName() { return imageFileName; }
+std::string Item::getImageFileName() { return image_file_name; }
 std::string Item::getDescription() { return description; }
 int Item::getPrice() { return price; }
-int Item::getPackageNum() { return packageNum; }
-int Item::getMaxStack() { return maxStack; }
+int Item::getPackageNum() { return package_num; }
+int Item::getMaxStack() { return max_stack; }
 /*SETTERS*/
 void Item::setRemaining(int r) { remaining = r; }
 

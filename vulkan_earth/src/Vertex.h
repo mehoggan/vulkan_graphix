@@ -11,8 +11,8 @@ public:
     Vertex();
     Vertex(GLfloat x, GLfloat y, GLfloat z);
     ~Vertex();
-    GLfloat coordX;
-    GLfloat coordY;
-    GLfloat coordZ;
+    GLfloat coord_x;
+    GLfloat coord_y;
+    GLfloat coord_z;
 };
 #endif  // Vertex

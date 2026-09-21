@@ -11,8 +11,8 @@ public:
     Normal();
     Normal(GLfloat x, GLfloat y, GLfloat z);
     ~Normal();
-    GLfloat compoX;
-    GLfloat compoY;
-    GLfloat compoZ;
+    GLfloat compo_x;
+    GLfloat compo_y;
+    GLfloat compo_z;
 };
 #endif  // NORMAL

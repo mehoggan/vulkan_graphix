@@ -7,23 +7,23 @@ extern void playSFX(int sfx);
 
 ItemAntiAcid::ItemAntiAcid() = default;
 ItemAntiAcid::ItemAntiAcid(int id) {
-    UNIQUEIDENTIFIER = id;
-    packageNum = 3;
-    maxStack = 12;
+    uniqueidentifier = id;
+    package_num = 3;
+    max_stack = 12;
     remaining = 3;
-    imageFileName = "ItemAntiAcid.raw";
+    image_file_name = "ItemAntiAcid.raw";
     description = "Anti-Acid:     Cures acid status.";
     price = 70;
-    specialNum = 0;
+    special_num = 0;
 }
 ItemAntiAcid::~ItemAntiAcid() = default;
 
 ItemAntiAcid* ItemAntiAcid::getItemInstance() {
-    return new ItemAntiAcid(UNIQUEIDENTIFIER);
+    return new ItemAntiAcid(uniqueidentifier);
 }
 
 bool ItemAntiAcid::causeEffectToTank(Tank* tank) {
-    tank->setDurationAcid(specialNum);
+    tank->setDurationAcid(special_num);
     return false;
 }
 

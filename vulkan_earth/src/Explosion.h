@@ -24,7 +24,7 @@ public:
      * Constructors and De-constructor
      */
     Explosion();
-    Explosion(GLfloat x, GLfloat y, GLfloat z, int weaponRadius);
+    Explosion(GLfloat x, GLfloat y, GLfloat z, int weapon_radius);
     ~Explosion() override;
     void draw() override;
     void setColors1(GLfloat* colors1) override;
@@ -38,7 +38,7 @@ private:
     GLfloat y;
     GLfloat z;
     GLfloat time;
-    GLfloat transMatrix[16];
+    GLfloat trans_matrix[16];
     Shader* shader;
     GLfloat timer;
     GLfloat radius;
@@ -46,7 +46,7 @@ private:
     GLfloat colors2[3];
     GLfloat colors3[3];
     GLfloat colors4[3];
-    int weaponRadius;
+    int weapon_radius;
 };
 
 #endif /* EXPLOSION_H_ */

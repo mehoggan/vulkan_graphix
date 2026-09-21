@@ -8,7 +8,7 @@
 class ItemCloak : public Item {
 public:
     ItemCloak();
-    ItemCloak(int ID);
+    ItemCloak(int id);
     ~ItemCloak() override;
     ItemCloak* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

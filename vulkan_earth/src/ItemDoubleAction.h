@@ -8,7 +8,7 @@
 class ItemDoubleAction : public Item {
 public:
     ItemDoubleAction();
-    ItemDoubleAction(int ID);
+    ItemDoubleAction(int id);
     ~ItemDoubleAction() override;
     ItemDoubleAction* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

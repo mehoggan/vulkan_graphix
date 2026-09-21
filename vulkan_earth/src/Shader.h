@@ -8,12 +8,12 @@
 class Shader {
 public:
     Shader();
-    Shader(const char* vsFile, const char* fsFile);
+    Shader(const char* vs_file, const char* fs_file);
     ~Shader();
     void validateShader(GLuint shader, const char* file = nullptr);
     void validateProgram(GLuint program);
 
-    void init(const char* vsFile, const char* fsFile);
+    void init(const char* vs_file, const char* fs_file);
     void bind();
     void unbind();
 
@@ -23,6 +23,6 @@ private:
     unsigned int shader_id;
     unsigned int shader_vp;
     unsigned int shader_fp;
-    std::string textFileRead(const char* fileName);
+    std::string textFileRead(const char* file_name);
 };
 #endif /*__SHADER_H__*/

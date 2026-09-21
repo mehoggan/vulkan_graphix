@@ -15,9 +15,9 @@ class ControlItemButton : public ControlItem {
 public:
     ControlItemButton();
     ControlItemButton(SubMenuLandscape* parent,
-                      GLfloat xPos,
-                      GLfloat yPos,
-                      GLfloat zPos,
+                      GLfloat x_pos,
+                      GLfloat y_pos,
+                      GLfloat z_pos,
                       GLfloat red,
                       GLfloat green,
                       GLfloat blue,
@@ -29,7 +29,7 @@ public:
     void mouseClickEvent(GLint x,
                          GLint y,
                          GLint state,
-                         bool stillOverControlItemCheckBox) override;
+                         bool still_over_control_item_check_box) override;
     GLfloat getXPos() override;
     GLfloat getYPos() override;
     GLfloat getHeight() override;
@@ -37,23 +37,23 @@ public:
     std::string collectData() override;
     void updateMouse(int x, int y) override;
     void setOptionText(int index) override;
-    void setOptionText(const std::string& newText) override;
+    void setOptionText(const std::string& new_text) override;
     void updateButtonState();
     bool isToggled();
     void setToggled(bool t);
 
 private:
-    GLfloat xPos;
-    GLfloat yPos;
-    GLfloat zPos;
+    GLfloat x_pos;
+    GLfloat y_pos;
+    GLfloat z_pos;
     GLfloat color[4];
     GLint width;
     GLint height;
     TextObject* label;
     std::string caption;
-    int menuState;
-    int buttonState;  // 0 = no button pressed, 1 = up button pressed, 2 = down
-                      // button pressed
+    int menu_state;
+    int button_state;  // 0 = no button pressed, 1 = up button pressed, 2 =
+                       // down button pressed
     SubMenuLandscape* parent;
     bool toggled;
 };

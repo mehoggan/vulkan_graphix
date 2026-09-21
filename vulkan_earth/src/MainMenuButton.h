@@ -12,10 +12,10 @@ class SubMenu;
 class MainMenuButton {
 public:
     MainMenuButton();
-    MainMenuButton(int ID,
-                   GLfloat xPos,
-                   GLfloat yPos,
-                   GLfloat zPos,
+    MainMenuButton(int id,
+                   GLfloat x_pos,
+                   GLfloat y_pos,
+                   GLfloat z_pos,
                    GLfloat red,
                    GLfloat green,
                    GLfloat blue,
@@ -44,10 +44,10 @@ public:
     void printSelf(int i);
 
 private:
-    int UNIQUEIDENTIFIER;
-    GLfloat xPos;
-    GLfloat yPos;
-    GLfloat zPos;
+    int uniqueidentifier;
+    GLfloat x_pos;
+    GLfloat y_pos;
+    GLfloat z_pos;
     GLfloat color[4];
     GLint width;
     GLint height;

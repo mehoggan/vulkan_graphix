@@ -14,42 +14,44 @@ public:
     VBOShaderLibrary();
     ~VBOShaderLibrary();
     void drawClientData();
-    bool loadShaders(const char* vsFileName, const char* fsFileName);
-    bool loadClientData(const std::string& modelFile);
+    bool loadShaders(const char* vs_file_name, const char* fs_file_name);
+    bool loadClientData(const std::string& model_file);
     bool loadClientData(float* vertex_data,
                         float* normal_data,
                         float* tex_coord_data,
                         int number_of_vertices);
-    void SwapTexture(const char* filename, int width, int height);
-    void LoadTexture(const char* filename, int width, int height);
-    void SwapTextureNormals(const char* filename, int width, int height);
-    void LoadTextureNormals(const char* filename, int width, int height);
+    void swapTexture(const char* filename, int width, int height);
+    void loadTexture(const char* filename, int width, int height);
+    void swapTextureNormals(const char* filename, int width, int height);
+    void loadTextureNormals(const char* filename, int width, int height);
     bool getVBOPointerFunctions();
-    static bool InitGlew();
-    static bool AreVBOsSupported();
+    static bool initGlew();
+    static bool areVbOsSupported();
 
 private:
-    bool useVBOs;
-    bool useTextures;
-    bool useShaders;
-    int verticesLoaded;
-    GLuint VBOId;
+    bool use_vb_os;
+    bool use_textures;
+    bool use_shaders;
+    int vertices_loaded;
+    GLuint vbo_id;
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
     std::vector<TexCoord> tex_coord;
-    PFNGLGENBUFFERSARBPROC pglGenBuffersARB;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pglBindBufferARB;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pglBufferDataARB;  // VBO Data Loading Procedure
+    PFNGLGENBUFFERSARBPROC
+    pgl_gen_buffers_arb;  // VBO Name Generation Procedure
+    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb;  // VBO Bind Procedure
+    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb;  // VBO Data Loading Procedure
     PFNGLBUFFERSUBDATAARBPROC
-    pglBufferSubDataARB;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC pglDeleteBuffersARB;  // VBO Deletion Procedure
+    pgl_buffer_sub_data_arb;  // VBO Sub Data Loading Procedure
+    PFNGLDELETEBUFFERSARBPROC
+    pgl_delete_buffers_arb;  // VBO Deletion Procedure
     PFNGLGETBUFFERPARAMETERIVARBPROC
-    pglGetBufferParameterivARB;             // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pglMapBufferARB;  // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pglUnmapBufferARB;  // unmap VBO procedure
+    pgl_get_buffer_parameteriv_arb;  // return various parameters of VBO
+    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb;      // map VBO procedure
+    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb;  // unmap VBO procedure
 
-    std::string vsText;
-    std::string fsText;
+    std::string vs_text;
+    std::string fs_text;
     unsigned int shader_id;
     unsigned int shader_vp;
     unsigned int shader_fp;

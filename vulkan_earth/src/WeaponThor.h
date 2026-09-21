@@ -8,7 +8,7 @@
 class WeaponThor : public Weapon {
 public:
     WeaponThor();
-    WeaponThor(int ID);
+    WeaponThor(int id);
     ~WeaponThor() override;
     WeaponThor* getWeaponInstance() override;
     void causeEffectToTank(GLfloat distance, Tank* tank) override;

@@ -12,31 +12,31 @@ class ControlItem;
 class ControlItemCheckBox;
 class ControlItemSelectionBox;
 
-const int NUM_CONTROL_ITEMS_HW = 1;
+const int num_control_items_hw = 1;
 
 class SubMenuHardware : public SubMenu {
 public:
     SubMenuHardware();
-    SubMenuHardware(int ID,
-                    GLfloat xPos,
-                    GLfloat yPos,
-                    GLfloat zPos,
+    SubMenuHardware(int id,
+                    GLfloat x_pos,
+                    GLfloat y_pos,
+                    GLfloat z_pos,
                     GLfloat red,
                     GLfloat green,
                     GLfloat blue,
                     GLint width,
                     GLint height,
                     const std::string& caption,
-                    GLfloat percentBorder);
+                    GLfloat percent_border);
     ~SubMenuHardware() override;
     int getUNIQUEIDENTIFIER() override;
-    void setUNIQUEIDENTIFIER(int ID) override;
+    void setUNIQUEIDENTIFIER(int id) override;
     GLfloat getXPos() override;
-    void setXPos(GLfloat newXpos) override;
+    void setXPos(GLfloat new_xpos) override;
     GLfloat getYPos() override;
-    void setYPos(GLfloat newYpos) override;
+    void setYPos(GLfloat new_ypos) override;
     GLfloat getZPos() override;
-    void setZPos(GLfloat newZpos) override;
+    void setZPos(GLfloat new_zpos) override;
     GLfloat getRed() override;
     void setRed(GLfloat red) override;
     GLfloat getGreen() override;
@@ -53,22 +53,22 @@ public:
     void setPercentBorder(GLfloat percent) override;
     void draw() override;
     std::string collectData() override;
-    void subMenuMouseTest(int x, int y, int buttonDown) override;
+    void subMenuMouseTest(int x, int y, int button_down) override;
     void updateMouse(int x, int y) override;
 
 private:
-    int UNIQUEIDENTIFIER;
-    GLfloat xPos;
-    GLfloat yPos;
-    GLfloat zPos;
+    int uniqueidentifier;
+    GLfloat x_pos;
+    GLfloat y_pos;
+    GLfloat z_pos;
     GLfloat color[4];
     GLint width;
     GLint height;
     std::string caption;
-    GLfloat percentBorder;
+    GLfloat percent_border;
     TextObject* label;
-    ControlItem* subMenuButton[NUM_CONTROL_ITEMS_HW];
-    ControlItem* buttonPressed;
+    ControlItem* sub_menu_button[num_control_items_hw];
+    ControlItem* button_pressed;
 };
 
 #endif  //	SUB_MENU_HARDWARE_H

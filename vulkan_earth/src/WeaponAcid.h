@@ -8,7 +8,7 @@
 class WeaponAcid : public Weapon {
 public:
     WeaponAcid();
-    WeaponAcid(int ID);
+    WeaponAcid(int id);
     ~WeaponAcid() override;
     WeaponAcid* getWeaponInstance() override;
     void causeEffectToTank(GLfloat distance, Tank* tank) override;

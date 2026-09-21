@@ -9,9 +9,9 @@
 class ImageObject {
 public:
     ImageObject();
-    ImageObject(GLfloat xPos,
-                GLfloat yPos,
-                GLfloat zPos,
+    ImageObject(GLfloat x_pos,
+                GLfloat y_pos,
+                GLfloat z_pos,
                 GLint width,
                 GLint height,
                 GLfloat border,
@@ -32,12 +32,12 @@ public:
     void draw();
 
 private:
-    GLfloat xPos;
-    GLfloat yPos;
-    GLfloat zPos;
+    GLfloat x_pos;
+    GLfloat y_pos;
+    GLfloat z_pos;
     GLint width;
     GLint height;
-    GLfloat borderSize;
+    GLfloat border_size;
     GLuint texture;
 };
 #endif

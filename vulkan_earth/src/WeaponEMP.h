@@ -8,7 +8,7 @@
 class WeaponEMP : public Weapon {
 public:
     WeaponEMP();
-    WeaponEMP(int ID);
+    WeaponEMP(int id);
     ~WeaponEMP() override;
     WeaponEMP* getWeaponInstance() override;
     void causeEffectToTank(GLfloat distance, Tank* tank) override;

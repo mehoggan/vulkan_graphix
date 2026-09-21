@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
 
     global_settings = new GlobalSettings();
     player_factory = new PlayerFactory(global_settings);
-    player_factory->setNumberofPlayers(global_settings->getPlayer_Count());
+    player_factory->setNumberofPlayers(global_settings->getPlayerCount());
     mainmenu = new MainMenu(win_width,
                             win_height,
                             0.01f,
@@ -323,9 +323,9 @@ void draw() {
 
     if (screen_state != prev_screen_state) {
         if (readymenu)
-            readymenu->updateNumPlayers(global_settings->getPlayer_Count());
+            readymenu->updateNumPlayers(global_settings->getPlayerCount());
         if (shopmenu)
-            shopmenu->updateNumPlayers(global_settings->getPlayer_Count());
+            shopmenu->updateNumPlayers(global_settings->getPlayerCount());
         prev_screen_state = screen_state;
     }
 

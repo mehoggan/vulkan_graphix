@@ -24,11 +24,11 @@ SubMenuSound::SubMenuSound(int id,
                            GLint height,
                            const std::string& caption,
                            GLfloat percent_border) {
-    UNIQUEIDENTIFIER = id;
-    this->xPos = x_pos;
-    this->yPos = y_pos;
-    this->zPos = z_pos;
-    this->percentBorder = percent_border;
+    uniqueidentifier = id;
+    this->x_pos = x_pos;
+    this->y_pos = y_pos;
+    this->z_pos = z_pos;
+    this->percent_border = percent_border;
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -42,19 +42,20 @@ SubMenuSound::SubMenuSound(int id,
     for (char ch : this->caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = this->xPos + ((this->width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = this->yPos - this->height / 20;
+    GLfloat label_x_pos =
+            this->x_pos + ((this->width) / 2) - (real_length / 2);
+    GLfloat label_y_pos = this->y_pos - this->height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(this->caption,
                            label_x_pos,
                            label_y_pos,
-                           (this->zPos + 1),
+                           (this->z_pos + 1),
                            GLUT_BITMAP_TIMES_ROMAN_24,
                            0.0f,
                            0.0f,
                            0.0f);
-    buttonPressed = nullptr;
+    button_pressed = nullptr;
     /*
     subMenuButton[0] = new
     ControlItemSelectionBox(this->xPos+(this->width/2)-(0.3*this->width),this->yPos-(this->height*0.2),
@@ -66,10 +67,10 @@ SubMenuSound::SubMenuSound(int id,
                                                         "Music
     Volume","100/0/10/20/30/40/50/60/70/80/90/");
     //*/
-    subMenuButton[0] = new ControlItemSliderbar(
-            this->xPos + (this->width / 2) - (0.3 * this->width),
-            this->yPos - (this->height * 0.2),
-            this->zPos + 1,
+    sub_menu_button[0] = new ControlItemSliderbar(
+            this->x_pos + (this->width / 2) - (0.3 * this->width),
+            this->y_pos - (this->height * 0.2),
+            this->z_pos + 1,
             0.5f,
             0.5f,
             0.5f,
@@ -78,10 +79,10 @@ SubMenuSound::SubMenuSound(int id,
             "SFX Volume",
             "0/10/20/30/40/50/60/70/80/90/100/",
             10);
-    subMenuButton[1] = new ControlItemSliderbar(
-            this->xPos + (this->width / 2) - (0.3 * this->width),
-            this->yPos - (this->height * 0.3),
-            this->zPos + 1,
+    sub_menu_button[1] = new ControlItemSliderbar(
+            this->x_pos + (this->width / 2) - (0.3 * this->width),
+            this->y_pos - (this->height * 0.3),
+            this->z_pos + 1,
             0.5f,
             0.5f,
             0.5f,
@@ -93,18 +94,18 @@ SubMenuSound::SubMenuSound(int id,
 }
 
 SubMenuSound::~SubMenuSound() {
-    for (int i = 0; i < NUM_CONTROL_ITEMS_SND; i++) delete subMenuButton[i];
+    for (int i = 0; i < num_control_items_snd; i++) delete sub_menu_button[i];
     delete label;
 }
 
-int SubMenuSound::getUNIQUEIDENTIFIER() { return UNIQUEIDENTIFIER; }
-void SubMenuSound::setUNIQUEIDENTIFIER(int id) { UNIQUEIDENTIFIER = id; }
-GLfloat SubMenuSound::getXPos() { return this->xPos; }
-void SubMenuSound::setXPos(GLfloat new_xpos) { this->xPos = new_xpos; }
-GLfloat SubMenuSound::getYPos() { return this->yPos; }
-void SubMenuSound::setYPos(GLfloat new_ypos) { this->yPos = new_ypos; }
-GLfloat SubMenuSound::getZPos() { return this->zPos; }
-void SubMenuSound::setZPos(GLfloat new_zpos) { this->zPos = new_zpos; }
+int SubMenuSound::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuSound::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+GLfloat SubMenuSound::getXPos() { return this->x_pos; }
+void SubMenuSound::setXPos(GLfloat new_xpos) { this->x_pos = new_xpos; }
+GLfloat SubMenuSound::getYPos() { return this->y_pos; }
+void SubMenuSound::setYPos(GLfloat new_ypos) { this->y_pos = new_ypos; }
+GLfloat SubMenuSound::getZPos() { return this->z_pos; }
+void SubMenuSound::setZPos(GLfloat new_zpos) { this->z_pos = new_zpos; }
 GLfloat SubMenuSound::getRed() { return color[0]; }
 void SubMenuSound::setRed(GLfloat red) { color[0] = red; }
 GLfloat SubMenuSound::getGreen() { return color[1]; }
@@ -119,51 +120,51 @@ std::string SubMenuSound::getCaption() { return this->caption; }
 void SubMenuSound::setCaption(const std::string& caption) {
     this->caption = caption;
 }
-GLfloat SubMenuSound::getPerecentBorder() { return this->percentBorder; }
+GLfloat SubMenuSound::getPerecentBorder() { return this->percent_border; }
 void SubMenuSound::setPercentBorder(GLfloat percent) {
-    this->percentBorder = percentBorder;
+    this->percent_border = percent_border;
 }
 
 void SubMenuSound::draw() {
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
-    glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(this->xPos - 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
+    glVertex3f(this->x_pos - 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(this->xPos, this->yPos, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
+    glVertex3f(this->x_pos, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->xPos - 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos - height, this->zPos);
-    glVertex3f(this->xPos, this->yPos - height, this->zPos);
+    glVertex3f(this->x_pos - 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos - height, this->z_pos);
+    glVertex3f(this->x_pos, this->y_pos - height, this->z_pos);
     glEnd();
     glBegin(GL_QUADS);
     glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(this->xPos + width, this->yPos, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos + 3, this->zPos);
-    glVertex3f(this->xPos + width + 3, this->yPos - height - 3, this->zPos);
-    glVertex3f(this->xPos + width, this->yPos + -height, this->zPos);
+    glVertex3f(this->x_pos + width, this->y_pos, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos + 3, this->z_pos);
+    glVertex3f(this->x_pos + width + 3, this->y_pos - height - 3, this->z_pos);
+    glVertex3f(this->x_pos + width, this->y_pos + -height, this->z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < NUM_CONTROL_ITEMS_SND; i++) {
-        if (subMenuButton[i]) {
-            subMenuButton[i]->draw();
+    for (int i = 0; i < num_control_items_snd; i++) {
+        if (sub_menu_button[i]) {
+            sub_menu_button[i]->draw();
         }
     }
 }
@@ -172,64 +173,64 @@ std::string SubMenuSound::collectData() { return "Sound:"; }
 
 void SubMenuSound::subMenuMouseTest(int x, int y, int button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < NUM_CONTROL_ITEMS_SND;
+        for (int button_i = 0; button_i < num_control_items_snd;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
-            if ((x >= subMenuButton[button_i]->getXPos()) &&
-                (x <= (subMenuButton[button_i]->getXPos() +
-                       subMenuButton[button_i]->getWidth())) &&
-                (y <= subMenuButton[button_i]->getYPos()) &&
-                (y >= (subMenuButton[button_i]->getYPos() -
-                       subMenuButton[button_i]->getHeight()))) {
-                subMenuButton[button_i]->mouseClickEvent(
+            if ((x >= sub_menu_button[button_i]->getXPos()) &&
+                (x <= (sub_menu_button[button_i]->getXPos() +
+                       sub_menu_button[button_i]->getWidth())) &&
+                (y <= sub_menu_button[button_i]->getYPos()) &&
+                (y >= (sub_menu_button[button_i]->getYPos() -
+                       sub_menu_button[button_i]->getHeight()))) {
+                sub_menu_button[button_i]->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         true);  // YOU PRESSED OVER A ARROWBUTTON
-                buttonPressed = subMenuButton[button_i];
+                button_pressed = sub_menu_button[button_i];
             }
         }
     } else if (!button_down) {  // IF BUTTON WENT DOWN 2nd CONDITION IS BUTTON
                                 // GOES UP
-        if (buttonPressed !=
+        if (button_pressed !=
             nullptr) {  // IF YOU MANAGED TO CLICK INSIDE AN ARROW BUTTON
                         // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
-            if ((x >= buttonPressed->getXPos()) &&
+            if ((x >= button_pressed->getXPos()) &&
                 (x <=
-                 (buttonPressed->getXPos() + buttonPressed->getWidth())) &&
-                (y <= buttonPressed->getYPos()) &&
+                 (button_pressed->getXPos() + button_pressed->getWidth())) &&
+                (y <= button_pressed->getYPos()) &&
                 (y >=
-                 (buttonPressed->getYPos() - buttonPressed->getHeight()))) {
-                buttonPressed->mouseClickEvent(
+                 (button_pressed->getYPos() - button_pressed->getHeight()))) {
+                button_pressed->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                 // RELEASE THE MOUSE
-                changeVolumes(buttonPressed);
+                changeVolumes(button_pressed);
             } else {
-                buttonPressed->mouseClickEvent(
+                button_pressed->mouseClickEvent(
                         x,
                         y,
                         button_down,
                         false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                                  // RELEASE THE MOUSE
-                buttonPressed = nullptr;
+                button_pressed = nullptr;
             }
         }
     }
 }
 
 void SubMenuSound::updateMouse(int x, int y) {
-    subMenuButton[0]->updateMouse(x, y);
-    subMenuButton[1]->updateMouse(x, y);
-    changeVolumes(buttonPressed);
+    sub_menu_button[0]->updateMouse(x, y);
+    sub_menu_button[1]->updateMouse(x, y);
+    changeVolumes(button_pressed);
 }
 
 void SubMenuSound::changeVolumes(ControlItem* the_sub_menu_button) {
     // SFX volume handler
-    if (the_sub_menu_button == subMenuButton[0]) {
+    if (the_sub_menu_button == sub_menu_button[0]) {
         int new_volume = atoi(the_sub_menu_button->collectData().c_str());
         Mix_Volume(-1,
                    128 / 100 *
@@ -237,7 +238,7 @@ void SubMenuSound::changeVolumes(ControlItem* the_sub_menu_button) {
                                          // channels, 128 is the maximum volume
     }
     // Music volume handler
-    else if (the_sub_menu_button == subMenuButton[1]) {
+    else if (the_sub_menu_button == sub_menu_button[1]) {
         int new_volume = atoi(the_sub_menu_button->collectData().c_str());
         Mix_VolumeMusic(128 / 100 *
                         new_volume);  // music has its special channel, so
