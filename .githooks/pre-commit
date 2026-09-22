@@ -1,27 +1,29 @@
 #!/usr/bin/env bash
-# Pre-commit checks for vulkan_earth/src.
+# Pre-commit checks.
 #
-# Codifies the verification pass used throughout the C++ modernization /
-# naming migration of vulkan_earth (see the git log around
-# "vulkan_earth Phase B/C" and "resolve every constructor/setter param-vs-
-# member shadow"):
-#   1. build            - staged .cpp files must still compile
+# Codifies the verification pass used throughout the vulkan_earth C++
+# modernization/naming migration (see the git log around "vulkan_earth
+# Phase B/C" and "resolve every constructor/setter param-vs-member
+# shadow") and confirmed clean-by-default in lib/ and bin/ (the
+# tutorials) against the same checks:
+#   1. build            - staged .cpp/.h files must still compile
 #   2. -Wshadow         - no local/parameter may shadow a member (this is
-#                          what makes `this->` removal and `X = X;`
-#                          assignments safe elsewhere in the file)
+#                          what makes vulkan_earth's `this->` removal and
+#                          bare `member = param;` assignments safe)
 #   3. self-assignment  - `x = x;` / `a.b = a.b;` (the exact shape of the
 #                          Tank::setHP and SubMenu*::setPercentBorder bugs
 #                          found during that migration)
 #   4. naming/length    - the project's .clang-tidy readability-identifier-
 #                          naming / readability-identifier-length rules
 #
-# Runs only against files staged under vulkan_earth/src, and only against
-# the exact content that will be committed (unstaged changes are stashed
-# out of the way for the duration of the checks). Missing tooling (bear,
-# clang-tidy, g++) degrades a check to a skipped warning rather than a
-# blocked commit, since this hook isn't installed by default (see
-# .githooks/README.md) and shouldn't brick a commit on a machine that
-# doesn't have the full toolchain.
+# Runs against three areas independently - vulkan_earth/src, lib/, and
+# bin/ (the tutorials) - each with that area's own real compiler flags,
+# and only against files actually staged there. Checks run against the
+# exact content that will be committed (unstaged changes are stashed out
+# of the way for the duration). Missing tooling (bear, clang-tidy, g++)
+# degrades a check to a skipped warning rather than a blocked commit,
+# since this hook isn't installed by default (see .githooks/README.md)
+# and shouldn't brick a commit on a machine without the full toolchain.
 #
 # Bypass for a single commit: git commit --no-verify
 
@@ -30,39 +32,36 @@ set -u
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT"
 
-mapfile -t STAGED_CPP < <(git diff --cached --name-only --diff-filter=ACM -- 'vulkan_earth/src/*.cpp')
-mapfile -t STAGED_ALL < <(git diff --cached --name-only --diff-filter=ACM -- 'vulkan_earth/src/*.cpp' 'vulkan_earth/src/*.h')
-
-if [ "${#STAGED_ALL[@]}" -eq 0 ]; then
-    exit 0
-fi
-
-STASHED=0
-if ! git diff --quiet -- vulkan_earth/src; then
-    git stash push --keep-index --quiet --include-untracked --message "pre-commit-autostash" -- vulkan_earth/src
-    STASHED=1
-fi
-cleanup() {
-    if [ "$STASHED" -eq 1 ]; then
-        git stash pop --quiet
-    fi
-}
-trap cleanup EXIT
-
+AREAS_WITH_CHANGES=()
+ANY_STAGED_ALL=0
 FAIL=0
-cd vulkan_earth/src
-BASENAMES=()
-for f in "${STAGED_CPP[@]}"; do
-    BASENAMES+=("$(basename "$f")")
-done
-BASENAMES_ALL=()
-for f in "${STAGED_ALL[@]}"; do
-    BASENAMES_ALL+=("$(basename "$f")")
-done
 
-# --- 1. self-assignment scan (no compiler needed, always runs) ---------
-echo "pre-commit: scanning for self-assignment (x = x;)..." >&2
-SELFASSIGN=$(python3 - "${BASENAMES_ALL[@]}" <<'PYEOF'
+# --- per-area check: self-assignment, -Wshadow, naming/length ----------
+# $1 = area label (for messages)  $2 = dir relative to REPO_ROOT
+# $3.. = extra -I/-D flags for that area's real compile command
+check_area() {
+    local label="$1" dir="$2"
+    shift 2
+    local extra_flags=("$@")
+
+    local staged_cpp staged_all
+    mapfile -t staged_cpp < <(git diff --cached --name-only --diff-filter=ACM -- "$dir/*.cpp")
+    mapfile -t staged_all < <(git diff --cached --name-only --diff-filter=ACM -- "$dir/*.cpp" "$dir/*.h")
+
+    if [ "${#staged_all[@]}" -eq 0 ]; then
+        return 0
+    fi
+    AREAS_WITH_CHANGES+=("$dir")
+    ANY_STAGED_ALL=1
+
+    local basenames=() basenames_all=() f
+    for f in "${staged_cpp[@]}"; do basenames+=("$(basename "$f")"); done
+    for f in "${staged_all[@]}"; do basenames_all+=("$(basename "$f")"); done
+
+    ( cd "$dir"
+
+      echo "pre-commit [$label]: scanning for self-assignment (x = x;)..." >&2
+      SELFASSIGN=$(python3 - "${basenames_all[@]}" <<'PYEOF'
 import re, sys
 pat_bare = re.compile(r'(?<![>.\w])([a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
 pat_member = re.compile(r'\b([a-zA-Z_][a-zA-Z_0-9]*\.[a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
@@ -81,61 +80,106 @@ for fname in sys.argv[1:]:
 sys.exit(1 if found else 0)
 PYEOF
 )
-if [ -n "$SELFASSIGN" ]; then
-    echo "pre-commit: SELF-ASSIGNMENT FOUND (a setter/assignment that writes a value to itself instead of a member):" >&2
-    echo "$SELFASSIGN" >&2
+      if [ -n "$SELFASSIGN" ]; then
+          echo "pre-commit [$label]: SELF-ASSIGNMENT FOUND (writes a value to itself instead of a member):" >&2
+          echo "$SELFASSIGN" >&2
+          echo 1 > /tmp/precommit_fail_marker
+      fi
+
+      if command -v g++ >/dev/null 2>&1; then
+          echo "pre-commit [$label]: checking for variable/parameter shadowing (-Wshadow)..." >&2
+          for fname in "${basenames[@]}"; do
+              [ -f "$fname" ] || continue
+              OUT=$(g++ -std=gnu++20 -Wshadow -fsyntax-only "${extra_flags[@]}" "$fname" 2>&1 | grep 'shadows' || true)
+              if [ -n "$OUT" ]; then
+                  echo "pre-commit [$label]: SHADOW WARNING in $fname:" >&2
+                  echo "$OUT" >&2
+                  echo 1 > /tmp/precommit_fail_marker
+              fi
+          done
+      else
+          echo "pre-commit [$label]: g++ not found, skipping -Wshadow check" >&2
+      fi
+
+      if ! command -v run-clang-tidy >/dev/null 2>&1; then
+          echo "pre-commit [$label]: run-clang-tidy not found, skipping naming/length check" >&2
+      elif [ "${#basenames[@]}" -eq 0 ]; then
+          echo "pre-commit [$label]: no staged .cpp file to anchor a naming/length check (header-only change; covered by the build check instead)" >&2
+      elif [ ! -f compile_commands.json ]; then
+          echo "pre-commit [$label]: no compile_commands.json in $dir, skipping naming/length check (see .githooks/README.md to generate one)" >&2
+      else
+          echo "pre-commit [$label]: checking naming/length conventions (clang-tidy)..." >&2
+          # -header-filter='.*' is deliberately broad (a narrower regex here
+          # silently matches nothing at all - see the "fix header-filter bug"
+          # commit in the vulkan_earth history for what that cost), which
+          # means it also reports pre-existing violations in ANY transitively-
+          # included project header, not just the ones staged in this commit
+          # (e.g. include/vulkan_graphix/Tools.h's still-PascalCase AutoDeleter
+          # template, pulled in by nearly every lib/ .cpp). A commit that
+          # doesn't touch that header shouldn't be blocked by it. So: keep
+          # -header-filter broad for correctness, then narrow the reported
+          # warnings down to only the files actually staged in this commit
+          # (plus drop vendored/third-party headers entirely - Khronos'
+          # vk_platform.h, public-domain stb_image.h, and the Vulkan-spec-
+          # named macros in ListOfFunctions.inl were never meant to follow
+          # this project's naming convention).
+          NAMING_OUT=$(run-clang-tidy -checks='-*,readability-identifier-naming,readability-identifier-length' \
+                  -header-filter='.*' "${basenames[@]}" 2>&1 | grep 'warning:' \
+                  | grep -v -E 'STBImage\.h|VulkanPlatform\.h|ListOfFunctions\.inl' \
+                  | python3 -c "
+import sys, os
+staged = set(sys.argv[1:])
+for line in sys.stdin:
+    path = line.split(':', 1)[0]
+    if os.path.basename(path) in staged:
+        sys.stdout.write(line)
+" "${basenames_all[@]}" || true)
+          if [ -n "$NAMING_OUT" ]; then
+              echo "pre-commit [$label]: NAMING/LENGTH VIOLATIONS (see CLAUDE.md's Clang-Tidy section for the project's exemption list):" >&2
+              echo "$NAMING_OUT" >&2
+              echo 1 > /tmp/precommit_fail_marker
+          fi
+      fi
+    )
+}
+
+rm -f /tmp/precommit_fail_marker
+
+check_area vulkan_earth vulkan_earth/src \
+        -DHAVE_CONFIG_H -I. -I../.. -DFREEGLUT_STATIC -I/usr/include/SDL \
+        -D_GNU_SOURCE=1 -D_REENTRANT -I/opt/boost/include
+
+check_area lib lib \
+        -DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include
+
+check_area bin bin \
+        -DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include
+
+if [ "$ANY_STAGED_ALL" -eq 0 ]; then
+    exit 0
+fi
+
+if [ -f /tmp/precommit_fail_marker ]; then
     FAIL=1
+    rm -f /tmp/precommit_fail_marker
 fi
 
-# --- 2. -Wshadow (needs g++) --------------------------------------------
-if command -v g++ >/dev/null 2>&1; then
-    echo "pre-commit: checking for variable/parameter shadowing (-Wshadow)..." >&2
-    for fname in "${BASENAMES[@]}"; do
-        [ -f "$fname" ] || continue
-        OUT=$(g++ -std=gnu++20 -DHAVE_CONFIG_H -I. -I../.. -DFREEGLUT_STATIC \
-                -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT \
-                -I/opt/boost/include -Wshadow -fsyntax-only "$fname" 2>&1 \
-                | grep 'shadows' || true)
-        if [ -n "$OUT" ]; then
-            echo "pre-commit: SHADOW WARNING in $fname (this is what makes an unqualified 'this->member' removal or a bare assignment ambiguous):" >&2
-            echo "$OUT" >&2
-            FAIL=1
-        fi
-    done
-else
-    echo "pre-commit: g++ not found, skipping -Wshadow check" >&2
+# --- build (last: slowest check; one root build covers cross-dir deps,
+#     e.g. a lib/ change that breaks something bin/ links against) ------
+STASHED=0
+if ! git diff --quiet -- "${AREAS_WITH_CHANGES[@]}"; then
+    git stash push --keep-index --quiet --include-untracked \
+            --message "pre-commit-autostash" -- "${AREAS_WITH_CHANGES[@]}"
+    STASHED=1
 fi
-
-# --- 3. naming/length (needs clang-tidy + a compile database, and at
-#        least one staged .cpp to serve as a translation-unit anchor -
-#        a header-only change is still covered by the build check below) -
-if ! command -v run-clang-tidy >/dev/null 2>&1; then
-    echo "pre-commit: run-clang-tidy not found, skipping naming/length check" >&2
-elif [ "${#STAGED_CPP[@]}" -eq 0 ]; then
-    echo "pre-commit: no staged .cpp file to anchor a naming/length check (header-only change; covered by the build check instead)" >&2
-else
-    if [ ! -f compile_commands.json ]; then
-        if command -v bear >/dev/null 2>&1; then
-            echo "pre-commit: no compile_commands.json, generating one (bear -- make)..." >&2
-            bear -- make -j4 >/tmp/precommit_bear.log 2>&1 || true
-        fi
+cleanup() {
+    if [ "$STASHED" -eq 1 ]; then
+        git stash pop --quiet
     fi
-    if [ -f compile_commands.json ]; then
-        echo "pre-commit: checking naming/length conventions (clang-tidy)..." >&2
-        NAMING_OUT=$(run-clang-tidy -checks='-*,readability-identifier-naming,readability-identifier-length' \
-                -header-filter='.*' "${BASENAMES[@]}" 2>&1 | grep 'warning:' || true)
-        if [ -n "$NAMING_OUT" ]; then
-            echo "pre-commit: NAMING/LENGTH VIOLATIONS (see CLAUDE.md's Clang-Tidy section for the project's exemption list):" >&2
-            echo "$NAMING_OUT" >&2
-            FAIL=1
-        fi
-    else
-        echo "pre-commit: no compile_commands.json available, skipping naming/length check" >&2
-    fi
-fi
+}
+trap cleanup EXIT
 
-# --- 4. build (last: slowest check; runs for header-only changes too) --
-echo "pre-commit: building vulkan_earth (incremental)..." >&2
+echo "pre-commit: building (incremental, from repo root)..." >&2
 if ! make -j4 >/tmp/precommit_build.log 2>&1; then
     echo "pre-commit: BUILD FAILED:" >&2
     tail -60 /tmp/precommit_build.log >&2
