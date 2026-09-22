@@ -15,12 +15,12 @@ namespace vulkan_graphix::Tools {
 template <class T, class F> class AutoDeleter {
 public:
     AutoDeleter()
-            : Object(VK_NULL_HANDLE)
-            , Deleter(nullptr)
-            , Device(VK_NULL_HANDLE) {}
+            : object(VK_NULL_HANDLE)
+            , deleter(nullptr)
+            , device(VK_NULL_HANDLE) {}
 
-    AutoDeleter(T object, F deleter, VkDevice device)
-            : Object(object), Deleter(deleter), Device(device) {}
+    AutoDeleter(T new_object, F new_deleter, VkDevice new_device)
+            : object(new_object), deleter(new_deleter), device(new_device) {}
 
     AutoDeleter(AutoDeleter&& other) noexcept { *this = std::move(other); }
 
@@ -28,30 +28,30 @@ public:
     AutoDeleter& operator=(const AutoDeleter&) = delete;
 
     ~AutoDeleter() {
-        if ((Object != VK_NULL_HANDLE) && (Deleter != nullptr) &&
-            (Device != VK_NULL_HANDLE)) {
-            Deleter(Device, Object, nullptr);
+        if ((object != VK_NULL_HANDLE) && (deleter != nullptr) &&
+            (device != VK_NULL_HANDLE)) {
+            deleter(device, object, nullptr);
         }
     }
 
     AutoDeleter& operator=(AutoDeleter&& other) noexcept {
         if (this != &other) {
-            Object = other.Object;
-            Deleter = other.Deleter;
-            Device = other.Device;
-            other.Object = VK_NULL_HANDLE;
+            object = other.object;
+            deleter = other.deleter;
+            device = other.device;
+            other.object = VK_NULL_HANDLE;
         }
         return *this;
     }
 
-    T get() { return Object; }
+    T get() { return object; }
 
-    bool operator!() const { return Object == VK_NULL_HANDLE; }
+    bool operator!() const { return object == VK_NULL_HANDLE; }
 
 private:
-    T Object;
-    F Deleter;
-    VkDevice Device;
+    T object;
+    F deleter;
+    VkDevice device;
 };
 
 std::vector<char> getBinaryFileContents(std::string const& filename);
