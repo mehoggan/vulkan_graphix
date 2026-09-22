@@ -1,6 +1,7 @@
 #ifndef VULKAN_GRAPHIX_TOOLS_H
 #define VULKAN_GRAPHIX_TOOLS_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -62,6 +63,17 @@ std::vector<char> getImageData(std::string const& filename,
                                int* height,
                                int* components,
                                int* data_size);
+
+// Loads a headerless raw RGB (3 bytes/pixel) file of exactly width*height*3
+// bytes - the format every .raw asset under vulkan_earth/src/ uses (no
+// magic number, no dimensions stored in the file; the caller has to already
+// know them) - and expands it to RGBA (inserting a 0xFF alpha byte after
+// every pixel) so the result is drop-in compatible with the same
+// VK_FORMAT_R8G8B8A8_UNORM upload path getImageData()'s callers use.
+// Returns an empty vector on any read failure.
+std::vector<char> getRawImageData(std::string const& filename,
+                                  std::uint32_t width,
+                                  std::uint32_t height);
 
 vulkan_graphix::Math::Mat4<float> getPerspectiveProjectionMatrix(
         float const aspect_ratio,

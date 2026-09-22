@@ -106,6 +106,41 @@ std::vector<char> getImageData(std::string const& filename,
     return output;
 }
 
+std::vector<char> getRawImageData(std::string const& filename,
+                                  std::uint32_t width,
+                                  std::uint32_t height) {
+    std::filesystem::path path(filename);
+    if (!std::filesystem::exists(path)) {
+        path = executableDir() / filename;
+    }
+    std::ifstream file(path, std::ios::binary);
+    if (file.fail()) {
+        std::cout << "Could not open \"" << filename << "\" file!"
+                  << std::endl;
+        return std::vector<char>();
+    }
+
+    std::size_t const rgb_size = static_cast<std::size_t>(width) *
+                                 static_cast<std::size_t>(height) * 3;
+    std::vector<char> rgb_data(rgb_size);
+    file.read(rgb_data.data(), static_cast<std::streamsize>(rgb_size));
+    if (static_cast<std::size_t>(file.gcount()) != rgb_size) {
+        std::cout << "\"" << filename << "\" is not " << width << "x"
+                  << height << " raw RGB (expected " << rgb_size
+                  << " bytes, read " << file.gcount() << ")!" << std::endl;
+        return std::vector<char>();
+    }
+
+    std::vector<char> rgba_data(rgb_size / 3 * 4);
+    for (std::size_t pixel = 0; pixel < rgb_size / 3; ++pixel) {
+        rgba_data[pixel * 4 + 0] = rgb_data[pixel * 3 + 0];
+        rgba_data[pixel * 4 + 1] = rgb_data[pixel * 3 + 1];
+        rgba_data[pixel * 4 + 2] = rgb_data[pixel * 3 + 2];
+        rgba_data[pixel * 4 + 3] = static_cast<char>(0xFF);
+    }
+    return rgba_data;
+}
+
 // ************************************************************ //
 // GetPerspectiveProjectionMatrix                               //
 //                                                              //

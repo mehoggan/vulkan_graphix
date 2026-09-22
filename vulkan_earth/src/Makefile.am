@@ -1,4 +1,4 @@
-bin_PROGRAMS = vulkan_earth_runner vk_skybox_pilot_runner
+bin_PROGRAMS = vulkan_earth_runner vk_skybox_pilot_runner vk_terrain_pilot_runner
 
 # Vendored legacy OpenGL/GLUT game, ported off MSVC/Win32 onto X11 via
 # GLUT rather than held to this project's own -Werror/-Wall/-pedantic
@@ -112,6 +112,17 @@ vk_skybox_pilot_runner_LDADD = \
 	$(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 vk_skybox_pilot_runner_LDFLAGS = -pthread
 
+# Standalone Vulkan-migration pilot #2 (see VulkanTerrainPilot.h) - same
+# additive-only setup as vk_skybox_pilot_runner above.
+vk_terrain_pilot_runner_SOURCES = \
+	VulkanTerrainPilot.cpp \
+	vk_terrain_pilot_main.cpp
+vk_terrain_pilot_runner_CPPFLAGS = -Werror -Wall -pedantic \
+	-I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+vk_terrain_pilot_runner_LDADD = \
+	$(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+vk_terrain_pilot_runner_LDFLAGS = -pthread
+
 # shader.07.vert.spv/shader.07.frag.spv are Tutorial07's compiled shaders,
 # reused byte-for-byte (see VulkanSkyboxPilot::createPipeline()) - copied
 # here rather than referenced in place since Tools::getBinaryFileContents()
@@ -120,8 +131,23 @@ vk_skybox_pilot_runner_LDFLAGS = -pthread
 vk_skybox_pilot_vert = $(top_srcdir)/resources/07/Data/shader.vert.07.spv
 vk_skybox_pilot_frag = $(top_srcdir)/resources/07/Data/shader.frag.07.spv
 
-all-local: $(vk_skybox_pilot_vert) $(vk_skybox_pilot_frag)
+# shader.09.vert.spv/shader.09.frag.spv are Tutorial09's compiled shaders,
+# reused byte-for-byte by VulkanTerrainPilot::createPipeline() - same
+# reasoning as the skybox pilot's shader.07.*.spv copies above.
+vk_terrain_pilot_vert = $(top_srcdir)/resources/09/Data/shader.vert.09.spv
+vk_terrain_pilot_frag = $(top_srcdir)/resources/09/Data/shader.frag.09.spv
+
+# Rocky.raw (VulkanTerrainPilot::createTexture()'s ground texture, loaded
+# via Tools::getRawImageData()) already lives directly in this directory -
+# unlike the shader .spv files above, no copy is needed for it to resolve
+# relative to the running executable.
+
+all-local: $(vk_skybox_pilot_vert) $(vk_skybox_pilot_frag) \
+		$(vk_terrain_pilot_vert) $(vk_terrain_pilot_frag)
 	cp $(vk_skybox_pilot_vert) $(builddir)/shader.07.vert.spv
 	cp $(vk_skybox_pilot_frag) $(builddir)/shader.07.frag.spv
+	cp $(vk_terrain_pilot_vert) $(builddir)/shader.09.vert.spv
+	cp $(vk_terrain_pilot_frag) $(builddir)/shader.09.frag.spv
 
-CLEANFILES = shader.07.vert.spv shader.07.frag.spv
+CLEANFILES = shader.07.vert.spv shader.07.frag.spv \
+	shader.09.vert.spv shader.09.frag.spv

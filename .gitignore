@@ -61,6 +61,7 @@ bin/shader.*.spv
 bin/texture.*.png
 vulkan_earth/src/vulkan_earth_runner
 vulkan_earth/src/vk_skybox_pilot_runner
+vulkan_earth/src/vk_terrain_pilot_runner
 vulkan_earth/src/shader.*.spv
 tests/math_test
 tests/math_test.log
