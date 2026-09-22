@@ -16,14 +16,22 @@
 #   4. naming/length    - the project's .clang-tidy readability-identifier-
 #                          naming / readability-identifier-length rules
 #
-# Runs against three areas independently - vulkan_earth/src, lib/, and
-# bin/ (the tutorials) - each with that area's own real compiler flags,
-# and only against files actually staged there. Checks run against the
-# exact content that will be committed (unstaged changes are stashed out
-# of the way for the duration). Missing tooling (bear, clang-tidy, g++)
-# degrades a check to a skipped warning rather than a blocked commit,
-# since this hook isn't installed by default (see .githooks/README.md)
-# and shouldn't brick a commit on a machine without the full toolchain.
+# Runs against four areas independently - vulkan_earth/src, lib/, bin/
+# (the tutorials), and include/vulkan_graphix (their public headers) -
+# each with that area's own real compiler flags, and only against files
+# actually staged there. Checks run against the exact content that will
+# be committed (unstaged changes are stashed out of the way for the
+# duration). Missing tooling (bear, clang-tidy, g++) degrades a check to
+# a skipped warning rather than a blocked commit, since this hook isn't
+# installed by default (see .githooks/README.md) and shouldn't brick a
+# commit on a machine without the full toolchain.
+#
+# include/vulkan_graphix has no .cpp of its own to compile as a check
+# anchor (unlike the other three areas), so its shadow/naming checks
+# compile against every lib/*.cpp instead - lib/ is the primary
+# consumer of these public headers, and it's how the Tools.h AutoDeleter
+# PascalCase-member finding (the reason this area exists at all) was
+# actually caught, since nothing in lib/ was staged that day.
 #
 # Bypass for a single commit: git commit --no-verify
 
@@ -133,9 +141,105 @@ for line in sys.stdin:
     path = line.split(':', 1)[0]
     if os.path.basename(path) in staged:
         sys.stdout.write(line)
-" "${basenames_all[@]}" || true)
+" "${basenames_all[@]}" | sort -u || true)
           if [ -n "$NAMING_OUT" ]; then
               echo "pre-commit [$label]: NAMING/LENGTH VIOLATIONS (see CLAUDE.md's Clang-Tidy section for the project's exemption list):" >&2
+              echo "$NAMING_OUT" >&2
+              echo 1 > /tmp/precommit_fail_marker
+          fi
+      fi
+    )
+}
+
+# --- include/vulkan_graphix: same idea, but there's no .cpp in this
+# area to compile directly, so shadow/naming checks use every lib/*.cpp
+# as the anchor TU set instead (lib/ is the primary consumer of these
+# public headers) and then narrow the reported warnings down to just
+# the staged header files, same as check_area does for its own area.
+check_include_area() {
+    local dir="include/vulkan_graphix"
+    local staged_all
+    mapfile -t staged_all < <(git diff --cached --name-only --diff-filter=ACM -- \
+            "$dir/*.h" "$dir/*.hpp" "$dir/*.inl" \
+            "$dir/Math/*.hpp" "$dir/VertexTypes/*.hpp")
+
+    if [ "${#staged_all[@]}" -eq 0 ]; then
+        return 0
+    fi
+    AREAS_WITH_CHANGES+=("$dir")
+    ANY_STAGED_ALL=1
+
+    local basenames_all=() f
+    for f in "${staged_all[@]}"; do basenames_all+=("$(basename "$f")"); done
+
+    ( cd "$dir"
+
+      echo "pre-commit [include]: scanning for self-assignment (x = x;)..." >&2
+      SELFASSIGN=$(python3 - "${basenames_all[@]}" <<'PYEOF'
+import re, sys
+pat_bare = re.compile(r'(?<![>.\w])([a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
+pat_member = re.compile(r'\b([a-zA-Z_][a-zA-Z_0-9]*\.[a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
+found = 0
+for fname in sys.argv[1:]:
+    try:
+        with open(fname) as f:
+            lines = f.readlines()
+    except (IsADirectoryError, FileNotFoundError):
+        continue
+    for i, line in enumerate(lines, 1):
+        for pat in (pat_bare, pat_member):
+            for m in pat.finditer(line):
+                print(f'{fname}:{i}: {line.strip()}')
+                found += 1
+sys.exit(1 if found else 0)
+PYEOF
+)
+      if [ -n "$SELFASSIGN" ]; then
+          echo "pre-commit [include]: SELF-ASSIGNMENT FOUND (writes a value to itself instead of a member):" >&2
+          echo "$SELFASSIGN" >&2
+          echo 1 > /tmp/precommit_fail_marker
+      fi
+    )
+
+    ( cd lib
+      local lib_flags=(-DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include)
+      local lib_basenames=()
+      f=""
+      for f in *.cpp; do lib_basenames+=("$f"); done
+
+      if command -v g++ >/dev/null 2>&1; then
+          echo "pre-commit [include]: checking for variable/parameter shadowing (-Wshadow), compiling all of lib/ against the staged headers..." >&2
+          for fname in "${lib_basenames[@]}"; do
+              OUT=$(g++ -std=gnu++20 -Wshadow -fsyntax-only "${lib_flags[@]}" "$fname" 2>&1 | grep 'shadows' || true)
+              if [ -n "$OUT" ]; then
+                  echo "pre-commit [include]: SHADOW WARNING (via lib/$fname):" >&2
+                  echo "$OUT" >&2
+                  echo 1 > /tmp/precommit_fail_marker
+              fi
+          done
+      else
+          echo "pre-commit [include]: g++ not found, skipping -Wshadow check" >&2
+      fi
+
+      if ! command -v run-clang-tidy >/dev/null 2>&1; then
+          echo "pre-commit [include]: run-clang-tidy not found, skipping naming/length check" >&2
+      elif [ ! -f compile_commands.json ]; then
+          echo "pre-commit [include]: no compile_commands.json in lib/, skipping naming/length check (see .githooks/README.md to generate one)" >&2
+      else
+          echo "pre-commit [include]: checking naming/length conventions (clang-tidy), via lib/*.cpp..." >&2
+          NAMING_OUT=$(run-clang-tidy -checks='-*,readability-identifier-naming,readability-identifier-length' \
+                  -header-filter='.*' "${lib_basenames[@]}" 2>&1 | grep 'warning:' \
+                  | grep -v -E 'STBImage\.h|VulkanPlatform\.h|ListOfFunctions\.inl' \
+                  | python3 -c "
+import sys, os
+staged = set(sys.argv[1:])
+for line in sys.stdin:
+    path = line.split(':', 1)[0]
+    if os.path.basename(path) in staged:
+        sys.stdout.write(line)
+" "${basenames_all[@]}" | sort -u || true)
+          if [ -n "$NAMING_OUT" ]; then
+              echo "pre-commit [include]: NAMING/LENGTH VIOLATIONS (see CLAUDE.md's Clang-Tidy section for the project's exemption list):" >&2
               echo "$NAMING_OUT" >&2
               echo 1 > /tmp/precommit_fail_marker
           fi
@@ -154,6 +258,8 @@ check_area lib lib \
 
 check_area bin bin \
         -DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include
+
+check_include_area
 
 if [ "$ANY_STAGED_ALL" -eq 0 ]; then
     exit 0
