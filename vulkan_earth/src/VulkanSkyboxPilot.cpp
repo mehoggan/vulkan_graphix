@@ -223,7 +223,15 @@ bool VulkanSkyboxPilot::createBuffer(VkBufferUsageFlags usage,
 }
 
 bool VulkanSkyboxPilot::createStagingBuffer() {
-    staging_buffer_.setSize(1000000);
+    // Tutorial07 hardcodes 1000000 bytes here, sized for its own
+    // texture.07.png (512x462 RGBA = 946176 bytes - just under). SkyBox.jpg
+    // is 1024x1024 RGBA = 4194304 bytes, well over that; sized explicitly
+    // for it here (with headroom) rather than copying Tutorial07's constant
+    // without checking it against this pilot's own asset - see
+    // copyTextureData()'s size guard for what silently overflowing this
+    // buffer actually did (a real, reproducible i915 GPU hang a few
+    // seconds into every run).
+    staging_buffer_.setSize(5 * 1024 * 1024);
     if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
                       staging_buffer_)) {
@@ -346,6 +354,20 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
                                         std::uint32_t data_size,
                                         std::uint32_t width,
                                         std::uint32_t height) {
+    if (data_size > staging_buffer_.getSize()) {
+        // Silently memcpy-ing past the staging buffer's mapped allocation
+        // here is exactly what caused a real, reproducible i915 GPU hang
+        // a few seconds into every run before this check existed - fail
+        // loudly instead.
+        Logging::error(LOG_TAG,
+                       "Texture data (",
+                       data_size,
+                       " bytes) does not fit in the staging buffer (",
+                       staging_buffer_.getSize(),
+                       " bytes)!");
+        return false;
+    }
+
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
                     staging_buffer_.getVkDeviceMemory(),
@@ -1096,6 +1118,16 @@ bool VulkanSkyboxPilot::copyBufferData(BufferParameters& destination,
                                        std::uint32_t data_size,
                                        VkAccessFlags dst_access_mask,
                                        VkPipelineStageFlags dst_stage_mask) {
+    if (data_size > staging_buffer_.getSize()) {
+        Logging::error(LOG_TAG,
+                       "Buffer data (",
+                       data_size,
+                       " bytes) does not fit in the staging buffer (",
+                       staging_buffer_.getSize(),
+                       " bytes)!");
+        return false;
+    }
+
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
                     staging_buffer_.getVkDeviceMemory(),
