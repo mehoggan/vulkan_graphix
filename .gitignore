@@ -63,6 +63,7 @@ vulkan_earth/src/vulkan_earth_runner
 vulkan_earth/src/vk_skybox_pilot_runner
 vulkan_earth/src/vk_terrain_pilot_runner
 vulkan_earth/src/vk_projectile_pilot_runner
+vulkan_earth/src/vk_particle_pilot_runner
 vulkan_earth/src/shader.*.spv
 vulkan_earth/src/projectileDefault.ogl
 vulkan_earth/src/projectileDefault.raw
