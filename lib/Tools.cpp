@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #define STB_IMAGE_IMPLEMENTATION
 #include "vulkan_graphix/STBImage.h"
 
@@ -139,6 +140,38 @@ std::vector<char> getRawImageData(std::string const& filename,
         rgba_data[pixel * 4 + 3] = static_cast<char>(0xFF);
     }
     return rgba_data;
+}
+
+std::vector<OglVertexData> loadOglMeshData(std::string const& filename) {
+    std::vector<char> file_data = Tools::getBinaryFileContents(filename);
+    std::string const file_content(file_data.begin(), file_data.end());
+    std::istringstream token_stream(file_content);
+
+    std::vector<float> values;
+    float value = 0.0f;
+    while (token_stream >> value) {
+        values.push_back(value);
+    }
+
+    static std::size_t const c_floats_per_vertex = 8;
+    if ((values.empty()) || (values.size() % c_floats_per_vertex != 0)) {
+        return std::vector<OglVertexData>();
+    }
+
+    std::size_t const vertex_count = values.size() / c_floats_per_vertex;
+    std::vector<OglVertexData> mesh_data;
+    mesh_data.reserve(vertex_count);
+    for (std::size_t i = 0; i < vertex_count; ++i) {
+        std::size_t const base = i * c_floats_per_vertex;
+        OglVertexData vertex;
+        vertex.texcoord = Math::Vec2<float>(values[base + 0], values[base + 1]);
+        vertex.normal = Math::Vec3<float>(
+                values[base + 2], values[base + 3], values[base + 4]);
+        vertex.position = Math::Vec3<float>(
+                values[base + 5], values[base + 6], values[base + 7]);
+        mesh_data.push_back(vertex);
+    }
+    return mesh_data;
 }
 
 // ************************************************************ //

@@ -1,7 +1,7 @@
 bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial04_runner tutorial05_runner tutorial06_runner tutorial07_runner \
     tutorial08_runner tutorial09_runner tutorial10_runner tutorial11_runner \
-    tutorial12_runner
+    tutorial12_runner tutorial13_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./Tutorial01Main.cpp
@@ -98,6 +98,14 @@ tutorial12_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial12_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial12_runner_LDFLAGS = -pthread
+
+# Tutorial 13 Binary
+tutorial13_runner_SOURCES = ./Tutorial13Main.cpp
+tutorial13_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial13_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial13_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -126,6 +134,10 @@ tutorial11_texture = $(top_srcdir)/resources/11/Data/SkyBox.jpg
 tutorial12_vert = $(top_srcdir)/resources/12/Data/shader.vert.12.spv
 tutorial12_frag = $(top_srcdir)/resources/12/Data/shader.frag.12.spv
 tutorial12_texture = $(top_srcdir)/resources/12/Data/Rocky.raw
+tutorial13_vert = $(top_srcdir)/resources/13/Data/shader.vert.13.spv
+tutorial13_frag = $(top_srcdir)/resources/13/Data/shader.frag.13.spv
+tutorial13_mesh = $(top_srcdir)/resources/13/Data/projectileDefault.ogl
+tutorial13_texture = $(top_srcdir)/resources/13/Data/projectileDefault.raw
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
@@ -135,7 +147,9 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial09_vert) $(tutorial09_frag) $(tutorial09_texture) \
     $(tutorial10_line_vert) $(tutorial10_line_frag) \
     $(tutorial11_vert) $(tutorial11_frag) $(tutorial11_texture) \
-    $(tutorial12_vert) $(tutorial12_frag) $(tutorial12_texture)
+    $(tutorial12_vert) $(tutorial12_frag) $(tutorial12_texture) \
+    $(tutorial13_vert) $(tutorial13_frag) $(tutorial13_mesh) \
+    $(tutorial13_texture)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -161,6 +175,10 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial12_vert) $(builddir)/shader.12.vert.spv
 	cp $(tutorial12_frag) $(builddir)/shader.12.frag.spv
 	cp $(tutorial12_texture) $(builddir)/Rocky.raw
+	cp $(tutorial13_vert) $(builddir)/shader.13.vert.spv
+	cp $(tutorial13_frag) $(builddir)/shader.13.frag.spv
+	cp $(tutorial13_mesh) $(builddir)/projectileDefault.ogl
+	cp $(tutorial13_texture) $(builddir)/projectileDefault.raw
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
@@ -170,4 +188,6 @@ CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.09.vert.spv shader.09.frag.spv texture.09.png \
     shader.10_line.vert.spv shader.10_line.frag.spv \
     shader.11.vert.spv shader.11.frag.spv SkyBox.jpg \
-    shader.12.vert.spv shader.12.frag.spv Rocky.raw
+    shader.12.vert.spv shader.12.frag.spv Rocky.raw \
+    shader.13.vert.spv shader.13.frag.spv \
+    projectileDefault.ogl projectileDefault.raw

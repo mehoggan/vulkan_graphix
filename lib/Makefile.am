@@ -21,6 +21,7 @@ libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
 															./Tutorial10.cpp \
 															./Tutorial11.cpp \
 															./Tutorial12.cpp \
+															./Tutorial13.cpp \
 															./TutorialBase.cpp \
 															./VulkanFunctions.cpp
 

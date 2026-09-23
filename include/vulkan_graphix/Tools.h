@@ -75,6 +75,23 @@ std::vector<char> getRawImageData(std::string const& filename,
                                   std::uint32_t width,
                                   std::uint32_t height);
 
+// One vertex from a vulkan_earth ".ogl" mesh file - a plain-ASCII,
+// whitespace-delimited, unindexed format with no header:
+// [texcoord.s, texcoord.t, normal.x, normal.y, normal.z, vertex.x,
+// vertex.y, vertex.z] repeated per vertex, three vertices per triangle
+// (see VBOShaderLibrary::loadClientData(const std::string&) in
+// vulkan_earth/src/VBOShaderLibrary.cpp for the format this mirrors).
+struct OglVertexData {
+    Math::Vec2<float> texcoord;
+    Math::Vec3<float> normal;
+    Math::Vec3<float> position;
+};
+
+// Parses an entire ".ogl" file into a flat, unindexed vertex list (three
+// consecutive entries make one triangle). Returns an empty vector on any
+// read failure or if the file's token count isn't a multiple of 8.
+std::vector<OglVertexData> loadOglMeshData(std::string const& filename);
+
 vulkan_graphix::Math::Mat4<float> getPerspectiveProjectionMatrix(
         float const aspect_ratio,
         float const field_of_view,

@@ -1,5 +1,4 @@
-bin_PROGRAMS = vulkan_earth_runner \
-	vk_projectile_pilot_runner vk_particle_pilot_runner
+bin_PROGRAMS = vulkan_earth_runner vk_particle_pilot_runner
 
 # Vendored legacy OpenGL/GLUT game, ported off MSVC/Win32 onto X11 via
 # GLUT rather than held to this project's own -Werror/-Wall/-pedantic
@@ -100,23 +99,13 @@ vulkan_earth_runner_LDADD = \
 	$(VULKAN_EARTH_XRANDR_LIBS) $(X11_LIBS)
 vulkan_earth_runner_LDFLAGS = -pthread
 
-# Standalone Vulkan-migration pilot #3 (see VulkanProjectilePilot.h) -
+# Standalone Vulkan-migration pilot #4 (see VulkanParticlePilot.h) -
 # additive only, doesn't touch or get linked into vulkan_earth_runner
 # above. Built against this repo's own tutorial framework
 # (lib/libvulkan_graphix.la), not any of the vulkan_earth_runner
-# GL/GLEW/SDL/Xrandr dependencies. Pilots #1 (skybox) and #2 (terrain)
-# have since graduated to Tutorial11/12 - see bin/Makefile.am.
-vk_projectile_pilot_runner_SOURCES = \
-	VulkanProjectilePilot.cpp \
-	vk_projectile_pilot_main.cpp
-vk_projectile_pilot_runner_CPPFLAGS = -Werror -Wall -pedantic \
-	-I$(abs_top_srcdir)/include $(GLM_CFLAGS)
-vk_projectile_pilot_runner_LDADD = \
-	$(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
-vk_projectile_pilot_runner_LDFLAGS = -pthread
-
-# Standalone Vulkan-migration pilot #4 (see VulkanParticlePilot.h) - same
-# additive-only setup as vk_skybox_pilot_runner above.
+# GL/GLEW/SDL/Xrandr dependencies. Pilots #1-3 (skybox, terrain,
+# projectile) have since graduated to Tutorial11/12/13 - see
+# bin/Makefile.am.
 vk_particle_pilot_runner_SOURCES = \
 	VulkanParticlePilot.cpp \
 	vk_particle_pilot_main.cpp
@@ -125,15 +114,6 @@ vk_particle_pilot_runner_CPPFLAGS = -Werror -Wall -pedantic \
 vk_particle_pilot_runner_LDADD = \
 	$(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 vk_particle_pilot_runner_LDFLAGS = -pthread
-
-# projectileDefault.ogl/projectileDefault.raw (the real tank-shell mesh and
-# its texture, parsed/loaded by VulkanProjectilePilot) live one directory
-# down, under Projectiles/ - copied flat since
-# Tools::getBinaryFileContents()/getRawImageData() resolve filenames
-# relative to the running executable's own directory, same convention
-# bin/Makefile.am uses for every tutorial.
-vk_projectile_pilot_mesh = $(srcdir)/Projectiles/projectileDefault.ogl
-vk_projectile_pilot_texture = $(srcdir)/Projectiles/projectileDefault.raw
 
 # shader.vert.spv/shader.frag.spv are this pilot's own new shaders (see
 # VulkanParticlePilot.h) - not reused from any numbered tutorial, since
@@ -145,12 +125,8 @@ vk_projectile_pilot_texture = $(srcdir)/Projectiles/projectileDefault.raw
 vk_particle_pilot_vert = $(top_srcdir)/resources/particle_pilot/Data/shader.vert.spv
 vk_particle_pilot_frag = $(top_srcdir)/resources/particle_pilot/Data/shader.frag.spv
 
-all-local: $(vk_projectile_pilot_mesh) $(vk_projectile_pilot_texture) \
-		$(vk_particle_pilot_vert) $(vk_particle_pilot_frag)
-	cp $(vk_projectile_pilot_mesh) $(builddir)/projectileDefault.ogl
-	cp $(vk_projectile_pilot_texture) $(builddir)/projectileDefault.raw
+all-local: $(vk_particle_pilot_vert) $(vk_particle_pilot_frag)
 	cp $(vk_particle_pilot_vert) $(builddir)/shader.particle.vert.spv
 	cp $(vk_particle_pilot_frag) $(builddir)/shader.particle.frag.spv
 
-CLEANFILES = projectileDefault.ogl projectileDefault.raw \
-	shader.particle.vert.spv shader.particle.frag.spv
+CLEANFILES = shader.particle.vert.spv shader.particle.frag.spv

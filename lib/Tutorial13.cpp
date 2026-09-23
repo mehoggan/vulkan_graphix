@@ -1,11 +1,9 @@
-#include "VulkanProjectilePilot.h"
+#include "vulkan_graphix/Tutorial13.h"
 
 #include <vulkan/vulkan_core.h>
 
 #include <cstddef>
 #include <cstring>
-#include <sstream>
-#include <string>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -13,22 +11,169 @@
 
 namespace vulkan_graphix {
 
-VulkanProjectilePilot::VulkanProjectilePilot()
-        : vk_render_pass_(VK_NULL_HANDLE)
-        , vk_pipeline_layout_(VK_NULL_HANDLE)
-        , vk_graphics_pipeline_(VK_NULL_HANDLE)
-        , vertex_count_(0)
-        , vk_command_pool_(VK_NULL_HANDLE)
-        , rendering_resources_(resources_count_)
+// ************************************************************ //
+// VulkanTutorial13Parameters                                   //
+// ************************************************************ //
+VulkanTutorial13Parameters::VulkanTutorial13Parameters()
+        : m_vk_render_pass(VK_NULL_HANDLE)
+        , m_vk_pipeline_layout(VK_NULL_HANDLE)
+        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
+        , m_vertex_count(0)
+        , m_vk_command_pool(VK_NULL_HANDLE)
+        , m_rendering_resources(resources_count) {}
+
+const VkRenderPass& VulkanTutorial13Parameters::getVkRenderPass() const {
+    return m_vk_render_pass;
+}
+VkRenderPass& VulkanTutorial13Parameters::getVkRenderPass() {
+    return m_vk_render_pass;
+}
+void VulkanTutorial13Parameters::setVkRenderPass(
+        const VkRenderPass& vk_render_pass) {
+    m_vk_render_pass = vk_render_pass;
+}
+
+const ImageParameters& VulkanTutorial13Parameters::getImageParameters()
+        const {
+    return m_image_parameters;
+}
+ImageParameters& VulkanTutorial13Parameters::getImageParameters() {
+    return m_image_parameters;
+}
+void VulkanTutorial13Parameters::setImageParameters(
+        const ImageParameters& image_parameters) {
+    m_image_parameters = image_parameters;
+}
+
+const BufferParameters&
+VulkanTutorial13Parameters::getUniformBufferParameters() const {
+    return m_uniform_buffer;
+}
+BufferParameters& VulkanTutorial13Parameters::getUniformBufferParameters() {
+    return m_uniform_buffer;
+}
+void VulkanTutorial13Parameters::setUniformBufferParameters(
+        const BufferParameters& uniform_buffer) {
+    m_uniform_buffer = uniform_buffer;
+}
+
+const DescriptorSetParameters&
+VulkanTutorial13Parameters::getDescriptorSetParameters() const {
+    return m_descriptor_set_parameters;
+}
+DescriptorSetParameters&
+VulkanTutorial13Parameters::getDescriptorSetParameters() {
+    return m_descriptor_set_parameters;
+}
+void VulkanTutorial13Parameters::setDescriptorSetParameters(
+        const DescriptorSetParameters& descriptor_set_parameters) {
+    m_descriptor_set_parameters = descriptor_set_parameters;
+}
+
+const VkPipelineLayout& VulkanTutorial13Parameters::getVkPipelineLayout()
+        const {
+    return m_vk_pipeline_layout;
+}
+VkPipelineLayout& VulkanTutorial13Parameters::getVkPipelineLayout() {
+    return m_vk_pipeline_layout;
+}
+void VulkanTutorial13Parameters::setVkPipelineLayout(
+        const VkPipelineLayout& vk_pipeline_layout) {
+    m_vk_pipeline_layout = vk_pipeline_layout;
+}
+
+const VkPipeline& VulkanTutorial13Parameters::getVkGraphicsPipeline() const {
+    return m_vk_graphics_pipeline;
+}
+VkPipeline& VulkanTutorial13Parameters::getVkGraphicsPipeline() {
+    return m_vk_graphics_pipeline;
+}
+void VulkanTutorial13Parameters::setVkGraphicsPipeline(
+        const VkPipeline& vk_graphics_pipeline) {
+    m_vk_graphics_pipeline = vk_graphics_pipeline;
+}
+
+const BufferParameters& VulkanTutorial13Parameters::getVertexBufferParameters()
+        const {
+    return m_vertex_buffer;
+}
+BufferParameters& VulkanTutorial13Parameters::getVertexBufferParameters() {
+    return m_vertex_buffer;
+}
+void VulkanTutorial13Parameters::setVertexBufferParameters(
+        const BufferParameters& vertex_buffer) {
+    m_vertex_buffer = vertex_buffer;
+}
+
+std::uint32_t VulkanTutorial13Parameters::getVertexCount() const {
+    return m_vertex_count;
+}
+void VulkanTutorial13Parameters::setVertexCount(std::uint32_t vertex_count) {
+    m_vertex_count = vertex_count;
+}
+
+const BufferParameters&
+VulkanTutorial13Parameters::getStagingBufferParameters() const {
+    return m_staging_buffer;
+}
+BufferParameters& VulkanTutorial13Parameters::getStagingBufferParameters() {
+    return m_staging_buffer;
+}
+void VulkanTutorial13Parameters::setStagingBufferParameters(
+        const BufferParameters& staging_buffer) {
+    m_staging_buffer = staging_buffer;
+}
+
+const VkCommandPool& VulkanTutorial13Parameters::getVkCommandPool() const {
+    return m_vk_command_pool;
+}
+VkCommandPool& VulkanTutorial13Parameters::getVkCommandPool() {
+    return m_vk_command_pool;
+}
+void VulkanTutorial13Parameters::setVkCommandPool(
+        const VkCommandPool& vk_command_pool) {
+    m_vk_command_pool = vk_command_pool;
+}
+
+const std::vector<RenderingResourceParameters>&
+VulkanTutorial13Parameters::getRenderingResources() const {
+    return m_rendering_resources;
+}
+std::vector<RenderingResourceParameters>&
+VulkanTutorial13Parameters::getRenderingResources() {
+    return m_rendering_resources;
+}
+void VulkanTutorial13Parameters::setRenderingResources(
+        const std::vector<RenderingResourceParameters>& rendering_resources) {
+    m_rendering_resources = rendering_resources;
+}
+
+const std::vector<VkSemaphore>&
+VulkanTutorial13Parameters::getFinishedRenderingSemaphores() const {
+    return m_finished_rendering_semaphores;
+}
+std::vector<VkSemaphore>&
+VulkanTutorial13Parameters::getFinishedRenderingSemaphores() {
+    return m_finished_rendering_semaphores;
+}
+void VulkanTutorial13Parameters::setFinishedRenderingSemaphores(
+        const std::vector<VkSemaphore>& finished_rendering_semaphores) {
+    m_finished_rendering_semaphores = finished_rendering_semaphores;
+}
+
+// ************************************************************ //
+// Tutorial13                                                   //
+// ************************************************************ //
+Tutorial13::Tutorial13()
         // The mesh itself spans roughly [-0.2, 0.2] on every axis (a real
         // tank-shell's own modeling-tool units) - 1.5 is OrbitCamera's own
         // minimum distance, close enough to see it clearly.
-        , camera_(0.6f, 0.3f, 1.5f) {}
+        : m_camera(0.6f, 0.3f, 1.5f) {}
 
-VulkanProjectilePilot::~VulkanProjectilePilot() { childClear(); }
+Tutorial13::~Tutorial13() { childClear(); }
 
-bool VulkanProjectilePilot::createCommandPool(
-        std::uint32_t queue_family_index, VkCommandPool* pool) {
+bool Tutorial13::createCommandPool(std::uint32_t queue_family_index,
+                                   VkCommandPool* pool) {
     VkCommandPoolCreateInfo cmd_pool_create_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             .pNext = nullptr,
@@ -45,10 +190,9 @@ bool VulkanProjectilePilot::createCommandPool(
     return true;
 }
 
-bool VulkanProjectilePilot::allocateCommandBuffers(
-        VkCommandPool pool,
-        std::uint32_t count,
-        VkCommandBuffer* command_buffers) {
+bool Tutorial13::allocateCommandBuffers(VkCommandPool pool,
+                                        std::uint32_t count,
+                                        VkCommandBuffer* command_buffers) {
     VkCommandBufferAllocateInfo command_buffer_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
             .pNext = nullptr,
@@ -65,49 +209,56 @@ bool VulkanProjectilePilot::allocateCommandBuffers(
     return true;
 }
 
-bool VulkanProjectilePilot::createCommandBuffers() {
-    if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
-                           &vk_command_pool_)) {
+bool Tutorial13::createCommandBuffers() {
+    if (!createCommandPool(
+                getGraphicsQueueParameters().getFamilyIndex(),
+                &m_vulkan_tutorial13_parameters.getVkCommandPool())) {
         return false;
     }
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial13_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!allocateCommandBuffers(
-                    vk_command_pool_,
+                    m_vulkan_tutorial13_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer())) {
+                    &rendering_resources[i].getVkCommandBuffer())) {
             return false;
         }
     }
     return true;
 }
 
-bool VulkanProjectilePilot::createSemaphores() {
+bool Tutorial13::createSemaphores() {
     VkSemaphoreCreateInfo semaphore_create_info = {
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial13_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateSemaphore(
                     getVkDevice(),
                     &semaphore_create_info,
                     nullptr,
-                    &rendering_resources_[i].getImageAvailableVkSemaphore()) !=
+                    &rendering_resources[i].getImageAvailableVkSemaphore()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
     }
 
-    finished_rendering_semaphores_.assign(
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial13_parameters.getFinishedRenderingSemaphores();
+    finished_rendering_semaphores.assign(
             getSwapchainParameters().getImageParameters().size(),
             VK_NULL_HANDLE);
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
         if (vkCreateSemaphore(getVkDevice(),
                               &semaphore_create_info,
                               nullptr,
-                              &finished_rendering_semaphores_[i]) !=
+                              &finished_rendering_semaphores[i]) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
@@ -117,17 +268,19 @@ bool VulkanProjectilePilot::createSemaphores() {
     return true;
 }
 
-bool VulkanProjectilePilot::createFences() {
+bool Tutorial13::createFences() {
     VkFenceCreateInfo fence_create_info = {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_FENCE_CREATE_SIGNALED_BIT};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial13_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateFence(getVkDevice(),
                           &fence_create_info,
                           nullptr,
-                          &rendering_resources_[i].getVkFence()) !=
+                          &rendering_resources[i].getVkFence()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
@@ -136,7 +289,7 @@ bool VulkanProjectilePilot::createFences() {
     return true;
 }
 
-bool VulkanProjectilePilot::createRenderingResources() {
+bool Tutorial13::createRenderingResources() {
     if (!createCommandBuffers()) {
         return false;
     }
@@ -149,8 +302,9 @@ bool VulkanProjectilePilot::createRenderingResources() {
     return true;
 }
 
-bool VulkanProjectilePilot::allocateBufferMemory(
-        VkBuffer buffer, VkMemoryPropertyFlags property, VkDeviceMemory* memory) {
+bool Tutorial13::allocateBufferMemory(VkBuffer buffer,
+                                      VkMemoryPropertyFlags property,
+                                      VkDeviceMemory* memory) {
     VkMemoryRequirements buffer_memory_requirements;
     vkGetBufferMemoryRequirements(
             getVkDevice(), buffer, &buffer_memory_requirements);
@@ -180,9 +334,9 @@ bool VulkanProjectilePilot::allocateBufferMemory(
     return false;
 }
 
-bool VulkanProjectilePilot::createBuffer(VkBufferUsageFlags usage,
-                                         VkMemoryPropertyFlags memory_property,
-                                         BufferParameters& buffer) {
+bool Tutorial13::createBuffer(VkBufferUsageFlags usage,
+                              VkMemoryPropertyFlags memory_property,
+                              BufferParameters& buffer) {
     VkBufferCreateInfo buffer_create_info = {
             .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
             .pNext = nullptr,
@@ -221,17 +375,19 @@ bool VulkanProjectilePilot::createBuffer(VkBufferUsageFlags usage,
     return true;
 }
 
-bool VulkanProjectilePilot::createStagingBuffer() {
+bool Tutorial13::createStagingBuffer() {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial13_parameters.getStagingBufferParameters();
     // projectileDefault.raw decodes to 512x512 RGBA = 1,048,576 bytes - the
-    // larger of this pilot's two staging uses (792 vertices * 24 bytes is
-    // trivial next to it). Sized with headroom rather than copied from
-    // another pilot's constant - see copyTextureData()/copyBufferData()'s
+    // larger of this tutorial's two staging uses (792 vertices * 24 bytes
+    // is trivial next to it). Sized with headroom rather than copied from
+    // another tutorial's constant - see copyTextureData()/copyBufferData()'s
     // size guards below for what silently overflowing this buffer did to
-    // the skybox pilot.
-    staging_buffer_.setSize(4 * 1024 * 1024);
+    // the original migration pilot this tutorial is ported from.
+    staging_buffer.setSize(4 * 1024 * 1024);
     if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                      staging_buffer_)) {
+                      staging_buffer)) {
         Logging::error(LOG_TAG, "Could not create staging buffer!");
         return false;
     }
@@ -239,9 +395,9 @@ bool VulkanProjectilePilot::createStagingBuffer() {
     return true;
 }
 
-bool VulkanProjectilePilot::createImage(std::uint32_t width,
-                                        std::uint32_t height,
-                                        VkImage* image) {
+bool Tutorial13::createImage(std::uint32_t width,
+                             std::uint32_t height,
+                             VkImage* image) {
     VkImageCreateInfo image_create_info = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             .pNext = nullptr,
@@ -264,8 +420,9 @@ bool VulkanProjectilePilot::createImage(std::uint32_t width,
            VK_SUCCESS;
 }
 
-bool VulkanProjectilePilot::allocateImageMemory(
-        VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory) {
+bool Tutorial13::allocateImageMemory(VkImage image,
+                                     VkMemoryPropertyFlags property,
+                                     VkDeviceMemory* memory) {
     VkMemoryRequirements image_memory_requirements;
     vkGetImageMemoryRequirements(
             getVkDevice(), image, &image_memory_requirements);
@@ -295,12 +452,14 @@ bool VulkanProjectilePilot::allocateImageMemory(
     return false;
 }
 
-bool VulkanProjectilePilot::createImageView() {
+bool Tutorial13::createImageView() {
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial13_parameters.getImageParameters();
     VkImageViewCreateInfo image_view_create_info = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .image = image_parameters_.getVkImage(),
+            .image = image_parameters.getVkImage(),
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
             .format = VK_FORMAT_R8G8B8A8_UNORM,
             .components = {.r = VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -316,11 +475,11 @@ bool VulkanProjectilePilot::createImageView() {
     return vkCreateImageView(getVkDevice(),
                              &image_view_create_info,
                              nullptr,
-                             &image_parameters_.getVkImageView()) ==
+                             &image_parameters.getVkImageView()) ==
            VK_SUCCESS;
 }
 
-bool VulkanProjectilePilot::createSampler(VkSampler* sampler) {
+bool Tutorial13::createSampler(VkSampler* sampler) {
     VkSamplerCreateInfo sampler_create_info = {
             .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext = nullptr,
@@ -346,23 +505,28 @@ bool VulkanProjectilePilot::createSampler(VkSampler* sampler) {
            VK_SUCCESS;
 }
 
-bool VulkanProjectilePilot::copyTextureData(char* texture_data,
-                                            std::uint32_t data_size,
-                                            std::uint32_t width,
-                                            std::uint32_t height) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial13::copyTextureData(char* texture_data,
+                                 std::uint32_t data_size,
+                                 std::uint32_t width,
+                                 std::uint32_t height) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial13_parameters.getStagingBufferParameters();
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial13_parameters.getImageParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Texture data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -378,12 +542,12 @@ bool VulkanProjectilePilot::copyTextureData(char* texture_data,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -392,7 +556,8 @@ bool VulkanProjectilePilot::copyTextureData(char* texture_data,
             .pInheritanceInfo = nullptr};
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial13_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
 
@@ -412,7 +577,7 @@ bool VulkanProjectilePilot::copyTextureData(char* texture_data,
              .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
              .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
              .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-             .image = image_parameters_.getVkImage(),
+             .image = image_parameters.getVkImage(),
              .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
                          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
@@ -436,8 +601,8 @@ bool VulkanProjectilePilot::copyTextureData(char* texture_data,
             .imageOffset = {.x = 0, .y = 0, .z = 0},
             .imageExtent = {.width = width, .height = height, .depth = 1}};
     vkCmdCopyBufferToImage(command_buffer,
-                           staging_buffer_.getVkBuffer(),
-                           image_parameters_.getVkImage(),
+                           staging_buffer.getVkBuffer(),
+                           image_parameters.getVkImage(),
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                            1,
                            &buffer_image_copy_info);
@@ -451,7 +616,7 @@ bool VulkanProjectilePilot::copyTextureData(char* texture_data,
             .newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-            .image = image_parameters_.getVkImage(),
+            .image = image_parameters.getVkImage(),
             .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
@@ -488,32 +653,35 @@ bool VulkanProjectilePilot::copyTextureData(char* texture_data,
     return true;
 }
 
-bool VulkanProjectilePilot::createTexture() {
+bool Tutorial13::createTexture() {
     std::vector<char> texture_data =
             Tools::getRawImageData("projectileDefault.raw", 512, 512);
     if (texture_data.empty()) {
         return false;
     }
 
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial13_parameters.getImageParameters();
+
     VkImage vk_image;
     if (!createImage(512, 512, &vk_image)) {
         Logging::error(LOG_TAG, "Could not create image!");
         return false;
     }
-    image_parameters_.setVkImage(vk_image);
+    image_parameters.setVkImage(vk_image);
 
     VkDeviceMemory vk_device_memory;
-    if (!allocateImageMemory(image_parameters_.getVkImage(),
+    if (!allocateImageMemory(image_parameters.getVkImage(),
                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                              &vk_device_memory)) {
         Logging::error(LOG_TAG, "Could not allocate memory for image!");
         return false;
     }
-    image_parameters_.setVkDeviceMemory(vk_device_memory);
+    image_parameters.setVkDeviceMemory(vk_device_memory);
 
     if (vkBindImageMemory(getVkDevice(),
-                          image_parameters_.getVkImage(),
-                          image_parameters_.getVkDeviceMemory(),
+                          image_parameters.getVkImage(),
+                          image_parameters.getVkDeviceMemory(),
                           0) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not bind memory to an image!");
         return false;
@@ -529,7 +697,7 @@ bool VulkanProjectilePilot::createTexture() {
         Logging::error(LOG_TAG, "Could not create sampler!");
         return false;
     }
-    image_parameters_.setVkSampler(vk_sampler);
+    image_parameters.setVkSampler(vk_sampler);
 
     if (!copyTextureData(texture_data.data(),
                          static_cast<std::uint32_t>(texture_data.size()),
@@ -543,14 +711,16 @@ bool VulkanProjectilePilot::createTexture() {
     return true;
 }
 
-bool VulkanProjectilePilot::createUniformBuffer() {
-    uniform_buffer_.setSize(16 * sizeof(float));
+bool Tutorial13::createUniformBuffer() {
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial13_parameters.getUniformBufferParameters();
+    uniform_buffer.setSize(16 * sizeof(float));
     // Host-visible/coherent: rewritten every frame as the orbit camera
-    // moves, same tradeoff the skybox pilot makes for the same reason.
+    // moves, same tradeoff Tutorial11 makes for the same reason.
     if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      uniform_buffer_)) {
+                      uniform_buffer)) {
         Logging::error(LOG_TAG, "Could not create uniform buffer!");
         return false;
     }
@@ -558,13 +728,13 @@ bool VulkanProjectilePilot::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-Math::Mat4<float> VulkanProjectilePilot::getUniformBufferData() const {
+Math::Mat4<float> Tutorial13::getUniformBufferData() const {
     // Reused Tutorial07 shaders name this uniform "u_ProjectionMatrix" but
     // just do gl_Position = u_ProjectionMatrix * i_Position - really a full
     // model-view-projection slot, exactly what's needed here.
     Math::Mat4<float> const model(1.0f);
     Math::Mat4<float> const view = glm::lookAt(
-            camera_.eye(), camera_.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -577,12 +747,14 @@ Math::Mat4<float> VulkanProjectilePilot::getUniformBufferData() const {
     return projection * view * model;
 }
 
-bool VulkanProjectilePilot::updateUniformBufferData() {
+bool Tutorial13::updateUniformBufferData() {
     Math::Mat4<float> const uniform_data = getUniformBufferData();
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial13_parameters.getUniformBufferParameters();
 
     void* uniform_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    uniform_buffer_.getVkDeviceMemory(),
+                    uniform_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -592,16 +764,16 @@ bool VulkanProjectilePilot::updateUniformBufferData() {
     }
     std::memcpy(uniform_buffer_memory_pointer,
                 glm::value_ptr(uniform_data),
-                uniform_buffer_.getSize());
-    vkUnmapMemory(getVkDevice(), uniform_buffer_.getVkDeviceMemory());
+                uniform_buffer.getSize());
+    vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
 
     return true;
 }
 
-bool VulkanProjectilePilot::createDescriptorSetLayout() {
+bool Tutorial13::createDescriptorSetLayout() {
     // Binding numbers match Tutorial07's shaders exactly (binding 0 =
     // sampler in the fragment stage, binding 1 = uniform buffer in the
-    // vertex stage) since this pilot reuses those compiled shaders as-is.
+    // vertex stage) since this tutorial reuses those compiled shaders.
     std::vector<VkDescriptorSetLayoutBinding> layout_bindings = {
             {.binding = 0,
              .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -629,13 +801,13 @@ bool VulkanProjectilePilot::createDescriptorSetLayout() {
         Logging::error(LOG_TAG, "Could not create descriptor set layout!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSetLayout(
-            vk_descriptor_set_layout);
+    m_vulkan_tutorial13_parameters.getDescriptorSetParameters()
+            .setVkDescriptorSetLayout(vk_descriptor_set_layout);
 
     return true;
 }
 
-bool VulkanProjectilePilot::createDescriptorPool() {
+bool Tutorial13::createDescriptorPool() {
     std::vector<VkDescriptorPoolSize> pool_sizes = {
             {.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
              .descriptorCount = 1},
@@ -657,18 +829,21 @@ bool VulkanProjectilePilot::createDescriptorPool() {
         Logging::error(LOG_TAG, "Could not create descriptor pool!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorPool(vk_descriptor_pool);
+    m_vulkan_tutorial13_parameters.getDescriptorSetParameters()
+            .setVkDescriptorPool(vk_descriptor_pool);
 
     return true;
 }
 
-bool VulkanProjectilePilot::allocateDescriptorSet() {
+bool Tutorial13::allocateDescriptorSet() {
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial13_parameters.getDescriptorSetParameters();
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            descriptor_set.getVkDescriptorSetLayout();
     VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
             .pNext = nullptr,
-            .descriptorPool = descriptor_set_parameters_.getVkDescriptorPool(),
+            .descriptorPool = descriptor_set.getVkDescriptorPool(),
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_descriptor_set_layout};
 
@@ -679,26 +854,33 @@ bool VulkanProjectilePilot::allocateDescriptorSet() {
         Logging::error(LOG_TAG, "Could not allocate descriptor set!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSet(vk_descriptor_set);
+    descriptor_set.setVkDescriptorSet(vk_descriptor_set);
 
     return true;
 }
 
-bool VulkanProjectilePilot::updateDescriptorSet() {
+bool Tutorial13::updateDescriptorSet() {
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial13_parameters.getImageParameters();
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial13_parameters.getUniformBufferParameters();
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial13_parameters.getDescriptorSetParameters();
+
     VkDescriptorImageInfo image_info = {
-            .sampler = image_parameters_.getVkSampler(),
-            .imageView = image_parameters_.getVkImageView(),
+            .sampler = image_parameters.getVkSampler(),
+            .imageView = image_parameters.getVkImageView(),
             .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
     VkDescriptorBufferInfo buffer_info = {
-            .buffer = uniform_buffer_.getVkBuffer(),
+            .buffer = uniform_buffer.getVkBuffer(),
             .offset = 0,
-            .range = uniform_buffer_.getSize()};
+            .range = uniform_buffer.getSize()};
 
     std::vector<VkWriteDescriptorSet> descriptor_writes = {
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 0,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -708,7 +890,7 @@ bool VulkanProjectilePilot::updateDescriptorSet() {
              .pTexelBufferView = nullptr},
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 1,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -726,7 +908,7 @@ bool VulkanProjectilePilot::updateDescriptorSet() {
     return true;
 }
 
-bool VulkanProjectilePilot::createRenderPass() {
+bool Tutorial13::createRenderPass() {
     VkAttachmentDescription attachment_descriptions[] = {
             {.flags = 0,
              .format = getSwapchainParameters().getVkFormat(),
@@ -765,10 +947,12 @@ bool VulkanProjectilePilot::createRenderPass() {
             .dependencyCount = 0,
             .pDependencies = nullptr};
 
-    if (vkCreateRenderPass(getVkDevice(),
-                           &render_pass_create_info,
-                           nullptr,
-                           &vk_render_pass_) != VK_SUCCESS) {
+    if (vkCreateRenderPass(
+                getVkDevice(),
+                &render_pass_create_info,
+                nullptr,
+                &m_vulkan_tutorial13_parameters.getVkRenderPass()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create render pass!");
         return false;
     }
@@ -776,9 +960,10 @@ bool VulkanProjectilePilot::createRenderPass() {
     return true;
 }
 
-bool VulkanProjectilePilot::createPipelineLayout() {
+bool Tutorial13::createPipelineLayout() {
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            m_vulkan_tutorial13_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSetLayout();
     VkPipelineLayoutCreateInfo layout_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext = nullptr,
@@ -788,10 +973,12 @@ bool VulkanProjectilePilot::createPipelineLayout() {
             .pushConstantRangeCount = 0,
             .pPushConstantRanges = nullptr};
 
-    if (vkCreatePipelineLayout(getVkDevice(),
-                               &layout_create_info,
-                               nullptr,
-                               &vk_pipeline_layout_) != VK_SUCCESS) {
+    if (vkCreatePipelineLayout(
+                getVkDevice(),
+                &layout_create_info,
+                nullptr,
+                &m_vulkan_tutorial13_parameters.getVkPipelineLayout()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create pipeline layout!");
         return false;
     }
@@ -800,7 +987,7 @@ bool VulkanProjectilePilot::createPipelineLayout() {
 }
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-VulkanProjectilePilot::createShaderModule(const char* filename) {
+Tutorial13::createShaderModule(const char* filename) {
     const std::vector<char> code = Tools::getBinaryFileContents(filename);
     if (code.empty()) {
         return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
@@ -829,14 +1016,13 @@ VulkanProjectilePilot::createShaderModule(const char* filename) {
             shader_module, vkDestroyShaderModule, getVkDevice());
 }
 
-bool VulkanProjectilePilot::createPipeline() {
-    // Reused byte-for-byte from Tutorial07, same as the skybox pilot: an
-    // unlit textured surface on a {position, texcoord} vertex is exactly
-    // what this mesh needs too (see VulkanProjectilePilot.h).
+bool Tutorial13::createPipeline() {
+    // Reused byte-for-byte from Tutorial07: an unlit textured surface on a
+    // {position, texcoord} vertex is exactly what this mesh needs too.
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            vertex_shader_module = createShaderModule("shader.07.vert.spv");
+            vertex_shader_module = createShaderModule("shader.13.vert.spv");
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            fragment_shader_module = createShaderModule("shader.07.frag.spv");
+            fragment_shader_module = createShaderModule("shader.13.frag.spv");
 
     if (!vertex_shader_module || !fragment_shader_module) {
         return false;
@@ -860,7 +1046,7 @@ bool VulkanProjectilePilot::createPipeline() {
 
     std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions =
             {{.binding = 0,
-              .stride = ProjectilePilotVertexAttributeTraits::stride,
+              .stride = Tutorial13VertexAttributeTraits::stride,
               .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
     std::vector<VkVertexInputAttributeDescription>
@@ -868,13 +1054,13 @@ bool VulkanProjectilePilot::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct ProjectilePilotVertexData,
-                                        position)},
+                     .offset =
+                             offsetof(struct Tutorial13VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset = offsetof(struct ProjectilePilotVertexData,
-                                        texcoord)}};
+                     .offset =
+                             offsetof(struct Tutorial13VertexData, texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -918,8 +1104,8 @@ bool VulkanProjectilePilot::createPipeline() {
             .polygonMode = VK_POLYGON_MODE_FILL,
             // NONE: this hand-authored asset's winding order hasn't been
             // verified against this project's usual CCW convention, and
-            // the orbit camera can end up on any side - same reasoning the
-            // skybox pilot used for its own cullMode.
+            // the orbit camera can end up on any side - same reasoning
+            // Tutorial11's skybox uses for its own cullMode.
             .cullMode = VK_CULL_MODE_NONE,
             .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
             .depthBiasEnable = VK_FALSE,
@@ -988,80 +1174,67 @@ bool VulkanProjectilePilot::createPipeline() {
             .pDepthStencilState = nullptr,
             .pColorBlendState = &color_blend_state_create_info,
             .pDynamicState = &dynamic_state_create_info,
-            .layout = vk_pipeline_layout_,
-            .renderPass = vk_render_pass_,
+            .layout = m_vulkan_tutorial13_parameters.getVkPipelineLayout(),
+            .renderPass = m_vulkan_tutorial13_parameters.getVkRenderPass(),
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
 
-    if (vkCreateGraphicsPipelines(getVkDevice(),
-                                  VK_NULL_HANDLE,
-                                  1,
-                                  &pipeline_create_info,
-                                  nullptr,
-                                  &vk_graphics_pipeline_) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(
+                getVkDevice(),
+                VK_NULL_HANDLE,
+                1,
+                &pipeline_create_info,
+                nullptr,
+                &m_vulkan_tutorial13_parameters.getVkGraphicsPipeline()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create graphics pipeline!");
         return false;
     }
     return true;
 }
 
-const std::vector<ProjectilePilotVertexData>&
-VulkanProjectilePilot::getVertexData() {
-    if (!vertex_data_.empty()) {
-        return vertex_data_;
+const std::vector<Tutorial13VertexData>& Tutorial13::getVertexData() {
+    if (!m_vertex_data.empty()) {
+        return m_vertex_data;
     }
 
-    // projectileDefault.ogl: plain ASCII, whitespace-delimited floats, no
-    // header, 8 floats per vertex - [texcoord.s, texcoord.t, normal.x,
-    // normal.y, normal.z, vertex.x, vertex.y, vertex.z] - matching
-    // VBOShaderLibrary::loadClientData(const std::string&)'s own parsing
-    // exactly. The normal is parsed (to stay honest about the file's real
-    // layout) but dropped, same as that function's real fragment shader
-    // effectively does.
-    std::vector<char> file_data =
-            Tools::getBinaryFileContents("projectileDefault.ogl");
-    std::string const file_content(file_data.begin(), file_data.end());
-    std::istringstream token_stream(file_content);
-
-    std::vector<float> values;
-    float value = 0.0f;
-    while (token_stream >> value) {
-        values.push_back(value);
+    // Normal is parsed by loadOglMeshData() (to stay honest about the
+    // file's real layout) but dropped here, same as
+    // VBOShaderLibrary::drawClientData()'s real fragment shader
+    // effectively does (see Tutorial13.h).
+    std::vector<Tools::OglVertexData> const mesh_data =
+            Tools::loadOglMeshData("projectileDefault.ogl");
+    m_vertex_data.reserve(mesh_data.size());
+    for (Tools::OglVertexData const& vertex : mesh_data) {
+        m_vertex_data.push_back(
+                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
     }
 
-    static std::size_t const c_floats_per_vertex = 8;
-    std::size_t const vertex_count = values.size() / c_floats_per_vertex;
-    vertex_data_.reserve(vertex_count);
-    for (std::size_t i = 0; i < vertex_count; ++i) {
-        std::size_t const base = i * c_floats_per_vertex;
-        Math::Vec2<float> texcoord(values[base + 0], values[base + 1]);
-        Math::Vec4<float> position(
-                values[base + 5], values[base + 6], values[base + 7], 1.0f);
-        vertex_data_.push_back({position, texcoord});
-    }
-
-    return vertex_data_;
+    return m_vertex_data;
 }
 
-bool VulkanProjectilePilot::copyBufferData(BufferParameters& destination,
-                                           const void* data,
-                                           std::uint32_t data_size,
-                                           VkAccessFlags dst_access_mask,
-                                           VkPipelineStageFlags dst_stage_mask) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial13::copyBufferData(BufferParameters& destination,
+                                const void* data,
+                                std::uint32_t data_size,
+                                VkAccessFlags dst_access_mask,
+                                VkPipelineStageFlags dst_stage_mask) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial13_parameters.getStagingBufferParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Buffer data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -1077,15 +1250,16 @@ bool VulkanProjectilePilot::copyBufferData(BufferParameters& destination,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial13_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -1098,7 +1272,7 @@ bool VulkanProjectilePilot::copyBufferData(BufferParameters& destination,
     VkBufferCopy buffer_copy_info = {
             .srcOffset = 0, .dstOffset = 0, .size = data_size};
     vkCmdCopyBuffer(command_buffer,
-                    staging_buffer_.getVkBuffer(),
+                    staging_buffer.getVkBuffer(),
                     destination.getVkBuffer(),
                     1,
                     &buffer_copy_info);
@@ -1148,30 +1322,32 @@ bool VulkanProjectilePilot::copyBufferData(BufferParameters& destination,
     return true;
 }
 
-bool VulkanProjectilePilot::createVertexBuffer() {
-    const std::vector<ProjectilePilotVertexData>& vertex_data =
-            getVertexData();
-    vertex_count_ = static_cast<std::uint32_t>(vertex_data.size());
+bool Tutorial13::createVertexBuffer() {
+    const std::vector<Tutorial13VertexData>& vertex_data = getVertexData();
+    m_vulkan_tutorial13_parameters.setVertexCount(
+            static_cast<std::uint32_t>(vertex_data.size()));
 
-    vertex_buffer_.setSize(static_cast<std::uint32_t>(
+    BufferParameters& vertex_buffer =
+            m_vulkan_tutorial13_parameters.getVertexBufferParameters();
+    vertex_buffer.setSize(static_cast<std::uint32_t>(
             vertex_data.size() * sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      vertex_buffer_)) {
+                      vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create vertex buffer!");
         return false;
     }
 
-    return copyBufferData(vertex_buffer_,
+    return copyBufferData(vertex_buffer,
                           vertex_data.data(),
-                          vertex_buffer_.getSize(),
+                          vertex_buffer.getSize(),
                           VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool VulkanProjectilePilot::createFramebuffer(VkFramebuffer& framebuffer,
-                                              VkImageView image_view) {
+bool Tutorial13::createFramebuffer(VkFramebuffer& framebuffer,
+                                   VkImageView image_view) {
     if (framebuffer != VK_NULL_HANDLE) {
         vkDestroyFramebuffer(getVkDevice(), framebuffer, nullptr);
         framebuffer = VK_NULL_HANDLE;
@@ -1181,7 +1357,7 @@ bool VulkanProjectilePilot::createFramebuffer(VkFramebuffer& framebuffer,
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial13_parameters.getVkRenderPass(),
             .attachmentCount = 1,
             .pAttachments = &image_view,
             .width = getSwapchainParameters().getVkExtent2d().width,
@@ -1199,10 +1375,9 @@ bool VulkanProjectilePilot::createFramebuffer(VkFramebuffer& framebuffer,
     return true;
 }
 
-bool VulkanProjectilePilot::prepareFrame(
-        VkCommandBuffer command_buffer,
-        const ImageParameters& image_parameters,
-        VkFramebuffer& framebuffer) {
+bool Tutorial13::prepareFrame(VkCommandBuffer command_buffer,
+                              const ImageParameters& image_parameters,
+                              VkFramebuffer& framebuffer) {
     if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
         return false;
     }
@@ -1258,7 +1433,7 @@ bool VulkanProjectilePilot::prepareFrame(
     VkRenderPassBeginInfo render_pass_begin_info = {
             .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .pNext = nullptr,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial13_parameters.getVkRenderPass(),
             .framebuffer = framebuffer,
             .renderArea = {.offset = {.x = 0, .y = 0},
                            .extent = getSwapchainParameters().getVkExtent2d()},
@@ -1270,7 +1445,9 @@ bool VulkanProjectilePilot::prepareFrame(
                          VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(
-            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_graphics_pipeline_);
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial13_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1290,20 +1467,32 @@ bool VulkanProjectilePilot::prepareFrame(
 
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(
-            command_buffer, 0, 1, &vertex_buffer_.getVkBuffer(), &offset);
+            command_buffer,
+            0,
+            1,
+            &m_vulkan_tutorial13_parameters.getVertexBufferParameters()
+                     .getVkBuffer(),
+            &offset);
 
     VkDescriptorSet vk_descriptor_set =
-            descriptor_set_parameters_.getVkDescriptorSet();
-    vkCmdBindDescriptorSets(command_buffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            vk_pipeline_layout_,
-                            0,
-                            1,
-                            &vk_descriptor_set,
-                            0,
-                            nullptr);
+            m_vulkan_tutorial13_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSet();
+    vkCmdBindDescriptorSets(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial13_parameters.getVkPipelineLayout(),
+            0,
+            1,
+            &vk_descriptor_set,
+            0,
+            nullptr);
 
-    vkCmdDraw(command_buffer, vertex_count_, 1, 0, 0);
+    vkCmdDraw(
+            command_buffer,
+            m_vulkan_tutorial13_parameters.getVertexCount(),
+            1,
+            0,
+            0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1336,14 +1525,17 @@ bool VulkanProjectilePilot::prepareFrame(
     return true;
 }
 
-bool VulkanProjectilePilot::draw() {
+bool Tutorial13::draw() {
     static std::size_t resource_index = 0;
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial13_parameters.getRenderingResources();
     RenderingResourceParameters& current_rendering_resource =
-            rendering_resources_[resource_index];
+            rendering_resources[resource_index];
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) % resources_count_;
+    resource_index = (resource_index + 1) %
+                     VulkanTutorial13Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1388,7 +1580,8 @@ bool VulkanProjectilePilot::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            finished_rendering_semaphores_[image_index];
+            m_vulkan_tutorial13_parameters.getFinishedRenderingSemaphores()
+                    [image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1439,18 +1632,18 @@ bool VulkanProjectilePilot::draw() {
     return true;
 }
 
-void VulkanProjectilePilot::onMouseButton(int button,
-                                          bool pressed,
-                                          int pos_x,
-                                          int pos_y) {
-    camera_.onMouseButton(button, pressed, pos_x, pos_y);
+void Tutorial13::onMouseButton(int button,
+                               bool pressed,
+                               int pos_x,
+                               int pos_y) {
+    m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void VulkanProjectilePilot::onMouseMove(int pos_x, int pos_y) {
-    camera_.onMouseMove(pos_x, pos_y);
+void Tutorial13::onMouseMove(int pos_x, int pos_y) {
+    m_camera.onMouseMove(pos_x, pos_y);
 }
 
-void VulkanProjectilePilot::destroyBuffer(BufferParameters& buffer) {
+void Tutorial13::destroyBuffer(BufferParameters& buffer) {
     if (buffer.getVkBuffer() != VK_NULL_HANDLE) {
         vkDestroyBuffer(getVkDevice(), buffer.getVkBuffer(), nullptr);
         buffer.setVkBuffer(VK_NULL_HANDLE);
@@ -1461,7 +1654,7 @@ void VulkanProjectilePilot::destroyBuffer(BufferParameters& buffer) {
     }
 }
 
-bool VulkanProjectilePilot::childOnWindowSizeChanged() {
+bool Tutorial13::childOnWindowSizeChanged() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return true;
     }
@@ -1503,104 +1696,124 @@ bool VulkanProjectilePilot::childOnWindowSizeChanged() {
     return createVertexBuffer();
 }
 
-void VulkanProjectilePilot::childClear() {
+void Tutorial13::childClear() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return;
     }
     vkDeviceWaitIdle(getVkDevice());
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
-        if (rendering_resources_[i].getVkFramebuffer() != VK_NULL_HANDLE) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial13_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
+        if (rendering_resources[i].getVkFramebuffer() != VK_NULL_HANDLE) {
             vkDestroyFramebuffer(getVkDevice(),
-                                 rendering_resources_[i].getVkFramebuffer(),
+                                 rendering_resources[i].getVkFramebuffer(),
                                  nullptr);
-            rendering_resources_[i].setVkFramebuffer(VK_NULL_HANDLE);
+            rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
         }
-        if (rendering_resources_[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
             vkFreeCommandBuffers(
                     getVkDevice(),
-                    vk_command_pool_,
+                    m_vulkan_tutorial13_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer());
+                    &rendering_resources[i].getVkCommandBuffer());
         }
-        if (rendering_resources_[i].getImageAvailableVkSemaphore() !=
+        if (rendering_resources[i].getImageAvailableVkSemaphore() !=
             VK_NULL_HANDLE) {
             vkDestroySemaphore(
                     getVkDevice(),
-                    rendering_resources_[i].getImageAvailableVkSemaphore(),
+                    rendering_resources[i].getImageAvailableVkSemaphore(),
                     nullptr);
         }
-        if (rendering_resources_[i].getVkFence() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
             vkDestroyFence(
-                    getVkDevice(), rendering_resources_[i].getVkFence(), nullptr);
+                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
         }
     }
 
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
-        if (finished_rendering_semaphores_[i] != VK_NULL_HANDLE) {
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial13_parameters.getFinishedRenderingSemaphores();
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
+        if (finished_rendering_semaphores[i] != VK_NULL_HANDLE) {
             vkDestroySemaphore(
-                    getVkDevice(), finished_rendering_semaphores_[i], nullptr);
+                    getVkDevice(), finished_rendering_semaphores[i], nullptr);
         }
     }
-    finished_rendering_semaphores_.clear();
+    finished_rendering_semaphores.clear();
 
-    if (vk_command_pool_ != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(getVkDevice(), vk_command_pool_, nullptr);
-        vk_command_pool_ = VK_NULL_HANDLE;
-    }
-
-    destroyBuffer(vertex_buffer_);
-    destroyBuffer(staging_buffer_);
-
-    if (vk_graphics_pipeline_ != VK_NULL_HANDLE) {
-        vkDestroyPipeline(getVkDevice(), vk_graphics_pipeline_, nullptr);
-        vk_graphics_pipeline_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_pipeline_layout_ != VK_NULL_HANDLE) {
-        vkDestroyPipelineLayout(getVkDevice(), vk_pipeline_layout_, nullptr);
-        vk_pipeline_layout_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_render_pass_ != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(getVkDevice(), vk_render_pass_, nullptr);
-        vk_render_pass_ = VK_NULL_HANDLE;
-    }
-
-    if (descriptor_set_parameters_.getVkDescriptorPool() != VK_NULL_HANDLE) {
-        vkDestroyDescriptorPool(getVkDevice(),
-                                descriptor_set_parameters_.getVkDescriptorPool(),
-                                nullptr);
-        descriptor_set_parameters_.setVkDescriptorPool(VK_NULL_HANDLE);
-    }
-    if (descriptor_set_parameters_.getVkDescriptorSetLayout() !=
-        VK_NULL_HANDLE) {
-        vkDestroyDescriptorSetLayout(
+    if (m_vulkan_tutorial13_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
+        vkDestroyCommandPool(
                 getVkDevice(),
-                descriptor_set_parameters_.getVkDescriptorSetLayout(),
+                m_vulkan_tutorial13_parameters.getVkCommandPool(),
                 nullptr);
-        descriptor_set_parameters_.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+        m_vulkan_tutorial13_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
-    destroyBuffer(uniform_buffer_);
+    destroyBuffer(m_vulkan_tutorial13_parameters.getVertexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial13_parameters.getStagingBufferParameters());
 
-    if (image_parameters_.getVkSampler() != VK_NULL_HANDLE) {
-        vkDestroySampler(getVkDevice(), image_parameters_.getVkSampler(), nullptr);
-        image_parameters_.setVkSampler(VK_NULL_HANDLE);
+    if (m_vulkan_tutorial13_parameters.getVkGraphicsPipeline() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipeline(
+                getVkDevice(),
+                m_vulkan_tutorial13_parameters.getVkGraphicsPipeline(),
+                nullptr);
+        m_vulkan_tutorial13_parameters.setVkGraphicsPipeline(VK_NULL_HANDLE);
     }
-    if (image_parameters_.getVkImageView() != VK_NULL_HANDLE) {
+
+    if (m_vulkan_tutorial13_parameters.getVkPipelineLayout() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipelineLayout(
+                getVkDevice(),
+                m_vulkan_tutorial13_parameters.getVkPipelineLayout(),
+                nullptr);
+        m_vulkan_tutorial13_parameters.setVkPipelineLayout(VK_NULL_HANDLE);
+    }
+
+    if (m_vulkan_tutorial13_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
+        vkDestroyRenderPass(
+                getVkDevice(),
+                m_vulkan_tutorial13_parameters.getVkRenderPass(),
+                nullptr);
+        m_vulkan_tutorial13_parameters.setVkRenderPass(VK_NULL_HANDLE);
+    }
+
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial13_parameters.getDescriptorSetParameters();
+    if (descriptor_set.getVkDescriptorPool() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorPool(
+                getVkDevice(), descriptor_set.getVkDescriptorPool(), nullptr);
+        descriptor_set.setVkDescriptorPool(VK_NULL_HANDLE);
+    }
+    if (descriptor_set.getVkDescriptorSetLayout() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorSetLayout(getVkDevice(),
+                                     descriptor_set.getVkDescriptorSetLayout(),
+                                     nullptr);
+        descriptor_set.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+    }
+
+    destroyBuffer(m_vulkan_tutorial13_parameters.getUniformBufferParameters());
+
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial13_parameters.getImageParameters();
+    if (image_parameters.getVkSampler() != VK_NULL_HANDLE) {
+        vkDestroySampler(
+                getVkDevice(), image_parameters.getVkSampler(), nullptr);
+        image_parameters.setVkSampler(VK_NULL_HANDLE);
+    }
+    if (image_parameters.getVkImageView() != VK_NULL_HANDLE) {
         vkDestroyImageView(
-                getVkDevice(), image_parameters_.getVkImageView(), nullptr);
-        image_parameters_.setVkImageView(VK_NULL_HANDLE);
+                getVkDevice(), image_parameters.getVkImageView(), nullptr);
+        image_parameters.setVkImageView(VK_NULL_HANDLE);
     }
-    if (image_parameters_.getVkImage() != VK_NULL_HANDLE) {
-        vkDestroyImage(getVkDevice(), image_parameters_.getVkImage(), nullptr);
-        image_parameters_.setVkImage(VK_NULL_HANDLE);
+    if (image_parameters.getVkImage() != VK_NULL_HANDLE) {
+        vkDestroyImage(getVkDevice(), image_parameters.getVkImage(), nullptr);
+        image_parameters.setVkImage(VK_NULL_HANDLE);
     }
-    if (image_parameters_.getVkDeviceMemory() != VK_NULL_HANDLE) {
+    if (image_parameters.getVkDeviceMemory() != VK_NULL_HANDLE) {
         vkFreeMemory(
-                getVkDevice(), image_parameters_.getVkDeviceMemory(), nullptr);
-        image_parameters_.setVkDeviceMemory(VK_NULL_HANDLE);
+                getVkDevice(), image_parameters.getVkDeviceMemory(), nullptr);
+        image_parameters.setVkDeviceMemory(VK_NULL_HANDLE);
     }
 }
 
