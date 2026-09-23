@@ -1,7 +1,7 @@
 bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial04_runner tutorial05_runner tutorial06_runner tutorial07_runner \
     tutorial08_runner tutorial09_runner tutorial10_runner tutorial11_runner \
-    tutorial12_runner tutorial13_runner tutorial14_runner
+    tutorial12_runner tutorial13_runner tutorial14_runner tutorial15_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./Tutorial01Main.cpp
@@ -114,6 +114,14 @@ tutorial14_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial14_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial14_runner_LDFLAGS = -pthread
+
+# Tutorial 15 Binary
+tutorial15_runner_SOURCES = ./Tutorial15Main.cpp
+tutorial15_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial15_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial15_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -148,6 +156,8 @@ tutorial13_mesh = $(top_srcdir)/resources/13/Data/projectileDefault.ogl
 tutorial13_texture = $(top_srcdir)/resources/13/Data/projectileDefault.raw
 tutorial14_vert = $(top_srcdir)/resources/14/Data/shader.vert.14.spv
 tutorial14_frag = $(top_srcdir)/resources/14/Data/shader.frag.14.spv
+tutorial15_vert = $(top_srcdir)/resources/15/Data/shader.vert.15.spv
+tutorial15_frag = $(top_srcdir)/resources/15/Data/shader.frag.15.spv
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
@@ -159,7 +169,8 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial11_vert) $(tutorial11_frag) $(tutorial11_texture) \
     $(tutorial12_vert) $(tutorial12_frag) $(tutorial12_texture) \
     $(tutorial13_vert) $(tutorial13_frag) $(tutorial13_mesh) \
-    $(tutorial13_texture) $(tutorial14_vert) $(tutorial14_frag)
+    $(tutorial13_texture) $(tutorial14_vert) $(tutorial14_frag) \
+    $(tutorial15_vert) $(tutorial15_frag)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -191,6 +202,8 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial13_texture) $(builddir)/projectileDefault.raw
 	cp $(tutorial14_vert) $(builddir)/shader.14.vert.spv
 	cp $(tutorial14_frag) $(builddir)/shader.14.frag.spv
+	cp $(tutorial15_vert) $(builddir)/shader.15.vert.spv
+	cp $(tutorial15_frag) $(builddir)/shader.15.frag.spv
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
@@ -203,4 +216,5 @@ CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.12.vert.spv shader.12.frag.spv Rocky.raw \
     shader.13.vert.spv shader.13.frag.spv \
     projectileDefault.ogl projectileDefault.raw \
-    shader.14.vert.spv shader.14.frag.spv
+    shader.14.vert.spv shader.14.frag.spv \
+    shader.15.vert.spv shader.15.frag.spv

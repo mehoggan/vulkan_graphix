@@ -3,7 +3,8 @@ lib_LTLIBRARIES = libvulkan_graphix.la
 libvulkan_graphix_la_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GLM_CFLAGS)
 
-libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
+libvulkan_graphix_la_SOURCES = ./BitmapFont.cpp \
+															./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
 															./OrbitCamera.cpp \
@@ -23,7 +24,9 @@ libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
 															./Tutorial12.cpp \
 															./Tutorial13.cpp \
 															./Tutorial14.cpp \
+															./Tutorial15.cpp \
 															./TutorialBase.cpp \
+															./UiGeometry.cpp \
 															./VulkanFunctions.cpp
 
 libvulkan_graphix_la_LIBADD = -lboost_log -lboost_system -lboost_thread \

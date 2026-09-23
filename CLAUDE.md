@@ -14,6 +14,7 @@ Install dependencies:
 ```sh
 sudo apt install -y libvulkan-dev vulkan-validationlayers spirv-tools
 sudo apt install -y libboost-log-dev libboost-system-dev libboost-thread-dev
+sudo apt install -y fonts-dejavu-core
 ```
 
 Generate build files (if needed):
@@ -30,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial14_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial15_runner`
 
 ### Development Workflow
 
@@ -99,10 +100,16 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-14.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-15.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
+  - `BitmapFont.cpp/.h` - Bakes a TrueType font into a glyph atlas via
+    the vendored `STBTrueType.h` (kept fully behind std types - no
+    `stbtt_*` symbol is reachable outside `BitmapFont.cpp`), shared by
+    Tutorial15 and any future vulkan_earth UI port
+  - `UiGeometry.cpp/.h` - Beveled 2D button-quad geometry, ported from
+    vulkan_earth's `ControlItemButton::draw()`, shared the same way
   - `Logging.cpp/.h` - Boost-based logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
   - `Tools.cpp/.h` - Utility functions (also holds `loadOglMeshData()`,
@@ -112,11 +119,13 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-14)
+  - One `TutorialNNMain.cpp` per active tutorial (01-15)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
-  - `stb_image.h` - Single-header image loading library
+  - `STBImage.h` - Vendored single-header image loading library
+  - `STBTrueType.h` - Vendored single-header TrueType font rasterizer,
+    used only by `lib/BitmapFont.cpp` (see above)
   - `vk_platform.h` - Platform-specific Vulkan definitions
 
 - **resources/NN/Data/** - Each tutorial's own GLSL sources
@@ -215,6 +224,18 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   real tank-shell mesh parsed from a `.ogl` file (parser shared via
   `Tools::loadOglMeshData()`), and a translucent alpha-blended particle
   sphere (`Math::Sphere`, same as Tutorial08's)
+- Tutorial15: a text title and one clickable button with a text label -
+  the two primitives vulkan_earth's whole UI (`ControlItem*`/`MainMenu`/
+  `SubMenu*`/`ReadyMenu`/`ShopMenu`) is built from, without porting that
+  entire class hierarchy. Text comes from `BitmapFont` (a TrueType glyph
+  atlas baked via the vendored `STBTrueType.h`, replacing vulkan_earth's
+  `glutBitmapCharacter()` calls, which have no Vulkan equivalent); the
+  button's raised/pressed bevel comes from `UiGeometry::buildButtonBevel()`
+  (ported from `ControlItemButton::draw()`). First tutorial to use
+  `Tools::getOrthographicProjectionMatrix()` for real UI layout (Tutorial07
+  already used it for one static full-screen quad) and the first with a
+  host-visible vertex buffer rewritten every frame from CPU-side UI state,
+  rather than a device-local one uploaded once
 
 ## Common Tasks
 

@@ -1,0 +1,48 @@
+; SPIR-V
+; Version: 1.0
+; Generator: Google Shaderc over Glslang; 11
+; Bound: 24
+; Schema: 0
+               OpCapability Shader
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint Fragment %main "main" %o_Color %v_Texcoord %v_Color
+               OpExecutionMode %main OriginUpperLeft
+               OpSource GLSL 450
+               OpSourceExtension "GL_GOOGLE_cpp_style_line_directive"
+               OpSourceExtension "GL_GOOGLE_include_directive"
+               OpName %main "main"
+               OpName %o_Color "o_Color"
+               OpName %u_Atlas "u_Atlas"
+               OpName %v_Texcoord "v_Texcoord"
+               OpName %v_Color "v_Color"
+               OpDecorate %o_Color Location 0
+               OpDecorate %u_Atlas Binding 1
+               OpDecorate %u_Atlas DescriptorSet 0
+               OpDecorate %v_Texcoord Location 0
+               OpDecorate %v_Color Location 1
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+      %float = OpTypeFloat 32
+    %v4float = OpTypeVector %float 4
+%_ptr_Output_v4float = OpTypePointer Output %v4float
+    %o_Color = OpVariable %_ptr_Output_v4float Output
+         %10 = OpTypeImage %float 2D 0 0 0 1 Unknown
+         %11 = OpTypeSampledImage %10
+%_ptr_UniformConstant_11 = OpTypePointer UniformConstant %11
+    %u_Atlas = OpVariable %_ptr_UniformConstant_11 UniformConstant
+    %v2float = OpTypeVector %float 2
+%_ptr_Input_v2float = OpTypePointer Input %v2float
+ %v_Texcoord = OpVariable %_ptr_Input_v2float Input
+%_ptr_Input_v4float = OpTypePointer Input %v4float
+    %v_Color = OpVariable %_ptr_Input_v4float Input
+       %main = OpFunction %void None %3
+          %5 = OpLabel
+         %14 = OpLoad %11 %u_Atlas
+         %18 = OpLoad %v2float %v_Texcoord
+         %19 = OpImageSampleImplicitLod %v4float %14 %18
+         %22 = OpLoad %v4float %v_Color
+         %23 = OpFMul %v4float %19 %22
+               OpStore %o_Color %23
+               OpReturn
+               OpFunctionEnd
