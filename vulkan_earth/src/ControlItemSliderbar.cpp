@@ -3,8 +3,8 @@
 #include <iostream>
 #include "ControlItem.h"
 #include "TextObject.h"
-#include "macro_crtdbg.h"
-#include "sound.h"
+#include "MacroCrtdbg.h"
+#include "Sound.h"
 
 extern void playSFX(int sfx);
 

@@ -1,6 +1,6 @@
 #include "SpecialEffect.h"
 #include "OpenGLColors.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 SpecialEffect::SpecialEffect() = default;
 

@@ -17,9 +17,9 @@
 #include "SubMenu.h"
 #include "SubMenuLandscape.h"
 #include "TerrainMaker.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 #include "math.h"
-#include "possibleGameStates.h"
+#include "PossibleGameStates.h"
 
 #ifdef new
 #undef new

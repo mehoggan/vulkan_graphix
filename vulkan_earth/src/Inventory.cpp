@@ -8,7 +8,7 @@
 #include "PlayerHuman.h"
 #include "TextObject.h"
 #include "Weapon.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 Inventory::Inventory() = default;
 Inventory::Inventory(GLfloat x, GLfloat y, int w, int h) {

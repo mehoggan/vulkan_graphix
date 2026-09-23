@@ -988,7 +988,7 @@ bool Tutorial04::childOnWindowSizeChanged() {
     // before this runs, which tears down every Vulkan object this tutorial
     // owns (fences, semaphores, command pool, pipeline, render pass, vertex
     // buffer) - not just the swapchain. Everything has to be rebuilt here,
-    // in the same order as tutorial04_main.cpp's initial setup.
+    // in the same order as Tutorial04Main.cpp's initial setup.
     if (!createRenderPass()) {
         return false;
     }

@@ -11,9 +11,9 @@
 #include "SubMenu.h"
 #include "TerrainMaker.h"
 #include "TextObject.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 #include "math.h"
-#include "sound.h"
+#include "Sound.h"
 
 #define PI 3.1415926535898
 

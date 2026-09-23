@@ -1,6 +1,6 @@
 #include "LoadingScreen.h"
 #include "ImageObject.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 LoadingScreen::LoadingScreen() = default;
 LoadingScreen::LoadingScreen(GLfloat x,

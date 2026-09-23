@@ -27,9 +27,9 @@
 #include "WeaponRevive.h"
 #include "WeaponTeleport.h"
 #include "WeaponThor.h"
-#include "macro_crtdbg.h"
-#include "possibleGameStates.h"
-#include "sound.h"
+#include "MacroCrtdbg.h"
+#include "PossibleGameStates.h"
+#include "Sound.h"
 
 extern void playSFX(int sfx);
 extern void playMusic(int music);

@@ -26,10 +26,10 @@
 #include "Water.h"
 #include "Weapon.h"
 #include "WorldCam.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 #include "math.h"
-#include "possibleGameStates.h"
-#include "sound.h"
+#include "PossibleGameStates.h"
+#include "Sound.h"
 #include "time.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must

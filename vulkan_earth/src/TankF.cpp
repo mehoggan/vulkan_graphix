@@ -1,7 +1,7 @@
 #include "TankF.h"
 #include "Tank.h"
 #include "VBOShaderLibrary.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 const char* tank_f_name = "Behemoth";
 const int tank_f_hp = 1000;

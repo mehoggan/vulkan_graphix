@@ -1,4 +1,4 @@
-SOURCE = main.cpp VBOShaderLibrary.cpp Normal.cpp Vertex.cpp TexCoord.cpp
+SOURCE = Main.cpp VBOShaderLibrary.cpp Normal.cpp Vertex.cpp TexCoord.cpp
 OBJ = main.obj VBOShaderLibrary.obj Normal.obj Vertex.obj TexCoord.obj
 LIBS = glew32.lib
 

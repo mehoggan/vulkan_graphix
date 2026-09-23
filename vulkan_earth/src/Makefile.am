@@ -44,11 +44,11 @@ vulkan_earth_runner_SOURCES = \
 	PlayerHuman.cpp \
 	Projectile.cpp \
 	ReadyMenu.cpp \
-	vulkan_earth.cpp \
+	VulkanEarth.cpp \
 	Shader.cpp \
 	ShopMenu.cpp \
 	SkyboxFactory.cpp \
-	sound.cpp \
+	Sound.cpp \
 	SpecialEffect.cpp \
 	SubMenu.cpp \
 	SubMenuEconomics.cpp \

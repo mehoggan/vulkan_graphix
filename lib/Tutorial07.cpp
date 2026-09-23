@@ -1667,7 +1667,7 @@ bool Tutorial07::childOnWindowSizeChanged() {
     // owns (fences, semaphores, command pool, pipeline, render pass,
     // descriptor set, vertex/staging/uniform buffers, texture image) - not
     // just the swapchain. Everything has to be rebuilt here, in the same
-    // order as tutorial07_main.cpp's initial setup. createUniformBuffer()
+    // order as Tutorial07Main.cpp's initial setup. createUniformBuffer()
     // re-uploads fresh data (aspect-ratio-dependent) as part of its own
     // sequence, so there's no separate copyUniformBufferData() call needed.
     if (!createRenderingResources()) {

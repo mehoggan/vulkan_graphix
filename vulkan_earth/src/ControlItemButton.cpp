@@ -8,8 +8,8 @@
 #include "SubMenuLandscape.h"
 #include "TerrainMaker.h"
 #include "TextObject.h"
-#include "macro_crtdbg.h"
-#include "sound.h"
+#include "MacroCrtdbg.h"
+#include "Sound.h"
 
 using namespace std;
 

@@ -3,7 +3,7 @@
 #include <string>
 #include "SubMenu.h"
 #include "TextObject.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 using namespace std;
 

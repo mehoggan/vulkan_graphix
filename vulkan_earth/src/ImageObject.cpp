@@ -1,7 +1,7 @@
 #include "ImageObject.h"
 #include <fstream>
 #include <vector>
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 ImageObject::ImageObject() = default;
 

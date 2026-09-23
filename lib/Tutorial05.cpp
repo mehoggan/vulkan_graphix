@@ -1114,7 +1114,7 @@ bool Tutorial05::childOnWindowSizeChanged() {
     // before this runs, which tears down every Vulkan object this tutorial
     // owns (fences, semaphores, command pool, pipeline, render pass, vertex
     // and staging buffers) - not just the swapchain. Everything has to be
-    // rebuilt here, in the same order as tutorial05_main.cpp's initial
+    // rebuilt here, in the same order as Tutorial05Main.cpp's initial
     // setup (rendering resources first, since copyVertexData() borrows
     // rendering_resources[0]'s command buffer).
     if (!createRenderingResources()) {

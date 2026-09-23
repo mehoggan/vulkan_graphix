@@ -1531,7 +1531,7 @@ bool Tutorial08::childOnWindowSizeChanged() {
     // owns (fences, command pool, pipeline, render pass, descriptor set,
     // vertex/index/uniform buffers, depth image) - not just the swapchain.
     // Everything has to be rebuilt here, in the same dependency order as
-    // tutorial08_main.cpp's initial setup (rendering resources first, since
+    // Tutorial08Main.cpp's initial setup (rendering resources first, since
     // the buffer-upload helpers borrow rendering_resources[0]'s command
     // buffer).
     if (!createRenderingResources()) {

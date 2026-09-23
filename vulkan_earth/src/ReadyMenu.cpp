@@ -27,9 +27,9 @@
 #include "TerrainMaker.h"
 #include "TextObject.h"
 #include "Vertex.h"
-#include "macro_crtdbg.h"
-#include "possibleGameStates.h"
-#include "sound.h"
+#include "MacroCrtdbg.h"
+#include "PossibleGameStates.h"
+#include "Sound.h"
 
 extern void playMusic(int music);
 

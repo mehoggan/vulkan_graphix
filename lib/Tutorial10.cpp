@@ -1706,7 +1706,7 @@ bool Tutorial10::childOnWindowSizeChanged() {
     // TutorialBase::onWindowSizeChanged() calls childClear() unconditionally
     // before this runs, which tears down every Vulkan object this tutorial
     // owns - not just the swapchain. Everything has to be rebuilt here, in
-    // the same order tutorial10_main.cpp's initial setup uses. See
+    // the same order Tutorial10Main.cpp's initial setup uses. See
     // Tutorial04-09's identical fix for the full rationale.
     if (!createRenderingResources()) {
         return false;

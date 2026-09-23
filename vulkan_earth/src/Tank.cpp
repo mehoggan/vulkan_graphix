@@ -4,7 +4,7 @@
 #include "ParticleGenerator.h"
 #include "VBOShaderLibrary.h"
 #include "Vector.h"
-#include "macro_crtdbg.h"
+#include "MacroCrtdbg.h"
 
 using namespace std;
 

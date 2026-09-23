@@ -1,5 +1,5 @@
-#include "sound.h"
-#include "macro_crtdbg.h"
+#include "Sound.h"
+#include "MacroCrtdbg.h"
 
 Mix_Chunk* sfx[max_sfx_files];
 Mix_Music* music[total_music_files];

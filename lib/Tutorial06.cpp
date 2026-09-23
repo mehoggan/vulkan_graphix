@@ -1494,7 +1494,7 @@ bool Tutorial06::childOnWindowSizeChanged() {
     // owns (fences, semaphores, command pool, pipeline, render pass,
     // descriptor set, vertex/staging buffers, texture image) - not just the
     // swapchain. Everything has to be rebuilt here, in the same order as
-    // tutorial06_main.cpp's initial setup.
+    // Tutorial06Main.cpp's initial setup.
     if (!createRenderingResources()) {
         return false;
     }
