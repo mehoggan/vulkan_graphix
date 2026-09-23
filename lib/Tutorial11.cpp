@@ -1,4 +1,4 @@
-#include "VulkanSkyboxPilot.h"
+#include "vulkan_graphix/Tutorial11.h"
 
 #include <vulkan/vulkan_core.h>
 
@@ -11,24 +11,183 @@
 
 namespace vulkan_graphix {
 
-VulkanSkyboxPilot::VulkanSkyboxPilot()
-        : vk_render_pass_(VK_NULL_HANDLE)
-        , vk_pipeline_layout_(VK_NULL_HANDLE)
-        , vk_graphics_pipeline_(VK_NULL_HANDLE)
-        , index_count_(0)
-        , vk_command_pool_(VK_NULL_HANDLE)
-        , rendering_resources_(resources_count_)
+// ************************************************************ //
+// VulkanTutorial11Parameters                                   //
+// ************************************************************ //
+VulkanTutorial11Parameters::VulkanTutorial11Parameters()
+        : m_vk_render_pass(VK_NULL_HANDLE)
+        , m_vk_pipeline_layout(VK_NULL_HANDLE)
+        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
+        , m_index_count(0)
+        , m_vk_command_pool(VK_NULL_HANDLE)
+        , m_rendering_resources(resources_count) {}
+
+const VkRenderPass& VulkanTutorial11Parameters::getVkRenderPass() const {
+    return m_vk_render_pass;
+}
+VkRenderPass& VulkanTutorial11Parameters::getVkRenderPass() {
+    return m_vk_render_pass;
+}
+void VulkanTutorial11Parameters::setVkRenderPass(
+        const VkRenderPass& vk_render_pass) {
+    m_vk_render_pass = vk_render_pass;
+}
+
+const ImageParameters& VulkanTutorial11Parameters::getImageParameters()
+        const {
+    return m_image_parameters;
+}
+ImageParameters& VulkanTutorial11Parameters::getImageParameters() {
+    return m_image_parameters;
+}
+void VulkanTutorial11Parameters::setImageParameters(
+        const ImageParameters& image_parameters) {
+    m_image_parameters = image_parameters;
+}
+
+const BufferParameters&
+VulkanTutorial11Parameters::getUniformBufferParameters() const {
+    return m_uniform_buffer;
+}
+BufferParameters& VulkanTutorial11Parameters::getUniformBufferParameters() {
+    return m_uniform_buffer;
+}
+void VulkanTutorial11Parameters::setUniformBufferParameters(
+        const BufferParameters& uniform_buffer) {
+    m_uniform_buffer = uniform_buffer;
+}
+
+const DescriptorSetParameters&
+VulkanTutorial11Parameters::getDescriptorSetParameters() const {
+    return m_descriptor_set_parameters;
+}
+DescriptorSetParameters&
+VulkanTutorial11Parameters::getDescriptorSetParameters() {
+    return m_descriptor_set_parameters;
+}
+void VulkanTutorial11Parameters::setDescriptorSetParameters(
+        const DescriptorSetParameters& descriptor_set_parameters) {
+    m_descriptor_set_parameters = descriptor_set_parameters;
+}
+
+const VkPipelineLayout& VulkanTutorial11Parameters::getVkPipelineLayout()
+        const {
+    return m_vk_pipeline_layout;
+}
+VkPipelineLayout& VulkanTutorial11Parameters::getVkPipelineLayout() {
+    return m_vk_pipeline_layout;
+}
+void VulkanTutorial11Parameters::setVkPipelineLayout(
+        const VkPipelineLayout& vk_pipeline_layout) {
+    m_vk_pipeline_layout = vk_pipeline_layout;
+}
+
+const VkPipeline& VulkanTutorial11Parameters::getVkGraphicsPipeline() const {
+    return m_vk_graphics_pipeline;
+}
+VkPipeline& VulkanTutorial11Parameters::getVkGraphicsPipeline() {
+    return m_vk_graphics_pipeline;
+}
+void VulkanTutorial11Parameters::setVkGraphicsPipeline(
+        const VkPipeline& vk_graphics_pipeline) {
+    m_vk_graphics_pipeline = vk_graphics_pipeline;
+}
+
+const BufferParameters& VulkanTutorial11Parameters::getVertexBufferParameters()
+        const {
+    return m_vertex_buffer;
+}
+BufferParameters& VulkanTutorial11Parameters::getVertexBufferParameters() {
+    return m_vertex_buffer;
+}
+void VulkanTutorial11Parameters::setVertexBufferParameters(
+        const BufferParameters& vertex_buffer) {
+    m_vertex_buffer = vertex_buffer;
+}
+
+const BufferParameters& VulkanTutorial11Parameters::getIndexBufferParameters()
+        const {
+    return m_index_buffer;
+}
+BufferParameters& VulkanTutorial11Parameters::getIndexBufferParameters() {
+    return m_index_buffer;
+}
+void VulkanTutorial11Parameters::setIndexBufferParameters(
+        const BufferParameters& index_buffer) {
+    m_index_buffer = index_buffer;
+}
+
+std::uint32_t VulkanTutorial11Parameters::getIndexCount() const {
+    return m_index_count;
+}
+void VulkanTutorial11Parameters::setIndexCount(std::uint32_t index_count) {
+    m_index_count = index_count;
+}
+
+const BufferParameters&
+VulkanTutorial11Parameters::getStagingBufferParameters() const {
+    return m_staging_buffer;
+}
+BufferParameters& VulkanTutorial11Parameters::getStagingBufferParameters() {
+    return m_staging_buffer;
+}
+void VulkanTutorial11Parameters::setStagingBufferParameters(
+        const BufferParameters& staging_buffer) {
+    m_staging_buffer = staging_buffer;
+}
+
+const VkCommandPool& VulkanTutorial11Parameters::getVkCommandPool() const {
+    return m_vk_command_pool;
+}
+VkCommandPool& VulkanTutorial11Parameters::getVkCommandPool() {
+    return m_vk_command_pool;
+}
+void VulkanTutorial11Parameters::setVkCommandPool(
+        const VkCommandPool& vk_command_pool) {
+    m_vk_command_pool = vk_command_pool;
+}
+
+const std::vector<RenderingResourceParameters>&
+VulkanTutorial11Parameters::getRenderingResources() const {
+    return m_rendering_resources;
+}
+std::vector<RenderingResourceParameters>&
+VulkanTutorial11Parameters::getRenderingResources() {
+    return m_rendering_resources;
+}
+void VulkanTutorial11Parameters::setRenderingResources(
+        const std::vector<RenderingResourceParameters>& rendering_resources) {
+    m_rendering_resources = rendering_resources;
+}
+
+const std::vector<VkSemaphore>&
+VulkanTutorial11Parameters::getFinishedRenderingSemaphores() const {
+    return m_finished_rendering_semaphores;
+}
+std::vector<VkSemaphore>&
+VulkanTutorial11Parameters::getFinishedRenderingSemaphores() {
+    return m_finished_rendering_semaphores;
+}
+void VulkanTutorial11Parameters::setFinishedRenderingSemaphores(
+        const std::vector<VkSemaphore>& finished_rendering_semaphores) {
+    m_finished_rendering_semaphores = finished_rendering_semaphores;
+}
+
+// ************************************************************ //
+// Tutorial11                                                   //
+// ************************************************************ //
+Tutorial11::Tutorial11()
         // Start outside the cube (half-extent 2.0, see getVertexData()) for
         // a clear initial view; drag to orbit, including in past the faces
         // to look around from inside - cullMode is NONE (see
         // createPipeline()) specifically so that works without any
         // winding-order fuss.
-        , camera_(0.6f, 0.4f, 6.0f) {}
+        : m_camera(0.6f, 0.4f, 6.0f) {}
 
-VulkanSkyboxPilot::~VulkanSkyboxPilot() { childClear(); }
+Tutorial11::~Tutorial11() { childClear(); }
 
-bool VulkanSkyboxPilot::createCommandPool(std::uint32_t queue_family_index,
-                                          VkCommandPool* pool) {
+bool Tutorial11::createCommandPool(std::uint32_t queue_family_index,
+                                   VkCommandPool* pool) {
     VkCommandPoolCreateInfo cmd_pool_create_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             .pNext = nullptr,
@@ -45,10 +204,9 @@ bool VulkanSkyboxPilot::createCommandPool(std::uint32_t queue_family_index,
     return true;
 }
 
-bool VulkanSkyboxPilot::allocateCommandBuffers(
-        VkCommandPool pool,
-        std::uint32_t count,
-        VkCommandBuffer* command_buffers) {
+bool Tutorial11::allocateCommandBuffers(VkCommandPool pool,
+                                        std::uint32_t count,
+                                        VkCommandBuffer* command_buffers) {
     VkCommandBufferAllocateInfo command_buffer_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
             .pNext = nullptr,
@@ -65,49 +223,56 @@ bool VulkanSkyboxPilot::allocateCommandBuffers(
     return true;
 }
 
-bool VulkanSkyboxPilot::createCommandBuffers() {
-    if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
-                           &vk_command_pool_)) {
+bool Tutorial11::createCommandBuffers() {
+    if (!createCommandPool(
+                getGraphicsQueueParameters().getFamilyIndex(),
+                &m_vulkan_tutorial11_parameters.getVkCommandPool())) {
         return false;
     }
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial11_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!allocateCommandBuffers(
-                    vk_command_pool_,
+                    m_vulkan_tutorial11_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer())) {
+                    &rendering_resources[i].getVkCommandBuffer())) {
             return false;
         }
     }
     return true;
 }
 
-bool VulkanSkyboxPilot::createSemaphores() {
+bool Tutorial11::createSemaphores() {
     VkSemaphoreCreateInfo semaphore_create_info = {
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial11_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateSemaphore(
                     getVkDevice(),
                     &semaphore_create_info,
                     nullptr,
-                    &rendering_resources_[i].getImageAvailableVkSemaphore()) !=
+                    &rendering_resources[i].getImageAvailableVkSemaphore()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
     }
 
-    finished_rendering_semaphores_.assign(
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial11_parameters.getFinishedRenderingSemaphores();
+    finished_rendering_semaphores.assign(
             getSwapchainParameters().getImageParameters().size(),
             VK_NULL_HANDLE);
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
         if (vkCreateSemaphore(getVkDevice(),
                               &semaphore_create_info,
                               nullptr,
-                              &finished_rendering_semaphores_[i]) !=
+                              &finished_rendering_semaphores[i]) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
@@ -117,17 +282,19 @@ bool VulkanSkyboxPilot::createSemaphores() {
     return true;
 }
 
-bool VulkanSkyboxPilot::createFences() {
+bool Tutorial11::createFences() {
     VkFenceCreateInfo fence_create_info = {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_FENCE_CREATE_SIGNALED_BIT};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial11_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateFence(getVkDevice(),
                           &fence_create_info,
                           nullptr,
-                          &rendering_resources_[i].getVkFence()) !=
+                          &rendering_resources[i].getVkFence()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
@@ -136,7 +303,7 @@ bool VulkanSkyboxPilot::createFences() {
     return true;
 }
 
-bool VulkanSkyboxPilot::createRenderingResources() {
+bool Tutorial11::createRenderingResources() {
     if (!createCommandBuffers()) {
         return false;
     }
@@ -149,9 +316,9 @@ bool VulkanSkyboxPilot::createRenderingResources() {
     return true;
 }
 
-bool VulkanSkyboxPilot::allocateBufferMemory(VkBuffer buffer,
-                                             VkMemoryPropertyFlags property,
-                                             VkDeviceMemory* memory) {
+bool Tutorial11::allocateBufferMemory(VkBuffer buffer,
+                                      VkMemoryPropertyFlags property,
+                                      VkDeviceMemory* memory) {
     VkMemoryRequirements buffer_memory_requirements;
     vkGetBufferMemoryRequirements(
             getVkDevice(), buffer, &buffer_memory_requirements);
@@ -181,9 +348,9 @@ bool VulkanSkyboxPilot::allocateBufferMemory(VkBuffer buffer,
     return false;
 }
 
-bool VulkanSkyboxPilot::createBuffer(VkBufferUsageFlags usage,
-                                     VkMemoryPropertyFlags memory_property,
-                                     BufferParameters& buffer) {
+bool Tutorial11::createBuffer(VkBufferUsageFlags usage,
+                              VkMemoryPropertyFlags memory_property,
+                              BufferParameters& buffer) {
     VkBufferCreateInfo buffer_create_info = {
             .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
             .pNext = nullptr,
@@ -222,19 +389,21 @@ bool VulkanSkyboxPilot::createBuffer(VkBufferUsageFlags usage,
     return true;
 }
 
-bool VulkanSkyboxPilot::createStagingBuffer() {
+bool Tutorial11::createStagingBuffer() {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial11_parameters.getStagingBufferParameters();
     // Tutorial07 hardcodes 1000000 bytes here, sized for its own
     // texture.07.png (512x462 RGBA = 946176 bytes - just under). SkyBox.jpg
-    // is 1024x1024 RGBA = 4194304 bytes, well over that; sized explicitly
+    // is 1024x1024 RGBA = 4194304 bytes, well over that - sized explicitly
     // for it here (with headroom) rather than copying Tutorial07's constant
-    // without checking it against this pilot's own asset - see
+    // without checking it against this tutorial's own asset. See
     // copyTextureData()'s size guard for what silently overflowing this
-    // buffer actually did (a real, reproducible i915 GPU hang a few
-    // seconds into every run).
-    staging_buffer_.setSize(5 * 1024 * 1024);
+    // buffer did to the original migration pilot this tutorial is ported
+    // from: a real, reproducible i915 GPU hang a few seconds into every run.
+    staging_buffer.setSize(5 * 1024 * 1024);
     if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                      staging_buffer_)) {
+                      staging_buffer)) {
         Logging::error(LOG_TAG, "Could not create staging buffer!");
         return false;
     }
@@ -242,9 +411,9 @@ bool VulkanSkyboxPilot::createStagingBuffer() {
     return true;
 }
 
-bool VulkanSkyboxPilot::createImage(std::uint32_t width,
-                                    std::uint32_t height,
-                                    VkImage* image) {
+bool Tutorial11::createImage(std::uint32_t width,
+                             std::uint32_t height,
+                             VkImage* image) {
     VkImageCreateInfo image_create_info = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             .pNext = nullptr,
@@ -267,9 +436,9 @@ bool VulkanSkyboxPilot::createImage(std::uint32_t width,
            VK_SUCCESS;
 }
 
-bool VulkanSkyboxPilot::allocateImageMemory(VkImage image,
-                                            VkMemoryPropertyFlags property,
-                                            VkDeviceMemory* memory) {
+bool Tutorial11::allocateImageMemory(VkImage image,
+                                     VkMemoryPropertyFlags property,
+                                     VkDeviceMemory* memory) {
     VkMemoryRequirements image_memory_requirements;
     vkGetImageMemoryRequirements(
             getVkDevice(), image, &image_memory_requirements);
@@ -299,12 +468,14 @@ bool VulkanSkyboxPilot::allocateImageMemory(VkImage image,
     return false;
 }
 
-bool VulkanSkyboxPilot::createImageView() {
+bool Tutorial11::createImageView() {
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial11_parameters.getImageParameters();
     VkImageViewCreateInfo image_view_create_info = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .image = image_parameters_.getVkImage(),
+            .image = image_parameters.getVkImage(),
             .viewType = VK_IMAGE_VIEW_TYPE_2D,
             .format = VK_FORMAT_R8G8B8A8_UNORM,
             .components = {.r = VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -320,11 +491,11 @@ bool VulkanSkyboxPilot::createImageView() {
     return vkCreateImageView(getVkDevice(),
                              &image_view_create_info,
                              nullptr,
-                             &image_parameters_.getVkImageView()) ==
+                             &image_parameters.getVkImageView()) ==
            VK_SUCCESS;
 }
 
-bool VulkanSkyboxPilot::createSampler(VkSampler* sampler) {
+bool Tutorial11::createSampler(VkSampler* sampler) {
     VkSamplerCreateInfo sampler_create_info = {
             .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext = nullptr,
@@ -350,27 +521,32 @@ bool VulkanSkyboxPilot::createSampler(VkSampler* sampler) {
            VK_SUCCESS;
 }
 
-bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
-                                        std::uint32_t data_size,
-                                        std::uint32_t width,
-                                        std::uint32_t height) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial11::copyTextureData(char* texture_data,
+                                 std::uint32_t data_size,
+                                 std::uint32_t width,
+                                 std::uint32_t height) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial11_parameters.getStagingBufferParameters();
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial11_parameters.getImageParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         // Silently memcpy-ing past the staging buffer's mapped allocation
-        // here is exactly what caused a real, reproducible i915 GPU hang
-        // a few seconds into every run before this check existed - fail
-        // loudly instead.
+        // here is exactly what caused a real, reproducible i915 GPU hang a
+        // few seconds into every run of the original migration pilot before
+        // this check existed - fail loudly instead.
         Logging::error(LOG_TAG,
                        "Texture data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -386,12 +562,12 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -400,7 +576,8 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
             .pInheritanceInfo = nullptr};
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial11_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
 
@@ -420,7 +597,7 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
              .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
              .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
              .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-             .image = image_parameters_.getVkImage(),
+             .image = image_parameters.getVkImage(),
              .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
                          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
@@ -444,8 +621,8 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
             .imageOffset = {.x = 0, .y = 0, .z = 0},
             .imageExtent = {.width = width, .height = height, .depth = 1}};
     vkCmdCopyBufferToImage(command_buffer,
-                           staging_buffer_.getVkBuffer(),
-                           image_parameters_.getVkImage(),
+                           staging_buffer.getVkBuffer(),
+                           image_parameters.getVkImage(),
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                            1,
                            &buffer_image_copy_info);
@@ -459,7 +636,7 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
             .newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-            .image = image_parameters_.getVkImage(),
+            .image = image_parameters.getVkImage(),
             .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
@@ -496,17 +673,18 @@ bool VulkanSkyboxPilot::copyTextureData(char* texture_data,
     return true;
 }
 
-bool VulkanSkyboxPilot::createTexture() {
+bool Tutorial11::createTexture() {
     int width = 0, height = 0, data_size = 0;
-    // SkyBox.jpg is the same 1024x1024 sky texture SkyboxFactory.cpp loads
-    // as SkyBox.raw, decodable directly via stb_image - no new raw-image
-    // loader needed for this pilot (see the migration plan's "Future work"
-    // section for the broader .raw-asset question).
+    // The same 1024x1024 sky texture vulkan_earth's SkyboxFactory.cpp
+    // loads as SkyBox.raw, decodable directly via stb_image here.
     std::vector<char> texture_data = Tools::getImageData(
             "SkyBox.jpg", 4, &width, &height, nullptr, &data_size);
     if (texture_data.empty()) {
         return false;
     }
+
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial11_parameters.getImageParameters();
 
     VkImage vk_image;
     if (!createImage(static_cast<std::uint32_t>(width),
@@ -515,20 +693,20 @@ bool VulkanSkyboxPilot::createTexture() {
         Logging::error(LOG_TAG, "Could not create image!");
         return false;
     }
-    image_parameters_.setVkImage(vk_image);
+    image_parameters.setVkImage(vk_image);
 
     VkDeviceMemory vk_device_memory;
-    if (!allocateImageMemory(image_parameters_.getVkImage(),
+    if (!allocateImageMemory(image_parameters.getVkImage(),
                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                              &vk_device_memory)) {
         Logging::error(LOG_TAG, "Could not allocate memory for image!");
         return false;
     }
-    image_parameters_.setVkDeviceMemory(vk_device_memory);
+    image_parameters.setVkDeviceMemory(vk_device_memory);
 
     if (vkBindImageMemory(getVkDevice(),
-                          image_parameters_.getVkImage(),
-                          image_parameters_.getVkDeviceMemory(),
+                          image_parameters.getVkImage(),
+                          image_parameters.getVkDeviceMemory(),
                           0) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not bind memory to an image!");
         return false;
@@ -544,7 +722,7 @@ bool VulkanSkyboxPilot::createTexture() {
         Logging::error(LOG_TAG, "Could not create sampler!");
         return false;
     }
-    image_parameters_.setVkSampler(vk_sampler);
+    image_parameters.setVkSampler(vk_sampler);
 
     if (!copyTextureData(texture_data.data(),
                          static_cast<std::uint32_t>(data_size),
@@ -558,15 +736,17 @@ bool VulkanSkyboxPilot::createTexture() {
     return true;
 }
 
-bool VulkanSkyboxPilot::createUniformBuffer() {
-    uniform_buffer_.setSize(16 * sizeof(float));
-    // Host-visible/coherent (not device-local + staged): rewritten every
-    // frame as the orbit camera moves, same tradeoff Tutorial09 makes for
-    // the same reason (see updateUniformBufferData()/draw()).
+bool Tutorial11::createUniformBuffer() {
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial11_parameters.getUniformBufferParameters();
+    uniform_buffer.setSize(16 * sizeof(float));
+    // Host-visible/coherent: rewritten every frame as the orbit camera
+    // moves, same tradeoff Tutorial09 makes for the same reason (see
+    // updateUniformBufferData()/draw()).
     if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      uniform_buffer_)) {
+                      uniform_buffer)) {
         Logging::error(LOG_TAG, "Could not create uniform buffer!");
         return false;
     }
@@ -574,13 +754,13 @@ bool VulkanSkyboxPilot::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-Math::Mat4<float> VulkanSkyboxPilot::getUniformBufferData() const {
-    // Reused Tutorial07 shaders name this uniform "u_ProjectionMatrix" but
-    // just do gl_Position = u_ProjectionMatrix * i_Position - it's really a
-    // full model-view-projection slot, which is exactly what's needed here.
+Math::Mat4<float> Tutorial11::getUniformBufferData() const {
+    // Tutorial07's shaders name this uniform "u_ProjectionMatrix" but just
+    // do gl_Position = u_ProjectionMatrix * i_Position - it's really a full
+    // model-view-projection slot, which is exactly what's needed here.
     Math::Mat4<float> const model(1.0f);
     Math::Mat4<float> const view = glm::lookAt(
-            camera_.eye(), camera_.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -593,12 +773,14 @@ Math::Mat4<float> VulkanSkyboxPilot::getUniformBufferData() const {
     return projection * view * model;
 }
 
-bool VulkanSkyboxPilot::updateUniformBufferData() {
+bool Tutorial11::updateUniformBufferData() {
     Math::Mat4<float> const uniform_data = getUniformBufferData();
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial11_parameters.getUniformBufferParameters();
 
     void* uniform_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    uniform_buffer_.getVkDeviceMemory(),
+                    uniform_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -608,16 +790,16 @@ bool VulkanSkyboxPilot::updateUniformBufferData() {
     }
     std::memcpy(uniform_buffer_memory_pointer,
                 glm::value_ptr(uniform_data),
-                uniform_buffer_.getSize());
-    vkUnmapMemory(getVkDevice(), uniform_buffer_.getVkDeviceMemory());
+                uniform_buffer.getSize());
+    vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
 
     return true;
 }
 
-bool VulkanSkyboxPilot::createDescriptorSetLayout() {
+bool Tutorial11::createDescriptorSetLayout() {
     // Binding numbers match Tutorial07's shaders exactly (binding 0 =
     // sampler in the fragment stage, binding 1 = uniform buffer in the
-    // vertex stage) since this pilot reuses those compiled shaders as-is.
+    // vertex stage) since this tutorial reuses those compiled shaders as-is.
     std::vector<VkDescriptorSetLayoutBinding> layout_bindings = {
             {.binding = 0,
              .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -645,13 +827,13 @@ bool VulkanSkyboxPilot::createDescriptorSetLayout() {
         Logging::error(LOG_TAG, "Could not create descriptor set layout!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSetLayout(
-            vk_descriptor_set_layout);
+    m_vulkan_tutorial11_parameters.getDescriptorSetParameters()
+            .setVkDescriptorSetLayout(vk_descriptor_set_layout);
 
     return true;
 }
 
-bool VulkanSkyboxPilot::createDescriptorPool() {
+bool Tutorial11::createDescriptorPool() {
     std::vector<VkDescriptorPoolSize> pool_sizes = {
             {.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
              .descriptorCount = 1},
@@ -673,18 +855,21 @@ bool VulkanSkyboxPilot::createDescriptorPool() {
         Logging::error(LOG_TAG, "Could not create descriptor pool!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorPool(vk_descriptor_pool);
+    m_vulkan_tutorial11_parameters.getDescriptorSetParameters()
+            .setVkDescriptorPool(vk_descriptor_pool);
 
     return true;
 }
 
-bool VulkanSkyboxPilot::allocateDescriptorSet() {
+bool Tutorial11::allocateDescriptorSet() {
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial11_parameters.getDescriptorSetParameters();
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            descriptor_set.getVkDescriptorSetLayout();
     VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
             .pNext = nullptr,
-            .descriptorPool = descriptor_set_parameters_.getVkDescriptorPool(),
+            .descriptorPool = descriptor_set.getVkDescriptorPool(),
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_descriptor_set_layout};
 
@@ -695,26 +880,33 @@ bool VulkanSkyboxPilot::allocateDescriptorSet() {
         Logging::error(LOG_TAG, "Could not allocate descriptor set!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSet(vk_descriptor_set);
+    descriptor_set.setVkDescriptorSet(vk_descriptor_set);
 
     return true;
 }
 
-bool VulkanSkyboxPilot::updateDescriptorSet() {
+bool Tutorial11::updateDescriptorSet() {
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial11_parameters.getImageParameters();
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial11_parameters.getUniformBufferParameters();
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial11_parameters.getDescriptorSetParameters();
+
     VkDescriptorImageInfo image_info = {
-            .sampler = image_parameters_.getVkSampler(),
-            .imageView = image_parameters_.getVkImageView(),
+            .sampler = image_parameters.getVkSampler(),
+            .imageView = image_parameters.getVkImageView(),
             .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
     VkDescriptorBufferInfo buffer_info = {
-            .buffer = uniform_buffer_.getVkBuffer(),
+            .buffer = uniform_buffer.getVkBuffer(),
             .offset = 0,
-            .range = uniform_buffer_.getSize()};
+            .range = uniform_buffer.getSize()};
 
     std::vector<VkWriteDescriptorSet> descriptor_writes = {
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 0,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -724,7 +916,7 @@ bool VulkanSkyboxPilot::updateDescriptorSet() {
              .pTexelBufferView = nullptr},
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 1,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -742,7 +934,7 @@ bool VulkanSkyboxPilot::updateDescriptorSet() {
     return true;
 }
 
-bool VulkanSkyboxPilot::createRenderPass() {
+bool Tutorial11::createRenderPass() {
     VkAttachmentDescription attachment_descriptions[] = {
             {.flags = 0,
              .format = getSwapchainParameters().getVkFormat(),
@@ -781,10 +973,12 @@ bool VulkanSkyboxPilot::createRenderPass() {
             .dependencyCount = 0,
             .pDependencies = nullptr};
 
-    if (vkCreateRenderPass(getVkDevice(),
-                           &render_pass_create_info,
-                           nullptr,
-                           &vk_render_pass_) != VK_SUCCESS) {
+    if (vkCreateRenderPass(
+                getVkDevice(),
+                &render_pass_create_info,
+                nullptr,
+                &m_vulkan_tutorial11_parameters.getVkRenderPass()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create render pass!");
         return false;
     }
@@ -792,9 +986,10 @@ bool VulkanSkyboxPilot::createRenderPass() {
     return true;
 }
 
-bool VulkanSkyboxPilot::createPipelineLayout() {
+bool Tutorial11::createPipelineLayout() {
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            m_vulkan_tutorial11_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSetLayout();
     VkPipelineLayoutCreateInfo layout_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext = nullptr,
@@ -804,10 +999,12 @@ bool VulkanSkyboxPilot::createPipelineLayout() {
             .pushConstantRangeCount = 0,
             .pPushConstantRanges = nullptr};
 
-    if (vkCreatePipelineLayout(getVkDevice(),
-                               &layout_create_info,
-                               nullptr,
-                               &vk_pipeline_layout_) != VK_SUCCESS) {
+    if (vkCreatePipelineLayout(
+                getVkDevice(),
+                &layout_create_info,
+                nullptr,
+                &m_vulkan_tutorial11_parameters.getVkPipelineLayout()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create pipeline layout!");
         return false;
     }
@@ -816,7 +1013,7 @@ bool VulkanSkyboxPilot::createPipelineLayout() {
 }
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-VulkanSkyboxPilot::createShaderModule(const char* filename) {
+Tutorial11::createShaderModule(const char* filename) {
     const std::vector<char> code = Tools::getBinaryFileContents(filename);
     if (code.empty()) {
         return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
@@ -845,16 +1042,16 @@ VulkanSkyboxPilot::createShaderModule(const char* filename) {
             shader_module, vkDestroyShaderModule, getVkDevice());
 }
 
-bool VulkanSkyboxPilot::createPipeline() {
-    // Reused byte-for-byte from Tutorial07 (resources/07/Data/): its vertex
-    // shader does gl_Position = u_ProjectionMatrix * i_Position on a
-    // {vec4 position; vec2 texcoord;} vertex, and its fragment shader is a
-    // single texture(sampler, uv) lookup - exactly an unlit textured
-    // surface, which is all a skybox is. No new GLSL needed for this pilot.
+bool Tutorial11::createPipeline() {
+    // Reused byte-for-byte from Tutorial07: its vertex shader does
+    // gl_Position = u_ProjectionMatrix * i_Position on a {vec4 position;
+    // vec2 texcoord;} vertex, and its fragment shader is a single
+    // texture(sampler, uv) lookup - exactly an unlit textured surface,
+    // which is all a skybox is.
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            vertex_shader_module = createShaderModule("shader.07.vert.spv");
+            vertex_shader_module = createShaderModule("shader.11.vert.spv");
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            fragment_shader_module = createShaderModule("shader.07.frag.spv");
+            fragment_shader_module = createShaderModule("shader.11.frag.spv");
 
     if (!vertex_shader_module || !fragment_shader_module) {
         return false;
@@ -878,7 +1075,7 @@ bool VulkanSkyboxPilot::createPipeline() {
 
     std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions =
             {{.binding = 0,
-              .stride = SkyboxPilotVertexAttributeTraits::stride,
+              .stride = Tutorial11VertexAttributeTraits::stride,
               .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
     std::vector<VkVertexInputAttributeDescription>
@@ -886,13 +1083,13 @@ bool VulkanSkyboxPilot::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct SkyboxPilotVertexData,
-                                        position)},
+                     .offset =
+                             offsetof(struct Tutorial11VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset = offsetof(struct SkyboxPilotVertexData,
-                                        texcoord)}};
+                     .offset =
+                             offsetof(struct Tutorial11VertexData, texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -936,10 +1133,9 @@ bool VulkanSkyboxPilot::createPipeline() {
             .polygonMode = VK_POLYGON_MODE_FILL,
             // NONE, not BACK_BIT: the camera can end up either outside or
             // inside this cube (drag the orbit camera in past a face), and
-            // both need to render without fighting over SkyboxFactory's
-            // original triangle winding. A real skybox is conventionally
-            // rendered this way (or with inverted culling) for exactly this
-            // reason.
+            // both need to render without fighting over the original
+            // triangle winding. A real skybox is conventionally rendered
+            // this way (or with inverted culling) for exactly this reason.
             .cullMode = VK_CULL_MODE_NONE,
             .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
             .depthBiasEnable = VK_FALSE,
@@ -1008,38 +1204,39 @@ bool VulkanSkyboxPilot::createPipeline() {
             .pDepthStencilState = nullptr,
             .pColorBlendState = &color_blend_state_create_info,
             .pDynamicState = &dynamic_state_create_info,
-            .layout = vk_pipeline_layout_,
-            .renderPass = vk_render_pass_,
+            .layout = m_vulkan_tutorial11_parameters.getVkPipelineLayout(),
+            .renderPass = m_vulkan_tutorial11_parameters.getVkRenderPass(),
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
 
-    if (vkCreateGraphicsPipelines(getVkDevice(),
-                                  VK_NULL_HANDLE,
-                                  1,
-                                  &pipeline_create_info,
-                                  nullptr,
-                                  &vk_graphics_pipeline_) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(
+                getVkDevice(),
+                VK_NULL_HANDLE,
+                1,
+                &pipeline_create_info,
+                nullptr,
+                &m_vulkan_tutorial11_parameters.getVkGraphicsPipeline()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create graphics pipeline!");
         return false;
     }
     return true;
 }
 
-const std::vector<SkyboxPilotVertexData>& VulkanSkyboxPilot::getVertexData()
-        const {
-    // Replicates SkyboxFactory::draw()'s six hardcoded GL_QUADS faces
-    // (vulkan_earth/src/SkyboxFactory.cpp:219-288) exactly - same per-face
-    // vertex order and (0,1)/(0,0)/(1,0)/(1,1) UV corners on every face, no
-    // atlas - just at a small, sane scale instead of the game's *100 world
-    // units, and as 24 unique indexed vertices instead of six independent
-    // GL_QUADS draws. Y is asymmetric on purpose, matching the original:
-    // the top is half as far from center as the bottom/sides.
+const std::vector<Tutorial11VertexData>& Tutorial11::getVertexData() const {
+    // Replicates vulkan_earth's SkyboxFactory::draw()'s six hardcoded
+    // GL_QUADS faces exactly - same per-face vertex order and (0,1)/(0,0)/
+    // (1,0)/(1,1) UV corners on every face, no atlas - just at a small,
+    // sane scale instead of the game's *100 world units, and as 24 unique
+    // indexed vertices instead of six independent GL_QUADS draws. Y is
+    // asymmetric on purpose, matching the original: the top is half as far
+    // from center as the bottom/sides.
     static const float x_min = -2.0f, x_max = 2.0f;
     static const float y_min = -2.0f, y_max = 1.0f;  // 2.0f * 0.5f
     static const float z_min = -2.0f, z_max = 2.0f;
 
-    static const std::vector<SkyboxPilotVertexData> vertex_data = {
+    static const std::vector<Tutorial11VertexData> vertex_data = {
             // front (z = z_min)
             {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
              Math::Vec2<float>(0.0f, 1.0f)},
@@ -1099,7 +1296,7 @@ const std::vector<SkyboxPilotVertexData>& VulkanSkyboxPilot::getVertexData()
     return vertex_data;
 }
 
-const std::vector<std::uint32_t>& VulkanSkyboxPilot::getIndexData() const {
+const std::vector<std::uint32_t>& Tutorial11::getIndexData() const {
     // Two triangles per face (0,1,2 and 0,2,3), matching GL_QUADS' implicit
     // fan triangulation of the same four corners.
     static const std::vector<std::uint32_t> index_data = {
@@ -1113,24 +1310,27 @@ const std::vector<std::uint32_t>& VulkanSkyboxPilot::getIndexData() const {
     return index_data;
 }
 
-bool VulkanSkyboxPilot::copyBufferData(BufferParameters& destination,
-                                       const void* data,
-                                       std::uint32_t data_size,
-                                       VkAccessFlags dst_access_mask,
-                                       VkPipelineStageFlags dst_stage_mask) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial11::copyBufferData(BufferParameters& destination,
+                                const void* data,
+                                std::uint32_t data_size,
+                                VkAccessFlags dst_access_mask,
+                                VkPipelineStageFlags dst_stage_mask) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial11_parameters.getStagingBufferParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Buffer data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -1146,15 +1346,16 @@ bool VulkanSkyboxPilot::copyBufferData(BufferParameters& destination,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial11_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -1167,7 +1368,7 @@ bool VulkanSkyboxPilot::copyBufferData(BufferParameters& destination,
     VkBufferCopy buffer_copy_info = {
             .srcOffset = 0, .dstOffset = 0, .size = data_size};
     vkCmdCopyBuffer(command_buffer,
-                    staging_buffer_.getVkBuffer(),
+                    staging_buffer.getVkBuffer(),
                     destination.getVkBuffer(),
                     1,
                     &buffer_copy_info);
@@ -1217,49 +1418,54 @@ bool VulkanSkyboxPilot::copyBufferData(BufferParameters& destination,
     return true;
 }
 
-bool VulkanSkyboxPilot::createVertexBuffer() {
-    const std::vector<SkyboxPilotVertexData>& vertex_data = getVertexData();
+bool Tutorial11::createVertexBuffer() {
+    const std::vector<Tutorial11VertexData>& vertex_data = getVertexData();
+    BufferParameters& vertex_buffer =
+            m_vulkan_tutorial11_parameters.getVertexBufferParameters();
 
-    vertex_buffer_.setSize(static_cast<std::uint32_t>(
+    vertex_buffer.setSize(static_cast<std::uint32_t>(
             vertex_data.size() * sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      vertex_buffer_)) {
+                      vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create vertex buffer!");
         return false;
     }
 
-    return copyBufferData(vertex_buffer_,
+    return copyBufferData(vertex_buffer,
                           vertex_data.data(),
-                          vertex_buffer_.getSize(),
+                          vertex_buffer.getSize(),
                           VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool VulkanSkyboxPilot::createIndexBuffer() {
+bool Tutorial11::createIndexBuffer() {
     const std::vector<std::uint32_t>& index_data = getIndexData();
-    index_count_ = static_cast<std::uint32_t>(index_data.size());
+    m_vulkan_tutorial11_parameters.setIndexCount(
+            static_cast<std::uint32_t>(index_data.size()));
 
-    index_buffer_.setSize(static_cast<std::uint32_t>(
+    BufferParameters& index_buffer =
+            m_vulkan_tutorial11_parameters.getIndexBufferParameters();
+    index_buffer.setSize(static_cast<std::uint32_t>(
             index_data.size() * sizeof(index_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      index_buffer_)) {
+                      index_buffer)) {
         Logging::error(LOG_TAG, "Could not create index buffer!");
         return false;
     }
 
-    return copyBufferData(index_buffer_,
+    return copyBufferData(index_buffer,
                           index_data.data(),
-                          index_buffer_.getSize(),
+                          index_buffer.getSize(),
                           VK_ACCESS_INDEX_READ_BIT,
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool VulkanSkyboxPilot::createFramebuffer(VkFramebuffer& framebuffer,
-                                          VkImageView image_view) {
+bool Tutorial11::createFramebuffer(VkFramebuffer& framebuffer,
+                                   VkImageView image_view) {
     if (framebuffer != VK_NULL_HANDLE) {
         vkDestroyFramebuffer(getVkDevice(), framebuffer, nullptr);
         framebuffer = VK_NULL_HANDLE;
@@ -1269,7 +1475,7 @@ bool VulkanSkyboxPilot::createFramebuffer(VkFramebuffer& framebuffer,
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial11_parameters.getVkRenderPass(),
             .attachmentCount = 1,
             .pAttachments = &image_view,
             .width = getSwapchainParameters().getVkExtent2d().width,
@@ -1287,9 +1493,9 @@ bool VulkanSkyboxPilot::createFramebuffer(VkFramebuffer& framebuffer,
     return true;
 }
 
-bool VulkanSkyboxPilot::prepareFrame(VkCommandBuffer command_buffer,
-                                     const ImageParameters& image_parameters,
-                                     VkFramebuffer& framebuffer) {
+bool Tutorial11::prepareFrame(VkCommandBuffer command_buffer,
+                              const ImageParameters& image_parameters,
+                              VkFramebuffer& framebuffer) {
     if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
         return false;
     }
@@ -1345,7 +1551,7 @@ bool VulkanSkyboxPilot::prepareFrame(VkCommandBuffer command_buffer,
     VkRenderPassBeginInfo render_pass_begin_info = {
             .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .pNext = nullptr,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial11_parameters.getVkRenderPass(),
             .framebuffer = framebuffer,
             .renderArea = {.offset = {.x = 0, .y = 0},
                            .extent = getSwapchainParameters().getVkExtent2d()},
@@ -1357,7 +1563,9 @@ bool VulkanSkyboxPilot::prepareFrame(VkCommandBuffer command_buffer,
                          VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(
-            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_graphics_pipeline_);
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial11_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1377,23 +1585,40 @@ bool VulkanSkyboxPilot::prepareFrame(VkCommandBuffer command_buffer,
 
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(
-            command_buffer, 0, 1, &vertex_buffer_.getVkBuffer(), &offset);
+            command_buffer,
+            0,
+            1,
+            &m_vulkan_tutorial11_parameters.getVertexBufferParameters()
+                     .getVkBuffer(),
+            &offset);
 
     vkCmdBindIndexBuffer(
-            command_buffer, index_buffer_.getVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
+            command_buffer,
+            m_vulkan_tutorial11_parameters.getIndexBufferParameters()
+                    .getVkBuffer(),
+            0,
+            VK_INDEX_TYPE_UINT32);
 
     VkDescriptorSet vk_descriptor_set =
-            descriptor_set_parameters_.getVkDescriptorSet();
-    vkCmdBindDescriptorSets(command_buffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            vk_pipeline_layout_,
-                            0,
-                            1,
-                            &vk_descriptor_set,
-                            0,
-                            nullptr);
+            m_vulkan_tutorial11_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSet();
+    vkCmdBindDescriptorSets(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial11_parameters.getVkPipelineLayout(),
+            0,
+            1,
+            &vk_descriptor_set,
+            0,
+            nullptr);
 
-    vkCmdDrawIndexed(command_buffer, index_count_, 1, 0, 0, 0);
+    vkCmdDrawIndexed(
+            command_buffer,
+            m_vulkan_tutorial11_parameters.getIndexCount(),
+            1,
+            0,
+            0,
+            0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1426,14 +1651,17 @@ bool VulkanSkyboxPilot::prepareFrame(VkCommandBuffer command_buffer,
     return true;
 }
 
-bool VulkanSkyboxPilot::draw() {
+bool Tutorial11::draw() {
     static std::size_t resource_index = 0;
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial11_parameters.getRenderingResources();
     RenderingResourceParameters& current_rendering_resource =
-            rendering_resources_[resource_index];
+            rendering_resources[resource_index];
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) % resources_count_;
+    resource_index = (resource_index + 1) %
+                     VulkanTutorial11Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1447,8 +1675,7 @@ bool VulkanSkyboxPilot::draw() {
 
     // The uniform buffer is a single, shared, host-visible allocation
     // rewritten every frame from the orbit camera's current state - the
-    // same tradeoff Tutorial09 makes for the same reason (see the comment
-    // in Tutorial09::draw()).
+    // same tradeoff Tutorial09 makes for the same reason.
     vkDeviceWaitIdle(getVkDevice());
     if (!updateUniformBufferData()) {
         return false;
@@ -1482,7 +1709,8 @@ bool VulkanSkyboxPilot::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            finished_rendering_semaphores_[image_index];
+            m_vulkan_tutorial11_parameters.getFinishedRenderingSemaphores()
+                    [image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1533,18 +1761,18 @@ bool VulkanSkyboxPilot::draw() {
     return true;
 }
 
-void VulkanSkyboxPilot::onMouseButton(int button,
-                                      bool pressed,
-                                      int pos_x,
-                                      int pos_y) {
-    camera_.onMouseButton(button, pressed, pos_x, pos_y);
+void Tutorial11::onMouseButton(int button,
+                               bool pressed,
+                               int pos_x,
+                               int pos_y) {
+    m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void VulkanSkyboxPilot::onMouseMove(int pos_x, int pos_y) {
-    camera_.onMouseMove(pos_x, pos_y);
+void Tutorial11::onMouseMove(int pos_x, int pos_y) {
+    m_camera.onMouseMove(pos_x, pos_y);
 }
 
-void VulkanSkyboxPilot::destroyBuffer(BufferParameters& buffer) {
+void Tutorial11::destroyBuffer(BufferParameters& buffer) {
     if (buffer.getVkBuffer() != VK_NULL_HANDLE) {
         vkDestroyBuffer(getVkDevice(), buffer.getVkBuffer(), nullptr);
         buffer.setVkBuffer(VK_NULL_HANDLE);
@@ -1555,16 +1783,12 @@ void VulkanSkyboxPilot::destroyBuffer(BufferParameters& buffer) {
     }
 }
 
-bool VulkanSkyboxPilot::childOnWindowSizeChanged() {
+bool Tutorial11::childOnWindowSizeChanged() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return true;
     }
     vkDeviceWaitIdle(getVkDevice());
 
-    // TutorialBase::onWindowSizeChanged() calls childClear() unconditionally
-    // before this runs, tearing down every Vulkan object this pilot owns,
-    // not just the swapchain - everything is rebuilt here in the same order
-    // as vk_skybox_pilot_main.cpp's initial setup.
     if (!createRenderingResources()) {
         return false;
     }
@@ -1604,105 +1828,125 @@ bool VulkanSkyboxPilot::childOnWindowSizeChanged() {
     return createIndexBuffer();
 }
 
-void VulkanSkyboxPilot::childClear() {
+void Tutorial11::childClear() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return;
     }
     vkDeviceWaitIdle(getVkDevice());
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
-        if (rendering_resources_[i].getVkFramebuffer() != VK_NULL_HANDLE) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial11_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
+        if (rendering_resources[i].getVkFramebuffer() != VK_NULL_HANDLE) {
             vkDestroyFramebuffer(getVkDevice(),
-                                 rendering_resources_[i].getVkFramebuffer(),
+                                 rendering_resources[i].getVkFramebuffer(),
                                  nullptr);
-            rendering_resources_[i].setVkFramebuffer(VK_NULL_HANDLE);
+            rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
         }
-        if (rendering_resources_[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
             vkFreeCommandBuffers(
                     getVkDevice(),
-                    vk_command_pool_,
+                    m_vulkan_tutorial11_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer());
+                    &rendering_resources[i].getVkCommandBuffer());
         }
-        if (rendering_resources_[i].getImageAvailableVkSemaphore() !=
+        if (rendering_resources[i].getImageAvailableVkSemaphore() !=
             VK_NULL_HANDLE) {
             vkDestroySemaphore(
                     getVkDevice(),
-                    rendering_resources_[i].getImageAvailableVkSemaphore(),
+                    rendering_resources[i].getImageAvailableVkSemaphore(),
                     nullptr);
         }
-        if (rendering_resources_[i].getVkFence() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
             vkDestroyFence(
-                    getVkDevice(), rendering_resources_[i].getVkFence(), nullptr);
+                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
         }
     }
 
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
-        if (finished_rendering_semaphores_[i] != VK_NULL_HANDLE) {
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial11_parameters.getFinishedRenderingSemaphores();
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
+        if (finished_rendering_semaphores[i] != VK_NULL_HANDLE) {
             vkDestroySemaphore(
-                    getVkDevice(), finished_rendering_semaphores_[i], nullptr);
+                    getVkDevice(), finished_rendering_semaphores[i], nullptr);
         }
     }
-    finished_rendering_semaphores_.clear();
+    finished_rendering_semaphores.clear();
 
-    if (vk_command_pool_ != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(getVkDevice(), vk_command_pool_, nullptr);
-        vk_command_pool_ = VK_NULL_HANDLE;
-    }
-
-    destroyBuffer(vertex_buffer_);
-    destroyBuffer(index_buffer_);
-    destroyBuffer(staging_buffer_);
-
-    if (vk_graphics_pipeline_ != VK_NULL_HANDLE) {
-        vkDestroyPipeline(getVkDevice(), vk_graphics_pipeline_, nullptr);
-        vk_graphics_pipeline_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_pipeline_layout_ != VK_NULL_HANDLE) {
-        vkDestroyPipelineLayout(getVkDevice(), vk_pipeline_layout_, nullptr);
-        vk_pipeline_layout_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_render_pass_ != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(getVkDevice(), vk_render_pass_, nullptr);
-        vk_render_pass_ = VK_NULL_HANDLE;
-    }
-
-    if (descriptor_set_parameters_.getVkDescriptorPool() != VK_NULL_HANDLE) {
-        vkDestroyDescriptorPool(getVkDevice(),
-                                descriptor_set_parameters_.getVkDescriptorPool(),
-                                nullptr);
-        descriptor_set_parameters_.setVkDescriptorPool(VK_NULL_HANDLE);
-    }
-    if (descriptor_set_parameters_.getVkDescriptorSetLayout() !=
-        VK_NULL_HANDLE) {
-        vkDestroyDescriptorSetLayout(
+    if (m_vulkan_tutorial11_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
+        vkDestroyCommandPool(
                 getVkDevice(),
-                descriptor_set_parameters_.getVkDescriptorSetLayout(),
+                m_vulkan_tutorial11_parameters.getVkCommandPool(),
                 nullptr);
-        descriptor_set_parameters_.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+        m_vulkan_tutorial11_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
-    destroyBuffer(uniform_buffer_);
+    destroyBuffer(m_vulkan_tutorial11_parameters.getVertexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial11_parameters.getIndexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial11_parameters.getStagingBufferParameters());
 
-    if (image_parameters_.getVkSampler() != VK_NULL_HANDLE) {
-        vkDestroySampler(getVkDevice(), image_parameters_.getVkSampler(), nullptr);
-        image_parameters_.setVkSampler(VK_NULL_HANDLE);
+    if (m_vulkan_tutorial11_parameters.getVkGraphicsPipeline() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipeline(
+                getVkDevice(),
+                m_vulkan_tutorial11_parameters.getVkGraphicsPipeline(),
+                nullptr);
+        m_vulkan_tutorial11_parameters.setVkGraphicsPipeline(VK_NULL_HANDLE);
     }
-    if (image_parameters_.getVkImageView() != VK_NULL_HANDLE) {
+
+    if (m_vulkan_tutorial11_parameters.getVkPipelineLayout() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipelineLayout(
+                getVkDevice(),
+                m_vulkan_tutorial11_parameters.getVkPipelineLayout(),
+                nullptr);
+        m_vulkan_tutorial11_parameters.setVkPipelineLayout(VK_NULL_HANDLE);
+    }
+
+    if (m_vulkan_tutorial11_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
+        vkDestroyRenderPass(
+                getVkDevice(),
+                m_vulkan_tutorial11_parameters.getVkRenderPass(),
+                nullptr);
+        m_vulkan_tutorial11_parameters.setVkRenderPass(VK_NULL_HANDLE);
+    }
+
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial11_parameters.getDescriptorSetParameters();
+    if (descriptor_set.getVkDescriptorPool() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorPool(
+                getVkDevice(), descriptor_set.getVkDescriptorPool(), nullptr);
+        descriptor_set.setVkDescriptorPool(VK_NULL_HANDLE);
+    }
+    if (descriptor_set.getVkDescriptorSetLayout() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorSetLayout(getVkDevice(),
+                                     descriptor_set.getVkDescriptorSetLayout(),
+                                     nullptr);
+        descriptor_set.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+    }
+
+    destroyBuffer(m_vulkan_tutorial11_parameters.getUniformBufferParameters());
+
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial11_parameters.getImageParameters();
+    if (image_parameters.getVkSampler() != VK_NULL_HANDLE) {
+        vkDestroySampler(
+                getVkDevice(), image_parameters.getVkSampler(), nullptr);
+        image_parameters.setVkSampler(VK_NULL_HANDLE);
+    }
+    if (image_parameters.getVkImageView() != VK_NULL_HANDLE) {
         vkDestroyImageView(
-                getVkDevice(), image_parameters_.getVkImageView(), nullptr);
-        image_parameters_.setVkImageView(VK_NULL_HANDLE);
+                getVkDevice(), image_parameters.getVkImageView(), nullptr);
+        image_parameters.setVkImageView(VK_NULL_HANDLE);
     }
-    if (image_parameters_.getVkImage() != VK_NULL_HANDLE) {
-        vkDestroyImage(getVkDevice(), image_parameters_.getVkImage(), nullptr);
-        image_parameters_.setVkImage(VK_NULL_HANDLE);
+    if (image_parameters.getVkImage() != VK_NULL_HANDLE) {
+        vkDestroyImage(getVkDevice(), image_parameters.getVkImage(), nullptr);
+        image_parameters.setVkImage(VK_NULL_HANDLE);
     }
-    if (image_parameters_.getVkDeviceMemory() != VK_NULL_HANDLE) {
+    if (image_parameters.getVkDeviceMemory() != VK_NULL_HANDLE) {
         vkFreeMemory(
-                getVkDevice(), image_parameters_.getVkDeviceMemory(), nullptr);
-        image_parameters_.setVkDeviceMemory(VK_NULL_HANDLE);
+                getVkDevice(), image_parameters.getVkDeviceMemory(), nullptr);
+        image_parameters.setVkDeviceMemory(VK_NULL_HANDLE);
     }
 }
 
