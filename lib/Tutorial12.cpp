@@ -1,9 +1,7 @@
-#include "VulkanTerrainPilot.h"
+#include "vulkan_graphix/Tutorial12.h"
 
 #include <vulkan/vulkan_core.h>
 
-#include <array>
-#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -20,25 +18,182 @@ constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 constexpr VkFormat c_texture_format = VK_FORMAT_R8G8B8A8_UNORM;
 }  // namespace
 
-VulkanTerrainPilot::VulkanTerrainPilot()
-        : vk_render_pass_(VK_NULL_HANDLE)
-        , vk_pipeline_layout_(VK_NULL_HANDLE)
-        , vk_graphics_pipeline_(VK_NULL_HANDLE)
-        , vertex_count_(0)
-        , vk_command_pool_(VK_NULL_HANDLE)
-        , rendering_resources_(resources_count_)
+// ************************************************************ //
+// VulkanTutorial12Parameters                                   //
+// ************************************************************ //
+VulkanTutorial12Parameters::VulkanTutorial12Parameters()
+        : m_vk_render_pass(VK_NULL_HANDLE)
+        , m_vk_pipeline_layout(VK_NULL_HANDLE)
+        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
+        , m_vertex_count(0)
+        , m_vk_command_pool(VK_NULL_HANDLE)
+        , m_rendering_resources(resources_count) {}
+
+const VkRenderPass& VulkanTutorial12Parameters::getVkRenderPass() const {
+    return m_vk_render_pass;
+}
+VkRenderPass& VulkanTutorial12Parameters::getVkRenderPass() {
+    return m_vk_render_pass;
+}
+void VulkanTutorial12Parameters::setVkRenderPass(
+        const VkRenderPass& vk_render_pass) {
+    m_vk_render_pass = vk_render_pass;
+}
+
+const ImageParameters& VulkanTutorial12Parameters::getDepthImageParameters()
+        const {
+    return m_depth_image_parameters;
+}
+ImageParameters& VulkanTutorial12Parameters::getDepthImageParameters() {
+    return m_depth_image_parameters;
+}
+void VulkanTutorial12Parameters::setDepthImageParameters(
+        const ImageParameters& depth_image) {
+    m_depth_image_parameters = depth_image;
+}
+
+const ImageParameters& VulkanTutorial12Parameters::getTextureImageParameters()
+        const {
+    return m_texture_image_parameters;
+}
+ImageParameters& VulkanTutorial12Parameters::getTextureImageParameters() {
+    return m_texture_image_parameters;
+}
+void VulkanTutorial12Parameters::setTextureImageParameters(
+        const ImageParameters& texture_image) {
+    m_texture_image_parameters = texture_image;
+}
+
+const BufferParameters&
+VulkanTutorial12Parameters::getUniformBufferParameters() const {
+    return m_uniform_buffer;
+}
+BufferParameters& VulkanTutorial12Parameters::getUniformBufferParameters() {
+    return m_uniform_buffer;
+}
+void VulkanTutorial12Parameters::setUniformBufferParameters(
+        const BufferParameters& uniform_buffer) {
+    m_uniform_buffer = uniform_buffer;
+}
+
+const DescriptorSetParameters&
+VulkanTutorial12Parameters::getDescriptorSetParameters() const {
+    return m_descriptor_set_parameters;
+}
+DescriptorSetParameters&
+VulkanTutorial12Parameters::getDescriptorSetParameters() {
+    return m_descriptor_set_parameters;
+}
+void VulkanTutorial12Parameters::setDescriptorSetParameters(
+        const DescriptorSetParameters& descriptor_set_parameters) {
+    m_descriptor_set_parameters = descriptor_set_parameters;
+}
+
+const VkPipelineLayout& VulkanTutorial12Parameters::getVkPipelineLayout()
+        const {
+    return m_vk_pipeline_layout;
+}
+VkPipelineLayout& VulkanTutorial12Parameters::getVkPipelineLayout() {
+    return m_vk_pipeline_layout;
+}
+void VulkanTutorial12Parameters::setVkPipelineLayout(
+        const VkPipelineLayout& vk_pipeline_layout) {
+    m_vk_pipeline_layout = vk_pipeline_layout;
+}
+
+const VkPipeline& VulkanTutorial12Parameters::getVkGraphicsPipeline() const {
+    return m_vk_graphics_pipeline;
+}
+VkPipeline& VulkanTutorial12Parameters::getVkGraphicsPipeline() {
+    return m_vk_graphics_pipeline;
+}
+void VulkanTutorial12Parameters::setVkGraphicsPipeline(
+        const VkPipeline& vk_graphics_pipeline) {
+    m_vk_graphics_pipeline = vk_graphics_pipeline;
+}
+
+const BufferParameters& VulkanTutorial12Parameters::getVertexBufferParameters()
+        const {
+    return m_vertex_buffer;
+}
+BufferParameters& VulkanTutorial12Parameters::getVertexBufferParameters() {
+    return m_vertex_buffer;
+}
+void VulkanTutorial12Parameters::setVertexBufferParameters(
+        const BufferParameters& vertex_buffer) {
+    m_vertex_buffer = vertex_buffer;
+}
+
+std::uint32_t VulkanTutorial12Parameters::getVertexCount() const {
+    return m_vertex_count;
+}
+void VulkanTutorial12Parameters::setVertexCount(std::uint32_t vertex_count) {
+    m_vertex_count = vertex_count;
+}
+
+const BufferParameters&
+VulkanTutorial12Parameters::getStagingBufferParameters() const {
+    return m_staging_buffer;
+}
+BufferParameters& VulkanTutorial12Parameters::getStagingBufferParameters() {
+    return m_staging_buffer;
+}
+void VulkanTutorial12Parameters::setStagingBufferParameters(
+        const BufferParameters& staging_buffer) {
+    m_staging_buffer = staging_buffer;
+}
+
+const VkCommandPool& VulkanTutorial12Parameters::getVkCommandPool() const {
+    return m_vk_command_pool;
+}
+VkCommandPool& VulkanTutorial12Parameters::getVkCommandPool() {
+    return m_vk_command_pool;
+}
+void VulkanTutorial12Parameters::setVkCommandPool(
+        const VkCommandPool& vk_command_pool) {
+    m_vk_command_pool = vk_command_pool;
+}
+
+const std::vector<RenderingResourceParameters>&
+VulkanTutorial12Parameters::getRenderingResources() const {
+    return m_rendering_resources;
+}
+std::vector<RenderingResourceParameters>&
+VulkanTutorial12Parameters::getRenderingResources() {
+    return m_rendering_resources;
+}
+void VulkanTutorial12Parameters::setRenderingResources(
+        const std::vector<RenderingResourceParameters>& rendering_resources) {
+    m_rendering_resources = rendering_resources;
+}
+
+const std::vector<VkSemaphore>&
+VulkanTutorial12Parameters::getFinishedRenderingSemaphores() const {
+    return m_finished_rendering_semaphores;
+}
+std::vector<VkSemaphore>&
+VulkanTutorial12Parameters::getFinishedRenderingSemaphores() {
+    return m_finished_rendering_semaphores;
+}
+void VulkanTutorial12Parameters::setFinishedRenderingSemaphores(
+        const std::vector<VkSemaphore>& finished_rendering_semaphores) {
+    m_finished_rendering_semaphores = finished_rendering_semaphores;
+}
+
+// ************************************************************ //
+// Tutorial12                                                   //
+// ************************************************************ //
+Tutorial12::Tutorial12()
         // Pulled back to OrbitCamera's max distance (40) and pitched down
-        // less steeply than a first attempt at 35/0.5 - that framing filled
-        // the whole view with one close-up rock face; this one shows the
-        // grid's full silhouette with sky around it.
-        , camera_(0.5f, 0.35f, 40.0f) {
+        // moderately, showing the grid's full silhouette with sky around it.
+        : m_camera(0.5f, 0.35f, 40.0f) {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
-VulkanTerrainPilot::~VulkanTerrainPilot() { childClear(); }
+Tutorial12::~Tutorial12() { childClear(); }
 
-bool VulkanTerrainPilot::createCommandPool(std::uint32_t queue_family_index,
-                                           VkCommandPool* pool) {
+bool Tutorial12::createCommandPool(std::uint32_t queue_family_index,
+                                   VkCommandPool* pool) {
     VkCommandPoolCreateInfo cmd_pool_create_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             .pNext = nullptr,
@@ -55,10 +210,9 @@ bool VulkanTerrainPilot::createCommandPool(std::uint32_t queue_family_index,
     return true;
 }
 
-bool VulkanTerrainPilot::allocateCommandBuffers(
-        VkCommandPool pool,
-        std::uint32_t count,
-        VkCommandBuffer* command_buffers) {
+bool Tutorial12::allocateCommandBuffers(VkCommandPool pool,
+                                        std::uint32_t count,
+                                        VkCommandBuffer* command_buffers) {
     VkCommandBufferAllocateInfo command_buffer_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
             .pNext = nullptr,
@@ -75,49 +229,56 @@ bool VulkanTerrainPilot::allocateCommandBuffers(
     return true;
 }
 
-bool VulkanTerrainPilot::createCommandBuffers() {
-    if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
-                           &vk_command_pool_)) {
+bool Tutorial12::createCommandBuffers() {
+    if (!createCommandPool(
+                getGraphicsQueueParameters().getFamilyIndex(),
+                &m_vulkan_tutorial12_parameters.getVkCommandPool())) {
         return false;
     }
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial12_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!allocateCommandBuffers(
-                    vk_command_pool_,
+                    m_vulkan_tutorial12_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer())) {
+                    &rendering_resources[i].getVkCommandBuffer())) {
             return false;
         }
     }
     return true;
 }
 
-bool VulkanTerrainPilot::createSemaphores() {
+bool Tutorial12::createSemaphores() {
     VkSemaphoreCreateInfo semaphore_create_info = {
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial12_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateSemaphore(
                     getVkDevice(),
                     &semaphore_create_info,
                     nullptr,
-                    &rendering_resources_[i].getImageAvailableVkSemaphore()) !=
+                    &rendering_resources[i].getImageAvailableVkSemaphore()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
     }
 
-    finished_rendering_semaphores_.assign(
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial12_parameters.getFinishedRenderingSemaphores();
+    finished_rendering_semaphores.assign(
             getSwapchainParameters().getImageParameters().size(),
             VK_NULL_HANDLE);
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
         if (vkCreateSemaphore(getVkDevice(),
                               &semaphore_create_info,
                               nullptr,
-                              &finished_rendering_semaphores_[i]) !=
+                              &finished_rendering_semaphores[i]) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
@@ -127,17 +288,19 @@ bool VulkanTerrainPilot::createSemaphores() {
     return true;
 }
 
-bool VulkanTerrainPilot::createFences() {
+bool Tutorial12::createFences() {
     VkFenceCreateInfo fence_create_info = {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_FENCE_CREATE_SIGNALED_BIT};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial12_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateFence(getVkDevice(),
                           &fence_create_info,
                           nullptr,
-                          &rendering_resources_[i].getVkFence()) !=
+                          &rendering_resources[i].getVkFence()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
@@ -146,7 +309,7 @@ bool VulkanTerrainPilot::createFences() {
     return true;
 }
 
-bool VulkanTerrainPilot::createRenderingResources() {
+bool Tutorial12::createRenderingResources() {
     if (!createCommandBuffers()) {
         return false;
     }
@@ -159,9 +322,9 @@ bool VulkanTerrainPilot::createRenderingResources() {
     return true;
 }
 
-bool VulkanTerrainPilot::allocateBufferMemory(VkBuffer buffer,
-                                              VkMemoryPropertyFlags property,
-                                              VkDeviceMemory* memory) {
+bool Tutorial12::allocateBufferMemory(VkBuffer buffer,
+                                      VkMemoryPropertyFlags property,
+                                      VkDeviceMemory* memory) {
     VkMemoryRequirements buffer_memory_requirements;
     vkGetBufferMemoryRequirements(
             getVkDevice(), buffer, &buffer_memory_requirements);
@@ -191,9 +354,9 @@ bool VulkanTerrainPilot::allocateBufferMemory(VkBuffer buffer,
     return false;
 }
 
-bool VulkanTerrainPilot::createBuffer(VkBufferUsageFlags usage,
-                                      VkMemoryPropertyFlags memory_property,
-                                      BufferParameters& buffer) {
+bool Tutorial12::createBuffer(VkBufferUsageFlags usage,
+                              VkMemoryPropertyFlags memory_property,
+                              BufferParameters& buffer) {
     VkBufferCreateInfo buffer_create_info = {
             .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
             .pNext = nullptr,
@@ -232,17 +395,20 @@ bool VulkanTerrainPilot::createBuffer(VkBufferUsageFlags usage,
     return true;
 }
 
-bool VulkanTerrainPilot::createStagingBuffer() {
+bool Tutorial12::createStagingBuffer() {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial12_parameters.getStagingBufferParameters();
     // Rocky.raw decodes to 2048x2048 RGBA = 16,777,216 bytes once expanded
-    // by getRawImageData() - by far the larger of this pilot's two staging
-    // uses (the ~208KB vertex buffer is trivial next to it). Sized with
-    // headroom rather than copied from another pilot's constant - see
-    // copyTextureData()/copyBufferData()'s size guards below for what
-    // silently overflowing this buffer did to the skybox pilot.
-    staging_buffer_.setSize(20 * 1024 * 1024);
+    // by getRawImageData() - by far the larger of this tutorial's two
+    // staging uses (the ~208KB vertex buffer is trivial next to it). Sized
+    // with headroom rather than copied from another tutorial's constant -
+    // see copyTextureData()/copyBufferData()'s size guards below for what
+    // silently overflowing this buffer did to the original migration pilot
+    // this tutorial is ported from: a real, reproducible i915 GPU hang.
+    staging_buffer.setSize(20 * 1024 * 1024);
     if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                      staging_buffer_)) {
+                      staging_buffer)) {
         Logging::error(LOG_TAG, "Could not create staging buffer!");
         return false;
     }
@@ -250,11 +416,11 @@ bool VulkanTerrainPilot::createStagingBuffer() {
     return true;
 }
 
-bool VulkanTerrainPilot::createImage(std::uint32_t width,
-                                     std::uint32_t height,
-                                     VkFormat format,
-                                     VkImageUsageFlags usage,
-                                     VkImage* image) {
+bool Tutorial12::createImage(std::uint32_t width,
+                             std::uint32_t height,
+                             VkFormat format,
+                             VkImageUsageFlags usage,
+                             VkImage* image) {
     VkImageCreateInfo image_create_info = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             .pNext = nullptr,
@@ -276,9 +442,9 @@ bool VulkanTerrainPilot::createImage(std::uint32_t width,
            VK_SUCCESS;
 }
 
-bool VulkanTerrainPilot::allocateImageMemory(VkImage image,
-                                             VkMemoryPropertyFlags property,
-                                             VkDeviceMemory* memory) {
+bool Tutorial12::allocateImageMemory(VkImage image,
+                                     VkMemoryPropertyFlags property,
+                                     VkDeviceMemory* memory) {
     VkMemoryRequirements image_memory_requirements;
     vkGetImageMemoryRequirements(
             getVkDevice(), image, &image_memory_requirements);
@@ -308,10 +474,10 @@ bool VulkanTerrainPilot::allocateImageMemory(VkImage image,
     return false;
 }
 
-bool VulkanTerrainPilot::createImageView(VkImage image,
-                                         VkFormat format,
-                                         VkImageAspectFlags aspect_mask,
-                                         VkImageView* image_view) {
+bool Tutorial12::createImageView(VkImage image,
+                                 VkFormat format,
+                                 VkImageAspectFlags aspect_mask,
+                                 VkImageView* image_view) {
     VkImageViewCreateInfo image_view_create_info = {
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .pNext = nullptr,
@@ -334,8 +500,8 @@ bool VulkanTerrainPilot::createImageView(VkImage image,
            VK_SUCCESS;
 }
 
-bool VulkanTerrainPilot::createSampler(VkSamplerAddressMode address_mode,
-                                       VkSampler* sampler) {
+bool Tutorial12::createSampler(VkSamplerAddressMode address_mode,
+                               VkSampler* sampler) {
     VkSamplerCreateInfo sampler_create_info = {
             .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext = nullptr,
@@ -361,23 +527,28 @@ bool VulkanTerrainPilot::createSampler(VkSamplerAddressMode address_mode,
            VK_SUCCESS;
 }
 
-bool VulkanTerrainPilot::copyTextureData(char* texture_data,
-                                         std::uint32_t data_size,
-                                         std::uint32_t width,
-                                         std::uint32_t height) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial12::copyTextureData(char* texture_data,
+                                 std::uint32_t data_size,
+                                 std::uint32_t width,
+                                 std::uint32_t height) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial12_parameters.getStagingBufferParameters();
+    ImageParameters& image_parameters =
+            m_vulkan_tutorial12_parameters.getTextureImageParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Texture data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -393,12 +564,12 @@ bool VulkanTerrainPilot::copyTextureData(char* texture_data,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -407,7 +578,8 @@ bool VulkanTerrainPilot::copyTextureData(char* texture_data,
             .pInheritanceInfo = nullptr};
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial12_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
 
@@ -427,7 +599,7 @@ bool VulkanTerrainPilot::copyTextureData(char* texture_data,
              .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
              .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
              .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-             .image = texture_image_parameters_.getVkImage(),
+             .image = image_parameters.getVkImage(),
              .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
                          VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
@@ -451,8 +623,8 @@ bool VulkanTerrainPilot::copyTextureData(char* texture_data,
             .imageOffset = {.x = 0, .y = 0, .z = 0},
             .imageExtent = {.width = width, .height = height, .depth = 1}};
     vkCmdCopyBufferToImage(command_buffer,
-                           staging_buffer_.getVkBuffer(),
-                           texture_image_parameters_.getVkImage(),
+                           staging_buffer.getVkBuffer(),
+                           image_parameters.getVkImage(),
                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                            1,
                            &buffer_image_copy_info);
@@ -466,7 +638,7 @@ bool VulkanTerrainPilot::copyTextureData(char* texture_data,
             .newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
             .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
             .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-            .image = texture_image_parameters_.getVkImage(),
+            .image = image_parameters.getVkImage(),
             .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
                          VK_PIPELINE_STAGE_TRANSFER_BIT,
@@ -503,7 +675,9 @@ bool VulkanTerrainPilot::copyTextureData(char* texture_data,
     return true;
 }
 
-bool VulkanTerrainPilot::createDepthResources() {
+bool Tutorial12::createDepthResources() {
+    ImageParameters& depth_image_parameters =
+            m_vulkan_tutorial12_parameters.getDepthImageParameters();
     std::uint32_t const width =
             getSwapchainParameters().getVkExtent2d().width;
     std::uint32_t const height =
@@ -518,65 +692,69 @@ bool VulkanTerrainPilot::createDepthResources() {
         Logging::error(LOG_TAG, "Could not create depth image!");
         return false;
     }
-    depth_image_parameters_.setVkImage(vk_image);
+    depth_image_parameters.setVkImage(vk_image);
 
     VkDeviceMemory vk_device_memory;
-    if (!allocateImageMemory(depth_image_parameters_.getVkImage(),
+    if (!allocateImageMemory(depth_image_parameters.getVkImage(),
                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                              &vk_device_memory)) {
         Logging::error(LOG_TAG, "Could not allocate memory for depth image!");
         return false;
     }
-    depth_image_parameters_.setVkDeviceMemory(vk_device_memory);
+    depth_image_parameters.setVkDeviceMemory(vk_device_memory);
 
     if (vkBindImageMemory(getVkDevice(),
-                          depth_image_parameters_.getVkImage(),
-                          depth_image_parameters_.getVkDeviceMemory(),
+                          depth_image_parameters.getVkImage(),
+                          depth_image_parameters.getVkDeviceMemory(),
                           0) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not bind memory to depth image!");
         return false;
     }
 
     VkImageView vk_image_view;
-    if (!createImageView(depth_image_parameters_.getVkImage(),
+    if (!createImageView(depth_image_parameters.getVkImage(),
                          c_depth_format,
                          VK_IMAGE_ASPECT_DEPTH_BIT,
                          &vk_image_view)) {
         Logging::error(LOG_TAG, "Could not create depth image view!");
         return false;
     }
-    depth_image_parameters_.setVkImageView(vk_image_view);
+    depth_image_parameters.setVkImageView(vk_image_view);
 
     return true;
 }
 
-bool VulkanTerrainPilot::destroyDepthResources() {
-    if (depth_image_parameters_.getVkImageView() != VK_NULL_HANDLE) {
-        vkDestroyImageView(getVkDevice(),
-                           depth_image_parameters_.getVkImageView(),
-                           nullptr);
-        depth_image_parameters_.setVkImageView(VK_NULL_HANDLE);
+bool Tutorial12::destroyDepthResources() {
+    ImageParameters& depth_image_parameters =
+            m_vulkan_tutorial12_parameters.getDepthImageParameters();
+    if (depth_image_parameters.getVkImageView() != VK_NULL_HANDLE) {
+        vkDestroyImageView(
+                getVkDevice(), depth_image_parameters.getVkImageView(), nullptr);
+        depth_image_parameters.setVkImageView(VK_NULL_HANDLE);
     }
-    if (depth_image_parameters_.getVkImage() != VK_NULL_HANDLE) {
+    if (depth_image_parameters.getVkImage() != VK_NULL_HANDLE) {
         vkDestroyImage(
-                getVkDevice(), depth_image_parameters_.getVkImage(), nullptr);
-        depth_image_parameters_.setVkImage(VK_NULL_HANDLE);
+                getVkDevice(), depth_image_parameters.getVkImage(), nullptr);
+        depth_image_parameters.setVkImage(VK_NULL_HANDLE);
     }
-    if (depth_image_parameters_.getVkDeviceMemory() != VK_NULL_HANDLE) {
+    if (depth_image_parameters.getVkDeviceMemory() != VK_NULL_HANDLE) {
         vkFreeMemory(getVkDevice(),
-                    depth_image_parameters_.getVkDeviceMemory(),
+                    depth_image_parameters.getVkDeviceMemory(),
                     nullptr);
-        depth_image_parameters_.setVkDeviceMemory(VK_NULL_HANDLE);
+        depth_image_parameters.setVkDeviceMemory(VK_NULL_HANDLE);
     }
     return true;
 }
 
-bool VulkanTerrainPilot::createTexture() {
+bool Tutorial12::createTexture() {
     std::vector<char> texture_data =
             Tools::getRawImageData("Rocky.raw", 2048, 2048);
     if (texture_data.empty()) {
         return false;
     }
+
+    ImageParameters& texture_image_parameters =
+            m_vulkan_tutorial12_parameters.getTextureImageParameters();
 
     VkImage vk_image;
     if (!createImage(2048,
@@ -588,44 +766,43 @@ bool VulkanTerrainPilot::createTexture() {
         Logging::error(LOG_TAG, "Could not create image!");
         return false;
     }
-    texture_image_parameters_.setVkImage(vk_image);
+    texture_image_parameters.setVkImage(vk_image);
 
     VkDeviceMemory vk_device_memory;
-    if (!allocateImageMemory(texture_image_parameters_.getVkImage(),
+    if (!allocateImageMemory(texture_image_parameters.getVkImage(),
                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                              &vk_device_memory)) {
         Logging::error(LOG_TAG, "Could not allocate memory for image!");
         return false;
     }
-    texture_image_parameters_.setVkDeviceMemory(vk_device_memory);
+    texture_image_parameters.setVkDeviceMemory(vk_device_memory);
 
     if (vkBindImageMemory(getVkDevice(),
-                          texture_image_parameters_.getVkImage(),
-                          texture_image_parameters_.getVkDeviceMemory(),
+                          texture_image_parameters.getVkImage(),
+                          texture_image_parameters.getVkDeviceMemory(),
                           0) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not bind memory to an image!");
         return false;
     }
 
     VkImageView vk_image_view;
-    if (!createImageView(texture_image_parameters_.getVkImage(),
+    if (!createImageView(texture_image_parameters.getVkImage(),
                          c_texture_format,
                          VK_IMAGE_ASPECT_COLOR_BIT,
                          &vk_image_view)) {
         Logging::error(LOG_TAG, "Could not create image view!");
         return false;
     }
-    texture_image_parameters_.setVkImageView(vk_image_view);
+    texture_image_parameters.setVkImageView(vk_image_view);
 
     // REPEAT, like Tutorial09's ground texture: texcoords tile across the
-    // terrain (see getVertexData()'s chunk_size-based UVs) rather than
-    // being clamped into one stretched copy.
+    // terrain rather than being clamped into one stretched copy.
     VkSampler vk_sampler;
     if (!createSampler(VK_SAMPLER_ADDRESS_MODE_REPEAT, &vk_sampler)) {
         Logging::error(LOG_TAG, "Could not create sampler!");
         return false;
     }
-    texture_image_parameters_.setVkSampler(vk_sampler);
+    texture_image_parameters.setVkSampler(vk_sampler);
 
     if (!copyTextureData(texture_data.data(),
                          static_cast<std::uint32_t>(texture_data.size()),
@@ -639,15 +816,16 @@ bool VulkanTerrainPilot::createTexture() {
     return true;
 }
 
-bool VulkanTerrainPilot::createUniformBuffer() {
-    uniform_buffer_.setSize(sizeof(TerrainPilotUniformBufferData));
+bool Tutorial12::createUniformBuffer() {
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial12_parameters.getUniformBufferParameters();
+    uniform_buffer.setSize(sizeof(Tutorial12UniformBufferData));
     // Host-visible/coherent, rewritten every frame as the orbit camera
-    // moves - same tradeoff Tutorial09 makes for the same reason (see
-    // updateUniformBufferData()/draw()).
+    // moves - same tradeoff Tutorial09 makes for the same reason.
     if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      uniform_buffer_)) {
+                      uniform_buffer)) {
         Logging::error(LOG_TAG, "Could not create uniform buffer!");
         return false;
     }
@@ -655,12 +833,11 @@ bool VulkanTerrainPilot::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-TerrainPilotUniformBufferData VulkanTerrainPilot::getUniformBufferData()
-        const {
-    TerrainPilotUniformBufferData data{};
+Tutorial12UniformBufferData Tutorial12::getUniformBufferData() const {
+    Tutorial12UniformBufferData data{};
     data.model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
     data.view = glm::lookAt(
-            camera_.eye(), camera_.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -671,17 +848,19 @@ TerrainPilotUniformBufferData VulkanTerrainPilot::getUniformBufferData()
 
     data.light_position = Math::Vec4<float>(15.0f, 25.0f, 15.0f, 1.0f);
     data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(camera_.eye(), 1.0f);
+    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
 
     return data;
 }
 
-bool VulkanTerrainPilot::updateUniformBufferData() {
-    TerrainPilotUniformBufferData const uniform_data = getUniformBufferData();
+bool Tutorial12::updateUniformBufferData() {
+    Tutorial12UniformBufferData const uniform_data = getUniformBufferData();
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial12_parameters.getUniformBufferParameters();
 
     void* uniform_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    uniform_buffer_.getVkDeviceMemory(),
+                    uniform_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -691,16 +870,16 @@ bool VulkanTerrainPilot::updateUniformBufferData() {
     }
     std::memcpy(uniform_buffer_memory_pointer,
                 &uniform_data,
-                uniform_buffer_.getSize());
-    vkUnmapMemory(getVkDevice(), uniform_buffer_.getVkDeviceMemory());
+                uniform_buffer.getSize());
+    vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
 
     return true;
 }
 
-bool VulkanTerrainPilot::createDescriptorSetLayout() {
+bool Tutorial12::createDescriptorSetLayout() {
     // Binding numbers match Tutorial09's shaders exactly (binding 0 =
     // uniform buffer in vertex+fragment, binding 1 = sampler in the
-    // fragment stage) since this pilot reuses those compiled shaders as-is.
+    // fragment stage) since this tutorial reuses those compiled shaders.
     std::vector<VkDescriptorSetLayoutBinding> layout_bindings = {
             {.binding = 0,
              .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -729,13 +908,13 @@ bool VulkanTerrainPilot::createDescriptorSetLayout() {
         Logging::error(LOG_TAG, "Could not create descriptor set layout!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSetLayout(
-            vk_descriptor_set_layout);
+    m_vulkan_tutorial12_parameters.getDescriptorSetParameters()
+            .setVkDescriptorSetLayout(vk_descriptor_set_layout);
 
     return true;
 }
 
-bool VulkanTerrainPilot::createDescriptorPool() {
+bool Tutorial12::createDescriptorPool() {
     std::vector<VkDescriptorPoolSize> pool_sizes = {
             {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1},
             {.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -757,18 +936,21 @@ bool VulkanTerrainPilot::createDescriptorPool() {
         Logging::error(LOG_TAG, "Could not create descriptor pool!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorPool(vk_descriptor_pool);
+    m_vulkan_tutorial12_parameters.getDescriptorSetParameters()
+            .setVkDescriptorPool(vk_descriptor_pool);
 
     return true;
 }
 
-bool VulkanTerrainPilot::allocateDescriptorSet() {
+bool Tutorial12::allocateDescriptorSet() {
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial12_parameters.getDescriptorSetParameters();
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            descriptor_set.getVkDescriptorSetLayout();
     VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
             .pNext = nullptr,
-            .descriptorPool = descriptor_set_parameters_.getVkDescriptorPool(),
+            .descriptorPool = descriptor_set.getVkDescriptorPool(),
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_descriptor_set_layout};
 
@@ -779,26 +961,33 @@ bool VulkanTerrainPilot::allocateDescriptorSet() {
         Logging::error(LOG_TAG, "Could not allocate descriptor set!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSet(vk_descriptor_set);
+    descriptor_set.setVkDescriptorSet(vk_descriptor_set);
 
     return true;
 }
 
-bool VulkanTerrainPilot::updateDescriptorSet() {
+bool Tutorial12::updateDescriptorSet() {
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial12_parameters.getUniformBufferParameters();
+    ImageParameters& texture_image_parameters =
+            m_vulkan_tutorial12_parameters.getTextureImageParameters();
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial12_parameters.getDescriptorSetParameters();
+
     VkDescriptorBufferInfo buffer_info = {
-            .buffer = uniform_buffer_.getVkBuffer(),
+            .buffer = uniform_buffer.getVkBuffer(),
             .offset = 0,
-            .range = uniform_buffer_.getSize()};
+            .range = uniform_buffer.getSize()};
 
     VkDescriptorImageInfo image_info = {
-            .sampler = texture_image_parameters_.getVkSampler(),
-            .imageView = texture_image_parameters_.getVkImageView(),
+            .sampler = texture_image_parameters.getVkSampler(),
+            .imageView = texture_image_parameters.getVkImageView(),
             .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 
     std::vector<VkWriteDescriptorSet> descriptor_writes = {
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 0,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -808,7 +997,7 @@ bool VulkanTerrainPilot::updateDescriptorSet() {
              .pTexelBufferView = nullptr},
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 1,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -826,7 +1015,7 @@ bool VulkanTerrainPilot::updateDescriptorSet() {
     return true;
 }
 
-bool VulkanTerrainPilot::createRenderPass() {
+bool Tutorial12::createRenderPass() {
     VkAttachmentDescription attachment_descriptions[] = {
             {.flags = 0,
              .format = getSwapchainParameters().getVkFormat(),
@@ -878,10 +1067,12 @@ bool VulkanTerrainPilot::createRenderPass() {
             .dependencyCount = 0,
             .pDependencies = nullptr};
 
-    if (vkCreateRenderPass(getVkDevice(),
-                           &render_pass_create_info,
-                           nullptr,
-                           &vk_render_pass_) != VK_SUCCESS) {
+    if (vkCreateRenderPass(
+                getVkDevice(),
+                &render_pass_create_info,
+                nullptr,
+                &m_vulkan_tutorial12_parameters.getVkRenderPass()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create render pass!");
         return false;
     }
@@ -889,9 +1080,10 @@ bool VulkanTerrainPilot::createRenderPass() {
     return true;
 }
 
-bool VulkanTerrainPilot::createPipelineLayout() {
+bool Tutorial12::createPipelineLayout() {
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            m_vulkan_tutorial12_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSetLayout();
     VkPipelineLayoutCreateInfo layout_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext = nullptr,
@@ -901,10 +1093,12 @@ bool VulkanTerrainPilot::createPipelineLayout() {
             .pushConstantRangeCount = 0,
             .pPushConstantRanges = nullptr};
 
-    if (vkCreatePipelineLayout(getVkDevice(),
-                               &layout_create_info,
-                               nullptr,
-                               &vk_pipeline_layout_) != VK_SUCCESS) {
+    if (vkCreatePipelineLayout(
+                getVkDevice(),
+                &layout_create_info,
+                nullptr,
+                &m_vulkan_tutorial12_parameters.getVkPipelineLayout()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create pipeline layout!");
         return false;
     }
@@ -913,7 +1107,7 @@ bool VulkanTerrainPilot::createPipelineLayout() {
 }
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-VulkanTerrainPilot::createShaderModule(const char* filename) {
+Tutorial12::createShaderModule(const char* filename) {
     const std::vector<char> code = Tools::getBinaryFileContents(filename);
     if (code.empty()) {
         return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
@@ -942,15 +1136,15 @@ VulkanTerrainPilot::createShaderModule(const char* filename) {
             shader_module, vkDestroyShaderModule, getVkDevice());
 }
 
-bool VulkanTerrainPilot::createPipeline() {
-    // Reused byte-for-byte from Tutorial09 (resources/09/Data/): a Phong-lit,
-    // textured, depth-tested surface is exactly what this ported terrain
-    // needs, and its vertex layout (position/normal/texcoord) matches
-    // TerrainPilotVertexData exactly.
+bool Tutorial12::createPipeline() {
+    // Reused byte-for-byte from Tutorial09: a Phong-lit, textured, depth-
+    // tested surface is exactly what this generated terrain needs, and its
+    // vertex layout (position/normal/texcoord) matches Tutorial12VertexData
+    // exactly.
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            vertex_shader_module = createShaderModule("shader.09.vert.spv");
+            vertex_shader_module = createShaderModule("shader.12.vert.spv");
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            fragment_shader_module = createShaderModule("shader.09.frag.spv");
+            fragment_shader_module = createShaderModule("shader.12.frag.spv");
 
     if (!vertex_shader_module || !fragment_shader_module) {
         return false;
@@ -974,7 +1168,7 @@ bool VulkanTerrainPilot::createPipeline() {
 
     std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions =
             {{.binding = 0,
-              .stride = TerrainPilotVertexAttributeTraits::stride,
+              .stride = Tutorial12VertexAttributeTraits::stride,
               .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
     std::vector<VkVertexInputAttributeDescription>
@@ -982,18 +1176,18 @@ bool VulkanTerrainPilot::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct TerrainPilotVertexData,
-                                        position)},
+                     .offset =
+                             offsetof(struct Tutorial12VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
                      .offset =
-                             offsetof(struct TerrainPilotVertexData, normal)},
+                             offsetof(struct Tutorial12VertexData, normal)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset = offsetof(struct TerrainPilotVertexData,
-                                        texcoord)}};
+                     .offset =
+                             offsetof(struct Tutorial12VertexData, texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1038,7 +1232,8 @@ bool VulkanTerrainPilot::createPipeline() {
             // NONE: the winding of the ported v_i..v_z quad pattern hasn't
             // been verified against this project's usual CCW convention,
             // and the orbit camera can end up on either side of the grid -
-            // same reasoning the skybox pilot used for its own cullMode.
+            // same reasoning the skybox tutorial (11) uses for its own
+            // cullMode.
             .cullMode = VK_CULL_MODE_NONE,
             .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
             .depthBiasEnable = VK_FALSE,
@@ -1122,219 +1317,53 @@ bool VulkanTerrainPilot::createPipeline() {
             .pDepthStencilState = &depth_stencil_state_create_info,
             .pColorBlendState = &color_blend_state_create_info,
             .pDynamicState = &dynamic_state_create_info,
-            .layout = vk_pipeline_layout_,
-            .renderPass = vk_render_pass_,
+            .layout = m_vulkan_tutorial12_parameters.getVkPipelineLayout(),
+            .renderPass = m_vulkan_tutorial12_parameters.getVkRenderPass(),
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
 
-    if (vkCreateGraphicsPipelines(getVkDevice(),
-                                  VK_NULL_HANDLE,
-                                  1,
-                                  &pipeline_create_info,
-                                  nullptr,
-                                  &vk_graphics_pipeline_) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(
+                getVkDevice(),
+                VK_NULL_HANDLE,
+                1,
+                &pipeline_create_info,
+                nullptr,
+                &m_vulkan_tutorial12_parameters.getVkGraphicsPipeline()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create graphics pipeline!");
         return false;
     }
     return true;
 }
 
-void VulkanTerrainPilot::prepTerrain() {
-    terrain_heights_.assign(kGridSize, std::vector<int>(kGridSize, 0));
-}
-
-void VulkanTerrainPilot::terrainGen(int new_steps,
-                                    int new_increase,
-                                    float new_radius,
-                                    int new_random_jump) {
-    float current_x = static_cast<float>(kGridSize / 2);
-    float current_y = static_cast<float>(kGridSize / 2);
-
-    for (int current_step = 1; current_step < new_steps; ++current_step) {
-        int const random_value = rand() % 100;
-
-        if (random_value > new_random_jump) {
-            switch (rand() % 4) {
-                case 0:
-                    current_x -= 1.0f;
-                    break;
-                case 1:
-                    current_x += 1.0f;
-                    break;
-                case 2:
-                    current_y -= 1.0f;
-                    break;
-                case 3:
-                    current_y += 1.0f;
-                    break;
-                default:
-                    break;
-            }
-            if (((current_x >= kGridSize) || (current_x < 0)) ||
-                ((current_y >= kGridSize) || (current_y < 0))) {
-                current_x = static_cast<float>(rand() % kGridSize);
-                current_y = static_cast<float>(rand() % kGridSize);
-            }
-        } else {
-            current_x = static_cast<float>(rand() % kGridSize);
-            current_y = static_cast<float>(rand() % kGridSize);
-        }
-
-        int const x_min = static_cast<int>(current_x - new_radius);
-        int const x_max = static_cast<int>(current_x + new_radius);
-        int const y_min = static_cast<int>(current_y - new_radius);
-        int const y_max = static_cast<int>(current_y + new_radius);
-        for (int x = x_min; x < x_max; ++x) {
-            for (int y = y_min; y < y_max; ++y) {
-                float const distance = std::sqrt(
-                        std::pow(static_cast<double>(current_x - x), 2) +
-                        std::pow(static_cast<double>(current_y) - y, 2));
-                if ((distance < new_radius) &&
-                    ((x >= 0 && x < kGridSize) && (y >= 0 && y < kGridSize))) {
-                    terrain_heights_[x][y] += new_increase;
-                }
-            }
-        }
-    }
-}
-
-void VulkanTerrainPilot::terrainSmoothe(int box_width) {
-    std::vector<std::vector<int>> smoothed = terrain_heights_;
-    for (int y = 0; y < kGridSize; ++y) {
-        for (int x = 0; x < kGridSize; ++x) {
-            int height_sum = 0;
-            for (int i = y - (box_width / 2); i < y + (box_width / 2); ++i) {
-                for (int j = x - (box_width / 2); j < x + (box_width / 2);
-                     ++j) {
-                    if ((i >= 0 && i < kGridSize) && (j >= 0 && j < kGridSize)) {
-                        height_sum += terrain_heights_[i][j];
-                    }
-                }
-            }
-            smoothed[y][x] = height_sum / (box_width * box_width);
-        }
-    }
-    terrain_heights_ = smoothed;
-
-    // Zero the four grid edges - collapses TerrainMaker::terrainSmoothe()'s
-    // four separate (but overlapping) edge-clearing conditions into the one
-    // condition they're together equivalent to.
-    for (int y = 0; y < kGridSize; ++y) {
-        for (int x = 0; x < kGridSize; ++x) {
-            if (x == 0 || y == 0 || x == kGridSize - 1 || y == kGridSize - 1) {
-                terrain_heights_[y][x] = 0;
-            }
-        }
-    }
-}
-
-void VulkanTerrainPilot::calcNormal(int x,
-                                    int z,
-                                    int flag,
-                                    Math::Vec3<float>* normal) const {
-    std::array<float, 3> v1 = {};
-    std::array<float, 3> v2 = {};
-    bool can_calculate = true;
-    if (flag == 1) {
-        if (((x - 1) >= 0) && ((z - 1) >= 0) && (x < kGridSize) &&
-            (z < kGridSize)) {
-            v1[0] = -static_cast<float>(kGridScale);
-            v1[1] = static_cast<float>(terrain_heights_[x - 1][z - 1] -
-                                       terrain_heights_[x][z]);
-            v1[2] = -static_cast<float>(kGridScale);
-
-            v2[0] = -static_cast<float>(kGridScale);
-            v2[1] = static_cast<float>(terrain_heights_[x - 1][z] -
-                                       terrain_heights_[x][z]);
-            v2[2] = 0.0f;
-        } else {
-            can_calculate = false;
-        }
-    } else {
-        if ((((x - 1) >= 0) && (x < kGridSize)) && ((z + 1) < kGridSize) &&
-            (z > 0)) {
-            v1[0] = -static_cast<float>(kGridScale);
-            v1[1] = static_cast<float>(terrain_heights_[x - 1][z] -
-                                       terrain_heights_[x][z]);
-            v1[2] = 0.0f;
-
-            v2[0] = 0.0f;
-            v2[1] = static_cast<float>(terrain_heights_[x][z + 1] -
-                                       terrain_heights_[x][z]);
-            v2[2] = static_cast<float>(kGridScale);
-        } else {
-            can_calculate = false;
-        }
+const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
+    if (!m_vertex_data.empty()) {
+        return m_vertex_data;
     }
 
-    if (can_calculate) {
-        normal->x = v1[1] * v2[2] - v1[2] * v2[1];
-        normal->y = v1[2] * v2[0] - v1[0] * v2[2];
-        normal->z = v1[0] * v2[1] - v1[1] * v2[0];
-        float const mag = std::sqrt((normal->x * normal->x) +
-                                    (normal->y * normal->y) +
-                                    (normal->z * normal->z));
-        normal->x /= mag;
-        normal->y /= mag;
-        normal->z /= mag;
-    } else {
-        normal->x = 0.0f;
-        normal->y = 1.0f;
-        normal->z = 0.0f;
-    }
-}
-
-void VulkanTerrainPilot::smoothShadeNormal(int x,
-                                           int z,
-                                           Math::Vec3<float>* normal) const {
-    Math::Vec3<float> n0(0.0f, 0.0f, 0.0f);
-    Math::Vec3<float> n1(0.0f, 0.0f, 0.0f);
-    Math::Vec3<float> n2(0.0f, 0.0f, 0.0f);
-    Math::Vec3<float> n3(0.0f, 0.0f, 0.0f);
-    Math::Vec3<float> n4(0.0f, 0.0f, 0.0f);
-    Math::Vec3<float> n5(0.0f, 0.0f, 0.0f);
-    calcNormal(x, z - 1, 0, &n0);
-    calcNormal(x, z, 0, &n1);
-    calcNormal(x, z, 1, &n2);
-    calcNormal(x + 1, z + 1, 1, &n3);
-    calcNormal(x + 1, z, 1, &n4);
-    calcNormal(x + 1, z, 0, &n5);
-
-    normal->x = (n0.x + n1.x + n2.x + n3.x + n4.x + n5.x) / 6.0f;
-    normal->y = (n0.y + n1.y + n2.y + n3.y + n4.y + n5.y) / 6.0f;
-    normal->z = (n0.z + n1.z + n2.z + n3.z + n4.z + n5.z) / 6.0f;
-}
-
-const std::vector<TerrainPilotVertexData>&
-VulkanTerrainPilot::getVertexData() {
-    if (!vertex_data_.empty()) {
-        return vertex_data_;
-    }
-
-    prepTerrain();
-    terrainGen(kGenSteps, kGenIncrease, kGenRadius, kGenRandomJump);
-    for (int i = -1; i < kSmoothingPasses; ++i) {
-        terrainSmoothe(10);
-    }
+    TerrainGenerator generator(kGridSize, kGridScale);
+    generator.generate(
+            kGenSteps, kGenIncrease, kGenRadius, kGenRandomJump,
+            kSmoothingPasses);
 
     int const chunk_size = kGridSize / 2;
     float const chunk_span = static_cast<float>(chunk_size - 1);
     float const half_extent =
             static_cast<float>(kGridSize - 1) * kGridScale / 2.0f;
 
-    vertex_data_.reserve(static_cast<std::size_t>(kGridSize - 1) *
-                         static_cast<std::size_t>(kGridSize - 1) * 6);
+    m_vertex_data.reserve(static_cast<std::size_t>(kGridSize - 1) *
+                          static_cast<std::size_t>(kGridSize - 1) * 6);
 
     for (int i = 0; i < kGridSize - 1; ++i) {
         for (int j = 0; j < kGridSize - 1; ++j) {
-            auto make_position = [&](int px, int pz, int height_row,
+            auto make_position = [&](int grid_x, int grid_z, int height_row,
                                      int height_col) {
                 return Math::Vec4<float>(
-                        static_cast<float>(px * kGridScale) - half_extent,
+                        static_cast<float>(grid_x * kGridScale) - half_extent,
                         static_cast<float>(
-                                terrain_heights_[height_row][height_col]),
-                        static_cast<float>(pz * kGridScale) - half_extent,
+                                generator.heightAt(height_row, height_col)),
+                        static_cast<float>(grid_z * kGridScale) - half_extent,
                         1.0f);
             };
 
@@ -1344,9 +1373,9 @@ VulkanTerrainPilot::getVertexData() {
                     static_cast<float>(j % (chunk_size - 1)) / chunk_span);
             Math::Vec3<float> n_i(0.0f, 0.0f, 0.0f);
             if (i != 0 && j != 0) {
-                smoothShadeNormal(j, i, &n_i);
+                n_i = generator.normalAt(j, i);
             }
-            vertex_data_.push_back({make_position(j, i, i, j), n_i, t_i});
+            m_vertex_data.push_back({make_position(j, i, i, j), n_i, t_i});
 
             // V_J
             Math::Vec2<float> t_j(
@@ -1355,9 +1384,9 @@ VulkanTerrainPilot::getVertexData() {
                     static_cast<float>(j % (chunk_size - 1)) / chunk_span);
             Math::Vec3<float> n_j(0.0f, 0.0f, 0.0f);
             if (j != 0 && i != kGridSize - 2) {
-                smoothShadeNormal(j, i + 1, &n_j);
+                n_j = generator.normalAt(j, i + 1);
             }
-            vertex_data_.push_back(
+            m_vertex_data.push_back(
                     {make_position(j, i + 1, i + 1, j), n_j, t_j});
 
             // V_K
@@ -1367,13 +1396,13 @@ VulkanTerrainPilot::getVertexData() {
                             chunk_span);
             Math::Vec3<float> n_k(0.0f, 0.0f, 0.0f);
             if (i != 0 && j != kGridSize - 2) {
-                smoothShadeNormal(j + 1, i, &n_k);
+                n_k = generator.normalAt(j + 1, i);
             }
-            vertex_data_.push_back(
+            m_vertex_data.push_back(
                     {make_position(j + 1, i, i, j + 1), n_k, t_k});
 
             // V_X (same position/UV pattern as V_J)
-            vertex_data_.push_back(
+            m_vertex_data.push_back(
                     {make_position(j, i + 1, i + 1, j), n_j, t_j});
 
             // V_Y
@@ -1384,38 +1413,41 @@ VulkanTerrainPilot::getVertexData() {
                             chunk_span);
             Math::Vec3<float> n_y(0.0f, 0.0f, 0.0f);
             if (i != kGridSize - 2 && j != kGridSize - 2) {
-                smoothShadeNormal(j + 1, i + 1, &n_y);
+                n_y = generator.normalAt(j + 1, i + 1);
             }
-            vertex_data_.push_back(
+            m_vertex_data.push_back(
                     {make_position(j + 1, i + 1, i + 1, j + 1), n_y, t_y});
 
             // V_Z (same position/UV pattern as V_K)
-            vertex_data_.push_back(
+            m_vertex_data.push_back(
                     {make_position(j + 1, i, i, j + 1), n_k, t_k});
         }
     }
 
-    return vertex_data_;
+    return m_vertex_data;
 }
 
-bool VulkanTerrainPilot::copyBufferData(BufferParameters& destination,
-                                        const void* data,
-                                        std::uint32_t data_size,
-                                        VkAccessFlags dst_access_mask,
-                                        VkPipelineStageFlags dst_stage_mask) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial12::copyBufferData(BufferParameters& destination,
+                                const void* data,
+                                std::uint32_t data_size,
+                                VkAccessFlags dst_access_mask,
+                                VkPipelineStageFlags dst_stage_mask) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial12_parameters.getStagingBufferParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Buffer data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -1431,15 +1463,16 @@ bool VulkanTerrainPilot::copyBufferData(BufferParameters& destination,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial12_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -1452,7 +1485,7 @@ bool VulkanTerrainPilot::copyBufferData(BufferParameters& destination,
     VkBufferCopy buffer_copy_info = {
             .srcOffset = 0, .dstOffset = 0, .size = data_size};
     vkCmdCopyBuffer(command_buffer,
-                    staging_buffer_.getVkBuffer(),
+                    staging_buffer.getVkBuffer(),
                     destination.getVkBuffer(),
                     1,
                     &buffer_copy_info);
@@ -1502,42 +1535,47 @@ bool VulkanTerrainPilot::copyBufferData(BufferParameters& destination,
     return true;
 }
 
-bool VulkanTerrainPilot::createVertexBuffer() {
-    const std::vector<TerrainPilotVertexData>& vertex_data = getVertexData();
-    vertex_count_ = static_cast<std::uint32_t>(vertex_data.size());
+bool Tutorial12::createVertexBuffer() {
+    const std::vector<Tutorial12VertexData>& vertex_data = getVertexData();
+    m_vulkan_tutorial12_parameters.setVertexCount(
+            static_cast<std::uint32_t>(vertex_data.size()));
 
-    vertex_buffer_.setSize(static_cast<std::uint32_t>(
+    BufferParameters& vertex_buffer =
+            m_vulkan_tutorial12_parameters.getVertexBufferParameters();
+    vertex_buffer.setSize(static_cast<std::uint32_t>(
             vertex_data.size() * sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      vertex_buffer_)) {
+                      vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create vertex buffer!");
         return false;
     }
 
-    return copyBufferData(vertex_buffer_,
+    return copyBufferData(vertex_buffer,
                           vertex_data.data(),
-                          vertex_buffer_.getSize(),
+                          vertex_buffer.getSize(),
                           VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool VulkanTerrainPilot::createFramebuffer(VkFramebuffer& framebuffer,
-                                           VkImageView image_view) {
+bool Tutorial12::createFramebuffer(VkFramebuffer& framebuffer,
+                                   VkImageView image_view) {
     if (framebuffer != VK_NULL_HANDLE) {
         vkDestroyFramebuffer(getVkDevice(), framebuffer, nullptr);
         framebuffer = VK_NULL_HANDLE;
     }
 
     std::vector<VkImageView> attachments = {
-            image_view, depth_image_parameters_.getVkImageView()};
+            image_view,
+            m_vulkan_tutorial12_parameters.getDepthImageParameters()
+                    .getVkImageView()};
 
     VkFramebufferCreateInfo framebuffer_create_info = {
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial12_parameters.getVkRenderPass(),
             .attachmentCount = static_cast<std::uint32_t>(attachments.size()),
             .pAttachments = attachments.data(),
             .width = getSwapchainParameters().getVkExtent2d().width,
@@ -1555,9 +1593,9 @@ bool VulkanTerrainPilot::createFramebuffer(VkFramebuffer& framebuffer,
     return true;
 }
 
-bool VulkanTerrainPilot::prepareFrame(VkCommandBuffer command_buffer,
-                                      const ImageParameters& image_parameters,
-                                      VkFramebuffer& framebuffer) {
+bool Tutorial12::prepareFrame(VkCommandBuffer command_buffer,
+                              const ImageParameters& image_parameters,
+                              VkFramebuffer& framebuffer) {
     if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
         return false;
     }
@@ -1614,7 +1652,7 @@ bool VulkanTerrainPilot::prepareFrame(VkCommandBuffer command_buffer,
     VkRenderPassBeginInfo render_pass_begin_info = {
             .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .pNext = nullptr,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial12_parameters.getVkRenderPass(),
             .framebuffer = framebuffer,
             .renderArea = {.offset = {.x = 0, .y = 0},
                            .extent = getSwapchainParameters().getVkExtent2d()},
@@ -1626,7 +1664,9 @@ bool VulkanTerrainPilot::prepareFrame(VkCommandBuffer command_buffer,
                          VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(
-            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_graphics_pipeline_);
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial12_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1646,20 +1686,32 @@ bool VulkanTerrainPilot::prepareFrame(VkCommandBuffer command_buffer,
 
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(
-            command_buffer, 0, 1, &vertex_buffer_.getVkBuffer(), &offset);
+            command_buffer,
+            0,
+            1,
+            &m_vulkan_tutorial12_parameters.getVertexBufferParameters()
+                     .getVkBuffer(),
+            &offset);
 
     VkDescriptorSet vk_descriptor_set =
-            descriptor_set_parameters_.getVkDescriptorSet();
-    vkCmdBindDescriptorSets(command_buffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            vk_pipeline_layout_,
-                            0,
-                            1,
-                            &vk_descriptor_set,
-                            0,
-                            nullptr);
+            m_vulkan_tutorial12_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSet();
+    vkCmdBindDescriptorSets(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial12_parameters.getVkPipelineLayout(),
+            0,
+            1,
+            &vk_descriptor_set,
+            0,
+            nullptr);
 
-    vkCmdDraw(command_buffer, vertex_count_, 1, 0, 0);
+    vkCmdDraw(
+            command_buffer,
+            m_vulkan_tutorial12_parameters.getVertexCount(),
+            1,
+            0,
+            0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1692,14 +1744,17 @@ bool VulkanTerrainPilot::prepareFrame(VkCommandBuffer command_buffer,
     return true;
 }
 
-bool VulkanTerrainPilot::draw() {
+bool Tutorial12::draw() {
     static std::size_t resource_index = 0;
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial12_parameters.getRenderingResources();
     RenderingResourceParameters& current_rendering_resource =
-            rendering_resources_[resource_index];
+            rendering_resources[resource_index];
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) % resources_count_;
+    resource_index = (resource_index + 1) %
+                     VulkanTutorial12Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1744,7 +1799,8 @@ bool VulkanTerrainPilot::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            finished_rendering_semaphores_[image_index];
+            m_vulkan_tutorial12_parameters.getFinishedRenderingSemaphores()
+                    [image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1795,18 +1851,18 @@ bool VulkanTerrainPilot::draw() {
     return true;
 }
 
-void VulkanTerrainPilot::onMouseButton(int button,
-                                       bool pressed,
-                                       int pos_x,
-                                       int pos_y) {
-    camera_.onMouseButton(button, pressed, pos_x, pos_y);
+void Tutorial12::onMouseButton(int button,
+                               bool pressed,
+                               int pos_x,
+                               int pos_y) {
+    m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void VulkanTerrainPilot::onMouseMove(int pos_x, int pos_y) {
-    camera_.onMouseMove(pos_x, pos_y);
+void Tutorial12::onMouseMove(int pos_x, int pos_y) {
+    m_camera.onMouseMove(pos_x, pos_y);
 }
 
-void VulkanTerrainPilot::destroyBuffer(BufferParameters& buffer) {
+void Tutorial12::destroyBuffer(BufferParameters& buffer) {
     if (buffer.getVkBuffer() != VK_NULL_HANDLE) {
         vkDestroyBuffer(getVkDevice(), buffer.getVkBuffer(), nullptr);
         buffer.setVkBuffer(VK_NULL_HANDLE);
@@ -1817,7 +1873,7 @@ void VulkanTerrainPilot::destroyBuffer(BufferParameters& buffer) {
     }
 }
 
-bool VulkanTerrainPilot::childOnWindowSizeChanged() {
+bool Tutorial12::childOnWindowSizeChanged() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return true;
     }
@@ -1862,108 +1918,129 @@ bool VulkanTerrainPilot::childOnWindowSizeChanged() {
     return createVertexBuffer();
 }
 
-void VulkanTerrainPilot::childClear() {
+void Tutorial12::childClear() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return;
     }
     vkDeviceWaitIdle(getVkDevice());
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
-        if (rendering_resources_[i].getVkFramebuffer() != VK_NULL_HANDLE) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial12_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
+        if (rendering_resources[i].getVkFramebuffer() != VK_NULL_HANDLE) {
             vkDestroyFramebuffer(getVkDevice(),
-                                 rendering_resources_[i].getVkFramebuffer(),
+                                 rendering_resources[i].getVkFramebuffer(),
                                  nullptr);
-            rendering_resources_[i].setVkFramebuffer(VK_NULL_HANDLE);
+            rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
         }
-        if (rendering_resources_[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
             vkFreeCommandBuffers(
                     getVkDevice(),
-                    vk_command_pool_,
+                    m_vulkan_tutorial12_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer());
+                    &rendering_resources[i].getVkCommandBuffer());
         }
-        if (rendering_resources_[i].getImageAvailableVkSemaphore() !=
+        if (rendering_resources[i].getImageAvailableVkSemaphore() !=
             VK_NULL_HANDLE) {
             vkDestroySemaphore(
                     getVkDevice(),
-                    rendering_resources_[i].getImageAvailableVkSemaphore(),
+                    rendering_resources[i].getImageAvailableVkSemaphore(),
                     nullptr);
         }
-        if (rendering_resources_[i].getVkFence() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
             vkDestroyFence(
-                    getVkDevice(), rendering_resources_[i].getVkFence(), nullptr);
+                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
         }
     }
 
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
-        if (finished_rendering_semaphores_[i] != VK_NULL_HANDLE) {
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial12_parameters.getFinishedRenderingSemaphores();
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
+        if (finished_rendering_semaphores[i] != VK_NULL_HANDLE) {
             vkDestroySemaphore(
-                    getVkDevice(), finished_rendering_semaphores_[i], nullptr);
+                    getVkDevice(), finished_rendering_semaphores[i], nullptr);
         }
     }
-    finished_rendering_semaphores_.clear();
+    finished_rendering_semaphores.clear();
 
-    if (vk_command_pool_ != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(getVkDevice(), vk_command_pool_, nullptr);
-        vk_command_pool_ = VK_NULL_HANDLE;
-    }
-
-    destroyBuffer(vertex_buffer_);
-    destroyBuffer(staging_buffer_);
-
-    if (vk_graphics_pipeline_ != VK_NULL_HANDLE) {
-        vkDestroyPipeline(getVkDevice(), vk_graphics_pipeline_, nullptr);
-        vk_graphics_pipeline_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_pipeline_layout_ != VK_NULL_HANDLE) {
-        vkDestroyPipelineLayout(getVkDevice(), vk_pipeline_layout_, nullptr);
-        vk_pipeline_layout_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_render_pass_ != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(getVkDevice(), vk_render_pass_, nullptr);
-        vk_render_pass_ = VK_NULL_HANDLE;
-    }
-
-    if (descriptor_set_parameters_.getVkDescriptorPool() != VK_NULL_HANDLE) {
-        vkDestroyDescriptorPool(getVkDevice(),
-                                descriptor_set_parameters_.getVkDescriptorPool(),
-                                nullptr);
-        descriptor_set_parameters_.setVkDescriptorPool(VK_NULL_HANDLE);
-    }
-    if (descriptor_set_parameters_.getVkDescriptorSetLayout() !=
-        VK_NULL_HANDLE) {
-        vkDestroyDescriptorSetLayout(
+    if (m_vulkan_tutorial12_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
+        vkDestroyCommandPool(
                 getVkDevice(),
-                descriptor_set_parameters_.getVkDescriptorSetLayout(),
+                m_vulkan_tutorial12_parameters.getVkCommandPool(),
                 nullptr);
-        descriptor_set_parameters_.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+        m_vulkan_tutorial12_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
-    destroyBuffer(uniform_buffer_);
+    destroyBuffer(m_vulkan_tutorial12_parameters.getVertexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial12_parameters.getStagingBufferParameters());
+
+    if (m_vulkan_tutorial12_parameters.getVkGraphicsPipeline() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipeline(
+                getVkDevice(),
+                m_vulkan_tutorial12_parameters.getVkGraphicsPipeline(),
+                nullptr);
+        m_vulkan_tutorial12_parameters.setVkGraphicsPipeline(VK_NULL_HANDLE);
+    }
+
+    if (m_vulkan_tutorial12_parameters.getVkPipelineLayout() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipelineLayout(
+                getVkDevice(),
+                m_vulkan_tutorial12_parameters.getVkPipelineLayout(),
+                nullptr);
+        m_vulkan_tutorial12_parameters.setVkPipelineLayout(VK_NULL_HANDLE);
+    }
+
+    if (m_vulkan_tutorial12_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
+        vkDestroyRenderPass(
+                getVkDevice(),
+                m_vulkan_tutorial12_parameters.getVkRenderPass(),
+                nullptr);
+        m_vulkan_tutorial12_parameters.setVkRenderPass(VK_NULL_HANDLE);
+    }
+
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial12_parameters.getDescriptorSetParameters();
+    if (descriptor_set.getVkDescriptorPool() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorPool(
+                getVkDevice(), descriptor_set.getVkDescriptorPool(), nullptr);
+        descriptor_set.setVkDescriptorPool(VK_NULL_HANDLE);
+    }
+    if (descriptor_set.getVkDescriptorSetLayout() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorSetLayout(getVkDevice(),
+                                     descriptor_set.getVkDescriptorSetLayout(),
+                                     nullptr);
+        descriptor_set.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+    }
+
+    destroyBuffer(m_vulkan_tutorial12_parameters.getUniformBufferParameters());
     destroyDepthResources();
 
-    if (texture_image_parameters_.getVkSampler() != VK_NULL_HANDLE) {
-        vkDestroySampler(
-                getVkDevice(), texture_image_parameters_.getVkSampler(), nullptr);
-        texture_image_parameters_.setVkSampler(VK_NULL_HANDLE);
+    ImageParameters& texture_image_parameters =
+            m_vulkan_tutorial12_parameters.getTextureImageParameters();
+    if (texture_image_parameters.getVkSampler() != VK_NULL_HANDLE) {
+        vkDestroySampler(getVkDevice(),
+                         texture_image_parameters.getVkSampler(),
+                         nullptr);
+        texture_image_parameters.setVkSampler(VK_NULL_HANDLE);
     }
-    if (texture_image_parameters_.getVkImageView() != VK_NULL_HANDLE) {
-        vkDestroyImageView(
-                getVkDevice(), texture_image_parameters_.getVkImageView(), nullptr);
-        texture_image_parameters_.setVkImageView(VK_NULL_HANDLE);
+    if (texture_image_parameters.getVkImageView() != VK_NULL_HANDLE) {
+        vkDestroyImageView(getVkDevice(),
+                           texture_image_parameters.getVkImageView(),
+                           nullptr);
+        texture_image_parameters.setVkImageView(VK_NULL_HANDLE);
     }
-    if (texture_image_parameters_.getVkImage() != VK_NULL_HANDLE) {
+    if (texture_image_parameters.getVkImage() != VK_NULL_HANDLE) {
         vkDestroyImage(
-                getVkDevice(), texture_image_parameters_.getVkImage(), nullptr);
-        texture_image_parameters_.setVkImage(VK_NULL_HANDLE);
+                getVkDevice(), texture_image_parameters.getVkImage(), nullptr);
+        texture_image_parameters.setVkImage(VK_NULL_HANDLE);
     }
-    if (texture_image_parameters_.getVkDeviceMemory() != VK_NULL_HANDLE) {
+    if (texture_image_parameters.getVkDeviceMemory() != VK_NULL_HANDLE) {
         vkFreeMemory(getVkDevice(),
-                    texture_image_parameters_.getVkDeviceMemory(),
+                    texture_image_parameters.getVkDeviceMemory(),
                     nullptr);
-        texture_image_parameters_.setVkDeviceMemory(VK_NULL_HANDLE);
+        texture_image_parameters.setVkDeviceMemory(VK_NULL_HANDLE);
     }
 }
 

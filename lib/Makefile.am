@@ -7,6 +7,7 @@ libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
 															./OrbitCamera.cpp \
+															./TerrainGenerator.cpp \
 															./Tools.cpp \
 															./Tutorial01.cpp \
 															./Tutorial02.cpp \
@@ -18,6 +19,8 @@ libvulkan_graphix_la_SOURCES = ./LoggerHelpers.cpp \
 															./Tutorial08.cpp \
 															./Tutorial09.cpp \
 															./Tutorial10.cpp \
+															./Tutorial11.cpp \
+															./Tutorial12.cpp \
 															./TutorialBase.cpp \
 															./VulkanFunctions.cpp
 
