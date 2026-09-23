@@ -1,0 +1,119 @@
+; SPIR-V
+; Version: 1.0
+; Generator: Google Shaderc over Glslang; 11
+; Bound: 63
+; Schema: 0
+               OpCapability Shader
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint Vertex %main "main" %i_Position %__0 %v_WorldPosition %v_Normal %i_Normal
+               OpSource GLSL 450
+               OpSourceExtension "GL_GOOGLE_cpp_style_line_directive"
+               OpSourceExtension "GL_GOOGLE_include_directive"
+               OpName %main "main"
+               OpName %world_position "world_position"
+               OpName %u_UniformBuffer "u_UniformBuffer"
+               OpMemberName %u_UniformBuffer 0 "u_Model"
+               OpMemberName %u_UniformBuffer 1 "u_View"
+               OpMemberName %u_UniformBuffer 2 "u_Projection"
+               OpMemberName %u_UniformBuffer 3 "u_LightPosition"
+               OpMemberName %u_UniformBuffer 4 "u_LightColor"
+               OpMemberName %u_UniformBuffer 5 "u_ViewPosition"
+               OpName %_ ""
+               OpName %i_Position "i_Position"
+               OpName %gl_PerVertex "gl_PerVertex"
+               OpMemberName %gl_PerVertex 0 "gl_Position"
+               OpName %__0 ""
+               OpName %v_WorldPosition "v_WorldPosition"
+               OpName %normal_matrix "normal_matrix"
+               OpName %v_Normal "v_Normal"
+               OpName %i_Normal "i_Normal"
+               OpDecorate %u_UniformBuffer Block
+               OpMemberDecorate %u_UniformBuffer 0 ColMajor
+               OpMemberDecorate %u_UniformBuffer 0 MatrixStride 16
+               OpMemberDecorate %u_UniformBuffer 0 Offset 0
+               OpMemberDecorate %u_UniformBuffer 1 ColMajor
+               OpMemberDecorate %u_UniformBuffer 1 MatrixStride 16
+               OpMemberDecorate %u_UniformBuffer 1 Offset 64
+               OpMemberDecorate %u_UniformBuffer 2 ColMajor
+               OpMemberDecorate %u_UniformBuffer 2 MatrixStride 16
+               OpMemberDecorate %u_UniformBuffer 2 Offset 128
+               OpMemberDecorate %u_UniformBuffer 3 Offset 192
+               OpMemberDecorate %u_UniformBuffer 4 Offset 208
+               OpMemberDecorate %u_UniformBuffer 5 Offset 224
+               OpDecorate %_ Binding 0
+               OpDecorate %_ DescriptorSet 0
+               OpDecorate %i_Position Location 0
+               OpDecorate %gl_PerVertex Block
+               OpMemberDecorate %gl_PerVertex 0 BuiltIn Position
+               OpDecorate %v_WorldPosition Location 0
+               OpDecorate %v_Normal Location 1
+               OpDecorate %i_Normal Location 1
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+      %float = OpTypeFloat 32
+    %v4float = OpTypeVector %float 4
+%_ptr_Function_v4float = OpTypePointer Function %v4float
+%mat4v4float = OpTypeMatrix %v4float 4
+%u_UniformBuffer = OpTypeStruct %mat4v4float %mat4v4float %mat4v4float %v4float %v4float %v4float
+%_ptr_Uniform_u_UniformBuffer = OpTypePointer Uniform %u_UniformBuffer
+          %_ = OpVariable %_ptr_Uniform_u_UniformBuffer Uniform
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+%_ptr_Uniform_mat4v4float = OpTypePointer Uniform %mat4v4float
+%_ptr_Input_v4float = OpTypePointer Input %v4float
+ %i_Position = OpVariable %_ptr_Input_v4float Input
+%gl_PerVertex = OpTypeStruct %v4float
+%_ptr_Output_gl_PerVertex = OpTypePointer Output %gl_PerVertex
+        %__0 = OpVariable %_ptr_Output_gl_PerVertex Output
+      %int_2 = OpConstant %int 2
+      %int_1 = OpConstant %int 1
+%_ptr_Output_v4float = OpTypePointer Output %v4float
+    %v3float = OpTypeVector %float 3
+%_ptr_Output_v3float = OpTypePointer Output %v3float
+%v_WorldPosition = OpVariable %_ptr_Output_v3float Output
+%mat3v3float = OpTypeMatrix %v3float 3
+%_ptr_Function_mat3v3float = OpTypePointer Function %mat3v3float
+   %v_Normal = OpVariable %_ptr_Output_v3float Output
+%_ptr_Input_v3float = OpTypePointer Input %v3float
+   %i_Normal = OpVariable %_ptr_Input_v3float Input
+       %main = OpFunction %void None %3
+          %5 = OpLabel
+%world_position = OpVariable %_ptr_Function_v4float Function
+%normal_matrix = OpVariable %_ptr_Function_mat3v3float Function
+         %17 = OpAccessChain %_ptr_Uniform_mat4v4float %_ %int_0
+         %18 = OpLoad %mat4v4float %17
+         %21 = OpLoad %v4float %i_Position
+         %22 = OpMatrixTimesVector %v4float %18 %21
+               OpStore %world_position %22
+         %27 = OpAccessChain %_ptr_Uniform_mat4v4float %_ %int_2
+         %28 = OpLoad %mat4v4float %27
+         %30 = OpAccessChain %_ptr_Uniform_mat4v4float %_ %int_1
+         %31 = OpLoad %mat4v4float %30
+         %32 = OpMatrixTimesMatrix %mat4v4float %28 %31
+         %33 = OpLoad %v4float %world_position
+         %34 = OpMatrixTimesVector %v4float %32 %33
+         %36 = OpAccessChain %_ptr_Output_v4float %__0 %int_0
+               OpStore %36 %34
+         %40 = OpLoad %v4float %world_position
+         %41 = OpVectorShuffle %v3float %40 %40 0 1 2
+               OpStore %v_WorldPosition %41
+         %45 = OpAccessChain %_ptr_Uniform_mat4v4float %_ %int_0
+         %46 = OpLoad %mat4v4float %45
+         %47 = OpExtInst %mat4v4float %1 MatrixInverse %46
+         %48 = OpTranspose %mat4v4float %47
+         %49 = OpCompositeExtract %v4float %48 0
+         %50 = OpVectorShuffle %v3float %49 %49 0 1 2
+         %51 = OpCompositeExtract %v4float %48 1
+         %52 = OpVectorShuffle %v3float %51 %51 0 1 2
+         %53 = OpCompositeExtract %v4float %48 2
+         %54 = OpVectorShuffle %v3float %53 %53 0 1 2
+         %55 = OpCompositeConstruct %mat3v3float %50 %52 %54
+               OpStore %normal_matrix %55
+         %57 = OpLoad %mat3v3float %normal_matrix
+         %60 = OpLoad %v3float %i_Normal
+         %61 = OpMatrixTimesVector %v3float %57 %60
+         %62 = OpExtInst %v3float %1 Normalize %61
+               OpStore %v_Normal %62
+               OpReturn
+               OpFunctionEnd

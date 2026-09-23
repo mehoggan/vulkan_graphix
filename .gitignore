@@ -64,8 +64,6 @@ bin/Rocky.raw
 bin/projectileDefault.ogl
 bin/projectileDefault.raw
 vulkan_earth/src/vulkan_earth_runner
-vulkan_earth/src/vk_particle_pilot_runner
-vulkan_earth/src/shader.*.spv
 tests/math_test
 tests/math_test.log
 tests/math_test.trs

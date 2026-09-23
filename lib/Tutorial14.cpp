@@ -1,4 +1,4 @@
-#include "VulkanParticlePilot.h"
+#include "vulkan_graphix/Tutorial14.h"
 
 #include <vulkan/vulkan_core.h>
 
@@ -12,21 +12,168 @@
 
 namespace vulkan_graphix {
 
-VulkanParticlePilot::VulkanParticlePilot()
-        : vk_render_pass_(VK_NULL_HANDLE)
-        , vk_pipeline_layout_(VK_NULL_HANDLE)
-        , vk_graphics_pipeline_(VK_NULL_HANDLE)
-        , index_count_(0)
-        , vk_command_pool_(VK_NULL_HANDLE)
-        , rendering_resources_(resources_count_)
+// ************************************************************ //
+// VulkanTutorial14Parameters                                   //
+// ************************************************************ //
+VulkanTutorial14Parameters::VulkanTutorial14Parameters()
+        : m_vk_render_pass(VK_NULL_HANDLE)
+        , m_vk_pipeline_layout(VK_NULL_HANDLE)
+        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
+        , m_index_count(0)
+        , m_vk_command_pool(VK_NULL_HANDLE)
+        , m_rendering_resources(resources_count) {}
+
+const VkRenderPass& VulkanTutorial14Parameters::getVkRenderPass() const {
+    return m_vk_render_pass;
+}
+VkRenderPass& VulkanTutorial14Parameters::getVkRenderPass() {
+    return m_vk_render_pass;
+}
+void VulkanTutorial14Parameters::setVkRenderPass(
+        const VkRenderPass& vk_render_pass) {
+    m_vk_render_pass = vk_render_pass;
+}
+
+const BufferParameters&
+VulkanTutorial14Parameters::getUniformBufferParameters() const {
+    return m_uniform_buffer;
+}
+BufferParameters& VulkanTutorial14Parameters::getUniformBufferParameters() {
+    return m_uniform_buffer;
+}
+void VulkanTutorial14Parameters::setUniformBufferParameters(
+        const BufferParameters& uniform_buffer) {
+    m_uniform_buffer = uniform_buffer;
+}
+
+const DescriptorSetParameters&
+VulkanTutorial14Parameters::getDescriptorSetParameters() const {
+    return m_descriptor_set_parameters;
+}
+DescriptorSetParameters&
+VulkanTutorial14Parameters::getDescriptorSetParameters() {
+    return m_descriptor_set_parameters;
+}
+void VulkanTutorial14Parameters::setDescriptorSetParameters(
+        const DescriptorSetParameters& descriptor_set_parameters) {
+    m_descriptor_set_parameters = descriptor_set_parameters;
+}
+
+const VkPipelineLayout& VulkanTutorial14Parameters::getVkPipelineLayout()
+        const {
+    return m_vk_pipeline_layout;
+}
+VkPipelineLayout& VulkanTutorial14Parameters::getVkPipelineLayout() {
+    return m_vk_pipeline_layout;
+}
+void VulkanTutorial14Parameters::setVkPipelineLayout(
+        const VkPipelineLayout& vk_pipeline_layout) {
+    m_vk_pipeline_layout = vk_pipeline_layout;
+}
+
+const VkPipeline& VulkanTutorial14Parameters::getVkGraphicsPipeline() const {
+    return m_vk_graphics_pipeline;
+}
+VkPipeline& VulkanTutorial14Parameters::getVkGraphicsPipeline() {
+    return m_vk_graphics_pipeline;
+}
+void VulkanTutorial14Parameters::setVkGraphicsPipeline(
+        const VkPipeline& vk_graphics_pipeline) {
+    m_vk_graphics_pipeline = vk_graphics_pipeline;
+}
+
+const BufferParameters& VulkanTutorial14Parameters::getVertexBufferParameters()
+        const {
+    return m_vertex_buffer;
+}
+BufferParameters& VulkanTutorial14Parameters::getVertexBufferParameters() {
+    return m_vertex_buffer;
+}
+void VulkanTutorial14Parameters::setVertexBufferParameters(
+        const BufferParameters& vertex_buffer) {
+    m_vertex_buffer = vertex_buffer;
+}
+
+const BufferParameters& VulkanTutorial14Parameters::getIndexBufferParameters()
+        const {
+    return m_index_buffer;
+}
+BufferParameters& VulkanTutorial14Parameters::getIndexBufferParameters() {
+    return m_index_buffer;
+}
+void VulkanTutorial14Parameters::setIndexBufferParameters(
+        const BufferParameters& index_buffer) {
+    m_index_buffer = index_buffer;
+}
+
+std::uint32_t VulkanTutorial14Parameters::getIndexCount() const {
+    return m_index_count;
+}
+void VulkanTutorial14Parameters::setIndexCount(std::uint32_t index_count) {
+    m_index_count = index_count;
+}
+
+const BufferParameters&
+VulkanTutorial14Parameters::getStagingBufferParameters() const {
+    return m_staging_buffer;
+}
+BufferParameters& VulkanTutorial14Parameters::getStagingBufferParameters() {
+    return m_staging_buffer;
+}
+void VulkanTutorial14Parameters::setStagingBufferParameters(
+        const BufferParameters& staging_buffer) {
+    m_staging_buffer = staging_buffer;
+}
+
+const VkCommandPool& VulkanTutorial14Parameters::getVkCommandPool() const {
+    return m_vk_command_pool;
+}
+VkCommandPool& VulkanTutorial14Parameters::getVkCommandPool() {
+    return m_vk_command_pool;
+}
+void VulkanTutorial14Parameters::setVkCommandPool(
+        const VkCommandPool& vk_command_pool) {
+    m_vk_command_pool = vk_command_pool;
+}
+
+const std::vector<RenderingResourceParameters>&
+VulkanTutorial14Parameters::getRenderingResources() const {
+    return m_rendering_resources;
+}
+std::vector<RenderingResourceParameters>&
+VulkanTutorial14Parameters::getRenderingResources() {
+    return m_rendering_resources;
+}
+void VulkanTutorial14Parameters::setRenderingResources(
+        const std::vector<RenderingResourceParameters>& rendering_resources) {
+    m_rendering_resources = rendering_resources;
+}
+
+const std::vector<VkSemaphore>&
+VulkanTutorial14Parameters::getFinishedRenderingSemaphores() const {
+    return m_finished_rendering_semaphores;
+}
+std::vector<VkSemaphore>&
+VulkanTutorial14Parameters::getFinishedRenderingSemaphores() {
+    return m_finished_rendering_semaphores;
+}
+void VulkanTutorial14Parameters::setFinishedRenderingSemaphores(
+        const std::vector<VkSemaphore>& finished_rendering_semaphores) {
+    m_finished_rendering_semaphores = finished_rendering_semaphores;
+}
+
+// ************************************************************ //
+// Tutorial14                                                   //
+// ************************************************************ //
+Tutorial14::Tutorial14()
         // The sphere itself has radius 1.0 (see getVertexData()); 3.5 gives
         // a clear view of it and its translucency against the clear color.
-        , camera_(0.6f, 0.3f, 3.5f) {}
+        : m_camera(0.6f, 0.3f, 3.5f) {}
 
-VulkanParticlePilot::~VulkanParticlePilot() { childClear(); }
+Tutorial14::~Tutorial14() { childClear(); }
 
-bool VulkanParticlePilot::createCommandPool(std::uint32_t queue_family_index,
-                                            VkCommandPool* pool) {
+bool Tutorial14::createCommandPool(std::uint32_t queue_family_index,
+                                   VkCommandPool* pool) {
     VkCommandPoolCreateInfo cmd_pool_create_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             .pNext = nullptr,
@@ -43,10 +190,9 @@ bool VulkanParticlePilot::createCommandPool(std::uint32_t queue_family_index,
     return true;
 }
 
-bool VulkanParticlePilot::allocateCommandBuffers(
-        VkCommandPool pool,
-        std::uint32_t count,
-        VkCommandBuffer* command_buffers) {
+bool Tutorial14::allocateCommandBuffers(VkCommandPool pool,
+                                        std::uint32_t count,
+                                        VkCommandBuffer* command_buffers) {
     VkCommandBufferAllocateInfo command_buffer_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
             .pNext = nullptr,
@@ -63,49 +209,56 @@ bool VulkanParticlePilot::allocateCommandBuffers(
     return true;
 }
 
-bool VulkanParticlePilot::createCommandBuffers() {
-    if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
-                           &vk_command_pool_)) {
+bool Tutorial14::createCommandBuffers() {
+    if (!createCommandPool(
+                getGraphicsQueueParameters().getFamilyIndex(),
+                &m_vulkan_tutorial14_parameters.getVkCommandPool())) {
         return false;
     }
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial14_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!allocateCommandBuffers(
-                    vk_command_pool_,
+                    m_vulkan_tutorial14_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer())) {
+                    &rendering_resources[i].getVkCommandBuffer())) {
             return false;
         }
     }
     return true;
 }
 
-bool VulkanParticlePilot::createSemaphores() {
+bool Tutorial14::createSemaphores() {
     VkSemaphoreCreateInfo semaphore_create_info = {
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial14_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateSemaphore(
                     getVkDevice(),
                     &semaphore_create_info,
                     nullptr,
-                    &rendering_resources_[i].getImageAvailableVkSemaphore()) !=
+                    &rendering_resources[i].getImageAvailableVkSemaphore()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
     }
 
-    finished_rendering_semaphores_.assign(
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial14_parameters.getFinishedRenderingSemaphores();
+    finished_rendering_semaphores.assign(
             getSwapchainParameters().getImageParameters().size(),
             VK_NULL_HANDLE);
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
         if (vkCreateSemaphore(getVkDevice(),
                               &semaphore_create_info,
                               nullptr,
-                              &finished_rendering_semaphores_[i]) !=
+                              &finished_rendering_semaphores[i]) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
@@ -115,17 +268,19 @@ bool VulkanParticlePilot::createSemaphores() {
     return true;
 }
 
-bool VulkanParticlePilot::createFences() {
+bool Tutorial14::createFences() {
     VkFenceCreateInfo fence_create_info = {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_FENCE_CREATE_SIGNALED_BIT};
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial14_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (vkCreateFence(getVkDevice(),
                           &fence_create_info,
                           nullptr,
-                          &rendering_resources_[i].getVkFence()) !=
+                          &rendering_resources[i].getVkFence()) !=
             VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
@@ -134,7 +289,7 @@ bool VulkanParticlePilot::createFences() {
     return true;
 }
 
-bool VulkanParticlePilot::createRenderingResources() {
+bool Tutorial14::createRenderingResources() {
     if (!createCommandBuffers()) {
         return false;
     }
@@ -147,8 +302,9 @@ bool VulkanParticlePilot::createRenderingResources() {
     return true;
 }
 
-bool VulkanParticlePilot::allocateBufferMemory(
-        VkBuffer buffer, VkMemoryPropertyFlags property, VkDeviceMemory* memory) {
+bool Tutorial14::allocateBufferMemory(VkBuffer buffer,
+                                      VkMemoryPropertyFlags property,
+                                      VkDeviceMemory* memory) {
     VkMemoryRequirements buffer_memory_requirements;
     vkGetBufferMemoryRequirements(
             getVkDevice(), buffer, &buffer_memory_requirements);
@@ -178,9 +334,9 @@ bool VulkanParticlePilot::allocateBufferMemory(
     return false;
 }
 
-bool VulkanParticlePilot::createBuffer(VkBufferUsageFlags usage,
-                                       VkMemoryPropertyFlags memory_property,
-                                       BufferParameters& buffer) {
+bool Tutorial14::createBuffer(VkBufferUsageFlags usage,
+                              VkMemoryPropertyFlags memory_property,
+                              BufferParameters& buffer) {
     VkBufferCreateInfo buffer_create_info = {
             .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
             .pNext = nullptr,
@@ -219,17 +375,19 @@ bool VulkanParticlePilot::createBuffer(VkBufferUsageFlags usage,
     return true;
 }
 
-bool VulkanParticlePilot::createStagingBuffer() {
+bool Tutorial14::createStagingBuffer() {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial14_parameters.getStagingBufferParameters();
     // The icosphere's vertex+index data is tiny (a few hundred vertices at
     // most for a sane level-of-detail) - 1MB is generous headroom rather
-    // than copied from another pilot's constant sized for a much larger
-    // texture upload this pilot doesn't have. See copyBufferData()'s size
-    // guard below for what silently overflowing this buffer did to the
-    // skybox pilot.
-    staging_buffer_.setSize(1024 * 1024);
+    // than copied from another tutorial's constant sized for a much larger
+    // texture upload this tutorial doesn't have. See copyBufferData()'s
+    // size guard below for what silently overflowing this buffer did to
+    // the original migration pilot this tutorial is ported from.
+    staging_buffer.setSize(1024 * 1024);
     if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                      staging_buffer_)) {
+                      staging_buffer)) {
         Logging::error(LOG_TAG, "Could not create staging buffer!");
         return false;
     }
@@ -237,14 +395,16 @@ bool VulkanParticlePilot::createStagingBuffer() {
     return true;
 }
 
-bool VulkanParticlePilot::createUniformBuffer() {
-    uniform_buffer_.setSize(sizeof(ParticlePilotUniformBufferData));
+bool Tutorial14::createUniformBuffer() {
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial14_parameters.getUniformBufferParameters();
+    uniform_buffer.setSize(sizeof(Tutorial14UniformBufferData));
     // Host-visible/coherent, rewritten every frame as the orbit camera
     // moves - same tradeoff Tutorial08/Tutorial09 make for the same reason.
     if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      uniform_buffer_)) {
+                      uniform_buffer)) {
         Logging::error(LOG_TAG, "Could not create uniform buffer!");
         return false;
     }
@@ -252,12 +412,11 @@ bool VulkanParticlePilot::createUniformBuffer() {
     return updateUniformBufferData();
 }
 
-ParticlePilotUniformBufferData VulkanParticlePilot::getUniformBufferData()
-        const {
-    ParticlePilotUniformBufferData data{};
+Tutorial14UniformBufferData Tutorial14::getUniformBufferData() const {
+    Tutorial14UniformBufferData data{};
     data.model = Math::Mat4<float>(1.0f);  // static particle, no rotation
     data.view = glm::lookAt(
-            camera_.eye(), camera_.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -268,18 +427,19 @@ ParticlePilotUniformBufferData VulkanParticlePilot::getUniformBufferData()
 
     data.light_position = Math::Vec4<float>(5.0f, 8.0f, 5.0f, 1.0f);
     data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(camera_.eye(), 1.0f);
+    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
 
     return data;
 }
 
-bool VulkanParticlePilot::updateUniformBufferData() {
-    ParticlePilotUniformBufferData const uniform_data =
-            getUniformBufferData();
+bool Tutorial14::updateUniformBufferData() {
+    Tutorial14UniformBufferData const uniform_data = getUniformBufferData();
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial14_parameters.getUniformBufferParameters();
 
     void* uniform_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    uniform_buffer_.getVkDeviceMemory(),
+                    uniform_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -289,13 +449,13 @@ bool VulkanParticlePilot::updateUniformBufferData() {
     }
     std::memcpy(uniform_buffer_memory_pointer,
                 &uniform_data,
-                uniform_buffer_.getSize());
-    vkUnmapMemory(getVkDevice(), uniform_buffer_.getVkDeviceMemory());
+                uniform_buffer.getSize());
+    vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
 
     return true;
 }
 
-bool VulkanParticlePilot::createDescriptorSetLayout() {
+bool Tutorial14::createDescriptorSetLayout() {
     // Just the one uniform buffer binding - no texture, matching the
     // original's flat, untextured glutSolidSphere() look and Tutorial08's
     // own (texture-free) descriptor layout.
@@ -322,13 +482,13 @@ bool VulkanParticlePilot::createDescriptorSetLayout() {
         Logging::error(LOG_TAG, "Could not create descriptor set layout!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSetLayout(
-            vk_descriptor_set_layout);
+    m_vulkan_tutorial14_parameters.getDescriptorSetParameters()
+            .setVkDescriptorSetLayout(vk_descriptor_set_layout);
 
     return true;
 }
 
-bool VulkanParticlePilot::createDescriptorPool() {
+bool Tutorial14::createDescriptorPool() {
     std::vector<VkDescriptorPoolSize> pool_sizes = {
             {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1}};
 
@@ -348,18 +508,21 @@ bool VulkanParticlePilot::createDescriptorPool() {
         Logging::error(LOG_TAG, "Could not create descriptor pool!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorPool(vk_descriptor_pool);
+    m_vulkan_tutorial14_parameters.getDescriptorSetParameters()
+            .setVkDescriptorPool(vk_descriptor_pool);
 
     return true;
 }
 
-bool VulkanParticlePilot::allocateDescriptorSet() {
+bool Tutorial14::allocateDescriptorSet() {
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial14_parameters.getDescriptorSetParameters();
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            descriptor_set.getVkDescriptorSetLayout();
     VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
             .pNext = nullptr,
-            .descriptorPool = descriptor_set_parameters_.getVkDescriptorPool(),
+            .descriptorPool = descriptor_set.getVkDescriptorPool(),
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_descriptor_set_layout};
 
@@ -370,21 +533,26 @@ bool VulkanParticlePilot::allocateDescriptorSet() {
         Logging::error(LOG_TAG, "Could not allocate descriptor set!");
         return false;
     }
-    descriptor_set_parameters_.setVkDescriptorSet(vk_descriptor_set);
+    descriptor_set.setVkDescriptorSet(vk_descriptor_set);
 
     return true;
 }
 
-bool VulkanParticlePilot::updateDescriptorSet() {
+bool Tutorial14::updateDescriptorSet() {
+    BufferParameters& uniform_buffer =
+            m_vulkan_tutorial14_parameters.getUniformBufferParameters();
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial14_parameters.getDescriptorSetParameters();
+
     VkDescriptorBufferInfo buffer_info = {
-            .buffer = uniform_buffer_.getVkBuffer(),
+            .buffer = uniform_buffer.getVkBuffer(),
             .offset = 0,
-            .range = uniform_buffer_.getSize()};
+            .range = uniform_buffer.getSize()};
 
     std::vector<VkWriteDescriptorSet> descriptor_writes = {
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet = descriptor_set_parameters_.getVkDescriptorSet(),
+             .dstSet = descriptor_set.getVkDescriptorSet(),
              .dstBinding = 0,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -402,7 +570,7 @@ bool VulkanParticlePilot::updateDescriptorSet() {
     return true;
 }
 
-bool VulkanParticlePilot::createRenderPass() {
+bool Tutorial14::createRenderPass() {
     VkAttachmentDescription attachment_descriptions[] = {
             {.flags = 0,
              .format = getSwapchainParameters().getVkFormat(),
@@ -441,10 +609,12 @@ bool VulkanParticlePilot::createRenderPass() {
             .dependencyCount = 0,
             .pDependencies = nullptr};
 
-    if (vkCreateRenderPass(getVkDevice(),
-                           &render_pass_create_info,
-                           nullptr,
-                           &vk_render_pass_) != VK_SUCCESS) {
+    if (vkCreateRenderPass(
+                getVkDevice(),
+                &render_pass_create_info,
+                nullptr,
+                &m_vulkan_tutorial14_parameters.getVkRenderPass()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create render pass!");
         return false;
     }
@@ -452,9 +622,10 @@ bool VulkanParticlePilot::createRenderPass() {
     return true;
 }
 
-bool VulkanParticlePilot::createPipelineLayout() {
+bool Tutorial14::createPipelineLayout() {
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set_parameters_.getVkDescriptorSetLayout();
+            m_vulkan_tutorial14_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSetLayout();
     VkPipelineLayoutCreateInfo layout_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
             .pNext = nullptr,
@@ -464,10 +635,12 @@ bool VulkanParticlePilot::createPipelineLayout() {
             .pushConstantRangeCount = 0,
             .pPushConstantRanges = nullptr};
 
-    if (vkCreatePipelineLayout(getVkDevice(),
-                               &layout_create_info,
-                               nullptr,
-                               &vk_pipeline_layout_) != VK_SUCCESS) {
+    if (vkCreatePipelineLayout(
+                getVkDevice(),
+                &layout_create_info,
+                nullptr,
+                &m_vulkan_tutorial14_parameters.getVkPipelineLayout()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create pipeline layout!");
         return false;
     }
@@ -476,7 +649,7 @@ bool VulkanParticlePilot::createPipelineLayout() {
 }
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-VulkanParticlePilot::createShaderModule(const char* filename) {
+Tutorial14::createShaderModule(const char* filename) {
     const std::vector<char> code = Tools::getBinaryFileContents(filename);
     if (code.empty()) {
         return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
@@ -505,17 +678,15 @@ VulkanParticlePilot::createShaderModule(const char* filename) {
             shader_module, vkDestroyShaderModule, getVkDevice());
 }
 
-bool VulkanParticlePilot::createPipeline() {
+bool Tutorial14::createPipeline() {
     // Vertex shader reused verbatim from Tutorial08 (position/normal ->
     // world position/normal, same UBO shape); fragment shader is new
-    // (resources/particle_pilot/Data/shader.frag) since Tutorial08's own
-    // hardcodes an opaque, non-alpha-blended color - see VulkanParticlePilot.h.
+    // (resources/14/Data/shader.14.frag) since Tutorial08's own hardcodes
+    // an opaque, non-alpha-blended color - see Tutorial14.h.
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            vertex_shader_module =
-                    createShaderModule("shader.particle.vert.spv");
+            vertex_shader_module = createShaderModule("shader.14.vert.spv");
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            fragment_shader_module =
-                    createShaderModule("shader.particle.frag.spv");
+            fragment_shader_module = createShaderModule("shader.14.frag.spv");
 
     if (!vertex_shader_module || !fragment_shader_module) {
         return false;
@@ -539,7 +710,7 @@ bool VulkanParticlePilot::createPipeline() {
 
     std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions =
             {{.binding = 0,
-              .stride = ParticlePilotVertexAttributeTraits::stride,
+              .stride = Tutorial14VertexAttributeTraits::stride,
               .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
     std::vector<VkVertexInputAttributeDescription>
@@ -547,13 +718,13 @@ bool VulkanParticlePilot::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct ParticlePilotVertexData,
-                                        position)},
+                     .offset =
+                             offsetof(struct Tutorial14VertexData, position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
                      .offset =
-                             offsetof(struct ParticlePilotVertexData, normal)}};
+                             offsetof(struct Tutorial14VertexData, normal)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -615,11 +786,11 @@ bool VulkanParticlePilot::createPipeline() {
             .alphaToCoverageEnable = VK_FALSE,
             .alphaToOneEnable = VK_FALSE};
 
-    // The only one of this session's pilots that needs blending - matches
-    // Particle::render()'s own glColor4f(r, g, b, 0.4) translucency.
+    // The only one of the four migration tutorials that needs blending -
+    // matches Particle::render()'s own glColor4f(r, g, b, 0.4) translucency.
     // Standard alpha-over blend factors; no depth attachment (see
-    // VulkanParticlePilot.h - back-face culling alone is enough for a
-    // single convex icosphere, so there's no self-occlusion to resolve).
+    // Tutorial14.h - back-face culling alone is enough for a single convex
+    // icosphere, so there's no self-occlusion to resolve).
     VkPipelineColorBlendAttachmentState color_blend_attachment_state = {
             .blendEnable = VK_TRUE,
             .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
@@ -669,34 +840,35 @@ bool VulkanParticlePilot::createPipeline() {
             .pDepthStencilState = nullptr,
             .pColorBlendState = &color_blend_state_create_info,
             .pDynamicState = &dynamic_state_create_info,
-            .layout = vk_pipeline_layout_,
-            .renderPass = vk_render_pass_,
+            .layout = m_vulkan_tutorial14_parameters.getVkPipelineLayout(),
+            .renderPass = m_vulkan_tutorial14_parameters.getVkRenderPass(),
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
 
-    if (vkCreateGraphicsPipelines(getVkDevice(),
-                                  VK_NULL_HANDLE,
-                                  1,
-                                  &pipeline_create_info,
-                                  nullptr,
-                                  &vk_graphics_pipeline_) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(
+                getVkDevice(),
+                VK_NULL_HANDLE,
+                1,
+                &pipeline_create_info,
+                nullptr,
+                &m_vulkan_tutorial14_parameters.getVkGraphicsPipeline()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create graphics pipeline!");
         return false;
     }
     return true;
 }
 
-const std::vector<ParticlePilotVertexData>&
-VulkanParticlePilot::getVertexData() const {
+const std::vector<Tutorial14VertexData>& Tutorial14::getVertexData() const {
     // Same Math::Sphere usage as Tutorial08::getVertexData() - an icosphere
     // (radius 1.0, subdivision level 3), no texcoords since the original
     // glutSolidSphere() draw is untextured too.
-    static const std::vector<ParticlePilotVertexData> vertex_data = [] {
+    static const std::vector<Tutorial14VertexData> vertex_data = [] {
         Math::Sphere<float, std::uint32_t> const sphere(
                 1.0f, static_cast<std::uint8_t>(3));
 
-        std::vector<ParticlePilotVertexData> data;
+        std::vector<Tutorial14VertexData> data;
         data.reserve(sphere.points().size());
         for (std::size_t i = 0; i < sphere.points().size(); ++i) {
             Math::Vec3<float> const& point = sphere.points()[i];
@@ -709,7 +881,7 @@ VulkanParticlePilot::getVertexData() const {
     return vertex_data;
 }
 
-const std::vector<std::uint32_t>& VulkanParticlePilot::getIndexData() const {
+const std::vector<std::uint32_t>& Tutorial14::getIndexData() const {
     static const std::vector<std::uint32_t> index_data = [] {
         Math::Sphere<float, std::uint32_t> const sphere(
                 1.0f, static_cast<std::uint8_t>(3));
@@ -718,24 +890,27 @@ const std::vector<std::uint32_t>& VulkanParticlePilot::getIndexData() const {
     return index_data;
 }
 
-bool VulkanParticlePilot::copyBufferData(BufferParameters& destination,
-                                         const void* data,
-                                         std::uint32_t data_size,
-                                         VkAccessFlags dst_access_mask,
-                                         VkPipelineStageFlags dst_stage_mask) {
-    if (data_size > staging_buffer_.getSize()) {
+bool Tutorial14::copyBufferData(BufferParameters& destination,
+                                const void* data,
+                                std::uint32_t data_size,
+                                VkAccessFlags dst_access_mask,
+                                VkPipelineStageFlags dst_stage_mask) {
+    BufferParameters& staging_buffer =
+            m_vulkan_tutorial14_parameters.getStagingBufferParameters();
+
+    if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Buffer data (",
                        data_size,
                        " bytes) does not fit in the staging buffer (",
-                       staging_buffer_.getSize(),
+                       staging_buffer.getSize(),
                        " bytes)!");
         return false;
     }
 
     void* staging_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    staging_buffer_.getVkDeviceMemory(),
+                    staging_buffer.getVkDeviceMemory(),
                     0,
                     VK_WHOLE_SIZE,
                     0,
@@ -751,15 +926,16 @@ bool VulkanParticlePilot::copyBufferData(BufferParameters& destination,
     VkMappedMemoryRange flush_range = {
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
             .pNext = nullptr,
-            .memory = staging_buffer_.getVkDeviceMemory(),
+            .memory = staging_buffer.getVkDeviceMemory(),
             .offset = 0,
             .size = VK_WHOLE_SIZE};
     vkFlushMappedMemoryRanges(getVkDevice(), 1, &flush_range);
 
-    vkUnmapMemory(getVkDevice(), staging_buffer_.getVkDeviceMemory());
+    vkUnmapMemory(getVkDevice(), staging_buffer.getVkDeviceMemory());
 
     VkCommandBuffer command_buffer =
-            rendering_resources_[0].getVkCommandBuffer();
+            m_vulkan_tutorial14_parameters.getRenderingResources()[0]
+                    .getVkCommandBuffer();
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -772,7 +948,7 @@ bool VulkanParticlePilot::copyBufferData(BufferParameters& destination,
     VkBufferCopy buffer_copy_info = {
             .srcOffset = 0, .dstOffset = 0, .size = data_size};
     vkCmdCopyBuffer(command_buffer,
-                    staging_buffer_.getVkBuffer(),
+                    staging_buffer.getVkBuffer(),
                     destination.getVkBuffer(),
                     1,
                     &buffer_copy_info);
@@ -822,49 +998,54 @@ bool VulkanParticlePilot::copyBufferData(BufferParameters& destination,
     return true;
 }
 
-bool VulkanParticlePilot::createVertexBuffer() {
-    const std::vector<ParticlePilotVertexData>& vertex_data = getVertexData();
+bool Tutorial14::createVertexBuffer() {
+    const std::vector<Tutorial14VertexData>& vertex_data = getVertexData();
 
-    vertex_buffer_.setSize(static_cast<std::uint32_t>(
+    BufferParameters& vertex_buffer =
+            m_vulkan_tutorial14_parameters.getVertexBufferParameters();
+    vertex_buffer.setSize(static_cast<std::uint32_t>(
             vertex_data.size() * sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      vertex_buffer_)) {
+                      vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create vertex buffer!");
         return false;
     }
 
-    return copyBufferData(vertex_buffer_,
+    return copyBufferData(vertex_buffer,
                           vertex_data.data(),
-                          vertex_buffer_.getSize(),
+                          vertex_buffer.getSize(),
                           VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool VulkanParticlePilot::createIndexBuffer() {
+bool Tutorial14::createIndexBuffer() {
     const std::vector<std::uint32_t>& index_data = getIndexData();
-    index_count_ = static_cast<std::uint32_t>(index_data.size());
+    m_vulkan_tutorial14_parameters.setIndexCount(
+            static_cast<std::uint32_t>(index_data.size()));
 
-    index_buffer_.setSize(static_cast<std::uint32_t>(
+    BufferParameters& index_buffer =
+            m_vulkan_tutorial14_parameters.getIndexBufferParameters();
+    index_buffer.setSize(static_cast<std::uint32_t>(
             index_data.size() * sizeof(index_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      index_buffer_)) {
+                      index_buffer)) {
         Logging::error(LOG_TAG, "Could not create index buffer!");
         return false;
     }
 
-    return copyBufferData(index_buffer_,
+    return copyBufferData(index_buffer,
                           index_data.data(),
-                          index_buffer_.getSize(),
+                          index_buffer.getSize(),
                           VK_ACCESS_INDEX_READ_BIT,
                           VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool VulkanParticlePilot::createFramebuffer(VkFramebuffer& framebuffer,
-                                            VkImageView image_view) {
+bool Tutorial14::createFramebuffer(VkFramebuffer& framebuffer,
+                                   VkImageView image_view) {
     if (framebuffer != VK_NULL_HANDLE) {
         vkDestroyFramebuffer(getVkDevice(), framebuffer, nullptr);
         framebuffer = VK_NULL_HANDLE;
@@ -874,7 +1055,7 @@ bool VulkanParticlePilot::createFramebuffer(VkFramebuffer& framebuffer,
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial14_parameters.getVkRenderPass(),
             .attachmentCount = 1,
             .pAttachments = &image_view,
             .width = getSwapchainParameters().getVkExtent2d().width,
@@ -892,10 +1073,9 @@ bool VulkanParticlePilot::createFramebuffer(VkFramebuffer& framebuffer,
     return true;
 }
 
-bool VulkanParticlePilot::prepareFrame(
-        VkCommandBuffer command_buffer,
-        const ImageParameters& image_parameters,
-        VkFramebuffer& framebuffer) {
+bool Tutorial14::prepareFrame(VkCommandBuffer command_buffer,
+                              const ImageParameters& image_parameters,
+                              VkFramebuffer& framebuffer) {
     if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
         return false;
     }
@@ -953,7 +1133,7 @@ bool VulkanParticlePilot::prepareFrame(
     VkRenderPassBeginInfo render_pass_begin_info = {
             .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .pNext = nullptr,
-            .renderPass = vk_render_pass_,
+            .renderPass = m_vulkan_tutorial14_parameters.getVkRenderPass(),
             .framebuffer = framebuffer,
             .renderArea = {.offset = {.x = 0, .y = 0},
                            .extent = getSwapchainParameters().getVkExtent2d()},
@@ -965,7 +1145,9 @@ bool VulkanParticlePilot::prepareFrame(
                          VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(
-            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk_graphics_pipeline_);
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial14_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -985,23 +1167,40 @@ bool VulkanParticlePilot::prepareFrame(
 
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(
-            command_buffer, 0, 1, &vertex_buffer_.getVkBuffer(), &offset);
+            command_buffer,
+            0,
+            1,
+            &m_vulkan_tutorial14_parameters.getVertexBufferParameters()
+                     .getVkBuffer(),
+            &offset);
 
     vkCmdBindIndexBuffer(
-            command_buffer, index_buffer_.getVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
+            command_buffer,
+            m_vulkan_tutorial14_parameters.getIndexBufferParameters()
+                    .getVkBuffer(),
+            0,
+            VK_INDEX_TYPE_UINT32);
 
     VkDescriptorSet vk_descriptor_set =
-            descriptor_set_parameters_.getVkDescriptorSet();
-    vkCmdBindDescriptorSets(command_buffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            vk_pipeline_layout_,
-                            0,
-                            1,
-                            &vk_descriptor_set,
-                            0,
-                            nullptr);
+            m_vulkan_tutorial14_parameters.getDescriptorSetParameters()
+                    .getVkDescriptorSet();
+    vkCmdBindDescriptorSets(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial14_parameters.getVkPipelineLayout(),
+            0,
+            1,
+            &vk_descriptor_set,
+            0,
+            nullptr);
 
-    vkCmdDrawIndexed(command_buffer, index_count_, 1, 0, 0, 0);
+    vkCmdDrawIndexed(
+            command_buffer,
+            m_vulkan_tutorial14_parameters.getIndexCount(),
+            1,
+            0,
+            0,
+            0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1034,14 +1233,17 @@ bool VulkanParticlePilot::prepareFrame(
     return true;
 }
 
-bool VulkanParticlePilot::draw() {
+bool Tutorial14::draw() {
     static std::size_t resource_index = 0;
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial14_parameters.getRenderingResources();
     RenderingResourceParameters& current_rendering_resource =
-            rendering_resources_[resource_index];
+            rendering_resources[resource_index];
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) % resources_count_;
+    resource_index = (resource_index + 1) %
+                     VulkanTutorial14Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1086,7 +1288,8 @@ bool VulkanParticlePilot::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            finished_rendering_semaphores_[image_index];
+            m_vulkan_tutorial14_parameters.getFinishedRenderingSemaphores()
+                    [image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1137,18 +1340,18 @@ bool VulkanParticlePilot::draw() {
     return true;
 }
 
-void VulkanParticlePilot::onMouseButton(int button,
-                                        bool pressed,
-                                        int pos_x,
-                                        int pos_y) {
-    camera_.onMouseButton(button, pressed, pos_x, pos_y);
+void Tutorial14::onMouseButton(int button,
+                               bool pressed,
+                               int pos_x,
+                               int pos_y) {
+    m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void VulkanParticlePilot::onMouseMove(int pos_x, int pos_y) {
-    camera_.onMouseMove(pos_x, pos_y);
+void Tutorial14::onMouseMove(int pos_x, int pos_y) {
+    m_camera.onMouseMove(pos_x, pos_y);
 }
 
-void VulkanParticlePilot::destroyBuffer(BufferParameters& buffer) {
+void Tutorial14::destroyBuffer(BufferParameters& buffer) {
     if (buffer.getVkBuffer() != VK_NULL_HANDLE) {
         vkDestroyBuffer(getVkDevice(), buffer.getVkBuffer(), nullptr);
         buffer.setVkBuffer(VK_NULL_HANDLE);
@@ -1159,7 +1362,7 @@ void VulkanParticlePilot::destroyBuffer(BufferParameters& buffer) {
     }
 }
 
-bool VulkanParticlePilot::childOnWindowSizeChanged() {
+bool Tutorial14::childOnWindowSizeChanged() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return true;
     }
@@ -1201,87 +1404,104 @@ bool VulkanParticlePilot::childOnWindowSizeChanged() {
     return createIndexBuffer();
 }
 
-void VulkanParticlePilot::childClear() {
+void Tutorial14::childClear() {
     if (getVkDevice() == VK_NULL_HANDLE) {
         return;
     }
     vkDeviceWaitIdle(getVkDevice());
 
-    for (std::size_t i = 0; i < rendering_resources_.size(); ++i) {
-        if (rendering_resources_[i].getVkFramebuffer() != VK_NULL_HANDLE) {
+    std::vector<RenderingResourceParameters>& rendering_resources =
+            m_vulkan_tutorial14_parameters.getRenderingResources();
+    for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
+        if (rendering_resources[i].getVkFramebuffer() != VK_NULL_HANDLE) {
             vkDestroyFramebuffer(getVkDevice(),
-                                 rendering_resources_[i].getVkFramebuffer(),
+                                 rendering_resources[i].getVkFramebuffer(),
                                  nullptr);
-            rendering_resources_[i].setVkFramebuffer(VK_NULL_HANDLE);
+            rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
         }
-        if (rendering_resources_[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
             vkFreeCommandBuffers(
                     getVkDevice(),
-                    vk_command_pool_,
+                    m_vulkan_tutorial14_parameters.getVkCommandPool(),
                     1,
-                    &rendering_resources_[i].getVkCommandBuffer());
+                    &rendering_resources[i].getVkCommandBuffer());
         }
-        if (rendering_resources_[i].getImageAvailableVkSemaphore() !=
+        if (rendering_resources[i].getImageAvailableVkSemaphore() !=
             VK_NULL_HANDLE) {
             vkDestroySemaphore(
                     getVkDevice(),
-                    rendering_resources_[i].getImageAvailableVkSemaphore(),
+                    rendering_resources[i].getImageAvailableVkSemaphore(),
                     nullptr);
         }
-        if (rendering_resources_[i].getVkFence() != VK_NULL_HANDLE) {
+        if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
             vkDestroyFence(
-                    getVkDevice(), rendering_resources_[i].getVkFence(), nullptr);
+                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
         }
     }
 
-    for (std::size_t i = 0; i < finished_rendering_semaphores_.size(); ++i) {
-        if (finished_rendering_semaphores_[i] != VK_NULL_HANDLE) {
+    std::vector<VkSemaphore>& finished_rendering_semaphores =
+            m_vulkan_tutorial14_parameters.getFinishedRenderingSemaphores();
+    for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
+        if (finished_rendering_semaphores[i] != VK_NULL_HANDLE) {
             vkDestroySemaphore(
-                    getVkDevice(), finished_rendering_semaphores_[i], nullptr);
+                    getVkDevice(), finished_rendering_semaphores[i], nullptr);
         }
     }
-    finished_rendering_semaphores_.clear();
+    finished_rendering_semaphores.clear();
 
-    if (vk_command_pool_ != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(getVkDevice(), vk_command_pool_, nullptr);
-        vk_command_pool_ = VK_NULL_HANDLE;
-    }
-
-    destroyBuffer(vertex_buffer_);
-    destroyBuffer(index_buffer_);
-    destroyBuffer(staging_buffer_);
-
-    if (vk_graphics_pipeline_ != VK_NULL_HANDLE) {
-        vkDestroyPipeline(getVkDevice(), vk_graphics_pipeline_, nullptr);
-        vk_graphics_pipeline_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_pipeline_layout_ != VK_NULL_HANDLE) {
-        vkDestroyPipelineLayout(getVkDevice(), vk_pipeline_layout_, nullptr);
-        vk_pipeline_layout_ = VK_NULL_HANDLE;
-    }
-
-    if (vk_render_pass_ != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(getVkDevice(), vk_render_pass_, nullptr);
-        vk_render_pass_ = VK_NULL_HANDLE;
-    }
-
-    if (descriptor_set_parameters_.getVkDescriptorPool() != VK_NULL_HANDLE) {
-        vkDestroyDescriptorPool(getVkDevice(),
-                                descriptor_set_parameters_.getVkDescriptorPool(),
-                                nullptr);
-        descriptor_set_parameters_.setVkDescriptorPool(VK_NULL_HANDLE);
-    }
-    if (descriptor_set_parameters_.getVkDescriptorSetLayout() !=
-        VK_NULL_HANDLE) {
-        vkDestroyDescriptorSetLayout(
+    if (m_vulkan_tutorial14_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
+        vkDestroyCommandPool(
                 getVkDevice(),
-                descriptor_set_parameters_.getVkDescriptorSetLayout(),
+                m_vulkan_tutorial14_parameters.getVkCommandPool(),
                 nullptr);
-        descriptor_set_parameters_.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+        m_vulkan_tutorial14_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
-    destroyBuffer(uniform_buffer_);
+    destroyBuffer(m_vulkan_tutorial14_parameters.getVertexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial14_parameters.getIndexBufferParameters());
+    destroyBuffer(m_vulkan_tutorial14_parameters.getStagingBufferParameters());
+
+    if (m_vulkan_tutorial14_parameters.getVkGraphicsPipeline() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipeline(
+                getVkDevice(),
+                m_vulkan_tutorial14_parameters.getVkGraphicsPipeline(),
+                nullptr);
+        m_vulkan_tutorial14_parameters.setVkGraphicsPipeline(VK_NULL_HANDLE);
+    }
+
+    if (m_vulkan_tutorial14_parameters.getVkPipelineLayout() !=
+        VK_NULL_HANDLE) {
+        vkDestroyPipelineLayout(
+                getVkDevice(),
+                m_vulkan_tutorial14_parameters.getVkPipelineLayout(),
+                nullptr);
+        m_vulkan_tutorial14_parameters.setVkPipelineLayout(VK_NULL_HANDLE);
+    }
+
+    if (m_vulkan_tutorial14_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
+        vkDestroyRenderPass(
+                getVkDevice(),
+                m_vulkan_tutorial14_parameters.getVkRenderPass(),
+                nullptr);
+        m_vulkan_tutorial14_parameters.setVkRenderPass(VK_NULL_HANDLE);
+    }
+
+    DescriptorSetParameters& descriptor_set =
+            m_vulkan_tutorial14_parameters.getDescriptorSetParameters();
+    if (descriptor_set.getVkDescriptorPool() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorPool(
+                getVkDevice(), descriptor_set.getVkDescriptorPool(), nullptr);
+        descriptor_set.setVkDescriptorPool(VK_NULL_HANDLE);
+    }
+    if (descriptor_set.getVkDescriptorSetLayout() != VK_NULL_HANDLE) {
+        vkDestroyDescriptorSetLayout(getVkDevice(),
+                                     descriptor_set.getVkDescriptorSetLayout(),
+                                     nullptr);
+        descriptor_set.setVkDescriptorSetLayout(VK_NULL_HANDLE);
+    }
+
+    destroyBuffer(m_vulkan_tutorial14_parameters.getUniformBufferParameters());
 }
 
 }  // namespace vulkan_graphix
