@@ -51,11 +51,13 @@ style `glslc -S` does, since `glslc` uses it internally.
 
 `tests/MathTest.cpp`/`tests/VertexTypesTest.cpp` exercise the header-only
 `Math/`/`VertexTypes/` modules. `tests/TutorialNNIntegrationTest.cpp` (one
-binary per tutorial, linked against `libvulkan_graphix.la`) drives each
-tutorial through its real `prepareVulkan()`/`create*()`/`draw()`/
-`onWindowSizeChanged()` sequence, plus mouse input for Tutorial09/10 —
-these need a live Vulkan device and X11 window, so they call `GTEST_SKIP()`
-when `DISPLAY` isn't set (e.g. headless CI) rather than failing.
+binary per tutorial 01-10, linked against `libvulkan_graphix.la`) drives
+each of those tutorials through its real `prepareVulkan()`/`create*()`/
+`draw()`/`onWindowSizeChanged()` sequence, plus mouse input for
+Tutorial09/10 — these need a live Vulkan device and X11 window, so they
+call `GTEST_SKIP()` when `DISPLAY` isn't set (e.g. headless CI) rather
+than failing. Tutorial11-14 (ported from vulkan_earth's migration pilots)
+don't have integration/fault-injection tests of their own yet.
 `tests/OperatingSystemTest.cpp` drives the real X11 event loop
 (`os::Window::renderingLoop()`) with synthetic events. `tests/ToolsTest.cpp`,
 `tests/LoggingTest.cpp`, and `tests/LoggerHelpersTest.cpp` cover
@@ -63,7 +65,7 @@ when `DISPLAY` isn't set (e.g. headless CI) rather than failing.
 no device or window. `tests/TutorialBaseHelpersTest.cpp` covers
 `TutorialBase`'s pure swap-chain-parameter-selection helpers the same way.
 
-A `tests/*FaultInjectionTest.cpp` per tutorial (plus
+A `tests/*FaultInjectionTest.cpp` per tutorial 03-10 (plus
 `tests/TutorialBaseFaultInjection*Test.cpp` for the shared setup sequence)
 covers the `if (result != VK_SUCCESS) return false;` branches a real
 device essentially never takes: every Vulkan call in this codebase goes

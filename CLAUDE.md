@@ -30,7 +30,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial10_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial14_runner`
 
 ### Development Workflow
 
@@ -85,10 +85,13 @@ device's reported properties, not just a failure code, to reach.
 Shaders are compiled to SPIR-V bytecode using glslangValidator:
 ```sh
 source ./compile_shaders.sh <folder> <shader_name>
-# Example: source ./compile_shaders.sh Tutorials/03 shader
+# Example: source ./compile_shaders.sh resources/03 shader
 ```
 
 This compiles `.vert` and `.frag` files to `.spv` format in the Data folder.
+`glslc` (from the `shaderc` project) works as a drop-in alternative when
+`glslangValidator` isn't installed - see README.md's "Generating Shader
+Files" section for the exact invocation.
 
 ## Code Structure
 
@@ -96,23 +99,29 @@ This compiles `.vert` and `.frag` files to `.spv` format in the Data folder.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-10.cpp/.h` - Individual tutorial implementations
-  - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10
+  - `Tutorial01-14.cpp/.h` - Individual tutorial implementations
+  - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
+  - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
+    shared by Tutorial12 and (eventually) a real vulkan_earth port
   - `Logging.cpp/.h` - Boost-based logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
-  - `Tools.cpp/.h` - Utility functions
+  - `Tools.cpp/.h` - Utility functions (also holds `loadOglMeshData()`,
+    a shared parser for vulkan_earth's `.ogl` mesh format used by
+    Tutorial13 and any future vulkan_earth Vulkan port)
   - `OperatingSystem.cpp/.h` - Platform-specific abstractions
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One main per active tutorial (01-10)
+  - One `TutorialNNMain.cpp` per active tutorial (01-14)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
   - `stb_image.h` - Single-header image loading library
   - `vk_platform.h` - Platform-specific Vulkan definitions
 
-- **Tutorials/** - Shader files (GLSL) organized per tutorial
+- **resources/NN/Data/** - Each tutorial's own GLSL sources
+  (`shader.NN.{vert,frag}`), compiled SPIR-V (`shader.{vert,frag}.NN.spv`
+  + `.spv.txt` disassembly), and any texture/mesh assets it needs
 
 ### Dependencies
 
@@ -199,17 +208,28 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   second, thinner line strip — first tutorial with push constants,
   line topology, and `VK_DYNAMIC_STATE_LINE_WIDTH` (curve thicker
   than control polygon, gated on the device's `wideLines` feature)
+- Tutorial11 - Tutorial14: ported from the `vulkan_earth/` OpenGL->Vulkan
+  migration's standalone pilots (see that directory's own git history) -
+  an indexed textured skybox cube, a diamond-square-generated terrain
+  (height-field generation shared via `TerrainGenerator`, see above), the
+  real tank-shell mesh parsed from a `.ogl` file (parser shared via
+  `Tools::loadOglMeshData()`), and a translucent alpha-blended particle
+  sphere (`Math::Sphere`, same as Tutorial08's)
 
 ## Common Tasks
 
 ### Adding a New Tutorial
 
-1. Create `Tutorial0X.cpp/.h` in lib/
+1. Create `TutorialNN.h` in `include/vulkan_graphix/` and `TutorialNN.cpp`
+   in `lib/`
 2. Implement the tutorial class with Vulkan setup
-3. Add `Tutorial0X.cpp` to `lib/Makefile.am` libvulkan_graphix_la_SOURCES
-4. Create `tutorial0X_main.cpp` in bin/
-5. Add binary target to `bin/Makefile.am`
-6. Create shader files in `Tutorials/0X/Data/`
+3. Add `./TutorialNN.cpp` to `lib/Makefile.am` libvulkan_graphix_la_SOURCES
+4. Create `TutorialNNMain.cpp` in bin/
+5. Add binary target (`tutorialNN_runner`) to `bin/Makefile.am`
+6. Create shader files in `resources/NN/Data/` (`shader.NN.vert`/
+   `shader.NN.frag`), compile with `compile_shaders.sh` (or `glslc`
+   directly - see README.md), and copy the compiled `.spv`/any texture
+   assets into the build dir via an `all-local:` rule in `bin/Makefile.am`
 
 ### Debugging
 
