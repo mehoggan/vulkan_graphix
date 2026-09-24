@@ -31,10 +31,47 @@ Math::Mat4<float> const& getPartBasis() {
     return basis;
 }
 
-Math::Mat4<float> getPartModelMatrix(Math::Vec3<float> const& offset) {
-    return glm::translate(Math::Mat4<float>(1.0f), offset) * getPartBasis() *
+// Mirrors Tank::setTankPos()'s own construction exactly (Tank.cpp:73-99):
+// e.g. head_matrix[12] = body_matrix[12] + head_offset[0]*body_matrix[0] +
+// head_offset[1]*body_matrix[4] + head_offset[2]*body_matrix[8] (and the
+// [13]/[14] analogues) - a child part's offset is rotated through its
+// parent's own basis columns before being added, not added directly. An
+// earlier version of this tutorial added offsets directly, which is only
+// a no-op for head_offset (its x/z components are both zero) and
+// silently wrong for turret_offset (real turret position ends up beside
+// the head, not in front of it).
+Math::Vec3<float> rotateOffsetThroughBasis(Math::Mat4<float> const& basis,
+                                           Math::Vec3<float> const& offset) {
+    return Math::Vec3<float>(basis * Math::Vec4<float>(offset, 0.0f));
+}
+
+Math::Mat4<float> buildPartMatrix(Math::Vec3<float> const& translation) {
+    return glm::translate(Math::Mat4<float>(1.0f), translation) *
+           getPartBasis() *
            glm::scale(Math::Mat4<float>(1.0f),
                       Math::Vec3<float>(c_part_scale));
+}
+
+// The three parts' real world translations, composed hierarchically
+// exactly as Tank::setTankPos() does (body -> head -> turret), for a
+// tank placed at the world origin. head/turret's basis is identical to
+// body's in TankB (see getPartBasis()), so this is the same fixed
+// coordinate permutation at every level, just chained through each
+// parent's own translation instead of the world origin directly.
+Math::Vec3<float> const& getBodyTranslation() { return c_body_offset; }
+
+Math::Vec3<float> const& getHeadTranslation() {
+    static Math::Vec3<float> const translation =
+            getBodyTranslation() +
+            rotateOffsetThroughBasis(getPartBasis(), c_head_offset);
+    return translation;
+}
+
+Math::Vec3<float> const& getTurretTranslation() {
+    static Math::Vec3<float> const translation =
+            getHeadTranslation() +
+            rotateOffsetThroughBasis(getPartBasis(), c_turret_offset);
+    return translation;
 }
 }  // namespace
 
@@ -242,7 +279,7 @@ Tutorial16::Tutorial16()
         // initial distance to that same 40 clamp) - scrolling out from here
         // will clamp closer than this initial framing, but scrolling in to
         // inspect the mesh works over the its full range.
-        : m_camera(0.6f, 0.15f, 400.0f) {}
+        : m_camera(0.6f, -0.05f, 650.0f) {}
 
 Tutorial16::~Tutorial16() { childClear(); }
 
@@ -1479,15 +1516,15 @@ bool Tutorial16::createVertexBuffers() {
 }
 
 Math::Mat4<float> Tutorial16::getBodyModelMatrix() const {
-    return getPartModelMatrix(c_body_offset);
+    return buildPartMatrix(getBodyTranslation());
 }
 
 Math::Mat4<float> Tutorial16::getHeadModelMatrix() const {
-    return getPartModelMatrix(c_head_offset);
+    return buildPartMatrix(getHeadTranslation());
 }
 
 Math::Mat4<float> Tutorial16::getTurretModelMatrix() const {
-    return getPartModelMatrix(c_turret_offset);
+    return buildPartMatrix(getTurretTranslation());
 }
 
 bool Tutorial16::createFramebuffer(VkFramebuffer& framebuffer,
