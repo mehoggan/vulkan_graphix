@@ -67,6 +67,14 @@ bin/Hellfire_Body.ogl
 bin/Hellfire_Head.ogl
 bin/Hellfire_Turret.ogl
 bin/TestImage.raw
+bin/ItemAntiAcid.raw
+bin/ItemBigRepair.raw
+bin/ItemCloak.raw
+bin/ItemDoubleAction.raw
+bin/ItemExtraBattery.raw
+bin/ItemFloat.raw
+bin/ItemShield.raw
+bin/ItemSmallRepair.raw
 vulkan_earth/src/vulkan_earth_runner
 tests/math_test
 tests/math_test.log

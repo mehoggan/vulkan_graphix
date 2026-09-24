@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial16_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial17_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-16.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-17.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-16)
+  - One `TutorialNNMain.cpp` per active tutorial (01-17)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -246,6 +246,18 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   delivered as a vertex-stage push constant set immediately before that
   part's draw call, the first push constant here carrying a matrix rather
   than Tutorial10's flat color
+- Tutorial17: a titled bevel-panel grid of all 8 real vulkan_earth items
+  (`vulkan_earth/src/ItemXxx.cpp` - `Item` itself has no `draw()` method,
+  so there was nothing to port there beyond this real data), ported from
+  `Inventory`'s own rendering (`ControlItemGrid`'s bevel, built the same
+  way as Tutorial15's button). Two textures - the `BitmapFont` glyph atlas
+  and a combined icon atlas stitched at runtime from the 8 real
+  `ItemXxx.raw` assets (tutorial-local plumbing, not a shared component) -
+  stay behind the established one-texture-per-descriptor-set shape by
+  using two descriptor sets from one layout and drawing in two passes per
+  frame (bind the font set and draw every flat-color/text quad, then bind
+  the icon set and draw the 8 icon quads on top). Click a cell to select
+  it and read its real description, word-wrapped to the panel width
 
 ## Common Tasks
 
