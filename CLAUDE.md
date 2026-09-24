@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial18_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial19_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-18.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-19.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-18)
+  - One `TutorialNNMain.cpp` per active tutorial (01-19)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -273,6 +273,18 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   `Player`/`PlayerHuman`/`PlayerCPU` themselves have no rendering code at
   all (confirmed via full reads), so this is the real rendering logic
   living next to Player: `Tank::setTankPos()` and `GameState::drawHUD()`
+- Tutorial19: `Weapon` + its 10 concrete subclasses are pure data, exactly
+  like `Item` (no `draw()`, no `VBOShaderLibrary`, confirmed via grep
+  across every subclass). The real rendering logic lives in
+  `Projectile::draw()` (three distinct projectile meshes - Default/Acid/
+  BFB - each scaled by its own weapon's real `scale`, each with its own
+  texture and descriptor set bound in turn before its draw call) and a
+  5x2 weapon inventory grid mirroring Tutorial17's Item grid exactly,
+  fed the 10 real shop-purchasable weapons' data (`WeaponDefault`/id 10
+  is an internal `Projectile` fallback, never shop-purchasable, and is
+  excluded). Same one-render-pass-two-pipelines technique Tutorial18
+  introduced, without a depth buffer this time (three separate,
+  non-overlapping static meshes)
 
 ## Common Tasks
 

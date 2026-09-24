@@ -2,7 +2,8 @@ bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial04_runner tutorial05_runner tutorial06_runner tutorial07_runner \
     tutorial08_runner tutorial09_runner tutorial10_runner tutorial11_runner \
     tutorial12_runner tutorial13_runner tutorial14_runner tutorial15_runner \
-    tutorial16_runner tutorial17_runner tutorial18_runner
+    tutorial16_runner tutorial17_runner tutorial18_runner \
+    tutorial19_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./Tutorial01Main.cpp
@@ -147,6 +148,14 @@ tutorial18_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial18_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial18_runner_LDFLAGS = -pthread
+
+# Tutorial 19 Binary
+tutorial19_runner_SOURCES = ./Tutorial19Main.cpp
+tutorial19_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial19_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial19_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -203,6 +212,26 @@ tutorial18_3d_vert = $(top_srcdir)/resources/18/Data/shader.vert.18_3d.spv
 tutorial18_3d_frag = $(top_srcdir)/resources/18/Data/shader.frag.18_3d.spv
 tutorial18_hud_vert = $(top_srcdir)/resources/18/Data/shader.vert.18_hud.spv
 tutorial18_hud_frag = $(top_srcdir)/resources/18/Data/shader.frag.18_hud.spv
+tutorial19_3d_vert = $(top_srcdir)/resources/19/Data/shader.vert.19_3d.spv
+tutorial19_3d_frag = $(top_srcdir)/resources/19/Data/shader.frag.19_3d.spv
+tutorial19_grid_vert = $(top_srcdir)/resources/19/Data/shader.vert.19_grid.spv
+tutorial19_grid_frag = $(top_srcdir)/resources/19/Data/shader.frag.19_grid.spv
+tutorial19_default_mesh = $(top_srcdir)/resources/19/Data/projectileDefault.ogl
+tutorial19_default_texture = $(top_srcdir)/resources/19/Data/projectileDefault.raw
+tutorial19_acid_mesh = $(top_srcdir)/resources/19/Data/projectileAcid.ogl
+tutorial19_acid_texture = $(top_srcdir)/resources/19/Data/projectileAcid.raw
+tutorial19_bfb_mesh = $(top_srcdir)/resources/19/Data/projectileBFB.ogl
+tutorial19_bfb_texture = $(top_srcdir)/resources/19/Data/projectileBFB.raw
+tutorial19_weapon_mfb = $(top_srcdir)/resources/19/Data/WeaponMFB.raw
+tutorial19_weapon_bfb = $(top_srcdir)/resources/19/Data/WeaponBFB.raw
+tutorial19_weapon_acid = $(top_srcdir)/resources/19/Data/WeaponAcid.raw
+tutorial19_weapon_thor = $(top_srcdir)/resources/19/Data/WeaponThor.raw
+tutorial19_weapon_emp = $(top_srcdir)/resources/19/Data/WeaponEMP.raw
+tutorial19_weapon_padlock = $(top_srcdir)/resources/19/Data/WeaponPadlock.raw
+tutorial19_weapon_revive = $(top_srcdir)/resources/19/Data/WeaponRevive.raw
+tutorial19_weapon_teleport = $(top_srcdir)/resources/19/Data/WeaponTeleport.raw
+tutorial19_weapon_atom = $(top_srcdir)/resources/19/Data/WeaponAtom.raw
+tutorial19_weapon_nuke = $(top_srcdir)/resources/19/Data/WeaponNuke.raw
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
@@ -224,7 +253,17 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial17_item_float) $(tutorial17_item_shield) \
     $(tutorial17_item_small_repair) \
     $(tutorial18_3d_vert) $(tutorial18_3d_frag) $(tutorial18_hud_vert) \
-    $(tutorial18_hud_frag)
+    $(tutorial18_hud_frag) \
+    $(tutorial19_3d_vert) $(tutorial19_3d_frag) $(tutorial19_grid_vert) \
+    $(tutorial19_grid_frag) $(tutorial19_default_mesh) \
+    $(tutorial19_default_texture) $(tutorial19_acid_mesh) \
+    $(tutorial19_acid_texture) $(tutorial19_bfb_mesh) \
+    $(tutorial19_bfb_texture) $(tutorial19_weapon_mfb) \
+    $(tutorial19_weapon_bfb) $(tutorial19_weapon_acid) \
+    $(tutorial19_weapon_thor) $(tutorial19_weapon_emp) \
+    $(tutorial19_weapon_padlock) $(tutorial19_weapon_revive) \
+    $(tutorial19_weapon_teleport) $(tutorial19_weapon_atom) \
+    $(tutorial19_weapon_nuke)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -278,6 +317,26 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial18_3d_frag) $(builddir)/shader.18_3d.frag.spv
 	cp $(tutorial18_hud_vert) $(builddir)/shader.18_hud.vert.spv
 	cp $(tutorial18_hud_frag) $(builddir)/shader.18_hud.frag.spv
+	cp $(tutorial19_3d_vert) $(builddir)/shader.19_3d.vert.spv
+	cp $(tutorial19_3d_frag) $(builddir)/shader.19_3d.frag.spv
+	cp $(tutorial19_grid_vert) $(builddir)/shader.19_grid.vert.spv
+	cp $(tutorial19_grid_frag) $(builddir)/shader.19_grid.frag.spv
+	cp $(tutorial19_default_mesh) $(builddir)/projectileDefault.ogl
+	cp $(tutorial19_default_texture) $(builddir)/projectileDefault.raw
+	cp $(tutorial19_acid_mesh) $(builddir)/projectileAcid.ogl
+	cp $(tutorial19_acid_texture) $(builddir)/projectileAcid.raw
+	cp $(tutorial19_bfb_mesh) $(builddir)/projectileBFB.ogl
+	cp $(tutorial19_bfb_texture) $(builddir)/projectileBFB.raw
+	cp $(tutorial19_weapon_mfb) $(builddir)/WeaponMFB.raw
+	cp $(tutorial19_weapon_bfb) $(builddir)/WeaponBFB.raw
+	cp $(tutorial19_weapon_acid) $(builddir)/WeaponAcid.raw
+	cp $(tutorial19_weapon_thor) $(builddir)/WeaponThor.raw
+	cp $(tutorial19_weapon_emp) $(builddir)/WeaponEMP.raw
+	cp $(tutorial19_weapon_padlock) $(builddir)/WeaponPadlock.raw
+	cp $(tutorial19_weapon_revive) $(builddir)/WeaponRevive.raw
+	cp $(tutorial19_weapon_teleport) $(builddir)/WeaponTeleport.raw
+	cp $(tutorial19_weapon_atom) $(builddir)/WeaponAtom.raw
+	cp $(tutorial19_weapon_nuke) $(builddir)/WeaponNuke.raw
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
@@ -298,4 +357,11 @@ CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     ItemAntiAcid.raw ItemBigRepair.raw ItemCloak.raw ItemDoubleAction.raw \
     ItemExtraBattery.raw ItemFloat.raw ItemShield.raw ItemSmallRepair.raw \
     shader.18_3d.vert.spv shader.18_3d.frag.spv \
-    shader.18_hud.vert.spv shader.18_hud.frag.spv
+    shader.18_hud.vert.spv shader.18_hud.frag.spv \
+    shader.19_3d.vert.spv shader.19_3d.frag.spv \
+    shader.19_grid.vert.spv shader.19_grid.frag.spv \
+    projectileAcid.ogl projectileAcid.raw \
+    projectileBFB.ogl projectileBFB.raw \
+    WeaponMFB.raw WeaponBFB.raw WeaponAcid.raw WeaponThor.raw \
+    WeaponEMP.raw WeaponPadlock.raw WeaponRevive.raw WeaponTeleport.raw \
+    WeaponAtom.raw WeaponNuke.raw
