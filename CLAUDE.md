@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial17_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial18_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-17.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-18.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-17)
+  - One `TutorialNNMain.cpp` per active tutorial (01-18)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -258,6 +258,21 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   frame (bind the font set and draw every flat-color/text quad, then bind
   the icon set and draw the 8 icon quads on top). Click a cell to select
   it and read its real description, word-wrapped to the panel width
+  (Tutorial16's per-part model matrix was later fixed to match
+  `Tank::setTankPos()`'s real hierarchical composition - a child part's
+  offset is rotated through its *parent's* basis columns before being
+  added to the parent's translation, not added directly to a common
+  origin - discovered while researching Tutorial18 below)
+- Tutorial18: two real Hellfire tanks (`Tank::setTankPos()`'s real
+  hierarchical positioning, see the Tutorial16 note above) tinted by an
+  illustrative per-player team color via a push constant extended with a
+  `Vec4` tint, plus a HUD overlay using the real
+  `GameState::drawHUD()` health/power color ramps (`(1-ratio, ratio, 0)`
+  and its inverse). First tutorial to combine a depth-tested 3D pass and
+  a depth-disabled 2D overlay pass in one render pass/two pipelines -
+  `Player`/`PlayerHuman`/`PlayerCPU` themselves have no rendering code at
+  all (confirmed via full reads), so this is the real rendering logic
+  living next to Player: `Tank::setTankPos()` and `GameState::drawHUD()`
 
 ## Common Tasks
 

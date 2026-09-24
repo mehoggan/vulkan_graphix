@@ -27,6 +27,7 @@ libvulkan_graphix_la_SOURCES = ./BitmapFont.cpp \
 															./Tutorial15.cpp \
 															./Tutorial16.cpp \
 															./Tutorial17.cpp \
+															./Tutorial18.cpp \
 															./TutorialBase.cpp \
 															./UiGeometry.cpp \
 															./VulkanFunctions.cpp

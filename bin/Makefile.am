@@ -2,7 +2,7 @@ bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial04_runner tutorial05_runner tutorial06_runner tutorial07_runner \
     tutorial08_runner tutorial09_runner tutorial10_runner tutorial11_runner \
     tutorial12_runner tutorial13_runner tutorial14_runner tutorial15_runner \
-    tutorial16_runner tutorial17_runner
+    tutorial16_runner tutorial17_runner tutorial18_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./Tutorial01Main.cpp
@@ -139,6 +139,14 @@ tutorial17_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial17_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial17_runner_LDFLAGS = -pthread
+
+# Tutorial 18 Binary
+tutorial18_runner_SOURCES = ./Tutorial18Main.cpp
+tutorial18_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial18_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial18_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -191,6 +199,10 @@ tutorial17_item_extra_battery = $(top_srcdir)/resources/17/Data/ItemExtraBattery
 tutorial17_item_float = $(top_srcdir)/resources/17/Data/ItemFloat.raw
 tutorial17_item_shield = $(top_srcdir)/resources/17/Data/ItemShield.raw
 tutorial17_item_small_repair = $(top_srcdir)/resources/17/Data/ItemSmallRepair.raw
+tutorial18_3d_vert = $(top_srcdir)/resources/18/Data/shader.vert.18_3d.spv
+tutorial18_3d_frag = $(top_srcdir)/resources/18/Data/shader.frag.18_3d.spv
+tutorial18_hud_vert = $(top_srcdir)/resources/18/Data/shader.vert.18_hud.spv
+tutorial18_hud_frag = $(top_srcdir)/resources/18/Data/shader.frag.18_hud.spv
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
@@ -210,7 +222,9 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial17_item_big_repair) $(tutorial17_item_cloak) \
     $(tutorial17_item_double_action) $(tutorial17_item_extra_battery) \
     $(tutorial17_item_float) $(tutorial17_item_shield) \
-    $(tutorial17_item_small_repair)
+    $(tutorial17_item_small_repair) \
+    $(tutorial18_3d_vert) $(tutorial18_3d_frag) $(tutorial18_hud_vert) \
+    $(tutorial18_hud_frag)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -260,6 +274,10 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial17_item_float) $(builddir)/ItemFloat.raw
 	cp $(tutorial17_item_shield) $(builddir)/ItemShield.raw
 	cp $(tutorial17_item_small_repair) $(builddir)/ItemSmallRepair.raw
+	cp $(tutorial18_3d_vert) $(builddir)/shader.18_3d.vert.spv
+	cp $(tutorial18_3d_frag) $(builddir)/shader.18_3d.frag.spv
+	cp $(tutorial18_hud_vert) $(builddir)/shader.18_hud.vert.spv
+	cp $(tutorial18_hud_frag) $(builddir)/shader.18_hud.frag.spv
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
@@ -278,4 +296,6 @@ CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     Hellfire_Body.ogl Hellfire_Head.ogl Hellfire_Turret.ogl TestImage.raw \
     shader.17.vert.spv shader.17.frag.spv \
     ItemAntiAcid.raw ItemBigRepair.raw ItemCloak.raw ItemDoubleAction.raw \
-    ItemExtraBattery.raw ItemFloat.raw ItemShield.raw ItemSmallRepair.raw
+    ItemExtraBattery.raw ItemFloat.raw ItemShield.raw ItemSmallRepair.raw \
+    shader.18_3d.vert.spv shader.18_3d.frag.spv \
+    shader.18_hud.vert.spv shader.18_hud.frag.spv
