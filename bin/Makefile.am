@@ -1,7 +1,8 @@
 bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial04_runner tutorial05_runner tutorial06_runner tutorial07_runner \
     tutorial08_runner tutorial09_runner tutorial10_runner tutorial11_runner \
-    tutorial12_runner tutorial13_runner tutorial14_runner tutorial15_runner
+    tutorial12_runner tutorial13_runner tutorial14_runner tutorial15_runner \
+    tutorial16_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./Tutorial01Main.cpp
@@ -122,6 +123,14 @@ tutorial15_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial15_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial15_runner_LDFLAGS = -pthread
+
+# Tutorial 16 Binary
+tutorial16_runner_SOURCES = ./Tutorial16Main.cpp
+tutorial16_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial16_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial16_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -158,6 +167,12 @@ tutorial14_vert = $(top_srcdir)/resources/14/Data/shader.vert.14.spv
 tutorial14_frag = $(top_srcdir)/resources/14/Data/shader.frag.14.spv
 tutorial15_vert = $(top_srcdir)/resources/15/Data/shader.vert.15.spv
 tutorial15_frag = $(top_srcdir)/resources/15/Data/shader.frag.15.spv
+tutorial16_vert = $(top_srcdir)/resources/16/Data/shader.vert.16.spv
+tutorial16_frag = $(top_srcdir)/resources/16/Data/shader.frag.16.spv
+tutorial16_body_mesh = $(top_srcdir)/resources/16/Data/Hellfire_Body.ogl
+tutorial16_head_mesh = $(top_srcdir)/resources/16/Data/Hellfire_Head.ogl
+tutorial16_turret_mesh = $(top_srcdir)/resources/16/Data/Hellfire_Turret.ogl
+tutorial16_texture = $(top_srcdir)/resources/16/Data/TestImage.raw
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
@@ -170,7 +185,9 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial12_vert) $(tutorial12_frag) $(tutorial12_texture) \
     $(tutorial13_vert) $(tutorial13_frag) $(tutorial13_mesh) \
     $(tutorial13_texture) $(tutorial14_vert) $(tutorial14_frag) \
-    $(tutorial15_vert) $(tutorial15_frag)
+    $(tutorial15_vert) $(tutorial15_frag) \
+    $(tutorial16_vert) $(tutorial16_frag) $(tutorial16_body_mesh) \
+    $(tutorial16_head_mesh) $(tutorial16_turret_mesh) $(tutorial16_texture)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -204,6 +221,12 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial14_frag) $(builddir)/shader.14.frag.spv
 	cp $(tutorial15_vert) $(builddir)/shader.15.vert.spv
 	cp $(tutorial15_frag) $(builddir)/shader.15.frag.spv
+	cp $(tutorial16_vert) $(builddir)/shader.16.vert.spv
+	cp $(tutorial16_frag) $(builddir)/shader.16.frag.spv
+	cp $(tutorial16_body_mesh) $(builddir)/Hellfire_Body.ogl
+	cp $(tutorial16_head_mesh) $(builddir)/Hellfire_Head.ogl
+	cp $(tutorial16_turret_mesh) $(builddir)/Hellfire_Turret.ogl
+	cp $(tutorial16_texture) $(builddir)/TestImage.raw
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
@@ -217,4 +240,6 @@ CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.13.vert.spv shader.13.frag.spv \
     projectileDefault.ogl projectileDefault.raw \
     shader.14.vert.spv shader.14.frag.spv \
-    shader.15.vert.spv shader.15.frag.spv
+    shader.15.vert.spv shader.15.frag.spv \
+    shader.16.vert.spv shader.16.frag.spv \
+    Hellfire_Body.ogl Hellfire_Head.ogl Hellfire_Turret.ogl TestImage.raw

@@ -63,6 +63,10 @@ bin/SkyBox.jpg
 bin/Rocky.raw
 bin/projectileDefault.ogl
 bin/projectileDefault.raw
+bin/Hellfire_Body.ogl
+bin/Hellfire_Head.ogl
+bin/Hellfire_Turret.ogl
+bin/TestImage.raw
 vulkan_earth/src/vulkan_earth_runner
 tests/math_test
 tests/math_test.log

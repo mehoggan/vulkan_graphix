@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial15_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial16_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-15.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-16.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-15)
+  - One `TutorialNNMain.cpp` per active tutorial (01-16)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -236,6 +236,16 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   already used it for one static full-screen quad) and the first with a
   host-visible vertex buffer rewritten every frame from CPU-side UI state,
   rather than a device-local one uploaded once
+- Tutorial16: the real "Hellfire" tank (`vulkan_earth/src/TankB.cpp`)
+  assembled from its three independently-positioned mesh parts (body/
+  head/turret - `Tank`/`TankB` track a fourth "wheel" part, but `TankB`
+  never loads or draws one, so this tutorial doesn't either), each parsed
+  via `Tools::loadOglMeshData()` and sharing one texture, viewed via
+  `OrbitCamera`. Each part's model matrix (TankB's own offset/scale/basis
+  data, taken verbatim - see the tutorial's own header comment) is
+  delivered as a vertex-stage push constant set immediately before that
+  part's draw call, the first push constant here carrying a matrix rather
+  than Tutorial10's flat color
 
 ## Common Tasks
 
