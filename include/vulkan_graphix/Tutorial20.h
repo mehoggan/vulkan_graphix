@@ -225,9 +225,6 @@ private:
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
-    bool allocateBufferMemory(VkBuffer buffer,
-                              VkMemoryPropertyFlags property,
-                              VkDeviceMemory* memory);
     bool copyBufferData(BufferParameters& destination,
                         const void* data,
                         std::uint32_t data_size,

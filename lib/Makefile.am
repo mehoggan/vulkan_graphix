@@ -34,6 +34,7 @@ libvulkan_graphix_la_SOURCES = ./BitmapFont.cpp \
 															./Tutorial22.cpp \
 															./TutorialBase.cpp \
 															./UiGeometry.cpp \
+															./VulkanCommon.cpp \
 															./VulkanFunctions.cpp
 
 libvulkan_graphix_la_LIBADD = -lboost_log -lboost_system -lboost_thread \

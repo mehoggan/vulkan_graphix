@@ -100,7 +100,6 @@ private:
     createShaderModule(const char* filename);
     Tools::AutoDeleter<VkPipelineLayout, PFN_vkDestroyPipelineLayout>
     createPipelineLayout();
-    bool allocateBufferMemory(VkBuffer buffer, VkDeviceMemory* memory);
     bool createCommandPool(std::uint32_t queue_family_index,
                            VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,

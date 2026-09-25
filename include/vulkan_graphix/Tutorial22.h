@@ -278,9 +278,6 @@ private:
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
-    bool allocateBufferMemory(VkBuffer buffer,
-                              VkMemoryPropertyFlags property,
-                              VkDeviceMemory* memory);
     bool createImage(std::uint32_t width,
                      std::uint32_t height,
                      VkFormat format,
@@ -293,12 +290,6 @@ private:
                          VkFormat format,
                          VkImageAspectFlags aspect_mask,
                          VkImageView* image_view);
-    bool createSampler(VkSampler* sampler);
-    bool copyTextureData(VkImage image,
-                         char* texture_data,
-                         std::uint32_t data_size,
-                         std::uint32_t width,
-                         std::uint32_t height);
     bool createTextureFromPixels(std::uint32_t width,
                                  std::uint32_t height,
                                  const std::vector<char>& pixels,

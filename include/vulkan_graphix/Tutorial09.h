@@ -181,9 +181,6 @@ private:
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
-    bool allocateBufferMemory(VkBuffer buffer,
-                              VkMemoryPropertyFlags property,
-                              VkDeviceMemory* memory);
     bool createImage(std::uint32_t width,
                      std::uint32_t height,
                      VkFormat format,

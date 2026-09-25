@@ -99,7 +99,17 @@ Files" section for the exact invocation.
 ### Directory Layout
 
 - **lib/**: Core library source files
-  - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
+  - `VulkanCommon.cpp/.h` - `namespace vulkan_graphix::VulkanCommon`: buffer/
+    image/sampler creation (`BufferFactory`/`ImageFactory`), staged
+    (staging-buffer + one-shot command buffer) uploads (`StagedUploader`),
+    command-pool/command-buffer/semaphore/fence creation
+    (`FrameResourceFactory`), and shader module loading
+    (`createShaderModule()`) - the boilerplate every tutorial from
+    Tutorial03 on used to reimplement independently, now shared. Device/
+    instance/swapchain bring-up and presentation/synchronization orchestration
+    stay in `TutorialBase` (see Architecture Notes below); constructed as
+    cheap call-site temporaries, not stored as tutorial members - see the
+    file's own top comment for why
   - `Tutorial01-22.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
@@ -201,10 +211,25 @@ The project uses a custom logging infrastructure built on Boost.Log:
 ### Vulkan Utilities
 
 `VulkanCommon.h/cpp` contains abstractions for:
-- Device creation and initialization
-- Memory allocation and buffer management
-- Command buffer recording
-- Presentation and synchronization
+- Buffer creation/memory allocation/binding (`BufferFactory`)
+- Image/image-view/sampler creation and memory allocation (`ImageFactory`)
+- Staged (staging-buffer + one-shot command buffer) uploads into a
+  device-local buffer or image (`StagedUploader`)
+- Command pool/command buffer/semaphore/fence creation
+  (`FrameResourceFactory`)
+- Shader module loading (`createShaderModule()`)
+
+Device/instance/swapchain bring-up (`createInstance()`, `createDevice()`,
+`createSwapChain()`, `createPresentationSurface()`, ...) and each tutorial's
+own presentation/synchronization orchestration (acquire -> record -> submit
+-> present, one `RenderingResourceParameters` slot per swapchain image) stay
+in `TutorialBase` - `VulkanCommon` only factors out the per-object creation
+boilerplate underneath, not the frame-loop or device bring-up logic. Every
+tutorial from Tutorial03 on shares `VulkanCommon` instead of reimplementing
+this - each tutorial's own `createBuffer()`/`createImage()`/etc. stay as
+thin private wrappers (so existing fault-injection/integration tests keep
+calling the same public method names) that just delegate to a
+`VulkanCommon::X` constructed as a temporary at the call site.
 
 Tutorial classes inherit patterns from Tutorial01, building incrementally:
 - Tutorial01: Basic device initialization

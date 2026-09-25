@@ -297,26 +297,15 @@ private:
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
-    bool allocateBufferMemory(VkBuffer buffer,
-                              VkMemoryPropertyFlags property,
-                              VkDeviceMemory* memory);
-    bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
-    bool createImageView(VkImage image, VkImageView* image_view);
-    bool createSampler(VkSampler* sampler);
-    bool copyTextureData(VkImage image,
-                         char* texture_data,
-                         std::uint32_t data_size,
-                         std::uint32_t width,
-                         std::uint32_t height);
     bool createTextureFromPixels(std::uint32_t width,
                                  std::uint32_t height,
                                  const std::vector<char>& pixels,
                                  ImageParameters& out_image_parameters);
+    bool copyBufferData(BufferParameters& destination,
+                        const void* data,
+                        std::uint32_t data_size,
+                        VkAccessFlags dst_access_mask,
+                        VkPipelineStageFlags dst_stage_mask);
     std::vector<char> buildIconAtlasPixels() const;
 
     Tutorial19UniformBufferData3D get3DUniformBufferData() const;

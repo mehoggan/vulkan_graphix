@@ -118,9 +118,6 @@ private:
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
-    bool allocateBufferMemory(VkBuffer buffer,
-                              VkMemoryPropertyFlags property,
-                              VkDeviceMemory* memory);
     const std::vector<Tutorial05VertexData>& getVertexData() const;
     bool prepareFrame(VkCommandBuffer command_buffer,
                       const ImageParameters& image_parameters,

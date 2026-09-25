@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
 namespace vulkan_graphix {
@@ -385,17 +386,12 @@ bool Tutorial03::createPipeline() {
 }
 
 bool Tutorial03::createSemaphores() {
-    VkSemaphoreCreateInfo semaphore_create_info = {
-            .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0};
+    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+            getVkDevice());
 
-    if (vkCreateSemaphore(getVkDevice(),
-                          &semaphore_create_info,
-                          nullptr,
-                          &m_vulkan_tutorial03_parameters
-                                   .getImageAvailableVkSemaphore()) !=
-        VK_SUCCESS) {
+    if (!frame_resource_factory.createSemaphore(
+                &m_vulkan_tutorial03_parameters
+                         .getImageAvailableVkSemaphore())) {
         Logging::error(LOG_TAG, "Could not create semaphores!");
         return false;
     }
@@ -413,26 +409,15 @@ bool Tutorial03::createSemaphores() {
             getSwapchainParameters().getImageParameters().size(),
             VK_NULL_HANDLE);
     for (std::size_t i = 0; i < rendering_finished_semaphores.size(); ++i) {
-        if (vkCreateSemaphore(getVkDevice(),
-                              &semaphore_create_info,
-                              nullptr,
-                              &rendering_finished_semaphores[i]) !=
-            VK_SUCCESS) {
+        if (!frame_resource_factory.createSemaphore(
+                    &rendering_finished_semaphores[i])) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
     }
 
-    VkFenceCreateInfo fence_create_info = {
-            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = VK_FENCE_CREATE_SIGNALED_BIT};
-
-    if (vkCreateFence(getVkDevice(),
-                      &fence_create_info,
-                      nullptr,
-                      &m_vulkan_tutorial03_parameters.getVkFence()) !=
-        VK_SUCCESS) {
+    if (!frame_resource_factory.createFence(
+                /*signaled=*/true, &m_vulkan_tutorial03_parameters.getVkFence())) {
         Logging::error(LOG_TAG, "Could not create a fence!");
         return false;
     }
@@ -677,32 +662,15 @@ bool Tutorial03::draw() {
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
 Tutorial03::createShaderModule(const char* filename) {
-    const std::vector<char> code = Tools::getBinaryFileContents(filename);
-    if (code.empty()) {
-        return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
-    }
-
-    VkShaderModuleCreateInfo shader_module_create_info = {
-            .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .codeSize = code.size(),
-            .pCode = reinterpret_cast<const std::uint32_t*>(code.data())};
-
-    VkShaderModule shader_module;
-    if (vkCreateShaderModule(getVkDevice(),
-                             &shader_module_create_info,
-                             nullptr,
-                             &shader_module) != VK_SUCCESS) {
+    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule> module =
+            VulkanCommon::createShaderModule(getVkDevice(), filename);
+    if (!module) {
         Logging::error(LOG_TAG,
                        "Could not create shader module from a \"",
                        filename,
                        "\" file!");
-        return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
     }
-
-    return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>(
-            shader_module, vkDestroyShaderModule, getVkDevice());
+    return module;
 }
 
 Tools::AutoDeleter<VkPipelineLayout, PFN_vkDestroyPipelineLayout>
@@ -746,16 +714,8 @@ bool Tutorial03::createCommandPool(std::uint32_t queue_family_index,
 bool Tutorial03::allocateCommandBuffers(VkCommandPool pool,
                                         std::uint32_t count,
                                         VkCommandBuffer* command_buffers) {
-    VkCommandBufferAllocateInfo command_buffer_allocate_info = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext = nullptr,
-            .commandPool = pool,
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = count};
-
-    return vkAllocateCommandBuffers(getVkDevice(),
-                                    &command_buffer_allocate_info,
-                                    command_buffers) == VK_SUCCESS;
+    return VulkanCommon::FrameResourceFactory(getVkDevice())
+            .allocateCommandBuffers(pool, count, command_buffers);
 }
 
 void Tutorial03::childClear() {

@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstring>
 
+#include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
 namespace vulkan_graphix {
@@ -160,32 +161,15 @@ bool Tutorial04::createRenderPass() {
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
 Tutorial04::createShaderModule(const char* filename) {
-    const std::vector<char> code = Tools::getBinaryFileContents(filename);
-    if (code.empty()) {
-        return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
-    }
-
-    VkShaderModuleCreateInfo shader_module_create_info = {
-            .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .codeSize = code.size(),
-            .pCode = reinterpret_cast<const std::uint32_t*>(code.data())};
-
-    VkShaderModule shader_module;
-    if (vkCreateShaderModule(getVkDevice(),
-                             &shader_module_create_info,
-                             nullptr,
-                             &shader_module) != VK_SUCCESS) {
+    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule> module =
+            VulkanCommon::createShaderModule(getVkDevice(), filename);
+    if (!module) {
         Logging::error(LOG_TAG,
                        "Could not create shader module from a \"",
                        filename,
                        "\" file!");
-        return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
     }
-
-    return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>(
-            shader_module, vkDestroyShaderModule, getVkDevice());
+    return module;
 }
 
 Tools::AutoDeleter<VkPipelineLayout, PFN_vkDestroyPipelineLayout>
@@ -389,37 +373,6 @@ bool Tutorial04::createPipeline() {
     return true;
 }
 
-bool Tutorial04::allocateBufferMemory(VkBuffer buffer,
-                                      VkDeviceMemory* memory) {
-    VkMemoryRequirements buffer_memory_requirements;
-    vkGetBufferMemoryRequirements(
-            getVkDevice(), buffer, &buffer_memory_requirements);
-
-    VkPhysicalDeviceMemoryProperties memory_properties;
-    vkGetPhysicalDeviceMemoryProperties(getVkPhysicalDevice(),
-                                        &memory_properties);
-
-    for (std::uint32_t i = 0; i < memory_properties.memoryTypeCount; ++i) {
-        if ((buffer_memory_requirements.memoryTypeBits & (1 << i)) &&
-            (memory_properties.memoryTypes[i].propertyFlags &
-             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)) {
-            VkMemoryAllocateInfo memory_allocate_info = {
-                    .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-                    .pNext = nullptr,
-                    .allocationSize = buffer_memory_requirements.size,
-                    .memoryTypeIndex = i};
-
-            if (vkAllocateMemory(getVkDevice(),
-                                 &memory_allocate_info,
-                                 nullptr,
-                                 memory) == VK_SUCCESS) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 bool Tutorial04::createVertexBuffer() {
     Tutorial04VertexData vertex_data[] = {
             {Math::Vec4<float>(-0.7f, -0.7f, 0.0f, 1.0f),
@@ -435,39 +388,10 @@ bool Tutorial04::createVertexBuffer() {
             m_vulkan_tutorial04_parameters.getVertexBufferParameters();
     vertex_buffer.setSize(static_cast<std::uint32_t>(sizeof(vertex_data)));
 
-    VkBufferCreateInfo buffer_create_info = {
-            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .size = vertex_buffer.getSize(),
-            .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-            .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-            .queueFamilyIndexCount = 0,
-            .pQueueFamilyIndices = nullptr};
-
-    VkBuffer vk_buffer;
-    if (vkCreateBuffer(
-                getVkDevice(), &buffer_create_info, nullptr, &vk_buffer) !=
-        VK_SUCCESS) {
+    if (!VulkanCommon::BufferFactory(getVkDevice(), getVkPhysicalDevice())
+                 .create(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create a vertex buffer!");
-        return false;
-    }
-    vertex_buffer.setVkBuffer(vk_buffer);
-
-    VkDeviceMemory vk_device_memory;
-    if (!allocateBufferMemory(vertex_buffer.getVkBuffer(),
-                              &vk_device_memory)) {
-        Logging::error(LOG_TAG,
-                       "Could not allocate memory for a vertex buffer!");
-        return false;
-    }
-    vertex_buffer.setVkDeviceMemory(vk_device_memory);
-
-    if (vkBindBufferMemory(getVkDevice(),
-                           vertex_buffer.getVkBuffer(),
-                           vertex_buffer.getVkDeviceMemory(),
-                           0) != VK_SUCCESS) {
-        Logging::error(LOG_TAG, "Could not bind memory for a vertex buffer!");
         return false;
     }
 
@@ -503,31 +427,15 @@ bool Tutorial04::createVertexBuffer() {
 
 bool Tutorial04::createCommandPool(std::uint32_t queue_family_index,
                                    VkCommandPool* pool) {
-    VkCommandPoolCreateInfo cmd_pool_create_info = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT |
-                     VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
-            .queueFamilyIndex = queue_family_index};
-
-    return vkCreateCommandPool(
-                   getVkDevice(), &cmd_pool_create_info, nullptr, pool) ==
-           VK_SUCCESS;
+    return VulkanCommon::FrameResourceFactory(getVkDevice())
+            .createCommandPool(queue_family_index, pool);
 }
 
 bool Tutorial04::allocateCommandBuffers(VkCommandPool pool,
                                         std::uint32_t count,
                                         VkCommandBuffer* command_buffers) {
-    VkCommandBufferAllocateInfo command_buffer_allocate_info = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext = nullptr,
-            .commandPool = pool,
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = count};
-
-    return vkAllocateCommandBuffers(getVkDevice(),
-                                    &command_buffer_allocate_info,
-                                    command_buffers) == VK_SUCCESS;
+    return VulkanCommon::FrameResourceFactory(getVkDevice())
+            .allocateCommandBuffers(pool, count, command_buffers);
 }
 
 bool Tutorial04::createCommandBuffers() {
@@ -553,20 +461,14 @@ bool Tutorial04::createCommandBuffers() {
 }
 
 bool Tutorial04::createSemaphores() {
-    VkSemaphoreCreateInfo semaphore_create_info = {
-            .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0};
+    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+            getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial04_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (vkCreateSemaphore(
-                    getVkDevice(),
-                    &semaphore_create_info,
-                    nullptr,
-                    &rendering_resources[i].getImageAvailableVkSemaphore()) !=
-            VK_SUCCESS) {
+        if (!frame_resource_factory.createSemaphore(
+                    &rendering_resources[i].getImageAvailableVkSemaphore())) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
@@ -585,11 +487,8 @@ bool Tutorial04::createSemaphores() {
             getSwapchainParameters().getImageParameters().size(),
             VK_NULL_HANDLE);
     for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
-        if (vkCreateSemaphore(getVkDevice(),
-                              &semaphore_create_info,
-                              nullptr,
-                              &finished_rendering_semaphores[i]) !=
-            VK_SUCCESS) {
+        if (!frame_resource_factory.createSemaphore(
+                    &finished_rendering_semaphores[i])) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
@@ -599,19 +498,14 @@ bool Tutorial04::createSemaphores() {
 }
 
 bool Tutorial04::createFences() {
-    VkFenceCreateInfo fence_create_info = {
-            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = VK_FENCE_CREATE_SIGNALED_BIT};
+    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+            getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial04_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (vkCreateFence(getVkDevice(),
-                          &fence_create_info,
-                          nullptr,
-                          &rendering_resources[i].getVkFence()) !=
-            VK_SUCCESS) {
+        if (!frame_resource_factory.createFence(
+                    /*signaled=*/true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
