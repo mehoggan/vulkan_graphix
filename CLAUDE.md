@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial19_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial20_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-19.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-20.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-19)
+  - One `TutorialNNMain.cpp` per active tutorial (01-20)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -285,6 +285,22 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   excluded). Same one-render-pass-two-pipelines technique Tutorial18
   introduced, without a depth buffer this time (three separate,
   non-overlapping static meshes)
+- Tutorial20: real vulkan_earth Effects - `ParticleGenerator`/`Particle`
+  and `Explosion`/`SpecialEffect` are both real, wired-up code, and both
+  are untextured, unlit, alpha-blended `glutSolidSphere` geometry
+  (confirmed no particle/explosion texture asset exists anywhere in
+  vulkan_earth/src/, and `GL_LIGHTING` is only ever enabled for the
+  terrain in the real game). Live per-frame CPU simulations of three
+  real particle types (smoke's white->yellow->red->black color-over-time
+  fade, acid's green linear motion, float's white damped-Y drift, each
+  respawning at end of life like `ParticleGenerator::addParticles()`
+  refills a dead slot) plus a real weapon-colored growing/fading
+  explosion sphere and the real translucent shield sphere, all drawn as
+  one shared `Math::Sphere` mesh with a per-instance push constant. This
+  project's first tutorial with no texture at all (flat-colored,
+  matching the real unlit spheres) and its first continuously-animating,
+  non-static simulation (every particle's position/color evolves every
+  frame, independent of camera/mouse input)
 
 ## Common Tasks
 

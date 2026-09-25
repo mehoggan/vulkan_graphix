@@ -3,7 +3,7 @@ bin_PROGRAMS = tutorial01_runner tutorial02_runner tutorial03_runner \
     tutorial08_runner tutorial09_runner tutorial10_runner tutorial11_runner \
     tutorial12_runner tutorial13_runner tutorial14_runner tutorial15_runner \
     tutorial16_runner tutorial17_runner tutorial18_runner \
-    tutorial19_runner
+    tutorial19_runner tutorial20_runner
 
 # Tutorial 01 Binary
 tutorial01_runner_SOURCES = ./Tutorial01Main.cpp
@@ -156,6 +156,14 @@ tutorial19_runner_CPPFLAGS = -Werror -Wall -pedantic \
 tutorial19_runner_LDADD = \
     $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
 tutorial19_runner_LDFLAGS = -pthread
+
+# Tutorial 20 Binary
+tutorial20_runner_SOURCES = ./Tutorial20Main.cpp
+tutorial20_runner_CPPFLAGS = -Werror -Wall -pedantic \
+    -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
+tutorial20_runner_LDADD = \
+    $(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) $(X11_LIBS)
+tutorial20_runner_LDFLAGS = -pthread
 pkgdatadir = $(bindir)
 
 # --- Shader Copying Logic ---
@@ -232,6 +240,8 @@ tutorial19_weapon_revive = $(top_srcdir)/resources/19/Data/WeaponRevive.raw
 tutorial19_weapon_teleport = $(top_srcdir)/resources/19/Data/WeaponTeleport.raw
 tutorial19_weapon_atom = $(top_srcdir)/resources/19/Data/WeaponAtom.raw
 tutorial19_weapon_nuke = $(top_srcdir)/resources/19/Data/WeaponNuke.raw
+tutorial20_vert = $(top_srcdir)/resources/20/Data/shader.vert.20.spv
+tutorial20_frag = $(top_srcdir)/resources/20/Data/shader.frag.20.spv
 
 all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial04_frag) $(tutorial05_vert) $(tutorial05_frag) \
@@ -263,7 +273,8 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
     $(tutorial19_weapon_thor) $(tutorial19_weapon_emp) \
     $(tutorial19_weapon_padlock) $(tutorial19_weapon_revive) \
     $(tutorial19_weapon_teleport) $(tutorial19_weapon_atom) \
-    $(tutorial19_weapon_nuke)
+    $(tutorial19_weapon_nuke) \
+    $(tutorial20_vert) $(tutorial20_frag)
 	cp $(tutorial03_vert) $(builddir)/shader.03.vert.spv
 	cp $(tutorial03_frag) $(builddir)/shader.03.frag.spv
 	cp $(tutorial04_vert) $(builddir)/shader.04.vert.spv
@@ -337,6 +348,8 @@ all-local: $(tutorial03_vert) $(tutorial03_frag) $(tutorial04_vert) \
 	cp $(tutorial19_weapon_teleport) $(builddir)/WeaponTeleport.raw
 	cp $(tutorial19_weapon_atom) $(builddir)/WeaponAtom.raw
 	cp $(tutorial19_weapon_nuke) $(builddir)/WeaponNuke.raw
+	cp $(tutorial20_vert) $(builddir)/shader.20.vert.spv
+	cp $(tutorial20_frag) $(builddir)/shader.20.frag.spv
 
 CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     shader.04.frag.spv shader.05.vert.spv shader.05.frag.spv \
@@ -364,4 +377,5 @@ CLEANFILES = shader.03.vert.spv shader.03.frag.spv shader.04.vert.spv \
     projectileBFB.ogl projectileBFB.raw \
     WeaponMFB.raw WeaponBFB.raw WeaponAcid.raw WeaponThor.raw \
     WeaponEMP.raw WeaponPadlock.raw WeaponRevive.raw WeaponTeleport.raw \
-    WeaponAtom.raw WeaponNuke.raw
+    WeaponAtom.raw WeaponNuke.raw \
+    shader.20.vert.spv shader.20.frag.spv
