@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial20_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial21_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-20.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-21.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-20)
+  - One `TutorialNNMain.cpp` per active tutorial (01-21)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -301,6 +301,32 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   matching the real unlit spheres) and its first continuously-animating,
   non-static simulation (every particle's position/color evolves every
   frame, independent of camera/mouse input)
+- Tutorial21: real vulkan_earth World/Camera integration - `GameState::
+  draw()`'s own skybox -> terrain -> tank per-frame order, combining
+  three previously-separate pilots (Tutorial11's skybox, Tutorial12's
+  terrain, Tutorial16's tank) into one real scene. Tutorial12's terrain
+  shader/pipeline is reused verbatim (it was already Phong-lit and
+  textured - confirmed via grep, not something this tutorial added) at
+  this tutorial's own larger grid/scale constants, so a full-scale
+  Hellfire tank reads as sitting on a landscape rather than dwarfing a
+  32-unit pilot patch. The tank is placed using a real height query -
+  `TerrainGenerator::heightAt()`, the same call `getVertexData()` itself
+  makes to build the terrain mesh - not a fabricated Y position. Skybox
+  and tank share one unlit-textured pipeline/shader (`Tutorial11VertexData`/
+  `Tutorial16PushConstants`'s shape confirmed identical) via Tutorial19's
+  N-descriptor-sets-from-one-layout technique, but get their own separate
+  *pipelines* from that shared layout: the skybox draws with depth testing
+  off entirely (it's drawn first, before anything else has written real
+  depth, and at this tutorial's much larger world scale its own far
+  corners sit close enough to the projection's far plane that a real
+  depth test intermittently failed there from floating-point precision,
+  confirmed via a screenshot showing a solid-black clipped triangle -
+  fixed by both disabling its depth test and giving the far plane more
+  headroom), while the tank keeps a real depth test/write against the
+  terrain drawn just before it. First tutorial with three pipelines
+  (terrain Phong, tank, skybox) and a depth buffer sharing one render
+  pass, and the first where a generated terrain's own height data feeds
+  another object's placement rather than only its own mesh
 
 ## Common Tasks
 
