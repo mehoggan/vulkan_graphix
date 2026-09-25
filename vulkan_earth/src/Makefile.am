@@ -103,3 +103,36 @@ vulkan_earth_runner_LDFLAGS = -pthread
 # that used to live here as standalone additive binaries have since
 # graduated to Tutorial11-14 - see bin/Makefile.am and each tutorial's own
 # resources/NN/Data/.
+
+# The game's own textures/meshes/shaders/sound files are duplicated (not
+# shared/symlinked) into resources/vulkan_earth/Data/, deliberately kept
+# separate from any Vulkan tutorial's own resources/NN/Data/ even where
+# the content overlaps (e.g. Hellfire_*.ogl, TestImage.raw) - the two
+# sides are free to diverge independently. The game itself still loads
+# everything by bare relative filename (e.g. "SkyBox.raw",
+# "Projectiles/projectileDefault.ogl") with no path-prefix logic of its
+# own (unmodified vendored code, see the comment above). For an
+# out-of-tree build ($(srcdir) != $(builddir), e.g. a separate build/
+# directory configured via ../configure - see the top-level CLAUDE.md)
+# this copies resources/vulkan_earth/Data/'s contents into $(builddir)
+# next to the built binary, the same role each Vulkan tutorial's own
+# all-local: rule in bin/Makefile.am plays for itself. For an in-tree
+# build the assets already sit right there (this subdir's own
+# $(srcdir)), so both rules are guarded to do nothing - critically,
+# never rm -rf anything here when $(srcdir) == $(builddir), since that
+# would delete the vendored game's own original asset files instead of
+# a copy of them.
+all-local:
+	@if test "$(srcdir)" != "$(builddir)"; then \
+		mkdir -p $(builddir); \
+		for entry in $(top_srcdir)/resources/vulkan_earth/Data/*; do \
+			cp -r "$$entry" $(builddir)/; \
+		done; \
+	fi
+
+clean-local:
+	@if test "$(srcdir)" != "$(builddir)"; then \
+		for entry in $(top_srcdir)/resources/vulkan_earth/Data/*; do \
+			rm -rf $(builddir)/`basename "$$entry"`; \
+		done; \
+	fi
