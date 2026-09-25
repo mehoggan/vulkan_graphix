@@ -31,7 +31,7 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial21_runner`
+- `./build/bin/tutorial01_runner` through `./build/bin/tutorial22_runner`
 
 ### Development Workflow
 
@@ -100,7 +100,7 @@ Files" section for the exact invocation.
 
 - **lib/**: Core library source files
   - `VulkanCommon.cpp/.h` - Shared Vulkan utilities and helpers
-  - `Tutorial01-21.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-22.cpp/.h` - Individual tutorial implementations
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -119,7 +119,7 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-21)
+  - One `TutorialNNMain.cpp` per active tutorial (01-22)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -327,6 +327,33 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   (terrain Phong, tank, skybox) and a depth buffer sharing one render
   pass, and the first where a generated terrain's own height data feeds
   another object's placement rather than only its own mesh
+- Tutorial22: real vulkan_earth GameState menu layer - `GameState` itself
+  only covers in-match `GAME_PLAY` and owns no menus (confirmed via a
+  full read of `GameState.h`); the menu screens (`MainMenu`/`ReadyMenu`/
+  `ShopMenu`/`SubMenu*`) are separate top-level classes in
+  `VulkanEarth.cpp`, and every one of them opens with the identical
+  5-quad bevel-panel background `UiGeometry::buildButtonBevel()` already
+  implements generically - Tutorial17/19 already call it this exact way,
+  so no new shared code was needed for that piece; this tutorial reuses
+  Tutorial15's exact 2D pipeline/shader for the panel/title/button. What
+  is genuinely new is `ReadyMenu`'s own real technique
+  (`ReadyMenu.cpp:909-982`): a live rotating 3D tank preview rendered
+  into a scissored sub-region of the screen, reusing Tutorial16's exact
+  tank pipeline/push-constant shape and real hierarchical positioning,
+  but bound with a `VkViewport`/`VkRect2D` confined to that sub-region
+  instead of the full swapchain extent - this project's first pipeline
+  whose viewport doesn't cover the whole frame. The tank's model matrix
+  also gets one extra Y-axis rotation that increments every `draw()`
+  call, mirroring `ReadyMenu.cpp`'s own `tank_angle += 0.25f` - this
+  project's first continuously-animating *transform*, independent of
+  mouse/camera input (Tutorial20's particle/explosion state also
+  evolves every frame, but as a simulation's positions/colors, not a
+  single object's pose). One render pass, two pipelines: the 2D panel
+  pipeline (depth disabled, full extent, drawn first) and the 3D preview
+  pipeline (real depth test/write, scissored to the sub-region, drawn
+  second so it composites inside the panel) - the same multi-pipeline-
+  one-render-pass technique Tutorial18 introduced, now paired with a
+  partial-frame viewport
 
 ## Common Tasks
 
