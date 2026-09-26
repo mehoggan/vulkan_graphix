@@ -1,6 +1,8 @@
 #include "PlayerCPU.h"
 #include <string>
+#include "Item.h"
 #include "PlayerFactory.h"
+#include "Weapon.h"
 #include "Tank.h"
 #include "TankA.h"
 #include "TankB.h"

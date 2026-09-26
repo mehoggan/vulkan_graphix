@@ -17,4 +17,4 @@ public:
     virtual void setDefaultColors() = 0;
 };
 
-#endif SPECIAL_EFFECT_H_
+#endif  // SPECIAL_EFFECT_H_

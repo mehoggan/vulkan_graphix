@@ -131,7 +131,7 @@ GameState::GameState(int new_width,
     } else if (!new_global_settings) {
         printf("Quiting because Global Settings Does Not Exist\n");
         exit(0);
-    } else if (!(global_settings->getCurrentTerrain())) {
+    } else if (!(new_global_settings->getCurrentTerrain())) {
         printf("The terrain does not exist\n");
         exit(0);
     } else {

@@ -38,4 +38,4 @@ private:
     Item* items[player_max_items];
     int select_cell_row, select_cell_col;
 };
-#endif INVENTORY_H
+#endif  // INVENTORY_H
