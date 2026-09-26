@@ -30,7 +30,9 @@ make -j8
 ```
 
 Build output binaries:
-- `./build/bin/tutorial01_runner` through `./build/bin/tutorial22_runner`
+- `./build/bin/NN_<name>/tutorialNN_runner`, e.g.
+  `./build/bin/01_device_initialization/tutorial01_runner` through
+  `./build/bin/22_menu_tank_preview/tutorial22_runner`
 
 ### Development Workflow
 
@@ -129,7 +131,13 @@ Files" section for the exact invocation.
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
 - **bin/**: Tutorial executable entry points
-  - One `TutorialNNMain.cpp` per active tutorial (01-22)
+  - One `NN_<terse_description>/` folder per tutorial (01-22), each holding
+    its own `main.cpp` and `Makefile.am`; `bin/Makefile.am` just lists
+    them as `SUBDIRS`. Assets are loaded from the executable's own
+    directory (`Tools.cpp`'s `executableDir()`), so each folder's
+    `all-local:` rule copies every shader/texture/mesh that tutorial loads,
+    including ones borrowed from another tutorial's `resources/NN/Data/`
+    (e.g. 18/21/22 copy the Hellfire tank from `resources/16/Data/`)
 
 - **include/vulkan_graphix/**: Public headers
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
@@ -399,18 +407,22 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
    in `lib/`
 2. Implement the tutorial class with Vulkan setup
 3. Add `./TutorialNN.cpp` to `lib/Makefile.am` libvulkan_graphix_la_SOURCES
-4. Create `TutorialNNMain.cpp` in bin/
-5. Add binary target (`tutorialNN_runner`) to `bin/Makefile.am`
+4. Create `bin/NN_<terse_description>/main.cpp`
+5. Give that folder its own `Makefile.am` (`bin_PROGRAMS =
+   tutorialNN_runner`, copy an existing one), add the folder to
+   `bin/Makefile.am`'s `SUBDIRS`, and add `bin/NN_<...>/Makefile` to
+   `configure.ac`'s `AC_CONFIG_FILES`
 6. Create shader files in `resources/NN/Data/` (`shader.NN.vert`/
    `shader.NN.frag`), compile with `compile_shaders.sh` (or `glslc`
    directly - see README.md), and copy the compiled `.spv`/any texture
-   assets into the build dir via an `all-local:` rule in `bin/Makefile.am`
+   assets into the build dir via an `all-local:` rule in that folder's
+   `Makefile.am`
 
 ### Debugging
 
 Binaries can be run directly after building:
 ```sh
-./build/bin/tutorial01_runner
+./build/bin/01_device_initialization/tutorial01_runner
 ```
 
 The logging system will output debug information. Set logging levels in code via the logging API.
