@@ -10,7 +10,6 @@ A collection of Vulkan API tutorials built as a shared library (`libvulkan_graph
 
 ```sh
 sudo apt install -y libvulkan-dev vulkan-validationlayers spirv-tools
-sudo apt install -y libboost-log-dev libboost-system-dev libboost-thread-dev
 ```
 
 ### Build

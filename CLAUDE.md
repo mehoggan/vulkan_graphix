@@ -13,7 +13,6 @@ A collection of Vulkan API tutorials and examples, demonstrating progressive con
 Install dependencies:
 ```sh
 sudo apt install -y libvulkan-dev vulkan-validationlayers spirv-tools
-sudo apt install -y libboost-log-dev libboost-system-dev libboost-thread-dev
 sudo apt install -y fonts-dejavu-core
 ```
 
@@ -120,7 +119,8 @@ Files" section for the exact invocation.
     Tutorial15 and any future vulkan_earth UI port
   - `UiGeometry.cpp/.h` - Beveled 2D button-quad geometry, ported from
     vulkan_earth's `ControlItemButton::draw()`, shared the same way
-  - `Logging.cpp/.h` - Boost-based logging framework
+  - `Logging.cpp/.h` - std::-based (filesystem/ostream/chrono/thread)
+    per-tag logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
   - `Tools.cpp/.h` - Utility functions (also holds `loadOglMeshData()`,
     a shared parser for vulkan_earth's `.ogl` mesh format used by
@@ -146,9 +146,9 @@ Files" section for the exact invocation.
 
 - **Vulkan SDK** - GPU API bindings
 - **X11** - Display server protocol (X11 platform)
-- **Boost** - Logging (boost_log, boost_system, boost_thread)
 - **libm** - Math library (C standard)
-- **C++20** - Modern C++ standard
+- **C++20** - Modern C++ standard (logging uses `<filesystem>`/`<chrono>`/
+  `<thread>` directly - no Boost dependency anywhere in the project)
 
 ## Code Style & Quality
 
@@ -203,9 +203,20 @@ Standard formatting applied (`.clang-format` present).
 
 ### Logging System
 
-The project uses a custom logging infrastructure built on Boost.Log:
+The project uses a custom, std::-only logging infrastructure (no Boost):
 - `LoggedClass` base class provides logging capabilities
-- `Logging.h` contains the logging configuration
+- `Logging.h`/`.cpp` implement a per-`LogTag` registry of `std::ostream*`
+  destinations (`std::cout`/`std::cerr`/`std::clog`, or an owned
+  `std::ofstream` for a file sink) with a per-sink minimum
+  `SeverityLevel`; `std::filesystem` for paths/temp-directory creation,
+  `std::chrono`+`<ctime>` for the record timestamp, and
+  `std::this_thread::get_id()` for the thread-id field. Registering a
+  second sink for a tag that's already registered is a silent no-op
+  (first registration for a given tag wins) - so `LoggedClass`'s own
+  cerr registration currently never takes effect once its cout
+  registration has already claimed that instance's tag; this is
+  pre-existing behavior carried over unchanged from the prior Boost.Log
+  implementation, not something the std:: rewrite introduced
 - `LoggerHelpers` provide utility functions for formatted output
 
 ### Vulkan Utilities

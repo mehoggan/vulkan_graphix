@@ -37,8 +37,7 @@ libvulkan_graphix_la_SOURCES = ./BitmapFont.cpp \
 															./VulkanCommon.cpp \
 															./VulkanFunctions.cpp
 
-libvulkan_graphix_la_LIBADD = -lboost_log -lboost_system -lboost_thread \
-														$(VULKAN_LIBS) $(X11_LIBS)
+libvulkan_graphix_la_LIBADD = $(VULKAN_LIBS) $(X11_LIBS)
 
 libvulkan_graphix_la_LDFLAGS = -pthread
 

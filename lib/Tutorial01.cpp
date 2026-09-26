@@ -1,5 +1,6 @@
 #include "vulkan_graphix/Tutorial01.h"
 
+#include <algorithm>
 #include <climits>
 #include <cstdint>
 #include <functional>

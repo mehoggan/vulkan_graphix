@@ -35,7 +35,7 @@ math_test_LDFLAGS = -pthread
 
 # Exercises vulkan_graphix::Tools's file-IO/math helpers directly (see
 # ToolsTest.cpp's header comment) - needs libvulkan_graphix.la (Tools.cpp
-# carries the STB_IMAGE_IMPLEMENTATION and the Vulkan/X11/boost symbols the
+# carries the STB_IMAGE_IMPLEMENTATION and the Vulkan/X11 symbols the
 # library as a whole depends on), but no live device or window, unlike the
 # integration tests below.
 tools_test_SOURCES = ./ToolsTest.cpp
@@ -44,7 +44,6 @@ tools_test_CPPFLAGS = -Werror -Wall -pedantic \
 		$(VULKAN_CFLAGS)
 tools_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tools_test_LDFLAGS = -pthread
 
@@ -57,24 +56,22 @@ operating_system_test_CPPFLAGS = -Werror -Wall -pedantic \
 		$(X11_CFLAGS)
 operating_system_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 operating_system_test_LDFLAGS = -pthread
 
 # Exercises vulkan_graphix::Logging directly (see LoggingTest.cpp's header
-# comment) - pure Boost.Log/filesystem code, no live device or window.
+# comment) - pure std::filesystem/ostream code, no live device or window.
 logging_test_SOURCES = ./LoggingTest.cpp
 logging_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 logging_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread -lboost_filesystem \
 		$(VULKAN_LIBS) $(X11_LIBS)
 logging_test_LDFLAGS = -pthread
 
 # Exercises LoggerHelpers.h's stream operators directly (see
 # LoggerHelpersTest.cpp's header comment) - pure stringstream formatting,
-# no boost/X11/library link needed, so LoggerHelpers.cpp is compiled
+# no X11/library link needed, so LoggerHelpers.cpp is compiled
 # straight into this binary rather than linking libvulkan_graphix.la.
 logger_helpers_test_SOURCES = ./LoggerHelpersTest.cpp \
 		$(abs_top_srcdir)/lib/LoggerHelpers.cpp
@@ -92,7 +89,6 @@ tutorial_base_helpers_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial_base_helpers_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial_base_helpers_test_LDFLAGS = -pthread
 
@@ -107,7 +103,6 @@ tutorial_base_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial_base_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial_base_fault_injection_test_LDFLAGS = -pthread
 
@@ -124,7 +119,6 @@ tutorial_base_fault_injection_swapchain_test_CPPFLAGS = \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial_base_fault_injection_swapchain_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial_base_fault_injection_swapchain_test_LDFLAGS = -pthread
 
@@ -135,7 +129,6 @@ tutorial_base_fault_injection_device_level_test_CPPFLAGS = \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial_base_fault_injection_device_level_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial_base_fault_injection_device_level_test_LDFLAGS = -pthread
 
@@ -148,7 +141,6 @@ tutorial04_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial04_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial04_fault_injection_test_LDFLAGS = -pthread
 
@@ -160,7 +152,6 @@ tutorial05_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial05_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial05_fault_injection_test_LDFLAGS = -pthread
 
@@ -170,7 +161,6 @@ tutorial06_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial06_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial06_fault_injection_test_LDFLAGS = -pthread
 
@@ -180,7 +170,6 @@ tutorial07_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial07_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial07_fault_injection_test_LDFLAGS = -pthread
 
@@ -192,7 +181,6 @@ tutorial03_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial03_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial03_fault_injection_test_LDFLAGS = -pthread
 
@@ -202,7 +190,6 @@ tutorial08_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial08_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial08_fault_injection_test_LDFLAGS = -pthread
 
@@ -212,7 +199,6 @@ tutorial09_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial09_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial09_fault_injection_test_LDFLAGS = -pthread
 
@@ -222,7 +208,6 @@ tutorial10_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial10_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial10_fault_injection_test_LDFLAGS = -pthread
 
@@ -241,7 +226,6 @@ integration_test_common_cppflags = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
 integration_test_common_ldadd = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
-		-lboost_log -lboost_system -lboost_thread \
 		$(VULKAN_LIBS) $(X11_LIBS)
 integration_test_common_ldflags = -pthread
 

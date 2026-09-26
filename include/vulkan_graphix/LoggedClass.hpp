@@ -23,11 +23,9 @@ public:
      * @param[in] cout_level The level at which to log to std::cout.
      * @param[in] cerr_level The level at which to log to std::cerr.
      */
-    explicit LoggedClass(
-            const DerivedType& derived,
-            boost::log::trivial::severity_level cout_level = VULKAN_GRAPHIX_INFO,
-            boost::log::trivial::severity_level cerr_level =
-                    VULKAN_GRAPHIX_ERROR)
+    explicit LoggedClass(const DerivedType& derived,
+                        SeverityLevel cout_level = VULKAN_GRAPHIX_INFO,
+                        SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR)
             : LOG_TAG(Logging::logTagForThis(derived)) {
         Logging::addStdCoutLogger(LOG_TAG, cout_level);
         Logging::addStdCerrLogger(LOG_TAG, cerr_level);
@@ -44,7 +42,7 @@ public:
     virtual ~LoggedClass() = default;
 
 protected:
-    LogTag LOG_TAG;
+    LogTag LOG_TAG;  // NOLINT(readability-identifier-naming)
 };
 }  // namespace vulkan_graphix
 #endif

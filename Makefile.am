@@ -40,7 +40,7 @@ coverage: coverage-clean
 			--add-tracefile coverage-run.info \
 			--ignore-errors inconsistent,negative,count \
 			--output-file coverage.info; \
-		$(LCOV) --remove coverage.info '/usr/*' '*/boost/*' \
+		$(LCOV) --remove coverage.info '/usr/*' \
 			'*/tests/*' '*STBImage.h' '*ListOfFunctions.inl' \
 			--ignore-errors inconsistent,unused \
 			--output-file coverage.info; \

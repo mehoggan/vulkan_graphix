@@ -126,7 +126,7 @@ the uncovered line numbers/ranges directly (run `make coverage` or
 `gcovr` specifically — `lcov` has no equivalent per-line text report; with
 `lcov` only, read uncovered lines off the highlighted source in `make
 coverage`'s HTML output instead. Both targets filter out system headers,
-`glm`, `gtest`, `boost`, and the vendored `STBImage.h`/`ListOfFunctions.inl`
+`glm`, `gtest`, and the vendored `STBImage.h`/`ListOfFunctions.inl`
 — only this project's own `lib/` and `include/vulkan_graphix/` code is
 reported on.
 

@@ -1,30 +1,38 @@
 #ifndef VULKAN_GRAPHIX_LOGGING_H
 #define VULKAN_GRAPHIX_LOGGING_H
 
-#define BOOST_LOG_DYN_LINK 1
-
 #include "vulkan_graphix/LoggerHelpers.h"
 
 #include <gtest/gtest_prod.h>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/log/sinks/sync_frontend.hpp>
-#include <boost/log/sinks/text_ostream_backend.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/weak_ptr.hpp>
-
 #include <atomic>
+#include <filesystem>
+#include <fstream>
+#include <memory>
 #include <mutex>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 
-#define VULKAN_GRAPHIX_TRACE boost::log::trivial::severity_level::trace
-#define VULKAN_GRAPHIX_DEBUG boost::log::trivial::severity_level::debug
-#define VULKAN_GRAPHIX_INFO boost::log::trivial::severity_level::info
-#define VULKAN_GRAPHIX_WARN boost::log::trivial::severity_level::warning
-#define VULKAN_GRAPHIX_ERROR boost::log::trivial::severity_level::error
-#define VULKAN_GRAPHIX_FATAL boost::log::trivial::severity_level::fatal
+namespace vulkan_graphix {
+/**
+ * @brief The severity levels a log record can be written at.
+ *
+ * Mirrors boost::log::trivial::severity_level's own six levels (same
+ * names/ordering), which every caller in this project already refers to
+ * exclusively through the VULKAN_GRAPHIX_* macros below rather than by
+ * spelling this type out directly.
+ */
+enum class SeverityLevel { trace, debug, info, warning, error, fatal };
+}  // namespace vulkan_graphix
+
+#define VULKAN_GRAPHIX_TRACE vulkan_graphix::SeverityLevel::trace
+#define VULKAN_GRAPHIX_DEBUG vulkan_graphix::SeverityLevel::debug
+#define VULKAN_GRAPHIX_INFO vulkan_graphix::SeverityLevel::info
+#define VULKAN_GRAPHIX_WARN vulkan_graphix::SeverityLevel::warning
+#define VULKAN_GRAPHIX_ERROR vulkan_graphix::SeverityLevel::error
+#define VULKAN_GRAPHIX_FATAL vulkan_graphix::SeverityLevel::fatal
 
 namespace vulkan_graphix {
 /**
@@ -101,7 +109,7 @@ public:
     }
 
 private:
-    std::string tag_;
+    std::string tag_;  // NOLINT(readability-identifier-naming)
 };
 }  // namespace vulkan_graphix
 
@@ -136,9 +144,18 @@ private:
     }
 
 public:
-    using TextSink = boost::log::sinks::synchronous_sink<
-            boost::log::sinks::text_ostream_backend>;
-    using Dict = std::unordered_map<LogTag, boost::weak_ptr<TextSink>>;
+    // One tag's registered destination: where formatted records get
+    // written (never owned here - std::cout/cerr/clog are process-
+    // lifetime singletons; a file sink's std::ofstream is owned by the
+    // same TextSink instance via owned_file, and stream then points at
+    // *owned_file) plus the minimum severity that passes this sink's
+    // filter, matching every addXLogger() overload's own `level` param.
+    struct TextSink {
+        std::ostream* stream;
+        SeverityLevel level;
+        std::unique_ptr<std::ofstream> owned_file;
+    };
+    using Dict = std::unordered_map<LogTag, TextSink>;
 
     /**
      * @brief Used to create a stdout source tied to a \ref LogTag.
@@ -152,9 +169,8 @@ public:
      * @return true if \p tag was not already added to logger, false
      *         otherwise.
      */
-    static bool addStdCoutLogger(
-            const LogTag& tag,
-            boost::log::trivial::severity_level level = VULKAN_GRAPHIX_INFO);
+    static bool addStdCoutLogger(const LogTag& tag,
+                                 SeverityLevel level = VULKAN_GRAPHIX_INFO);
 
     /**
      * @brief Used to create a stderr source tied to a \ref LogTag.
@@ -168,9 +184,8 @@ public:
      * @return true if \p tag was not already added to logger, false
      *         otherwise.
      */
-    static bool addStdCerrLogger(
-            const LogTag& tag,
-            boost::log::trivial::severity_level level = VULKAN_GRAPHIX_ERROR);
+    static bool addStdCerrLogger(const LogTag& tag,
+                                 SeverityLevel level = VULKAN_GRAPHIX_ERROR);
 
     /**
      * @brief Used to create a stdlog source tied to a \ref LogTag.
@@ -182,9 +197,8 @@ public:
      * @return true if \p tag was not already added to logger, false
      *         otherwise.
      */
-    static bool addStdLogLogger(
-            const LogTag& tag,
-            boost::log::trivial::severity_level level = VULKAN_GRAPHIX_TRACE);
+    static bool addStdLogLogger(const LogTag& tag,
+                                SeverityLevel level = VULKAN_GRAPHIX_TRACE);
 
     /**
      * @brief Used to create a file source tied to a \ref LogTag.
@@ -198,10 +212,9 @@ public:
      *
      * @return
      */
-    static bool addFileLogger(
-            const LogTag& tag,
-            const boost::filesystem::path& log_path,
-            boost::log::trivial::severity_level level = VULKAN_GRAPHIX_INFO);
+    static bool addFileLogger(const LogTag& tag,
+                              const std::filesystem::path& log_path,
+                              SeverityLevel level = VULKAN_GRAPHIX_INFO);
 
     /**
      * @brief A utility function used to generate a log tag for a specific
@@ -231,13 +244,16 @@ public:
      * @brief Utility function for creating a tmp directory for where to
      *        write log files.
      *
-     * @param[in] model The format to be used in creating a tmp directory
+     * @param[in] model The format to be used in creating a tmp directory,
+     *                  with each run of '%' replaced by a random hex
+     *                  digit (matching boost::filesystem::unique_path()'s
+     *                  own substitution rule).
      *
-     * @return A \ref boost::filesystem::path to where the tmp directory
+     * @return A \ref std::filesystem::path to where the tmp directory
      *         was created on the local filesystem.
      */
-    static boost::filesystem::path mktmpdir(
-            const boost::filesystem::path& model = "%%%%-%%%%-%%%%-%%%%");
+    static std::filesystem::path mktmpdir(
+            const std::filesystem::path& model = "%%%%-%%%%-%%%%-%%%%");
 
     /**
      * @brief A key function for Logging at the \ref VULKAN_GRAPHIX_TRACE
@@ -374,16 +390,14 @@ public:
 
 private:
     static void writeSeverityLog(const LogTag& tag,
-                                 boost::log::trivial::severity_level level,
+                                 SeverityLevel level,
                                  const std::string& message);
-
-private:
-    LogTag tag_;
 
 private:
     static std::atomic<bool> s_init;
     static Dict s_loggers;
     static std::mutex s_loggers_mutex;
+    static std::atomic<unsigned int> s_line_id;
 
 private:
     FRIEND_TEST(TestLogging, testClearAll);
@@ -406,8 +420,8 @@ private:
 template <class T>
 LogTag addStdCoutStdErrLoggerForTypeInstance(
         const T& type,
-        boost::log::trivial::severity_level cout_level = VULKAN_GRAPHIX_INFO,
-        boost::log::trivial::severity_level cerr_level = VULKAN_GRAPHIX_ERROR) {
+        SeverityLevel cout_level = VULKAN_GRAPHIX_INFO,
+        SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR) {
     LogTag log_tag = Logging::logTagForThis(type);
     Logging::addStdCoutLogger(log_tag, cout_level);
     Logging::addStdCerrLogger(log_tag, cerr_level);

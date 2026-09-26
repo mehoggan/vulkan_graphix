@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <algorithm>
 #include <cstdint>
 
 #include "vulkan_graphix/VulkanFunctions.h"

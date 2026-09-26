@@ -1,24 +1,16 @@
-// Exercises vulkan_graphix::Logging directly - pure Boost.Log/filesystem
-// code, no Vulkan device or X11 window needed. TestLogging.testClearAll
-// is named to match the FRIEND_TEST(TestLogging, testClearAll) already
-// declared in Logging.h, giving it access to the private s_loggers map.
-
-// vulkan_graphix/Logging.h must be included before any other boost/log
-// header: it #defines BOOST_LOG_DYN_LINK, which fixes boost::log's ABI-
-// versioning inline namespace (v2_mt_posix vs. v2s_mt_posix) on that
-// header's first inclusion in this translation unit - including
-// <boost/log/core.hpp> first here previously picked the wrong one and
-// left this binary unable to link against libvulkan_graphix.la's Logging
-// symbols.
+// Exercises vulkan_graphix::Logging directly - pure std::filesystem/
+// ostream code, no Vulkan device or X11 window needed. TestLogging.
+// testClearAll is named to match the FRIEND_TEST(TestLogging, testClearAll)
+// already declared in Logging.h, giving it access to the private
+// s_loggers map.
 #include "vulkan_graphix/Logging.h"
 
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <string>
 
 #include <gtest/gtest.h>
-#include <boost/filesystem/operations.hpp>
-#include <boost/log/core.hpp>
 
 using vulkan_graphix::Logging;
 using vulkan_graphix::LogTag;
@@ -99,31 +91,30 @@ TEST(LoggingTest, LogTagForThisIsStableForTheSameInstance) {
 }
 
 TEST(LoggingTest, MktmpdirCreatesARealDirectory) {
-    boost::filesystem::path tmp_dir = Logging::mktmpdir();
+    std::filesystem::path tmp_dir = Logging::mktmpdir();
 
-    EXPECT_TRUE(boost::filesystem::exists(tmp_dir));
-    EXPECT_TRUE(boost::filesystem::is_directory(tmp_dir));
+    EXPECT_TRUE(std::filesystem::exists(tmp_dir));
+    EXPECT_TRUE(std::filesystem::is_directory(tmp_dir));
 
-    boost::filesystem::remove_all(tmp_dir);
+    std::filesystem::remove_all(tmp_dir);
 }
 
 TEST(LoggingTest, AddFileLoggerWritesTheLoggedMessageToDisk) {
-    boost::filesystem::path tmp_dir = Logging::mktmpdir();
-    boost::filesystem::path log_file = tmp_dir / "logging_test.log";
+    std::filesystem::path tmp_dir = Logging::mktmpdir();
+    std::filesystem::path log_file = tmp_dir / "logging_test.log";
     LogTag log_tag("logging-test-file");
 
     ASSERT_TRUE(Logging::addFileLogger(log_tag, log_file));
     Logging::info(log_tag, "hello", "file", "logger");
-    boost::log::core::get()->flush();
 
-    ASSERT_TRUE(boost::filesystem::exists(log_file));
+    ASSERT_TRUE(std::filesystem::exists(log_file));
     std::ifstream in_stream(log_file.string());
     std::string contents((std::istreambuf_iterator<char>(in_stream)),
                          std::istreambuf_iterator<char>());
     EXPECT_NE(contents.find("hello file logger"), std::string::npos);
 
     Logging::clearAll();
-    boost::filesystem::remove_all(tmp_dir);
+    std::filesystem::remove_all(tmp_dir);
 }
 
 TEST(LoggingTest, SeverityLevelLoggingCallsDoNotCrash) {
