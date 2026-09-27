@@ -101,12 +101,34 @@ AM_CONDITIONAL([OSX], [test "$build_mac" = "yes"])
 LT_INIT()
 
 AX_CXX_COMPILE_STDCXX([20], [noext], [mandatory])
-AC_CONFIG_SRCDIR([bin/Tutorial01Main.cpp])
+AC_CONFIG_SRCDIR([bin/01_device_initialization/main.cpp])
 
 AC_CONFIG_FILES([
   Makefile
   lib/Makefile
   bin/Makefile
+  bin/01_device_initialization/Makefile
+  bin/02_swap_chain/Makefile
+  bin/03_first_triangle/Makefile
+  bin/04_vertex_attributes/Makefile
+  bin/05_staging_resources/Makefile
+  bin/06_descriptor_sets/Makefile
+  bin/07_uniform_buffers/Makefile
+  bin/08_phong_sphere/Makefile
+  bin/09_tessellated_terrain/Makefile
+  bin/10_spline_polyline/Makefile
+  bin/11_skybox/Makefile
+  bin/12_generated_terrain/Makefile
+  bin/13_projectile_model/Makefile
+  bin/14_particle_sphere/Makefile
+  bin/15_text_and_button/Makefile
+  bin/16_tank/Makefile
+  bin/17_item_inventory/Makefile
+  bin/18_player_tanks_hud/Makefile
+  bin/19_weapons_projectiles/Makefile
+  bin/20_particle_effects/Makefile
+  bin/21_world_scene/Makefile
+  bin/22_menu_tank_preview/Makefile
   tests/Makefile
   vulkan_earth/src/Makefile
 ])
