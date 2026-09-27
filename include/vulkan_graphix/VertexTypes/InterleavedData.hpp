@@ -11,7 +11,8 @@
 namespace vulkan_graphix::VertexTypes {
 
 // A vertex buffer's worth of interleaved attribute records.
-template <typename... Ts> struct InterleavedData {
+template <typename... Ts>
+struct InterleavedData {
 public:
     using datum_type = InterleavedDatum<Ts...>;
     using collection_type = std::vector<datum_type>;

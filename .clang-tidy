@@ -57,6 +57,9 @@ Checks: >
     readability-uniqueptr-delete-release,
     readability-identifier-naming,
     readability-identifier-length
+# Format fix-its (clang-tidy --fix) with the project's .clang-format, so
+# e.g. generated template code keeps `template <...>` on its own line.
+FormatStyle: file
 CheckOptions:
   - key:             llvm-namespace-comment.ShortNamespaceLines
     value:           40

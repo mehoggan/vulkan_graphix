@@ -6,7 +6,8 @@
 namespace vulkan_graphix::Math {
 
 // A line segment between two 3D points.
-template <typename T> class Line {
+template <typename T>
+class Line {
 public:
     Line(Vec3<T> const& point0, Vec3<T> const& point1)
             : m_point0(point0), m_point1(point1) {}

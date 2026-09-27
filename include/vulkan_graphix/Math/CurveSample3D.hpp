@@ -9,7 +9,8 @@ namespace vulkan_graphix::Math {
 
 // A single sample along a CubicCurve: the position, tangent, and curve
 // parameter (t) it was evaluated at.
-template <typename T> struct CurveSample3D {
+template <typename T>
+struct CurveSample3D {
     CurveSample3D()
             : position(T(0), T(0), T(0))
             , tangent(T(0), T(0), T(0))

@@ -24,15 +24,18 @@ bool pointsOfTriangleAreCollinear(
     return !(area > epsilon);
 }
 
-template <typename T> Vec3<T> centroidOfTriangle(Triangle<T> const& tri) {
+template <typename T>
+Vec3<T> centroidOfTriangle(Triangle<T> const& tri) {
     return (tri.p0() + tri.p1() + tri.p2()) / T(3);
 }
 
-template <typename T> Vec3<T> midpointOfLine(Line<T> const& line) {
+template <typename T>
+Vec3<T> midpointOfLine(Line<T> const& line) {
     return (line.p0() + line.p1()) / T(2);
 }
 
-template <typename T, AngleMode AM> class SphericalCoordinates {
+template <typename T, AngleMode AM>
+class SphericalCoordinates {
 public:
     SphericalCoordinates(T theta, T phi, T radius)
             : m_theta(theta), m_phi(phi), m_radius(radius) {}

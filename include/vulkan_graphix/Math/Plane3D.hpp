@@ -9,7 +9,8 @@ namespace vulkan_graphix::Math {
 
 // A 3D plane stored as the coefficients (a, b, c, d) of
 // a*x + b*y + c*z + d = 0.
-template <typename T> class Plane3D {
+template <typename T>
+class Plane3D {
 public:
     // Default-constructs an invalid plane (all coefficients zero).
     Plane3D() : m_coefficients(T(0), T(0), T(0), T(0)) {}
