@@ -1,12 +1,12 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial19.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial19.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Three real, distinct projectile meshes (Default/Acid/BFB) each scaled
 // by their own weapon's real scale value, demonstrating Projectile::
 // draw()'s real per-weapon mesh dispatch, plus a grid of the 10 real
-// shop-purchasable weapons - see include/vulkan_graphix/Tutorial19.h.
+// shop-purchasable weapons - see include/vulkan_graphix/Tutorial/Tutorial19.h.
 // Click a weapon cell to select it and read its real description; drag
 // with the mouse to orbit the projectiles.
 int main(int /*argc*/, char** /*argv*/) {

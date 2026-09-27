@@ -1,4 +1,4 @@
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 #include <vulkan/vulkan_core.h>
 

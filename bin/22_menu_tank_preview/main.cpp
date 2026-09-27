@@ -1,13 +1,13 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial22.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial22.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Real vulkan_earth GameState menu layer: the identical 5-quad bevel-
 // panel background every real menu screen (MainMenu/ReadyMenu/ShopMenu/
 // SubMenu*) opens with, plus ReadyMenu's own real technique - a live
 // rotating 3D tank preview rendered into a scissored sub-region of the
-// screen - see include/vulkan_graphix/Tutorial22.h. Click the button to
+// screen - see include/vulkan_graphix/Tutorial/Tutorial22.h. Click the button to
 // see the click counter update.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;

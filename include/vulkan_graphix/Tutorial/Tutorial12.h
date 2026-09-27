@@ -23,7 +23,7 @@
 #include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/TerrainGenerator.h"
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
 
 namespace vulkan_graphix {

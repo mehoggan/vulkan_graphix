@@ -1,66 +1,74 @@
-#ifndef VULKAN_GRAPHIX_TUTORIAL15_H
-#define VULKAN_GRAPHIX_TUTORIAL15_H
-
-// A minimal 2D UI: a text title and one clickable button with a text
-// label, demonstrating the two primitives vulkan_earth's whole menu
-// system (MainMenu/SubMenu*/ReadyMenu/ShopMenu/ControlItem*) is built
-// from - text (BitmapFont.h) and a beveled button face
-// (UiGeometry::buildButtonBevel(), ported from
-// vulkan_earth/src/ControlItemButton.cpp) - without porting that entire
-// class hierarchy. Both of those pieces are pure CPU geometry/layout
-// logic with no Vulkan coupling, so this tutorial's own job is just:
-// upload the font atlas as a texture, and every frame, rebuild a small
-// CPU vertex list from current UI state (title + button bevel + button
-// label) and re-upload it into a host-visible vertex buffer - the
-// correct Vulkan pattern for small, per-frame-dynamic geometry, the same
-// way every other tutorial already maps/memcpy's its uniform buffer each
-// frame rather than staging it.
+#ifndef VULKAN_GRAPHIX_TUTORIAL10_H
+#define VULKAN_GRAPHIX_TUTORIAL10_H
 
 #include <cstddef>
 #include <cstdint>
-#include <string>
 #include <vector>
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
-#include "vulkan_graphix/BitmapFont.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
 
 namespace vulkan_graphix {
 
-struct Tutorial15VertexData {
+// ************************************************************ //
+// LineVertexData                                               //
+//                                                              //
+// One vertex layout for both things this tutorial draws with   //
+// LINE_STRIP: the sampled curve itself (a real polyline, not a //
+// swept mesh) and its control polygon.                         //
+// ************************************************************ //
+struct LineVertexData {
     Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+};
+
+using LineVertexAttributeTraits =
+        VertexTypes::AttributeTraits<Math::Vec4<float>>;
+
+// ************************************************************ //
+// UniformBufferData                                            //
+//                                                              //
+// No model matrix: both line strips are generated directly in  //
+// world space. No lighting fields either - flat-colored lines  //
+// have no surface to light.                                    //
+// ************************************************************ //
+struct Tutorial10UniformBufferData {
+    Math::Mat4<float> view;
+    Math::Mat4<float> projection;
+};
+
+// ************************************************************ //
+// LinePushConstants                                            //
+//                                                              //
+// The active line strip's flat color, set per draw call.       //
+// ************************************************************ //
+struct LinePushConstants {
     Math::Vec4<float> color;
 };
 
-using Tutorial15VertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec2<float>,
-                                     Math::Vec4<float>>;
-
 // ************************************************************ //
-// VulkanTutorial15Parameters                                   //
+// VulkanTutorial10Parameters                                   //
 //                                                              //
 // Vulkan specific parameters                                   //
 // ************************************************************ //
-struct VulkanTutorial15Parameters {
+class VulkanTutorial10Parameters {
 public:
     static const std::size_t resources_count = 3;
 
-    VulkanTutorial15Parameters();
+    VulkanTutorial10Parameters();
 
     const VkRenderPass& getVkRenderPass() const;
     VkRenderPass& getVkRenderPass();
     void setVkRenderPass(const VkRenderPass& vk_render_pass);
 
-    const ImageParameters& getImageParameters() const;
-    ImageParameters& getImageParameters();
-    void setImageParameters(const ImageParameters& image_parameters);
+    const ImageParameters& getDepthImageParameters() const;
+    ImageParameters& getDepthImageParameters();
+    void setDepthImageParameters(const ImageParameters& depth_image);
 
     const BufferParameters& getUniformBufferParameters() const;
     BufferParameters& getUniformBufferParameters();
@@ -75,20 +83,25 @@ public:
     VkPipelineLayout& getVkPipelineLayout();
     void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
 
-    const VkPipeline& getVkGraphicsPipeline() const;
-    VkPipeline& getVkGraphicsPipeline();
-    void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
+    const VkPipeline& getVkLinePipeline() const;
+    VkPipeline& getVkLinePipeline();
+    void setVkLinePipeline(const VkPipeline& vk_line_pipeline);
 
-    // Host-visible/coherent, sized once for kMaxVertexCount - see
-    // Tutorial15.h's own comment and updateVertexBufferData().
-    const BufferParameters& getVertexBufferParameters() const;
-    BufferParameters& getVertexBufferParameters();
-    void setVertexBufferParameters(const BufferParameters& vertex_buffer);
+    const BufferParameters& getCurveVertexBufferParameters() const;
+    BufferParameters& getCurveVertexBufferParameters();
+    void setCurveVertexBufferParameters(const BufferParameters& vertex_buffer);
 
-    std::uint32_t getVertexCount() const;
-    void setVertexCount(std::uint32_t vertex_count);
+    std::uint32_t getCurveVertexCount() const;
+    void setCurveVertexCount(std::uint32_t vertex_count);
 
-    // Only used once, to upload the font atlas texture.
+    const BufferParameters& getControlPolygonVertexBufferParameters() const;
+    BufferParameters& getControlPolygonVertexBufferParameters();
+    void setControlPolygonVertexBufferParameters(
+            const BufferParameters& vertex_buffer);
+
+    std::uint32_t getControlPolygonVertexCount() const;
+    void setControlPolygonVertexCount(std::uint32_t vertex_count);
+
     const BufferParameters& getStagingBufferParameters() const;
     BufferParameters& getStagingBufferParameters();
     void setStagingBufferParameters(const BufferParameters& staging_buffer);
@@ -113,13 +126,15 @@ public:
 
 private:
     VkRenderPass m_vk_render_pass;
-    ImageParameters m_image_parameters;
+    ImageParameters m_depth_image_parameters;
     BufferParameters m_uniform_buffer;
     DescriptorSetParameters m_descriptor_set_parameters;
     VkPipelineLayout m_vk_pipeline_layout;
-    VkPipeline m_vk_graphics_pipeline;
-    BufferParameters m_vertex_buffer;
-    std::uint32_t m_vertex_count;
+    VkPipeline m_vk_line_pipeline;
+    BufferParameters m_curve_vertex_buffer;
+    std::uint32_t m_curve_vertex_count;
+    BufferParameters m_control_polygon_vertex_buffer;
+    std::uint32_t m_control_polygon_vertex_count;
     BufferParameters m_staging_buffer;
     VkCommandPool m_vk_command_pool;
     std::vector<RenderingResourceParameters> m_rendering_resources;
@@ -127,18 +142,18 @@ private:
 };
 
 // ************************************************************ //
-// Tutorial15                                                   //
+// Tutorial10                                                   //
 //                                                              //
 // Class for presenting Vulkan usage topics                     //
 // ************************************************************ //
-class Tutorial15 : public TutorialBase {
+class Tutorial10 : public TutorialBase {
 public:
-    Tutorial15();
-    ~Tutorial15() override;
+    Tutorial10();
+    ~Tutorial10() override;
 
     bool createRenderingResources();
     bool createStagingBuffer();
-    bool createFontAtlas();
+    bool createDepthResources();
     bool createUniformBuffer();
     bool createDescriptorSetLayout();
     bool createDescriptorPool();
@@ -146,8 +161,9 @@ public:
     bool updateDescriptorSet();
     bool createRenderPass();
     bool createPipelineLayout();
-    bool createPipeline();
-    bool createVertexBuffer();
+    bool createLinePipeline();
+    bool createCurveVertexBuffer();
+    bool createControlPolygonVertexBuffer();
 
     bool draw() override;
 
@@ -155,17 +171,9 @@ public:
                        bool pressed,
                        int pos_x,
                        int pos_y) override;
+    void onMouseMove(int pos_x, int pos_y) override;
 
 private:
-    // Generous fixed capacity - a title plus one short button label is a
-    // few dozen quads at most.
-    static constexpr std::size_t kMaxQuads = 256;
-    static constexpr std::size_t kMaxVertexCount = kMaxQuads * 6;
-    static constexpr float kFontPixelHeight = 28.0f;
-    // fonts-dejavu-core (see CLAUDE.md's Initial Setup) provides this.
-    static constexpr const char* kFontPath =
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
-
     bool createCommandBuffers();
     bool createCommandPool(std::uint32_t queue_family_index,
                            VkCommandPool* pool);
@@ -177,44 +185,34 @@ private:
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
+    bool allocateBufferMemory(VkBuffer buffer,
+                              VkMemoryPropertyFlags property,
+                              VkDeviceMemory* memory);
     bool createImage(std::uint32_t width,
                      std::uint32_t height,
+                     VkFormat format,
+                     VkImageUsageFlags usage,
                      VkImage* image);
     bool allocateImageMemory(VkImage image,
                              VkMemoryPropertyFlags property,
                              VkDeviceMemory* memory);
-    bool createImageView();
-    bool createSampler(VkSampler* sampler);
-    bool copyTextureData(char* texture_data,
-                         std::uint32_t data_size,
-                         std::uint32_t width,
-                         std::uint32_t height);
-    Math::Mat4<float> getUniformBufferData() const;
+    bool createImageView(VkImage image,
+                         VkFormat format,
+                         VkImageAspectFlags aspect_mask,
+                         VkImageView* image_view);
+    bool destroyDepthResources();
+    Tutorial10UniformBufferData getUniformBufferData() const;
     bool updateUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
     createShaderModule(const char* filename);
-
-    // Layout: button top-left/size in the same screen-pixel, top-left-
-    // origin, y-down convention the vertex/projection setup uses -
-    // shared between rendering and onMouseButton()'s hit test so they
-    // can never disagree.
-    Math::Vec2<float> getButtonTopLeft() const;
-    Math::Vec2<float> getButtonSize() const;
-    std::string getButtonLabel() const;
-
-    void appendGlyphQuad(std::vector<Tutorial15VertexData>& vertex_data,
-                         const BitmapFontGlyphQuad& glyph,
-                         Math::Vec4<float> color) const;
-    void appendColoredQuad(std::vector<Tutorial15VertexData>& vertex_data,
-                           const std::array<Math::Vec2<float>, 4>& corners,
-                           Math::Vec4<float> color) const;
-    void appendText(std::vector<Tutorial15VertexData>& vertex_data,
-                    const std::string& text,
-                    Math::Vec2<float> origin,
-                    Math::Vec4<float> color) const;
-    std::vector<Tutorial15VertexData> buildUiVertexData() const;
-    bool updateVertexBufferData();
-
+    const std::vector<LineVertexData>& getCurveVertexData() const;
+    const std::vector<LineVertexData>& getControlPolygonVertexData() const;
+    float getLineWidth() const;
+    bool copyBufferData(BufferParameters& destination,
+                        const void* data,
+                        std::uint32_t data_size,
+                        VkAccessFlags dst_access_mask,
+                        VkPipelineStageFlags dst_stage_mask);
     bool prepareFrame(VkCommandBuffer command_buffer,
                       const ImageParameters& image_parameters,
                       VkFramebuffer& framebuffer);
@@ -224,12 +222,10 @@ private:
     bool childOnWindowSizeChanged() override;
     void childClear() override;
 
-    VulkanTutorial15Parameters m_vulkan_tutorial15_parameters;
-    BitmapFont m_font;
-    bool m_button_pressed;
-    int m_click_count;
+    VulkanTutorial10Parameters m_vulkan_tutorial10_parameters;
+    OrbitCamera m_camera;
 };
 
 }  // namespace vulkan_graphix
 
-#endif  // VULKAN_GRAPHIX_TUTORIAL15_H
+#endif  // VULKAN_GRAPHIX_TUTORIAL10_H

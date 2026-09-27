@@ -1,7 +1,7 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial20.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial20.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Real vulkan_earth Effects: live smoke/acid/float particle streams (each
 // using its own real per-type update formula), a growing/fading/color-
