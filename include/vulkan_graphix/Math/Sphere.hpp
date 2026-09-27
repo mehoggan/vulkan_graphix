@@ -23,7 +23,8 @@ namespace vulkan_graphix::Math {
 // A triangulated sphere mesh, built either by walking a latitude/longitude
 // grid (a "UV sphere") or by recursively subdividing an Icosahedron (an
 // "icosphere").
-template <typename T = float, typename I = std::uint32_t> class Sphere {
+template <typename T = float, typename I = std::uint32_t>
+class Sphere {
 public:
     static constexpr T c_min_theta_degrees = T(0);
     static constexpr T c_max_theta_degrees = T(360);

@@ -13,7 +13,8 @@ namespace vulkan_graphix {
  *
  * @tparam DerivedType Used in RTTI for an instance of \tref DerivedType.
  */
-template <typename DerivedType> class LoggedClass {
+template <typename DerivedType>
+class LoggedClass {
 public:
     /**
      * @brief ctor

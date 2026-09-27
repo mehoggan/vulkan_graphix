@@ -8,7 +8,8 @@
 
 namespace vulkan_graphix::VertexTypes {
 
-template <typename T> struct Indices {
+template <typename T>
+struct Indices {
 public:
     static_assert(std::is_integral_v<T>, "Integer type required");
 

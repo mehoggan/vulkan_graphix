@@ -14,21 +14,24 @@ namespace vulkan_graphix::Math {
 
 namespace detail {
 
-template <typename T> Mat4<T> catmullRomBasis() {
+template <typename T>
+Mat4<T> catmullRomBasis() {
     return Mat4<T>(Vec4<T>(T(-0.5), T(+1.5), T(-1.5), T(+0.5)),
                    Vec4<T>(T(+1.0), T(-2.5), T(+2.0), T(-0.5)),
                    Vec4<T>(T(-0.5), T(+0.0), T(+0.5), T(+0.0)),
                    Vec4<T>(T(+0.0), T(+1.0), T(+0.0), T(+0.0)));
 }
 
-template <typename T> Mat4<T> bezierBasis() {
+template <typename T>
+Mat4<T> bezierBasis() {
     return Mat4<T>(Vec4<T>(T(-1.0), T(+3.0), T(-3.0), T(+1.0)),
                    Vec4<T>(T(+3.0), T(-6.0), T(+3.0), T(+0.0)),
                    Vec4<T>(T(-3.0), T(+3.0), T(+0.0), T(+0.0)),
                    Vec4<T>(T(+1.0), T(+0.0), T(+0.0), T(+0.0)));
 }
 
-template <typename T> Mat4<T> hermiteBasis() {
+template <typename T>
+Mat4<T> hermiteBasis() {
     return Mat4<T>(Vec4<T>(T(+2.0), T(-2.0), T(+1.0), T(+1.0)),
                    Vec4<T>(T(-3.0), T(+3.0), T(-2.0), T(-1.0)),
                    Vec4<T>(T(+0.0), T(+0.0), T(+1.0), T(+0.0)),
@@ -39,7 +42,8 @@ template <typename T> Mat4<T> hermiteBasis() {
 
 // A parametric cubic curve (Bezier, Hermite, or Catmull-Rom), always in
 // column-major layout (matching glm/Vulkan/GL, which this project targets).
-template <typename T> class CubicCurve {
+template <typename T>
+class CubicCurve {
 public:
     enum class Type { Bezier, Hermite, CatmullRom };
 

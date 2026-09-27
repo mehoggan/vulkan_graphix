@@ -18,7 +18,8 @@ namespace vulkan_graphix::Math {
 // convention SphericalCoordinates<T, AngleMode> already uses (elevation
 // +90 at the top vertex, -90 at the bottom vertex), matching this project's
 // camera/view conventions.
-template <typename T = float, typename I = std::uint32_t> class Icosahedron {
+template <typename T = float, typename I = std::uint32_t>
+class Icosahedron {
 public:
     explicit Icosahedron(T radius) : m_radius(radius) {
         generateVertices();

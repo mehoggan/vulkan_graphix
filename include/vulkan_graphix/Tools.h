@@ -13,7 +13,8 @@
 
 namespace vulkan_graphix::Tools {
 
-template <class T, class F> class AutoDeleter {
+template <class T, class F>
+class AutoDeleter {
 public:
     AutoDeleter()
             : object(VK_NULL_HANDLE)

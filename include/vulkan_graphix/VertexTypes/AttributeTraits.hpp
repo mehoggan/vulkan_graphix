@@ -11,49 +11,60 @@ namespace vulkan_graphix::VertexTypes {
 // Primary template covers user-defined attribute PODs that expose a
 // `static constexpr std::size_t dimension`. glm types don't, so they get
 // explicit specializations below.
-template <typename T> struct AttributeDimension {
+template <typename T>
+struct AttributeDimension {
     static constexpr std::size_t value = T::dimension;
 };
 
-template <> struct AttributeDimension<glm::vec2> {
+template <>
+struct AttributeDimension<glm::vec2> {
     static constexpr std::size_t value = 2;
 };
 
-template <> struct AttributeDimension<glm::vec3> {
+template <>
+struct AttributeDimension<glm::vec3> {
     static constexpr std::size_t value = 3;
 };
 
-template <> struct AttributeDimension<glm::vec4> {
+template <>
+struct AttributeDimension<glm::vec4> {
     static constexpr std::size_t value = 4;
 };
 
-template <> struct AttributeDimension<glm::ivec2> {
+template <>
+struct AttributeDimension<glm::ivec2> {
     static constexpr std::size_t value = 2;
 };
 
-template <> struct AttributeDimension<glm::ivec3> {
+template <>
+struct AttributeDimension<glm::ivec3> {
     static constexpr std::size_t value = 3;
 };
 
-template <> struct AttributeDimension<glm::ivec4> {
+template <>
+struct AttributeDimension<glm::ivec4> {
     static constexpr std::size_t value = 4;
 };
 
-template <> struct AttributeDimension<glm::uvec2> {
+template <>
+struct AttributeDimension<glm::uvec2> {
     static constexpr std::size_t value = 2;
 };
 
-template <> struct AttributeDimension<glm::uvec3> {
+template <>
+struct AttributeDimension<glm::uvec3> {
     static constexpr std::size_t value = 3;
 };
 
-template <> struct AttributeDimension<glm::uvec4> {
+template <>
+struct AttributeDimension<glm::uvec4> {
     static constexpr std::size_t value = 4;
 };
 
 // Stride, per-attribute value count, and byte offsets for a set of
 // interleaved attribute types, in declaration order.
-template <typename... Ts> struct AttributeTraits {
+template <typename... Ts>
+struct AttributeTraits {
     static constexpr std::size_t attribute_count = sizeof...(Ts);
     static constexpr std::size_t stride = (sizeof(Ts) + ...);
     static constexpr std::size_t attribute_value_count =

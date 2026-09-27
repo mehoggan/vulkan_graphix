@@ -9,7 +9,8 @@
 namespace vulkan_graphix::Math {
 
 // A 2D axis-aligned bounding box.
-template <typename T> class AxisAligned2D {
+template <typename T>
+class AxisAligned2D {
 public:
     AxisAligned2D()
             : m_lower_left(std::numeric_limits<T>::max(),

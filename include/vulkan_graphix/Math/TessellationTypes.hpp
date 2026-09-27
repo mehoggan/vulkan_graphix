@@ -11,7 +11,8 @@ namespace vulkan_graphix::Math {
 enum class GeneratorMode { Fill, Wireframe };
 
 // The point cloud and index buffer produced by a tessellation operation.
-template <typename T, typename I> class TessellatedTriangleData {
+template <typename T, typename I>
+class TessellatedTriangleData {
 public:
     explicit TessellatedTriangleData(GeneratorMode mode = GeneratorMode::Fill)
             : m_mode(mode) {}

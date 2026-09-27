@@ -6,7 +6,8 @@
 namespace vulkan_graphix::Math {
 
 // A triangle defined by three 3D points.
-template <typename T> class Triangle {
+template <typename T>
+class Triangle {
 public:
     Triangle(Vec3<T> const& point0,
              Vec3<T> const& point1,
