@@ -56,6 +56,7 @@ m4/ltversion.m4
 # Build Files
 ######
 compile_commands.json
+.clangd
 bin/tutorial*_runner
 bin/shader.*.spv
 bin/texture.*.png
