@@ -285,11 +285,29 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "pre-commit: building (incremental, from repo root)..." >&2
-if ! make -j4 >/tmp/precommit_build.log 2>&1; then
-    echo "pre-commit: BUILD FAILED:" >&2
-    tail -60 /tmp/precommit_build.log >&2
+# Build wherever the tree is actually configured: an in-tree build has a
+# Makefile at the repo root, an out-of-tree one (CLAUDE.md's
+# `mkdir build && cd build && ../configure`) has it under build/ instead.
+if [ -f "$REPO_ROOT/Makefile" ]; then
+    BUILD_DIR="$REPO_ROOT"
+    BUILD_LABEL="repo root"
+elif [ -f "$REPO_ROOT/build/Makefile" ]; then
+    BUILD_DIR="$REPO_ROOT/build"
+    BUILD_LABEL="build/"
+else
+    BUILD_DIR=""
+fi
+
+if [ -z "$BUILD_DIR" ]; then
+    echo "pre-commit: BUILD FAILED: no Makefile at the repo root or in build/ - run ./configure (in-tree) or ../configure from build/ first" >&2
     FAIL=1
+else
+    echo "pre-commit: building (incremental, from $BUILD_LABEL)..." >&2
+    if ! make -C "$BUILD_DIR" -j4 >/tmp/precommit_build.log 2>&1; then
+        echo "pre-commit: BUILD FAILED:" >&2
+        tail -60 /tmp/precommit_build.log >&2
+        FAIL=1
+    fi
 fi
 
 if [ "$FAIL" -ne 0 ]; then
