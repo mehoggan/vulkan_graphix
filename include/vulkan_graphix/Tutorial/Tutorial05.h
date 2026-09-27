@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TUTORIAL06_H
-#define VULKAN_GRAPHIX_TUTORIAL06_H
+#ifndef VULKAN_GRAPHIX_TUTORIAL05_H
+#define VULKAN_GRAPHIX_TUTORIAL05_H
 
 #include <cstddef>
 #include <cstdint>
@@ -10,7 +10,7 @@
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
 
 namespace vulkan_graphix {
@@ -20,41 +20,28 @@ namespace vulkan_graphix {
 //                                                              //
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
-struct Tutorial06VertexData {
+struct Tutorial05VertexData {
     Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> color;
 };
 
 using VertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
+        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec4<float>>;
 
 // ************************************************************ //
-// VulkanTutorial06Parameters                                   //
+// VulkanTutorial05Parameters                                   //
 //                                                              //
 // Vulkan specific parameters                                   //
 // ************************************************************ //
-struct VulkanTutorial06Parameters {
+struct VulkanTutorial05Parameters {
 public:
     static const std::size_t resources_count = 3;
 
-    VulkanTutorial06Parameters();
+    VulkanTutorial05Parameters();
 
     const VkRenderPass& getVkRenderPass() const;
     VkRenderPass& getVkRenderPass();
     void setVkRenderPass(const VkRenderPass& vk_render_pass);
-
-    const ImageParameters& getImageParameters() const;
-    ImageParameters& getImageParameters();
-    void setImageParameters(const ImageParameters& image_parameters);
-
-    const DescriptorSetParameters& getDescriptorSetParameters() const;
-    DescriptorSetParameters& getDescriptorSetParameters();
-    void setDescriptorSetParameters(
-            const DescriptorSetParameters& descriptor_set_parameters);
-
-    const VkPipelineLayout& getVkPipelineLayout() const;
-    VkPipelineLayout& getVkPipelineLayout();
-    void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
 
     const VkPipeline& getVkGraphicsPipeline() const;
     VkPipeline& getVkGraphicsPipeline();
@@ -88,9 +75,6 @@ public:
 
 private:
     VkRenderPass m_vk_render_pass;
-    ImageParameters m_image_parameters;
-    DescriptorSetParameters m_descriptor_set_parameters;
-    VkPipelineLayout m_vk_pipeline_layout;
     VkPipeline m_vk_graphics_pipeline;
     BufferParameters m_vertex_buffer;
     BufferParameters m_staging_buffer;
@@ -100,69 +84,53 @@ private:
 };
 
 // ************************************************************ //
-// Tutorial06                                                   //
+// Tutorial05                                                   //
 //                                                              //
 // Class for presenting Vulkan usage topics                     //
 // ************************************************************ //
-class Tutorial06 : public TutorialBase {
+class Tutorial05 : public TutorialBase {
 public:
-    Tutorial06();
-    ~Tutorial06() override;
+    Tutorial05();
+    ~Tutorial05() override;
 
     bool createRenderingResources();
-    bool createStagingBuffer();
-    bool createTexture();
-    bool createDescriptorSetLayout();
-    bool createDescriptorPool();
-    bool allocateDescriptorSet();
-    bool updateDescriptorSet();
     bool createRenderPass();
-    bool createPipelineLayout();
     bool createPipeline();
     bool createVertexBuffer();
+    bool createStagingBuffer();
+    bool copyVertexData();
 
     bool draw() override;
 
 private:
-    bool createCommandBuffers();
+    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
+    createShaderModule(const char* filename);
+    Tools::AutoDeleter<VkPipelineLayout, PFN_vkDestroyPipelineLayout>
+    createPipelineLayout();
     bool createCommandPool(std::uint32_t queue_family_index,
                            VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
                                 std::uint32_t count,
                                 VkCommandBuffer* command_buffers);
+    bool createCommandBuffers();
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
                       VkMemoryPropertyFlags memory_property,
                       BufferParameters& buffer);
-    bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
-    bool createImageView();
-    bool createSampler(VkSampler* sampler);
-    bool copyTextureData(char* texture_data,
-                         std::uint32_t data_size,
-                         std::uint32_t width,
-                         std::uint32_t height);
-    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-    createShaderModule(const char* filename);
-    const std::vector<Tutorial06VertexData>& getVertexData() const;
-    bool copyVertexData();
+    const std::vector<Tutorial05VertexData>& getVertexData() const;
     bool prepareFrame(VkCommandBuffer command_buffer,
                       const ImageParameters& image_parameters,
                       VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 
-    bool childOnWindowSizeChanged() override;
     void childClear() override;
+    bool childOnWindowSizeChanged() override;
 
-    VulkanTutorial06Parameters m_vulkan_tutorial06_parameters;
+    VulkanTutorial05Parameters m_vulkan_tutorial05_parameters;
 };
 
 }  // namespace vulkan_graphix
 
-#endif  // VULKAN_GRAPHIX_TUTORIAL06_H
+#endif  // VULKAN_GRAPHIX_TUTORIAL05_H

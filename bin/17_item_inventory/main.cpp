@@ -1,11 +1,11 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial17.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial17.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // A titled grid of the 8 real vulkan_earth items (see vulkan_earth/src/
 // ItemXxx.cpp), ported from Inventory's own bevel-panel/icon-grid
-// rendering - see include/vulkan_graphix/Tutorial17.h. Click an item to
+// rendering - see include/vulkan_graphix/Tutorial/Tutorial17.h. Click an item to
 // select it and read its real description.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;

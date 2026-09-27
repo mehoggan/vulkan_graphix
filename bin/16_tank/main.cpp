@@ -1,12 +1,12 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial16.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial16.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // The real "Hellfire" tank (vulkan_earth/src/TankB.cpp) assembled from its
 // three mesh parts (body/head/turret), each parsed via the shared
 // Tools::loadOglMeshData() and sharing one texture (TestImage.raw) - see
-// include/vulkan_graphix/Tutorial16.h. Drag with the mouse to orbit
+// include/vulkan_graphix/Tutorial/Tutorial16.h. Drag with the mouse to orbit
 // around it.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;

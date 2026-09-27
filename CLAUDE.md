@@ -111,7 +111,8 @@ Files" section for the exact invocation.
     stay in `TutorialBase` (see Architecture Notes below); constructed as
     cheap call-site temporaries, not stored as tutorial members - see the
     file's own top comment for why
-  - `Tutorial01-22.cpp/.h` - Individual tutorial implementations
+  - `Tutorial01-22.cpp` - Individual tutorial implementations (headers
+    live in `include/vulkan_graphix/Tutorial/`, see below)
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
@@ -140,6 +141,9 @@ Files" section for the exact invocation.
     (e.g. 18/21/22 copy the Hellfire tank from `resources/16/Data/`)
 
 - **include/vulkan_graphix/**: Public headers
+  - `Tutorial/` - `TutorialBase.h` and every `Tutorial01-22.h`, included
+    as `"vulkan_graphix/Tutorial/TutorialNN.h"` (tutorial-only; the
+    standalone OpenGL `vulkan_earth/` game includes none of them)
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
   - `STBImage.h` - Vendored single-header image loading library
   - `STBTrueType.h` - Vendored single-header TrueType font rasterizer,
@@ -403,7 +407,7 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
 
 ### Adding a New Tutorial
 
-1. Create `TutorialNN.h` in `include/vulkan_graphix/` and `TutorialNN.cpp`
+1. Create `TutorialNN.h` in `include/vulkan_graphix/Tutorial/` and `TutorialNN.cpp`
    in `lib/`
 2. Implement the tutorial class with Vulkan setup
 3. Add `./TutorialNN.cpp` to `lib/Makefile.am` libvulkan_graphix_la_SOURCES

@@ -8,7 +8,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 namespace vulkan_graphix {
 

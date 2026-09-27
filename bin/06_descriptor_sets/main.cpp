@@ -1,7 +1,7 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial06.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial06.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;

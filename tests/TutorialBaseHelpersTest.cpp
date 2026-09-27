@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 namespace {
 

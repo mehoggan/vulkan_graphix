@@ -1,10 +1,10 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial18.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial18.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Two real Hellfire tanks positioned via Tank::setTankPos()'s real
-// hierarchical composition (see include/vulkan_graphix/Tutorial18.h),
+// hierarchical composition (see include/vulkan_graphix/Tutorial/Tutorial18.h),
 // tinted per-player, with a HUD overlay using the real
 // GameState::drawHUD() health/power color ramps. Drag with the mouse to
 // orbit around both.

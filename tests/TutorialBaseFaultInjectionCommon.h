@@ -25,7 +25,7 @@
 #include <dlfcn.h>
 
 #include "vulkan_graphix/OperatingSystem.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 namespace vulkan_graphix::test {
 

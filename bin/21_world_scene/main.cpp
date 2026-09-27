@@ -1,14 +1,14 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial21.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial21.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Real vulkan_earth World/Camera integration: GameState::draw()'s own
 // skybox -> terrain -> tank order, combining three previously-separate
 // pilots (Tutorial11's skybox, Tutorial12's terrain, Tutorial16's tank)
 // into one real scene, with the tank placed via a real
 // TerrainGenerator::heightAt() query - see
-// include/vulkan_graphix/Tutorial21.h. Drag with the mouse to orbit
+// include/vulkan_graphix/Tutorial/Tutorial21.h. Drag with the mouse to orbit
 // around the scene.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;

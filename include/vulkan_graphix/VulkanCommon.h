@@ -29,7 +29,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/Tools.h"
 
 namespace vulkan_graphix::VulkanCommon {

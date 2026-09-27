@@ -1,10 +1,10 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial12.h"
-#include "vulkan_graphix/TutorialBase.h"
+#include "vulkan_graphix/Tutorial/Tutorial12.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Generated terrain ported from vulkan_earth's TerrainMaker height-field
-// algorithm (see include/vulkan_graphix/Tutorial12.h and
+// algorithm (see include/vulkan_graphix/Tutorial/Tutorial12.h and
 // TerrainGenerator.h) - drag with the mouse to orbit around it.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
