@@ -51,7 +51,8 @@ style `glslc -S` does, since `glslc` uses it internally.
 
 `tests/MathTest.cpp`/`tests/VertexTypesTest.cpp` exercise the header-only
 `Math/`/`VertexTypes/` modules. `tests/TutorialNNIntegrationTest.cpp` (one
-binary per tutorial 01-10, linked against `libvulkan_graphix.la`) drives
+binary per tutorial 01-10, linked against `libvulkan_graphix.la` and
+compiling in that tutorial's own `bin/NN_*/TutorialNN.cpp`) drives
 each of those tutorials through its real `prepareVulkan()`/`create*()`/
 `draw()`/`onWindowSizeChanged()` sequence, plus mouse input for
 Tutorial09/10 — these need a live Vulkan device and X11 window, so they
@@ -86,7 +87,7 @@ resolve to the real `libvulkan.so` symbols instead — so
 `createPresentationSurface()`'s and `createSwapChain()`'s own failure
 branches are out of reach without LD_PRELOAD interposition.
 
-Overall `lib/`+`include/vulkan_graphix/` line coverage is ~71%; the
+Overall `lib/`+`include/vulkan_graphix/`+tutorial line coverage is ~71%; the
 remaining gap is mostly those swapchain/surface branches, plus a few
 `checkPhysicalDeviceProperties()` branches that need a fake device's
 reported properties (not just a failure code) to reach.
@@ -100,7 +101,9 @@ sudo apt install -y lcov
 ```
 
 Configure with coverage instrumentation (this passes `--coverage -O0` to
-`lib/` and `tests/` only — `bin/` stays uninstrumented), then generate a
+`lib/` and `tests/` only — the `tutorialNN_runner` executables in `bin/`
+stay uninstrumented, but tests/'s own copies of Tutorial01-10's sources
+are instrumented), then generate a
 report:
 
 ```sh
@@ -127,8 +130,8 @@ the uncovered line numbers/ranges directly (run `make coverage` or
 `lcov` only, read uncovered lines off the highlighted source in `make
 coverage`'s HTML output instead. Both targets filter out system headers,
 `glm`, `gtest`, and the vendored `STBImage.h`/`ListOfFunctions.inl`
-— only this project's own `lib/` and `include/vulkan_graphix/` code is
-reported on.
+— only this project's own `lib/`, `include/vulkan_graphix/`, and
+`bin/NN_*/TutorialNN.{cpp,h}` code is reported on.
 
 `make clean` removes the generated `.gcno`/`.gcda`/`coverage-html`/
 `coverage.info` files. Coverage instrumentation adds real runtime and

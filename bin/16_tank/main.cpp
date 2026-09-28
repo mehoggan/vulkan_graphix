@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial16.h"
+#include "Tutorial16.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // The real "Hellfire" tank (vulkan_earth/src/TankB.cpp) assembled from its

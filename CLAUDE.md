@@ -57,7 +57,9 @@ make -j8
 make coverage          # HTML report at coverage-html/index.html
 make coverage-missing  # prints uncovered line numbers per file, no HTML
 ```
-Only `lib/` and `tests/` are instrumented. All ten tutorials get a real
+Only `lib/` and `tests/` are instrumented (`tests/` compiles
+Tutorial01-10's own `bin/NN_*/TutorialNN.cpp` in directly, so those are
+instrumented and reported too). All ten tutorials get a real
 integration test (drives each through a live Vulkan device/X11 window -
 skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
 `OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`, and
@@ -76,7 +78,7 @@ surface/swapchain entry points (`vkCreateXlibSurfaceKHR`,
 `vkCreateSwapchainKHR`, etc.) aren't routed through that seam - they
 resolve to real `libvulkan.so` symbols instead - so `createPresentation
 Surface()`'s and `createSwapChain()`'s own failure branches stay out of
-reach without LD_PRELOAD interposition. Overall `lib/`+`include/` line
+reach without LD_PRELOAD interposition. Overall `lib/`+`include/`+tutorial line
 coverage is ~71%; the remaining gap is mostly those swapchain/surface
 branches, plus a few `checkPhysicalDeviceProperties()` branches (e.g. "no
 queue family with the required properties") that would need a fake
@@ -111,17 +113,25 @@ Files" section for the exact invocation.
     stay in `TutorialBase` (see Architecture Notes below); constructed as
     cheap call-site temporaries, not stored as tutorial members - see the
     file's own top comment for why
-  - `Tutorial01-22.cpp` - Individual tutorial implementations (headers
-    live in `include/vulkan_graphix/Tutorial/`, see below)
+  - `TutorialBase.cpp` - Shared base class every tutorial derives from
+    (the tutorials themselves live in `bin/`, see below)
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
   - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
     shared by Tutorial12 and (eventually) a real vulkan_earth port
   - `BitmapFont.cpp/.h` - Bakes a TrueType font into a glyph atlas via
     the vendored `STBTrueType.h` (kept fully behind std types - no
-    `stbtt_*` symbol is reachable outside `BitmapFont.cpp`), shared by
-    Tutorial15 and any future vulkan_earth UI port
+    `stbtt_*` symbol is reachable outside `BitmapFont.cpp`), plus
+    `wrapText()` word-wrapping, shared by Tutorial15/17/18/19/22 and any
+    future vulkan_earth UI port
   - `UiGeometry.cpp/.h` - Beveled 2D button-quad geometry, ported from
-    vulkan_earth's `ControlItemButton::draw()`, shared the same way
+    vulkan_earth's `ControlItemButton::draw()`, plus header-only
+    `append{GlyphQuad,ColoredQuad,Text,ImageQuad}()` templates that turn
+    glyph/bevel/icon quads into two-triangle vertex lists for any
+    `{position, texcoord, color}` vertex struct - shared the same way
+  - `HellfireTank.cpp/.h` - The Hellfire tank's per-part placement math
+    (TankB's offsets/basis/50x scale composed hierarchically exactly as
+    `Tank::setTankPos()` does), shared by Tutorial16/18/21/22 and any
+    future vulkan_earth Tank port
   - `Logging.cpp/.h` - std::-based (filesystem/ostream/chrono/thread)
     per-tag logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
@@ -131,19 +141,28 @@ Files" section for the exact invocation.
   - `OperatingSystem.cpp/.h` - Platform-specific abstractions
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
-- **bin/**: Tutorial executable entry points
+- **bin/**: The tutorials themselves
   - One `NN_<terse_description>/` folder per tutorial (01-22), each holding
-    its own `main.cpp` and `Makefile.am`; `bin/Makefile.am` just lists
-    them as `SUBDIRS`. Assets are loaded from the executable's own
+    its own `TutorialNN.h`/`TutorialNN.cpp` (the tutorial class, compiled
+    straight into that folder's `tutorialNN_runner`, not into
+    `libvulkan_graphix.la`), `main.cpp`, and `Makefile.am`;
+    `bin/Makefile.am` just lists them as `SUBDIRS`. `main.cpp` includes
+    `"TutorialNN.h"` from its own folder. Anything a tutorial needs that a
+    vulkan_earth Vulkan port would also need goes in a shared `lib/`
+    module instead (see `HellfireTank`/`UiGeometry`/`BitmapFont` above).
+    `tests/` compiles Tutorial01-10's `.cpp` into each tutorial's own
+    integration/fault-injection test binary, with that folder on its
+    include path. Assets are loaded from the executable's own
     directory (`Tools.cpp`'s `executableDir()`), so each folder's
     `all-local:` rule copies every shader/texture/mesh that tutorial loads,
     including ones borrowed from another tutorial's `resources/NN/Data/`
     (e.g. 18/21/22 copy the Hellfire tank from `resources/16/Data/`)
 
 - **include/vulkan_graphix/**: Public headers
-  - `Tutorial/` - `TutorialBase.h` and every `Tutorial01-22.h`, included
-    as `"vulkan_graphix/Tutorial/TutorialNN.h"` (tutorial-only; the
-    standalone OpenGL `vulkan_earth/` game includes none of them)
+  - `Tutorial/` - `TutorialBase.h` only, included as
+    `"vulkan_graphix/Tutorial/TutorialBase.h"` (every `TutorialNN.h` lives
+    in its own `bin/NN_*/` folder instead; the standalone OpenGL
+    `vulkan_earth/` game includes neither)
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
   - `STBImage.h` - Vendored single-header image loading library
   - `STBTrueType.h` - Vendored single-header TrueType font rasterizer,
@@ -407,16 +426,18 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
 
 ### Adding a New Tutorial
 
-1. Create `TutorialNN.h` in `include/vulkan_graphix/Tutorial/` and `TutorialNN.cpp`
-   in `lib/`
-2. Implement the tutorial class with Vulkan setup
-3. Add `./TutorialNN.cpp` to `lib/Makefile.am` libvulkan_graphix_la_SOURCES
-4. Create `bin/NN_<terse_description>/main.cpp`
-5. Give that folder its own `Makefile.am` (`bin_PROGRAMS =
-   tutorialNN_runner`, copy an existing one), add the folder to
-   `bin/Makefile.am`'s `SUBDIRS`, and add `bin/NN_<...>/Makefile` to
-   `configure.ac`'s `AC_CONFIG_FILES`
-6. Create shader files in `resources/NN/Data/` (`shader.NN.vert`/
+1. Create `bin/NN_<terse_description>/` holding `TutorialNN.h`,
+   `TutorialNN.cpp`, and `main.cpp` (which includes `"TutorialNN.h"`)
+2. Implement the tutorial class with Vulkan setup; anything vulkan_earth
+   would also need (not just this tutorial) goes in a shared `lib/`
+   module instead, added to `lib/Makefile.am`'s
+   libvulkan_graphix_la_SOURCES
+3. Give that folder its own `Makefile.am` (`bin_PROGRAMS =
+   tutorialNN_runner`, `tutorialNN_runner_SOURCES = ./main.cpp
+   ./TutorialNN.cpp ./TutorialNN.h`, copy an existing one), add the
+   folder to `bin/Makefile.am`'s `SUBDIRS`, and add `bin/NN_<...>/Makefile`
+   to `configure.ac`'s `AC_CONFIG_FILES`
+4. Create shader files in `resources/NN/Data/` (`shader.NN.vert`/
    `shader.NN.frag`), compile with `compile_shaders.sh` (or `glslc`
    directly - see README.md), and copy the compiled `.spv`/any texture
    assets into the build dir via an `all-local:` rule in that folder's

@@ -33,7 +33,8 @@ if test "x$have_gtest" = "xno"; then
   AC_MSG_WARN([gtest/gtest_main not found via pkg-config, tests/ will not build])
 fi
 
-# Code coverage (gcov instrumentation for lib/ and tests/; see README.md)
+# Code coverage (gcov instrumentation for lib/ and tests/, including the
+# bin/NN_*/TutorialNN.cpp sources tests/ compiles in; see README.md)
 AC_ARG_ENABLE([coverage],
   [AS_HELP_STRING([--enable-coverage],
     [instrument lib/ and tests/ with gcov for code coverage reports])],

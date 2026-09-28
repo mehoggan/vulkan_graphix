@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial17.h"
+#include "Tutorial17.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // A titled grid of the 8 real vulkan_earth items (see vulkan_earth/src/

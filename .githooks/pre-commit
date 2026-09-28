@@ -17,7 +17,8 @@
 #                          naming / readability-identifier-length rules
 #
 # Runs against four areas independently - vulkan_earth/src, lib/, bin/
-# (the tutorials), and include/vulkan_graphix (their public headers) -
+# (the tutorials, each NN_*/ folder holding its own TutorialNN.{h,cpp}),
+# and include/vulkan_graphix (lib/'s public headers) -
 # each with that area's own real compiler flags, and only against files
 # actually staged there. Checks run against the exact content that will
 # be committed (unstaged changes are stashed out of the way for the

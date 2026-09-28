@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial18.h"
+#include "Tutorial18.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Two real Hellfire tanks positioned via Tank::setTankPos()'s real

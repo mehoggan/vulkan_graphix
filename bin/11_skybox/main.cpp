@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial11.h"
+#include "Tutorial11.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Indexed, textured cube ported from vulkan_earth's SkyboxFactory geometry

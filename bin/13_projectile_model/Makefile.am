@@ -1,6 +1,6 @@
 bin_PROGRAMS = tutorial13_runner
 
-tutorial13_runner_SOURCES = ./main.cpp
+tutorial13_runner_SOURCES = ./main.cpp ./Tutorial13.cpp ./Tutorial13.h
 tutorial13_runner_CPPFLAGS = -Werror -Wall -pedantic \
     -I$(abs_top_srcdir)/include $(GLM_CFLAGS)
 tutorial13_runner_LDADD = \

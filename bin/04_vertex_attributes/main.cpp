@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial04.h"
+#include "Tutorial04.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 int main(int /*argc*/, char** /*argv*/) {

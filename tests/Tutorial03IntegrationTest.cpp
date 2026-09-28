@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "vulkan_graphix/OperatingSystem.h"
-#include "vulkan_graphix/Tutorial/Tutorial03.h"
+#include "Tutorial03.h"
 
 #include "IntegrationTestCommon.h"
 

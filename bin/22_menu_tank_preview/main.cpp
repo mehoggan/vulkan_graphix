@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial22.h"
+#include "Tutorial22.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Real vulkan_earth GameState menu layer: the identical 5-quad bevel-
