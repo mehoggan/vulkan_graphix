@@ -44,6 +44,26 @@ AREAS_WITH_CHANGES=()
 ANY_STAGED_ALL=0
 FAIL=0
 
+# Directory holding the compile_commands.json run-clang-tidy should use
+# for area $1: the area's own (.githooks/README.md's per-area recipe) if
+# present, otherwise the out-of-tree build/ one (CLAUDE.md's
+# `bear -- make` from build/). Prints nothing if neither exists.
+compile_db_dir() {
+    if [ -f "$REPO_ROOT/$1/compile_commands.json" ]; then
+        echo "$REPO_ROOT/$1"
+    elif [ -f "$REPO_ROOT/build/compile_commands.json" ]; then
+        echo "$REPO_ROOT/build"
+    fi
+}
+
+# run-clang-tidy treats each file argument as a regex searched against
+# the database's absolute paths, so anchor on the full path of repo-
+# relative file $1 - otherwise bin/'s 22 main.cpp files, or same-named
+# files in different areas of the shared build/ database, cross-match.
+path_regex() {
+    printf '^%s$' "$(printf '%s' "$REPO_ROOT/$1" | sed 's/[][\.*^$+?(){}|]/\\&/g')"
+}
+
 # --- per-area check: self-assignment, -Wshadow, naming/length ----------
 # $1 = area label (for messages)  $2 = dir relative to REPO_ROOT
 # $3.. = extra -I/-D flags for that area's real compile command
@@ -62,14 +82,26 @@ check_area() {
     AREAS_WITH_CHANGES+=("$dir")
     ANY_STAGED_ALL=1
 
-    local basenames=() basenames_all=() f
-    for f in "${staged_cpp[@]}"; do basenames+=("$(basename "$f")"); done
-    for f in "${staged_all[@]}"; do basenames_all+=("$(basename "$f")"); done
+    # File operations below run from inside $dir, so use paths relative to
+    # it (bin/'s entry points live in subdirectories, e.g.
+    # bin/03_first_triangle/main.cpp); basenames are only used to match
+    # clang-tidy's reported warning paths back to the staged files.
+    local relpaths=() relpaths_all=() basenames_all=() tidy_files=() f
+    for f in "${staged_cpp[@]}"; do
+        relpaths+=("${f#"$dir"/}")
+        tidy_files+=("$(path_regex "$f")")
+    done
+    for f in "${staged_all[@]}"; do
+        relpaths_all+=("${f#"$dir"/}")
+        basenames_all+=("$(basename "$f")")
+    done
+    local db_dir
+    db_dir=$(compile_db_dir "$dir")
 
     ( cd "$dir"
 
       echo "pre-commit [$label]: scanning for self-assignment (x = x;)..." >&2
-      SELFASSIGN=$(python3 - "${basenames_all[@]}" <<'PYEOF'
+      SELFASSIGN=$(python3 - "${relpaths_all[@]}" <<'PYEOF'
 import re, sys
 pat_bare = re.compile(r'(?<![>.\w])([a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
 pat_member = re.compile(r'\b([a-zA-Z_][a-zA-Z_0-9]*\.[a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
@@ -96,7 +128,7 @@ PYEOF
 
       if command -v g++ >/dev/null 2>&1; then
           echo "pre-commit [$label]: checking for variable/parameter shadowing (-Wshadow)..." >&2
-          for fname in "${basenames[@]}"; do
+          for fname in "${relpaths[@]}"; do
               [ -f "$fname" ] || continue
               OUT=$(g++ -std=gnu++20 -Wshadow -fsyntax-only "${extra_flags[@]}" "$fname" 2>&1 | grep 'shadows' || true)
               if [ -n "$OUT" ]; then
@@ -111,10 +143,10 @@ PYEOF
 
       if ! command -v run-clang-tidy >/dev/null 2>&1; then
           echo "pre-commit [$label]: run-clang-tidy not found, skipping naming/length check" >&2
-      elif [ "${#basenames[@]}" -eq 0 ]; then
+      elif [ "${#relpaths[@]}" -eq 0 ]; then
           echo "pre-commit [$label]: no staged .cpp file to anchor a naming/length check (header-only change; covered by the build check instead)" >&2
-      elif [ ! -f compile_commands.json ]; then
-          echo "pre-commit [$label]: no compile_commands.json in $dir, skipping naming/length check (see .githooks/README.md to generate one)" >&2
+      elif [ -z "$db_dir" ]; then
+          echo "pre-commit [$label]: no compile_commands.json in $dir or build/, skipping naming/length check (see .githooks/README.md to generate one)" >&2
       else
           echo "pre-commit [$label]: checking naming/length conventions (clang-tidy)..." >&2
           # -header-filter='.*' is deliberately broad (a narrower regex here
@@ -131,8 +163,9 @@ PYEOF
           # vk_platform.h, public-domain stb_image.h, and the Vulkan-spec-
           # named macros in ListOfFunctions.inl were never meant to follow
           # this project's naming convention).
-          NAMING_OUT=$(run-clang-tidy -checks='-*,readability-identifier-naming,readability-identifier-length' \
-                  -header-filter='.*' "${basenames[@]}" 2>&1 | grep 'warning:' \
+          NAMING_OUT=$(run-clang-tidy -p "$db_dir" \
+                  -checks='-*,readability-identifier-naming,readability-identifier-length' \
+                  -header-filter='.*' "${tidy_files[@]}" 2>&1 | grep 'warning:' \
                   | grep -v -E 'STBImage\.h|VulkanPlatform\.h|ListOfFunctions\.inl' \
                   | python3 -c "
 import sys, os
@@ -169,13 +202,19 @@ check_include_area() {
     AREAS_WITH_CHANGES+=("$dir")
     ANY_STAGED_ALL=1
 
-    local basenames_all=() f
-    for f in "${staged_all[@]}"; do basenames_all+=("$(basename "$f")"); done
+    # Relative paths for reading files from inside $dir (headers live in
+    # Tutorial/, Math/, VertexTypes/ subdirectories too); basenames only
+    # for matching clang-tidy's warning paths back to the staged files.
+    local relpaths_all=() basenames_all=() f
+    for f in "${staged_all[@]}"; do
+        relpaths_all+=("${f#"$dir"/}")
+        basenames_all+=("$(basename "$f")")
+    done
 
     ( cd "$dir"
 
       echo "pre-commit [include]: scanning for self-assignment (x = x;)..." >&2
-      SELFASSIGN=$(python3 - "${basenames_all[@]}" <<'PYEOF'
+      SELFASSIGN=$(python3 - "${relpaths_all[@]}" <<'PYEOF'
 import re, sys
 pat_bare = re.compile(r'(?<![>.\w])([a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
 pat_member = re.compile(r'\b([a-zA-Z_][a-zA-Z_0-9]*\.[a-zA-Z_][a-zA-Z_0-9]*)\s*=\s*\1\s*;')
@@ -203,9 +242,13 @@ PYEOF
 
     ( cd lib
       local lib_flags=(-DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include)
-      local lib_basenames=()
+      local lib_basenames=() lib_tidy_files=() db_dir
       f=""
-      for f in *.cpp; do lib_basenames+=("$f"); done
+      for f in *.cpp; do
+          lib_basenames+=("$f")
+          lib_tidy_files+=("$(path_regex "lib/$f")")
+      done
+      db_dir=$(compile_db_dir lib)
 
       if command -v g++ >/dev/null 2>&1; then
           echo "pre-commit [include]: checking for variable/parameter shadowing (-Wshadow), compiling all of lib/ against the staged headers..." >&2
@@ -223,12 +266,13 @@ PYEOF
 
       if ! command -v run-clang-tidy >/dev/null 2>&1; then
           echo "pre-commit [include]: run-clang-tidy not found, skipping naming/length check" >&2
-      elif [ ! -f compile_commands.json ]; then
-          echo "pre-commit [include]: no compile_commands.json in lib/, skipping naming/length check (see .githooks/README.md to generate one)" >&2
+      elif [ -z "$db_dir" ]; then
+          echo "pre-commit [include]: no compile_commands.json in lib/ or build/, skipping naming/length check (see .githooks/README.md to generate one)" >&2
       else
           echo "pre-commit [include]: checking naming/length conventions (clang-tidy), via lib/*.cpp..." >&2
-          NAMING_OUT=$(run-clang-tidy -checks='-*,readability-identifier-naming,readability-identifier-length' \
-                  -header-filter='.*' "${lib_basenames[@]}" 2>&1 | grep 'warning:' \
+          NAMING_OUT=$(run-clang-tidy -p "$db_dir" \
+                  -checks='-*,readability-identifier-naming,readability-identifier-length' \
+                  -header-filter='.*' "${lib_tidy_files[@]}" 2>&1 | grep 'warning:' \
                   | grep -v -E 'STBImage\.h|VulkanPlatform\.h|ListOfFunctions\.inl' \
                   | python3 -c "
 import sys, os

@@ -14,15 +14,18 @@ compiler flags:
    staged in the commit (a pre-existing violation in some unrelated
    header you happen to include doesn't block you)
 
-The naming/length check needs a `compile_commands.json` in the area's
-own directory (`lib/compile_commands.json`, `bin/compile_commands.json`,
-`vulkan_earth/src/compile_commands.json`) to know the real include
-paths; it's skipped with a message if that's missing. Generate one
-per area with:
+The naming/length check needs a `compile_commands.json` to know the
+real include paths. For an out-of-tree build (CLAUDE.md's
+`mkdir build && cd build && bear -- ../configure && bear -- make -j8`),
+the single `build/compile_commands.json` covers every area and is all
+you need. The hook uses an area's own `compile_commands.json`
+(`lib/`, `bin/`, `vulkan_earth/src/`) instead when one exists, and
+skips the check with a message if it finds neither. For an in-tree
+build, generate one per area with:
 
 ```sh
 touch lib/*.cpp && cd lib && bear -- make -j4 && cd ..
-touch bin/*.cpp && cd bin && bear -- make -j4 && cd ..
+touch bin/*/main.cpp && cd bin && bear -- make -j4 && cd ..
 touch vulkan_earth/src/*.cpp && cd vulkan_earth/src && bear -- make -j4 && cd ../..
 ```
 
