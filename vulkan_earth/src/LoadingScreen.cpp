@@ -1,6 +1,6 @@
-#include "LoadingScreen.h"
-#include "ImageObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/LoadingScreen.h"
+#include "vulkan_earth/ImageObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 LoadingScreen::LoadingScreen() = default;
 LoadingScreen::LoadingScreen(GLfloat x,

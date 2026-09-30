@@ -1,5 +1,5 @@
-#include "WorldCam.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/WorldCam.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 WorldCam::WorldCam() = default;
 WorldCam::WorldCam(GLfloat x, GLfloat y, GLfloat z) {

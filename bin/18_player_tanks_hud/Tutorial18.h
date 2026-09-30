@@ -2,8 +2,9 @@
 #define VULKAN_GRAPHIX_TUTORIAL18_H
 
 // Ported from vulkan_earth's Player: `Player`/`PlayerHuman`/`PlayerCPU`
-// (see vulkan_earth/src/Player.h/.cpp, PlayerHuman.h/.cpp,
-// PlayerCPU.h/.cpp) have no draw()/rendering code of their own at all -
+// (see Player.h/PlayerHuman.h/PlayerCPU.h under
+// vulkan_earth/include/vulkan_earth/ and their .cpp files under
+// vulkan_earth/src/) have no draw()/rendering code of their own at all -
 // confirmed by grep across all three, the only hits are a dead, empty
 // `drawHUD(){}` free-function stub and a debug-only line/plane
 // visualizer that never touches a Tank. The two real, renderable things

@@ -1,10 +1,10 @@
-#include "ControlItemGrid.h"
-#include "ControlItem.h"
-#include "ControlItemButton.h"
-#include "ImageObject.h"
-#include "Sound.h"
-#include "TextObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItemGrid.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/ControlItemButton.h"
+#include "vulkan_earth/ImageObject.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

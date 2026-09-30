@@ -1,6 +1,6 @@
-#include "WeaponDefault.h"
-#include "Weapon.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/WeaponDefault.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponDefault::WeaponDefault() = default;
 WeaponDefault::WeaponDefault(int id) {

@@ -1,4 +1,4 @@
-#include "ParticleGenerator.h"
+#include "vulkan_earth/ParticleGenerator.h"
 #include <cstdlib>
 #include "math.h"
 

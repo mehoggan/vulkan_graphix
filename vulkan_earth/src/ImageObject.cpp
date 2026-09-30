@@ -1,7 +1,7 @@
-#include "ImageObject.h"
+#include "vulkan_earth/ImageObject.h"
 #include <fstream>
 #include <vector>
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 ImageObject::ImageObject() = default;
 

@@ -1,11 +1,11 @@
-#include "GlobalSettings.h"
+#include "vulkan_earth/GlobalSettings.h"
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "TerrainMaker.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

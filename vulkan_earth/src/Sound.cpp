@@ -1,5 +1,5 @@
-#include "Sound.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 Mix_Chunk* sfx[max_sfx_files];
 Mix_Music* music[total_music_files];

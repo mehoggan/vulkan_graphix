@@ -1,7 +1,7 @@
-#include "TankG.h"
-#include "Tank.h"
-#include "VBOShaderLibrary.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/TankG.h"
+#include "vulkan_earth/Tank.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_g_name = "Cubix";
 const int tank_g_hp = 1000;

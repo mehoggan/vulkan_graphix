@@ -1,4 +1,4 @@
-#include "Normal.h"
+#include "vulkan_earth/Tools/ModelBuilder/Normal.h"
 
 Normal::Normal() {}
 

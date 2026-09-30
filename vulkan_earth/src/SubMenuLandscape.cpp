@@ -1,19 +1,19 @@
-#include "SubMenuLandscape.h"
+#include "vulkan_earth/SubMenuLandscape.h"
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "ControlItem.h"
-#include "ControlItemButton.h"
-#include "ControlItemCheckBox.h"
-#include "ControlItemSelectionBox.h"
-#include "ControlItemSliderbar.h"
-#include "Sound.h"
-#include "SubMenu.h"
-#include "TerrainMaker.h"
-#include "TextObject.h"
 #include "math.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/ControlItemButton.h"
+#include "vulkan_earth/ControlItemCheckBox.h"
+#include "vulkan_earth/ControlItemSelectionBox.h"
+#include "vulkan_earth/ControlItemSliderbar.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 #define PI 3.1415926535898
 

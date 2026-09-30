@@ -169,6 +169,18 @@ Files" section for the exact invocation.
     used only by `lib/BitmapFont.cpp` (see above)
   - `vk_platform.h` - Platform-specific Vulkan definitions
 
+- **vulkan_earth/**: The standalone legacy OpenGL/GLUT game the later
+  tutorials port from (built as `vulkan_earth_runner`)
+  - `src/` - its `.cpp` files (plus the MSVC-only `Tools/ModelBuilder/`
+    mesh-conversion tool, not part of the autotools build)
+  - `include/vulkan_earth/` - every header, included as
+    `"vulkan_earth/Foo.h"` (`src/Makefile.am` adds
+    `-I$(top_srcdir)/vulkan_earth/include`); ModelBuilder's own headers
+    sit in `include/vulkan_earth/Tools/ModelBuilder/`, since four of
+    them share a name with a different game header. `MacroCrtdbg.h`
+    must stay the last include (it `#define`s `new`/`malloc`/`free`
+    under `_DEBUG`) - `.clang-format`'s `IncludeCategories` pins it last
+
 - **resources/NN/Data/** - Each tutorial's own GLSL sources
   (`shader.NN.{vert,frag}`), compiled SPIR-V (`shader.{vert,frag}.NN.spv`
   + `.spv.txt` disassembly), and any texture/mesh assets it needs

@@ -1,9 +1,9 @@
-#include "SkyboxFactory.h"
+#include "vulkan_earth/SkyboxFactory.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 SkyboxFactory::SkyboxFactory() = default;
 

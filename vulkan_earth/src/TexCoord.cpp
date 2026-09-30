@@ -1,5 +1,5 @@
-#include "TexCoord.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/TexCoord.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 TexCoord::TexCoord() = default;
 

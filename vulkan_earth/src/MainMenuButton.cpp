@@ -1,10 +1,10 @@
-#include "MainMenuButton.h"
+#include "vulkan_earth/MainMenuButton.h"
 #include <stdio.h>
 #include <iostream>
-#include "Sound.h"
-#include "SubMenu.h"
-#include "TextObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

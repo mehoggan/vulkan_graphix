@@ -1,6 +1,6 @@
-#include "WeaponAtom.h"
-#include "Weapon.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/WeaponAtom.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponAtom::WeaponAtom() = default;
 WeaponAtom::WeaponAtom(int id) {

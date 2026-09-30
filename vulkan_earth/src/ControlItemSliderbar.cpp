@@ -1,10 +1,10 @@
-#include "ControlItemSliderbar.h"
+#include "vulkan_earth/ControlItemSliderbar.h"
 #include <stdio.h>
 #include <iostream>
-#include "ControlItem.h"
-#include "Sound.h"
-#include "TextObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

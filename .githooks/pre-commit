@@ -16,7 +16,8 @@
 #   4. naming/length    - the project's .clang-tidy readability-identifier-
 #                          naming / readability-identifier-length rules
 #
-# Runs against four areas independently - vulkan_earth/src, lib/, bin/
+# Runs against four areas independently - vulkan_earth (src/ plus its
+# headers in include/vulkan_earth/), lib/, bin/
 # (the tutorials, each NN_*/ folder holding its own TutorialNN.{h,cpp}),
 # and include/vulkan_graphix (lib/'s public headers) -
 # each with that area's own real compiler flags, and only against files
@@ -67,20 +68,31 @@ path_regex() {
 
 # --- per-area check: self-assignment, -Wshadow, naming/length ----------
 # $1 = area label (for messages)  $2 = dir relative to REPO_ROOT
-# $3.. = extra -I/-D flags for that area's real compile command
+# $3 = the area's separate header dir relative to REPO_ROOT, or "" if its
+#      headers live in $2 itself (vulkan_earth keeps its .cpp files in
+#      src/ but its headers in include/vulkan_earth/)
+# $4.. = extra -I/-D flags for that area's real compile command
 check_area() {
-    local label="$1" dir="$2"
-    shift 2
+    local label="$1" dir="$2" header_dir="$3"
+    shift 3
     local extra_flags=("$@")
 
+    local header_globs=()
+    if [ -n "$header_dir" ]; then
+        header_globs=("$header_dir/*.h")
+    fi
+
     local staged_cpp staged_all
-    mapfile -t staged_cpp < <(git diff --cached --name-only --diff-filter=ACM -- "$dir/*.cpp")
-    mapfile -t staged_all < <(git diff --cached --name-only --diff-filter=ACM -- "$dir/*.cpp" "$dir/*.h")
+    mapfile -t staged_cpp < <(git diff --cached --name-only --diff-filter=ACMR -- "$dir/*.cpp")
+    mapfile -t staged_all < <(git diff --cached --name-only --diff-filter=ACMR -- "$dir/*.cpp" "$dir/*.h" "${header_globs[@]}")
 
     if [ "${#staged_all[@]}" -eq 0 ]; then
         return 0
     fi
     AREAS_WITH_CHANGES+=("$dir")
+    if [ -n "$header_dir" ]; then
+        AREAS_WITH_CHANGES+=("$header_dir")
+    fi
     ANY_STAGED_ALL=1
 
     # File operations below run from inside $dir, so use paths relative to
@@ -93,7 +105,7 @@ check_area() {
         tidy_files+=("$(path_regex "$f")")
     done
     for f in "${staged_all[@]}"; do
-        relpaths_all+=("${f#"$dir"/}")
+        relpaths_all+=("$(realpath -m --relative-to="$dir" "$f")")
         basenames_all+=("$(basename "$f")")
     done
     local db_dir
@@ -294,14 +306,15 @@ for line in sys.stdin:
 
 rm -f /tmp/precommit_fail_marker
 
-check_area vulkan_earth vulkan_earth/src \
-        -DHAVE_CONFIG_H -I. -I../.. -DFREEGLUT_STATIC -I/usr/include/SDL \
+check_area vulkan_earth vulkan_earth/src vulkan_earth/include \
+        -DHAVE_CONFIG_H -I. -I../.. -I"$REPO_ROOT/vulkan_earth/include" \
+        -DFREEGLUT_STATIC -I/usr/include/SDL \
         -D_GNU_SOURCE=1 -D_REENTRANT -I/opt/boost/include
 
-check_area lib lib \
+check_area lib lib "" \
         -DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include
 
-check_area bin bin \
+check_area bin bin "" \
         -DHAVE_CONFIG_H -I. -I.. -I"$REPO_ROOT/include" -I/opt/boost/include
 
 check_include_area

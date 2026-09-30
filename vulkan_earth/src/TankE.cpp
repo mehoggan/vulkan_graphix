@@ -1,7 +1,7 @@
-#include "TankE.h"
-#include "Tank.h"
-#include "VBOShaderLibrary.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/TankE.h"
+#include "vulkan_earth/Tank.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_e_name = "Eggroid";
 const int tank_e_hp = 1000;

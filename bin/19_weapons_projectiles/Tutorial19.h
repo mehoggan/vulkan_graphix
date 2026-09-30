@@ -2,10 +2,12 @@
 #define VULKAN_GRAPHIX_TUTORIAL19_H
 
 // Ported from vulkan_earth's Weapon: `Weapon` + its 10 concrete
-// subclasses (see vulkan_earth/src/Weapon.h/.cpp and WeaponXxx.h/.cpp)
-// are pure data - id, a real `description` string, `price`, `damage`,
-// `radius`, `scale`, explosion colors, plus gameplay-effect virtuals -
-// with no `draw()`, no `VBOShaderLibrary`, no `.ogl` reference anywhere
+// subclasses (see Weapon.h/WeaponXxx.h under
+// vulkan_earth/include/vulkan_earth/ and their .cpp files under
+// vulkan_earth/src/) are pure data - id, a real `description` string,
+// `price`, `damage`, `radius`, `scale`, explosion colors, plus
+// gameplay-effect virtuals - with no `draw()`, no `VBOShaderLibrary`, no
+// `.ogl` reference anywhere
 // (confirmed via grep across every subclass; `WeaponTest.h`'s
 // `draw()` is a dead, unused abstract leftover with no concrete
 // subclass). Structurally identical to `Item` - see Tutorial17.h's own

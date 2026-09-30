@@ -1,4 +1,4 @@
-#include "ParticleSmoke.h"
+#include "vulkan_earth/ParticleSmoke.h"
 
 ParticleSmoke::ParticleSmoke() = default;
 ParticleSmoke::ParticleSmoke(GLfloat new_x,

@@ -1,7 +1,7 @@
-#include "TankB.h"
-#include "Tank.h"
-#include "VBOShaderLibrary.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/TankB.h"
+#include "vulkan_earth/Tank.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_b_name = "Hellfire";
 const int tank_b_hp = 1000;

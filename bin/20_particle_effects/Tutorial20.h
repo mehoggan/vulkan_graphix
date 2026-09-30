@@ -2,10 +2,12 @@
 #define VULKAN_GRAPHIX_TUTORIAL20_H
 
 // Ported from vulkan_earth's Effects: `ParticleGenerator`/`Particle`
-// (see vulkan_earth/src/ParticleGenerator.h/.cpp, Particle*.h/.cpp) and
-// `Explosion`/`SpecialEffect` (Explosion.h/.cpp) are both real, wired-up
-// code, and both are untextured, unlit, alpha-blended `glutSolidSphere`
-// geometry - confirmed no particle/explosion texture asset exists
+// (see ParticleGenerator.h/Particle*.h under
+// vulkan_earth/include/vulkan_earth/ and their .cpp files under
+// vulkan_earth/src/) and `Explosion`/`SpecialEffect` (Explosion.h/.cpp)
+// are both real, wired-up code, and both are untextured, unlit,
+// alpha-blended `glutSolidSphere` geometry - confirmed no
+// particle/explosion texture asset exists
 // anywhere in vulkan_earth/src/, and confirmed `GL_LIGHTING` in the real
 // game is only ever enabled for the terrain (see Tutorial21's own header
 // comment) - tanks, projectiles, particles, and explosions are all drawn

@@ -1,8 +1,8 @@
 #include <glew.h>
 #include <glut.h>
 #include <iostream>
-#include "VBOShaderLibrary.h"
 #include "math.h"
+#include "vulkan_earth/Tools/ModelBuilder/VBOShaderLibrary.h"
 
 using namespace std;
 

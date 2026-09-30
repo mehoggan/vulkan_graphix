@@ -2,7 +2,9 @@
 
 `.githooks/pre-commit` runs the same checks used throughout the
 `vulkan_earth` C++ modernization pass, against any staged files in
-`vulkan_earth/src`, `lib/`, or `bin/` (the tutorials), before allowing
+`vulkan_earth/src` (plus its headers in
+`vulkan_earth/include/vulkan_earth`), `lib/`, or `bin/` (the tutorials),
+before allowing
 a commit - each area checked independently, with that area's own real
 compiler flags:
 

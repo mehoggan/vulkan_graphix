@@ -1,4 +1,4 @@
-#include "ParticleAcid.h"
+#include "vulkan_earth/ParticleAcid.h"
 
 ParticleAcid::ParticleAcid() = default;
 ParticleAcid::ParticleAcid(GLfloat new_x,

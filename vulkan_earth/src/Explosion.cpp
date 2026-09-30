@@ -5,10 +5,10 @@
  *      Author: Matthew Hoggan
  */
 
-#include "Explosion.h"
-#include "OpenGLColors.h"
-#include "Shader.h"
-#include "Vector.h"
+#include "vulkan_earth/Explosion.h"
+#include "vulkan_earth/OpenGLColors.h"
+#include "vulkan_earth/Shader.h"
+#include "vulkan_earth/Vector.h"
 
 /*
  * Constructors and De-constructors

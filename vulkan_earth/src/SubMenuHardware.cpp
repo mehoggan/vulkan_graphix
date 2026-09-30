@@ -1,12 +1,12 @@
-#include "SubMenuHardware.h"
+#include "vulkan_earth/SubMenuHardware.h"
 #include <cstring>
 #include <string>
-#include "ControlItem.h"
-#include "ControlItemCheckBox.h"
-#include "ControlItemSelectionBox.h"
-#include "SubMenu.h"
-#include "TextObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/ControlItemCheckBox.h"
+#include "vulkan_earth/ControlItemSelectionBox.h"
+#include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

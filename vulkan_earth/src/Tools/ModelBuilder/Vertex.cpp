@@ -1,4 +1,4 @@
-#include "Vertex.h"
+#include "vulkan_earth/Tools/ModelBuilder/Vertex.h"
 
 Vertex::Vertex() {}
 
