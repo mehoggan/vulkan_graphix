@@ -15,6 +15,12 @@ compiler flags:
 4. `.clang-tidy` naming/length rules, restricted to files actually
    staged in the commit (a pre-existing violation in some unrelated
    header you happen to include doesn't block you)
+5. `clang-format` - every staged `.cpp`/`.h`/`.hpp` in `bin/`,
+   `include/`, `lib/`, `tests/`, or `vulkan_earth/` (vendored
+   `STBImage.h`/`STBTrueType.h` excepted) must already match
+   `.clang-format`. It checks the staged content itself, so re-stage
+   after fixing; the failure message prints the exact
+   `clang-format -i ... && git add ...` command to run
 
 The naming/length check needs a `compile_commands.json` to know the
 real include paths. For an out-of-tree build (CLAUDE.md's
@@ -47,6 +53,7 @@ ln -sf ../../.githooks/pre-commit .git/hooks/pre-commit
 (This repo's own `.git/hooks/pre-commit` is already wired up this way
 locally.) Skip a single commit's checks with `git commit --no-verify`.
 
-Missing tooling (`g++`, `clang-tidy`/`run-clang-tidy`, `bear`) degrades
+Missing tooling (`g++`, `clang-tidy`/`run-clang-tidy`, `bear`,
+`clang-format`) degrades
 the corresponding check to a skipped warning rather than blocking the
 commit.
