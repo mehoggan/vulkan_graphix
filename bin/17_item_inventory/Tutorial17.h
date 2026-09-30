@@ -1,12 +1,14 @@
 #ifndef VULKAN_GRAPHIX_TUTORIAL17_H
 #define VULKAN_GRAPHIX_TUTORIAL17_H
 
-// Ported from vulkan_earth's Inventory (see vulkan_earth/src/Inventory.h/
-// .cpp): a titled bevel-panel grid of item icons with per-slot remaining-
-// count labels and a click-to-select description, using the real data
-// from all 8 concrete Item subclasses (vulkan_earth/src/ItemXxx.cpp) -
-// name/description/price/remaining come straight from those constructors,
-// not fabricated. Item itself (see Item.h) has no draw() method at all -
+// Ported from vulkan_earth's Inventory (see
+// vulkan_earth/include/vulkan_earth/Inventory.h and
+// vulkan_earth/src/Inventory.cpp): a titled bevel-panel grid of item
+// icons with per-slot remaining-count labels and a click-to-select
+// description, using the real data from all 8 concrete Item subclasses
+// (vulkan_earth/src/ItemXxx.cpp) - name/description/price/remaining come
+// straight from those constructors, not fabricated. Item itself (see
+// Item.h) has no draw() method at all -
 // it's a pure data record - so there is nothing to port for Item beyond
 // supplying that real data here; Inventory's ControlItemGrid panel (a
 // bevel-bordered box of cells - the same five-quad raised/pressed bevel

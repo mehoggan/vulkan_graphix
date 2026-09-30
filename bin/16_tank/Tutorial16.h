@@ -2,8 +2,9 @@
 #define VULKAN_GRAPHIX_TUTORIAL16_H
 
 // Ported from vulkan_earth's real multi-part tank renderer (see
-// vulkan_earth/src/Tank.h/.cpp and, for the concrete "Hellfire" tank
-// this tutorial renders, vulkan_earth/src/TankB.cpp): a Tank::draw()
+// vulkan_earth/include/vulkan_earth/Tank.h, vulkan_earth/src/Tank.cpp
+// and, for the concrete "Hellfire" tank this tutorial renders,
+// vulkan_earth/src/TankB.cpp): a Tank::draw()
 // independently positions and draws three mesh parts (body/head/turret
 // - Tank tracks a fourth "wheel" part, but TankB never loads or draws
 // one, so this tutorial doesn't either) through the same

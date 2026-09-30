@@ -1,6 +1,6 @@
-#include "WeaponTest.h"
+#include "vulkan_earth/WeaponTest.h"
 #include <string>
-#include "ImageObject.h"
+#include "vulkan_earth/ImageObject.h"
 
 using namespace std;
 

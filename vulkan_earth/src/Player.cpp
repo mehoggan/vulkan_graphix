@@ -1,11 +1,11 @@
-#include "Player.h"
-#include "GameState.h"
-#include "GlobalSettings.h"
-#include "PlayerFactory.h"
-#include "Sound.h"
-#include "Tank.h"
-#include "TerrainMaker.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/Player.h"
+#include "vulkan_earth/GameState.h"
+#include "vulkan_earth/GlobalSettings.h"
+#include "vulkan_earth/PlayerFactory.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/Tank.h"
+#include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

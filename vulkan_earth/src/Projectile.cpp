@@ -1,14 +1,14 @@
-#include "Projectile.h"
+#include "vulkan_earth/Projectile.h"
 #include <iostream>
 #include <sstream>
-#include "ChaseCam.h"
-#include "GameState.h"
-#include "Normal.h"
-#include "VBOShaderLibrary.h"
-#include "Vector.h"
-#include "Weapon.h"
-#include "WeaponDefault.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ChaseCam.h"
+#include "vulkan_earth/GameState.h"
+#include "vulkan_earth/Normal.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/Vector.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/WeaponDefault.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

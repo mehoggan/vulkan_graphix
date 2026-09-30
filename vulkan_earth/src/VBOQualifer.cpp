@@ -1,11 +1,11 @@
-#include "VBOQualifer.h"
+#include "vulkan_earth/VBOQualifer.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <algorithm>
 #include <cstring>
 #include <fstream>
 #include <iostream>
-// #include "MacroCrtdbg.h"
+// #include "vulkan_earth/MacroCrtdbg.h"
 
 VBOQualifer::VBOQualifer() {
     red_bits = 0;

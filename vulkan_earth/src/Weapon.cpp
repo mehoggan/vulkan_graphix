@@ -1,8 +1,8 @@
-#include "Weapon.h"
+#include "vulkan_earth/Weapon.h"
 #include <string>
-#include "ImageObject.h"
-#include "Sound.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ImageObject.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

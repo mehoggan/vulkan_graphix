@@ -1,7 +1,7 @@
-#include "TankC.h"
-#include "Tank.h"
-#include "VBOShaderLibrary.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/TankC.h"
+#include "vulkan_earth/Tank.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_c_name = "HeavyD";
 const int tank_c_hp = 1000;

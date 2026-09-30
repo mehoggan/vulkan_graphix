@@ -1,4 +1,4 @@
-#include "TerrainMaker.h"
+#include "vulkan_earth/TerrainMaker.h"
 #include <GL/glx.h>
 #include <cstdlib>
 #include <cstring>
@@ -6,12 +6,12 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "Normal.h"
-#include "Shader.h"
-#include "TexCoord.h"
-#include "Vertex.h"
 #include "math.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/Normal.h"
+#include "vulkan_earth/Shader.h"
+#include "vulkan_earth/TexCoord.h"
+#include "vulkan_earth/Vertex.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

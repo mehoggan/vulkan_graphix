@@ -1,6 +1,6 @@
-#include "WeaponPadlock.h"
-#include "Weapon.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/WeaponPadlock.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponPadlock::WeaponPadlock() = default;
 WeaponPadlock::WeaponPadlock(int id) {

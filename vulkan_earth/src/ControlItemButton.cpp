@@ -1,15 +1,15 @@
-#include "ControlItemButton.h"
+#include "vulkan_earth/ControlItemButton.h"
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "ControlItem.h"
-#include "Sound.h"
-#include "SubMenu.h"
-#include "SubMenuLandscape.h"
-#include "TerrainMaker.h"
-#include "TextObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/SubMenuLandscape.h"
+#include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

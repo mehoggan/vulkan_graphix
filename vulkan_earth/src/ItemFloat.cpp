@@ -1,7 +1,7 @@
-#include "ItemFloat.h"
-#include "Item.h"
-#include "Sound.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ItemFloat.h"
+#include "vulkan_earth/Item.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

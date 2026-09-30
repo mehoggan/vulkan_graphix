@@ -1,13 +1,13 @@
-#include "SubMenuSound.h"
+#include "vulkan_earth/SubMenuSound.h"
 #include <string>
-#include "ControlItem.h"
-#include "ControlItemCheckBox.h"
-#include "ControlItemSelectionBox.h"
-#include "ControlItemSliderbar.h"
-#include "Sound.h"
-#include "SubMenu.h"
-#include "TextObject.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/ControlItemCheckBox.h"
+#include "vulkan_earth/ControlItemSelectionBox.h"
+#include "vulkan_earth/ControlItemSliderbar.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

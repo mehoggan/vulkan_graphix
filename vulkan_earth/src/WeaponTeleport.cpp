@@ -1,7 +1,7 @@
-#include "WeaponTeleport.h"
-#include "Sound.h"
-#include "Weapon.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/WeaponTeleport.h"
+#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

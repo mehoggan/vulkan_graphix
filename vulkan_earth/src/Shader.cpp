@@ -1,8 +1,8 @@
-#include "Shader.h"
+#include "vulkan_earth/Shader.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

@@ -1,14 +1,14 @@
-#include "Inventory.h"
+#include "vulkan_earth/Inventory.h"
 #include <math.h>
-#include "ControlItem.h"
-#include "ControlItemGrid.h"
-#include "ImageObject.h"
-#include "Item.h"
-#include "Player.h"
-#include "PlayerHuman.h"
-#include "TextObject.h"
-#include "Weapon.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/ControlItemGrid.h"
+#include "vulkan_earth/ImageObject.h"
+#include "vulkan_earth/Item.h"
+#include "vulkan_earth/Player.h"
+#include "vulkan_earth/PlayerHuman.h"
+#include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 Inventory::Inventory() = default;
 Inventory::Inventory(GLfloat x, GLfloat y, int w, int h) {

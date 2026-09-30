@@ -1,6 +1,6 @@
-#include "WeaponMFB.h"
-#include "Weapon.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/WeaponMFB.h"
+#include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponMFB::WeaponMFB() = default;
 WeaponMFB::WeaponMFB(int id) {

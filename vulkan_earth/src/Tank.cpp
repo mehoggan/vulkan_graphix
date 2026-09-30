@@ -1,10 +1,10 @@
-#include "Tank.h"
+#include "vulkan_earth/Tank.h"
 #include <iostream>
-#include "Normal.h"
-#include "ParticleGenerator.h"
-#include "VBOShaderLibrary.h"
-#include "Vector.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/Normal.h"
+#include "vulkan_earth/ParticleGenerator.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/Vector.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

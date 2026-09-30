@@ -1,6 +1,6 @@
-#include "ItemDoubleAction.h"
-#include "Item.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/ItemDoubleAction.h"
+#include "vulkan_earth/Item.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 ItemDoubleAction::ItemDoubleAction() = default;
 ItemDoubleAction::ItemDoubleAction(int id) {

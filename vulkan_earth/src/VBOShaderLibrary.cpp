@@ -1,4 +1,4 @@
-#include "VBOShaderLibrary.h"
+#include "vulkan_earth/VBOShaderLibrary.h"
 #include <GL/glx.h>
 #include <math.h>
 #include <stdio.h>
@@ -14,9 +14,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Normal.h"
-#include "TexCoord.h"
-#include "Vertex.h"
+#include "vulkan_earth/Normal.h"
+#include "vulkan_earth/TexCoord.h"
+#include "vulkan_earth/Vertex.h"
 
 using namespace std;
 

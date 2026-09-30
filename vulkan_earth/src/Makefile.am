@@ -92,6 +92,7 @@ vulkan_earth_runner_SOURCES = \
 	WorldCam.cpp
 
 vulkan_earth_runner_CPPFLAGS = \
+	-I$(top_srcdir)/vulkan_earth/include \
 	$(VULKAN_EARTH_GL_CFLAGS) $(VULKAN_EARTH_GLEW_CFLAGS) $(VULKAN_EARTH_SDL_CFLAGS) \
 	$(VULKAN_EARTH_XRANDR_CFLAGS)
 vulkan_earth_runner_LDADD = \

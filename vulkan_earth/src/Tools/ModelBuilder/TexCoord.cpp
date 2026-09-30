@@ -1,4 +1,4 @@
-#include "TexCoord.h"
+#include "vulkan_earth/Tools/ModelBuilder/TexCoord.h"
 
 TexCoord::TexCoord() {}
 

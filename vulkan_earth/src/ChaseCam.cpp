@@ -1,6 +1,6 @@
-#include "ChaseCam.h"
+#include "vulkan_earth/ChaseCam.h"
 #include "math.h"
-#include "MacroCrtdbg.h"
+#include "vulkan_earth/MacroCrtdbg.h"
 
 ChaseCam::ChaseCam() = default;
 ChaseCam::ChaseCam(GLfloat* new_target_pos, GLfloat* new_target_at) {
