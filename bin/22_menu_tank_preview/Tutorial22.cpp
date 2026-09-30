@@ -427,8 +427,7 @@ bool Tutorial22::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial22_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -552,19 +551,20 @@ bool Tutorial22::destroyDepthResources() {
     return true;
 }
 
-bool Tutorial22::createTextureFromPixels(std::uint32_t width,
-                                         std::uint32_t height,
-                                         const std::vector<char>& pixels,
-                                         ImageParameters& out_image_parameters) {
+bool Tutorial22::createTextureFromPixels(
+        std::uint32_t width,
+        std::uint32_t height,
+        const std::vector<char>& pixels,
+        ImageParameters& out_image_parameters) {
     if (!VulkanCommon::createTextureFromPixels(
                 VulkanCommon::ImageFactory(getVkDevice(),
                                            getVkPhysicalDevice()),
                 VulkanCommon::StagedUploader(
                         getVkDevice(),
                         getGraphicsQueueParameters().getVkQueue(),
-                        m_vulkan_tutorial22_parameters.getRenderingResources()
-                                [0]
-                                        .getVkCommandBuffer()),
+                        m_vulkan_tutorial22_parameters
+                                .getRenderingResources()[0]
+                                .getVkCommandBuffer()),
                 m_vulkan_tutorial22_parameters.getStagingBufferParameters(),
                 width,
                 height,
@@ -745,7 +745,8 @@ bool Tutorial22::createDescriptorSetLayouts() {
                                     &layout_create_info_tank,
                                     nullptr,
                                     &vk_tank_layout) != VK_SUCCESS) {
-        Logging::error(LOG_TAG, "Could not create tank descriptor set layout!");
+        Logging::error(LOG_TAG,
+                       "Could not create tank descriptor set layout!");
         return false;
     }
     m_vulkan_tutorial22_parameters.setVkTankDescriptorSetLayout(
@@ -824,9 +825,9 @@ bool Tutorial22::allocateDescriptorSets() {
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_tank_layout};
     VkDescriptorSet vk_tank_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_tank, &vk_tank_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_tank,
+                                 &vk_tank_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate tank descriptor set!");
         return false;
     }
@@ -842,9 +843,9 @@ bool Tutorial22::allocateDescriptorSets() {
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_panel_layout};
     VkDescriptorSet vk_panel_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_panel, &vk_panel_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_panel,
+                                 &vk_panel_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate panel descriptor set!");
         return false;
     }
@@ -1286,8 +1287,8 @@ bool Tutorial22::createPipelines() {
             .vertexBindingDescriptionCount =
                     static_cast<std::uint32_t>(vertex_bindings_panel.size()),
             .pVertexBindingDescriptions = vertex_bindings_panel.data(),
-            .vertexAttributeDescriptionCount = static_cast<std::uint32_t>(
-                    vertex_attributes_panel.size()),
+            .vertexAttributeDescriptionCount =
+                    static_cast<std::uint32_t>(vertex_attributes_panel.size()),
             .pVertexAttributeDescriptions = vertex_attributes_panel.data()};
 
     VkPipelineInputAssemblyStateCreateInfo input_assembly_panel = {
@@ -1360,13 +1361,13 @@ bool Tutorial22::createPipelines() {
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
-    if (vkCreateGraphicsPipelines(
-                getVkDevice(),
-                VK_NULL_HANDLE,
-                1,
-                &pipeline_create_info_panel,
-                nullptr,
-                &m_vulkan_tutorial22_parameters.getVkPanelGraphicsPipeline()) !=
+    if (vkCreateGraphicsPipelines(getVkDevice(),
+                                  VK_NULL_HANDLE,
+                                  1,
+                                  &pipeline_create_info_panel,
+                                  nullptr,
+                                  &m_vulkan_tutorial22_parameters
+                                           .getVkPanelGraphicsPipeline()) !=
         VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create panel graphics pipeline!");
         return false;
@@ -1397,10 +1398,10 @@ bool Tutorial22::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial22_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial22_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial22_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
                                  destination,
                                  data,
@@ -1420,14 +1421,16 @@ bool Tutorial22::createTankPartVertexBuffer(const char* mesh_filename,
     std::vector<Tutorial22TankVertexData> const vertex_data =
             loadTankPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
-        Logging::error(
-                LOG_TAG, "Could not load mesh data from \"", mesh_filename, "\"!");
+        Logging::error(LOG_TAG,
+                       "Could not load mesh data from \"",
+                       mesh_filename,
+                       "\"!");
         return false;
     }
     vertex_count = static_cast<std::uint32_t>(vertex_data.size());
 
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1507,10 +1510,11 @@ void Tutorial22::appendColoredQuad(
             vertex_data, corners, color, m_font.solidTexelUv());
 }
 
-void Tutorial22::appendText(std::vector<Tutorial22PanelVertexData>& vertex_data,
-                            const std::string& text,
-                            Math::Vec2<float> origin,
-                            Math::Vec4<float> color) const {
+void Tutorial22::appendText(
+        std::vector<Tutorial22PanelVertexData>& vertex_data,
+        const std::string& text,
+        Math::Vec2<float> origin,
+        Math::Vec4<float> color) const {
     UiGeometry::appendText(vertex_data, m_font, text, origin, color);
 }
 
@@ -1540,8 +1544,8 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
 
     std::string const title = "Ready?";
     float const title_width = m_font.textWidth(title);
-    Math::Vec2<float> const title_origin(
-            width * 0.5f - title_width * 0.5f, panel_top_left.y + 40.0f);
+    Math::Vec2<float> const title_origin(width * 0.5f - title_width * 0.5f,
+                                         panel_top_left.y + 40.0f);
     appendText(vertex_data, title, title_origin, text_color);
 
     // A sunken "well" frame around the live 3D preview - matches
@@ -1564,9 +1568,11 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
     Math::Vec2<float> const button_top_left = getButtonTopLeft();
     Math::Vec2<float> const button_size = getButtonSize();
     Math::Vec4<float> const button_color(0.3f, 0.5f, 0.75f, 1.0f);
-    for (UiGeometry::ColoredQuad const& quad : UiGeometry::buildButtonBevel(
-                 button_top_left, button_size, button_color,
-                 m_button_pressed)) {
+    for (UiGeometry::ColoredQuad const& quad :
+         UiGeometry::buildButtonBevel(button_top_left,
+                                      button_size,
+                                      button_color,
+                                      m_button_pressed)) {
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
 
@@ -1780,10 +1786,10 @@ bool Tutorial22::prepareFrame(VkCommandBuffer command_buffer,
                      .getVkBuffer(),
             &zero_offset);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial22_parameters.getPanelVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial22_parameters.getPanelVertexCount(),
+              1,
+              0,
+              0);
 
     // --- Pass 2: 3D tank preview, scissored to its own sub-region,
     // drawn on top of the panel so it appears composited inside it ---
@@ -1802,9 +1808,9 @@ bool Tutorial22::prepareFrame(VkCommandBuffer command_buffer,
                                    .maxDepth = 1.0f};
     VkRect2D preview_scissor = {
             .offset = {.x = static_cast<std::int32_t>(preview_top_left.x),
-                      .y = static_cast<std::int32_t>(preview_top_left.y)},
+                       .y = static_cast<std::int32_t>(preview_top_left.y)},
             .extent = {.width = static_cast<std::uint32_t>(preview_size.x),
-                      .height = static_cast<std::uint32_t>(preview_size.y)}};
+                       .height = static_cast<std::uint32_t>(preview_size.y)}};
     vkCmdSetViewport(command_buffer, 0, 1, &preview_viewport);
     vkCmdSetScissor(command_buffer, 0, 1, &preview_scissor);
 
@@ -1889,8 +1895,8 @@ bool Tutorial22::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial22Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial22Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1939,8 +1945,8 @@ bool Tutorial22::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial22_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial22_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -2083,8 +2089,9 @@ void Tutorial22::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -2099,10 +2106,9 @@ void Tutorial22::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial22_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial22_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial22_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial22_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -2112,7 +2118,8 @@ void Tutorial22::childClear() {
     for (BufferParameters& buffer : tank_vertex_buffers) {
         destroyBuffer(buffer);
     }
-    destroyBuffer(m_vulkan_tutorial22_parameters.getPanelVertexBufferParameters());
+    destroyBuffer(
+            m_vulkan_tutorial22_parameters.getPanelVertexBufferParameters());
     destroyBuffer(m_vulkan_tutorial22_parameters.getStagingBufferParameters());
 
     if (m_vulkan_tutorial22_parameters.getVkTankGraphicsPipeline() !=
@@ -2153,10 +2160,9 @@ void Tutorial22::childClear() {
     }
 
     if (m_vulkan_tutorial22_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial22_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial22_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial22_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 
@@ -2187,7 +2193,8 @@ void Tutorial22::childClear() {
                 VK_NULL_HANDLE);
     }
 
-    destroyBuffer(m_vulkan_tutorial22_parameters.getTankUniformBufferParameters());
+    destroyBuffer(
+            m_vulkan_tutorial22_parameters.getTankUniformBufferParameters());
     destroyBuffer(
             m_vulkan_tutorial22_parameters.getPanelUniformBufferParameters());
 

@@ -11,6 +11,8 @@
 #include "ImageObject.h"
 #include "MainMenuButton.h"
 #include "PlayerFactory.h"
+#include "PossibleGameStates.h"
+#include "Sound.h"
 #include "SubMenu.h"
 #include "SubMenuEconomics.h"
 #include "SubMenuHardware.h"
@@ -23,8 +25,6 @@
 #include "SubMenuWeapons.h"
 #include "TextObject.h"
 #include "MacroCrtdbg.h"
-#include "PossibleGameStates.h"
-#include "Sound.h"
 
 extern void playMusic(int music);
 

@@ -19,8 +19,8 @@ public:
     // instead of the default front-on one, without changing the default
     // constructor's behavior for tutorials that don't care.
     OrbitCamera(float initial_yaw_radians,
-               float initial_pitch_radians,
-               float initial_distance);
+                float initial_pitch_radians,
+                float initial_distance);
 
     void onMouseButton(int button, bool pressed, int pos_x, int pos_y);
     void onMouseMove(int pos_x, int pos_y);

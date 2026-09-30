@@ -123,7 +123,8 @@ VulkanTutorial19Parameters::VulkanTutorial19Parameters()
         , m_vk_3d_descriptor_set_layout(VK_NULL_HANDLE)
         , m_vk_grid_descriptor_set_layout(VK_NULL_HANDLE)
         , m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_3d_descriptor_sets{VK_NULL_HANDLE, VK_NULL_HANDLE,
+        , m_vk_3d_descriptor_sets{VK_NULL_HANDLE,
+                                  VK_NULL_HANDLE,
                                   VK_NULL_HANDLE}
         , m_vk_font_descriptor_set(VK_NULL_HANDLE)
         , m_vk_icon_descriptor_set(VK_NULL_HANDLE)
@@ -301,8 +302,7 @@ void VulkanTutorial19Parameters::setVkGridPipelineLayout(
     m_vk_grid_pipeline_layout = other;
 }
 
-const VkPipeline& VulkanTutorial19Parameters::getVk3DGraphicsPipeline()
-        const {
+const VkPipeline& VulkanTutorial19Parameters::getVk3DGraphicsPipeline() const {
     return m_vk_3d_graphics_pipeline;
 }
 VkPipeline& VulkanTutorial19Parameters::getVk3DGraphicsPipeline() {
@@ -531,8 +531,7 @@ bool Tutorial19::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial19_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -583,19 +582,20 @@ bool Tutorial19::createStagingBuffer() {
     return true;
 }
 
-bool Tutorial19::createTextureFromPixels(std::uint32_t width,
-                                         std::uint32_t height,
-                                         const std::vector<char>& pixels,
-                                         ImageParameters& out_image_parameters) {
+bool Tutorial19::createTextureFromPixels(
+        std::uint32_t width,
+        std::uint32_t height,
+        const std::vector<char>& pixels,
+        ImageParameters& out_image_parameters) {
     if (!VulkanCommon::createTextureFromPixels(
                 VulkanCommon::ImageFactory(getVkDevice(),
                                            getVkPhysicalDevice()),
                 VulkanCommon::StagedUploader(
                         getVkDevice(),
                         getGraphicsQueueParameters().getVkQueue(),
-                        m_vulkan_tutorial19_parameters.getRenderingResources()
-                                [0]
-                                        .getVkCommandBuffer()),
+                        m_vulkan_tutorial19_parameters
+                                .getRenderingResources()[0]
+                                .getVkCommandBuffer()),
                 m_vulkan_tutorial19_parameters.getStagingBufferParameters(),
                 width,
                 height,
@@ -716,7 +716,8 @@ Tutorial19UniformBufferData3D Tutorial19::get3DUniformBufferData() const {
 }
 
 bool Tutorial19::update3DUniformBufferData() {
-    Tutorial19UniformBufferData3D const uniform_data = get3DUniformBufferData();
+    Tutorial19UniformBufferData3D const uniform_data =
+            get3DUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters();
 
@@ -852,7 +853,8 @@ bool Tutorial19::createDescriptorSetLayouts() {
                                     &layout_create_info_grid,
                                     nullptr,
                                     &vk_grid_layout) != VK_SUCCESS) {
-        Logging::error(LOG_TAG, "Could not create grid descriptor set layout!");
+        Logging::error(LOG_TAG,
+                       "Could not create grid descriptor set layout!");
         return false;
     }
     m_vulkan_tutorial19_parameters.setVkGridDescriptorSetLayout(
@@ -904,9 +906,9 @@ bool Tutorial19::allocateDescriptorSets() {
                         m_vulkan_tutorial19_parameters.getVkDescriptorPool(),
                 .descriptorSetCount = 1,
                 .pSetLayouts = &vk_3d_layout};
-        if (vkAllocateDescriptorSets(
-                    getVkDevice(), &allocate_info, &sets_3d[i]) !=
-            VK_SUCCESS) {
+        if (vkAllocateDescriptorSets(getVkDevice(),
+                                     &allocate_info,
+                                     &sets_3d[i]) != VK_SUCCESS) {
             Logging::error(LOG_TAG, "Could not allocate 3D descriptor set!");
             return false;
         }
@@ -922,9 +924,9 @@ bool Tutorial19::allocateDescriptorSets() {
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_grid_layout};
     VkDescriptorSet vk_font_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_font, &vk_font_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_font,
+                                 &vk_font_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate font descriptor set!");
         return false;
     }
@@ -938,9 +940,9 @@ bool Tutorial19::allocateDescriptorSets() {
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_grid_layout};
     VkDescriptorSet vk_icon_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_icon, &vk_icon_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_icon,
+                                 &vk_icon_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate icon descriptor set!");
         return false;
     }
@@ -1316,8 +1318,7 @@ bool Tutorial19::createPipelines() {
             .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .stageCount =
-                    static_cast<std::uint32_t>(shader_stages_3d.size()),
+            .stageCount = static_cast<std::uint32_t>(shader_stages_3d.size()),
             .pStages = shader_stages_3d.data(),
             .pVertexInputState = &vertex_input_state_3d,
             .pInputAssemblyState = &input_assembly_3d,
@@ -1547,10 +1548,10 @@ bool Tutorial19::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial19_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial19_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial19_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
                                  destination,
                                  data,
@@ -1675,11 +1676,12 @@ void Tutorial19::appendText(std::vector<Tutorial19VertexGridData>& vertex_data,
     UiGeometry::appendText(vertex_data, m_font, text, origin, color);
 }
 
-void Tutorial19::appendImageQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-                                 Math::Vec2<float> top_left,
-                                 Math::Vec2<float> size,
-                                 Math::Vec2<float> uv_min,
-                                 Math::Vec2<float> uv_max) const {
+void Tutorial19::appendImageQuad(
+        std::vector<Tutorial19VertexGridData>& vertex_data,
+        Math::Vec2<float> top_left,
+        Math::Vec2<float> size,
+        Math::Vec2<float> uv_min,
+        Math::Vec2<float> uv_max) const {
     UiGeometry::appendImageQuad(vertex_data, top_left, size, uv_min, uv_max);
 }
 
@@ -1701,10 +1703,10 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
     Math::Vec4<float> const text_color(0.05f, 0.05f, 0.05f, 1.0f);
     std::string const title = "Tutorial 19 - Weapons";
     appendText(vertex_data,
-              title,
-              Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                panel_top_left.y + 16.0f),
-              text_color);
+               title,
+               Math::Vec2<float>(panel_top_left.x + 16.0f,
+                                 panel_top_left.y + 16.0f),
+               text_color);
 
     std::array<WeaponDisplayData, c_weapon_grid_item_count> const& weapons =
             getWeaponDisplayData();
@@ -1728,12 +1730,11 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
         std::string const label = "$" + std::to_string(weapons[index].price);
         float const label_width = m_font.textWidth(label);
         appendText(vertex_data,
-                  label,
-                  Math::Vec2<float>(
-                          cell_top_left.x + cell_size.x * 0.5f -
-                                  label_width * 0.5f,
-                          cell_top_left.y + cell_size.y - 4.0f),
-                  text_color);
+                   label,
+                   Math::Vec2<float>(cell_top_left.x + cell_size.x * 0.5f -
+                                             label_width * 0.5f,
+                                     cell_top_left.y + cell_size.y - 4.0f),
+                   text_color);
     }
 
     float const description_top = getDescriptionTop();
@@ -1742,12 +1743,12 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
             weapons[m_selected_index].description, max_description_width);
     for (std::size_t line = 0; line < description_lines.size(); ++line) {
         appendText(vertex_data,
-                  description_lines[line],
-                  Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                    description_top +
-                                            static_cast<float>(line) *
-                                                    m_font.lineHeight()),
-                  text_color);
+                   description_lines[line],
+                   Math::Vec2<float>(
+                           panel_top_left.x + 16.0f,
+                           description_top + static_cast<float>(line) *
+                                                     m_font.lineHeight()),
+                   text_color);
     }
 
     return vertex_data;
@@ -1810,15 +1811,17 @@ bool Tutorial19::updateGridVertexBufferData() {
     }
     char* dest = static_cast<char*>(vertex_buffer_memory_pointer);
     if (!text_vertex_data.empty()) {
-        std::memcpy(dest,
-                    text_vertex_data.data(),
-                    text_vertex_data.size() * sizeof(Tutorial19VertexGridData));
+        std::memcpy(
+                dest,
+                text_vertex_data.data(),
+                text_vertex_data.size() * sizeof(Tutorial19VertexGridData));
         dest += text_vertex_data.size() * sizeof(Tutorial19VertexGridData);
     }
     if (!icon_vertex_data.empty()) {
-        std::memcpy(dest,
-                    icon_vertex_data.data(),
-                    icon_vertex_data.size() * sizeof(Tutorial19VertexGridData));
+        std::memcpy(
+                dest,
+                icon_vertex_data.data(),
+                icon_vertex_data.size() * sizeof(Tutorial19VertexGridData));
     }
     vkUnmapMemory(getVkDevice(), vertex_buffer.getVkDeviceMemory());
 
@@ -1955,9 +1958,10 @@ bool Tutorial19::prepareFrame(VkCommandBuffer command_buffer,
 
     // --- 3D pass: three projectile meshes, each with its own texture
     // (descriptor set) and its own push-constant model matrix.
-    vkCmdBindPipeline(command_buffer,
-                      VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline());
+    vkCmdBindPipeline(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline());
 
     VkDeviceSize const zero_offset = 0;
     std::array<ProjectileMeshInfo, c_projectile_mesh_count> const& mesh_info =
@@ -2023,10 +2027,10 @@ bool Tutorial19::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial19_parameters.getTextVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial19_parameters.getTextVertexCount(),
+              1,
+              0,
+              0);
 
     VkDeviceSize const icon_offset =
             static_cast<VkDeviceSize>(
@@ -2051,10 +2055,10 @@ bool Tutorial19::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial19_parameters.getIconVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial19_parameters.getIconVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -2096,8 +2100,8 @@ bool Tutorial19::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial19Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial19Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -2148,8 +2152,8 @@ bool Tutorial19::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial19_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial19_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -2292,8 +2296,9 @@ void Tutorial19::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -2308,10 +2313,9 @@ void Tutorial19::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial19_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial19_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial19_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial19_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -2321,7 +2325,8 @@ void Tutorial19::childClear() {
     for (BufferParameters& buffer : vertex_buffers) {
         destroyBuffer(buffer);
     }
-    destroyBuffer(m_vulkan_tutorial19_parameters.getGridVertexBufferParameters());
+    destroyBuffer(
+            m_vulkan_tutorial19_parameters.getGridVertexBufferParameters());
     destroyBuffer(m_vulkan_tutorial19_parameters.getStagingBufferParameters());
 
     if (m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline() !=
@@ -2360,10 +2365,9 @@ void Tutorial19::childClear() {
     }
 
     if (m_vulkan_tutorial19_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial19_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial19_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial19_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 
@@ -2394,7 +2398,8 @@ void Tutorial19::childClear() {
                 VK_NULL_HANDLE);
     }
 
-    destroyBuffer(m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters());
+    destroyBuffer(
+            m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters());
     destroyBuffer(
             m_vulkan_tutorial19_parameters.getUniformBufferGridParameters());
 

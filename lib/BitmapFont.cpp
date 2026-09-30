@@ -86,13 +86,13 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
         float pen_y = 0.0f;
         stbtt_aligned_quad quad{};
         stbtt_GetBakedQuad(baked_chars.data(),
-                          static_cast<int>(m_atlas_width),
-                          static_cast<int>(m_atlas_height),
-                          i,
-                          &pen_x,
-                          &pen_y,
-                          &quad,
-                          1);
+                           static_cast<int>(m_atlas_width),
+                           static_cast<int>(m_atlas_height),
+                           i,
+                           &pen_x,
+                           &pen_y,
+                           &quad,
+                           1);
 
         Glyph& glyph = m_glyphs[i];
         glyph.offset = Math::Vec2<float>(quad.x0, quad.y0);

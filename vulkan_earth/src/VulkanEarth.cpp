@@ -12,14 +12,14 @@
 #include "LoadingScreen.h"
 #include "MainMenu.h"
 #include "PlayerFactory.h"
+#include "PossibleGameStates.h"
 #include "ReadyMenu.h"
 #include "ShopMenu.h"
 #include "SubMenu.h"
 #include "SubMenuLandscape.h"
 #include "TerrainMaker.h"
-#include "MacroCrtdbg.h"
 #include "math.h"
-#include "PossibleGameStates.h"
+#include "MacroCrtdbg.h"
 
 #ifdef new
 #undef new

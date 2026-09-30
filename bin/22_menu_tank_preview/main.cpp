@@ -7,8 +7,8 @@
 // panel background every real menu screen (MainMenu/ReadyMenu/ShopMenu/
 // SubMenu*) opens with, plus ReadyMenu's own real technique - a live
 // rotating 3D tank preview rendered into a scissored sub-region of the
-// screen - see include/vulkan_graphix/Tutorial/Tutorial22.h. Click the button to
-// see the click counter update.
+// screen - see include/vulkan_graphix/Tutorial/Tutorial22.h. Click the button
+// to see the click counter update.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =

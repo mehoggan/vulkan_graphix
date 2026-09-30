@@ -3,9 +3,9 @@
 #include <iostream>
 #include <string>
 #include "ControlItem.h"
+#include "Sound.h"
 #include "TextObject.h"
 #include "MacroCrtdbg.h"
-#include "Sound.h"
 
 using namespace std;
 

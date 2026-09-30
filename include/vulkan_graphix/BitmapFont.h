@@ -58,8 +58,8 @@ public:
     // no Vulkan calls, same "logic only" precedent as TerrainGenerator/
     // Tools::loadOglMeshData(). Characters outside the baked range are
     // skipped; zero-area glyphs (e.g. space) emit no quad.
-    std::vector<BitmapFontGlyphQuad> layoutText(const std::string& text,
-                                                Math::Vec2<float> origin) const;
+    std::vector<BitmapFontGlyphQuad> layoutText(
+            const std::string& text, Math::Vec2<float> origin) const;
     float textWidth(const std::string& text) const;
     float lineHeight() const;
 

@@ -329,7 +329,7 @@ bool Tutorial08::createDepthResources() {
     ImageParameters& depth_image =
             m_vulkan_tutorial08_parameters.getDepthImageParameters();
     VulkanCommon::ImageFactory const image_factory(getVkDevice(),
-                                                    getVkPhysicalDevice());
+                                                   getVkPhysicalDevice());
 
     VkImage vk_image;
     if (!image_factory.createImage(
@@ -893,16 +893,16 @@ bool Tutorial08::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial08_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial08_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial08_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                destination,
-                                data,
-                                data_size,
-                                dst_access_mask,
-                                dst_stage_mask)) {
+                                 destination,
+                                 data,
+                                 data_size,
+                                 dst_access_mask,
+                                 dst_stage_mask)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");

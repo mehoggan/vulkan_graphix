@@ -14,8 +14,10 @@
 #include "Normal.h"
 #include "Player.h"
 #include "PlayerFactory.h"
+#include "PossibleGameStates.h"
 #include "Projectile.h"
 #include "SkyboxFactory.h"
+#include "Sound.h"
 #include "SpecialEffect.h"
 #include "Tank.h"
 #include "TerrainMaker.h"
@@ -26,11 +28,9 @@
 #include "Water.h"
 #include "Weapon.h"
 #include "WorldCam.h"
-#include "MacroCrtdbg.h"
 #include "math.h"
-#include "PossibleGameStates.h"
-#include "Sound.h"
 #include "time.h"
+#include "MacroCrtdbg.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must
  * unload their weapons. Call player(i)->setLoadedWeapon(NULL)*/

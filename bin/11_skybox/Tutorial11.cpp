@@ -34,8 +34,7 @@ void VulkanTutorial11Parameters::setVkRenderPass(
     m_vk_render_pass = vk_render_pass;
 }
 
-const ImageParameters& VulkanTutorial11Parameters::getImageParameters()
-        const {
+const ImageParameters& VulkanTutorial11Parameters::getImageParameters() const {
     return m_image_parameters;
 }
 ImageParameters& VulkanTutorial11Parameters::getImageParameters() {
@@ -325,11 +324,11 @@ bool Tutorial11::createImage(std::uint32_t width,
                              VkImage* image) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
             .createImage(width,
-                        height,
-                        VK_FORMAT_R8G8B8A8_UNORM,
-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                VK_IMAGE_USAGE_SAMPLED_BIT,
-                        image);
+                         height,
+                         VK_FORMAT_R8G8B8A8_UNORM,
+                         VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                         image);
 }
 
 bool Tutorial11::allocateImageMemory(VkImage image,
@@ -346,9 +345,9 @@ bool Tutorial11::createImageView() {
     VkImageView vk_image_view;
     if (!VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
                  .createImageView(image_parameters.getVkImage(),
-                                 VK_FORMAT_R8G8B8A8_UNORM,
-                                 VK_IMAGE_ASPECT_COLOR_BIT,
-                                 &vk_image_view)) {
+                                  VK_FORMAT_R8G8B8A8_UNORM,
+                                  VK_IMAGE_ASPECT_COLOR_BIT,
+                                  &vk_image_view)) {
         return false;
     }
     image_parameters.setVkImageView(vk_image_view);
@@ -375,16 +374,16 @@ bool Tutorial11::copyTextureData(char* texture_data,
     // guard existed - StagedUploader::uploadToImage() carries the same
     // guard forward, failing loudly instead.
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial11_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial11_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
-                               image_parameters.getVkImage(),
-                               texture_data,
-                               data_size,
-                               width,
-                               height)) {
+                                image_parameters.getVkImage(),
+                                texture_data,
+                                data_size,
+                                width,
+                                height)) {
         Logging::error(LOG_TAG,
                        "Could not map memory and upload texture data to a "
                        "staging buffer!");
@@ -480,16 +479,17 @@ Math::Mat4<float> Tutorial11::getUniformBufferData() const {
     // do gl_Position = u_ProjectionMatrix * i_Position - it's really a full
     // model-view-projection slot, which is exactly what's needed here.
     Math::Mat4<float> const model(1.0f);
-    Math::Mat4<float> const view = glm::lookAt(
-            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    Math::Mat4<float> const view =
+            glm::lookAt(m_camera.eye(),
+                        m_camera.target(),
+                        Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     float const height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Mat4<float> const projection =
-            Tools::getPerspectiveProjectionMatrix(
-                    width / height, 45.0f, 0.1f, 100.0f);
+    Math::Mat4<float> const projection = Tools::getPerspectiveProjectionMatrix(
+            width / height, 45.0f, 0.1f, 100.0f);
 
     return projection * view * model;
 }
@@ -1023,16 +1023,16 @@ bool Tutorial11::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial11_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial11_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial11_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                destination,
-                                data,
-                                data_size,
-                                dst_access_mask,
-                                dst_stage_mask)) {
+                                 destination,
+                                 data,
+                                 data_size,
+                                 dst_access_mask,
+                                 dst_stage_mask)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");
@@ -1047,8 +1047,8 @@ bool Tutorial11::createVertexBuffer() {
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial11_parameters.getVertexBufferParameters();
 
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1071,8 +1071,8 @@ bool Tutorial11::createIndexBuffer() {
 
     BufferParameters& index_buffer =
             m_vulkan_tutorial11_parameters.getIndexBufferParameters();
-    index_buffer.setSize(static_cast<std::uint32_t>(
-            index_data.size() * sizeof(index_data[0])));
+    index_buffer.setSize(static_cast<std::uint32_t>(index_data.size() *
+                                                    sizeof(index_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1186,10 +1186,9 @@ bool Tutorial11::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial11_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial11_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1236,13 +1235,12 @@ bool Tutorial11::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    vkCmdDrawIndexed(
-            command_buffer,
-            m_vulkan_tutorial11_parameters.getIndexCount(),
-            1,
-            0,
-            0,
-            0);
+    vkCmdDrawIndexed(command_buffer,
+                     m_vulkan_tutorial11_parameters.getIndexCount(),
+                     1,
+                     0,
+                     0,
+                     0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1284,8 +1282,8 @@ bool Tutorial11::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial11Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial11Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1333,8 +1331,8 @@ bool Tutorial11::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial11_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial11_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1482,8 +1480,9 @@ void Tutorial11::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1498,10 +1497,9 @@ void Tutorial11::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial11_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial11_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial11_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial11_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1528,10 +1526,9 @@ void Tutorial11::childClear() {
     }
 
     if (m_vulkan_tutorial11_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial11_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial11_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial11_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

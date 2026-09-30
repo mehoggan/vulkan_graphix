@@ -4,10 +4,10 @@
 #include "ControlItemCheckBox.h"
 #include "ControlItemSelectionBox.h"
 #include "ControlItemSliderbar.h"
+#include "Sound.h"
 #include "SubMenu.h"
 #include "TextObject.h"
 #include "MacroCrtdbg.h"
-#include "Sound.h"
 
 using namespace std;
 

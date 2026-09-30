@@ -10,8 +10,8 @@
 #include "Shader.h"
 #include "TexCoord.h"
 #include "Vertex.h"
-#include "MacroCrtdbg.h"
 #include "math.h"
+#include "MacroCrtdbg.h"
 
 using namespace std;
 

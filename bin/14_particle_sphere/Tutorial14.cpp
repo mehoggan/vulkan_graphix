@@ -324,8 +324,9 @@ bool Tutorial14::createUniformBuffer() {
 Tutorial14UniformBufferData Tutorial14::getUniformBufferData() const {
     Tutorial14UniformBufferData data{};
     data.model = Math::Mat4<float>(1.0f);  // static particle, no rotation
-    data.view = glm::lookAt(
-            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.view = glm::lookAt(m_camera.eye(),
+                            m_camera.target(),
+                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -615,8 +616,7 @@ bool Tutorial14::createPipeline() {
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial14VertexData, normal)}};
+                     .offset = offsetof(struct Tutorial14VertexData, normal)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -791,16 +791,16 @@ bool Tutorial14::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial14_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial14_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial14_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                destination,
-                                data,
-                                data_size,
-                                dst_access_mask,
-                                dst_stage_mask)) {
+                                 destination,
+                                 data,
+                                 data_size,
+                                 dst_access_mask,
+                                 dst_stage_mask)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");
@@ -815,8 +815,8 @@ bool Tutorial14::createVertexBuffer() {
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial14_parameters.getVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -839,8 +839,8 @@ bool Tutorial14::createIndexBuffer() {
 
     BufferParameters& index_buffer =
             m_vulkan_tutorial14_parameters.getIndexBufferParameters();
-    index_buffer.setSize(static_cast<std::uint32_t>(
-            index_data.size() * sizeof(index_data[0])));
+    index_buffer.setSize(static_cast<std::uint32_t>(index_data.size() *
+                                                    sizeof(index_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -956,10 +956,9 @@ bool Tutorial14::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial14_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial14_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1006,13 +1005,12 @@ bool Tutorial14::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    vkCmdDrawIndexed(
-            command_buffer,
-            m_vulkan_tutorial14_parameters.getIndexCount(),
-            1,
-            0,
-            0,
-            0);
+    vkCmdDrawIndexed(command_buffer,
+                     m_vulkan_tutorial14_parameters.getIndexCount(),
+                     1,
+                     0,
+                     0,
+                     0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1054,8 +1052,8 @@ bool Tutorial14::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial14Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial14Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1100,8 +1098,8 @@ bool Tutorial14::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial14_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial14_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1246,8 +1244,9 @@ void Tutorial14::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1262,10 +1261,9 @@ void Tutorial14::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial14_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial14_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial14_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial14_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1292,10 +1290,9 @@ void Tutorial14::childClear() {
     }
 
     if (m_vulkan_tutorial14_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial14_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial14_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial14_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

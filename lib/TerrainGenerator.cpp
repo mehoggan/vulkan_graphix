@@ -71,9 +71,8 @@ void TerrainGenerator::terrainGen(int steps,
                 float const distance = std::sqrt(
                         std::pow(static_cast<double>(current_x - x), 2) +
                         std::pow(static_cast<double>(current_y) - y, 2));
-                if ((distance < radius) &&
-                    ((x >= 0 && x < m_grid_size) &&
-                     (y >= 0 && y < m_grid_size))) {
+                if ((distance < radius) && ((x >= 0 && x < m_grid_size) &&
+                                            (y >= 0 && y < m_grid_size))) {
                     m_heights[x][y] += increase;
                 }
             }
@@ -129,8 +128,7 @@ void TerrainGenerator::calcNormal(int x,
             v1[2] = -static_cast<float>(m_grid_scale);
 
             v2[0] = -static_cast<float>(m_grid_scale);
-            v2[1] =
-                    static_cast<float>(m_heights[x - 1][z] - m_heights[x][z]);
+            v2[1] = static_cast<float>(m_heights[x - 1][z] - m_heights[x][z]);
             v2[2] = 0.0f;
         } else {
             can_calculate = false;
@@ -139,13 +137,11 @@ void TerrainGenerator::calcNormal(int x,
         if ((((x - 1) >= 0) && (x < m_grid_size)) && ((z + 1) < m_grid_size) &&
             (z > 0)) {
             v1[0] = -static_cast<float>(m_grid_scale);
-            v1[1] =
-                    static_cast<float>(m_heights[x - 1][z] - m_heights[x][z]);
+            v1[1] = static_cast<float>(m_heights[x - 1][z] - m_heights[x][z]);
             v1[2] = 0.0f;
 
             v2[0] = 0.0f;
-            v2[1] =
-                    static_cast<float>(m_heights[x][z + 1] - m_heights[x][z]);
+            v2[1] = static_cast<float>(m_heights[x][z + 1] - m_heights[x][z]);
             v2[2] = static_cast<float>(m_grid_scale);
         } else {
             can_calculate = false;
@@ -156,9 +152,9 @@ void TerrainGenerator::calcNormal(int x,
         normal->x = v1[1] * v2[2] - v1[2] * v2[1];
         normal->y = v1[2] * v2[0] - v1[0] * v2[2];
         normal->z = v1[0] * v2[1] - v1[1] * v2[0];
-        float const mag = std::sqrt((normal->x * normal->x) +
-                                    (normal->y * normal->y) +
-                                    (normal->z * normal->z));
+        float const mag =
+                std::sqrt((normal->x * normal->x) + (normal->y * normal->y) +
+                          (normal->z * normal->z));
         normal->x /= mag;
         normal->y /= mag;
         normal->z /= mag;

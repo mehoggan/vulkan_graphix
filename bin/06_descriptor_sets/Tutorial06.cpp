@@ -277,11 +277,11 @@ bool Tutorial06::createImage(std::uint32_t width,
                              VkImage* image) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
             .createImage(width,
-                        height,
-                        VK_FORMAT_R8G8B8A8_UNORM,
-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                VK_IMAGE_USAGE_SAMPLED_BIT,
-                        image);
+                         height,
+                         VK_FORMAT_R8G8B8A8_UNORM,
+                         VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                         image);
 }
 
 bool Tutorial06::allocateImageMemory(VkImage image,
@@ -298,9 +298,9 @@ bool Tutorial06::createImageView() {
     VkImageView vk_image_view;
     if (!VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
                  .createImageView(image_parameters.getVkImage(),
-                                 VK_FORMAT_R8G8B8A8_UNORM,
-                                 VK_IMAGE_ASPECT_COLOR_BIT,
-                                 &vk_image_view)) {
+                                  VK_FORMAT_R8G8B8A8_UNORM,
+                                  VK_IMAGE_ASPECT_COLOR_BIT,
+                                  &vk_image_view)) {
         return false;
     }
     image_parameters.setVkImageView(vk_image_view);
@@ -322,16 +322,16 @@ bool Tutorial06::copyTextureData(char* texture_data,
             m_vulkan_tutorial06_parameters.getImageParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial06_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial06_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
-                               image_parameters.getVkImage(),
-                               texture_data,
-                               data_size,
-                               width,
-                               height)) {
+                                image_parameters.getVkImage(),
+                                texture_data,
+                                data_size,
+                                width,
+                                height)) {
         Logging::error(LOG_TAG,
                        "Could not map memory and upload texture data to a "
                        "staging buffer!");
@@ -798,16 +798,16 @@ bool Tutorial06::copyVertexData() {
             m_vulkan_tutorial06_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial06_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial06_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                vertex_buffer,
-                                vertex_data.data(),
-                                vertex_buffer.getSize(),
-                                VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-                                VK_PIPELINE_STAGE_VERTEX_INPUT_BIT)) {
+                                 vertex_buffer,
+                                 vertex_data.data(),
+                                 vertex_buffer.getSize(),
+                                 VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
+                                 VK_PIPELINE_STAGE_VERTEX_INPUT_BIT)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");

@@ -4,8 +4,8 @@
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Translucent particle-effect sphere ported from vulkan_earth's
-// Particle::render() (see include/vulkan_graphix/Tutorial/Tutorial14.h) - drag with
-// the mouse to orbit around it.
+// Particle::render() (see include/vulkan_graphix/Tutorial/Tutorial14.h) - drag
+// with the mouse to orbit around it.
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =

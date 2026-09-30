@@ -1,10 +1,10 @@
 #include "MainMenuButton.h"
 #include <stdio.h>
 #include <iostream>
+#include "Sound.h"
 #include "SubMenu.h"
 #include "TextObject.h"
 #include "MacroCrtdbg.h"
-#include "Sound.h"
 
 using namespace std;
 

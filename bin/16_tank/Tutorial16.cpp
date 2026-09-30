@@ -37,8 +37,7 @@ void VulkanTutorial16Parameters::setVkRenderPass(
     m_vk_render_pass = vk_render_pass;
 }
 
-const ImageParameters& VulkanTutorial16Parameters::getImageParameters()
-        const {
+const ImageParameters& VulkanTutorial16Parameters::getImageParameters() const {
     return m_image_parameters;
 }
 ImageParameters& VulkanTutorial16Parameters::getImageParameters() {
@@ -307,8 +306,7 @@ bool Tutorial16::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial16_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -366,11 +364,11 @@ bool Tutorial16::createImage(std::uint32_t width,
                              VkImage* image) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
             .createImage(width,
-                        height,
-                        VK_FORMAT_R8G8B8A8_UNORM,
-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                VK_IMAGE_USAGE_SAMPLED_BIT,
-                        image);
+                         height,
+                         VK_FORMAT_R8G8B8A8_UNORM,
+                         VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                         image);
 }
 
 bool Tutorial16::allocateImageMemory(VkImage image,
@@ -405,10 +403,10 @@ bool Tutorial16::copyTextureData(char* texture_data,
             m_vulkan_tutorial16_parameters.getImageParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial16_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial16_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
                                 image_parameters.getVkImage(),
                                 texture_data,
@@ -980,10 +978,10 @@ bool Tutorial16::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial16_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial16_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial16_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
                                  destination,
                                  data,
@@ -1003,14 +1001,16 @@ bool Tutorial16::createPartVertexBuffer(const char* mesh_filename,
     std::vector<Tutorial16VertexData> const vertex_data =
             loadPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
-        Logging::error(
-                LOG_TAG, "Could not load mesh data from \"", mesh_filename, "\"!");
+        Logging::error(LOG_TAG,
+                       "Could not load mesh data from \"",
+                       mesh_filename,
+                       "\"!");
         return false;
     }
     vertex_count = static_cast<std::uint32_t>(vertex_data.size());
 
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1050,11 +1050,10 @@ bool Tutorial16::createVertexBuffers() {
     m_vulkan_tutorial16_parameters.setHeadVertexCount(head_vertex_count);
 
     std::uint32_t turret_vertex_count = 0;
-    if (!createPartVertexBuffer(
-                "Hellfire_Turret.ogl",
-                m_vulkan_tutorial16_parameters
-                        .getTurretVertexBufferParameters(),
-                turret_vertex_count)) {
+    if (!createPartVertexBuffer("Hellfire_Turret.ogl",
+                                m_vulkan_tutorial16_parameters
+                                        .getTurretVertexBufferParameters(),
+                                turret_vertex_count)) {
         return false;
     }
     m_vulkan_tutorial16_parameters.setTurretVertexCount(turret_vertex_count);
@@ -1175,10 +1174,9 @@ bool Tutorial16::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial16_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial16_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1230,10 +1228,10 @@ bool Tutorial16::prepareFrame(VkCommandBuffer command_buffer,
                        sizeof(Tutorial16PushConstants),
                        &body_push_constants);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial16_parameters.getBodyVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial16_parameters.getBodyVertexCount(),
+              1,
+              0,
+              0);
 
     Tutorial16PushConstants head_push_constants{getHeadModelMatrix()};
     vkCmdBindVertexBuffers(
@@ -1250,10 +1248,10 @@ bool Tutorial16::prepareFrame(VkCommandBuffer command_buffer,
                        sizeof(Tutorial16PushConstants),
                        &head_push_constants);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial16_parameters.getHeadVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial16_parameters.getHeadVertexCount(),
+              1,
+              0,
+              0);
 
     Tutorial16PushConstants turret_push_constants{getTurretModelMatrix()};
     vkCmdBindVertexBuffers(
@@ -1270,10 +1268,10 @@ bool Tutorial16::prepareFrame(VkCommandBuffer command_buffer,
                        sizeof(Tutorial16PushConstants),
                        &turret_push_constants);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial16_parameters.getTurretVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial16_parameters.getTurretVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1315,8 +1313,8 @@ bool Tutorial16::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial16Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial16Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1361,8 +1359,8 @@ bool Tutorial16::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial16_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial16_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1496,8 +1494,9 @@ void Tutorial16::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1512,10 +1511,9 @@ void Tutorial16::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial16_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial16_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial16_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial16_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1546,10 +1544,9 @@ void Tutorial16::childClear() {
     }
 
     if (m_vulkan_tutorial16_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial16_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial16_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial16_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

@@ -77,6 +77,10 @@ IncludeCategories:
     Priority:        1
   - Regex:           '^<.*'
     Priority:        2
+  # vulkan_earth's MacroCrtdbg.h #defines new/malloc/free (under _DEBUG) and
+  # so must stay the last include - never sort it ahead of anything else.
+  - Regex:           '^"MacroCrtdbg\.h"$'
+    Priority:        100
   - Regex:           '.*'
     Priority:        3
 IncludeIsMainRegex: '([-_](test|unittest))?$'
@@ -170,6 +174,10 @@ IncludeCategories:
     Priority:        1
   - Regex:           '^<.*'
     Priority:        2
+  # vulkan_earth's MacroCrtdbg.h #defines new/malloc/free (under _DEBUG) and
+  # so must stay the last include - never sort it ahead of anything else.
+  - Regex:           '^"MacroCrtdbg\.h"$'
+    Priority:        100
   - Regex:           '.*'
     Priority:        3
 IncludeIsMainRegex: '([-_](test|unittest))?$'

@@ -2,7 +2,6 @@
 #include <string>
 #include "Item.h"
 #include "PlayerFactory.h"
-#include "Weapon.h"
 #include "Tank.h"
 #include "TankA.h"
 #include "TankB.h"
@@ -12,6 +11,7 @@
 #include "TankF.h"
 #include "TankG.h"
 #include "TankH.h"
+#include "Weapon.h"
 #include "MacroCrtdbg.h"
 
 PlayerHuman::PlayerHuman() = default;

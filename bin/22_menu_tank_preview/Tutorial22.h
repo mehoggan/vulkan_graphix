@@ -117,7 +117,8 @@ public:
 
     const BufferParameters& getTankUniformBufferParameters() const;
     BufferParameters& getTankUniformBufferParameters();
-    void setTankUniformBufferParameters(const BufferParameters& uniform_buffer);
+    void setTankUniformBufferParameters(
+            const BufferParameters& uniform_buffer);
 
     const BufferParameters& getPanelUniformBufferParameters() const;
     BufferParameters& getPanelUniformBufferParameters();
@@ -319,10 +320,10 @@ private:
     Math::Vec2<float> getPreviewTopLeft() const;
     Math::Vec2<float> getPreviewSize() const;
 
-    // TankB's own real offsets/basis/scale (see HellfireTank.h) with one extra Y-axis rotation - this preview's own
-    // continuous spin - applied around the whole assembly before its
-    // real per-part translation, mirroring ReadyMenu.cpp's own
-    // tank_angle-driven glRotatef call.
+    // TankB's own real offsets/basis/scale (see HellfireTank.h) with one extra
+    // Y-axis rotation - this preview's own continuous spin - applied around
+    // the whole assembly before its real per-part translation, mirroring
+    // ReadyMenu.cpp's own tank_angle-driven glRotatef call.
     std::vector<Tutorial22TankVertexData> loadTankPartVertexData(
             const char* mesh_filename) const;
     bool createTankPartVertexBuffer(const char* mesh_filename,
@@ -338,10 +339,9 @@ private:
     void appendGlyphQuad(std::vector<Tutorial22PanelVertexData>& vertex_data,
                          const BitmapFontGlyphQuad& glyph,
                          Math::Vec4<float> color) const;
-    void appendColoredQuad(
-            std::vector<Tutorial22PanelVertexData>& vertex_data,
-            const std::array<Math::Vec2<float>, 4>& corners,
-            Math::Vec4<float> color) const;
+    void appendColoredQuad(std::vector<Tutorial22PanelVertexData>& vertex_data,
+                           const std::array<Math::Vec2<float>, 4>& corners,
+                           Math::Vec4<float> color) const;
     void appendText(std::vector<Tutorial22PanelVertexData>& vertex_data,
                     const std::string& text,
                     Math::Vec2<float> origin,
