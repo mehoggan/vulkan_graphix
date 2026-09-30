@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial14.h"
+#include "Tutorial14.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Translucent particle-effect sphere ported from vulkan_earth's

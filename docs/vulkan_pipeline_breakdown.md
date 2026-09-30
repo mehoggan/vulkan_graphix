@@ -665,7 +665,7 @@ flowchart TD
 **Goal:** Load Vulkan, create a logical device, retrieve a queue handle. No window, no rendering.
 
 #### Step 1 — Load Vulkan Library
-**Source:** `lib/Tutorial01.cpp:146`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:146`
 
 ```cpp
 m_vulkan_library_handle = dlopen("libvulkan.so.1", RTLD_NOW);
@@ -680,7 +680,7 @@ available.
 ---
 
 #### Step 2 — Load Exported Entry Points
-**Source:** `lib/Tutorial01.cpp:156`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:156`
 
 Uses `dlsym` (via the `VK_EXPORTED_FUNCTION` macro over `ListOfFunctions.inl`) to pull
 `vkGetInstanceProcAddr` out of the library. This is the only function obtained this way —
@@ -691,7 +691,7 @@ everything else flows through it.
 ---
 
 #### Step 3 — Load Global-Level Entry Points
-**Source:** `lib/Tutorial01.cpp:174`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:174`
 
 Calls `vkGetInstanceProcAddr(nullptr, ...)` to load functions that don't require a
 `VkInstance` yet:
@@ -703,7 +703,7 @@ Calls `vkGetInstanceProcAddr(nullptr, ...)` to load functions that don't require
 ---
 
 #### Step 4 — Create Instance
-**Source:** `lib/Tutorial01.cpp:190`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:190`
 
 1. **`checkValidationLayerSupport()`** — calls
    [`vkEnumerateInstanceLayerProperties`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumerateInstanceLayerProperties.html)
@@ -726,7 +726,7 @@ Calls `vkGetInstanceProcAddr(nullptr, ...)` to load functions that don't require
 ---
 
 #### Step 5 — Load Instance-Level Entry Points
-**Source:** `lib/Tutorial01.cpp:253`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:253`
 
 Calls `vkGetInstanceProcAddr(instance, ...)` to load instance-scoped functions:
 
@@ -739,7 +739,7 @@ Calls `vkGetInstanceProcAddr(instance, ...)` to load instance-scoped functions:
 ---
 
 #### Step 6 — Create Logical Device
-**Source:** `lib/Tutorial01.cpp:272`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:272`
 
 1. [`vkEnumeratePhysicalDevices`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkEnumeratePhysicalDevices.html) — enumerate all GPUs.
 
@@ -758,14 +758,14 @@ Calls `vkGetInstanceProcAddr(instance, ...)` to load instance-scoped functions:
 ---
 
 #### Step 7 — Load Device-Level Entry Points
-**Source:** `lib/Tutorial01.cpp:412`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:412`
 
 Calls [`vkGetDeviceProcAddr`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceProcAddr.html) to load device-scoped functions.
 
 ---
 
 #### Step 8 — Get Device Queue
-**Source:** `lib/Tutorial01.cpp:429`
+**Source:** `bin/01_device_initialization/Tutorial01.cpp:429`
 
 [`vkGetDeviceQueue`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceQueue.html) — retrieves queue handle at family index 0, queue index 0. One queue
 handles everything (graphics).
@@ -784,7 +784,7 @@ Steps 1–5 are identical to Tutorial01, then diverge:
 ---
 
 #### Step 5b — Create Presentation Surface
-**Source:** `lib/Tutorial02.cpp:713`
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:713`
 
 Inserted **between** `loadInstanceLevelEntryPoints` and `createDevice`.
 
@@ -806,7 +806,7 @@ The instance was created with `VK_KHR_SURFACE_EXTENSION_NAME` and
 ---
 
 #### Step 6b — Create Device (surface-aware)
-**Source:** `lib/Tutorial02.cpp:733`
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:733`
 
 Enhanced over Tutorial01:
 
@@ -823,14 +823,14 @@ Enhanced over Tutorial01:
 ---
 
 #### Step 7b — Get Both Queues
-**Source:** `lib/Tutorial02.cpp:980`
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:980`
 
 Two calls to [`vkGetDeviceQueue`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetDeviceQueue.html): one for `graphics_queue`, one for `present_queue`.
 
 ---
 
 #### Step 8b — Create Semaphores
-**Source:** `lib/Tutorial02.cpp:994`
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:994`
 
 Two [`vkCreateSemaphore`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html) calls:
 
@@ -841,7 +841,7 @@ Two [`vkCreateSemaphore`](https://registry.khronos.org/vulkan/specs/latest/man/h
 ---
 
 #### Step 9b — Create Swapchain
-**Source:** `lib/Tutorial02.cpp:304` (called via `onWindowSizeChanged`)
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:304` (called via `onWindowSizeChanged`)
 
 1. [`vkGetPhysicalDeviceSurfaceCapabilitiesKHR`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkGetPhysicalDeviceSurfaceCapabilitiesKHR.html) — surface size limits,
    supported transforms, image counts.
@@ -860,7 +860,7 @@ Two [`vkCreateSemaphore`](https://registry.khronos.org/vulkan/specs/latest/man/h
 ---
 
 #### Step 10b — Create Command Buffers
-**Source:** `lib/Tutorial02.cpp:452`
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:452`
 
 1. [`vkCreateCommandPool`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html) — on the **present** queue family.
 
@@ -881,7 +881,7 @@ Two [`vkCreateSemaphore`](https://registry.khronos.org/vulkan/specs/latest/man/h
 ---
 
 #### Step 11b — Render Loop
-**Source:** `lib/Tutorial02.cpp:508`
+**Source:** `bin/02_swap_chain/Tutorial02.cpp:508`
 
 1. [`vkAcquireNextImageKHR`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquireNextImageKHR.html) — get next available swapchain image index.
 
@@ -915,7 +915,7 @@ directly into `VkImage` handles via transfer.
 ---
 
 #### Step 10c — Create Render Pass
-**Source:** `lib/Tutorial03.cpp:141`
+**Source:** `bin/03_first_triangle/Tutorial03.cpp:141`
 
 ```
 VkAttachmentDescription:
@@ -937,7 +937,7 @@ VkSubpassDescription:
 ---
 
 #### Step 11c — Create Framebuffers
-**Source:** `lib/Tutorial03.cpp:193`
+**Source:** `bin/03_first_triangle/Tutorial03.cpp:193`
 
 One [`VkFramebuffer`](https://registry.khronos.org/vulkan/specs/latest/man/html/VkFramebuffer.html) per swapchain image, each binding that image's `VkImageView`
 as the color attachment for the render pass.
@@ -947,7 +947,7 @@ as the color attachment for the render pass.
 ---
 
 #### Step 12c — Create Graphics Pipeline
-**Source:** `lib/Tutorial03.cpp:224`
+**Source:** `bin/03_first_triangle/Tutorial03.cpp:224`
 
 ##### 12c.1 — Shader Modules
 [`vkCreateShaderModule`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html) × 2 from pre-compiled SPIR-V files:
@@ -992,7 +992,7 @@ and subpass 0.
 ---
 
 #### Step 13c — Create Command Buffers
-**Source:** `lib/Tutorial03.cpp:402`
+**Source:** `bin/03_first_triangle/Tutorial03.cpp:402`
 
 1. [`vkCreateCommandPool`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html) — on the **graphics** queue family (unlike Tutorial02's present
    queue pool).
@@ -1002,7 +1002,7 @@ and subpass 0.
 ---
 
 #### Step 14c — Record Command Buffers
-**Source:** `lib/Tutorial03.cpp:425`
+**Source:** `bin/03_first_triangle/Tutorial03.cpp:425`
 
 Per buffer:
 
@@ -1019,7 +1019,7 @@ Per buffer:
 ---
 
 #### Step 15c — Render Loop
-**Source:** `lib/Tutorial03.cpp:536`
+**Source:** `bin/03_first_triangle/Tutorial03.cpp:536`
 
 1. [`vkAcquireNextImageKHR`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquireNextImageKHR.html)
 2. [`vkQueueSubmit`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) — submits to **graphics queue**; waits at

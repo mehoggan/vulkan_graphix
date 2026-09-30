@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial02.h"
+#include "Tutorial02.h"
 
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;

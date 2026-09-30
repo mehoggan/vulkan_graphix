@@ -4,12 +4,14 @@ CLEANFILES = *.o
 CLEANDIRS = deps/ .lib/
 
 # Code coverage: configure with --enable-coverage first (see README.md).
-# Filtered to this project's own lib/ implementation and include/vulkan_graphix/
-# headers - system headers, glm, gtest, and the vendored STBImage.h/
+# Filtered to this project's own lib/ implementation, include/vulkan_graphix/
+# headers, and the bin/NN_*/TutorialNN.{cpp,h} sources tests/ compiles in
+# directly - system headers, glm, gtest, and the vendored STBImage.h/
 # ListOfFunctions.inl are excluded since they aren't ours to cover.
 if COVERAGE_ENABLED
 GCOVR_FILTERS = --filter 'lib/.*' \
 	--filter 'include/vulkan_graphix/.*' \
+	--filter 'bin/[0-9][0-9]_[^/]*/Tutorial[0-9][0-9]\.(cpp|h)' \
 	--exclude 'include/vulkan_graphix/STBImage\.h' \
 	--exclude 'include/vulkan_graphix/ListOfFunctions\.inl'
 

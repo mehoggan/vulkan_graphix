@@ -25,7 +25,7 @@ build, generate one per area with:
 
 ```sh
 touch lib/*.cpp && cd lib && bear -- make -j4 && cd ..
-touch bin/*/main.cpp && cd bin && bear -- make -j4 && cd ..
+touch bin/*/*.cpp && cd bin && bear -- make -j4 && cd ..
 touch vulkan_earth/src/*.cpp && cd vulkan_earth/src && bear -- make -j4 && cd ../..
 ```
 

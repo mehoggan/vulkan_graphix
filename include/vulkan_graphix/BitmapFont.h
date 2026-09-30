@@ -63,9 +63,15 @@ public:
     float textWidth(const std::string& text) const;
     float lineHeight() const;
 
+    // Greedily word-wraps `text` (space-separated) into lines no wider
+    // than max_width per textWidth(). A single word wider than max_width
+    // gets a line to itself rather than being split mid-word.
+    std::vector<std::string> wrapText(const std::string& text,
+                                      float max_width) const;
+
 private:
-    static constexpr int kFirstChar = 32;
-    static constexpr int kGlyphCount = 95;  // ASCII 32-126 inclusive
+    static constexpr int c_first_char = 32;
+    static constexpr int c_glyph_count = 95;  // ASCII 32-126 inclusive
 
     struct Glyph {
         Math::Vec2<float> size;
@@ -79,7 +85,7 @@ private:
     std::uint32_t m_atlas_width = 0;
     std::uint32_t m_atlas_height = 0;
     Math::Vec2<float> m_solid_texel_uv;
-    std::array<Glyph, kGlyphCount> m_glyphs;
+    std::array<Glyph, c_glyph_count> m_glyphs;
     float m_line_height = 0.0f;
 };
 

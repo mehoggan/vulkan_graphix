@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial19.h"
+#include "Tutorial19.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Three real, distinct projectile meshes (Default/Acid/BFB) each scaled

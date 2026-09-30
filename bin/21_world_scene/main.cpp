@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial21.h"
+#include "Tutorial21.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Real vulkan_earth World/Camera integration: GameState::draw()'s own

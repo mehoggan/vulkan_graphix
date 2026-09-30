@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial15.h"
+#include "Tutorial15.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // A text title and one clickable button with a text label - demonstrates

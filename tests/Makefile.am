@@ -74,7 +74,7 @@ logging_test_LDFLAGS = -pthread
 # no X11/library link needed, so LoggerHelpers.cpp is compiled
 # straight into this binary rather than linking libvulkan_graphix.la.
 logger_helpers_test_SOURCES = ./LoggerHelpersTest.cpp \
-		$(abs_top_srcdir)/lib/LoggerHelpers.cpp
+		../lib/LoggerHelpers.cpp
 logger_helpers_test_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(VULKAN_CFLAGS)
 logger_helpers_test_LDADD = $(GTEST_LIBS) $(VULKAN_LIBS)
@@ -136,9 +136,12 @@ tutorial_base_fault_injection_device_level_test_LDFLAGS = -pthread
 # Tutorial04FaultInjectionTest.cpp's header comment) - one real device per
 # process, like the TutorialBaseFaultInjection* binaries above.
 tutorial04_fault_injection_test_SOURCES = \
-		./Tutorial04FaultInjectionTest.cpp
+		./Tutorial04FaultInjectionTest.cpp \
+		../bin/04_vertex_attributes/Tutorial04.cpp
 tutorial04_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/04_vertex_attributes \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial04_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
@@ -147,27 +150,36 @@ tutorial04_fault_injection_test_LDFLAGS = -pthread
 # Fault-injects Tutorial05/06/07's own create*() failure branches, same
 # pattern as tutorial04_fault_injection_test above.
 tutorial05_fault_injection_test_SOURCES = \
-		./Tutorial05FaultInjectionTest.cpp
+		./Tutorial05FaultInjectionTest.cpp \
+		../bin/05_staging_resources/Tutorial05.cpp
 tutorial05_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/05_staging_resources \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial05_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial05_fault_injection_test_LDFLAGS = -pthread
 
 tutorial06_fault_injection_test_SOURCES = \
-		./Tutorial06FaultInjectionTest.cpp
+		./Tutorial06FaultInjectionTest.cpp \
+		../bin/06_descriptor_sets/Tutorial06.cpp
 tutorial06_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/06_descriptor_sets \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial06_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial06_fault_injection_test_LDFLAGS = -pthread
 
 tutorial07_fault_injection_test_SOURCES = \
-		./Tutorial07FaultInjectionTest.cpp
+		./Tutorial07FaultInjectionTest.cpp \
+		../bin/07_uniform_buffers/Tutorial07.cpp
 tutorial07_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/07_uniform_buffers \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial07_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
@@ -176,36 +188,48 @@ tutorial07_fault_injection_test_LDFLAGS = -pthread
 # Fault-injects Tutorial03/08/09/10's own create*() failure branches, same
 # pattern as tutorial04_fault_injection_test above.
 tutorial03_fault_injection_test_SOURCES = \
-		./Tutorial03FaultInjectionTest.cpp
+		./Tutorial03FaultInjectionTest.cpp \
+		../bin/03_first_triangle/Tutorial03.cpp
 tutorial03_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/03_first_triangle \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial03_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial03_fault_injection_test_LDFLAGS = -pthread
 
 tutorial08_fault_injection_test_SOURCES = \
-		./Tutorial08FaultInjectionTest.cpp
+		./Tutorial08FaultInjectionTest.cpp \
+		../bin/08_phong_sphere/Tutorial08.cpp
 tutorial08_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/08_phong_sphere \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial08_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial08_fault_injection_test_LDFLAGS = -pthread
 
 tutorial09_fault_injection_test_SOURCES = \
-		./Tutorial09FaultInjectionTest.cpp
+		./Tutorial09FaultInjectionTest.cpp \
+		../bin/09_tessellated_terrain/Tutorial09.cpp
 tutorial09_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/09_tessellated_terrain \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial09_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tutorial09_fault_injection_test_LDFLAGS = -pthread
 
 tutorial10_fault_injection_test_SOURCES = \
-		./Tutorial10FaultInjectionTest.cpp
+		./Tutorial10FaultInjectionTest.cpp \
+		../bin/10_spline_polyline/Tutorial10.cpp
 tutorial10_fault_injection_test_CPPFLAGS = -Werror -Wall -pedantic \
-		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+		-I$(abs_top_srcdir)/include \
+		-I$(abs_top_srcdir)/bin/10_spline_polyline \
+		$(GTEST_CFLAGS) $(GLM_CFLAGS)
 tutorial10_fault_injection_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
@@ -229,53 +253,73 @@ integration_test_common_ldadd = $(GTEST_LIBS) \
 		$(VULKAN_LIBS) $(X11_LIBS)
 integration_test_common_ldflags = -pthread
 
-tutorial01_integration_test_SOURCES = ./Tutorial01IntegrationTest.cpp
-tutorial01_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial01_integration_test_SOURCES = ./Tutorial01IntegrationTest.cpp \
+		../bin/01_device_initialization/Tutorial01.cpp
+tutorial01_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/01_device_initialization
 tutorial01_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial01_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial02_integration_test_SOURCES = ./Tutorial02IntegrationTest.cpp
-tutorial02_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial02_integration_test_SOURCES = ./Tutorial02IntegrationTest.cpp \
+		../bin/02_swap_chain/Tutorial02.cpp
+tutorial02_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/02_swap_chain
 tutorial02_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial02_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial03_integration_test_SOURCES = ./Tutorial03IntegrationTest.cpp
-tutorial03_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial03_integration_test_SOURCES = ./Tutorial03IntegrationTest.cpp \
+		../bin/03_first_triangle/Tutorial03.cpp
+tutorial03_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/03_first_triangle
 tutorial03_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial03_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial04_integration_test_SOURCES = ./Tutorial04IntegrationTest.cpp
-tutorial04_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial04_integration_test_SOURCES = ./Tutorial04IntegrationTest.cpp \
+		../bin/04_vertex_attributes/Tutorial04.cpp
+tutorial04_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/04_vertex_attributes
 tutorial04_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial04_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial05_integration_test_SOURCES = ./Tutorial05IntegrationTest.cpp
-tutorial05_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial05_integration_test_SOURCES = ./Tutorial05IntegrationTest.cpp \
+		../bin/05_staging_resources/Tutorial05.cpp
+tutorial05_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/05_staging_resources
 tutorial05_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial05_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial06_integration_test_SOURCES = ./Tutorial06IntegrationTest.cpp
-tutorial06_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial06_integration_test_SOURCES = ./Tutorial06IntegrationTest.cpp \
+		../bin/06_descriptor_sets/Tutorial06.cpp
+tutorial06_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/06_descriptor_sets
 tutorial06_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial06_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial07_integration_test_SOURCES = ./Tutorial07IntegrationTest.cpp
-tutorial07_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial07_integration_test_SOURCES = ./Tutorial07IntegrationTest.cpp \
+		../bin/07_uniform_buffers/Tutorial07.cpp
+tutorial07_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/07_uniform_buffers
 tutorial07_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial07_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial08_integration_test_SOURCES = ./Tutorial08IntegrationTest.cpp
-tutorial08_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial08_integration_test_SOURCES = ./Tutorial08IntegrationTest.cpp \
+		../bin/08_phong_sphere/Tutorial08.cpp
+tutorial08_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/08_phong_sphere
 tutorial08_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial08_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial09_integration_test_SOURCES = ./Tutorial09IntegrationTest.cpp
-tutorial09_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial09_integration_test_SOURCES = ./Tutorial09IntegrationTest.cpp \
+		../bin/09_tessellated_terrain/Tutorial09.cpp
+tutorial09_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/09_tessellated_terrain
 tutorial09_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial09_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
-tutorial10_integration_test_SOURCES = ./Tutorial10IntegrationTest.cpp
-tutorial10_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+tutorial10_integration_test_SOURCES = ./Tutorial10IntegrationTest.cpp \
+		../bin/10_spline_polyline/Tutorial10.cpp
+tutorial10_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
+		-I$(abs_top_srcdir)/bin/10_spline_polyline
 tutorial10_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial10_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 

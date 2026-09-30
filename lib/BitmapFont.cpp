@@ -1,5 +1,6 @@
 #include "vulkan_graphix/BitmapFont.h"
 
+#include <cstddef>
 #include <cstring>
 
 #define STB_TRUETYPE_IMPLEMENTATION
@@ -31,7 +32,7 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
     }
 
     std::vector<unsigned char> bitmap(c_atlas_width * c_atlas_height, 0);
-    std::array<stbtt_bakedchar, kGlyphCount> baked_chars{};
+    std::array<stbtt_bakedchar, c_glyph_count> baked_chars{};
 
     int const bake_result = stbtt_BakeFontBitmap(
             reinterpret_cast<unsigned char const*>(font_data.data()),
@@ -40,8 +41,8 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
             bitmap.data(),
             static_cast<int>(c_atlas_width),
             static_cast<int>(c_atlas_height),
-            kFirstChar,
-            kGlyphCount,
+            c_first_char,
+            c_glyph_count,
             baked_chars.data());
     // A positive result is the first unused bitmap row - everything at
     // or past it is guaranteed untouched, so the reserved solid block
@@ -80,7 +81,7 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
             static_cast<float>(block_y + c_solid_block_size / 2) /
                     static_cast<float>(m_atlas_height));
 
-    for (int i = 0; i < kGlyphCount; ++i) {
+    for (int i = 0; i < c_glyph_count; ++i) {
         float pen_x = 0.0f;
         float pen_y = 0.0f;
         stbtt_aligned_quad quad{};
@@ -120,10 +121,11 @@ std::vector<BitmapFontGlyphQuad> BitmapFont::layoutText(
 
     float pen_x = origin.x;
     for (unsigned char character : text) {
-        if (character < kFirstChar || character >= kFirstChar + kGlyphCount) {
+        if (character < c_first_char ||
+            character >= c_first_char + c_glyph_count) {
             continue;
         }
-        Glyph const& glyph = m_glyphs[character - kFirstChar];
+        Glyph const& glyph = m_glyphs[character - c_first_char];
         if (glyph.size.x > 0.0f && glyph.size.y > 0.0f) {
             BitmapFontGlyphQuad quad;
             quad.top_left = Math::Vec2<float>(pen_x + glyph.offset.x,
@@ -141,12 +143,43 @@ std::vector<BitmapFontGlyphQuad> BitmapFont::layoutText(
 float BitmapFont::textWidth(const std::string& text) const {
     float width = 0.0f;
     for (unsigned char character : text) {
-        if (character < kFirstChar || character >= kFirstChar + kGlyphCount) {
+        if (character < c_first_char ||
+            character >= c_first_char + c_glyph_count) {
             continue;
         }
-        width += m_glyphs[character - kFirstChar].advance;
+        width += m_glyphs[character - c_first_char].advance;
     }
     return width;
+}
+
+std::vector<std::string> BitmapFont::wrapText(const std::string& text,
+                                              float max_width) const {
+    std::vector<std::string> lines;
+    std::string current_line;
+    std::size_t word_start = 0;
+    for (std::size_t i = 0; i <= text.size(); ++i) {
+        if (i < text.size() && text[i] != ' ') {
+            continue;
+        }
+        std::string const word = text.substr(word_start, i - word_start);
+        word_start = i + 1;
+        if (word.empty()) {
+            continue;
+        }
+
+        std::string const candidate =
+                current_line.empty() ? word : current_line + " " + word;
+        if (!current_line.empty() && textWidth(candidate) > max_width) {
+            lines.push_back(current_line);
+            current_line = word;
+        } else {
+            current_line = candidate;
+        }
+    }
+    if (!current_line.empty()) {
+        lines.push_back(current_line);
+    }
+    return lines;
 }
 
 }  // namespace vulkan_graphix

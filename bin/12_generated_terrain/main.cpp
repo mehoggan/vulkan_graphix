@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial12.h"
+#include "Tutorial12.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Generated terrain ported from vulkan_earth's TerrainMaker height-field

@@ -4,34 +4,13 @@ libvulkan_graphix_la_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GLM_CFLAGS)
 
 libvulkan_graphix_la_SOURCES = ./BitmapFont.cpp \
+															./HellfireTank.cpp \
 															./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
 															./OrbitCamera.cpp \
 															./TerrainGenerator.cpp \
 															./Tools.cpp \
-															./Tutorial01.cpp \
-															./Tutorial02.cpp \
-															./Tutorial03.cpp \
-															./Tutorial04.cpp \
-															./Tutorial05.cpp \
-															./Tutorial06.cpp \
-															./Tutorial07.cpp \
-															./Tutorial08.cpp \
-															./Tutorial09.cpp \
-															./Tutorial10.cpp \
-															./Tutorial11.cpp \
-															./Tutorial12.cpp \
-															./Tutorial13.cpp \
-															./Tutorial14.cpp \
-															./Tutorial15.cpp \
-															./Tutorial16.cpp \
-															./Tutorial17.cpp \
-															./Tutorial18.cpp \
-															./Tutorial19.cpp \
-															./Tutorial20.cpp \
-															./Tutorial21.cpp \
-															./Tutorial22.cpp \
 															./TutorialBase.cpp \
 															./UiGeometry.cpp \
 															./VulkanCommon.cpp \

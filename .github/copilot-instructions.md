@@ -88,9 +88,9 @@ Classes gain per-instance logging by inheriting `LoggedClass<DerivedType>` (CRTP
 
 ### Adding a New Tutorial
 
-1. Create `lib/Tutorial0X.cpp` and `include/vulkan_graphix/Tutorial0X.h`.
-2. Add `Tutorial0X.cpp` to `lib/Makefile.am` under `libvulkan_graphix_la_SOURCES`.
-3. Create `bin/tutorial0X_main.cpp` and add it to `bin/Makefile.am` following the existing pattern.
+1. Create a `bin/0X_<terse_description>/` folder holding `Tutorial0X.h`, `Tutorial0X.cpp`, and `main.cpp` (tutorial sources live next to the runner they build, not in `lib/`; any code a vulkan_earth port would also need belongs in a shared `lib/` module instead).
+2. Give that folder a `Makefile.am` listing all three in `tutorial0X_runner_SOURCES`, add the folder to `bin/Makefile.am`'s `SUBDIRS`, and add its `Makefile` to `configure.ac`'s `AC_CONFIG_FILES`.
+3. `main.cpp` includes `"Tutorial0X.h"` directly (same folder).
 4. Add any new Vulkan functions to `ListOfFunctions.inl` with a `// Tutorial 0X` comment.
 5. Place GLSL shaders in `Tutorials/0X/Data/`; compiled SPV goes in `resources/0X/Data/`.
 6. Add SPV copy rules to `bin/Makefile.am` (`all-local` target and `CLEANFILES`).

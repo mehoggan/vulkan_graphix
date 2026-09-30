@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "vulkan_graphix/Tutorial/Tutorial13.h"
+#include "Tutorial13.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 // Real tank-shell mesh, parsed from vulkan_earth's own projectileDefault.ogl
