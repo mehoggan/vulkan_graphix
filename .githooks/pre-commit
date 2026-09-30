@@ -15,6 +15,9 @@
 #                          found during that migration)
 #   4. naming/length    - the project's .clang-tidy readability-identifier-
 #                          naming / readability-identifier-length rules
+#   5. clang-format     - staged C++ in bin/, include/, lib/, tests/, and
+#                          vulkan_earth/ must match .clang-format exactly
+#                          (checked against the staged blob itself)
 #
 # Runs against four areas independently - vulkan_earth (src/ plus its
 # headers in include/vulkan_earth/), lib/, bin/
@@ -23,7 +26,7 @@
 # each with that area's own real compiler flags, and only against files
 # actually staged there. Checks run against the exact content that will
 # be committed (unstaged changes are stashed out of the way for the
-# duration). Missing tooling (bear, clang-tidy, g++) degrades a check to
+# duration). Missing tooling (bear, clang-tidy, g++, clang-format) degrades a check to
 # a skipped warning rather than a blocked commit, since this hook isn't
 # installed by default (see .githooks/README.md) and shouldn't brick a
 # commit on a machine without the full toolchain.
@@ -319,7 +322,53 @@ check_area bin bin "" \
 
 check_include_area
 
+# --- clang-format: staged C++ must already match .clang-format ---------
+# Covers every C++ area, tests/ included (unlike the per-area checks
+# above). Formats the staged (index) blob via `git show :path`, not the
+# working-tree file, so a file that's formatted on disk but staged
+# unformatted still fails. The vendored STB headers aren't ours to
+# format.
+check_format() {
+    local staged=() unformatted=() f
+    mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR \
+            -- '*.cpp' '*.h' '*.hpp' \
+            | grep -E '^(bin|include|lib|tests|vulkan_earth)/' \
+            | grep -v -E '(^|/)STB(Image|TrueType)\.h$')
+    if [ "${#staged[@]}" -eq 0 ]; then
+        return 0
+    fi
+    if ! command -v clang-format >/dev/null 2>&1; then
+        echo "pre-commit [format]: clang-format not found, skipping formatting check" >&2
+        return 0
+    fi
+
+    echo "pre-commit [format]: checking formatting (clang-format)..." >&2
+    for f in "${staged[@]}"; do
+        if ! git show ":$f" | clang-format --style=file \
+                --assume-filename="$REPO_ROOT/$f" --dry-run --Werror \
+                >/dev/null 2>&1; then
+            unformatted+=("$f")
+        fi
+    done
+    if [ "${#unformatted[@]}" -gt 0 ]; then
+        echo "pre-commit [format]: NOT CLANG-FORMATTED (fix with the command below, then re-stage):" >&2
+        printf '  %s\n' "${unformatted[@]}" >&2
+        echo "  clang-format -i ${unformatted[*]} && git add ${unformatted[*]}" >&2
+        echo 1 > /tmp/precommit_fail_marker
+    fi
+}
+
+check_format
+
 if [ "$ANY_STAGED_ALL" -eq 0 ]; then
+    # Nothing staged in the four compiled areas (e.g. a tests/-only
+    # commit), so skip the build - but still honor a formatting failure.
+    if [ -f /tmp/precommit_fail_marker ]; then
+        rm -f /tmp/precommit_fail_marker
+        echo "" >&2
+        echo "pre-commit: one or more checks failed (see above). Fix, or bypass with 'git commit --no-verify'." >&2
+        exit 1
+    fi
     exit 0
 fi
 
