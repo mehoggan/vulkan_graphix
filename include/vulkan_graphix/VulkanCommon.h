@@ -29,8 +29,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/Tools.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 
 namespace vulkan_graphix::VulkanCommon {
 
@@ -43,8 +43,8 @@ public:
     // set before calling this (matches every existing tutorial's own
     // createBuffer() convention).
     bool create(VkBufferUsageFlags usage,
-               VkMemoryPropertyFlags memory_property,
-               BufferParameters& out) const;
+                VkMemoryPropertyFlags memory_property,
+                BufferParameters& out) const;
     void destroy(BufferParameters& buffer) const;
 
 private:

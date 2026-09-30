@@ -56,10 +56,10 @@ extern "C" {
 #define VKAPI_ATTR
 #define VKAPI_CALL __stdcall
 #define VKAPI_PTR VKAPI_CALL
-#elif defined(__ANDROID__) && defined(__ARM_EABI__) && !defined(__ARM_ARCH_7A__)
+#elif defined(__ANDROID__) && defined(__ARM_EABI__) && \
+        !defined(__ARM_ARCH_7A__)
 // Android does not support Vulkan in native code using the "armeabi" ABI.
-#error \
-    "Vulkan requires the 'armeabi-v7a' or 'armeabi-v7a-hard' ABI on 32-bit ARM CPUs"
+#error "Vulkan requires the 'armeabi-v7a' or 'armeabi-v7a-hard' ABI on 32-bit ARM CPUs"
 #elif defined(__ANDROID__) && defined(__ARM_ARCH_7A__)
 // On Android/ARMv7a, Vulkan functions use the armeabi-v7a-hard calling
 // convention, even if the application's native code is compiled with the

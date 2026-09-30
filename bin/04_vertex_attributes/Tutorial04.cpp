@@ -390,7 +390,8 @@ bool Tutorial04::createVertexBuffer() {
 
     if (!VulkanCommon::BufferFactory(getVkDevice(), getVkPhysicalDevice())
                  .create(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertex_buffer)) {
+                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                         vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create a vertex buffer!");
         return false;
     }

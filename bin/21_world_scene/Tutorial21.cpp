@@ -481,8 +481,7 @@ bool Tutorial21::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial21_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -606,20 +605,21 @@ bool Tutorial21::destroyDepthResources() {
     return true;
 }
 
-bool Tutorial21::createTextureFromPixels(std::uint32_t width,
-                                         std::uint32_t height,
-                                         const std::vector<char>& pixels,
-                                         VkSamplerAddressMode address_mode,
-                                         ImageParameters& out_image_parameters) {
+bool Tutorial21::createTextureFromPixels(
+        std::uint32_t width,
+        std::uint32_t height,
+        const std::vector<char>& pixels,
+        VkSamplerAddressMode address_mode,
+        ImageParameters& out_image_parameters) {
     if (!VulkanCommon::createTextureFromPixels(
                 VulkanCommon::ImageFactory(getVkDevice(),
                                            getVkPhysicalDevice()),
                 VulkanCommon::StagedUploader(
                         getVkDevice(),
                         getGraphicsQueueParameters().getVkQueue(),
-                        m_vulkan_tutorial21_parameters.getRenderingResources()
-                                [0]
-                                        .getVkCommandBuffer()),
+                        m_vulkan_tutorial21_parameters
+                                .getRenderingResources()[0]
+                                .getVkCommandBuffer()),
                 m_vulkan_tutorial21_parameters.getStagingBufferParameters(),
                 width,
                 height,
@@ -812,8 +812,8 @@ bool Tutorial21::createDescriptorSetLayouts() {
             {.binding = 0,
              .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
              .descriptorCount = 1,
-             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
-                          VK_SHADER_STAGE_FRAGMENT_BIT,
+             .stageFlags =
+                     VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
              .pImmutableSamplers = nullptr},
             {.binding = 1,
              .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -915,9 +915,9 @@ bool Tutorial21::allocateDescriptorSets() {
             .descriptorSetCount = 1,
             .pSetLayouts = &vk_terrain_layout};
     VkDescriptorSet vk_terrain_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_terrain, &vk_terrain_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_terrain,
+                                 &vk_terrain_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate terrain descriptor set!");
         return false;
     }
@@ -934,18 +934,18 @@ bool Tutorial21::allocateDescriptorSets() {
             .pSetLayouts = &vk_object_layout};
 
     VkDescriptorSet vk_tank_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_object, &vk_tank_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_object,
+                                 &vk_tank_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate tank descriptor set!");
         return false;
     }
     m_vulkan_tutorial21_parameters.setTankVkDescriptorSet(vk_tank_set);
 
     VkDescriptorSet vk_skybox_set;
-    if (vkAllocateDescriptorSets(
-                getVkDevice(), &allocate_info_object, &vk_skybox_set) !=
-        VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(getVkDevice(),
+                                 &allocate_info_object,
+                                 &vk_skybox_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate skybox descriptor set!");
         return false;
     }
@@ -992,8 +992,8 @@ bool Tutorial21::updateDescriptorSets() {
     std::vector<VkWriteDescriptorSet> descriptor_writes = {
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet =
-                     m_vulkan_tutorial21_parameters.getTerrainVkDescriptorSet(),
+             .dstSet = m_vulkan_tutorial21_parameters
+                               .getTerrainVkDescriptorSet(),
              .dstBinding = 0,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -1003,8 +1003,8 @@ bool Tutorial21::updateDescriptorSets() {
              .pTexelBufferView = nullptr},
             {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
              .pNext = nullptr,
-             .dstSet =
-                     m_vulkan_tutorial21_parameters.getTerrainVkDescriptorSet(),
+             .dstSet = m_vulkan_tutorial21_parameters
+                               .getTerrainVkDescriptorSet(),
              .dstBinding = 1,
              .dstArrayElement = 0,
              .descriptorCount = 1,
@@ -1139,11 +1139,11 @@ bool Tutorial21::createPipelineLayouts() {
             .pSetLayouts = &vk_terrain_layout,
             .pushConstantRangeCount = 0,
             .pPushConstantRanges = nullptr};
-    if (vkCreatePipelineLayout(
-                getVkDevice(),
-                &layout_create_info_terrain,
-                nullptr,
-                &m_vulkan_tutorial21_parameters.getVkTerrainPipelineLayout()) !=
+    if (vkCreatePipelineLayout(getVkDevice(),
+                               &layout_create_info_terrain,
+                               nullptr,
+                               &m_vulkan_tutorial21_parameters
+                                        .getVkTerrainPipelineLayout()) !=
         VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create terrain pipeline layout!");
         return false;
@@ -1221,23 +1221,21 @@ bool Tutorial21::createPipelines() {
             {.binding = 0,
              .stride = Tutorial21TerrainVertexAttributeTraits::stride,
              .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
-    std::vector<VkVertexInputAttributeDescription>
-            vertex_attributes_terrain = {
-                    {.location = 0,
-                     .binding = 0,
-                     .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct Tutorial21TerrainVertexData,
-                                        position)},
-                    {.location = 1,
-                     .binding = 0,
-                     .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct Tutorial21TerrainVertexData,
-                                        normal)},
-                    {.location = 2,
-                     .binding = 0,
-                     .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset = offsetof(struct Tutorial21TerrainVertexData,
-                                        texcoord)}};
+    std::vector<VkVertexInputAttributeDescription> vertex_attributes_terrain =
+            {{.location = 0,
+              .binding = 0,
+              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+              .offset =
+                      offsetof(struct Tutorial21TerrainVertexData, position)},
+             {.location = 1,
+              .binding = 0,
+              .format = VK_FORMAT_R32G32B32_SFLOAT,
+              .offset = offsetof(struct Tutorial21TerrainVertexData, normal)},
+             {.location = 2,
+              .binding = 0,
+              .format = VK_FORMAT_R32G32_SFLOAT,
+              .offset =
+                      offsetof(struct Tutorial21TerrainVertexData, texcoord)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_terrain = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1356,20 +1354,20 @@ bool Tutorial21::createPipelines() {
             .pDepthStencilState = &depth_stencil_on,
             .pColorBlendState = &color_blend_state_terrain,
             .pDynamicState = &dynamic_state_create_info,
-            .layout =
-                    m_vulkan_tutorial21_parameters.getVkTerrainPipelineLayout(),
+            .layout = m_vulkan_tutorial21_parameters
+                              .getVkTerrainPipelineLayout(),
             .renderPass = m_vulkan_tutorial21_parameters.getVkRenderPass(),
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
-    if (vkCreateGraphicsPipelines(
-                getVkDevice(),
-                VK_NULL_HANDLE,
-                1,
-                &pipeline_create_info_terrain,
-                nullptr,
-                &m_vulkan_tutorial21_parameters
-                         .getVkTerrainGraphicsPipeline()) != VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(getVkDevice(),
+                                  VK_NULL_HANDLE,
+                                  1,
+                                  &pipeline_create_info_terrain,
+                                  nullptr,
+                                  &m_vulkan_tutorial21_parameters
+                                           .getVkTerrainGraphicsPipeline()) !=
+        VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create terrain graphics pipeline!");
         return false;
     }
@@ -1499,13 +1497,13 @@ bool Tutorial21::createPipelines() {
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
-    if (vkCreateGraphicsPipelines(
-                getVkDevice(),
-                VK_NULL_HANDLE,
-                1,
-                &pipeline_create_info_object,
-                nullptr,
-                &m_vulkan_tutorial21_parameters.getVkObjectGraphicsPipeline()) !=
+    if (vkCreateGraphicsPipelines(getVkDevice(),
+                                  VK_NULL_HANDLE,
+                                  1,
+                                  &pipeline_create_info_object,
+                                  nullptr,
+                                  &m_vulkan_tutorial21_parameters
+                                           .getVkObjectGraphicsPipeline()) !=
         VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create object graphics pipeline!");
         return false;
@@ -1565,13 +1563,13 @@ bool Tutorial21::createPipelines() {
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = -1};
-    if (vkCreateGraphicsPipelines(
-                getVkDevice(),
-                VK_NULL_HANDLE,
-                1,
-                &pipeline_create_info_skybox,
-                nullptr,
-                &m_vulkan_tutorial21_parameters.getVkSkyboxGraphicsPipeline()) !=
+    if (vkCreateGraphicsPipelines(getVkDevice(),
+                                  VK_NULL_HANDLE,
+                                  1,
+                                  &pipeline_create_info_skybox,
+                                  nullptr,
+                                  &m_vulkan_tutorial21_parameters
+                                           .getVkSkyboxGraphicsPipeline()) !=
         VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create skybox graphics pipeline!");
         return false;
@@ -1667,11 +1665,10 @@ Tutorial21::getTerrainVertexData() {
             m_terrain_vertex_data.push_back(
                     {make_position(j, i + 1, i + 1, j), n_j, t_j});
 
-            Math::Vec2<float> t_y(
-                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
-                            chunk_span,
-                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                            chunk_span);
+            Math::Vec2<float> t_y((static_cast<float>(i % (chunk_size - 1)) +
+                                   1) / chunk_span,
+                                  (static_cast<float>(j % (chunk_size - 1)) +
+                                   1) / chunk_span);
             Math::Vec3<float> const n_y =
                     m_terrain_generator.normalAt(j + 1, i + 1);
             m_terrain_vertex_data.push_back(
@@ -1696,8 +1693,8 @@ Math::Mat4<float> Tutorial21::getTankPartModelMatrix(
     return HellfireTank::buildPartMatrix(part_translation);
 }
 
-const std::vector<Tutorial21ObjectVertexData>& Tutorial21::getSkyboxVertexData()
-        const {
+const std::vector<Tutorial21ObjectVertexData>&
+Tutorial21::getSkyboxVertexData() const {
     // Same six-face layout/UV mapping as Tutorial11's own
     // getVertexData() (see that tutorial's own comments), just at this
     // tutorial's own c_skybox_half_extent scale instead of Tutorial11's
@@ -1792,10 +1789,10 @@ bool Tutorial21::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial21_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial21_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial21_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
                                  destination,
                                  data,
@@ -1817,8 +1814,8 @@ bool Tutorial21::createTerrainVertexBuffer() {
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial21_parameters.getTerrainVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1853,14 +1850,16 @@ bool Tutorial21::createTankPartVertexBuffer(const char* mesh_filename,
     std::vector<Tutorial21ObjectVertexData> const vertex_data =
             loadTankPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
-        Logging::error(
-                LOG_TAG, "Could not load mesh data from \"", mesh_filename, "\"!");
+        Logging::error(LOG_TAG,
+                       "Could not load mesh data from \"",
+                       mesh_filename,
+                       "\"!");
         return false;
     }
     vertex_count = static_cast<std::uint32_t>(vertex_data.size());
 
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1899,8 +1898,8 @@ bool Tutorial21::createSkyboxBuffers() {
             getSkyboxVertexData();
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial21_parameters.getSkyboxVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1921,8 +1920,8 @@ bool Tutorial21::createSkyboxBuffers() {
             static_cast<std::uint32_t>(index_data.size()));
     BufferParameters& index_buffer =
             m_vulkan_tutorial21_parameters.getSkyboxIndexBufferParameters();
-    index_buffer.setSize(static_cast<std::uint32_t>(
-            index_data.size() * sizeof(index_data[0])));
+    index_buffer.setSize(static_cast<std::uint32_t>(index_data.size() *
+                                                    sizeof(index_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -2089,19 +2088,19 @@ bool Tutorial21::prepareFrame(VkCommandBuffer command_buffer,
             0,
             VK_INDEX_TYPE_UINT32);
     Tutorial21PushConstants skybox_push_constants{Math::Mat4<float>(1.0f)};
-    vkCmdPushConstants(command_buffer,
-                       m_vulkan_tutorial21_parameters.getVkObjectPipelineLayout(),
-                       VK_SHADER_STAGE_VERTEX_BIT,
-                       0,
-                       sizeof(Tutorial21PushConstants),
-                       &skybox_push_constants);
-    vkCmdDrawIndexed(
+    vkCmdPushConstants(
             command_buffer,
-            m_vulkan_tutorial21_parameters.getSkyboxIndexCount(),
-            1,
+            m_vulkan_tutorial21_parameters.getVkObjectPipelineLayout(),
+            VK_SHADER_STAGE_VERTEX_BIT,
             0,
-            0,
-            0);
+            sizeof(Tutorial21PushConstants),
+            &skybox_push_constants);
+    vkCmdDrawIndexed(command_buffer,
+                     m_vulkan_tutorial21_parameters.getSkyboxIndexCount(),
+                     1,
+                     0,
+                     0,
+                     0);
 
     // --- Pass 2: terrain, Phong-lit, real depth test/write ---
     vkCmdBindPipeline(
@@ -2127,10 +2126,10 @@ bool Tutorial21::prepareFrame(VkCommandBuffer command_buffer,
                      .getVkBuffer(),
             &zero_offset);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial21_parameters.getTerrainVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial21_parameters.getTerrainVertexCount(),
+              1,
+              0,
+              0);
 
     // --- Pass 3: tank, three parts, real hierarchical positioning
     // (Tank::setTankPos()) rooted at a real terrain height query ---
@@ -2219,8 +2218,8 @@ bool Tutorial21::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial21Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial21Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -2268,8 +2267,8 @@ bool Tutorial21::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial21_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial21_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -2418,8 +2417,9 @@ void Tutorial21::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -2434,10 +2434,9 @@ void Tutorial21::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial21_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial21_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial21_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial21_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -2502,10 +2501,9 @@ void Tutorial21::childClear() {
     }
 
     if (m_vulkan_tutorial21_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial21_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial21_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial21_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 
@@ -2529,16 +2527,16 @@ void Tutorial21::childClear() {
     }
     if (m_vulkan_tutorial21_parameters.getVkObjectDescriptorSetLayout() !=
         VK_NULL_HANDLE) {
-        vkDestroyDescriptorSetLayout(
-                getVkDevice(),
-                m_vulkan_tutorial21_parameters.getVkObjectDescriptorSetLayout(),
-                nullptr);
+        vkDestroyDescriptorSetLayout(getVkDevice(),
+                                     m_vulkan_tutorial21_parameters
+                                             .getVkObjectDescriptorSetLayout(),
+                                     nullptr);
         m_vulkan_tutorial21_parameters.setVkObjectDescriptorSetLayout(
                 VK_NULL_HANDLE);
     }
 
-    destroyBuffer(
-            m_vulkan_tutorial21_parameters.getTerrainUniformBufferParameters());
+    destroyBuffer(m_vulkan_tutorial21_parameters
+                          .getTerrainUniformBufferParameters());
     destroyBuffer(
             m_vulkan_tutorial21_parameters.getObjectUniformBufferParameters());
 

@@ -250,9 +250,10 @@ Math::Vec3<float> Tutorial20::randomUnitVector() const {
     return vector / length;
 }
 
-void Tutorial20::respawnParticle(EffectParticle& particle,
-                                 ParticleKind kind,
-                                 Math::Vec3<float> const& emitter_position) const {
+void Tutorial20::respawnParticle(
+        EffectParticle& particle,
+        ParticleKind kind,
+        Math::Vec3<float> const& emitter_position) const {
     particle.kind = kind;
     particle.position = emitter_position;
     particle.direction = randomUnitVector();
@@ -330,9 +331,9 @@ void Tutorial20::updateParticles() {
             // Matches ParticleGenerator::addParticles() refilling a
             // dead slot with a fresh particle at the emitter origin.
             Math::Vec3<float> const& origin =
-                    particle.kind == ParticleKind::kSmoke ? c_smoke_emitter
+                    particle.kind == ParticleKind::kSmoke  ? c_smoke_emitter
                     : particle.kind == ParticleKind::kAcid ? c_acid_emitter
-                                                            : c_float_emitter;
+                                                           : c_float_emitter;
             respawnParticle(particle, particle.kind, origin);
             // Gives the freshly respawned particle a valid position/
             // color for this frame instead of showing stale state from
@@ -709,8 +710,8 @@ bool Tutorial20::createPipelineLayout() {
                     .getVkDescriptorSetLayout();
 
     VkPushConstantRange push_constant_range = {
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
-                          VK_SHADER_STAGE_FRAGMENT_BIT,
+            .stageFlags =
+                    VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             .offset = 0,
             .size = sizeof(Tutorial20PushConstants)};
 
@@ -958,16 +959,16 @@ bool Tutorial20::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial20_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial20_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial20_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                destination,
-                                data,
-                                data_size,
-                                dst_access_mask,
-                                dst_stage_mask)) {
+                                 destination,
+                                 data,
+                                 data_size,
+                                 dst_access_mask,
+                                 dst_stage_mask)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");
@@ -982,8 +983,8 @@ bool Tutorial20::createVertexBuffer() {
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial20_parameters.getVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1006,8 +1007,8 @@ bool Tutorial20::createIndexBuffer() {
 
     BufferParameters& index_buffer =
             m_vulkan_tutorial20_parameters.getIndexBufferParameters();
-    index_buffer.setSize(static_cast<std::uint32_t>(
-            index_data.size() * sizeof(index_data[0])));
+    index_buffer.setSize(static_cast<std::uint32_t>(index_data.size() *
+                                                    sizeof(index_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1121,10 +1122,9 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial20_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial20_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1175,12 +1175,13 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
     Tutorial20PushConstants shield_push_constants{
             buildInstanceMatrix(c_shield_position, c_shield_radius),
             c_shield_color};
-    vkCmdPushConstants(command_buffer,
-                       m_vulkan_tutorial20_parameters.getVkPipelineLayout(),
-                       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                       0,
-                       sizeof(Tutorial20PushConstants),
-                       &shield_push_constants);
+    vkCmdPushConstants(
+            command_buffer,
+            m_vulkan_tutorial20_parameters.getVkPipelineLayout(),
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(Tutorial20PushConstants),
+            &shield_push_constants);
     vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
 
     // Particles: 3 emitters x c_particles_per_emitter live spheres. Color
@@ -1223,17 +1224,18 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
             m_explosion_radius * weapon_size_factor * 0.003f;
     Tutorial20PushConstants explosion_push_constants{
             buildInstanceMatrix(Math::Vec3<float>(0.0f, -1.0f, 2.5f),
-                               explosion_world_radius),
+                                explosion_world_radius),
             Math::Vec4<float>(explosion_color.r,
                               explosion_color.g,
                               explosion_color.b,
                               explosion_alpha)};
-    vkCmdPushConstants(command_buffer,
-                       m_vulkan_tutorial20_parameters.getVkPipelineLayout(),
-                       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                       0,
-                       sizeof(Tutorial20PushConstants),
-                       &explosion_push_constants);
+    vkCmdPushConstants(
+            command_buffer,
+            m_vulkan_tutorial20_parameters.getVkPipelineLayout(),
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(Tutorial20PushConstants),
+            &explosion_push_constants);
     vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
 
     vkCmdEndRenderPass(command_buffer);
@@ -1276,8 +1278,8 @@ bool Tutorial20::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial20Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial20Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1325,8 +1327,8 @@ bool Tutorial20::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial20_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial20_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1460,8 +1462,9 @@ void Tutorial20::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1476,10 +1479,9 @@ void Tutorial20::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial20_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial20_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial20_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial20_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1506,10 +1508,9 @@ void Tutorial20::childClear() {
     }
 
     if (m_vulkan_tutorial20_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial20_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial20_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial20_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

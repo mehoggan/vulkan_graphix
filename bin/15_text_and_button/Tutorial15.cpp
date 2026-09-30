@@ -38,8 +38,7 @@ void VulkanTutorial15Parameters::setVkRenderPass(
     m_vk_render_pass = vk_render_pass;
 }
 
-const ImageParameters& VulkanTutorial15Parameters::getImageParameters()
-        const {
+const ImageParameters& VulkanTutorial15Parameters::getImageParameters() const {
     return m_image_parameters;
 }
 ImageParameters& VulkanTutorial15Parameters::getImageParameters() {
@@ -248,8 +247,7 @@ bool Tutorial15::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial15_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -305,11 +303,11 @@ bool Tutorial15::createImage(std::uint32_t width,
                              VkImage* image) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
             .createImage(width,
-                        height,
-                        c_texture_format,
-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                VK_IMAGE_USAGE_SAMPLED_BIT,
-                        image);
+                         height,
+                         c_texture_format,
+                         VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                         image);
 }
 
 bool Tutorial15::allocateImageMemory(VkImage image,
@@ -344,10 +342,10 @@ bool Tutorial15::copyTextureData(char* texture_data,
             m_vulkan_tutorial15_parameters.getImageParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial15_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial15_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
                                 image_parameters.getVkImage(),
                                 texture_data,
@@ -948,8 +946,10 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
     Math::Vec2<float> const button_size = getButtonSize();
     Math::Vec4<float> const button_color(0.3f, 0.5f, 0.75f, 1.0f);
     std::vector<UiGeometry::ColoredQuad> const bevel =
-            UiGeometry::buildButtonBevel(
-                    button_top_left, button_size, button_color, m_button_pressed);
+            UiGeometry::buildButtonBevel(button_top_left,
+                                         button_size,
+                                         button_color,
+                                         m_button_pressed);
     for (UiGeometry::ColoredQuad const& quad : bevel) {
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
@@ -1121,10 +1121,9 @@ bool Tutorial15::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial15_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial15_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1164,12 +1163,11 @@ bool Tutorial15::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    vkCmdDraw(
-            command_buffer,
-            m_vulkan_tutorial15_parameters.getVertexCount(),
-            1,
-            0,
-            0);
+    vkCmdDraw(command_buffer,
+              m_vulkan_tutorial15_parameters.getVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1211,8 +1209,8 @@ bool Tutorial15::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial15Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial15Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1263,8 +1261,8 @@ bool Tutorial15::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial15_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial15_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1430,8 +1428,9 @@ void Tutorial15::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1446,10 +1445,9 @@ void Tutorial15::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial15_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial15_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial15_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial15_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1475,10 +1473,9 @@ void Tutorial15::childClear() {
     }
 
     if (m_vulkan_tutorial15_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial15_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial15_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial15_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

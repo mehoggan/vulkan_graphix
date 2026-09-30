@@ -1030,16 +1030,16 @@ bool Tutorial10::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial10_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial10_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial10_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                destination,
-                                data,
-                                data_size,
-                                dst_access_mask,
-                                dst_stage_mask)) {
+                                 destination,
+                                 data,
+                                 data_size,
+                                 dst_access_mask,
+                                 dst_stage_mask)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");

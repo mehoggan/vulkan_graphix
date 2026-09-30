@@ -14,7 +14,9 @@
 #include "PlayerCPU.h"
 #include "PlayerFactory.h"
 #include "PlayerHuman.h"
+#include "PossibleGameStates.h"
 #include "ShopMenu.h"
+#include "Sound.h"
 #include "Tank.h"
 #include "TankA.h"
 #include "TankB.h"
@@ -28,8 +30,6 @@
 #include "TextObject.h"
 #include "Vertex.h"
 #include "MacroCrtdbg.h"
-#include "PossibleGameStates.h"
-#include "Sound.h"
 
 extern void playMusic(int music);
 

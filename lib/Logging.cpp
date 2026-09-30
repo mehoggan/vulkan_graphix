@@ -124,8 +124,8 @@ void Logging::writeSeverityLog(const LogTag& tag,
         return;
     }
 
-    std::time_t now_time =
-            std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::time_t now_time = std::chrono::system_clock::to_time_t(
+            std::chrono::system_clock::now());
     std::tm local_tm{};
     localtime_r(&now_time, &local_tm);
 

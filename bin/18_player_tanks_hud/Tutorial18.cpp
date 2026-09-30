@@ -114,8 +114,7 @@ const BufferParameters&
 VulkanTutorial18Parameters::getUniformBufferHudParameters() const {
     return m_uniform_buffer_hud;
 }
-BufferParameters&
-VulkanTutorial18Parameters::getUniformBufferHudParameters() {
+BufferParameters& VulkanTutorial18Parameters::getUniformBufferHudParameters() {
     return m_uniform_buffer_hud;
 }
 void VulkanTutorial18Parameters::setUniformBufferHudParameters(
@@ -209,8 +208,7 @@ void VulkanTutorial18Parameters::setVkHudPipelineLayout(
     m_vk_hud_pipeline_layout = other;
 }
 
-const VkPipeline& VulkanTutorial18Parameters::getVk3DGraphicsPipeline()
-        const {
+const VkPipeline& VulkanTutorial18Parameters::getVk3DGraphicsPipeline() const {
     return m_vk_3d_graphics_pipeline;
 }
 VkPipeline& VulkanTutorial18Parameters::getVk3DGraphicsPipeline() {
@@ -458,8 +456,7 @@ bool Tutorial18::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial18_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -588,19 +585,20 @@ bool Tutorial18::destroyDepthResources() {
     return true;
 }
 
-bool Tutorial18::createTextureFromPixels(std::uint32_t width,
-                                         std::uint32_t height,
-                                         const std::vector<char>& pixels,
-                                         ImageParameters& out_image_parameters) {
+bool Tutorial18::createTextureFromPixels(
+        std::uint32_t width,
+        std::uint32_t height,
+        const std::vector<char>& pixels,
+        ImageParameters& out_image_parameters) {
     if (!VulkanCommon::createTextureFromPixels(
                 VulkanCommon::ImageFactory(getVkDevice(),
                                            getVkPhysicalDevice()),
                 VulkanCommon::StagedUploader(
                         getVkDevice(),
                         getGraphicsQueueParameters().getVkQueue(),
-                        m_vulkan_tutorial18_parameters.getRenderingResources()
-                                [0]
-                                        .getVkCommandBuffer()),
+                        m_vulkan_tutorial18_parameters
+                                .getRenderingResources()[0]
+                                .getVkCommandBuffer()),
                 m_vulkan_tutorial18_parameters.getStagingBufferParameters(),
                 width,
                 height,
@@ -664,7 +662,8 @@ Tutorial18UniformBufferData3D Tutorial18::get3DUniformBufferData() const {
 }
 
 bool Tutorial18::update3DUniformBufferData() {
-    Tutorial18UniformBufferData3D const uniform_data = get3DUniformBufferData();
+    Tutorial18UniformBufferData3D const uniform_data =
+            get3DUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial18_parameters.getUniformBuffer3DParameters();
 
@@ -1022,8 +1021,8 @@ bool Tutorial18::createPipelineLayouts() {
     VkDescriptorSetLayout vk_3d_layout =
             m_vulkan_tutorial18_parameters.getVk3DDescriptorSetLayout();
     VkPushConstantRange push_constant_range = {
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
-                          VK_SHADER_STAGE_FRAGMENT_BIT,
+            .stageFlags =
+                    VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             .offset = 0,
             .size = sizeof(Tutorial18PushConstants)};
     VkPipelineLayoutCreateInfo layout_create_info_3d = {
@@ -1231,8 +1230,7 @@ bool Tutorial18::createPipelines() {
             .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .stageCount =
-                    static_cast<std::uint32_t>(shader_stages_3d.size()),
+            .stageCount = static_cast<std::uint32_t>(shader_stages_3d.size()),
             .pStages = shader_stages_3d.data(),
             .pVertexInputState = &vertex_input_state_3d,
             .pInputAssemblyState = &input_assembly_3d,
@@ -1383,8 +1381,7 @@ bool Tutorial18::createPipelines() {
             .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext = nullptr,
             .flags = 0,
-            .stageCount =
-                    static_cast<std::uint32_t>(shader_stages_hud.size()),
+            .stageCount = static_cast<std::uint32_t>(shader_stages_hud.size()),
             .pStages = shader_stages_hud.data(),
             .pVertexInputState = &vertex_input_state_hud,
             .pInputAssemblyState = &input_assembly_hud,
@@ -1434,14 +1431,16 @@ bool Tutorial18::createPartVertexBuffer(const char* mesh_filename,
     std::vector<Tutorial18Vertex3DData> const vertex_data =
             loadPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
-        Logging::error(
-                LOG_TAG, "Could not load mesh data from \"", mesh_filename, "\"!");
+        Logging::error(LOG_TAG,
+                       "Could not load mesh data from \"",
+                       mesh_filename,
+                       "\"!");
         return false;
     }
     vertex_count = static_cast<std::uint32_t>(vertex_data.size());
 
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1566,11 +1565,10 @@ bool Tutorial18::createTankVertexBuffers() {
     m_vulkan_tutorial18_parameters.setHeadVertexCount(head_vertex_count);
 
     std::uint32_t turret_vertex_count = 0;
-    if (!createPartVertexBuffer(
-                "Hellfire_Turret.ogl",
-                m_vulkan_tutorial18_parameters
-                        .getTurretVertexBufferParameters(),
-                turret_vertex_count)) {
+    if (!createPartVertexBuffer("Hellfire_Turret.ogl",
+                                m_vulkan_tutorial18_parameters
+                                        .getTurretVertexBufferParameters(),
+                                turret_vertex_count)) {
         return false;
     }
     m_vulkan_tutorial18_parameters.setTurretVertexCount(turret_vertex_count);
@@ -1709,44 +1707,43 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
         }
 
         appendText(vertex_data,
-                  players[i].name,
-                  Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                    panel_top_left.y + 26.0f),
-                  players[i].team_color);
+                   players[i].name,
+                   Math::Vec2<float>(panel_top_left.x + 16.0f,
+                                     panel_top_left.y + 26.0f),
+                   players[i].team_color);
 
         std::string const hp_text = "HP: " + std::to_string(players[i].hp) +
                                     " / " + std::to_string(players[i].max_hp);
         appendText(vertex_data,
-                  hp_text,
-                  Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                    panel_top_left.y + 52.0f),
-                  text_color);
+                   hp_text,
+                   Math::Vec2<float>(panel_top_left.x + 16.0f,
+                                     panel_top_left.y + 52.0f),
+                   text_color);
 
         float const health_ratio = static_cast<float>(players[i].hp) /
                                    static_cast<float>(players[i].max_hp);
         appendBar(vertex_data,
-                 Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                   panel_top_left.y + 60.0f),
-                 Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
-                 health_ratio,
-                 &getHealthBarColor);
+                  Math::Vec2<float>(panel_top_left.x + 16.0f,
+                                    panel_top_left.y + 60.0f),
+                  Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
+                  health_ratio,
+                  &getHealthBarColor);
 
         std::string const power_text =
-                "Power: " +
-                std::to_string(
-                        static_cast<int>(players[i].power_ratio * 1000.0f));
+                "Power: " + std::to_string(static_cast<int>(
+                                    players[i].power_ratio * 1000.0f));
         appendText(vertex_data,
-                  power_text,
-                  Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                    panel_top_left.y + 100.0f),
-                  text_color);
+                   power_text,
+                   Math::Vec2<float>(panel_top_left.x + 16.0f,
+                                     panel_top_left.y + 100.0f),
+                   text_color);
 
         appendBar(vertex_data,
-                 Math::Vec2<float>(panel_top_left.x + 16.0f,
-                                   panel_top_left.y + 108.0f),
-                 Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
-                 players[i].power_ratio,
-                 &getPowerBarColor);
+                  Math::Vec2<float>(panel_top_left.x + 16.0f,
+                                    panel_top_left.y + 108.0f),
+                  Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
+                  players[i].power_ratio,
+                  &getPowerBarColor);
     }
 
     return vertex_data;
@@ -1931,9 +1928,10 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
     // part carrying that tank's model matrix and team-color tint (see
     // Tutorial18.h's top comment). Vertex buffers are the same three
     // (body/head/turret) static buffers reused for both tank instances.
-    vkCmdBindPipeline(command_buffer,
-                      VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      m_vulkan_tutorial18_parameters.getVk3DGraphicsPipeline());
+    vkCmdBindPipeline(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_vulkan_tutorial18_parameters.getVk3DGraphicsPipeline());
     VkDescriptorSet vk_3d_descriptor_set =
             m_vulkan_tutorial18_parameters.get3DVkDescriptorSet();
     vkCmdBindDescriptorSets(
@@ -1955,8 +1953,7 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                 command_buffer,
                 0,
                 1,
-                &m_vulkan_tutorial18_parameters
-                         .getBodyVertexBufferParameters()
+                &m_vulkan_tutorial18_parameters.getBodyVertexBufferParameters()
                          .getVkBuffer(),
                 &zero_offset);
         vkCmdPushConstants(
@@ -1967,10 +1964,10 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                 sizeof(Tutorial18PushConstants),
                 &body_push_constants);
         vkCmdDraw(command_buffer,
-                 m_vulkan_tutorial18_parameters.getBodyVertexCount(),
-                 1,
-                 0,
-                 0);
+                  m_vulkan_tutorial18_parameters.getBodyVertexCount(),
+                  1,
+                  0,
+                  0);
 
         Tutorial18PushConstants head_push_constants{
                 getHeadModelMatrix(player.world_position), player.team_color};
@@ -1978,8 +1975,7 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                 command_buffer,
                 0,
                 1,
-                &m_vulkan_tutorial18_parameters
-                         .getHeadVertexBufferParameters()
+                &m_vulkan_tutorial18_parameters.getHeadVertexBufferParameters()
                          .getVkBuffer(),
                 &zero_offset);
         vkCmdPushConstants(
@@ -1990,22 +1986,21 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                 sizeof(Tutorial18PushConstants),
                 &head_push_constants);
         vkCmdDraw(command_buffer,
-                 m_vulkan_tutorial18_parameters.getHeadVertexCount(),
-                 1,
-                 0,
-                 0);
+                  m_vulkan_tutorial18_parameters.getHeadVertexCount(),
+                  1,
+                  0,
+                  0);
 
         Tutorial18PushConstants turret_push_constants{
                 getTurretModelMatrix(player.world_position),
                 player.team_color};
-        vkCmdBindVertexBuffers(
-                command_buffer,
-                0,
-                1,
-                &m_vulkan_tutorial18_parameters
-                         .getTurretVertexBufferParameters()
-                         .getVkBuffer(),
-                &zero_offset);
+        vkCmdBindVertexBuffers(command_buffer,
+                               0,
+                               1,
+                               &m_vulkan_tutorial18_parameters
+                                        .getTurretVertexBufferParameters()
+                                        .getVkBuffer(),
+                               &zero_offset);
         vkCmdPushConstants(
                 command_buffer,
                 m_vulkan_tutorial18_parameters.getVk3DPipelineLayout(),
@@ -2014,10 +2009,10 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                 sizeof(Tutorial18PushConstants),
                 &turret_push_constants);
         vkCmdDraw(command_buffer,
-                 m_vulkan_tutorial18_parameters.getTurretVertexCount(),
-                 1,
-                 0,
-                 0);
+                  m_vulkan_tutorial18_parameters.getTurretVertexCount(),
+                  1,
+                  0,
+                  0);
     }
 
     // --- HUD pass: per-player name/HP/power panels, drawn on top ---
@@ -2044,10 +2039,10 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial18_parameters.getHudVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial18_parameters.getHudVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -2089,8 +2084,8 @@ bool Tutorial18::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial18Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial18Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -2135,8 +2130,8 @@ bool Tutorial18::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial18_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial18_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -2279,8 +2274,9 @@ void Tutorial18::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -2295,10 +2291,9 @@ void Tutorial18::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial18_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial18_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial18_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial18_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -2348,10 +2343,9 @@ void Tutorial18::childClear() {
     }
 
     if (m_vulkan_tutorial18_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial18_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial18_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial18_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 
@@ -2382,7 +2376,8 @@ void Tutorial18::childClear() {
                 VK_NULL_HANDLE);
     }
 
-    destroyBuffer(m_vulkan_tutorial18_parameters.getUniformBuffer3DParameters());
+    destroyBuffer(
+            m_vulkan_tutorial18_parameters.getUniformBuffer3DParameters());
     destroyBuffer(
             m_vulkan_tutorial18_parameters.getUniformBufferHudParameters());
 

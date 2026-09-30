@@ -417,7 +417,8 @@ bool Tutorial03::createSemaphores() {
     }
 
     if (!frame_resource_factory.createFence(
-                /*signaled=*/true, &m_vulkan_tutorial03_parameters.getVkFence())) {
+                /*signaled=*/true,
+                &m_vulkan_tutorial03_parameters.getVkFence())) {
         Logging::error(LOG_TAG, "Could not create a fence!");
         return false;
     }

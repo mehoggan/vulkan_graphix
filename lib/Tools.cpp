@@ -126,9 +126,9 @@ std::vector<char> getRawImageData(std::string const& filename,
     std::vector<char> rgb_data(rgb_size);
     file.read(rgb_data.data(), static_cast<std::streamsize>(rgb_size));
     if (static_cast<std::size_t>(file.gcount()) != rgb_size) {
-        std::cout << "\"" << filename << "\" is not " << width << "x"
-                  << height << " raw RGB (expected " << rgb_size
-                  << " bytes, read " << file.gcount() << ")!" << std::endl;
+        std::cout << "\"" << filename << "\" is not " << width << "x" << height
+                  << " raw RGB (expected " << rgb_size << " bytes, read "
+                  << file.gcount() << ")!" << std::endl;
         return std::vector<char>();
     }
 
@@ -164,7 +164,8 @@ std::vector<OglVertexData> loadOglMeshData(std::string const& filename) {
     for (std::size_t i = 0; i < vertex_count; ++i) {
         std::size_t const base = i * c_floats_per_vertex;
         OglVertexData vertex;
-        vertex.texcoord = Math::Vec2<float>(values[base + 0], values[base + 1]);
+        vertex.texcoord =
+                Math::Vec2<float>(values[base + 0], values[base + 1]);
         vertex.normal = Math::Vec3<float>(
                 values[base + 2], values[base + 3], values[base + 4]);
         vertex.position = Math::Vec3<float>(

@@ -470,16 +470,16 @@ bool Tutorial09::copyTextureData(char* texture_data,
             m_vulkan_tutorial09_parameters.getTextureImageParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial09_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial09_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
-                               image_parameters.getVkImage(),
-                               texture_data,
-                               data_size,
-                               width,
-                               height)) {
+                                image_parameters.getVkImage(),
+                                texture_data,
+                                data_size,
+                                width,
+                                height)) {
         Logging::error(LOG_TAG,
                        "Could not map memory and upload texture data to a "
                        "staging buffer!");
@@ -1097,16 +1097,16 @@ bool Tutorial09::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial09_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial09_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial09_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
-                                destination,
-                                data,
-                                data_size,
-                                dst_access_mask,
-                                dst_stage_mask)) {
+                                 destination,
+                                 data,
+                                 data_size,
+                                 dst_access_mask,
+                                 dst_stage_mask)) {
         Logging::error(
                 LOG_TAG,
                 "Could not map memory and upload data to a staging buffer!");

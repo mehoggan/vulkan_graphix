@@ -368,8 +368,7 @@ bool Tutorial17::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial17_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -421,19 +420,20 @@ bool Tutorial17::createStagingBuffer() {
     return true;
 }
 
-bool Tutorial17::createTextureFromPixels(std::uint32_t width,
-                                         std::uint32_t height,
-                                         const std::vector<char>& pixels,
-                                         ImageParameters& out_image_parameters) {
+bool Tutorial17::createTextureFromPixels(
+        std::uint32_t width,
+        std::uint32_t height,
+        const std::vector<char>& pixels,
+        ImageParameters& out_image_parameters) {
     if (!VulkanCommon::createTextureFromPixels(
                 VulkanCommon::ImageFactory(getVkDevice(),
                                            getVkPhysicalDevice()),
                 VulkanCommon::StagedUploader(
                         getVkDevice(),
                         getGraphicsQueueParameters().getVkQueue(),
-                        m_vulkan_tutorial17_parameters.getRenderingResources()
-                                [0]
-                                        .getVkCommandBuffer()),
+                        m_vulkan_tutorial17_parameters
+                                .getRenderingResources()[0]
+                                .getVkCommandBuffer()),
                 m_vulkan_tutorial17_parameters.getStagingBufferParameters(),
                 width,
                 height,
@@ -1120,16 +1120,16 @@ void Tutorial17::appendText(std::vector<Tutorial17VertexData>& vertex_data,
     UiGeometry::appendText(vertex_data, m_font, text, origin, color);
 }
 
-void Tutorial17::appendImageQuad(std::vector<Tutorial17VertexData>& vertex_data,
-                                 Math::Vec2<float> top_left,
-                                 Math::Vec2<float> size,
-                                 Math::Vec2<float> uv_min,
-                                 Math::Vec2<float> uv_max) const {
+void Tutorial17::appendImageQuad(
+        std::vector<Tutorial17VertexData>& vertex_data,
+        Math::Vec2<float> top_left,
+        Math::Vec2<float> size,
+        Math::Vec2<float> uv_min,
+        Math::Vec2<float> uv_max) const {
     UiGeometry::appendImageQuad(vertex_data, top_left, size, uv_min, uv_max);
 }
 
-std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData()
-        const {
+std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
     std::vector<Tutorial17VertexData> vertex_data;
     vertex_data.reserve(c_max_vertex_count);
 
@@ -1148,17 +1148,17 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData()
     Math::Vec4<float> const text_color(0.05f, 0.05f, 0.05f, 1.0f);
     std::string const title = "Tutorial 17 - Inventory";
     appendText(vertex_data,
-              title,
-              Math::Vec2<float>(panel_top_left.x + 20.0f,
-                                panel_top_left.y + 30.0f),
-              text_color);
+               title,
+               Math::Vec2<float>(panel_top_left.x + 20.0f,
+                                 panel_top_left.y + 30.0f),
+               text_color);
 
     std::string const explain = "(Click an item to see its description)";
     appendText(vertex_data,
-              explain,
-              Math::Vec2<float>(panel_top_left.x + 20.0f,
-                                panel_top_left.y + 58.0f),
-              text_color);
+               explain,
+               Math::Vec2<float>(panel_top_left.x + 20.0f,
+                                 panel_top_left.y + 58.0f),
+               text_color);
 
     std::array<ItemDisplayData, c_inventory_item_count> const& items =
             getItemDisplayData();
@@ -1183,15 +1183,15 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData()
             appendColoredQuad(vertex_data, highlight_corners, highlight_color);
         }
 
-        std::string const label = "x " + std::to_string(items[index].remaining);
+        std::string const label =
+                "x " + std::to_string(items[index].remaining);
         float const label_width = m_font.textWidth(label);
         appendText(vertex_data,
-                  label,
-                  Math::Vec2<float>(
-                          cell_top_left.x + cell_size.x * 0.5f -
-                                  label_width * 0.5f,
-                          cell_top_left.y + cell_size.y - 6.0f),
-                  text_color);
+                   label,
+                   Math::Vec2<float>(cell_top_left.x + cell_size.x * 0.5f -
+                                             label_width * 0.5f,
+                                     cell_top_left.y + cell_size.y - 6.0f),
+                   text_color);
     }
 
     float const description_top = getDescriptionTop();
@@ -1203,27 +1203,25 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData()
             items[m_selected_index].description, max_description_width);
     for (std::size_t line = 0; line < description_lines.size(); ++line) {
         appendText(vertex_data,
-                  description_lines[line],
-                  Math::Vec2<float>(panel_top_left.x + 20.0f,
-                                    description_top +
-                                            static_cast<float>(line) *
-                                                    m_font.lineHeight()),
-                  text_color);
+                   description_lines[line],
+                   Math::Vec2<float>(
+                           panel_top_left.x + 20.0f,
+                           description_top + static_cast<float>(line) *
+                                                     m_font.lineHeight()),
+                   text_color);
     }
 
     return vertex_data;
 }
 
-std::vector<Tutorial17VertexData> Tutorial17::buildIconPassVertexData()
-        const {
+std::vector<Tutorial17VertexData> Tutorial17::buildIconPassVertexData() const {
     std::vector<Tutorial17VertexData> vertex_data;
     vertex_data.reserve(c_inventory_item_count * 6);
 
     Math::Vec2<float> const cell_size = getCellSize();
     // Icon inset within its cell, leaving room for the "x N" label
     // drawn along the cell's bottom edge in the text pass.
-    float const icon_size =
-            std::min(cell_size.x, cell_size.y - 24.0f) * 0.8f;
+    float const icon_size = std::min(cell_size.x, cell_size.y - 24.0f) * 0.8f;
     for (std::size_t index = 0; index < c_inventory_item_count; ++index) {
         Math::Vec2<float> const cell_top_left = getCellTopLeft(index);
         Math::Vec2<float> const icon_top_left(
@@ -1405,10 +1403,9 @@ bool Tutorial17::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial17_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial17_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1448,10 +1445,10 @@ bool Tutorial17::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial17_parameters.getTextVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial17_parameters.getTextVertexCount(),
+              1,
+              0,
+              0);
 
     // Pass 2: the 8 icon quads, drawn on top against the icon atlas
     // descriptor set, from the second range of the same vertex buffer.
@@ -1473,10 +1470,10 @@ bool Tutorial17::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
     vkCmdDraw(command_buffer,
-             m_vulkan_tutorial17_parameters.getIconVertexCount(),
-             1,
-             0,
-             0);
+              m_vulkan_tutorial17_parameters.getIconVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1518,8 +1515,8 @@ bool Tutorial17::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial17Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial17Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1569,8 +1566,8 @@ bool Tutorial17::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial17_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial17_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1729,8 +1726,9 @@ void Tutorial17::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1745,10 +1743,9 @@ void Tutorial17::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial17_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial17_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial17_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial17_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1774,10 +1771,9 @@ void Tutorial17::childClear() {
     }
 
     if (m_vulkan_tutorial17_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial17_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial17_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial17_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

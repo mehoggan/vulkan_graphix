@@ -34,8 +34,7 @@ void VulkanTutorial13Parameters::setVkRenderPass(
     m_vk_render_pass = vk_render_pass;
 }
 
-const ImageParameters& VulkanTutorial13Parameters::getImageParameters()
-        const {
+const ImageParameters& VulkanTutorial13Parameters::getImageParameters() const {
     return m_image_parameters;
 }
 ImageParameters& VulkanTutorial13Parameters::getImageParameters() {
@@ -248,8 +247,7 @@ bool Tutorial13::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial13_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -306,11 +304,11 @@ bool Tutorial13::createImage(std::uint32_t width,
                              VkImage* image) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
             .createImage(width,
-                        height,
-                        VK_FORMAT_R8G8B8A8_UNORM,
-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                VK_IMAGE_USAGE_SAMPLED_BIT,
-                        image);
+                         height,
+                         VK_FORMAT_R8G8B8A8_UNORM,
+                         VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                         image);
 }
 
 bool Tutorial13::allocateImageMemory(VkImage image,
@@ -345,10 +343,10 @@ bool Tutorial13::copyTextureData(char* texture_data,
             m_vulkan_tutorial13_parameters.getImageParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial13_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial13_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
                                 image_parameters.getVkImage(),
                                 texture_data,
@@ -442,16 +440,17 @@ Math::Mat4<float> Tutorial13::getUniformBufferData() const {
     // just do gl_Position = u_ProjectionMatrix * i_Position - really a full
     // model-view-projection slot, exactly what's needed here.
     Math::Mat4<float> const model(1.0f);
-    Math::Mat4<float> const view = glm::lookAt(
-            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    Math::Mat4<float> const view =
+            glm::lookAt(m_camera.eye(),
+                        m_camera.target(),
+                        Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     float const height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Mat4<float> const projection =
-            Tools::getPerspectiveProjectionMatrix(
-                    width / height, 45.0f, 0.01f, 10.0f);
+    Math::Mat4<float> const projection = Tools::getPerspectiveProjectionMatrix(
+            width / height, 45.0f, 0.01f, 10.0f);
 
     return projection * view * model;
 }
@@ -915,10 +914,10 @@ bool Tutorial13::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial13_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial13_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial13_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
                                  destination,
                                  data,
@@ -939,8 +938,8 @@ bool Tutorial13::createVertexBuffer() {
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial13_parameters.getVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1054,10 +1053,9 @@ bool Tutorial13::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial13_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial13_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1097,12 +1095,11 @@ bool Tutorial13::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    vkCmdDraw(
-            command_buffer,
-            m_vulkan_tutorial13_parameters.getVertexCount(),
-            1,
-            0,
-            0);
+    vkCmdDraw(command_buffer,
+              m_vulkan_tutorial13_parameters.getVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1144,8 +1141,8 @@ bool Tutorial13::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial13Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial13Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1190,8 +1187,8 @@ bool Tutorial13::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial13_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial13_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1336,8 +1333,9 @@ void Tutorial13::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1352,10 +1350,9 @@ void Tutorial13::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial13_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial13_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial13_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial13_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1381,10 +1378,9 @@ void Tutorial13::childClear() {
     }
 
     if (m_vulkan_tutorial13_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial13_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial13_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial13_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

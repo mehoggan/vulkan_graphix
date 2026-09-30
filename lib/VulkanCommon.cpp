@@ -81,7 +81,8 @@ bool BufferFactory::create(VkBufferUsageFlags usage,
     out.setVkBuffer(vk_buffer);
 
     VkDeviceMemory vk_device_memory;
-    if (!allocateMemory(out.getVkBuffer(), memory_property, &vk_device_memory)) {
+    if (!allocateMemory(
+                out.getVkBuffer(), memory_property, &vk_device_memory)) {
         return false;
     }
     out.setVkDeviceMemory(vk_device_memory);
@@ -171,7 +172,8 @@ bool ImageFactory::createImageView(VkImage image,
                                  .baseArrayLayer = 0,
                                  .layerCount = 1}};
 
-    return vkCreateImageView(m_device, &image_view_create_info, nullptr, out) ==
+    return vkCreateImageView(
+                   m_device, &image_view_create_info, nullptr, out) ==
            VK_SUCCESS;
 }
 
@@ -358,12 +360,13 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
     return true;
 }
 
-bool StagedUploader::uploadToBuffer(BufferParameters& staging_buffer,
-                                    BufferParameters& destination,
-                                    const void* data,
-                                    std::uint32_t data_size,
-                                    VkAccessFlags dst_access_mask,
-                                    VkPipelineStageFlags dst_stage_mask) const {
+bool StagedUploader::uploadToBuffer(
+        BufferParameters& staging_buffer,
+        BufferParameters& destination,
+        const void* data,
+        std::uint32_t data_size,
+        VkAccessFlags dst_access_mask,
+        VkPipelineStageFlags dst_stage_mask) const {
     if (data_size > staging_buffer.getSize()) {
         return false;
     }
@@ -462,7 +465,8 @@ bool FrameResourceFactory::createCommandPool(std::uint32_t queue_family_index,
                      VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
             .queueFamilyIndex = queue_family_index};
 
-    return vkCreateCommandPool(m_device, &cmd_pool_create_info, nullptr, out) ==
+    return vkCreateCommandPool(
+                   m_device, &cmd_pool_create_info, nullptr, out) ==
            VK_SUCCESS;
 }
 
@@ -494,10 +498,9 @@ bool FrameResourceFactory::createFence(bool signaled, VkFence* out) const {
     VkFenceCreateInfo fence_create_info = {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .pNext = nullptr,
-            .flags = signaled
-                             ? static_cast<VkFenceCreateFlags>(
-                                       VK_FENCE_CREATE_SIGNALED_BIT)
-                             : 0u};
+            .flags = signaled ? static_cast<VkFenceCreateFlags>(
+                                        VK_FENCE_CREATE_SIGNALED_BIT)
+                              : 0u};
 
     return vkCreateFence(m_device, &fence_create_info, nullptr, out) ==
            VK_SUCCESS;
@@ -522,12 +525,12 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
     constexpr VkFormat c_texture_format = VK_FORMAT_R8G8B8A8_UNORM;
 
     VkImage vk_image;
-    if (!image_factory.createImage(width,
-                                   height,
-                                   c_texture_format,
-                                   VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                           VK_IMAGE_USAGE_SAMPLED_BIT,
-                                   &vk_image)) {
+    if (!image_factory.createImage(
+                width,
+                height,
+                c_texture_format,
+                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                &vk_image)) {
         return false;
     }
     out.setVkImage(vk_image);
@@ -540,8 +543,7 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
     }
     out.setVkDeviceMemory(vk_device_memory);
 
-    if (!image_factory.bindMemory(out.getVkImage(),
-                                  out.getVkDeviceMemory())) {
+    if (!image_factory.bindMemory(out.getVkImage(), out.getVkDeviceMemory())) {
         return false;
     }
 
@@ -583,10 +585,9 @@ createShaderModule(VkDevice device, const char* filename) {
             .pCode = reinterpret_cast<const std::uint32_t*>(code.data())};
 
     VkShaderModule shader_module;
-    if (vkCreateShaderModule(device,
-                             &shader_module_create_info,
-                             nullptr,
-                             &shader_module) != VK_SUCCESS) {
+    if (vkCreateShaderModule(
+                device, &shader_module_create_info, nullptr, &shader_module) !=
+        VK_SUCCESS) {
         return Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>();
     }
 

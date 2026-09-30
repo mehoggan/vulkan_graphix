@@ -1,7 +1,7 @@
 #include "WeaponEMP.h"
+#include "Sound.h"
 #include "Weapon.h"
 #include "MacroCrtdbg.h"
-#include "Sound.h"
 
 extern void playSFX(int sfx);
 

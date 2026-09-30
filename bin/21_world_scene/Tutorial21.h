@@ -208,7 +208,8 @@ public:
 
     const BufferParameters& getSkyboxVertexBufferParameters() const;
     BufferParameters& getSkyboxVertexBufferParameters();
-    void setSkyboxVertexBufferParameters(const BufferParameters& vertex_buffer);
+    void setSkyboxVertexBufferParameters(
+            const BufferParameters& vertex_buffer);
     const BufferParameters& getSkyboxIndexBufferParameters() const;
     BufferParameters& getSkyboxIndexBufferParameters();
     void setSkyboxIndexBufferParameters(const BufferParameters& index_buffer);
@@ -386,8 +387,7 @@ private:
     Math::Mat4<float> getTankPartModelMatrix(
             Math::Vec3<float> const& part_translation) const;
 
-    const std::vector<Tutorial21ObjectVertexData>& getSkyboxVertexData()
-            const;
+    const std::vector<Tutorial21ObjectVertexData>& getSkyboxVertexData() const;
     const std::vector<std::uint32_t>& getSkyboxIndexData() const;
 
     std::vector<Tutorial21ObjectVertexData> loadTankPartVertexData(

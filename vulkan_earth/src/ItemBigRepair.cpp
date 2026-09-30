@@ -1,7 +1,7 @@
 #include "ItemBigRepair.h"
 #include "Item.h"
-#include "MacroCrtdbg.h"
 #include "Sound.h"
+#include "MacroCrtdbg.h"
 
 extern void playSFX(int sfx);
 

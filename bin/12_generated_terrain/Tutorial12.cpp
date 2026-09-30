@@ -268,8 +268,7 @@ bool Tutorial12::createFences() {
     std::vector<RenderingResourceParameters>& rendering_resources =
             m_vulkan_tutorial12_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-        if (!factory.createFence(true,
-                                 &rendering_resources[i].getVkFence())) {
+        if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -362,10 +361,10 @@ bool Tutorial12::copyTextureData(char* texture_data,
             m_vulkan_tutorial12_parameters.getTextureImageParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial12_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial12_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToImage(staging_buffer,
                                 image_parameters.getVkImage(),
                                 texture_data,
@@ -382,8 +381,7 @@ bool Tutorial12::copyTextureData(char* texture_data,
 bool Tutorial12::createDepthResources() {
     ImageParameters& depth_image_parameters =
             m_vulkan_tutorial12_parameters.getDepthImageParameters();
-    std::uint32_t const width =
-            getSwapchainParameters().getVkExtent2d().width;
+    std::uint32_t const width = getSwapchainParameters().getVkExtent2d().width;
     std::uint32_t const height =
             getSwapchainParameters().getVkExtent2d().height;
 
@@ -445,12 +443,12 @@ bool Tutorial12::createTexture() {
             m_vulkan_tutorial12_parameters.getTextureImageParameters();
 
     VkImage vk_image;
-    if (!createImage(2048,
-                     2048,
-                     c_texture_format,
-                     VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                             VK_IMAGE_USAGE_SAMPLED_BIT,
-                     &vk_image)) {
+    if (!createImage(
+                2048,
+                2048,
+                c_texture_format,
+                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                &vk_image)) {
         Logging::error(LOG_TAG, "Could not create image!");
         return false;
     }
@@ -524,8 +522,9 @@ bool Tutorial12::createUniformBuffer() {
 Tutorial12UniformBufferData Tutorial12::getUniformBufferData() const {
     Tutorial12UniformBufferData data{};
     data.model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
-    data.view = glm::lookAt(
-            m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.view = glm::lookAt(m_camera.eye(),
+                            m_camera.target(),
+                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     float const width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -722,8 +721,7 @@ bool Tutorial12::createRenderPass() {
              .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
              .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
              .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-             .finalLayout =
-                     VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL}};
+             .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL}};
 
     VkAttachmentReference color_attachment_reference = {
             .attachment = 0,
@@ -852,8 +850,7 @@ bool Tutorial12::createPipeline() {
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial12VertexData, normal)},
+                     .offset = offsetof(struct Tutorial12VertexData, normal)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
@@ -1083,11 +1080,10 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
                     {make_position(j, i + 1, i + 1, j), n_j, t_j});
 
             // V_Y
-            Math::Vec2<float> t_y(
-                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
-                            chunk_span,
-                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                            chunk_span);
+            Math::Vec2<float> t_y((static_cast<float>(i % (chunk_size - 1)) +
+                                   1) / chunk_span,
+                                  (static_cast<float>(j % (chunk_size - 1)) +
+                                   1) / chunk_span);
             Math::Vec3<float> n_y(0.0f, 0.0f, 0.0f);
             if (i != c_grid_size - 2 && j != c_grid_size - 2) {
                 n_y = generator.normalAt(j + 1, i + 1);
@@ -1113,10 +1109,10 @@ bool Tutorial12::copyBufferData(BufferParameters& destination,
             m_vulkan_tutorial12_parameters.getStagingBufferParameters();
 
     if (!VulkanCommon::StagedUploader(
-                getVkDevice(),
-                getGraphicsQueueParameters().getVkQueue(),
-                m_vulkan_tutorial12_parameters.getRenderingResources()[0]
-                        .getVkCommandBuffer())
+                 getVkDevice(),
+                 getGraphicsQueueParameters().getVkQueue(),
+                 m_vulkan_tutorial12_parameters.getRenderingResources()[0]
+                         .getVkCommandBuffer())
                  .uploadToBuffer(staging_buffer,
                                  destination,
                                  data,
@@ -1137,8 +1133,8 @@ bool Tutorial12::createVertexBuffer() {
 
     BufferParameters& vertex_buffer =
             m_vulkan_tutorial12_parameters.getVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(
-            vertex_data.size() * sizeof(vertex_data[0])));
+    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
+                                                     sizeof(vertex_data[0])));
     if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -1258,10 +1254,9 @@ bool Tutorial12::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial12_parameters.getVkGraphicsPipeline());
+    vkCmdBindPipeline(command_buffer,
+                      VK_PIPELINE_BIND_POINT_GRAPHICS,
+                      m_vulkan_tutorial12_parameters.getVkGraphicsPipeline());
 
     VkViewport viewport = {
             .x = 0.0f,
@@ -1301,12 +1296,11 @@ bool Tutorial12::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    vkCmdDraw(
-            command_buffer,
-            m_vulkan_tutorial12_parameters.getVertexCount(),
-            1,
-            0,
-            0);
+    vkCmdDraw(command_buffer,
+              m_vulkan_tutorial12_parameters.getVertexCount(),
+              1,
+              0,
+              0);
 
     vkCmdEndRenderPass(command_buffer);
 
@@ -1348,8 +1342,8 @@ bool Tutorial12::draw() {
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
-    resource_index = (resource_index + 1) %
-                     VulkanTutorial12Parameters::resources_count;
+    resource_index =
+            (resource_index + 1) % VulkanTutorial12Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
                         1,
@@ -1394,8 +1388,8 @@ bool Tutorial12::draw() {
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial12_parameters.getFinishedRenderingSemaphores()
-                    [image_index];
+            m_vulkan_tutorial12_parameters
+                    .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -1543,8 +1537,9 @@ void Tutorial12::childClear() {
                     nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(
-                    getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
+            vkDestroyFence(getVkDevice(),
+                           rendering_resources[i].getVkFence(),
+                           nullptr);
         }
     }
 
@@ -1559,10 +1554,9 @@ void Tutorial12::childClear() {
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial12_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-        vkDestroyCommandPool(
-                getVkDevice(),
-                m_vulkan_tutorial12_parameters.getVkCommandPool(),
-                nullptr);
+        vkDestroyCommandPool(getVkDevice(),
+                             m_vulkan_tutorial12_parameters.getVkCommandPool(),
+                             nullptr);
         m_vulkan_tutorial12_parameters.setVkCommandPool(VK_NULL_HANDLE);
     }
 
@@ -1588,10 +1582,9 @@ void Tutorial12::childClear() {
     }
 
     if (m_vulkan_tutorial12_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(
-                getVkDevice(),
-                m_vulkan_tutorial12_parameters.getVkRenderPass(),
-                nullptr);
+        vkDestroyRenderPass(getVkDevice(),
+                            m_vulkan_tutorial12_parameters.getVkRenderPass(),
+                            nullptr);
         m_vulkan_tutorial12_parameters.setVkRenderPass(VK_NULL_HANDLE);
     }
 

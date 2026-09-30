@@ -13,8 +13,8 @@
 
 #include <gtest/gtest.h>
 
-#include "vulkan_graphix/OperatingSystem.h"
 #include "Tutorial04.h"
+#include "vulkan_graphix/OperatingSystem.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
 #include "IntegrationTestCommon.h"

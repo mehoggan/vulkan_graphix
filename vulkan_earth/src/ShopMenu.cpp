@@ -15,6 +15,8 @@
 #include "ItemSmallRepair.h"
 #include "Player.h"
 #include "PlayerFactory.h"
+#include "PossibleGameStates.h"
+#include "Sound.h"
 #include "TextObject.h"
 #include "Weapon.h"
 #include "WeaponAcid.h"
@@ -28,8 +30,6 @@
 #include "WeaponTeleport.h"
 #include "WeaponThor.h"
 #include "MacroCrtdbg.h"
-#include "PossibleGameStates.h"
-#include "Sound.h"
 
 extern void playSFX(int sfx);
 extern void playMusic(int music);

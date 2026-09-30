@@ -1,6 +1,6 @@
 #include "ChaseCam.h"
-#include "MacroCrtdbg.h"
 #include "math.h"
+#include "MacroCrtdbg.h"
 
 ChaseCam::ChaseCam() = default;
 ChaseCam::ChaseCam(GLfloat* new_target_pos, GLfloat* new_target_at) {
