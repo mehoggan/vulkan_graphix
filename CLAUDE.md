@@ -198,12 +198,13 @@ Files" section for the exact invocation.
     must stay the last include (it `#define`s `new`/`malloc`/`free`
     under `_DEBUG`) - `.clang-format`'s `IncludeCategories` pins it last
   - Assets: the game loads everything by bare filename from its working
-    directory. Its `.raw` textures live only in
-    `resources/vulkan_earth/Data/` (plus `Projectiles/`), and
-    `src/Makefile.am`'s `all-local:` copies them next to the binary - for
-    an out-of-tree build along with all of `resources/vulkan_earth/Data/`,
-    for an in-tree build just the `.raw` files (its other asset types
-    still also sit in `src/`; the in-tree copies are gitignored).
+    directory. Every runtime asset (textures, `.ogl` meshes, `.vs`
+    shaders, sounds) lives only in `resources/vulkan_earth/Data/`, and
+    `src/Makefile.am`'s `all-local:` copies that tree next to the binary
+    (into `src/` itself for an in-tree build, where the copies are
+    gitignored). Its rules work file by file, so `make clean` removes
+    exactly the copied files - `src/Predator/` also holds tracked
+    `.ac`/`.x3d` source models, which stay
     ModelBuilder's own two textures are in
     `resources/vulkan_earth/Tools/ModelBuilder/Data/` - its
     `TestImage.raw` differs from the game's - so run that tool from there
