@@ -16,7 +16,7 @@
 
 PlayerHuman::PlayerHuman() = default;
 
-PlayerHuman::PlayerHuman(GLfloat red, GLfloat green, GLfloat blue) {
+PlayerHuman::PlayerHuman(float red, float green, float blue) {
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -39,9 +39,9 @@ PlayerHuman::PlayerHuman(GLfloat red, GLfloat green, GLfloat blue) {
     loaded_weapon = nullptr;
 }
 
-PlayerHuman::PlayerHuman(GLfloat red,
-                         GLfloat green,
-                         GLfloat blue,
+PlayerHuman::PlayerHuman(float red,
+                         float green,
+                         float blue,
                          const std::string& new_tank_type,
                          const std::string& new_ai_type,
                          const std::string& new_name,
@@ -130,16 +130,16 @@ void PlayerHuman::setPlayerName(const std::string& new_name) {
 }
 int PlayerHuman::getCash() { return current_cash; }
 void PlayerHuman::setCash(int cash) { current_cash = cash; }
-GLfloat PlayerHuman::getRed() { return color[0]; }
-GLfloat PlayerHuman::getGreen() { return color[1]; }
-GLfloat PlayerHuman::getBlue() { return color[2]; }
+float PlayerHuman::getRed() { return color[0]; }
+float PlayerHuman::getGreen() { return color[1]; }
+float PlayerHuman::getBlue() { return color[2]; }
 float PlayerHuman::getCurrentWait() { return current_wait; }
 void PlayerHuman::setCurrentWait(float time) { current_wait = time; }
 char PlayerHuman::getTeamLabel() { return team_label; }
 void PlayerHuman::setTeamLabel(char t) { team_label = t; }
 Weapon* PlayerHuman::getLoadedWeapon() { return loaded_weapon; }
 void PlayerHuman::setLoadedWeapon(Weapon* wpn) { loaded_weapon = wpn; }
-GLfloat* PlayerHuman::getBalisticMatrix() { return balistic_matrix; }
+float* PlayerHuman::getBalisticMatrix() { return balistic_matrix; }
 void PlayerHuman::setItems(Item** item_set) {
     for (int i = 0; i < player_max_items; i++) {
         current_items[i] = item_set[i];

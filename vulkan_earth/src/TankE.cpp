@@ -10,7 +10,7 @@ const int tank_e_armor = 3;
 const int tank_e_speed = 80;
 
 TankE::TankE() = default;
-TankE::TankE(GLfloat x, GLfloat y, GLfloat z) {
+TankE::TankE(float x, float y, float z) {
     initBody();
     initHead();
     initTurret();

@@ -1,5 +1,6 @@
 #include "vulkan_earth/ControlItemTextField.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -15,14 +16,14 @@ extern void playSFX(int sfx);
 
 ControlItemTextField::ControlItemTextField() = default;
 
-ControlItemTextField::ControlItemTextField(GLfloat new_x_pos,
-                                           GLfloat new_y_pos,
-                                           GLfloat new_z_pos,
-                                           GLfloat red,
-                                           GLfloat green,
-                                           GLfloat blue,
-                                           GLint new_width,
-                                           GLint new_height) {
+ControlItemTextField::ControlItemTextField(float new_x_pos,
+                                           float new_y_pos,
+                                           float new_z_pos,
+                                           float red,
+                                           float green,
+                                           float blue,
+                                           std::int32_t new_width,
+                                           std::int32_t new_height) {
     x_pos = new_x_pos;
     y_pos = new_y_pos;
     z_pos = new_z_pos;
@@ -116,10 +117,10 @@ void ControlItemTextField::draw() {
     if (current_text) current_text->draw();
 }
 
-GLfloat ControlItemTextField::getXPos() { return x_pos; }
-GLfloat ControlItemTextField::getYPos() { return y_pos; }
-GLfloat ControlItemTextField::getHeight() { return height; }
-GLfloat ControlItemTextField::getWidth() { return width; }
+float ControlItemTextField::getXPos() { return x_pos; }
+float ControlItemTextField::getYPos() { return y_pos; }
+float ControlItemTextField::getHeight() { return height; }
+float ControlItemTextField::getWidth() { return width; }
 bool ControlItemTextField::isTextFieldActive() { return text_field_active; }
 std::string ControlItemTextField::collectData() {
     return current_text->getOutput();
@@ -134,9 +135,8 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
     for (char ch : new_text) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + 0.02 * width;
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + 0.02 * width;
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     current_text = new TextObject(new_text,
                                   label_x_pos,
                                   label_y_pos,
@@ -148,9 +148,9 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
 }
 
 void ControlItemTextField::mouseClickEvent(
-        GLint x,
-        GLint y,
-        GLint state,
+        std::int32_t x,
+        std::int32_t y,
+        std::int32_t state,
         bool still_over_control_item_text_field) {
     if (state == 0)
         if (still_over_control_item_text_field) text_field_active = true;

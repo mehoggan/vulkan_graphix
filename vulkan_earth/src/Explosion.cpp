@@ -14,9 +14,9 @@
  * Constructors and De-constructors
  */
 Explosion::Explosion() = default;
-Explosion::Explosion(GLfloat new_x,
-                     GLfloat new_y,
-                     GLfloat new_z,
+Explosion::Explosion(float new_x,
+                     float new_y,
+                     float new_z,
                      int new_weapon_radius) {
     glPushMatrix();
     glLoadIdentity();
@@ -36,10 +36,10 @@ Explosion::Explosion(GLfloat new_x,
     timer = 50.0f;
     radius = 0.0f;
 
-    GLfloat temp_colors1[3] = {White};
-    GLfloat temp_colors2[3] = {Yellow};
-    GLfloat temp_colors3[3] = {Orange};
-    GLfloat temp_colors4[3] = {Red};
+    float temp_colors1[3] = {White};
+    float temp_colors2[3] = {Yellow};
+    float temp_colors3[3] = {Orange};
+    float temp_colors4[3] = {Red};
     for (int i = 0; i < 3; i++) {
         colors1[i] = temp_colors1[i];
         colors2[i] = temp_colors2[i];
@@ -73,31 +73,31 @@ void Explosion::draw() {
     shader->unbind();
 }
 
-void Explosion::setColors1(GLfloat* new_colors1) {
+void Explosion::setColors1(float* new_colors1) {
     colors1[0] = new_colors1[0];
     colors1[1] = new_colors1[1];
     colors1[2] = new_colors1[2];
 }
-void Explosion::setColors2(GLfloat* new_colors2) {
+void Explosion::setColors2(float* new_colors2) {
     colors2[0] = new_colors2[0];
     colors2[1] = new_colors2[1];
     colors2[2] = new_colors2[2];
 }
-void Explosion::setColors3(GLfloat* new_colors3) {
+void Explosion::setColors3(float* new_colors3) {
     colors3[0] = new_colors3[0];
     colors3[1] = new_colors3[1];
     colors3[2] = new_colors3[2];
 }
-void Explosion::setColors4(GLfloat* new_colors4) {
+void Explosion::setColors4(float* new_colors4) {
     colors4[0] = new_colors4[0];
     colors4[1] = new_colors4[1];
     colors4[2] = new_colors4[2];
 }
 void Explosion::setDefaultColors() {
-    GLfloat temp_colors1[3] = {White};
-    GLfloat temp_colors2[3] = {Yellow};
-    GLfloat temp_colors3[3] = {Orange};
-    GLfloat temp_colors4[3] = {Red};
+    float temp_colors1[3] = {White};
+    float temp_colors2[3] = {Yellow};
+    float temp_colors3[3] = {Orange};
+    float temp_colors4[3] = {Red};
     for (int i = 0; i < 3; i++) {
         colors1[i] = temp_colors1[i];
         colors2[i] = temp_colors2[i];

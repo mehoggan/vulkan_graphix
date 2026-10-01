@@ -3,6 +3,7 @@
 
 #include <glew.h>
 #include <glut.h>
+#include <cstdint>
 
 class Normal;
 class TexCoord;
@@ -32,7 +33,7 @@ private:
     bool useTextures;
     bool useShaders;
     int verticesLoaded;
-    GLuint VBOId;
+    std::uint32_t VBOId;
     Vertex* vertices;
     Normal* normals;
     TexCoord* tex_coord;
@@ -52,8 +53,8 @@ private:
     unsigned int shader_id;
     unsigned int shader_vp;
     unsigned int shader_fp;
-    GLuint color_texture;
-    GLuint normal_texture;
+    std::uint32_t color_texture;
+    std::uint32_t normal_texture;
 };
 
 #endif /* VBO_SHADER_LIBRARY_H_	*/

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 
 class SkyboxFactory {
 public:
@@ -13,13 +14,13 @@ public:
     void printData();
 
 private:
-    GLuint texture0;
-    GLuint texture1;
-    GLuint texture2;
-    GLuint texture3;
-    GLuint texture4;
-    GLuint texture5;
-    GLuint texture6;
+    std::uint32_t texture0;
+    std::uint32_t texture1;
+    std::uint32_t texture2;
+    std::uint32_t texture3;
+    std::uint32_t texture4;
+    std::uint32_t texture5;
+    std::uint32_t texture6;
     float size;
     int image1_x_start;
     int image1_y_start;

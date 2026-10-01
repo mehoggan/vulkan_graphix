@@ -19,10 +19,10 @@ WeaponRevive::WeaponRevive(int id) {
     damage = 0;
     special_number = 400;
 
-    GLfloat temp_colors1[3] = {White};
-    GLfloat temp_colors2[3] = {Silver};
-    GLfloat temp_colors3[3] = {White};
-    GLfloat temp_colors4[3] = {LightGray};
+    float temp_colors1[3] = {White};
+    float temp_colors2[3] = {Silver};
+    float temp_colors3[3] = {White};
+    float temp_colors4[3] = {LightGray};
     for (int i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
@@ -35,7 +35,7 @@ WeaponRevive::~WeaponRevive() = default;
 WeaponRevive* WeaponRevive::getWeaponInstance() {
     return new WeaponRevive(uniqueidentifier);
 }
-void WeaponRevive::causeEffectToTank(GLfloat distance, Tank* tank) {
+void WeaponRevive::causeEffectToTank(float distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->setHP(tank->getHP() + special_number);
         if (tank->getHP() > tank->getArmor() * 100) {

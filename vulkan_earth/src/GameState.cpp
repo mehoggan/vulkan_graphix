@@ -248,11 +248,11 @@ GameState::GameState(int new_width,
     /* AI VARIABLES	*/
     tank_reachable = new bool*[player_factory->getNumberofPlayers()];
     tank_list = new Tank**[player_factory->getNumberofPlayers()];
-    distance_to_target = new GLfloat*[player_factory->getNumberofPlayers()];
+    distance_to_target = new float*[player_factory->getNumberofPlayers()];
     for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
         tank_list[i] = new Tank*[player_factory->getNumberofPlayers()];
         distance_to_target[i] =
-                new GLfloat[player_factory->getNumberofPlayers()];
+                new float[player_factory->getNumberofPlayers()];
         tank_reachable[i] = new bool[player_factory->getNumberofPlayers()];
         for (int j = 0; j < player_factory->getNumberofPlayers(); j++) {
             tank_list[i][j] = player_factory->getPlayer(j)->getCurrentTank();
@@ -301,19 +301,19 @@ GameState::~GameState() {
     delete[] distance_to_target;
 }
 
-GLfloat GameState::calcDistanceBetweenVertices(Vertex* v0, Vertex* v1) {
-    return static_cast<GLfloat>(sqrt(pow((static_cast<double>(v0->coord_x) -
-                                          static_cast<double>(v1->coord_x)),
-                                         2.0) +
-                                     pow((static_cast<double>(v0->coord_z) -
-                                          static_cast<double>(v1->coord_z)),
-                                         2.0)));
+float GameState::calcDistanceBetweenVertices(Vertex* v0, Vertex* v1) {
+    return static_cast<float>(sqrt(pow((static_cast<double>(v0->coord_x) -
+                                        static_cast<double>(v1->coord_x)),
+                                       2.0) +
+                                   pow((static_cast<double>(v0->coord_z) -
+                                        static_cast<double>(v1->coord_z)),
+                                       2.0)));
 }
 
-void GameState::timerEvent(GLfloat new_timer) {}
+void GameState::timerEvent(float new_timer) {}
 
 //!!!!!//
-GLfloat GameState::calcAngleBetweenVectors(Vector one, Vector two) {
+float GameState::calcAngleBetweenVectors(Vector one, Vector two) {
     return vulkan_graphix::TankOrientation::angleBetweenDegrees(
             vulkan_graphix::Math::Vec3<float>(
                     one.compo_x, one.compo_y, one.compo_z),
@@ -326,18 +326,18 @@ void GameState::calcNormalVector(Vertex* v0,
                                  Vertex* v1,
                                  Vertex* v2,
                                  Normal* n) {
-    GLfloat u[3] = {(v1->coord_x - v0->coord_x),
-                    (v1->coord_y / 100 - v0->coord_y / 100),
-                    (v1->coord_z - v0->coord_z)};
-    GLfloat v[3] = {(v2->coord_x - v0->coord_x),
-                    (v2->coord_y / 100 - v0->coord_y / 100),
-                    (v2->coord_z - v0->coord_z)};
+    float u[3] = {(v1->coord_x - v0->coord_x),
+                  (v1->coord_y / 100 - v0->coord_y / 100),
+                  (v1->coord_z - v0->coord_z)};
+    float v[3] = {(v2->coord_x - v0->coord_x),
+                  (v2->coord_y / 100 - v0->coord_y / 100),
+                  (v2->coord_z - v0->coord_z)};
 
     n->compo_x = u[1] * v[2] - v[1] * u[2];
     n->compo_y = u[2] * v[0] - u[0] * v[2];
     n->compo_z = u[0] * v[1] - v[0] * u[1];
 
-    GLfloat mag = static_cast<GLfloat>(
+    float mag = static_cast<float>(
             sqrt(pow(static_cast<double>(n->compo_x), 2.0) +
                  pow(static_cast<double>(n->compo_y), 2.0) +
                  pow(static_cast<double>(n->compo_z), 2.0)));
@@ -397,9 +397,9 @@ void GameState::draw() {
         if (!player_cam) {
             world_cam->view();
         } else {
-            const GLfloat* turret_matrix =
+            const float* turret_matrix =
                     current_player->getCurrentTank()->getTurretMatrix();
-            const GLfloat* head_matrix =
+            const float* head_matrix =
                     current_player->getCurrentTank()->getHeadMatrix();
             gluLookAt(head_matrix[12] + head_matrix[8] * 4000,
                       head_matrix[13] + 2000,
@@ -471,9 +471,9 @@ void GameState::draw() {
 
     if (game_sub_state == PLAYER_CONTROL) {
         if (current_player->getPlayerType() == "CPU") {
-            const GLfloat* turret_matrix =
+            const float* turret_matrix =
                     current_player->getCurrentTank()->getTurretMatrix();
-            const GLfloat* body_matrix =
+            const float* body_matrix =
                     current_player->getCurrentTank()->getBodyMatrix();
             glLineWidth(1000);
             glBegin(GL_LINES);
@@ -576,10 +576,10 @@ void GameState::drawHUD() {
     // Power Output
     if (game_sub_state == PLAYER_CONTROL) {
         // Text
-        GLfloat power_ratio = player_factory->getPlayer(current_player_index)
-                                      ->getCurrentTank()
-                                      ->getCurrentPower() /
-                              10.0;
+        float power_ratio = player_factory->getPlayer(current_player_index)
+                                    ->getCurrentTank()
+                                    ->getCurrentPower() /
+                            10.0;
         char buffer[128];
         memset(buffer, 0, 128);
         glColor3f(1, 1, 1);
@@ -698,7 +698,7 @@ void GameState::drawHUD() {
         glPopMatrix();
 
         // Graphic meter: Health
-        GLfloat health_ratio =
+        float health_ratio =
                 static_cast<float>(
                         player_factory->getPlayer(current_player_index)
                                 ->getCurrentTank()
@@ -756,8 +756,8 @@ void GameState::drawHUD() {
     glPopMatrix();
 }
 
-void GameState::drawHUDText(const std::string& input, GLfloat x, GLfloat y) {
-    GLfloat x_pos = x;
+void GameState::drawHUDText(const std::string& input, float x, float y) {
+    float x_pos = x;
     for (char ch : input) {
         int step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
         glRasterPos2f(x_pos, y);
@@ -1444,10 +1444,10 @@ void GameState::updateWorldCam() {
 }
 
 void GameState::createSpecialEffect() {
-    GLfloat power_ratio = player_factory->getPlayer(current_player_index)
-                                  ->getCurrentTank()
-                                  ->getCurrentPower() /
-                          10.0;
+    float power_ratio = player_factory->getPlayer(current_player_index)
+                                ->getCurrentTank()
+                                ->getCurrentPower() /
+                        10.0;
     player_factory->getPlayer(current_player_index)
             ->getCurrentTank()
             ->setPreviousPower(static_cast<int>(power_ratio * 1000));
@@ -1479,9 +1479,9 @@ void GameState::createSpecialEffect() {
             int new_z =
                     static_cast<int>(projectile->getPos()[2] / 100.0) * 100;
             current_player->getCurrentTank()->setTankPos(new_x, new_y, new_z);
-            const GLfloat* body_matrix =
+            const float* body_matrix =
                     current_player->getCurrentTank()->getBodyMatrix();
-            GLfloat new_height =
+            float new_height =
                     global_settings->getCurrentTerrain()->getHeightAt(
                             body_matrix[12], body_matrix[14]);
             int scale = static_cast<int>(
@@ -1558,18 +1558,18 @@ void GameState::handleProjectileState() {
             projectile->update(position.x, position.y, position.z);
         }
     } else {
-        GLfloat tank_attribute_power =
+        float tank_attribute_power =
                 player_factory->getPlayer(current_player_index)
                         ->getCurrentTank()
                         ->getPower();
-        GLfloat power_bar = player_factory->getPlayer(current_player_index)
-                                    ->getCurrentTank()
-                                    ->getCurrentPower();
-        const GLfloat* turret_matrix =
+        float power_bar = player_factory->getPlayer(current_player_index)
+                                  ->getCurrentTank()
+                                  ->getCurrentPower();
+        const float* turret_matrix =
                 player_factory->getPlayer(current_player_index)
                         ->getCurrentTank()
                         ->getTurretMatrix();
-        GLfloat matrix[16];
+        float matrix[16];
         for (int i = 0; i < 16; i++) {
             matrix[i] = turret_matrix[i];
         }
@@ -1630,22 +1630,22 @@ void GameState::currentPlayerFire() {
 }
 
 void GameState::constructProjectile() {
-    GLfloat tank_attribute_power =
+    float tank_attribute_power =
             player_factory->getPlayer(current_player_index)
                     ->getCurrentTank()
                     ->getPower();
-    GLfloat power_bar = player_factory->getPlayer(current_player_index)
-                                ->getCurrentTank()
-                                ->getCurrentPower();
+    float power_bar = player_factory->getPlayer(current_player_index)
+                              ->getCurrentTank()
+                              ->getCurrentPower();
 
-    const GLfloat* turret_matrix =
+    const float* turret_matrix =
             current_player->getCurrentTank()->getTurretMatrix();
     // Refuses to fire if a point just past the muzzle is already below the
     // terrain (e.g. the barrel is buried in a hillside).
     vulkan_graphix::Math::Vec3<float> const barrel_probe =
             vulkan_graphix::Ballistics::pointAlongBarrel(
                     glm::make_mat4(turret_matrix), 700.0f);
-    GLfloat land_pos[3] = {barrel_probe.x, barrel_probe.y, barrel_probe.z};
+    float land_pos[3] = {barrel_probe.x, barrel_probe.y, barrel_probe.z};
 
     if (land_pos[1] < global_settings->getCurrentTerrain()->getHeightAt(
                               land_pos[0], land_pos[2])) {
@@ -1676,16 +1676,16 @@ void GameState::handleSpecialEffectState() {
             for (int p = 0; p < total_players; p++) {
                 if (player_factory->getPlayer(p)->getCurrentTank() !=
                     nullptr) {
-                    const GLfloat* body_matrix = player_factory->getPlayer(p)
-                                                         ->getCurrentTank()
-                                                         ->getBodyMatrix();
+                    const float* body_matrix = player_factory->getPlayer(p)
+                                                       ->getCurrentTank()
+                                                       ->getBodyMatrix();
                     Vertex v0(
                             body_matrix[12], body_matrix[13], body_matrix[14]);
                     Vertex v1(projectile->getPos()[0],
                               projectile->getPos()[1],
                               projectile->getPos()[2]);
-                    GLfloat distance = calcDistanceBetweenVertices(&v0, &v1);
-                    GLfloat scale =
+                    float distance = calcDistanceBetweenVertices(&v0, &v1);
+                    float scale =
                             global_settings->getCurrentTerrain()->getScale();
                     if (distance < radius_of_current_explosion * scale) {
                         // PLACEHOLDER BELOW, pass the tank into the weapon and
@@ -1722,7 +1722,7 @@ void GameState::handleSpecialEffectState() {
                             int scale_int = static_cast<int>(
                                     global_settings->getCurrentTerrain()
                                             ->getScale());
-                            GLfloat new_height =
+                            float new_height =
                                     global_settings->getCurrentTerrain()
                                             ->getHeightAt(body_matrix[12],
                                                           body_matrix[14]);
@@ -2061,15 +2061,15 @@ void GameState::nearestEnemy() {
     if (current_player != nullptr &&
         current_player->getPlayerType() == "CPU") {
         /*	RECALULATE ALL DISTANCE	*/
-        const GLfloat* tank_matrix =
+        const float* tank_matrix =
                 current_player->getCurrentTank()->getBodyMatrix();
         for (int i = 0; i < number_of_players; i++) {
             if (tank_list[current_player_index][i] !=
                         current_player->getCurrentTank() &&
                 tank_list[i] != nullptr) {
-                const GLfloat* target_matrix =
+                const float* target_matrix =
                         tank_list[current_player_index][i]->getBodyMatrix();
-                GLfloat distance =
+                float distance =
                         sqrt((tank_matrix[12] - target_matrix[12]) *
                                      (tank_matrix[12] - target_matrix[12]) +
                              (tank_matrix[13] - target_matrix[13]) *
@@ -2082,7 +2082,7 @@ void GameState::nearestEnemy() {
 
         /*	FIND THE MINIMUM DISTANCE/ REACHABLE TARGET	*/
         int minimum_reachable_tank_index = -1;
-        GLfloat minimum_distance = 1E+37;
+        float minimum_distance = 1E+37;
         for (int i = 0; i < number_of_players; i++) {
             if (tank_list[current_player_index][i] !=
                         current_player->getCurrentTank() &&
@@ -2117,13 +2117,13 @@ void GameState::nearestEnemy() {
 }
 
 GlobalSettings* GameState::getGlobalSettings() { return global_settings; }
-GLfloat GameState::getGravity() { return gravity; }
+float GameState::getGravity() { return gravity; }
 PlayerFactory* GameState::getPlayerFactory() { return player_factory; }
-GLfloat GameState::getBalisticScalar() { return balistic_scalar; }
+float GameState::getBalisticScalar() { return balistic_scalar; }
 Vertex GameState::getPositionOfLastProjectile() {
     return position_of_last_projectile;
 }
-void GameState::setPositionOfLastProjectile(GLfloat x, GLfloat y, GLfloat z) {
+void GameState::setPositionOfLastProjectile(float x, float y, float z) {
     position_of_last_projectile.coord_x = x;
     position_of_last_projectile.coord_y = y;
     position_of_last_projectile.coord_z = z;

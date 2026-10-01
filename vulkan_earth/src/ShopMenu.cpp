@@ -35,9 +35,9 @@ extern void playSFX(int sfx);
 extern void playMusic(int music);
 
 ShopMenu::ShopMenu() = default;
-ShopMenu::ShopMenu(GLfloat new_width,
-                   GLfloat new_height,
-                   GLfloat new_percent_border,
+ShopMenu::ShopMenu(float new_width,
+                   float new_height,
+                   float new_percent_border,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
                    int* game_state) {

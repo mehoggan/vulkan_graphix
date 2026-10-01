@@ -11,7 +11,7 @@ public:
     WeaponPadlock(int id);
     ~WeaponPadlock() override;
     WeaponPadlock* getWeaponInstance() override;
-    void causeEffectToTank(GLfloat distance, Tank* tank) override;
+    void causeEffectToTank(float distance, Tank* tank) override;
 };
 
 #endif

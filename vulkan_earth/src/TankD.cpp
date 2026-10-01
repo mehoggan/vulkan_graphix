@@ -10,7 +10,7 @@ const int tank_d_armor = 5;
 const int tank_d_speed = 30;
 
 TankD::TankD() = default;
-TankD::TankD(GLfloat x, GLfloat y, GLfloat z) {
+TankD::TankD(float x, float y, float z) {
     initBody();
     initHead();
     initTurret();

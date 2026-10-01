@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuSelectTanks.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,16 +14,16 @@ using namespace std;
 SubMenuSelectTanks::SubMenuSelectTanks() = default;
 
 SubMenuSelectTanks::SubMenuSelectTanks(int id,
-                                       GLfloat new_x_pos,
-                                       GLfloat new_y_pos,
-                                       GLfloat new_z_pos,
-                                       GLfloat red,
-                                       GLfloat green,
-                                       GLfloat blue,
-                                       GLint new_width,
-                                       GLint new_height,
+                                       float new_x_pos,
+                                       float new_y_pos,
+                                       float new_z_pos,
+                                       float red,
+                                       float green,
+                                       float blue,
+                                       std::int32_t new_width,
+                                       std::int32_t new_height,
                                        const std::string& new_caption,
-                                       GLfloat new_percent_border) {
+                                       float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -41,8 +42,8 @@ SubMenuSelectTanks::SubMenuSelectTanks(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -59,28 +60,32 @@ SubMenuSelectTanks::~SubMenuSelectTanks() { delete label; }
 
 int SubMenuSelectTanks::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuSelectTanks::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuSelectTanks::getXPos() { return x_pos; }
-void SubMenuSelectTanks::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuSelectTanks::getYPos() { return y_pos; }
-void SubMenuSelectTanks::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuSelectTanks::getZPos() { return z_pos; }
-void SubMenuSelectTanks::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuSelectTanks::getRed() { return color[0]; }
-void SubMenuSelectTanks::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuSelectTanks::getGreen() { return color[1]; }
-void SubMenuSelectTanks::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuSelectTanks::getBlue() { return color[2]; }
-void SubMenuSelectTanks::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuSelectTanks::getWidth() { return width; }
-void SubMenuSelectTanks::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuSelectTanks::getHeight() { return height; }
-void SubMenuSelectTanks::setHeight(GLint new_height) { height = new_height; }
+float SubMenuSelectTanks::getXPos() { return x_pos; }
+void SubMenuSelectTanks::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuSelectTanks::getYPos() { return y_pos; }
+void SubMenuSelectTanks::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuSelectTanks::getZPos() { return z_pos; }
+void SubMenuSelectTanks::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuSelectTanks::getRed() { return color[0]; }
+void SubMenuSelectTanks::setRed(float red) { color[0] = red; }
+float SubMenuSelectTanks::getGreen() { return color[1]; }
+void SubMenuSelectTanks::setGreen(float green) { color[1] = green; }
+float SubMenuSelectTanks::getBlue() { return color[2]; }
+void SubMenuSelectTanks::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuSelectTanks::getWidth() { return width; }
+void SubMenuSelectTanks::setWdith(std::int32_t new_width) {
+    width = new_width;
+}
+std::int32_t SubMenuSelectTanks::getHeight() { return height; }
+void SubMenuSelectTanks::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuSelectTanks::getCaption() { return caption; }
 void SubMenuSelectTanks::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuSelectTanks::getPerecentBorder() { return percent_border; }
-void SubMenuSelectTanks::setPercentBorder(GLfloat percent) {
+float SubMenuSelectTanks::getPerecentBorder() { return percent_border; }
+void SubMenuSelectTanks::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

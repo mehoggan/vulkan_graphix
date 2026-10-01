@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuPlayOptions.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,16 +14,16 @@ using namespace std;
 SubMenuPlayOptions::SubMenuPlayOptions() = default;
 
 SubMenuPlayOptions::SubMenuPlayOptions(int id,
-                                       GLfloat new_x_pos,
-                                       GLfloat new_y_pos,
-                                       GLfloat new_z_pos,
-                                       GLfloat red,
-                                       GLfloat green,
-                                       GLfloat blue,
-                                       GLint new_width,
-                                       GLint new_height,
+                                       float new_x_pos,
+                                       float new_y_pos,
+                                       float new_z_pos,
+                                       float red,
+                                       float green,
+                                       float blue,
+                                       std::int32_t new_width,
+                                       std::int32_t new_height,
                                        const std::string& new_caption,
-                                       GLfloat new_percent_border) {
+                                       float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -41,8 +42,8 @@ SubMenuPlayOptions::SubMenuPlayOptions(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -127,28 +128,32 @@ SubMenuPlayOptions::~SubMenuPlayOptions() {
 
 int SubMenuPlayOptions::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuPlayOptions::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuPlayOptions::getXPos() { return x_pos; }
-void SubMenuPlayOptions::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuPlayOptions::getYPos() { return y_pos; }
-void SubMenuPlayOptions::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuPlayOptions::getZPos() { return z_pos; }
-void SubMenuPlayOptions::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuPlayOptions::getRed() { return color[0]; }
-void SubMenuPlayOptions::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuPlayOptions::getGreen() { return color[1]; }
-void SubMenuPlayOptions::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuPlayOptions::getBlue() { return color[2]; }
-void SubMenuPlayOptions::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuPlayOptions::getWidth() { return width; }
-void SubMenuPlayOptions::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuPlayOptions::getHeight() { return height; }
-void SubMenuPlayOptions::setHeight(GLint new_height) { height = new_height; }
+float SubMenuPlayOptions::getXPos() { return x_pos; }
+void SubMenuPlayOptions::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuPlayOptions::getYPos() { return y_pos; }
+void SubMenuPlayOptions::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuPlayOptions::getZPos() { return z_pos; }
+void SubMenuPlayOptions::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuPlayOptions::getRed() { return color[0]; }
+void SubMenuPlayOptions::setRed(float red) { color[0] = red; }
+float SubMenuPlayOptions::getGreen() { return color[1]; }
+void SubMenuPlayOptions::setGreen(float green) { color[1] = green; }
+float SubMenuPlayOptions::getBlue() { return color[2]; }
+void SubMenuPlayOptions::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuPlayOptions::getWidth() { return width; }
+void SubMenuPlayOptions::setWdith(std::int32_t new_width) {
+    width = new_width;
+}
+std::int32_t SubMenuPlayOptions::getHeight() { return height; }
+void SubMenuPlayOptions::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuPlayOptions::getCaption() { return caption; }
 void SubMenuPlayOptions::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuPlayOptions::getPerecentBorder() { return percent_border; }
-void SubMenuPlayOptions::setPercentBorder(GLfloat percent) {
+float SubMenuPlayOptions::getPerecentBorder() { return percent_border; }
+void SubMenuPlayOptions::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

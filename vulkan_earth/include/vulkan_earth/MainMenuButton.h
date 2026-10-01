@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/Item.h"
 
@@ -13,14 +14,14 @@ class MainMenuButton {
 public:
     MainMenuButton();
     MainMenuButton(int id,
-                   GLfloat new_x_pos,
-                   GLfloat new_y_pos,
-                   GLfloat new_z_pos,
-                   GLfloat red,
-                   GLfloat green,
-                   GLfloat blue,
-                   GLint new_width,
-                   GLint new_height,
+                   float new_x_pos,
+                   float new_y_pos,
+                   float new_z_pos,
+                   float red,
+                   float green,
+                   float blue,
+                   std::int32_t new_width,
+                   std::int32_t new_height,
                    const std::string& new_caption,
                    SubMenu* new_submenu);
     ~MainMenuButton();
@@ -34,23 +35,23 @@ public:
     bool isActive();
     void setLabel(const std::string& c);
     int getUNIQUEIDENTIFIER();
-    GLfloat getXPos();
-    GLfloat getYPos();
-    GLfloat getHeight();
-    GLfloat getWidth();
-    GLfloat* getColor();
-    void setColor(GLfloat r, GLfloat g, GLfloat b);
+    float getXPos();
+    float getYPos();
+    float getHeight();
+    float getWidth();
+    float* getColor();
+    void setColor(float r, float g, float b);
     SubMenu* getSubMenu();
     void printSelf(int i);
 
 private:
     int uniqueidentifier;
-    GLfloat x_pos;
-    GLfloat y_pos;
-    GLfloat z_pos;
-    GLfloat color[4];
-    GLint width;
-    GLint height;
+    float x_pos;
+    float y_pos;
+    float z_pos;
+    float color[4];
+    std::int32_t width;
+    std::int32_t height;
     std::string caption;
     TextObject* label;
     bool pressed;

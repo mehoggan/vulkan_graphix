@@ -11,7 +11,7 @@
 #include "vulkan_earth/MacroCrtdbg.h"
 
 Inventory::Inventory() = default;
-Inventory::Inventory(GLfloat x, GLfloat y, int w, int h) {
+Inventory::Inventory(float x, float y, int w, int h) {
     x_pos = x - x * 0.01;
     y_pos = y - y * 0.01;
     width = w + w * 0.01;

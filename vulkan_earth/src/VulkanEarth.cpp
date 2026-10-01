@@ -524,14 +524,14 @@ void mouseMotionHandler(int x, int y) {
 }
 
 void initStuff() {
-    GLfloat light_a[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
-    GLfloat light_d[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
-    GLfloat light_s[] = {1.0f, 1.0f, 1.0f, 0.0f};
+    float light_a[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
+    float light_d[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
+    float light_s[] = {1.0f, 1.0f, 1.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_a);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_d);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_s);
-    GLfloat light_pos0[4] = {1.0f, -1.0f, 0.0f, 0.0f};
-    GLfloat light_pos1[4] = {1.0f, 1.0f, 1.0f, 0.0f};
+    float light_pos0[4] = {1.0f, -1.0f, 0.0f, 0.0f};
+    float light_pos1[4] = {1.0f, 1.0f, 1.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, light_pos0);
 
     // readymenu light

@@ -37,19 +37,19 @@ const int num_arrow_buttons = 2;
 class MainMenu {
 public:
     MainMenu();
-    MainMenu(GLfloat new_width,
-             GLfloat new_height,
-             GLfloat new_percent_border,
+    MainMenu(float new_width,
+             float new_height,
+             float new_percent_border,
              GlobalSettings* new_global_settings,
              PlayerFactory* new_player_factory,
              int* game_state);
     ~MainMenu();
-    GLfloat* getPos();
-    GLfloat getHeight();
-    void setHeight(GLfloat new_height);
-    GLfloat getWidth();
-    void setWidth(GLfloat new_width);
-    GLfloat* getColor();
+    float* getPos();
+    float getHeight();
+    void setHeight(float new_height);
+    float getWidth();
+    void setWidth(float new_width);
+    float* getColor();
     SubMenu* getSubMenuI(int i);
     SubMenu* getActiveSubMenu();
     void draw();
@@ -58,9 +58,9 @@ public:
     SubMenuLandscape* getSubMenuLandscape();
 
 private:
-    GLfloat pos[3], width, height, color[4], border;
+    float pos[3], width, height, color[4], border;
     int* current_game_state;
-    GLfloat percent_border;
+    float percent_border;
     MainMenuButton* buttons[num_button];
     SubMenu* submenus[num_submenus];
     ImageObject* images[num_images];

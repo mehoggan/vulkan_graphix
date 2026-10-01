@@ -35,7 +35,7 @@ void Player::setGameState(GameState* new_game_state) {
 }
 Tank* Player::getTarget() { return target; }
 Vertex Player::getEnemyPosition() { return enemy_position; }
-GLfloat* Player::getBalisticMatrix() { return balistic_matrix; }
+float* Player::getBalisticMatrix() { return balistic_matrix; }
 
 /*	SAVE FOR LATER NEED IN CALCULATING PHYSICS	*/
 /*	STATES = {	NEED_NEW_TARGET, FIND_TARGET,					*/
@@ -150,17 +150,17 @@ void Player::aiMainLogisticFunction() {
         }
     }
     if (state_of_ai == WALKING_IN) {
-        /*const GLfloat* velMatrix = getCurrentTank()->getTurretMatrix();
-        GLfloat tankAttributePower = first_acquired_power;
-        GLfloat powerBar = getCurrentTank()->getCurrentPower();
-        GLfloat scalar = game_state->getBalisticScalar();
-        GLfloat power = tankAttributePower*powerBar*scalar;
-        GLfloat mag = sqrt	(
+        /*const float* velMatrix = getCurrentTank()->getTurretMatrix();
+        float tankAttributePower = first_acquired_power;
+        float powerBar = getCurrentTank()->getCurrentPower();
+        float scalar = game_state->getBalisticScalar();
+        float power = tankAttributePower*powerBar*scalar;
+        float mag = sqrt	(
                                 pow((power*velMatrix[8]),2) +
                                 pow((power*velMatrix[9]),2)	+
                                 pow((power*velMatrix[10]),2)
                             );
-        GLfloat ang = first_acquired_pitch;*/
+        float ang = first_acquired_pitch;*/
         degrees_rotated = 0;
         game_state->currentPlayerFire();
         prev_state_of_ai = SHOT_LAST_ROUND;
@@ -171,7 +171,7 @@ void Player::aiMainLogisticFunction() {
     }
 }
 
-char Player::minimumYawAngle(GLfloat right_degrees, GLfloat left_degrees) {
+char Player::minimumYawAngle(float right_degrees, float left_degrees) {
     if (right_degrees < left_degrees) {
         return 'r';
     } else if (right_degrees >= left_degrees) {
@@ -202,7 +202,7 @@ void Player::setUpYawVectors() {
     /* THIS IS KEY FOR ALL CALCULATIONS TO LINE UP TANK WITH THE PROJECTILE
      * PATH */
     updateBalsticMatrix();
-    const GLfloat* matrix = getBalisticMatrix();
+    const float* matrix = getBalisticMatrix();
     Vertex v = getEnemyPosition();
 
     // Forumlate Perpendicular Vector
@@ -231,12 +231,12 @@ void Player::setUpYawVectors() {
         v2.compo_y = v1.compo_y;
         v2.compo_z = v1.compo_z;
     }
-    GLfloat magnitude_w1 =
+    float magnitude_w1 =
             sqrt((w1.compo_x * w1.compo_x) + (w1.compo_y * w1.compo_y) +
                  (w1.compo_z * w1.compo_z));
-    GLfloat scalar = (w1.compo_x * v2.compo_x + w1.compo_y * v2.compo_y +
-                      w1.compo_z * v2.compo_z) /
-                     (pow(static_cast<double>(magnitude_w1), 2.0));
+    float scalar = (w1.compo_x * v2.compo_x + w1.compo_y * v2.compo_y +
+                    w1.compo_z * v2.compo_z) /
+                   (pow(static_cast<double>(magnitude_w1), 2.0));
     w1.compo_x *= scalar;
     w1.compo_y *= scalar;
     w1.compo_z *= scalar;
@@ -310,8 +310,8 @@ void Player::setUpYawVectors() {
 }
 
 void Player::setUpPitchVectors() {
-    const GLfloat* matrix = getBalisticMatrix();
-    GLfloat* turret_matrix = getCurrentTank()->getTurretMatrix();
+    const float* matrix = getBalisticMatrix();
+    float* turret_matrix = getCurrentTank()->getTurretMatrix();
     pitch_vector.compo_x = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
                             turret_matrix[12]);
     pitch_vector.compo_y = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
@@ -326,23 +326,21 @@ void Player::setUpPitchVectors() {
     down_vector.compo_z = ((matrix[14] - 1000 * matrix[6]) - matrix[14]);
 }
 
-bool Player::calculateProjectilePhysics(GLfloat xerr,
-                                        GLfloat yerr,
-                                        GLfloat zerr) {
+bool Player::calculateProjectilePhysics(float xerr, float yerr, float zerr) {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
-    GLfloat percent_errory = yerr;
-    GLfloat percent_errorxz = xerr;
-    GLfloat numerator = game_state->getGlobalSettings()
-                                ->getCurrentTerrain()
-                                ->getActualSize();
-    GLfloat denominator =
+    float percent_errory = yerr;
+    float percent_errorxz = xerr;
+    float numerator = game_state->getGlobalSettings()
+                              ->getCurrentTerrain()
+                              ->getActualSize();
+    float denominator =
             game_state->getGlobalSettings()->getCurrentTerrain()->getScale();
-    GLfloat terrain_size = numerator / denominator;
-    GLfloat g = game_state->getGravity();  // Note: gravity is negative
-    GLfloat tank_attribute_power = getCurrentTank()->getPower();
-    GLfloat power_bar = getCurrentTank()->getCurrentPower();
-    GLfloat balistic_scalar = game_state->getBalisticScalar();
-    GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
+    float terrain_size = numerator / denominator;
+    float g = game_state->getGravity();  // Note: gravity is negative
+    float tank_attribute_power = getCurrentTank()->getPower();
+    float power_bar = getCurrentTank()->getCurrentPower();
+    float balistic_scalar = game_state->getBalisticScalar();
+    float speed = tank_attribute_power * power_bar * balistic_scalar;
 
     /****************************************************************************************/
     /*	Physics Calculations First (Formulas)
@@ -361,13 +359,13 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
                     glm::make_mat4(getCurrentTank()->getTurretMatrix()),
                     speed,
                     Projectile::c_muzzle_distance);
-    GLfloat xf = launch.origin.x;
-    GLfloat yf = launch.origin.y;
-    GLfloat zf = launch.origin.z;
-    GLfloat xe = getEnemyPosition().coord_x;
-    GLfloat ye = getEnemyPosition().coord_y;
-    GLfloat ze = getEnemyPosition().coord_z;
-    GLfloat t = 0;
+    float xf = launch.origin.x;
+    float yf = launch.origin.y;
+    float zf = launch.origin.z;
+    float xe = getEnemyPosition().coord_x;
+    float ye = getEnemyPosition().coord_y;
+    float ze = getEnemyPosition().coord_z;
+    float t = 0;
     bool on_target = false;
     while (yf > 0) {
         vulkan_graphix::Math::Vec3<float> const position =
@@ -383,9 +381,9 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
             break;
         }
 
-        GLfloat terrain_height = game_state->getGlobalSettings()
-                                         ->getCurrentTerrain()
-                                         ->getHeightAt(xf, zf);
+        float terrain_height = game_state->getGlobalSettings()
+                                       ->getCurrentTerrain()
+                                       ->getHeightAt(xf, zf);
         if (terrain_height >= yf) {
             break;
         }
@@ -397,11 +395,11 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
 
 void Player::displayProjectilePhysiscs() {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
-    GLfloat tank_attribute_power = getCurrentTank()->getPower();
-    GLfloat power_bar = getCurrentTank()->getCurrentPower();
-    GLfloat balistic_scalar = game_state->getBalisticScalar();
-    GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
-    GLfloat g = game_state->getGravity();  // Note: gravity is negative
+    float tank_attribute_power = getCurrentTank()->getPower();
+    float power_bar = getCurrentTank()->getCurrentPower();
+    float balistic_scalar = game_state->getBalisticScalar();
+    float speed = tank_attribute_power * power_bar * balistic_scalar;
+    float g = game_state->getGravity();  // Note: gravity is negative
 
     // Same launch a real shot gets (Projectile's constructor) - this used to
     // start the simulated shell 200 units out along the barrel while a real
@@ -412,14 +410,14 @@ void Player::displayProjectilePhysiscs() {
                     glm::make_mat4(getCurrentTank()->getTurretMatrix()),
                     speed,
                     Projectile::c_muzzle_distance);
-    GLfloat xf = launch.origin.x;
-    GLfloat yf = launch.origin.y;
-    GLfloat zf = launch.origin.z;
-    GLfloat xe = getEnemyPosition().coord_x;
-    GLfloat ye = getEnemyPosition().coord_y;
-    GLfloat ze = getEnemyPosition().coord_z;
+    float xf = launch.origin.x;
+    float yf = launch.origin.y;
+    float zf = launch.origin.z;
+    float xe = getEnemyPosition().coord_x;
+    float ye = getEnemyPosition().coord_y;
+    float ze = getEnemyPosition().coord_z;
 
-    GLfloat t = 0;
+    float t = 0;
     while (yf > 0) {
         vulkan_graphix::Math::Vec3<float> const position =
                 vulkan_graphix::Ballistics::positionAt(launch, g, t);
@@ -447,28 +445,24 @@ void Player::displayProjectilePhysiscs() {
 int Player::getAIState() { return state_of_ai; }
 
 void Player::restoreTurretTo0Degrees() {
-    GLfloat restore_angle = getCurrentTank()->getTurretDegrees();
+    float restore_angle = getCurrentTank()->getTurretDegrees();
     getCurrentTank()->rotateTurret(-1 * restore_angle);
 }
 
-void Player::yawLeft(GLfloat degrees) {
-    getCurrentTank()->rotateHead(-degrees);
-}
+void Player::yawLeft(float degrees) { getCurrentTank()->rotateHead(-degrees); }
 
-void Player::yawRight(GLfloat degrees) {
-    getCurrentTank()->rotateHead(degrees);
-}
+void Player::yawRight(float degrees) { getCurrentTank()->rotateHead(degrees); }
 
-void Player::pitchUp(GLfloat degrees) {
+void Player::pitchUp(float degrees) {
     getCurrentTank()->rotateTurret(degrees);
 }
 
-void Player::pitchDown(GLfloat degrees) {
+void Player::pitchDown(float degrees) {
     getCurrentTank()->rotateTurret(-degrees);
 }
 
 void Player::drawTestLinesandPlanes() {
-    GLfloat scalar = 1000;
+    float scalar = 1000;
     /*	START BALISTIC AXES	*/
     glBegin(GL_LINES);
     glColor3f(Red);
@@ -556,7 +550,7 @@ void Player::drawTestLinesandPlanes() {
         /*	END	PROJECTILE PATH		*/
 
         glBegin(GL_QUADS);
-        const GLfloat* matrix = getBalisticMatrix();
+        const float* matrix = getBalisticMatrix();
         glColor4f(Pink, 0.75f);
         glVertex3f(matrix[12] - 1000 * matrix[0],
                    matrix[13],
@@ -573,7 +567,7 @@ void Player::drawTestLinesandPlanes() {
         glEnd();
 
         glBegin(GL_QUADS);
-        const GLfloat* t_matrix = getCurrentTank()->getTurretMatrix();
+        const float* t_matrix = getCurrentTank()->getTurretMatrix();
         glColor4f(Red, 0.75f);
         glVertex3f(t_matrix[12] - 1000 * t_matrix[0],
                    t_matrix[13] - 1000 * t_matrix[1],

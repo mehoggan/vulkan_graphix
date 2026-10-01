@@ -10,7 +10,7 @@ const int tank_f_armor = 8;
 const int tank_f_speed = 20;
 
 TankF::TankF() = default;
-TankF::TankF(GLfloat x, GLfloat y, GLfloat z) {
+TankF::TankF(float x, float y, float z) {
     initBody();
     initHead();
     initTurret();

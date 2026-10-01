@@ -1,5 +1,6 @@
 #include "vulkan_earth/MainMenuButton.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/SubMenu.h"
@@ -13,14 +14,14 @@ extern void playSFX(int sfx);
 MainMenuButton::MainMenuButton() = default;
 
 MainMenuButton::MainMenuButton(int id,
-                               GLfloat new_x_pos,
-                               GLfloat new_y_pos,
-                               GLfloat new_z_pos,
-                               GLfloat red,
-                               GLfloat green,
-                               GLfloat blue,
-                               GLint new_width,
-                               GLint new_height,
+                               float new_x_pos,
+                               float new_y_pos,
+                               float new_z_pos,
+                               float red,
+                               float green,
+                               float blue,
+                               std::int32_t new_width,
+                               std::int32_t new_height,
                                const std::string& new_caption,
                                SubMenu* new_submenu) {
     uniqueidentifier = id;
@@ -41,9 +42,8 @@ MainMenuButton::MainMenuButton(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     label = new TextObject(caption,
                            label_x_pos,
@@ -150,13 +150,13 @@ void MainMenuButton::draw() {
 }
 
 int MainMenuButton::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-GLfloat MainMenuButton::getXPos() { return x_pos; }
-GLfloat MainMenuButton::getYPos() { return y_pos; }
-GLfloat MainMenuButton::getHeight() { return height; }
-GLfloat MainMenuButton::getWidth() { return width; }
+float MainMenuButton::getXPos() { return x_pos; }
+float MainMenuButton::getYPos() { return y_pos; }
+float MainMenuButton::getHeight() { return height; }
+float MainMenuButton::getWidth() { return width; }
 SubMenu* MainMenuButton::getSubMenu() { return submenu; }
-GLfloat* MainMenuButton::getColor() { return &color[0]; }
-void MainMenuButton::setColor(GLfloat r, GLfloat g, GLfloat b) {
+float* MainMenuButton::getColor() { return &color[0]; }
+void MainMenuButton::setColor(float r, float g, float b) {
     color[0] = r;
     color[1] = g;
     color[2] = b;
@@ -170,9 +170,8 @@ void MainMenuButton::setLabel(const std::string& c) {
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
 
     label = new TextObject(caption,
                            label_x_pos,

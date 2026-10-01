@@ -31,20 +31,20 @@ const int player_attributes = 4;
 class ReadyMenu {
 public:
     ReadyMenu();
-    ReadyMenu(GLfloat new_width,
-              GLfloat new_height,
-              GLfloat new_percent_border,
+    ReadyMenu(float new_width,
+              float new_height,
+              float new_percent_border,
               GlobalSettings* new_global_settings,
               PlayerFactory* new_player_factory,
               int* game_state);
     ~ReadyMenu();
-    GLfloat* getPos();
-    GLfloat getHeight();
-    void setHeight(GLfloat new_height);
-    GLfloat getWidth();
-    void setWidth(GLfloat new_width);
-    GLfloat* getColor();
-    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    float* getPos();
+    float getHeight();
+    void setHeight(float new_height);
+    float getWidth();
+    void setWidth(float new_width);
+    float* getColor();
+    void setColor(float r, float g, float b, float a);
     void buttonTest(int x, int y, int button_down);
     void keyTest(unsigned char key);
     void draw();
@@ -57,10 +57,10 @@ public:
     void updateNumPlayers(int n);
 
 private:
-    GLfloat pos[3], width, height, color[4], border;
-    GLfloat percent_border;
-    GLfloat tank_prv_scr_pos[3], tank_prv_scr_width, tank_prv_scr_height;
-    GLfloat tank_prv_scr_color[3];
+    float pos[3], width, height, color[4], border;
+    float percent_border;
+    float tank_prv_scr_pos[3], tank_prv_scr_width, tank_prv_scr_height;
+    float tank_prv_scr_color[3];
     MainMenuButton* buttons[num_buttons];
     ImageObject* stat_images[num_stat_images];
     ControlItem* control_items[num_control_items];

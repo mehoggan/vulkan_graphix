@@ -1,5 +1,6 @@
 #include "vulkan_earth/SubMenuLandscape.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -23,16 +24,16 @@ extern void playSFX(int sfx);
 SubMenuLandscape::SubMenuLandscape() = default;
 
 SubMenuLandscape::SubMenuLandscape(int id,
-                                   GLfloat new_x_pos,
-                                   GLfloat new_y_pos,
-                                   GLfloat new_z_pos,
-                                   GLfloat red,
-                                   GLfloat green,
-                                   GLfloat blue,
-                                   GLint new_width,
-                                   GLint new_height,
+                                   float new_x_pos,
+                                   float new_y_pos,
+                                   float new_z_pos,
+                                   float red,
+                                   float green,
+                                   float blue,
+                                   std::int32_t new_width,
+                                   std::int32_t new_height,
                                    const std::string& new_caption,
-                                   GLfloat new_percent_border) {
+                                   float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -61,8 +62,8 @@ SubMenuLandscape::SubMenuLandscape(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -131,28 +132,30 @@ SubMenuLandscape::~SubMenuLandscape() {
 
 int SubMenuLandscape::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuLandscape::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuLandscape::getXPos() { return x_pos; }
-void SubMenuLandscape::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuLandscape::getYPos() { return y_pos; }
-void SubMenuLandscape::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuLandscape::getZPos() { return z_pos; }
-void SubMenuLandscape::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuLandscape::getRed() { return color[0]; }
-void SubMenuLandscape::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuLandscape::getGreen() { return color[1]; }
-void SubMenuLandscape::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuLandscape::getBlue() { return color[2]; }
-void SubMenuLandscape::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuLandscape::getWidth() { return width; }
-void SubMenuLandscape::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuLandscape::getHeight() { return height; }
-void SubMenuLandscape::setHeight(GLint new_height) { height = new_height; }
+float SubMenuLandscape::getXPos() { return x_pos; }
+void SubMenuLandscape::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuLandscape::getYPos() { return y_pos; }
+void SubMenuLandscape::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuLandscape::getZPos() { return z_pos; }
+void SubMenuLandscape::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuLandscape::getRed() { return color[0]; }
+void SubMenuLandscape::setRed(float red) { color[0] = red; }
+float SubMenuLandscape::getGreen() { return color[1]; }
+void SubMenuLandscape::setGreen(float green) { color[1] = green; }
+float SubMenuLandscape::getBlue() { return color[2]; }
+void SubMenuLandscape::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuLandscape::getWidth() { return width; }
+void SubMenuLandscape::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuLandscape::getHeight() { return height; }
+void SubMenuLandscape::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuLandscape::getCaption() { return caption; }
 void SubMenuLandscape::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuLandscape::getPerecentBorder() { return percent_border; }
-void SubMenuLandscape::setPercentBorder(GLfloat percent) {
+float SubMenuLandscape::getPerecentBorder() { return percent_border; }
+void SubMenuLandscape::setPercentBorder(float percent) {
     percent_border = percent;
 }
 
@@ -199,8 +202,8 @@ void SubMenuLandscape::draw() {
         }
     }
 
-    GLfloat border_x = x_pos + 0.03 * width;
-    GLfloat border_y = y_pos - 0.07 * height;
+    float border_x = x_pos + 0.03 * width;
+    float border_y = y_pos - 0.07 * height;
 
     // top-left
     glBegin(GL_QUADS);

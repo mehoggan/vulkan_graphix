@@ -3,7 +3,7 @@
 
 Vertex::Vertex() = default;
 
-Vertex::Vertex(GLfloat x, GLfloat y, GLfloat z) {
+Vertex::Vertex(float x, float y, float z) {
     coord_x = x;
     coord_y = y;
     coord_z = z;

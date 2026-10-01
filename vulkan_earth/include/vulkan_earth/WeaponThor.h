@@ -11,7 +11,7 @@ public:
     WeaponThor(int id);
     ~WeaponThor() override;
     WeaponThor* getWeaponInstance() override;
-    void causeEffectToTank(GLfloat distance, Tank* tank) override;
+    void causeEffectToTank(float distance, Tank* tank) override;
     void playFireSFX() override;
     void playExplosionSFX() override;
 };

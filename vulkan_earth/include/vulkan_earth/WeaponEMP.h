@@ -11,7 +11,7 @@ public:
     WeaponEMP(int id);
     ~WeaponEMP() override;
     WeaponEMP* getWeaponInstance() override;
-    void causeEffectToTank(GLfloat distance, Tank* tank) override;
+    void causeEffectToTank(float distance, Tank* tank) override;
     void playExplosionSFX() override;
 };
 

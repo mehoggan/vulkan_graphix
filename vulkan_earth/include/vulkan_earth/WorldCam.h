@@ -7,16 +7,16 @@
 class WorldCam {
 public:
     WorldCam();
-    WorldCam(GLfloat x, GLfloat y, GLfloat z);
+    WorldCam(float x, float y, float z);
     ~WorldCam();
     void view();
     void moveCam(float x, float y, float z);
-    GLfloat* getMatrix();
+    float* getMatrix();
     void setShakeCam(int magnitude);
     void updateShakeCam();
 
 private:
-    GLfloat matrix[16];
+    float matrix[16];
     int shake_cam_pos[3];
 };
 

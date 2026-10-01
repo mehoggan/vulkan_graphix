@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include <string>
 #include "stdio.h"
 
@@ -9,35 +10,35 @@
 class ImageObject {
 public:
     ImageObject();
-    ImageObject(GLfloat new_x_pos,
-                GLfloat new_y_pos,
-                GLfloat new_z_pos,
-                GLint new_width,
-                GLint new_height,
-                GLfloat border,
-                GLint i_width,
-                GLint i_height,
+    ImageObject(float new_x_pos,
+                float new_y_pos,
+                float new_z_pos,
+                std::int32_t new_width,
+                std::int32_t new_height,
+                float border,
+                std::int32_t i_width,
+                std::int32_t i_height,
                 const std::string& filename);
     ~ImageObject();
-    GLfloat getXpos();
-    GLfloat getYpos();
-    GLfloat getZpos();
-    GLint getWidth();
-    GLint getHeight();
-    void setXpos(GLfloat x);
-    void setYpos(GLfloat y);
-    void setZpos(GLfloat z);
-    void setWidth(GLint w);
-    void setHeight(GLint h);
+    float getXpos();
+    float getYpos();
+    float getZpos();
+    std::int32_t getWidth();
+    std::int32_t getHeight();
+    void setXpos(float x);
+    void setYpos(float y);
+    void setZpos(float z);
+    void setWidth(std::int32_t w);
+    void setHeight(std::int32_t h);
     void draw();
 
 private:
-    GLfloat x_pos;
-    GLfloat y_pos;
-    GLfloat z_pos;
-    GLint width;
-    GLint height;
-    GLfloat border_size;
-    GLuint texture;
+    float x_pos;
+    float y_pos;
+    float z_pos;
+    std::int32_t width;
+    std::int32_t height;
+    float border_size;
+    std::uint32_t texture;
 };
 #endif

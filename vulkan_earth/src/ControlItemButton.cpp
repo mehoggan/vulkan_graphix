@@ -1,5 +1,6 @@
 #include "vulkan_earth/ControlItemButton.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -18,14 +19,14 @@ extern void playSFX(int sfx);
 ControlItemButton::ControlItemButton() = default;
 
 ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
-                                     GLfloat new_x_pos,
-                                     GLfloat new_y_pos,
-                                     GLfloat new_z_pos,
-                                     GLfloat red,
-                                     GLfloat green,
-                                     GLfloat blue,
-                                     GLint new_width,
-                                     GLint new_height,
+                                     float new_x_pos,
+                                     float new_y_pos,
+                                     float new_z_pos,
+                                     float red,
+                                     float green,
+                                     float blue,
+                                     std::int32_t new_width,
+                                     std::int32_t new_height,
                                      const std::string& new_caption) {
     parent = new_parent;
 
@@ -49,9 +50,8 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     label = new TextObject(caption,
                            label_x_pos,
@@ -148,10 +148,10 @@ void ControlItemButton::draw() {
     glPopMatrix();
 }
 
-GLfloat ControlItemButton::getXPos() { return x_pos; }
-GLfloat ControlItemButton::getYPos() { return y_pos; }
-GLfloat ControlItemButton::getHeight() { return height; }
-GLfloat ControlItemButton::getWidth() { return width; }
+float ControlItemButton::getXPos() { return x_pos; }
+float ControlItemButton::getYPos() { return y_pos; }
+float ControlItemButton::getHeight() { return height; }
+float ControlItemButton::getWidth() { return width; }
 bool ControlItemButton::isToggled() { return toggled; }
 void ControlItemButton::updateButtonState() {
     if (toggled)
@@ -164,9 +164,9 @@ void ControlItemButton::setOptionText(int index) {}
 void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
 
-void ControlItemButton::mouseClickEvent(GLint x,
-                                        GLint y,
-                                        GLint state,
+void ControlItemButton::mouseClickEvent(std::int32_t x,
+                                        std::int32_t y,
+                                        std::int32_t state,
                                         bool still_over_control_item_button) {
     if (state) {
         if ((x >= (x_pos) && x <= ((x_pos) + (width))) &&

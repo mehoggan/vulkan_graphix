@@ -19,10 +19,10 @@ WeaponThor::WeaponThor(int id) {
     damage = 200;
     special_number = 1;
 
-    GLfloat temp_colors1[3] = {White};
-    GLfloat temp_colors2[3] = {MediumSlateBlue};
-    GLfloat temp_colors3[3] = {White};
-    GLfloat temp_colors4[3] = {MediumBlue};
+    float temp_colors1[3] = {White};
+    float temp_colors2[3] = {MediumSlateBlue};
+    float temp_colors3[3] = {White};
+    float temp_colors4[3] = {MediumBlue};
     for (int i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
@@ -35,7 +35,7 @@ WeaponThor::~WeaponThor() = default;
 WeaponThor* WeaponThor::getWeaponInstance() {
     return new WeaponThor(uniqueidentifier);
 }
-void WeaponThor::causeEffectToTank(GLfloat distance, Tank* tank) {
+void WeaponThor::causeEffectToTank(float distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->setDurationParalyze(special_number);
         tank->dealDamage(getDamage() * (1 - (distance / (getRadius() * 100))));

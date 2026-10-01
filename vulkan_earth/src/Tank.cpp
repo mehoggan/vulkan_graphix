@@ -74,7 +74,7 @@ void Tank::printBodyMatrix() {
          << endl;
 }
 
-void Tank::setTankPos(GLfloat x, GLfloat y, GLfloat z) {
+void Tank::setTankPos(float x, float y, float z) {
     // Keep Track of Tanks Position for Falling Damage
     previous_height = current_height;
     current_height = y;
@@ -120,7 +120,7 @@ void Tank::resetTurret() {
                         turret_offset[2] * head_matrix[10];
 }
 
-GLfloat Tank::calcAngleBetweenVectors(Vector one, Vector two) {
+float Tank::calcAngleBetweenVectors(Vector one, Vector two) {
     return vulkan_graphix::TankOrientation::angleBetweenDegrees(
             vulkan_graphix::Math::Vec3<float>(
                     one.compo_x, one.compo_y, one.compo_z),
@@ -161,7 +161,7 @@ void Tank::orientTank(Normal* n) {
     updateHitBox();
 }
 
-void Tank::rotateHead(GLfloat degrees) {
+void Tank::rotateHead(float degrees) {
     rotate_degrees += degrees;
     if (rotate_degrees > 360) {
         rotate_degrees -= 360;
@@ -169,7 +169,7 @@ void Tank::rotateHead(GLfloat degrees) {
         rotate_degrees += 360;
     }
 
-    GLfloat angle = calcAngleBetweenVectors(
+    float angle = calcAngleBetweenVectors(
             Vector(head_matrix[4], head_matrix[5], head_matrix[6]),
             Vector(turret_matrix[4], turret_matrix[5], turret_matrix[6]));
 
@@ -199,7 +199,7 @@ void Tank::rotateHead(GLfloat degrees) {
     updateHitBox();
 }
 
-void Tank::rotateTurret(GLfloat degrees) {
+void Tank::rotateTurret(float degrees) {
     if ((turret_degrees + degrees <= 90) && (turret_degrees + degrees >= 0)) {
         turret_degrees += degrees;
         glPushMatrix();
@@ -218,25 +218,22 @@ void Tank::rotateTurret(GLfloat degrees) {
     }
 }
 
-bool Tank::checkCollision(GLfloat x, GLfloat y, GLfloat z) {
+bool Tank::checkCollision(float x, float y, float z) {
     // First check distance from tank, then check each face of hit box
     if (sqrt(pow((x - tank_pos.coord_x), 2) + pow((y - tank_pos.coord_y), 2) +
              pow((z - tank_pos.coord_z), 2)) < 50000000) {
         // top
-        GLfloat plane_x = tank_pos.coord_x +
-                          hit_box_length / 2.0 * at.compo_x +
-                          hit_box_width / 2.0 * right.compo_x +
-                          hit_box_height / 2.0 * up.compo_x;
-        GLfloat plane_y = tank_pos.coord_y +
-                          hit_box_length / 2.0 * at.compo_y +
-                          hit_box_width / 2.0 * right.compo_y +
-                          hit_box_height / 2.0 * up.compo_y;
-        GLfloat plane_z = tank_pos.coord_z +
-                          hit_box_length / 2.0 * at.compo_z +
-                          hit_box_width / 2.0 * right.compo_z +
-                          hit_box_height / 2.0 * up.compo_z;
-        GLfloat d = up.compo_x * plane_x + up.compo_y * plane_y +
-                    up.compo_z * plane_z;
+        float plane_x = tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
+                        hit_box_width / 2.0 * right.compo_x +
+                        hit_box_height / 2.0 * up.compo_x;
+        float plane_y = tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
+                        hit_box_width / 2.0 * right.compo_y +
+                        hit_box_height / 2.0 * up.compo_y;
+        float plane_z = tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
+                        hit_box_width / 2.0 * right.compo_z +
+                        hit_box_height / 2.0 * up.compo_z;
+        float d = up.compo_x * plane_x + up.compo_y * plane_y +
+                  up.compo_z * plane_z;
         if (up.compo_x * x + up.compo_y * y + up.compo_z * z - d <= 0) {
             // right
             plane_x = tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
@@ -343,7 +340,7 @@ void Tank::tankRevive() {
     tank_alive = true;
 }
 
-void Tank::adjustPower(GLfloat amount) {
+void Tank::adjustPower(float amount) {
     if (((current_power + amount) <= 10.0) &&
         ((current_power + amount) >= 0.0)) {
         current_power += amount;
@@ -363,7 +360,7 @@ void Tank::initDuration() {
     delete float_gen;
 }
 
-void Tank::setBodyColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+void Tank::setBodyColor(float r, float g, float b, float a) {
     body_color[0] = r;
     body_color[1] = g;
     body_color[2] = b;
@@ -375,7 +372,7 @@ void Tank::setBodyScale(float x, float y, float z) {
     body_scale[2] = z;
 }
 
-void Tank::setHeadColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+void Tank::setHeadColor(float r, float g, float b, float a) {
     head_color[0] = r;
     head_color[1] = g;
     head_color[2] = b;
@@ -387,7 +384,7 @@ void Tank::setHeadScale(float x, float y, float z) {
     head_scale[2] = z;
 }
 
-void Tank::setTurretColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+void Tank::setTurretColor(float r, float g, float b, float a) {
     turret_color[0] = r;
     turret_color[1] = g;
     turret_color[2] = b;
@@ -399,7 +396,7 @@ void Tank::setTurretScale(float x, float y, float z) {
     turret_scale[2] = z;
 }
 
-void Tank::setWheelColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+void Tank::setWheelColor(float r, float g, float b, float a) {
     wheel_color[0] = r;
     wheel_color[1] = g;
     wheel_color[2] = b;
@@ -460,7 +457,7 @@ int Tank::getBaseSpeed() { return 0; }
 std::string Tank::getName() { return "Huh?"; }
 Normal Tank::getAlignmentVector() { return alignment_vector; }
 Normal Tank::getRotateAbout() { return rotate_about; }
-GLfloat Tank::getTurretDegrees() { return turret_degrees; }
+float Tank::getTurretDegrees() { return turret_degrees; }
 
 void Tank::draw() {
     glPushMatrix();
@@ -730,23 +727,23 @@ void Tank::drawTankHitBox() {
     glEnd();
 }
 
-GLfloat Tank::getCurrentPower() { return current_power; }
+float Tank::getCurrentPower() { return current_power; }
 int Tank::getPreviousPower() { return previous_power; }
 int Tank::getPreviousAngle() { return previous_angle; }
-GLfloat* Tank::getProjectileLandPos() { return projectile_land_pos; }
+float* Tank::getProjectileLandPos() { return projectile_land_pos; }
 void Tank::setPreviousPower(int new_previous_power) {
     previous_power = new_previous_power;
 }
 void Tank::setPreviousAngle(int new_previous_angle) {
     previous_angle = new_previous_angle;
 }
-void Tank::setProjectileLandPos(GLfloat x, GLfloat y) {
+void Tank::setProjectileLandPos(float x, float y) {
     projectile_land_pos[0] = x;
     projectile_land_pos[1] = y;
 }
 
 // remove later probably
-void Tank::rotateWheel(GLfloat degrees) {
+void Tank::rotateWheel(float degrees) {
     if (!(wheel_degrees + degrees > 90) || (wheel_degrees - degrees < 0)) {
         wheel_degrees += degrees;
         glPushMatrix();
@@ -971,20 +968,20 @@ void Tank::initWheel() {
 }
 
 // GETTERS
-const GLfloat* Tank::getBodyMatrix() { return &body_matrix[0]; }
-const GLfloat* Tank::getBodyColor() { return &body_color[0]; }
+const float* Tank::getBodyMatrix() { return &body_matrix[0]; }
+const float* Tank::getBodyColor() { return &body_color[0]; }
 float* Tank::getBodyScale() { return &body_scale[0]; }
 
-const GLfloat* Tank::getHeadMatrix() { return &head_matrix[0]; }
-const GLfloat* Tank::getHeadColor() { return &head_color[0]; }
+const float* Tank::getHeadMatrix() { return &head_matrix[0]; }
+const float* Tank::getHeadColor() { return &head_color[0]; }
 float* Tank::getHeadScale() { return &head_scale[0]; }
 
-GLfloat* Tank::getTurretMatrix() { return &turret_matrix[0]; }
-const GLfloat* Tank::getTurretColor() { return &turret_color[0]; }
+float* Tank::getTurretMatrix() { return &turret_matrix[0]; }
+const float* Tank::getTurretColor() { return &turret_color[0]; }
 float* Tank::getTurretScale() { return &turret_scale[0]; }
 
-const GLfloat* Tank::getWheelMatrix() { return &wheel_matrix[0]; }
-const GLfloat* Tank::getWheelColor() { return &wheel_color[0]; }
+const float* Tank::getWheelMatrix() { return &wheel_matrix[0]; }
+const float* Tank::getWheelColor() { return &wheel_color[0]; }
 float* Tank::getWheelScale() { return &wheel_scale[0]; }
 
 int Tank::getHP() { return hp; }

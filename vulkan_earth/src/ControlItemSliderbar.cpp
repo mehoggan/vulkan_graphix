@@ -1,5 +1,6 @@
 #include "vulkan_earth/ControlItemSliderbar.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/Sound.h"
@@ -9,14 +10,14 @@
 extern void playSFX(int sfx);
 
 ControlItemSliderbar::ControlItemSliderbar() = default;
-ControlItemSliderbar::ControlItemSliderbar(GLfloat new_x_pos,
-                                           GLfloat new_y_pos,
-                                           GLfloat new_z_pos,
-                                           GLfloat red,
-                                           GLfloat green,
-                                           GLfloat blue,
-                                           GLint new_width,
-                                           GLint new_height,
+ControlItemSliderbar::ControlItemSliderbar(float new_x_pos,
+                                           float new_y_pos,
+                                           float new_z_pos,
+                                           float red,
+                                           float green,
+                                           float blue,
+                                           std::int32_t new_width,
+                                           std::int32_t new_height,
                                            const std::string& new_caption,
                                            const std::string& menu_string,
                                            int slider_starting_index) {
@@ -69,8 +70,8 @@ ControlItemSliderbar::ControlItemSliderbar(GLfloat new_x_pos,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = bar_x_pos;
-    GLfloat label_y_pos = y_pos - height * 0.45;
+    float label_x_pos = bar_x_pos;
+    float label_y_pos = y_pos - height * 0.45;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     label = new TextObject(caption,
                            label_x_pos,
@@ -268,14 +269,14 @@ void ControlItemSliderbar::draw() {
     option_text->draw();
 }
 
-GLfloat ControlItemSliderbar::getXPos() { return x_pos; }
-GLfloat ControlItemSliderbar::getYPos() { return y_pos; }
-GLfloat ControlItemSliderbar::getHeight() { return height; }
-GLfloat ControlItemSliderbar::getWidth() { return width; }
-GLfloat ControlItemSliderbar::getBarXPos() { return bar_x_pos; }
-GLfloat ControlItemSliderbar::getInterval() { return interval; }
-GLfloat ControlItemSliderbar::getSliderXPos() { return slider_x_pos; }
-void ControlItemSliderbar::setSliderXPos(GLfloat x) { slider_x_pos = x; }
+float ControlItemSliderbar::getXPos() { return x_pos; }
+float ControlItemSliderbar::getYPos() { return y_pos; }
+float ControlItemSliderbar::getHeight() { return height; }
+float ControlItemSliderbar::getWidth() { return width; }
+float ControlItemSliderbar::getBarXPos() { return bar_x_pos; }
+float ControlItemSliderbar::getInterval() { return interval; }
+float ControlItemSliderbar::getSliderXPos() { return slider_x_pos; }
+void ControlItemSliderbar::setSliderXPos(float x) { slider_x_pos = x; }
 std::string ControlItemSliderbar::collectData() { return current_option; }
 
 void ControlItemSliderbar::setOptionText(const std::string& new_text) {}
@@ -286,8 +287,8 @@ void ControlItemSliderbar::setOptionText(int index) {
     for (char ch : current_option) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + (width / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height * 0.45;
+    float label_x_pos = x_pos + (width / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height * 0.45;
     delete option_text;
     option_text = new TextObject(current_option,
                                  label_x_pos,
@@ -302,9 +303,9 @@ void ControlItemSliderbar::setOptionText(int index) {
 }
 
 void ControlItemSliderbar::mouseClickEvent(
-        GLint x,
-        GLint y,
-        GLint state,
+        std::int32_t x,
+        std::int32_t y,
+        std::int32_t state,
         bool still_over_control_item_sliderbar) {
     if (state == 1) {
         // check if the click is on the slider

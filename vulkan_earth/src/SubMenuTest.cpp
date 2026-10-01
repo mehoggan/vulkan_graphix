@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuTest.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/SubMenu.h"
@@ -10,16 +11,16 @@ using namespace std;
 SubMenuTest::SubMenuTest() = default;
 
 SubMenuTest::SubMenuTest(int id,
-                         GLfloat new_x_pos,
-                         GLfloat new_y_pos,
-                         GLfloat new_z_pos,
-                         GLfloat red,
-                         GLfloat green,
-                         GLfloat blue,
-                         GLint new_width,
-                         GLint new_height,
+                         float new_x_pos,
+                         float new_y_pos,
+                         float new_z_pos,
+                         float red,
+                         float green,
+                         float blue,
+                         std::int32_t new_width,
+                         std::int32_t new_height,
                          const std::string& new_caption,
-                         GLfloat new_percent_border) {
+                         float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -38,8 +39,8 @@ SubMenuTest::SubMenuTest(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -56,30 +57,28 @@ SubMenuTest::~SubMenuTest() = default;
 
 int SubMenuTest::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuTest::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuTest::getXPos() { return x_pos; }
-void SubMenuTest::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuTest::getYPos() { return y_pos; }
-void SubMenuTest::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuTest::getZPos() { return z_pos; }
-void SubMenuTest::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuTest::getRed() { return color[0]; }
-void SubMenuTest::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuTest::getGreen() { return color[1]; }
-void SubMenuTest::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuTest::getBlue() { return color[2]; }
-void SubMenuTest::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuTest::getWidth() { return width; }
-void SubMenuTest::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuTest::getHeight() { return height; }
-void SubMenuTest::setHeight(GLint new_height) { height = new_height; }
+float SubMenuTest::getXPos() { return x_pos; }
+void SubMenuTest::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuTest::getYPos() { return y_pos; }
+void SubMenuTest::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuTest::getZPos() { return z_pos; }
+void SubMenuTest::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuTest::getRed() { return color[0]; }
+void SubMenuTest::setRed(float red) { color[0] = red; }
+float SubMenuTest::getGreen() { return color[1]; }
+void SubMenuTest::setGreen(float green) { color[1] = green; }
+float SubMenuTest::getBlue() { return color[2]; }
+void SubMenuTest::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuTest::getWidth() { return width; }
+void SubMenuTest::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuTest::getHeight() { return height; }
+void SubMenuTest::setHeight(std::int32_t new_height) { height = new_height; }
 std::string SubMenuTest::getCaption() { return caption; }
 void SubMenuTest::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuTest::getPerecentBorder() { return percent_border; }
-void SubMenuTest::setPercentBorder(GLfloat percent) {
-    percent_border = percent;
-}
+float SubMenuTest::getPerecentBorder() { return percent_border; }
+void SubMenuTest::setPercentBorder(float percent) { percent_border = percent; }
 
 void SubMenuTest::draw() {
     glBegin(GL_QUADS);

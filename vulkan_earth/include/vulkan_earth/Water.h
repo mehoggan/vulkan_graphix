@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <vector>
 #include "vulkan_earth/Normal.h"
 #include "vulkan_earth/TexCoord.h"
@@ -20,34 +21,34 @@ public:
     void initData();
     void prepareData(int steps, int increase, float radius, int random_jump);
     void calcAverageofSixNormals(Vertex* v_0,
-                                 GLfloat x1,
-                                 GLfloat y1,
-                                 GLfloat z1,
-                                 GLfloat x2,
-                                 GLfloat y2,
-                                 GLfloat z2,
-                                 GLfloat x3,
-                                 GLfloat y3,
-                                 GLfloat z3,
-                                 GLfloat x4,
-                                 GLfloat y4,
-                                 GLfloat z4,
-                                 GLfloat x5,
-                                 GLfloat y5,
-                                 GLfloat z5,
-                                 GLfloat x6,
-                                 GLfloat y6,
-                                 GLfloat z6,
+                                 float x1,
+                                 float y1,
+                                 float z1,
+                                 float x2,
+                                 float y2,
+                                 float z2,
+                                 float x3,
+                                 float y3,
+                                 float z3,
+                                 float x4,
+                                 float y4,
+                                 float z4,
+                                 float x5,
+                                 float y5,
+                                 float z5,
+                                 float x6,
+                                 float y6,
+                                 float z6,
                                  Normal* n);
     void verifyVBOs();
     void prepTerrain();
     void prepareData();
     void terrainGen(int steps, int increase, float radius, int random_jump);
-    GLint getActualSize();
-    GLint getScale();
+    std::int32_t getActualSize();
+    std::int32_t getScale();
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
-    GLuint loadTexture(const char* filename, int width, int height);
+    std::uint32_t loadTexture(const char* filename, int width, int height);
 
 private:
     VBOQualifer* vbo_qualify;
@@ -59,11 +60,11 @@ private:
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
     std::vector<TexCoord> tex_coord;
-    GLuint color_texture;
-    GLuint normal_texture;
-    std::vector<GLfloat> material_specular;
-    std::vector<GLfloat> material_shininess;
-    std::vector<GLfloat> material_diffuse;
+    std::uint32_t color_texture;
+    std::uint32_t normal_texture;
+    std::vector<float> material_specular;
+    std::vector<float> material_shininess;
+    std::vector<float> material_diffuse;
     void configVBOs();
     unsigned int vertex_vbo_id;
     unsigned int normal_vbo_id;
@@ -81,8 +82,8 @@ private:
     PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb;      // map VBO procedure
     PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb;  // unmap VBO procedure
     Shader* shader;
-    GLint timer_loc;
-    GLfloat timer;
+    std::int32_t timer_loc;
+    float timer;
 };
 
 #endif /*	WATER_H_	*/

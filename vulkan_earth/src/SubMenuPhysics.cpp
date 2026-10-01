@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuPhysics.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,16 +14,16 @@ using namespace std;
 SubMenuPhysics::SubMenuPhysics() = default;
 
 SubMenuPhysics::SubMenuPhysics(int id,
-                               GLfloat new_x_pos,
-                               GLfloat new_y_pos,
-                               GLfloat new_z_pos,
-                               GLfloat red,
-                               GLfloat green,
-                               GLfloat blue,
-                               GLint new_width,
-                               GLint new_height,
+                               float new_x_pos,
+                               float new_y_pos,
+                               float new_z_pos,
+                               float red,
+                               float green,
+                               float blue,
+                               std::int32_t new_width,
+                               std::int32_t new_height,
                                const std::string& new_caption,
-                               GLfloat new_percent_border) {
+                               float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -41,8 +42,8 @@ SubMenuPhysics::SubMenuPhysics(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -95,28 +96,30 @@ SubMenuPhysics::~SubMenuPhysics() {
 
 int SubMenuPhysics::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuPhysics::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuPhysics::getXPos() { return x_pos; }
-void SubMenuPhysics::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuPhysics::getYPos() { return y_pos; }
-void SubMenuPhysics::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuPhysics::getZPos() { return z_pos; }
-void SubMenuPhysics::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuPhysics::getRed() { return color[0]; }
-void SubMenuPhysics::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuPhysics::getGreen() { return color[1]; }
-void SubMenuPhysics::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuPhysics::getBlue() { return color[2]; }
-void SubMenuPhysics::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuPhysics::getWidth() { return width; }
-void SubMenuPhysics::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuPhysics::getHeight() { return height; }
-void SubMenuPhysics::setHeight(GLint new_height) { height = new_height; }
+float SubMenuPhysics::getXPos() { return x_pos; }
+void SubMenuPhysics::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuPhysics::getYPos() { return y_pos; }
+void SubMenuPhysics::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuPhysics::getZPos() { return z_pos; }
+void SubMenuPhysics::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuPhysics::getRed() { return color[0]; }
+void SubMenuPhysics::setRed(float red) { color[0] = red; }
+float SubMenuPhysics::getGreen() { return color[1]; }
+void SubMenuPhysics::setGreen(float green) { color[1] = green; }
+float SubMenuPhysics::getBlue() { return color[2]; }
+void SubMenuPhysics::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuPhysics::getWidth() { return width; }
+void SubMenuPhysics::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuPhysics::getHeight() { return height; }
+void SubMenuPhysics::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuPhysics::getCaption() { return caption; }
 void SubMenuPhysics::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuPhysics::getPerecentBorder() { return percent_border; }
-void SubMenuPhysics::setPercentBorder(GLfloat percent) {
+float SubMenuPhysics::getPerecentBorder() { return percent_border; }
+void SubMenuPhysics::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

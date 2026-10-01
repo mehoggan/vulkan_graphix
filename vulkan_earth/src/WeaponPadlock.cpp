@@ -17,10 +17,10 @@ WeaponPadlock::WeaponPadlock(int id) {
     damage = 50;
     special_number = 4;
 
-    GLfloat temp_colors1[3] = {DimGray};
-    GLfloat temp_colors2[3] = {Violet};
-    GLfloat temp_colors3[3] = {DarkSlateBlue};
-    GLfloat temp_colors4[3] = {DarkPurple};
+    float temp_colors1[3] = {DimGray};
+    float temp_colors2[3] = {Violet};
+    float temp_colors3[3] = {DarkSlateBlue};
+    float temp_colors4[3] = {DarkPurple};
     for (int i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
@@ -33,7 +33,7 @@ WeaponPadlock::~WeaponPadlock() = default;
 WeaponPadlock* WeaponPadlock::getWeaponInstance() {
     return new WeaponPadlock(uniqueidentifier);
 }
-void WeaponPadlock::causeEffectToTank(GLfloat distance, Tank* tank) {
+void WeaponPadlock::causeEffectToTank(float distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->setDurationPadlock(special_number);
         tank->dealDamage(getDamage() * (1 - (distance / (getRadius() * 100))));

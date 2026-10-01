@@ -10,7 +10,7 @@ const int tank_b_armor = 5;
 const int tank_b_speed = 50;
 
 TankB::TankB() = default;
-TankB::TankB(GLfloat x, GLfloat y, GLfloat z) {
+TankB::TankB(float x, float y, float z) {
     initBody();
     initHead();
     initTurret();

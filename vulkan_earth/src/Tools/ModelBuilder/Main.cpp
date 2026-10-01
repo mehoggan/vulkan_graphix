@@ -148,13 +148,13 @@ void draw() {
 }
 
 void initStuff() {
-    GLfloat lightA[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
-    GLfloat lightD[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
-    GLfloat lightS[] = {1.0f, 1.0f, 1.0f, 0.0f};
+    float lightA[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
+    float lightD[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
+    float lightS[] = {1.0f, 1.0f, 1.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightA);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightD);
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightS);
-    GLfloat lightDir0[4] = {1.0f, 1.0f, 1.0f, 0.0f};
+    float lightDir0[4] = {1.0f, 1.0f, 1.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightDir0);
 
     glEnable(GL_BLEND);

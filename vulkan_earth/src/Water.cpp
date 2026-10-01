@@ -1,5 +1,6 @@
 #include "vulkan_earth/Water.h"
 #include <GL/glx.h>
+#include <cstdint>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
@@ -50,8 +51,8 @@ Water::~Water() {
     glDeleteTextures(1, &normal_texture);
 }
 
-GLint Water::getScale() { return scale; }
-GLint Water::getActualSize() { return (size) * (scale); }
+std::int32_t Water::getScale() { return scale; }
+std::int32_t Water::getActualSize() { return (size) * (scale); }
 
 void Water::initData() {
     vertices.resize(tri_strip_buffer_size);
@@ -62,8 +63,8 @@ void Water::initData() {
     material_diffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
-GLuint Water::loadTexture(const char* filename, int width, int height) {
-    GLuint texture;
+std::uint32_t Water::loadTexture(const char* filename, int width, int height) {
+    std::uint32_t texture;
     std::vector<unsigned char> data(width * height * 3);
     std::ifstream file(filename, std::ios::binary);
     file.read(reinterpret_cast<char*>(data.data()), data.size());
@@ -147,43 +148,43 @@ void Water::draw() {
 }
 
 void Water::calcAverageofSixNormals(Vertex* v_0,
-                                    GLfloat x1,
-                                    GLfloat y1,
-                                    GLfloat z1,
-                                    GLfloat x2,
-                                    GLfloat y2,
-                                    GLfloat z2,
-                                    GLfloat x3,
-                                    GLfloat y3,
-                                    GLfloat z3,
-                                    GLfloat x4,
-                                    GLfloat y4,
-                                    GLfloat z4,
-                                    GLfloat x5,
-                                    GLfloat y5,
-                                    GLfloat z5,
-                                    GLfloat x6,
-                                    GLfloat y6,
-                                    GLfloat z6,
+                                    float x1,
+                                    float y1,
+                                    float z1,
+                                    float x2,
+                                    float y2,
+                                    float z2,
+                                    float x3,
+                                    float y3,
+                                    float z3,
+                                    float x4,
+                                    float y4,
+                                    float z4,
+                                    float x5,
+                                    float y5,
+                                    float z5,
+                                    float x6,
+                                    float y6,
+                                    float z6,
                                     Normal* n) {
-    GLfloat u_1_x = x1 - v_0->coord_x;
-    GLfloat u_1_y = y1 - v_0->coord_y;
-    GLfloat u_1_z = z1 - v_0->coord_z;
-    GLfloat u_2_x = x2 - v_0->coord_x;
-    GLfloat u_2_y = y2 - v_0->coord_y;
-    GLfloat u_2_z = z2 - v_0->coord_z;
-    GLfloat u_3_x = x3 - v_0->coord_x;
-    GLfloat u_3_y = y3 - v_0->coord_y;
-    GLfloat u_3_z = z3 - v_0->coord_z;
-    GLfloat u_4_x = x4 - v_0->coord_x;
-    GLfloat u_4_y = y4 - v_0->coord_y;
-    GLfloat u_4_z = z4 - v_0->coord_z;
-    GLfloat u_5_x = x5 - v_0->coord_x;
-    GLfloat u_5_y = y5 - v_0->coord_y;
-    GLfloat u_5_z = z5 - v_0->coord_z;
-    GLfloat u_6_x = x6 - v_0->coord_x;
-    GLfloat u_6_y = y6 - v_0->coord_y;
-    GLfloat u_6_z = z6 - v_0->coord_z;
+    float u_1_x = x1 - v_0->coord_x;
+    float u_1_y = y1 - v_0->coord_y;
+    float u_1_z = z1 - v_0->coord_z;
+    float u_2_x = x2 - v_0->coord_x;
+    float u_2_y = y2 - v_0->coord_y;
+    float u_2_z = z2 - v_0->coord_z;
+    float u_3_x = x3 - v_0->coord_x;
+    float u_3_y = y3 - v_0->coord_y;
+    float u_3_z = z3 - v_0->coord_z;
+    float u_4_x = x4 - v_0->coord_x;
+    float u_4_y = y4 - v_0->coord_y;
+    float u_4_z = z4 - v_0->coord_z;
+    float u_5_x = x5 - v_0->coord_x;
+    float u_5_y = y5 - v_0->coord_y;
+    float u_5_z = z5 - v_0->coord_z;
+    float u_6_x = x6 - v_0->coord_x;
+    float u_6_y = y6 - v_0->coord_y;
+    float u_6_z = z6 - v_0->coord_z;
     n->compo_x += u_6_y * u_1_z - u_1_y * u_6_z;
     n->compo_y += u_6_z * u_1_x - u_6_x * u_1_z;
     n->compo_z += u_6_x * u_1_y - u_1_x * u_6_y;
@@ -205,7 +206,7 @@ void Water::calcAverageofSixNormals(Vertex* v_0,
     n->compo_x /= 6;
     n->compo_y /= 6;
     n->compo_z /= 6;
-    GLfloat magnitude =
+    float magnitude =
             sqrt((n->compo_x * n->compo_x) + (n->compo_y * n->compo_y) +
                  (n->compo_z * n->compo_z));
     n->compo_x /= magnitude;
@@ -220,31 +221,34 @@ void Water::verifyVBOs() {
     if (vbo_qualify->getQualified()) {
         if (vbo_qualify->isExtensionSupported("GL_ARB_vertex_buffer_object")) {
             pgl_gen_buffers_arb = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glGenBuffersARB")));
             pgl_bind_buffer_arb = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glBindBufferARB")));
             pgl_buffer_data_arb = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glBufferDataARB")));
             pgl_buffer_sub_data_arb =
                     reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
-                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                                    "glBufferSubDataARB")));
+                            glXGetProcAddress(
+                                    reinterpret_cast<const std::uint8_t*>(
+                                            "glBufferSubDataARB")));
             pgl_delete_buffers_arb =
                     reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
-                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                                    "glDeleteBuffersARB")));
+                            glXGetProcAddress(
+                                    reinterpret_cast<const std::uint8_t*>(
+                                            "glDeleteBuffersARB")));
             pgl_get_buffer_parameteriv_arb =
                     reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
-                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                                    "glGetBufferParameterivARB")));
+                            glXGetProcAddress(
+                                    reinterpret_cast<const std::uint8_t*>(
+                                            "glGetBufferParameterivARB")));
             pgl_map_buffer_arb = reinterpret_cast<PFNGLMAPBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glMapBufferARB")));
             pgl_unmap_buffer_arb = reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glUnmapBufferARB")));
             if (pgl_gen_buffers_arb && pgl_bind_buffer_arb &&
                 pgl_buffer_data_arb && pgl_buffer_sub_data_arb &&
@@ -322,12 +326,12 @@ void Water::prepareData() {
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_i);
             } else if (i == 0) {
                 calcAverageofSixNormals(&v_i,
@@ -337,60 +341,60 @@ void Water::prepareData() {
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i][j - 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 1][j - 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_i);
             } else if (j == 0) {
                 calcAverageofSixNormals(&v_i,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i - 1][j + 1],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i - 1][j],
-                                        static_cast<GLfloat>(i - 1),
+                                        static_cast<float>(i - 1),
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_i);
             } else {
                 calcAverageofSixNormals(&v_i,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i - 1][j + 1],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i - 1][j],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i][j - 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 1][j - 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_i);
             }
             normals[index_normals++] = n_i;
@@ -407,12 +411,12 @@ void Water::prepareData() {
             Normal n_j(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
                 calcAverageofSixNormals(&v_j,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         v_j.coord_x,
                                         v_j.coord_y,
                                         v_j.coord_z,
@@ -422,72 +426,72 @@ void Water::prepareData() {
                                         v_j.coord_x,
                                         v_j.coord_y,
                                         v_j.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_j);
             } else if (j == 0) {
                 calcAverageofSixNormals(&v_j,
-                                        static_cast<GLfloat>(j) + 1,
+                                        static_cast<float>(j) + 1,
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         v_j.coord_x,
                                         v_j.coord_y,
                                         v_j.coord_z,
                                         v_j.coord_x,
                                         v_j.coord_y,
                                         v_j.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 2][j],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_j);
             } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_j,
-                                        static_cast<GLfloat>(j) + 1,
+                                        static_cast<float>(j) + 1,
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 1][j - 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_j.coord_x,
                                         v_j.coord_y,
                                         v_j.coord_z,
                                         v_j.coord_x,
                                         v_j.coord_y,
                                         v_j.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_j);
             } else {
                 calcAverageofSixNormals(&v_j,
-                                        static_cast<GLfloat>(j) + 1,
+                                        static_cast<float>(j) + 1,
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 1][j - 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 2][j - 1],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 2][j],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_j);
             }
             normals[index_normals++] = n_j;
@@ -510,15 +514,15 @@ void Water::prepareData() {
                                         v_k.coord_x,
                                         v_k.coord_y,
                                         v_k.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_k.coord_x,
                                         v_k.coord_y,
                                         v_k.coord_z,
@@ -531,60 +535,60 @@ void Water::prepareData() {
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i][j + 2],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_k);
             } else if (j == prep_size - 2) {
                 calcAverageofSixNormals(&v_k,
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i - 1][j + 1],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
                                         &n_k);
             } else {
                 calcAverageofSixNormals(&v_k,
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i - 1][j + 2],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i - 1][j + 1],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i][j + 2],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_k);
             }
             normals[index_normals++] = n_k;
@@ -601,12 +605,12 @@ void Water::prepareData() {
             Normal n_x(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
                 calcAverageofSixNormals(&v_x,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         v_x.coord_x,
                                         v_x.coord_y,
                                         v_x.coord_z,
@@ -616,72 +620,72 @@ void Water::prepareData() {
                                         v_x.coord_x,
                                         v_x.coord_y,
                                         v_x.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_x);
             } else if (j == 0) {
                 calcAverageofSixNormals(&v_x,
-                                        static_cast<GLfloat>(j) + 1,
+                                        static_cast<float>(j) + 1,
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         v_x.coord_x,
                                         v_x.coord_y,
                                         v_x.coord_z,
                                         v_x.coord_x,
                                         v_x.coord_y,
                                         v_x.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 2][j],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_x);
             } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_x,
-                                        static_cast<GLfloat>(j) + 1,
+                                        static_cast<float>(j) + 1,
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 1][j - 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_x.coord_x,
                                         v_x.coord_y,
                                         v_x.coord_z,
                                         v_x.coord_x,
                                         v_x.coord_y,
                                         v_x.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_x);
             } else {
                 calcAverageofSixNormals(&v_x,
-                                        static_cast<GLfloat>(j) + 1,
+                                        static_cast<float>(j) + 1,
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 1][j - 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j - 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j - 1),
                                         surfaceheight[i + 2][j - 1],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 2][j],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_x);
             }
             normals[index_normals++] = n_x;
@@ -702,12 +706,12 @@ void Water::prepareData() {
                                         v_y.coord_x,
                                         v_y.coord_y,
                                         v_y.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_y.coord_x,
                                         v_y.coord_y,
                                         v_y.coord_z,
@@ -720,66 +724,66 @@ void Water::prepareData() {
                                         &n_y);
             } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i][j + 2],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_y.coord_x,
                                         v_y.coord_y,
                                         v_y.coord_z,
                                         v_y.coord_x,
                                         v_y.coord_y,
                                         v_y.coord_z,
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i + 1][j + 2],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_y);
             } else if (j == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
                                         v_y.coord_x,
                                         v_y.coord_y,
                                         v_y.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 2][j],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 2][j + 1],
-                                        static_cast<GLfloat>(i + 2),
+                                        static_cast<float>(i + 2),
                                         v_y.coord_x,
                                         v_y.coord_y,
                                         v_y.coord_z,
                                         &n_y);
             } else {
                 calcAverageofSixNormals(&v_y,
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i][j + 2],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i][j + 1],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 2][j],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 2][j + 1],
-                                        static_cast<GLfloat>(i + 2),
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(i + 2),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i + 1][j + 2],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         &n_y);
             }
             normals[index_normals++] = n_y;
@@ -802,15 +806,15 @@ void Water::prepareData() {
                                         v_z.coord_x,
                                         v_z.coord_y,
                                         v_z.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_z.coord_x,
                                         v_z.coord_y,
                                         v_z.coord_z,
@@ -823,60 +827,60 @@ void Water::prepareData() {
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i][j + 2],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_z);
             } else if (j == prep_size - 2) {
                 calcAverageofSixNormals(&v_z,
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i - 1][j + 1],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
+                                        static_cast<float>(i + 1),
                                         v_i.coord_x,
                                         v_i.coord_y,
                                         v_i.coord_z,
                                         &n_z);
             } else {
                 calcAverageofSixNormals(&v_z,
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i - 1][j + 2],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i - 1][j + 1],
-                                        static_cast<GLfloat>(i - 1),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i - 1),
+                                        static_cast<float>(j),
                                         surfaceheight[i][j],
-                                        static_cast<GLfloat>(i),
-                                        static_cast<GLfloat>(j),
+                                        static_cast<float>(i),
+                                        static_cast<float>(j),
                                         surfaceheight[i + 1][j],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 1),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 1),
                                         surfaceheight[i + 1][j + 1],
-                                        static_cast<GLfloat>(i + 1),
-                                        static_cast<GLfloat>(j + 2),
+                                        static_cast<float>(i + 1),
+                                        static_cast<float>(j + 2),
                                         surfaceheight[i][j + 2],
-                                        static_cast<GLfloat>(i),
+                                        static_cast<float>(i),
                                         &n_z);
             }
             normals[index_normals++] = n_z;

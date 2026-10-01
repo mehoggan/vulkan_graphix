@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdlib.h>
+#include <cstdint>
 #include <string>
 
 class Shader {
@@ -10,8 +11,8 @@ public:
     Shader();
     Shader(const char* vs_file, const char* fs_file);
     ~Shader();
-    void validateShader(GLuint shader, const char* file = nullptr);
-    void validateProgram(GLuint program);
+    void validateShader(std::uint32_t shader, const char* file = nullptr);
+    void validateProgram(std::uint32_t program);
 
     void init(const char* vs_file, const char* fs_file);
     void bind();

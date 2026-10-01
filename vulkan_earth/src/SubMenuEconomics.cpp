@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuEconomics.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,16 +14,16 @@ using namespace std;
 SubMenuEconomics::SubMenuEconomics() = default;
 
 SubMenuEconomics::SubMenuEconomics(int id,
-                                   GLfloat new_x_pos,
-                                   GLfloat new_y_pos,
-                                   GLfloat new_z_pos,
-                                   GLfloat red,
-                                   GLfloat green,
-                                   GLfloat blue,
-                                   GLint new_width,
-                                   GLint new_height,
+                                   float new_x_pos,
+                                   float new_y_pos,
+                                   float new_z_pos,
+                                   float red,
+                                   float green,
+                                   float blue,
+                                   std::int32_t new_width,
+                                   std::int32_t new_height,
                                    const std::string& new_caption,
-                                   GLfloat new_percent_border) {
+                                   float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -41,8 +42,8 @@ SubMenuEconomics::SubMenuEconomics(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -116,28 +117,30 @@ SubMenuEconomics::~SubMenuEconomics() {
 
 int SubMenuEconomics::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuEconomics::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuEconomics::getXPos() { return x_pos; }
-void SubMenuEconomics::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuEconomics::getYPos() { return y_pos; }
-void SubMenuEconomics::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuEconomics::getZPos() { return z_pos; }
-void SubMenuEconomics::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuEconomics::getRed() { return color[0]; }
-void SubMenuEconomics::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuEconomics::getGreen() { return color[1]; }
-void SubMenuEconomics::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuEconomics::getBlue() { return color[2]; }
-void SubMenuEconomics::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuEconomics::getWidth() { return width; }
-void SubMenuEconomics::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuEconomics::getHeight() { return height; }
-void SubMenuEconomics::setHeight(GLint new_height) { height = new_height; }
+float SubMenuEconomics::getXPos() { return x_pos; }
+void SubMenuEconomics::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuEconomics::getYPos() { return y_pos; }
+void SubMenuEconomics::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuEconomics::getZPos() { return z_pos; }
+void SubMenuEconomics::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuEconomics::getRed() { return color[0]; }
+void SubMenuEconomics::setRed(float red) { color[0] = red; }
+float SubMenuEconomics::getGreen() { return color[1]; }
+void SubMenuEconomics::setGreen(float green) { color[1] = green; }
+float SubMenuEconomics::getBlue() { return color[2]; }
+void SubMenuEconomics::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuEconomics::getWidth() { return width; }
+void SubMenuEconomics::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuEconomics::getHeight() { return height; }
+void SubMenuEconomics::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuEconomics::getCaption() { return caption; }
 void SubMenuEconomics::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuEconomics::getPerecentBorder() { return percent_border; }
-void SubMenuEconomics::setPercentBorder(GLfloat percent) {
+float SubMenuEconomics::getPerecentBorder() { return percent_border; }
+void SubMenuEconomics::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

@@ -25,20 +25,20 @@ public:
     int getMaxStack();
     float getRadius();
     int getDamage();
-    GLfloat* getExplosionColor1();
-    GLfloat* getExplosionColor2();
-    GLfloat* getExplosionColor3();
-    GLfloat* getExplosionColor4();
-    virtual void causeEffectToTank(GLfloat distance, Tank* tank);
+    float* getExplosionColor1();
+    float* getExplosionColor2();
+    float* getExplosionColor3();
+    float* getExplosionColor4();
+    virtual void causeEffectToTank(float distance, Tank* tank);
     virtual void playFireSFX();
     virtual void playExplosionSFX();
 
 protected:
     int uniqueidentifier;
-    GLfloat explosion_color1[3];
-    GLfloat explosion_color2[3];
-    GLfloat explosion_color3[3];
-    GLfloat explosion_color4[3];
+    float explosion_color1[3];
+    float explosion_color2[3];
+    float explosion_color3[3];
+    float explosion_color4[3];
     float radius;
     int damage;
     float scale;

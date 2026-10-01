@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuSound.h"
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemCheckBox.h"
@@ -14,16 +15,16 @@ using namespace std;
 SubMenuSound::SubMenuSound() = default;
 
 SubMenuSound::SubMenuSound(int id,
-                           GLfloat new_x_pos,
-                           GLfloat new_y_pos,
-                           GLfloat new_z_pos,
-                           GLfloat red,
-                           GLfloat green,
-                           GLfloat blue,
-                           GLint new_width,
-                           GLint new_height,
+                           float new_x_pos,
+                           float new_y_pos,
+                           float new_z_pos,
+                           float red,
+                           float green,
+                           float blue,
+                           std::int32_t new_width,
+                           std::int32_t new_height,
                            const std::string& new_caption,
-                           GLfloat new_percent_border) {
+                           float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -42,8 +43,8 @@ SubMenuSound::SubMenuSound(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -99,28 +100,28 @@ SubMenuSound::~SubMenuSound() {
 
 int SubMenuSound::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuSound::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuSound::getXPos() { return x_pos; }
-void SubMenuSound::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuSound::getYPos() { return y_pos; }
-void SubMenuSound::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuSound::getZPos() { return z_pos; }
-void SubMenuSound::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuSound::getRed() { return color[0]; }
-void SubMenuSound::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuSound::getGreen() { return color[1]; }
-void SubMenuSound::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuSound::getBlue() { return color[2]; }
-void SubMenuSound::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuSound::getWidth() { return width; }
-void SubMenuSound::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuSound::getHeight() { return height; }
-void SubMenuSound::setHeight(GLint new_height) { height = new_height; }
+float SubMenuSound::getXPos() { return x_pos; }
+void SubMenuSound::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuSound::getYPos() { return y_pos; }
+void SubMenuSound::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuSound::getZPos() { return z_pos; }
+void SubMenuSound::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuSound::getRed() { return color[0]; }
+void SubMenuSound::setRed(float red) { color[0] = red; }
+float SubMenuSound::getGreen() { return color[1]; }
+void SubMenuSound::setGreen(float green) { color[1] = green; }
+float SubMenuSound::getBlue() { return color[2]; }
+void SubMenuSound::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuSound::getWidth() { return width; }
+void SubMenuSound::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuSound::getHeight() { return height; }
+void SubMenuSound::setHeight(std::int32_t new_height) { height = new_height; }
 std::string SubMenuSound::getCaption() { return caption; }
 void SubMenuSound::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuSound::getPerecentBorder() { return percent_border; }
-void SubMenuSound::setPercentBorder(GLfloat percent) {
+float SubMenuSound::getPerecentBorder() { return percent_border; }
+void SubMenuSound::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

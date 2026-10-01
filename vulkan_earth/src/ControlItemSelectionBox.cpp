@@ -1,5 +1,6 @@
 #include "vulkan_earth/ControlItemSelectionBox.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -14,14 +15,14 @@ extern void playSFX(int sfx);
 ControlItemSelectionBox::ControlItemSelectionBox() = default;
 
 ControlItemSelectionBox::ControlItemSelectionBox(
-        GLfloat new_x_pos,
-        GLfloat new_y_pos,
-        GLfloat new_z_pos,
-        GLfloat red,
-        GLfloat green,
-        GLfloat blue,
-        GLint new_width,
-        GLint new_height,
+        float new_x_pos,
+        float new_y_pos,
+        float new_z_pos,
+        float red,
+        float green,
+        float blue,
+        std::int32_t new_width,
+        std::int32_t new_height,
         const std::string& new_caption,
         const std::string& menu_string) {
     x_pos = new_x_pos;
@@ -57,9 +58,8 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + (width / 2) - (real_length / 2);
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + (width / 2) - (real_length / 2);
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     label = new TextObject(caption,
                            label_x_pos,
@@ -153,10 +153,10 @@ void ControlItemSelectionBox::draw() {
     glEnd();
 }
 
-GLfloat ControlItemSelectionBox::getXPos() { return x_pos; }
-GLfloat ControlItemSelectionBox::getYPos() { return y_pos; }
-GLfloat ControlItemSelectionBox::getHeight() { return height; }
-GLfloat ControlItemSelectionBox::getWidth() { return width; }
+float ControlItemSelectionBox::getXPos() { return x_pos; }
+float ControlItemSelectionBox::getYPos() { return y_pos; }
+float ControlItemSelectionBox::getHeight() { return height; }
+float ControlItemSelectionBox::getWidth() { return width; }
 std::string ControlItemSelectionBox::collectData() { return current_option; }
 
 void ControlItemSelectionBox::setOptionText(int index) {
@@ -165,9 +165,8 @@ void ControlItemSelectionBox::setOptionText(int index) {
     for (char ch : current_option) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + width - real_length - width / 50;
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + width - real_length - width / 50;
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     delete option_text;
     option_text = new TextObject(current_option,
                                  label_x_pos,
@@ -182,9 +181,9 @@ void ControlItemSelectionBox::setOptionText(int index) {
 void ControlItemSelectionBox::setOptionText(const std::string& new_text) {}
 
 void ControlItemSelectionBox::mouseClickEvent(
-        GLint x,
-        GLint y,
-        GLint state,
+        std::int32_t x,
+        std::int32_t y,
+        std::int32_t state,
         bool still_over_control_item_selection_box) {
     // up arrow test
     if ((x >= (x_pos + 0.02 * (width)) &&

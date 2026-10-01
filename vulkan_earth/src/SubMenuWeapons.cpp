@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuWeapons.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,16 +14,16 @@ using namespace std;
 SubMenuWeapons::SubMenuWeapons() = default;
 
 SubMenuWeapons::SubMenuWeapons(int id,
-                               GLfloat new_x_pos,
-                               GLfloat new_y_pos,
-                               GLfloat new_z_pos,
-                               GLfloat red,
-                               GLfloat green,
-                               GLfloat blue,
-                               GLint new_width,
-                               GLint new_height,
+                               float new_x_pos,
+                               float new_y_pos,
+                               float new_z_pos,
+                               float red,
+                               float green,
+                               float blue,
+                               std::int32_t new_width,
+                               std::int32_t new_height,
                                const std::string& new_caption,
-                               GLfloat new_percent_border) {
+                               float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -41,8 +42,8 @@ SubMenuWeapons::SubMenuWeapons(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -116,28 +117,30 @@ SubMenuWeapons::~SubMenuWeapons() {
 
 int SubMenuWeapons::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuWeapons::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuWeapons::getXPos() { return x_pos; }
-void SubMenuWeapons::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuWeapons::getYPos() { return y_pos; }
-void SubMenuWeapons::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuWeapons::getZPos() { return z_pos; }
-void SubMenuWeapons::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuWeapons::getRed() { return color[0]; }
-void SubMenuWeapons::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuWeapons::getGreen() { return color[1]; }
-void SubMenuWeapons::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuWeapons::getBlue() { return color[2]; }
-void SubMenuWeapons::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuWeapons::getWidth() { return width; }
-void SubMenuWeapons::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuWeapons::getHeight() { return height; }
-void SubMenuWeapons::setHeight(GLint new_height) { height = new_height; }
+float SubMenuWeapons::getXPos() { return x_pos; }
+void SubMenuWeapons::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuWeapons::getYPos() { return y_pos; }
+void SubMenuWeapons::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuWeapons::getZPos() { return z_pos; }
+void SubMenuWeapons::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuWeapons::getRed() { return color[0]; }
+void SubMenuWeapons::setRed(float red) { color[0] = red; }
+float SubMenuWeapons::getGreen() { return color[1]; }
+void SubMenuWeapons::setGreen(float green) { color[1] = green; }
+float SubMenuWeapons::getBlue() { return color[2]; }
+void SubMenuWeapons::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuWeapons::getWidth() { return width; }
+void SubMenuWeapons::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuWeapons::getHeight() { return height; }
+void SubMenuWeapons::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuWeapons::getCaption() { return caption; }
 void SubMenuWeapons::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuWeapons::getPerecentBorder() { return percent_border; }
-void SubMenuWeapons::setPercentBorder(GLfloat percent) {
+float SubMenuWeapons::getPerecentBorder() { return percent_border; }
+void SubMenuWeapons::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

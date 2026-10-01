@@ -21,14 +21,14 @@ int Weapon::getPackageNum() { return package_num; }
 int Weapon::getMaxStack() { return max_stack; }
 float Weapon::getRadius() { return radius; }
 int Weapon::getDamage() { return damage; }
-GLfloat* Weapon::getExplosionColor1() { return explosion_color1; }
-GLfloat* Weapon::getExplosionColor2() { return explosion_color2; }
-GLfloat* Weapon::getExplosionColor3() { return explosion_color3; }
-GLfloat* Weapon::getExplosionColor4() { return explosion_color4; }
+float* Weapon::getExplosionColor1() { return explosion_color1; }
+float* Weapon::getExplosionColor2() { return explosion_color2; }
+float* Weapon::getExplosionColor3() { return explosion_color3; }
+float* Weapon::getExplosionColor4() { return explosion_color4; }
 /*SETTERS*/
 void Weapon::setScale(float new_scale) { scale = new_scale; }
 void Weapon::setRemaining(int r) { remaining = r; }
-void Weapon::causeEffectToTank(GLfloat distance, Tank* tank) {
+void Weapon::causeEffectToTank(float distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->dealDamage(getDamage() * (1 - (distance / (getRadius() * 100))));
     }
