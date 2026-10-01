@@ -1034,10 +1034,10 @@ bool TutorialBase::createSwapChain() {
             m_vulkan_common_parameters.getSwapchainParameters()
                     .getVkSwapchainKhr();
 
-    if (static_cast<int>(desired_usage) == -1) {
+    if (static_cast<std::int32_t>(desired_usage) == -1) {
         return false;
     }
-    if (static_cast<int>(desired_present_mode) == -1) {
+    if (static_cast<std::int32_t>(desired_present_mode) == -1) {
         return false;
     }
     if ((desired_extent.width == 0) || (desired_extent.height == 0)) {

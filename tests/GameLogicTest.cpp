@@ -5,6 +5,7 @@
 // check).
 
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <set>
 #include <utility>
@@ -20,8 +21,8 @@ namespace {
 namespace vg = vulkan_graphix;
 
 constexpr float c_epsilon = 1e-4f;
-constexpr int c_grid_size = 32;
-constexpr int c_grid_scale = 100;
+constexpr std::int32_t c_grid_size = 32;
+constexpr std::int32_t c_grid_scale = 100;
 
 vg::TerrainGenerator makeGeneratedTerrain() {
     vg::TerrainGenerator terrain(c_grid_size, c_grid_scale);
@@ -34,8 +35,8 @@ vg::TerrainGenerator makeGeneratedTerrain() {
 
 TEST(GameLogicTest, NewTerrainIsFlatUntilGenerated) {
     vg::TerrainGenerator const terrain(c_grid_size, c_grid_scale);
-    for (int z = 0; z < c_grid_size; ++z) {
-        for (int x = 0; x < c_grid_size; ++x) {
+    for (std::int32_t z = 0; z < c_grid_size; ++z) {
+        for (std::int32_t x = 0; x < c_grid_size; ++x) {
             EXPECT_EQ(terrain.heightAt(x, z), 0);
         }
     }
@@ -46,16 +47,16 @@ TEST(GameLogicTest, NewTerrainIsFlatUntilGenerated) {
 TEST(GameLogicTest, GenerationIsDeterministicForASeed) {
     vg::TerrainGenerator const first = makeGeneratedTerrain();
     vg::TerrainGenerator const second = makeGeneratedTerrain();
-    int nonzero = 0;
-    for (int z = 0; z < c_grid_size; ++z) {
-        for (int x = 0; x < c_grid_size; ++x) {
+    std::int32_t nonzero = 0;
+    for (std::int32_t z = 0; z < c_grid_size; ++z) {
+        for (std::int32_t x = 0; x < c_grid_size; ++x) {
             EXPECT_EQ(first.heightAt(x, z), second.heightAt(x, z));
             nonzero += first.heightAt(x, z) != 0 ? 1 : 0;
         }
     }
     EXPECT_GT(nonzero, 0);
     // Smoothing always zeroes the grid's edges.
-    for (int i = 0; i < c_grid_size; ++i) {
+    for (std::int32_t i = 0; i < c_grid_size; ++i) {
         EXPECT_EQ(first.heightAt(i, 0), 0);
         EXPECT_EQ(first.heightAt(0, i), 0);
         EXPECT_EQ(first.heightAt(i, c_grid_size - 1), 0);
@@ -79,8 +80,8 @@ TEST(GameLogicTest, HeightAtWorldRoundsToTheNearestVertexInXThenZOrder) {
 
 TEST(GameLogicTest, NormalsAreUnitLengthAndFlatOutsideTheGrid) {
     vg::TerrainGenerator const terrain = makeGeneratedTerrain();
-    for (int z = 0; z < c_grid_size - 1; ++z) {
-        for (int x = 0; x < c_grid_size - 1; ++x) {
+    for (std::int32_t z = 0; z < c_grid_size - 1; ++z) {
+        for (std::int32_t x = 0; x < c_grid_size - 1; ++x) {
             vg::Math::Vec3<float> const triangle =
                     terrain.triangleNormalAt(x, z);
             EXPECT_NEAR(glm::length(triangle), 1.0f, c_epsilon);
@@ -98,13 +99,13 @@ TEST(GameLogicTest, NormalsAreUnitLengthAndFlatOutsideTheGrid) {
 TEST(GameLogicTest, CraterLowersTheImpactAndReportsTheBlastCells) {
     vg::TerrainGenerator terrain(c_grid_size, c_grid_scale);
     float const blast_size = 3.0f;
-    int const impact_x = 16;
-    int const impact_z = 12;
+    std::int32_t const impact_x = 16;
+    std::int32_t const impact_z = 12;
 
     std::vector<vg::TerrainGridCell> const cells = terrain.makeCrater(
             impact_x * c_grid_scale, impact_z * c_grid_scale, blast_size);
 
-    std::set<std::pair<int, int>> reported;
+    std::set<std::pair<std::int32_t, std::int32_t>> reported;
     for (vg::TerrainGridCell const& cell : cells) {
         reported.insert({cell.x, cell.z});
         float const distance = std::sqrt(

@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 
 class WeaponBFB : public Weapon {
 public:
     WeaponBFB();
-    WeaponBFB(int id);
+    WeaponBFB(std::int32_t id);
     ~WeaponBFB() override;
     WeaponBFB* getWeaponInstance() override;
 };

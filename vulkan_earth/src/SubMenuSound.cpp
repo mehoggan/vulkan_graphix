@@ -14,7 +14,7 @@ using namespace std;
 
 SubMenuSound::SubMenuSound() = default;
 
-SubMenuSound::SubMenuSound(int id,
+SubMenuSound::SubMenuSound(std::int32_t id,
                            float new_x_pos,
                            float new_y_pos,
                            float new_z_pos,
@@ -39,7 +39,7 @@ SubMenuSound::SubMenuSound(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -94,12 +94,15 @@ SubMenuSound::SubMenuSound(int id,
 }
 
 SubMenuSound::~SubMenuSound() {
-    for (int i = 0; i < num_control_items_snd; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_snd; i++)
+        delete sub_menu_button[i];
     delete label;
 }
 
-int SubMenuSound::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuSound::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuSound::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuSound::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuSound::getXPos() { return x_pos; }
 void SubMenuSound::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuSound::getYPos() { return y_pos; }
@@ -162,7 +165,7 @@ void SubMenuSound::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_snd; i++) {
+    for (std::int32_t i = 0; i < num_control_items_snd; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -171,9 +174,11 @@ void SubMenuSound::draw() {
 
 std::string SubMenuSound::collectData() { return "Sound:"; }
 
-void SubMenuSound::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuSound::subMenuMouseTest(std::int32_t x,
+                                    std::int32_t y,
+                                    std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_snd;
+        for (std::int32_t button_i = 0; button_i < num_control_items_snd;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -222,7 +227,7 @@ void SubMenuSound::subMenuMouseTest(int x, int y, int button_down) {
     }
 }
 
-void SubMenuSound::updateMouse(int x, int y) {
+void SubMenuSound::updateMouse(std::int32_t x, std::int32_t y) {
     sub_menu_button[0]->updateMouse(x, y);
     sub_menu_button[1]->updateMouse(x, y);
     changeVolumes(button_pressed);
@@ -231,7 +236,8 @@ void SubMenuSound::updateMouse(int x, int y) {
 void SubMenuSound::changeVolumes(ControlItem* the_sub_menu_button) {
     // SFX volume handler
     if (the_sub_menu_button == sub_menu_button[0]) {
-        int new_volume = atoi(the_sub_menu_button->collectData().c_str());
+        std::int32_t new_volume =
+                atoi(the_sub_menu_button->collectData().c_str());
         Mix_Volume(-1,
                    128 / 100 *
                            new_volume);  //-1 is to apply to all allocated
@@ -239,7 +245,8 @@ void SubMenuSound::changeVolumes(ControlItem* the_sub_menu_button) {
     }
     // Music volume handler
     else if (the_sub_menu_button == sub_menu_button[1]) {
-        int new_volume = atoi(the_sub_menu_button->collectData().c_str());
+        std::int32_t new_volume =
+                atoi(the_sub_menu_button->collectData().c_str());
         Mix_VolumeMusic(128 / 100 *
                         new_volume);  // music has its special channel, so
                                       // don't need to specify which channel.

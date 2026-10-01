@@ -1,5 +1,6 @@
 #include "vulkan_earth/Inventory.h"
 #include <math.h>
+#include <cstdint>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemGrid.h"
 #include "vulkan_earth/ImageObject.h"
@@ -11,7 +12,7 @@
 #include "vulkan_earth/MacroCrtdbg.h"
 
 Inventory::Inventory() = default;
-Inventory::Inventory(float x, float y, int w, int h) {
+Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
     x_pos = x - x * 0.01;
     y_pos = y - y * 0.01;
     width = w + w * 0.01;
@@ -28,7 +29,7 @@ Inventory::Inventory(float x, float y, int w, int h) {
                                      1,
                                      true,
                                      false);
-    for (int i = 0; i < player_max_weapons + player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons + player_max_items; i++) {
         img_inven[i] = nullptr;
         remainings[i] = nullptr;
     }
@@ -62,7 +63,7 @@ Inventory::Inventory(float x, float y, int w, int h) {
 }
 Inventory::~Inventory() {
     delete inven_grid;
-    for (int i = 0; i < player_max_weapons + player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons + player_max_items; i++) {
         if (img_inven[i]) {
             delete img_inven[i];
             delete remainings[i];
@@ -74,11 +75,11 @@ Inventory::~Inventory() {
 }
 
 void Inventory::setupInventory(Player* player) {
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         weapons[i] = player->getCurrentWeapons()[i];
         items[i] = player->getCurrentItems()[i];
     }
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         // If Player Has A Weapon
         if (weapons[i] != nullptr) {
             if (img_inven[i]) {
@@ -114,7 +115,7 @@ void Inventory::setupInventory(Player* player) {
             remainings[i] = nullptr;
         }
     }
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         // If Player Has An Item
         if (items[i] != nullptr) {
             if (img_inven[player_max_weapons + i]) {
@@ -146,9 +147,9 @@ void Inventory::setupInventory(Player* player) {
         }
     }
     // Place Images and remaining labels to the cells
-    int index = 0;
-    for (int r = 0; r < 2; r++) {
-        for (int c = 0; c < player_max_weapons; c++) {
+    std::int32_t index = 0;
+    for (std::int32_t r = 0; r < 2; r++) {
+        for (std::int32_t c = 0; c < player_max_weapons; c++) {
             if (img_inven[index] != nullptr) {
                 inven_grid->placeImageToCell(img_inven[index], r, c);
                 inven_grid->placeTextToCell(remainings[index], r, c);
@@ -182,7 +183,8 @@ void Inventory::setupInventory(Player* player) {
     }
 }
 
-void Inventory::handleInventory(Player* current_player, int inven_index) {
+void Inventory::handleInventory(Player* current_player,
+                                std::int32_t inven_index) {
     // IF PLAYER HAS SHOT WITH A SPECIAL WEAPON
     if (inven_index < player_max_weapons) {
         if (current_player->getLoadedWeapon() != nullptr) {
@@ -190,7 +192,7 @@ void Inventory::handleInventory(Player* current_player, int inven_index) {
                 current_player->getLoadedWeapon()->setRemaining(
                         current_player->getLoadedWeapon()->getRemaining() - 1);
             } else {
-                int index;
+                std::int32_t index;
                 for (index = 0; index < player_max_weapons; index++) {
                     if (current_player->getCurrentWeapons()[index] ==
                         nullptr) {
@@ -229,11 +231,11 @@ void Inventory::handleInventory(Player* current_player, int inven_index) {
     }
 }
 
-int Inventory::getSelectedIndex() {
+std::int32_t Inventory::getSelectedIndex() {
     return player_max_weapons * select_cell_row + select_cell_col;
 }
 
-void Inventory::keyHandler(int key) {
+void Inventory::keyHandler(std::int32_t key) {
     // LEFT KEY
     if (key == 1 && select_cell_col > 0) {
         select_cell_col--;
@@ -321,23 +323,23 @@ void Inventory::draw() {
     glScissor(x_pos, y_pos, width, height);
     glClearColor(0.75, 0.75, 0.75, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    int distance = static_cast<int>(glutGet(GLUT_WINDOW_HEIGHT) / 4 *
-                                    tan(1.04719755));
+    std::int32_t distance = static_cast<std::int32_t>(
+            glutGet(GLUT_WINDOW_HEIGHT) / 4 * tan(1.04719755));
     gluLookAt(0, 0, distance, 0, 0, 0, 0.0f, 1.0f, 0.0f);
 
     inven_grid->draw();
     title->draw();
     explain->draw();
     descript->draw();
-    for (int i = 0; i < player_max_weapons + player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons + player_max_items; i++) {
         if (img_inven[i] != nullptr) {
             img_inven[i]->draw();
             remainings[i]->draw();
         }
     }
 
-    int win_width = glutGet(GLUT_WINDOW_WIDTH);
-    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
+    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

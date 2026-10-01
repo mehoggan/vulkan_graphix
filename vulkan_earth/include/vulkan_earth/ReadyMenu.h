@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -21,12 +22,12 @@ class TankA;
 
 // using namespace std;
 
-const int num_buttons = 4;
-const int num_stat_images = 60;
-const int num_control_items = 3;
-const int num_tank_stats = 3;
-const int num_tank_types = 8;
-const int player_attributes = 4;
+const std::int32_t num_buttons = 4;
+const std::int32_t num_stat_images = 60;
+const std::int32_t num_control_items = 3;
+const std::int32_t num_tank_stats = 3;
+const std::int32_t num_tank_types = 8;
+const std::int32_t player_attributes = 4;
 
 class ReadyMenu {
 public:
@@ -36,7 +37,7 @@ public:
               float new_percent_border,
               GlobalSettings* new_global_settings,
               PlayerFactory* new_player_factory,
-              int* game_state);
+              std::int32_t* game_state);
     ~ReadyMenu();
     float* getPos();
     float getHeight();
@@ -45,16 +46,16 @@ public:
     void setWidth(float new_width);
     float* getColor();
     void setColor(float r, float g, float b, float a);
-    void buttonTest(int x, int y, int button_down);
-    void keyTest(unsigned char key);
+    void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);
+    void keyTest(std::uint8_t key);
     void draw();
     void showPreviousPlayerPage();
     void showNextPlayerPage();
-    void setPlayerPageNum(int i);
+    void setPlayerPageNum(std::int32_t i);
     void updatePageInfo();
-    void updateMouse(int x, int y);
+    void updateMouse(std::int32_t x, std::int32_t y);
     void saveCurrentPlayerData();
-    void updateNumPlayers(int n);
+    void updateNumPlayers(std::int32_t n);
 
 private:
     float pos[3], width, height, color[4], border;
@@ -68,10 +69,10 @@ private:
     TextObject* tank_stat_labels[num_tank_stats];
     MainMenuButton* button_pressed;
     std::string caption;
-    int current_player_index;
-    int num_players;
-    int* current_game_state;
-    int prv_scr_color_control;
+    std::int32_t current_player_index;
+    std::int32_t num_players;
+    std::int32_t* current_game_state;
+    std::int32_t prv_scr_color_control;
     ControlItemTextField* text_field;
     GlobalSettings* global_settings;
     PlayerFactory* player_factory;

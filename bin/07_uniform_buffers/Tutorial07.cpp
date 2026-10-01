@@ -1,4 +1,5 @@
 #include "Tutorial07.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -356,7 +357,7 @@ bool Tutorial07::copyTextureData(char* texture_data,
 }
 
 bool Tutorial07::createTexture() {
-    int width = 0, height = 0, data_size = 0;
+    std::int32_t width = 0, height = 0, data_size = 0;
     std::vector<char> texture_data = Tools::getImageData(
             "texture.07.png", 4, &width, &height, nullptr, &data_size);
     if (texture_data.empty()) {

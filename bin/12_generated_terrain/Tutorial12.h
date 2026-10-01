@@ -162,11 +162,11 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
-    void onMouseMove(int pos_x, int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
     // Small pilot-sized stand-in for TerrainMaker's real size=256/scale=100
@@ -175,13 +175,13 @@ private:
     // Centered on the origin (OrbitCamera's fixed target) rather than
     // starting at (0,0) the way TerrainMaker's own world placement does,
     // since OrbitCamera can't be re-targeted away from the origin.
-    static constexpr int c_grid_size = 32;
-    static constexpr int c_grid_scale = 1;
-    static constexpr int c_gen_steps = 150;
-    static constexpr int c_gen_increase = 1;
+    static constexpr std::int32_t c_grid_size = 32;
+    static constexpr std::int32_t c_grid_scale = 1;
+    static constexpr std::int32_t c_gen_steps = 150;
+    static constexpr std::int32_t c_gen_increase = 1;
     static constexpr float c_gen_radius = 4.0f;
-    static constexpr int c_gen_random_jump = 5;
-    static constexpr int c_smoothing_passes = 3;
+    static constexpr std::int32_t c_gen_random_jump = 5;
+    static constexpr std::int32_t c_smoothing_passes = 3;
 
     bool createCommandBuffers();
     bool createCommandPool(std::uint32_t queue_family_index,

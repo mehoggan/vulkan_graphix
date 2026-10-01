@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <glm/gtc/epsilon.hpp>
 #include <limits>
 #include <vector>
@@ -181,7 +182,7 @@ private:
         return Vec4<T>(point.x, point.y, point.z, T(0));
     }
 
-    static constexpr unsigned short max_subdivide_depth = 10;
+    static constexpr std::uint16_t max_subdivide_depth = 10;
 
     T chordalDistanceSquaredFromSecant(CurveSample3D<T> const& point0,
                                        CurveSample3D<T> const& point1,
@@ -199,7 +200,7 @@ private:
                          T mid_t,
                          CurveSample3D<T> const& point1,
                          T chordal_tolerance,
-                         unsigned short depth) const {
+                         std::uint16_t depth) const {
         T current_chordal_tolerance =
                 chordalDistanceSquaredFromSecant(point0, point1, mid_t);
         T chordal_tolerance_sq = chordal_tolerance * chordal_tolerance;
@@ -231,7 +232,7 @@ private:
                    CurveSample3D<T> const& point0,
                    CurveSample3D<T> const& point1,
                    T chordal_tolerance,
-                   unsigned short depth = 0) const {
+                   std::uint16_t depth = 0) const {
         T mid_param = glm::mix(point0.parameter, point1.parameter, T(0.5));
         CurveSample3D<T> break_point = evaluate(mid_param);
 

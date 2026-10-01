@@ -14,7 +14,7 @@
 
 using namespace std;
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ControlItemButton::ControlItemButton() = default;
 
@@ -46,7 +46,7 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
     menu_state = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -160,7 +160,7 @@ void ControlItemButton::updateButtonState() {
         button_state = 0;
 }
 void ControlItemButton::setToggled(bool t) { toggled = t; }
-void ControlItemButton::setOptionText(int index) {}
+void ControlItemButton::setOptionText(std::int32_t index) {}
 void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
 
@@ -183,4 +183,4 @@ void ControlItemButton::mouseClickEvent(std::int32_t x,
     }
 }
 
-void ControlItemButton::updateMouse(int x, int y) {}
+void ControlItemButton::updateMouse(std::int32_t x, std::int32_t y) {}

@@ -1,4 +1,5 @@
 #include "vulkan_earth/SkyboxFactory.h"
+#include <cstdint>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -7,12 +8,12 @@
 
 SkyboxFactory::SkyboxFactory() = default;
 
-SkyboxFactory::SkyboxFactory(int size_of_box) {
+SkyboxFactory::SkyboxFactory(std::int32_t size_of_box) {
     size = size_of_box;
-    int width = 1024;
-    int height = 1024;
-    int scale = 1024;
-    std::vector<unsigned char> data0(width * height * 3);
+    std::int32_t width = 1024;
+    std::int32_t height = 1024;
+    std::int32_t scale = 1024;
+    std::vector<std::uint8_t> data0(width * height * 3);
     std::ifstream file0("SkyBox.raw", std::ios::binary);
     if (!file0) {
         std::cerr << "ERROR: File Not Found" << std::endl;
@@ -200,9 +201,9 @@ SkyboxFactory::SkyboxFactory(int size_of_box) {
 SkyboxFactory::~SkyboxFactory() = default;
 
 void SkyboxFactory::draw() {
-    int start = -size / 2;
-    int bound = size / 2;
-    int scale = 100;
+    std::int32_t start = -size / 2;
+    std::int32_t bound = size / 2;
+    std::int32_t scale = 100;
     //	 11 16 20 o--------------o 07 12 19
     //			 /|			    /|
     //		    / |			   / |

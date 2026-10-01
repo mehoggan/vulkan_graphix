@@ -1,4 +1,5 @@
 #include "vulkan_earth/PlayerCPU.h"
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/PlayerFactory.h"
@@ -24,10 +25,10 @@ PlayerCPU::PlayerCPU(float red, float green, float blue) {
 
     current_tank = new TankA(0, 0, 0);
 
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         current_items[i] = nullptr;
     }
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         current_weapons[i] = nullptr;
     }
 
@@ -48,7 +49,7 @@ PlayerCPU::PlayerCPU(float red,
                      const std::string& new_name,
                      char new_team_label,
                      const std::string& new_player_type,
-                     int starting_cash) {
+                     std::int32_t starting_cash) {
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -58,10 +59,10 @@ PlayerCPU::PlayerCPU(float red,
     current_wait = 0;
     team_label = new_team_label;
 
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         current_items[i] = nullptr;
     }
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         current_weapons[i] = nullptr;
     }
     loaded_weapon = nullptr;
@@ -97,8 +98,10 @@ PlayerCPU::~PlayerCPU() {
 
     // before we delete inventory, where should we store the inventory? figure
     // this out later
-    for (int i = 0; i < player_max_items; i++) delete current_items[i];
-    for (int i = 0; i < player_max_weapons; i++) delete current_weapons[i];
+    for (std::int32_t i = 0; i < player_max_items; i++)
+        delete current_items[i];
+    for (std::int32_t i = 0; i < player_max_weapons; i++)
+        delete current_weapons[i];
 }
 
 void PlayerCPU::updateTank(
@@ -119,8 +122,8 @@ float PlayerCPU::getRed() { return color[0]; }
 float PlayerCPU::getGreen() { return color[1]; }
 float PlayerCPU::getBlue() { return color[2]; }
 std::string PlayerCPU::getPlayerName() { return player_type; }
-int PlayerCPU::getCash() { return current_cash; }
-void PlayerCPU::setCash(int cash) { current_cash = cash; }
+std::int32_t PlayerCPU::getCash() { return current_cash; }
+void PlayerCPU::setCash(std::int32_t cash) { current_cash = cash; }
 float PlayerCPU::getCurrentWait() { return current_wait; }
 void PlayerCPU::setCurrentWait(float time) { current_wait = time; }
 char PlayerCPU::getTeamLabel() { return team_label; }
@@ -133,12 +136,12 @@ void PlayerCPU::setPlayerName(const std::string& new_name) {
     name = "CPU";
 }
 void PlayerCPU::setWeapons(Weapon** weapon_set) {
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         current_weapons[i] = weapon_set[i];
     }
 }
 void PlayerCPU::setItems(Item** item_set) {
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         current_items[i] = item_set[i];
     }
 }

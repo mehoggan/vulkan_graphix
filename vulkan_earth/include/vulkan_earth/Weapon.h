@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/OpenGLColors.h"
 #include "vulkan_earth/Tank.h"
@@ -13,18 +14,18 @@ public:
     virtual ~Weapon();
     /*	GETTERS AND SETTERS	*/
     virtual Weapon* getWeaponInstance() = 0;
-    int getUNIQUEIDENTIFIER();
+    std::int32_t getUNIQUEIDENTIFIER();
     float getScale();
     void setScale(float new_scale);
-    int getRemaining();
-    void setRemaining(int r);
+    std::int32_t getRemaining();
+    void setRemaining(std::int32_t r);
     std::string getImageFileName();
     std::string getDescription();
-    int getPrice();
-    int getPackageNum();
-    int getMaxStack();
+    std::int32_t getPrice();
+    std::int32_t getPackageNum();
+    std::int32_t getMaxStack();
     float getRadius();
-    int getDamage();
+    std::int32_t getDamage();
     float* getExplosionColor1();
     float* getExplosionColor2();
     float* getExplosionColor3();
@@ -34,21 +35,21 @@ public:
     virtual void playExplosionSFX();
 
 protected:
-    int uniqueidentifier;
+    std::int32_t uniqueidentifier;
     float explosion_color1[3];
     float explosion_color2[3];
     float explosion_color3[3];
     float explosion_color4[3];
     float radius;
-    int damage;
+    std::int32_t damage;
     float scale;
     std::string image_file_name;
     std::string description;
-    int price;
-    int package_num;
-    int max_stack;
-    int remaining;
-    int special_number;
+    std::int32_t price;
+    std::int32_t package_num;
+    std::int32_t max_stack;
+    std::int32_t remaining;
+    std::int32_t special_number;
 };
 
 #endif  //	WEAPON_H

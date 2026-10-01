@@ -1,5 +1,6 @@
 #include "vulkan_earth/Tank.h"
 #include <algorithm>
+#include <cstdint>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <optional>
@@ -314,7 +315,7 @@ bool Tank::checkCollision(float x, float y, float z) {
     return false;
 }
 
-void Tank::dealDamage(int damage) {
+void Tank::dealDamage(std::int32_t damage) {
     if (damage < 0) cout << "ERROR: Negative damage";
     hp -= damage;
     if (hp <= 0) {
@@ -407,10 +408,10 @@ void Tank::setWheelScale(float x, float y, float z) {
     wheel_scale[1] = y;
     wheel_scale[2] = z;
 }
-void Tank::setHP(int new_hp) { hp = new_hp; }
-void Tank::setPower(int p) { power = p; }
-void Tank::setArmor(int a) { armor = a; }
-void Tank::setSpeed(int d) { speed = d; }
+void Tank::setHP(std::int32_t new_hp) { hp = new_hp; }
+void Tank::setPower(std::int32_t p) { power = p; }
+void Tank::setArmor(std::int32_t a) { armor = a; }
+void Tank::setSpeed(std::int32_t d) { speed = d; }
 
 // Other functions
 void Tank::fire() {}
@@ -450,10 +451,10 @@ void Tank::updateHitBox() {
 void Tank::keyHandler() {}
 
 // Virtuals
-int Tank::getBaseHP() { return 0; }
-int Tank::getBasePower() { return 0; }
-int Tank::getBaseArmor() { return 0; }
-int Tank::getBaseSpeed() { return 0; }
+std::int32_t Tank::getBaseHP() { return 0; }
+std::int32_t Tank::getBasePower() { return 0; }
+std::int32_t Tank::getBaseArmor() { return 0; }
+std::int32_t Tank::getBaseSpeed() { return 0; }
 std::string Tank::getName() { return "Huh?"; }
 Normal Tank::getAlignmentVector() { return alignment_vector; }
 Normal Tank::getRotateAbout() { return rotate_about; }
@@ -728,13 +729,13 @@ void Tank::drawTankHitBox() {
 }
 
 float Tank::getCurrentPower() { return current_power; }
-int Tank::getPreviousPower() { return previous_power; }
-int Tank::getPreviousAngle() { return previous_angle; }
+std::int32_t Tank::getPreviousPower() { return previous_power; }
+std::int32_t Tank::getPreviousAngle() { return previous_angle; }
 float* Tank::getProjectileLandPos() { return projectile_land_pos; }
-void Tank::setPreviousPower(int new_previous_power) {
+void Tank::setPreviousPower(std::int32_t new_previous_power) {
     previous_power = new_previous_power;
 }
-void Tank::setPreviousAngle(int new_previous_angle) {
+void Tank::setPreviousAngle(std::int32_t new_previous_angle) {
     previous_angle = new_previous_angle;
 }
 void Tank::setProjectileLandPos(float x, float y) {
@@ -754,7 +755,7 @@ void Tank::rotateWheel(float degrees) {
     }
 }
 
-void Tank::changeHeadTexture(int current_player_index) {
+void Tank::changeHeadTexture(std::int32_t current_player_index) {
     if (current_player_index == 0)
         vbo_shader_head->swapTexture("player1Head.raw", 1024, 1024);
     else if (current_player_index == 1)
@@ -781,27 +782,29 @@ void Tank::changeHeadTexture(int current_player_index) {
     }
 }
 
-int Tank::getCurrentHeight() { return current_height; }
+std::int32_t Tank::getCurrentHeight() { return current_height; }
 
-void Tank::setCurrentHeight(int curr_height) { current_height = curr_height; }
+void Tank::setCurrentHeight(std::int32_t curr_height) {
+    current_height = curr_height;
+}
 
-int Tank::getPreviousHeight() { return previous_height; }
+std::int32_t Tank::getPreviousHeight() { return previous_height; }
 
-void Tank::setPreviousHeight(int prev_height) {
+void Tank::setPreviousHeight(std::int32_t prev_height) {
     previous_height = prev_height;
 }
 
 // Getters for durations
-int Tank::getDurationAcid() { return duration_acid; }
-int Tank::getDurationShield() { return duration_shield; }
-int Tank::getDurationEMP() { return duration_emp; }
-int Tank::getDurationFloat() { return duration_float; }
-int Tank::getDurationDoubleAction() { return duration_double_action; }
-int Tank::getDurationPadlock() { return duration_padlock; }
-int Tank::getDurationCloak() { return duration_cloak; }
-int Tank::getDurationParalyze() { return duration_paralyze; }
+std::int32_t Tank::getDurationAcid() { return duration_acid; }
+std::int32_t Tank::getDurationShield() { return duration_shield; }
+std::int32_t Tank::getDurationEMP() { return duration_emp; }
+std::int32_t Tank::getDurationFloat() { return duration_float; }
+std::int32_t Tank::getDurationDoubleAction() { return duration_double_action; }
+std::int32_t Tank::getDurationPadlock() { return duration_padlock; }
+std::int32_t Tank::getDurationCloak() { return duration_cloak; }
+std::int32_t Tank::getDurationParalyze() { return duration_paralyze; }
 // Setters for durations
-void Tank::setDurationAcid(int value) {
+void Tank::setDurationAcid(std::int32_t value) {
     if (value != 0) {
         delete acid_gen;
         acid_gen = new ParticleGenerator(10, 5, 2, 100, 1);
@@ -813,9 +816,9 @@ void Tank::setDurationAcid(int value) {
     }
     duration_acid = value;
 }
-void Tank::setDurationShield(int value) { duration_shield = value; }
-void Tank::setDurationEMP(int value) { duration_emp = value; }
-void Tank::setDurationFloat(int value) {
+void Tank::setDurationShield(std::int32_t value) { duration_shield = value; }
+void Tank::setDurationEMP(std::int32_t value) { duration_emp = value; }
+void Tank::setDurationFloat(std::int32_t value) {
     if (value != 0) {
         delete float_gen;
         float_gen = new ParticleGenerator(10, 5, 2, 100, 2);
@@ -827,12 +830,14 @@ void Tank::setDurationFloat(int value) {
     }
     duration_float = value;
 }
-void Tank::setDurationDoubleAction(int value) {
+void Tank::setDurationDoubleAction(std::int32_t value) {
     duration_double_action = value;
 }
-void Tank::setDurationPadlock(int value) { duration_padlock = value; }
-void Tank::setDurationCloak(int value) { duration_cloak = value; }
-void Tank::setDurationParalyze(int value) { duration_paralyze = value; }
+void Tank::setDurationPadlock(std::int32_t value) { duration_padlock = value; }
+void Tank::setDurationCloak(std::int32_t value) { duration_cloak = value; }
+void Tank::setDurationParalyze(std::int32_t value) {
+    duration_paralyze = value;
+}
 void Tank::setDurationAllPassTurn() {
     // acid
     if (duration_acid > 0) {
@@ -984,8 +989,8 @@ const float* Tank::getWheelMatrix() { return &wheel_matrix[0]; }
 const float* Tank::getWheelColor() { return &wheel_color[0]; }
 float* Tank::getWheelScale() { return &wheel_scale[0]; }
 
-int Tank::getHP() { return hp; }
-int Tank::getPower() { return power; }
-int Tank::getArmor() { return armor; }
-int Tank::getSpeed() { return speed; }
+std::int32_t Tank::getHP() { return hp; }
+std::int32_t Tank::getPower() { return power; }
+std::int32_t Tank::getArmor() { return armor; }
+std::int32_t Tank::getSpeed() { return speed; }
 Tank* Tank::getTankPointer() { return this; }

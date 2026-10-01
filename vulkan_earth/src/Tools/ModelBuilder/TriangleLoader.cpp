@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <istream>
@@ -41,8 +42,8 @@ void crossProduct(float Ox,
 }
 
 int main(int argc, char* argv[]) {
-    unsigned int c;
-    unsigned int red, green, blue;
+    std::uint32_t c;
+    std::uint32_t red, green, blue;
     bool done = false;
     bool smooth = false;
     if ((argc == 4) && (strcmp(argv[3], "smooth") == 0)) {
@@ -66,7 +67,7 @@ int main(int argc, char* argv[]) {
         }
 
         fseek(x3d_file, 0, SEEK_END);
-        int read_file_size = ftell(x3d_file);
+        std::int32_t read_file_size = ftell(x3d_file);
         rewind(x3d_file);
 
         char* buffer;
@@ -81,19 +82,19 @@ int main(int argc, char* argv[]) {
         vector<float> Vertices(0);
         vector<float> TexCoord(0);
         vector<float> Normal(0);
-        vector<int> Indices(0);
-        vector<int> TexIndices(0);
-        for (int x = 0; x < results.size(); x++) {
+        vector<std::int32_t> Indices(0);
+        vector<std::int32_t> TexIndices(0);
+        for (std::int32_t x = 0; x < results.size(); x++) {
             if (results[x].compare("coordIndex=\"") == 0) {
                 cout << "START OF VERTEX INDICES" << endl;
-                int i = 0;
+                std::int32_t i = 0;
                 x = x + 1;
                 while (results[x].compare("\"") != 0 &&
                        results[x].compare("") != 0) {
                     std::istringstream iss(results[x]);
                     iss >> i >> std::dec;
                     if (i != -1) {
-                        Indices.push_back((int)i);
+                        Indices.push_back((std::int32_t)i);
                         cout << i << ", ";
                     }
                     x++;
@@ -102,14 +103,14 @@ int main(int argc, char* argv[]) {
             }
             if (results[x].compare("texCoordIndex=\"") == 0) {
                 cout << "START OF TEXT_COORD INDICES" << endl;
-                int i = 0;
+                std::int32_t i = 0;
                 x = x + 1;
                 while (results[x].compare("-1\"") != 0 &&
                        results[x].compare("") != 0) {
                     std::istringstream iss(results[x]);
                     iss >> i >> std::dec;
                     if (i != -1) {
-                        TexIndices.push_back((int)i);
+                        TexIndices.push_back((std::int32_t)i);
                         cout << i << ", ";
                     }
                     x++;
@@ -148,16 +149,16 @@ int main(int argc, char* argv[]) {
         vector<float> actualVertices(0);
         vector<float> actualTexCoord(0);
         vector<float> actualNormals(0);
-        for (int x = 0; x < Indices.size(); x++) {
+        for (std::int32_t x = 0; x < Indices.size(); x++) {
             actualVertices.push_back(Vertices[Indices[x] * 3 + 0]);
             actualVertices.push_back(Vertices[Indices[x] * 3 + 1]);
             actualVertices.push_back(Vertices[Indices[x] * 3 + 2]);
         }
-        for (int x = 0; x < TexIndices.size(); x++) {
+        for (std::int32_t x = 0; x < TexIndices.size(); x++) {
             actualTexCoord.push_back(TexCoord[TexIndices[x] * 2 + 0]);
             actualTexCoord.push_back(TexCoord[TexIndices[x] * 2 + 1]);
         }
-        for (int x = 0; x < actualVertices.size(); x += 9) {
+        for (std::int32_t x = 0; x < actualVertices.size(); x += 9) {
             // cout << actualVertices[x] << ", ";
             float Ox = actualVertices[x + 0];
             float Oy = actualVertices[x + 1];
@@ -197,11 +198,11 @@ int main(int argc, char* argv[]) {
 
         if (smooth) {
             cout << "Smoothing " << endl;
-            for (int x = 0; x < actualVertices.size(); x += 3) {
+            for (std::int32_t x = 0; x < actualVertices.size(); x += 3) {
                 float nX = 0.0;
                 float nY = 0.0;
                 float nZ = 0.0;
-                for (int y = 0; y < actualVertices.size(); y += 3) {
+                for (std::int32_t y = 0; y < actualVertices.size(); y += 3) {
                     if (((actualVertices[x] == actualVertices[y]) &&
                          (actualVertices[x + 1] == actualVertices[y + 1])) &&
                         (actualVertices[x + 2] == actualVertices[y + 2])) {
@@ -222,8 +223,8 @@ int main(int argc, char* argv[]) {
 
         cout << "Done Smoothing " << endl;
         cout << "Writing to file " << endl;
-        int y = 0;
-        for (int x = 0; x < actualNormals.size(); x += 3) {
+        std::int32_t y = 0;
+        for (std::int32_t x = 0; x < actualNormals.size(); x += 3) {
             // if(y < actualTexCoord.size() && (y + 1) < actualTexCoord.size())
             // {
             outputFile << actualTexCoord[y] << " " << actualTexCoord[y + 1]

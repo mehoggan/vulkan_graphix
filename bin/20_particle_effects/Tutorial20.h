@@ -95,8 +95,8 @@ struct EffectParticle {
     Math::Vec3<float> direction;
     Math::Vec4<float> color;
     float speed = 0.0f;
-    int current_frame = 0;
-    int active_frames = 0;
+    std::int32_t current_frame = 0;
+    std::int32_t active_frames = 0;
 };
 
 // ************************************************************ //
@@ -201,18 +201,18 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
-    void onMouseMove(int pos_x, int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
     // Real per-type constants (vulkan_earth/src/ParticleGenerator's own
     // constructor args at each real call site: spawn=10, life=100 - see
     // Tank.cpp:350,830-855) - rescaled position/speed/size below to this
     // tutorial's own small world.
-    static constexpr int c_active_frames = 100;
+    static constexpr std::int32_t c_active_frames = 100;
     static constexpr std::size_t c_particles_per_emitter = 8;
     static constexpr float c_world_scale = 0.03f;
 

@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 
 class ChaseCam {
 public:
@@ -10,7 +11,7 @@ public:
     ChaseCam(float* new_target_pos, float* new_target_at);
     ~ChaseCam();
     void view();
-    void setShakeCam(int magnitude);
+    void setShakeCam(std::int32_t magnitude);
     void updateShakeCam();
     void updateFactor();
     void resetFactor();
@@ -18,7 +19,7 @@ public:
 private:
     float* target_pos;
     float* target_at;
-    int shake_cam_pos[3];
+    std::int32_t shake_cam_pos[3];
     float back_factor;
     float up_factor;
 };

@@ -4,6 +4,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <dlfcn.h>
+#include <cstdint>
 
 #include <cstdlib>
 #include <cstring>
@@ -39,8 +40,11 @@ public:
     // unaffected. `button` follows X11 convention: 1/2/3 = left/middle/
     // right, 4/5 = scroll wheel up/down (reported as a press with no
     // matching release).
-    virtual void onMouseButton(int button, bool pressed, int pos_x, int pos_y);
-    virtual void onMouseMove(int pos_x, int pos_y);
+    virtual void onMouseButton(std::int32_t button,
+                               bool pressed,
+                               std::int32_t pos_x,
+                               std::int32_t pos_y);
+    virtual void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
 
 protected:
     bool m_can_render;

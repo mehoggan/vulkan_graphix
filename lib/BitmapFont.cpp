@@ -1,4 +1,5 @@
 #include "vulkan_graphix/BitmapFont.h"
+#include <cstdint>
 
 #include <cstddef>
 #include <cstring>
@@ -31,16 +32,16 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
         return false;
     }
 
-    std::vector<unsigned char> bitmap(c_atlas_width * c_atlas_height, 0);
+    std::vector<std::uint8_t> bitmap(c_atlas_width * c_atlas_height, 0);
     std::array<stbtt_bakedchar, c_glyph_count> baked_chars{};
 
-    int const bake_result = stbtt_BakeFontBitmap(
-            reinterpret_cast<unsigned char const*>(font_data.data()),
+    std::int32_t const bake_result = stbtt_BakeFontBitmap(
+            reinterpret_cast<std::uint8_t const*>(font_data.data()),
             0,
             pixel_height,
             bitmap.data(),
-            static_cast<int>(c_atlas_width),
-            static_cast<int>(c_atlas_height),
+            static_cast<std::int32_t>(c_atlas_width),
+            static_cast<std::int32_t>(c_atlas_height),
             c_first_char,
             c_glyph_count,
             baked_chars.data());
@@ -49,7 +50,8 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
     // (the last c_solid_block_size rows) is safe only if baking left at
     // least that many rows free.
     if (bake_result <= 0 ||
-        bake_result > static_cast<int>(c_atlas_height - c_solid_block_size)) {
+        bake_result > static_cast<std::int32_t>(c_atlas_height -
+                                                c_solid_block_size)) {
         return false;
     }
 
@@ -81,13 +83,13 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
             static_cast<float>(block_y + c_solid_block_size / 2) /
                     static_cast<float>(m_atlas_height));
 
-    for (int i = 0; i < c_glyph_count; ++i) {
+    for (std::int32_t i = 0; i < c_glyph_count; ++i) {
         float pen_x = 0.0f;
         float pen_y = 0.0f;
         stbtt_aligned_quad quad{};
         stbtt_GetBakedQuad(baked_chars.data(),
-                           static_cast<int>(m_atlas_width),
-                           static_cast<int>(m_atlas_height),
+                           static_cast<std::int32_t>(m_atlas_width),
+                           static_cast<std::int32_t>(m_atlas_height),
                            i,
                            &pen_x,
                            &pen_y,
@@ -120,7 +122,7 @@ std::vector<BitmapFontGlyphQuad> BitmapFont::layoutText(
     quads.reserve(text.size());
 
     float pen_x = origin.x;
-    for (unsigned char character : text) {
+    for (std::uint8_t character : text) {
         if (character < c_first_char ||
             character >= c_first_char + c_glyph_count) {
             continue;
@@ -142,7 +144,7 @@ std::vector<BitmapFontGlyphQuad> BitmapFont::layoutText(
 
 float BitmapFont::textWidth(const std::string& text) const {
     float width = 0.0f;
-    for (unsigned char character : text) {
+    for (std::uint8_t character : text) {
         if (character < c_first_char ||
             character >= c_first_char + c_glyph_count) {
             continue;

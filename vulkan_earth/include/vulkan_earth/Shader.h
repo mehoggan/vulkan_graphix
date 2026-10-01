@@ -18,12 +18,12 @@ public:
     void bind();
     void unbind();
 
-    unsigned int id();
+    std::uint32_t id();
 
 private:
-    unsigned int shader_id;
-    unsigned int shader_vp;
-    unsigned int shader_fp;
+    std::uint32_t shader_id;
+    std::uint32_t shader_vp;
+    std::uint32_t shader_fp;
     std::string textFileRead(const char* file_name);
 };
 #endif /*__SHADER_H__*/

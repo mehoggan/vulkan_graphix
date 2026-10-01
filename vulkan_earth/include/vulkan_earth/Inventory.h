@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include "vulkan_earth/Player.h"
 
 class TextObject;
@@ -17,17 +18,17 @@ class Item;
 class Inventory {
 public:
     Inventory();
-    Inventory(float x, float y, int width, int height);
+    Inventory(float x, float y, std::int32_t width, std::int32_t height);
     ~Inventory();
     void draw();
     void setupInventory(Player* player);
-    void handleInventory(Player* current_player, int inven_index);
-    void keyHandler(int key);
-    int getSelectedIndex();
+    void handleInventory(Player* current_player, std::int32_t inven_index);
+    void keyHandler(std::int32_t key);
+    std::int32_t getSelectedIndex();
 
 private:
     float x_pos, y_pos;
-    int width, height;
+    std::int32_t width, height;
     ControlItemGrid* inven_grid;
     TextObject* title;
     TextObject* descript;
@@ -36,6 +37,6 @@ private:
     TextObject* remainings[player_max_weapons + player_max_items];
     Weapon* weapons[player_max_weapons];
     Item* items[player_max_items];
-    int select_cell_row, select_cell_col;
+    std::int32_t select_cell_row, select_cell_col;
 };
 #endif  // INVENTORY_H

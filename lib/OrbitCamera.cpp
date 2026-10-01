@@ -1,4 +1,5 @@
 #include "vulkan_graphix/OrbitCamera.h"
+#include <cstdint>
 
 #include <algorithm>
 #include <cmath>
@@ -18,13 +19,13 @@ OrbitCamera::OrbitCamera(float initial_yaw_radians,
         , m_last_y(0)
         , m_target(0.0f, 0.0f, 0.0f) {}
 
-void OrbitCamera::onMouseButton(int button,
+void OrbitCamera::onMouseButton(std::int32_t button,
                                 bool pressed,
-                                int pos_x,
-                                int pos_y) {
-    constexpr int c_left_button = 1;
-    constexpr int c_scroll_up = 4;
-    constexpr int c_scroll_down = 5;
+                                std::int32_t pos_x,
+                                std::int32_t pos_y) {
+    constexpr std::int32_t c_left_button = 1;
+    constexpr std::int32_t c_scroll_up = 4;
+    constexpr std::int32_t c_scroll_down = 5;
     constexpr float c_zoom_step = 0.5f;
     constexpr float c_min_distance = 1.5f;
     constexpr float c_max_distance = 40.0f;
@@ -40,7 +41,7 @@ void OrbitCamera::onMouseButton(int button,
     }
 }
 
-void OrbitCamera::onMouseMove(int pos_x, int pos_y) {
+void OrbitCamera::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     if (!m_dragging) {
         return;
     }
@@ -51,8 +52,8 @@ void OrbitCamera::onMouseMove(int pos_x, int pos_y) {
     // y=0 terrain plane to see its underside.
     constexpr float c_max_pitch = 1.553343f;
 
-    int const delta_x = pos_x - m_last_x;
-    int const delta_y = pos_y - m_last_y;
+    std::int32_t const delta_x = pos_x - m_last_x;
+    std::int32_t const delta_y = pos_y - m_last_y;
     m_last_x = pos_x;
     m_last_y = pos_y;
 

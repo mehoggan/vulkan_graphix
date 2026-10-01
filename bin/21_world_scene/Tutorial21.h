@@ -297,11 +297,11 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
-    void onMouseMove(int pos_x, int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
     // Bigger than Tutorial12's own pilot-sized 32x32/scale-1 grid (see
@@ -309,19 +309,19 @@ private:
     // tank (hundreds of units across) reads as sitting on a landscape
     // rather than dwarfing it. Generation step constants reused as-is
     // from Tutorial12.
-    static constexpr int c_grid_size = 64;
-    static constexpr int c_grid_scale = 16;
+    static constexpr std::int32_t c_grid_size = 64;
+    static constexpr std::int32_t c_grid_scale = 16;
     // Tutorial12 (32x32 grid) uses steps=150/increase=1/radius=4 - a total
     // "paint volume" (steps * increase * pi * radius^2) of ~7500 spread
     // over 1024 cells. This grid has 4x the cells (4096), so steps=300/
     // increase=1/radius=6 (~34000) keeps a comparable paint density
     // instead of quadrupling it, which produced unrealistically steep
     // spikes during screenshot verification.
-    static constexpr int c_gen_steps = 200;
-    static constexpr int c_gen_increase = 1;
+    static constexpr std::int32_t c_gen_steps = 200;
+    static constexpr std::int32_t c_gen_increase = 1;
     static constexpr float c_gen_radius = 5.0f;
-    static constexpr int c_gen_random_jump = 8;
-    static constexpr int c_smoothing_passes = 6;
+    static constexpr std::int32_t c_gen_random_jump = 8;
+    static constexpr std::int32_t c_smoothing_passes = 6;
 
     // Large enough to comfortably enclose the whole terrain+tank scene
     // (see getSkyboxVertexData()) - the skybox is drawn first with

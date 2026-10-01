@@ -17,7 +17,7 @@ using namespace std;
 
 Water::Water() = default;
 
-Water::Water(int new_scale, int new_size) {
+Water::Water(std::int32_t new_scale, std::int32_t new_size) {
     srand(time(nullptr));
     vbo_qualify = nullptr;
     verifyVBOs();
@@ -37,7 +37,7 @@ Water::Water(int new_scale, int new_size) {
 
 Water::~Water() {
     if (surfaceheight != nullptr) {
-        for (int i = 0; i < size; i++) {
+        for (std::int32_t i = 0; i < size; i++) {
             delete surfaceheight[i];
         }
         delete surfaceheight;
@@ -63,9 +63,11 @@ void Water::initData() {
     material_diffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
-std::uint32_t Water::loadTexture(const char* filename, int width, int height) {
+std::uint32_t Water::loadTexture(const char* filename,
+                                 std::int32_t width,
+                                 std::int32_t height) {
     std::uint32_t texture;
-    std::vector<unsigned char> data(width * height * 3);
+    std::vector<std::uint8_t> data(width * height * 3);
     std::ifstream file(filename, std::ios::binary);
     file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);
@@ -88,9 +90,9 @@ std::uint32_t Water::loadTexture(const char* filename, int width, int height) {
 }
 
 void Water::draw() {
-    int draw_size = size;
-    int draw_scale = scale;
-    int buffersize = tri_strip_buffer_size;
+    std::int32_t draw_size = size;
+    std::int32_t draw_scale = scale;
+    std::int32_t buffersize = tri_strip_buffer_size;
 
     shader->bind();
     glEnable(GL_LIGHTING);  // NOT PART OF SHADER CODE
@@ -103,13 +105,15 @@ void Water::draw() {
 
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
-    int texture_location = glGetUniformLocation(shader->id(), "color_texture");
+    std::int32_t texture_location =
+            glGetUniformLocation(shader->id(), "color_texture");
     glUniform1i(texture_location, 0);
     glBindTexture(GL_TEXTURE_2D, color_texture);
 
     glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
-    int normal_location = glGetUniformLocation(shader->id(), "normal_texture");
+    std::int32_t normal_location =
+            glGetUniformLocation(shader->id(), "normal_texture");
     glUniform1i(normal_location, 1);
     glBindTexture(GL_TEXTURE_2D, normal_texture);
 
@@ -270,21 +274,21 @@ void Water::verifyVBOs() {
 }
 
 void Water::prepTerrain() {
-    surfaceheight = new int*[size];
-    for (int i = 0; i < size; i++) {
-        surfaceheight[i] = new int[size];
+    surfaceheight = new std::int32_t*[size];
+    for (std::int32_t i = 0; i < size; i++) {
+        surfaceheight[i] = new std::int32_t[size];
     }
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
+    for (std::int32_t y = 0; y < size; y++) {
+        for (std::int32_t x = 0; x < size; x++) {
             surfaceheight[x][y] = -5 * 100;
         }
     }
 }
 
 void Water::prepareData() {
-    int buffersize = tri_strip_buffer_size;
-    int prep_size = size;
-    int prep_scale = scale;
+    std::int32_t buffersize = tri_strip_buffer_size;
+    std::int32_t prep_size = size;
+    std::int32_t prep_scale = scale;
 
     //
     // 				v_k
@@ -296,11 +300,11 @@ void Water::prepareData() {
     //		x-----x
     //	v_j			v_y
     //	v_x
-    int index = 0;
-    int index_normals = 0;
-    int index_texture = 0;
-    for (int i = 0; i < prep_size - 1; i++) {
-        for (int j = 0; j < prep_size - 1; j++) {
+    std::int32_t index = 0;
+    std::int32_t index_normals = 0;
+    std::int32_t index_texture = 0;
+    for (std::int32_t i = 0; i < prep_size - 1; i++) {
+        for (std::int32_t j = 0; j < prep_size - 1; j++) {
             /************************************************************/
             /*	V_I -- N_I		                            */
             /************************************************************/

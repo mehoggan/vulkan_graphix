@@ -1,14 +1,15 @@
 #include "vulkan_earth/Sound.h"
+#include <cstdint>
 #include "vulkan_earth/MacroCrtdbg.h"
 
 Mix_Chunk* sfx[max_sfx_files];
 Mix_Music* music[total_music_files];
 
 void initSound() {
-    int audio_rate = 48000;
+    std::int32_t audio_rate = 48000;
     Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
+    std::int32_t audio_channels = 2;
+    std::int32_t audio_buffers = 4096;
 
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         printf("Unable to initialize SDL: %s\n", SDL_GetError());
@@ -19,10 +20,10 @@ void initSound() {
         printf("Unable to initialize audio: %s\n", Mix_GetError());
     }
 
-    for (int i = 0; i < max_sfx_files; i++) {
+    for (std::int32_t i = 0; i < max_sfx_files; i++) {
         sfx[i] = nullptr;
     }
-    for (int i = 0; i < total_music_files; i++) {
+    for (std::int32_t i = 0; i < total_music_files; i++) {
         music[i] = nullptr;
     }
 
@@ -83,14 +84,14 @@ void initSound() {
     music[9] = Mix_LoadMUS("Sounds/Music/gamestate_beach_loop.mp3");
     music[10] = Mix_LoadMUS("Sounds/Music/gamestate_desert.mp3");
     music[11] = Mix_LoadMUS("Sounds/Music/gamestate_lava.mp3");
-    for (int i = 0; i < total_music_files; i++) {
+    for (std::int32_t i = 0; i < total_music_files; i++) {
         if (music[i] == nullptr) {
             printf("Unable to load music: %s\n", Mix_GetError());
         }
     }
 }
 
-void playSFX(int type) {
+void playSFX(std::int32_t type) {
     if (type == BIG_CLICK) {
         Mix_PlayChannel(0, sfx[type], 0);
     } else if (type == SMALL_CLICK) {
@@ -194,7 +195,7 @@ void playSFX(int type) {
     }
 }
 
-void playMusic(int type) {
+void playMusic(std::int32_t type) {
     if (type == mainmenu) {
         if (Mix_PlayingMusic() == 0) Mix_PlayMusic(music[type], -1);
     } else if (type == readymenu_start) {

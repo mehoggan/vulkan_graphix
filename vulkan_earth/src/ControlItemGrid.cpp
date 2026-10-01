@@ -7,7 +7,7 @@
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ControlItemGrid::ControlItemGrid() = default;
 ControlItemGrid::ControlItemGrid(float new_x_pos,
@@ -15,8 +15,8 @@ ControlItemGrid::ControlItemGrid(float new_x_pos,
                                  float new_z_pos,
                                  std::int32_t new_width,
                                  std::int32_t new_height,
-                                 int new_rows,
-                                 int new_cols,
+                                 std::int32_t new_rows,
+                                 std::int32_t new_cols,
                                  float active_cell_color_red,
                                  float active_cell_color_green,
                                  float active_cell_color_blue,
@@ -41,13 +41,14 @@ ControlItemGrid::ControlItemGrid(float new_x_pos,
     selected_cells = new bool[new_rows * new_cols];
     buttons = new ControlItemButton*[new_rows * new_cols];
 
-    for (int i = 0; i < new_rows * new_cols; i++) selected_cells[i] = false;
+    for (std::int32_t i = 0; i < new_rows * new_cols; i++)
+        selected_cells[i] = false;
 
     // create buttons and place them in the grid in the order:(0,0), (0,1),
     // (0,2), .....
-    int button_i = 0;
-    for (int r = 0; r < new_rows; r++) {
-        for (int c = 0; c < new_cols; c++) {
+    std::int32_t button_i = 0;
+    for (std::int32_t r = 0; r < new_rows; r++) {
+        for (std::int32_t c = 0; c < new_cols; c++) {
             buttons[button_i] = new ControlItemButton(nullptr,
                                                       x_pos + cell_width * c,
                                                       y_pos - cell_height * r,
@@ -64,7 +65,7 @@ ControlItemGrid::ControlItemGrid(float new_x_pos,
 }
 
 ControlItemGrid::~ControlItemGrid() {
-    for (int i = 0; i < rows * cols; i++) {
+    for (std::int32_t i = 0; i < rows * cols; i++) {
         delete buttons[i];
     }
     delete[] buttons;
@@ -113,8 +114,8 @@ void ControlItemGrid::draw() {
 
     // Draw cell lines if they are set to visible
     if (visible_lines) {
-        for (int r = 0; r < rows; r++)
-            for (int c = 0; c < cols; c++) {
+        for (std::int32_t r = 0; r < rows; r++)
+            for (std::int32_t c = 0; c < cols; c++) {
                 glBegin(GL_LINE_LOOP);
                 glColor3f(0, 0, 0);
                 glVertex3f(x_pos + cell_width * c,
@@ -140,7 +141,7 @@ void ControlItemGrid::draw() {
     //*/
 
     // Change the color of active cells
-    for (int i = 0; i < rows * cols; i++) {
+    for (std::int32_t i = 0; i < rows * cols; i++) {
         if (buttons[i]->isToggled()) {
             glBegin(GL_QUADS);
             glColor3f(active_cell_color[0],
@@ -180,7 +181,7 @@ void ControlItemGrid::mouseClickEvent(std::int32_t x,
                 deselectAllCells();
                 // find the button that's been clicked on and update the state
                 // of the button
-                for (int i = 0; i < rows * cols; i++) {
+                for (std::int32_t i = 0; i < rows * cols; i++) {
                     buttons[i]->mouseClickEvent(x, y, state, true);
                     if (buttons[i]->isToggled()) {
                         selected_cells[i] = true;
@@ -191,7 +192,7 @@ void ControlItemGrid::mouseClickEvent(std::int32_t x,
             }
             // IF THE GRID ALLOWS MULTIPLE SELECTION
             else {
-                for (int i = 0; i < rows * cols; i++) {
+                for (std::int32_t i = 0; i < rows * cols; i++) {
                     if ((x >= (buttons[i]->getXPos()) &&
                          x <= ((buttons[i]->getXPos()) +
                                (buttons[i]->getWidth()))) &&
@@ -224,7 +225,8 @@ float ControlItemGrid::getHeight() { return height; }
 float ControlItemGrid::getWidth() { return width; }
 bool* ControlItemGrid::getSelectedCells() { return &selected_cells[0]; }
 
-void ControlItemGrid::selectCell(int row_index, int col_index) {
+void ControlItemGrid::selectCell(std::int32_t row_index,
+                                 std::int32_t col_index) {
     // Check for valid indexing
     if (0 <= row_index && row_index < rows && 0 <= col_index &&
         col_index < cols) {
@@ -240,7 +242,7 @@ void ControlItemGrid::selectCell(int row_index, int col_index) {
 }
 
 void ControlItemGrid::deselectAllCells() {
-    for (int i = 0; i < rows * cols; i++) {
+    for (std::int32_t i = 0; i < rows * cols; i++) {
         buttons[i]->setToggled(false);
         buttons[i]->updateButtonState();
         selected_cells[i] = false;
@@ -252,7 +254,9 @@ void ControlItemGrid::setImageSizeToCell(ImageObject* img, float scale) {
     img->setHeight(cell_height * scale);
 }
 
-void ControlItemGrid::placeImageToCell(ImageObject* img, int row, int col) {
+void ControlItemGrid::placeImageToCell(ImageObject* img,
+                                       std::int32_t row,
+                                       std::int32_t col) {
     img->setXpos(x_pos + (cell_width * col) +
                  ((cell_width - img->getWidth()) / 2.0));
     img->setYpos(y_pos - (cell_height * row) -
@@ -260,14 +264,16 @@ void ControlItemGrid::placeImageToCell(ImageObject* img, int row, int col) {
     img->setZpos(z_pos + 1);
 }
 
-void ControlItemGrid::placeTextToCell(TextObject* text, int row, int col) {
+void ControlItemGrid::placeTextToCell(TextObject* text,
+                                      std::int32_t row,
+                                      std::int32_t col) {
     text->setXpos(x_pos + (cell_width * col) + (cell_width * 0.1));
     text->setYpos(y_pos - (cell_height * row) - (cell_height * 0.85));
     text->setZpos(z_pos + 2);
 }
 
 // DUMMY FUNCTIONS
-void ControlItemGrid::setOptionText(int index) {}
+void ControlItemGrid::setOptionText(std::int32_t index) {}
 void ControlItemGrid::setOptionText(const std::string& new_text) {}
-void ControlItemGrid::updateMouse(int x, int y) {}
+void ControlItemGrid::updateMouse(std::int32_t x, std::int32_t y) {}
 std::string ControlItemGrid::collectData() { return ""; }

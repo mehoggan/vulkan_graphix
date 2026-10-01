@@ -10,9 +10,9 @@
 
 using namespace std;
 
-const int max_chars = 15;
+const std::int32_t max_chars = 15;
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ControlItemTextField::ControlItemTextField() = default;
 
@@ -89,7 +89,7 @@ void ControlItemTextField::draw() {
 
     if (text_field_active) {
         if (text_cursor_on == 1) {
-            int real_length = 0;
+            std::int32_t real_length = 0;
             for (char ch : current_chars) {
                 if (ch != ' ') {
                     real_length +=
@@ -126,12 +126,12 @@ std::string ControlItemTextField::collectData() {
     return current_text->getOutput();
 }
 void ControlItemTextField::deactivate() { text_field_active = false; }
-void ControlItemTextField::setOptionText(int index) {}
+void ControlItemTextField::setOptionText(std::int32_t index) {}
 
 void ControlItemTextField::setOptionText(const std::string& new_text) {
     delete current_text;
 
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : new_text) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -156,8 +156,8 @@ void ControlItemTextField::mouseClickEvent(
         if (still_over_control_item_text_field) text_field_active = true;
 }
 
-void ControlItemTextField::updateMouse(int x, int y) {}
-void ControlItemTextField::keyHandler(unsigned char key) {
+void ControlItemTextField::updateMouse(std::int32_t x, std::int32_t y) {}
+void ControlItemTextField::keyHandler(std::uint8_t key) {
     if (text_field_active) {
         if ((((key >= 48) && (key <= 57)) || ((key >= 65) && (key < 90))) ||
             ((key >= 97) && (key <= 122))) {
@@ -193,7 +193,7 @@ void ControlItemTextField::clearTextBuffer() {
 void ControlItemTextField::setTextBuffer(const std::string& new_text) {
     setOptionText(new_text);
     clearTextBuffer();
-    int new_length = 0;
+    std::int32_t new_length = 0;
     for (size_t i = 0; i < new_text.size() && i < current_chars.size(); i++) {
         current_chars[i] = new_text[i];
         if (new_text[i] != ' ') new_length++;

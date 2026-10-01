@@ -13,7 +13,7 @@ class SubMenu;
 class MainMenuButton {
 public:
     MainMenuButton();
-    MainMenuButton(int id,
+    MainMenuButton(std::int32_t id,
                    float new_x_pos,
                    float new_y_pos,
                    float new_z_pos,
@@ -34,7 +34,7 @@ public:
     bool isPressed();
     bool isActive();
     void setLabel(const std::string& c);
-    int getUNIQUEIDENTIFIER();
+    std::int32_t getUNIQUEIDENTIFIER();
     float getXPos();
     float getYPos();
     float getHeight();
@@ -42,10 +42,10 @@ public:
     float* getColor();
     void setColor(float r, float g, float b);
     SubMenu* getSubMenu();
-    void printSelf(int i);
+    void printSelf(std::int32_t i);
 
 private:
-    int uniqueidentifier;
+    std::int32_t uniqueidentifier;
     float x_pos;
     float y_pos;
     float z_pos;

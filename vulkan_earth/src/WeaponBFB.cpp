@@ -1,9 +1,10 @@
 #include "vulkan_earth/WeaponBFB.h"
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponBFB::WeaponBFB() = default;
-WeaponBFB::WeaponBFB(int id) {
+WeaponBFB::WeaponBFB(std::int32_t id) {
     uniqueidentifier = id;
     remaining = 2;
     scale = 100;
@@ -20,7 +21,7 @@ WeaponBFB::WeaponBFB(int id) {
     float temp_colors2[3] = {Yellow};
     float temp_colors3[3] = {Orange};
     float temp_colors4[3] = {Red};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
         explosion_color3[i] = temp_colors3[i];

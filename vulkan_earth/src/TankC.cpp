@@ -1,13 +1,14 @@
 #include "vulkan_earth/TankC.h"
+#include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_c_name = "HeavyD";
-const int tank_c_hp = 1000;
-const int tank_c_power = 10;
-const int tank_c_armor = 7;
-const int tank_c_speed = 5;
+const std::int32_t tank_c_hp = 1000;
+const std::int32_t tank_c_power = 10;
+const std::int32_t tank_c_armor = 7;
+const std::int32_t tank_c_speed = 5;
 
 TankC::TankC() = default;
 TankC::TankC(float x, float y, float z) {
@@ -27,7 +28,7 @@ TankC::TankC(float x, float y, float z) {
     body_offset[1] = 90;
     body_offset[2] = 0;
 
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         body_scale[i] = 80;
         head_scale[i] = 80;
         turret_scale[i] = 80;
@@ -78,10 +79,10 @@ TankC::~TankC() {
 }
 
 // GETTERS
-int TankC::getBaseHP() { return tank_c_hp; }
-int TankC::getBasePower() { return tank_c_power; }
-int TankC::getBaseArmor() { return tank_c_armor; }
-int TankC::getBaseSpeed() { return tank_c_speed; }
+std::int32_t TankC::getBaseHP() { return tank_c_hp; }
+std::int32_t TankC::getBasePower() { return tank_c_power; }
+std::int32_t TankC::getBaseArmor() { return tank_c_armor; }
+std::int32_t TankC::getBaseSpeed() { return tank_c_speed; }
 std::string TankC::getName() { return tank_c_name; }
 
 void TankC::drawTankHitBox() {

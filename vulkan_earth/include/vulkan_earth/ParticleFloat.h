@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include "vulkan_earth/Particle.h"
@@ -19,7 +20,7 @@ public:
                   float dir_y,
                   float dir_z,
                   float new_speed,
-                  int frames);
+                  std::int32_t frames);
 
     bool update() override;
 };

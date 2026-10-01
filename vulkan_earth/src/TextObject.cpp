@@ -1,4 +1,5 @@
 #include "vulkan_earth/TextObject.h"
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/MacroCrtdbg.h"
 
@@ -39,7 +40,7 @@ void TextObject::draw() {
     float x_pos = pos_x;
     glColor3f(color[0], color[1], color[2]);
     for (char ch : output) {
-        int step = glutBitmapWidth(font_size, ch);
+        std::int32_t step = glutBitmapWidth(font_size, ch);
         glRasterPos3f(x_pos, pos_y, pos_z);
         glutBitmapCharacter(font_size, ch);
         x_pos += step;

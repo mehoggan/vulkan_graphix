@@ -13,12 +13,12 @@ class ControlItem;
 class ControlItemCheckBox;
 class ControlItemSelectionBox;
 
-const int num_control_items_wpn = 5;
+const std::int32_t num_control_items_wpn = 5;
 
 class SubMenuWeapons : public SubMenu {
 public:
     SubMenuWeapons();
-    SubMenuWeapons(int id,
+    SubMenuWeapons(std::int32_t id,
                    float new_x_pos,
                    float new_y_pos,
                    float new_z_pos,
@@ -30,8 +30,8 @@ public:
                    const std::string& new_caption,
                    float new_percent_border);
     ~SubMenuWeapons() override;
-    int getUNIQUEIDENTIFIER() override;
-    void setUNIQUEIDENTIFIER(int id) override;
+    std::int32_t getUNIQUEIDENTIFIER() override;
+    void setUNIQUEIDENTIFIER(std::int32_t id) override;
     float getXPos() override;
     void setXPos(float new_xpos) override;
     float getYPos() override;
@@ -54,11 +54,13 @@ public:
     void setPercentBorder(float percent) override;
     void draw() override;
     std::string collectData() override;
-    void subMenuMouseTest(int x, int y, int button_down) override;
-    void updateMouse(int x, int y) override;
+    void subMenuMouseTest(std::int32_t x,
+                          std::int32_t y,
+                          std::int32_t button_down) override;
+    void updateMouse(std::int32_t x, std::int32_t y) override;
 
 private:
-    int uniqueidentifier;
+    std::int32_t uniqueidentifier;
     float x_pos;
     float y_pos;
     float z_pos;

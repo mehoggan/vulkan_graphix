@@ -1,8 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-const int player_max_weapons = 5;
-const int player_max_items = 5;
+#include <cstdint>
+
+const std::int32_t player_max_weapons = 5;
+const std::int32_t player_max_items = 5;
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -55,8 +57,8 @@ public:
     virtual void setPlayerType(const std::string& player_type) = 0;
     virtual std::string getPlayerName() = 0;
     virtual void setPlayerName(const std::string& name) = 0;
-    virtual int getCash() = 0;
-    virtual void setCash(int cash) = 0;
+    virtual std::int32_t getCash() = 0;
+    virtual void setCash(std::int32_t cash) = 0;
     virtual float getRed() = 0;
     virtual float getGreen() = 0;
     virtual float getBlue() = 0;
@@ -80,7 +82,7 @@ public:
     float* getBalisticMatrix();
     Vertex getEnemyPosition();
     void setEnemyPosition();
-    int getAIState();
+    std::int32_t getAIState();
     /*	END OF ACCESS AI TO OUTSIDE WORLD	*/
 
     /*	TEST DRAW FUNCTIONS				*/
@@ -112,9 +114,9 @@ protected:
     float dangle;
     float balistic_matrix[16];
     float max_pitch_angle;
-    int state_of_ai;
-    int prev_state_of_ai;
-    int sub_state_of_ai;
+    std::int32_t state_of_ai;
+    std::int32_t prev_state_of_ai;
+    std::int32_t sub_state_of_ai;
     /*	AI ACTIONS	*/
     void restoreTurretTo0Degrees();
     void yawLeft(float degrees);

@@ -21,15 +21,15 @@ class Shader;
 
 class TerrainMaker {
 public:
-    TerrainMaker(int i_scale, int i_size);
+    TerrainMaker(std::int32_t i_scale, std::int32_t i_size);
     ~TerrainMaker();
     void draw();
     void initData();
-    void prepareData(int new_steps,
-                     int new_increase,
+    void prepareData(std::int32_t new_steps,
+                     std::int32_t new_increase,
                      float new_radius,
-                     int new_random_jump,
-                     int smoothness);
+                     std::int32_t new_random_jump,
+                     std::int32_t smoothness);
     void verifyVBOs();
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
@@ -42,18 +42,20 @@ public:
     float getHeightAt(float x, float z);
     std::int32_t getActualSize();
     std::int32_t getScale();
-    std::uint32_t loadTexture(const char* filename, int width, int height);
+    std::uint32_t loadTexture(const char* filename,
+                              std::int32_t width,
+                              std::int32_t height);
     std::uint32_t selectTexture(const std::string& tex);
 
 private:
-    int scale;
-    int size;
-    int steps;
-    int increase;
+    std::int32_t scale;
+    std::int32_t size;
+    std::int32_t steps;
+    std::int32_t increase;
     float radius;
-    int random_jump;
-    int total_vertices;
-    int tri_strip_buffer_size;
+    std::int32_t random_jump;
+    std::int32_t total_vertices;
+    std::int32_t tri_strip_buffer_size;
     vulkan_graphix::TerrainGenerator terrain;
     VBOQualifer* vbo_qualify;
     std::vector<Vertex> vertices;

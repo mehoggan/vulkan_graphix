@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Tank.h"
 
 class TankG : public Tank {
@@ -11,10 +12,10 @@ public:
     TankG(float x, float y, float z);
     ~TankG() override;
 
-    int getBaseHP() override;
-    int getBasePower() override;
-    int getBaseArmor() override;
-    int getBaseSpeed() override;
+    std::int32_t getBaseHP() override;
+    std::int32_t getBasePower() override;
+    std::int32_t getBaseArmor() override;
+    std::int32_t getBaseSpeed() override;
     std::string getName() override;
     void buildList();
     void drawTankHitBox() override;

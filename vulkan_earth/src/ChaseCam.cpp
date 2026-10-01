@@ -1,4 +1,5 @@
 #include "vulkan_earth/ChaseCam.h"
+#include <cstdint>
 #include "math.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
@@ -41,7 +42,7 @@ void ChaseCam::resetFactor() {
     up_factor = 100;
 }
 
-void ChaseCam::setShakeCam(int magnitude) {
+void ChaseCam::setShakeCam(std::int32_t magnitude) {
     shake_cam_pos[0] = magnitude;
     shake_cam_pos[1] = magnitude;
     shake_cam_pos[2] = magnitude;

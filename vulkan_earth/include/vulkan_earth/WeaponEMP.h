@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 
 class WeaponEMP : public Weapon {
 public:
     WeaponEMP();
-    WeaponEMP(int id);
+    WeaponEMP(std::int32_t id);
     ~WeaponEMP() override;
     WeaponEMP* getWeaponInstance() override;
     void causeEffectToTank(float distance, Tank* tank) override;

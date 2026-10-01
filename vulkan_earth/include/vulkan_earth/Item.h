@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/Tank.h"
 
@@ -12,26 +13,26 @@ public:
     virtual ~Item();
     /*	GETTERS AND SETTERS	*/
     virtual Item* getItemInstance() = 0;
-    int getUNIQUEIDENTIFIER();
-    int getRemaining();
-    void setRemaining(int r);
+    std::int32_t getUNIQUEIDENTIFIER();
+    std::int32_t getRemaining();
+    void setRemaining(std::int32_t r);
     std::string getImageFileName();
     std::string getDescription();
-    int getPrice();
-    int getPackageNum();
-    int getMaxStack();
+    std::int32_t getPrice();
+    std::int32_t getPackageNum();
+    std::int32_t getMaxStack();
     virtual bool causeEffectToTank(Tank* tank) = 0;
     virtual void playUseSFX();
 
 protected:
-    int uniqueidentifier;
+    std::int32_t uniqueidentifier;
     std::string image_file_name;
     std::string description;
-    int price;
-    int package_num;
-    int max_stack;
-    int remaining;
-    int special_num;
+    std::int32_t price;
+    std::int32_t package_num;
+    std::int32_t max_stack;
+    std::int32_t remaining;
+    std::int32_t special_num;
 };
 
 #endif  //	ITEM_H

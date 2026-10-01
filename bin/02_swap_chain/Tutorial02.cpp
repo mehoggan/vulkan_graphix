@@ -1,4 +1,5 @@
 #include "Tutorial02.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -384,10 +385,10 @@ bool Tutorial02::createSwapChain() {
     VkSwapchainKHR old_swap_chain =
             m_vulkan_tutorial02_parameters.getVkSwapchainKHR();
 
-    if (static_cast<int>(desired_usage) == -1) {
+    if (static_cast<std::int32_t>(desired_usage) == -1) {
         return false;
     }
-    if (static_cast<int>(desired_present_mode) == -1) {
+    if (static_cast<std::int32_t>(desired_present_mode) == -1) {
         return false;
     }
     if ((desired_extent.width == 0) || (desired_extent.height == 0)) {

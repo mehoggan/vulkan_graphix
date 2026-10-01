@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 
 class ItemDoubleAction : public Item {
 public:
     ItemDoubleAction();
-    ItemDoubleAction(int id);
+    ItemDoubleAction(std::int32_t id);
     ~ItemDoubleAction() override;
     ItemDoubleAction* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

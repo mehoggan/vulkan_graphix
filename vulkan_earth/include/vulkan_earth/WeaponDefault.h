@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 
 class WeaponDefault : public Weapon {
 public:
     WeaponDefault();
-    WeaponDefault(int id);
+    WeaponDefault(std::int32_t id);
     ~WeaponDefault() override;
     WeaponDefault* getWeaponInstance() override;
 };

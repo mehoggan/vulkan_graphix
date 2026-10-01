@@ -10,6 +10,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include "vulkan_earth/SpecialEffect.h"
@@ -24,7 +25,10 @@ public:
      * Constructors and De-constructor
      */
     Explosion();
-    Explosion(float new_x, float new_y, float new_z, int new_weapon_radius);
+    Explosion(float new_x,
+              float new_y,
+              float new_z,
+              std::int32_t new_weapon_radius);
     ~Explosion() override;
     void draw() override;
     void setColors1(float* new_colors1) override;
@@ -46,7 +50,7 @@ private:
     float colors2[3];
     float colors3[3];
     float colors4[3];
-    int weapon_radius;
+    std::int32_t weapon_radius;
 };
 
 #endif /* EXPLOSION_H_ */

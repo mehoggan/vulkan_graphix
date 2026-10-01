@@ -11,7 +11,7 @@ class TextObject;
 class SubMenu {
 public:
     SubMenu();
-    SubMenu(int id,
+    SubMenu(std::int32_t id,
             float x_pos,
             float y_pos,
             float z_pos,
@@ -24,8 +24,8 @@ public:
             float percent_border);
     virtual ~SubMenu() = 0;
     /*	GETTERS AND SETTERS	*/
-    virtual int getUNIQUEIDENTIFIER() = 0;
-    virtual void setUNIQUEIDENTIFIER(int id) = 0;
+    virtual std::int32_t getUNIQUEIDENTIFIER() = 0;
+    virtual void setUNIQUEIDENTIFIER(std::int32_t id) = 0;
     virtual float getXPos() = 0;
     virtual void setXPos(float new_xpos) = 0;
     virtual float getYPos() = 0;
@@ -50,8 +50,10 @@ public:
     /*	ACTUAL ACTIONS A SUBMENU CAN MAKE	*/
     virtual void draw() = 0;
     virtual std::string collectData() = 0;
-    virtual void subMenuMouseTest(int x, int y, int button_down) = 0;
-    virtual void updateMouse(int x, int y) = 0;
+    virtual void subMenuMouseTest(std::int32_t x,
+                                  std::int32_t y,
+                                  std::int32_t button_down) = 0;
+    virtual void updateMouse(std::int32_t x, std::int32_t y) = 0;
     /*	END OF ACTIONS A SUBMENU CAN MAKE	*/
 };
 

@@ -1,4 +1,5 @@
 #include "vulkan_earth/ShopMenu.h"
+#include <cstdint>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemButton.h"
 #include "vulkan_earth/ControlItemGrid.h"
@@ -31,8 +32,8 @@
 #include "vulkan_earth/WeaponThor.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
-extern void playMusic(int music);
+extern void playSFX(std::int32_t sfx);
+extern void playMusic(std::int32_t music);
 
 ShopMenu::ShopMenu() = default;
 ShopMenu::ShopMenu(float new_width,
@@ -40,7 +41,7 @@ ShopMenu::ShopMenu(float new_width,
                    float new_percent_border,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
-                   int* game_state) {
+                   std::int32_t* game_state) {
     global_settings = new_global_settings;
     player_factory = new_player_factory;
     current_game_state = game_state;
@@ -48,7 +49,7 @@ ShopMenu::ShopMenu(float new_width,
     current_player_index = 0;
     current_player_balance = 0;
 
-    for (int i = 0; i < inven_grid_row; i++) {
+    for (std::int32_t i = 0; i < inven_grid_row; i++) {
         inven_wpns[i] = nullptr;
         inven_items[i] = nullptr;
         label_inven_wpn_remains[i] = nullptr;
@@ -225,7 +226,7 @@ ShopMenu::ShopMenu(float new_width,
     displayCurrentPlayerInfo();
 
     /*Images and remainsLabels Creation*/
-    for (int i = 0; i < num_sales_weapon; i++) {
+    for (std::int32_t i = 0; i < num_sales_weapon; i++) {
         img_shop_wpns[i] = new ImageObject(0,
                                            0,
                                            2.0f,
@@ -242,7 +243,7 @@ ShopMenu::ShopMenu(float new_width,
         label_shop_wpn_remains[i] = new TextObject(
                 remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
     }
-    for (int i = 0; i < num_sales_item; i++) {
+    for (std::int32_t i = 0; i < num_sales_item; i++) {
         img_shop_items[i] = new ImageObject(0,
                                             0,
                                             2.0f,
@@ -261,9 +262,9 @@ ShopMenu::ShopMenu(float new_width,
     }
 
     /*Set position of images and remainsLabels to shopping cells*/
-    int index = 0;
-    for (int r = 0; r < shop_grid_row; r++) {
-        for (int c = 0; c < shop_grid_col; c++) {
+    std::int32_t index = 0;
+    for (std::int32_t r = 0; r < shop_grid_row; r++) {
+        for (std::int32_t c = 0; c < shop_grid_col; c++) {
             if (index < num_sales_weapon) {
                 grids[0]->placeImageToCell(img_shop_wpns[index], r, c);
                 grids[0]->placeTextToCell(label_shop_wpn_remains[index], r, c);
@@ -281,7 +282,7 @@ ShopMenu::ShopMenu(float new_width,
 ShopMenu::~ShopMenu() {
     delete grids[0];
     delete grids[1];
-    for (int i = 0; i < 5; i++) delete buttons[i];
+    for (std::int32_t i = 0; i < 5; i++) delete buttons[i];
     delete label_wpn;
     delete label_item;
     delete label_player_num;
@@ -289,17 +290,17 @@ ShopMenu::~ShopMenu() {
     delete label_discription;
     delete label_buy_price;
     delete label_sell_price;
-    for (int i = 0; i < num_sales_weapon; i++) {
+    for (std::int32_t i = 0; i < num_sales_weapon; i++) {
         delete shop_wpns[i];
         delete img_shop_wpns[i];
         delete label_shop_wpn_remains[i];
     }
-    for (int i = 0; i < num_sales_item; i++) {
+    for (std::int32_t i = 0; i < num_sales_item; i++) {
         delete shop_items[i];
         delete img_shop_items[i];
         delete label_shop_item_remains[i];
     }
-    for (int i = 0; i < inven_grid_row; i++) {
+    for (std::int32_t i = 0; i < inven_grid_row; i++) {
         delete img_inven_wpns[i];
         delete label_inven_wpn_remains[i];
         delete img_inven_items[i];
@@ -308,7 +309,7 @@ ShopMenu::~ShopMenu() {
 }
 
 /*GETTERS & SETTERS*/
-void ShopMenu::updateNumPlayers(int n) { num_players = n; }
+void ShopMenu::updateNumPlayers(std::int32_t n) { num_players = n; }
 
 void ShopMenu::saveCurrentPlayerInfo() {
     // save currentPlayerBalance and the inventory (Weapon, Item objects, and
@@ -319,7 +320,7 @@ void ShopMenu::saveCurrentPlayerInfo() {
     player_factory->getPlayer(current_player_index)->setItems(inven_items);
 
     // clear inventory slots for the next player
-    for (int i = 0; i < inven_grid_row; i++) {
+    for (std::int32_t i = 0; i < inven_grid_row; i++) {
         if (img_inven_wpns[i] != nullptr) {
             delete img_inven_wpns[i];
             delete label_inven_wpn_remains[i];
@@ -350,7 +351,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
     }
 
     if (current_player_index < num_players) {
-        for (int i = 0; i < inven_grid_row; i++) {
+        for (std::int32_t i = 0; i < inven_grid_row; i++) {
             inven_wpns[i] = player_factory->getPlayer(current_player_index)
                                     ->getCurrentWeapons()[i];
             if (inven_wpns[i]) {
@@ -456,7 +457,7 @@ void ShopMenu::printDebugInfo() {
     // PLAYER INSPECTION DEBUG
     //***********************
     printf("\n*************************************");
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         printf("\n\nPlayer%d", i + 1);
         printf("\nPlayer Type: %s",
                player_factory->getPlayer(i)->getPlayerType().c_str());
@@ -469,7 +470,7 @@ void ShopMenu::printDebugInfo() {
         printf("\nTank Type: %s",
                player_factory->getPlayer(i)->getTankType().c_str());
         printf("\nCurrent Money: %d", player_factory->getPlayer(i)->getCash());
-        for (int j = 0; j < inven_grid_row; j++) {
+        for (std::int32_t j = 0; j < inven_grid_row; j++) {
             if (player_factory->getPlayer(i)->getCurrentWeapons()[j]) {
                 printf("\nWeapon Slot %i: %s",
                        j,
@@ -484,7 +485,7 @@ void ShopMenu::printDebugInfo() {
                                ->getRemaining());
             }
         }
-        for (int j = 0; j < inven_grid_row; j++) {
+        for (std::int32_t j = 0; j < inven_grid_row; j++) {
             if (player_factory->getPlayer(i)->getCurrentItems()[j]) {
                 printf("\nItem Slot %i: %s",
                        j,
@@ -507,7 +508,7 @@ void ShopMenu::printDebugInfo() {
 void ShopMenu::updateBuyDiscriptLabel() {
     bool* selected_cells = grids[0]->getSelectedCells();
     if (buttons[0]->isToggled()) {
-        for (int i = 0; i < num_sales_weapon; i++) {
+        for (std::int32_t i = 0; i < num_sales_weapon; i++) {
             if (selected_cells[i]) {
                 delete label_discription;
                 delete label_buy_price;
@@ -541,7 +542,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
             }
         }
     } else {
-        for (int i = 0; i < num_sales_item; i++) {
+        for (std::int32_t i = 0; i < num_sales_item; i++) {
             if (selected_cells[i]) {
                 delete label_discription;
                 delete label_buy_price;
@@ -579,23 +580,23 @@ void ShopMenu::updateBuyDiscriptLabel() {
 
 void ShopMenu::updateSellLabel() {
     bool* selected_cells = grids[1]->getSelectedCells();
-    int total_sell = 0;
+    std::int32_t total_sell = 0;
 
-    for (int i = 0; i < inven_grid_row * 2; i++) {
+    for (std::int32_t i = 0; i < inven_grid_row * 2; i++) {
         if (selected_cells[i] && inven_wpns[i / 2] != nullptr &&
             i % 2 == 0) {  //	i%2 == 0 is weapon inventory
-            total_sell +=
-                    static_cast<int>(((inven_wpns[i / 2]->getPrice() /
-                                       inven_wpns[i / 2]->getPackageNum()) /
-                                      1.5) *
-                                     inven_wpns[i / 2]->getRemaining());
+            total_sell += static_cast<std::int32_t>(
+                    ((inven_wpns[i / 2]->getPrice() /
+                      inven_wpns[i / 2]->getPackageNum()) /
+                     1.5) *
+                    inven_wpns[i / 2]->getRemaining());
         }
         if (selected_cells[i] && inven_items[i / 2] != nullptr && i % 2 == 1) {
-            total_sell +=
-                    static_cast<int>(((inven_items[i / 2]->getPrice() /
-                                       inven_items[i / 2]->getPackageNum()) /
-                                      1.5) *
-                                     inven_items[i / 2]->getRemaining());
+            total_sell += static_cast<std::int32_t>(
+                    ((inven_items[i / 2]->getPrice() /
+                      inven_items[i / 2]->getPackageNum()) /
+                     1.5) *
+                    inven_items[i / 2]->getRemaining());
         }
     }
 
@@ -612,11 +613,11 @@ void ShopMenu::updateSellLabel() {
 }
 
 void ShopMenu::buyHandler() {
-    int inven_i;
+    std::int32_t inven_i;
     bool* selected_cells = grids[0]->getSelectedCells();
 
     if (buttons[0]->isToggled()) {
-        for (int i = 0; i < num_sales_weapon; i++) {
+        for (std::int32_t i = 0; i < num_sales_weapon; i++) {
             if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < inven_grid_row; inven_i++) {
                     if ((inven_wpns[inven_i] == nullptr) ||
@@ -698,7 +699,7 @@ void ShopMenu::buyHandler() {
             }
         }
     } else {
-        for (int i = 0; i < num_sales_item; i++) {
+        for (std::int32_t i = 0; i < num_sales_item; i++) {
             if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < inven_grid_row; inven_i++) {
                     if ((inven_items[inven_i] == nullptr) ||
@@ -785,16 +786,16 @@ void ShopMenu::buyHandler() {
 
 void ShopMenu::sellHandler() {
     bool* selected_cells = grids[1]->getSelectedCells();
-    int total_sell = 0;
+    std::int32_t total_sell = 0;
 
-    for (int i = 0; i < inven_grid_row * 2; i++) {
+    for (std::int32_t i = 0; i < inven_grid_row * 2; i++) {
         if (selected_cells[i] && inven_wpns[i / 2] != nullptr &&
             i % 2 == 0) {  // i%2 == 0 is weapon inventory
-            total_sell +=
-                    static_cast<int>(((inven_wpns[i / 2]->getPrice() /
-                                       inven_wpns[i / 2]->getPackageNum()) /
-                                      1.5) *
-                                     inven_wpns[i / 2]->getRemaining());
+            total_sell += static_cast<std::int32_t>(
+                    ((inven_wpns[i / 2]->getPrice() /
+                      inven_wpns[i / 2]->getPackageNum()) /
+                     1.5) *
+                    inven_wpns[i / 2]->getRemaining());
             delete img_inven_wpns[i / 2];
             delete label_inven_wpn_remains[i / 2];
             delete inven_wpns[i / 2];
@@ -803,11 +804,11 @@ void ShopMenu::sellHandler() {
             inven_wpns[i / 2] = nullptr;
         }
         if (selected_cells[i] && inven_items[i / 2] != nullptr && i % 2 == 1) {
-            total_sell +=
-                    static_cast<int>(((inven_items[i / 2]->getPrice() /
-                                       inven_items[i / 2]->getPackageNum()) /
-                                      1.5) *
-                                     inven_items[i / 2]->getRemaining());
+            total_sell += static_cast<std::int32_t>(
+                    ((inven_items[i / 2]->getPrice() /
+                      inven_items[i / 2]->getPackageNum()) /
+                     1.5) *
+                    inven_items[i / 2]->getRemaining());
             delete img_inven_items[i / 2];
             delete label_inven_item_remains[i / 2];
             delete inven_items[i / 2];
@@ -957,18 +958,18 @@ void ShopMenu::draw() {
     label_sell_price->draw();
 
     if (buttons[0]->isToggled()) {
-        for (int i = 0; i < num_sales_weapon; i++) {
+        for (std::int32_t i = 0; i < num_sales_weapon; i++) {
             img_shop_wpns[i]->draw();
             label_shop_wpn_remains[i]->draw();
         }
     } else {
-        for (int i = 0; i < num_sales_item; i++) {
+        for (std::int32_t i = 0; i < num_sales_item; i++) {
             img_shop_items[i]->draw();
             label_shop_item_remains[i]->draw();
         }
     }
 
-    for (int i = 0; i < inven_grid_row; i++) {
+    for (std::int32_t i = 0; i < inven_grid_row; i++) {
         if (img_inven_wpns[i] != nullptr) {
             img_inven_wpns[i]->draw();
             label_inven_wpn_remains[i]->draw();
@@ -981,7 +982,9 @@ void ShopMenu::draw() {
     glPopMatrix();
 }
 
-void ShopMenu::buttonTest(int x, int y, int button_down) {
+void ShopMenu::buttonTest(std::int32_t x,
+                          std::int32_t y,
+                          std::int32_t button_down) {
     grids[0]->mouseClickEvent(x, y, button_down, true);
     updateBuyDiscriptLabel();
     grids[1]->mouseClickEvent(x, y, button_down, true);

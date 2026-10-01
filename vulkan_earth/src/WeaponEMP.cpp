@@ -1,12 +1,13 @@
 #include "vulkan_earth/WeaponEMP.h"
+#include <cstdint>
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 WeaponEMP::WeaponEMP() = default;
-WeaponEMP::WeaponEMP(int id) {
+WeaponEMP::WeaponEMP(std::int32_t id) {
     uniqueidentifier = id;
     max_stack = 8;
     package_num = 2;
@@ -23,7 +24,7 @@ WeaponEMP::WeaponEMP(int id) {
     float temp_colors2[3] = {Silver};
     float temp_colors3[3] = {White};
     float temp_colors4[3] = {Silver};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
         explosion_color3[i] = temp_colors3[i];

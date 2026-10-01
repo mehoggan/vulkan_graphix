@@ -22,10 +22,10 @@ ImageObject::ImageObject(float new_x_pos,
     height = new_height;
     border_size = border;
 
-    int img_width = i_width;
-    int img_height = i_height;
+    std::int32_t img_width = i_width;
+    std::int32_t img_height = i_height;
 
-    std::vector<unsigned char> data(img_width * img_height * 3);
+    std::vector<std::uint8_t> data(img_width * img_height * 3);
     std::ifstream file(filename, std::ios::binary);
     file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);

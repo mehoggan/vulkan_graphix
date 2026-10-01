@@ -1,12 +1,13 @@
 #include "vulkan_earth/ItemExtraBattery.h"
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ItemExtraBattery::ItemExtraBattery() = default;
-ItemExtraBattery::ItemExtraBattery(int id) {
+ItemExtraBattery::ItemExtraBattery(std::int32_t id) {
     uniqueidentifier = id;
     package_num = 3;
     max_stack = 9;

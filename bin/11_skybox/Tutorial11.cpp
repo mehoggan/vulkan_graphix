@@ -1,4 +1,5 @@
 #include "Tutorial11.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -394,7 +395,7 @@ bool Tutorial11::copyTextureData(char* texture_data,
 }
 
 bool Tutorial11::createTexture() {
-    int width = 0, height = 0, data_size = 0;
+    std::int32_t width = 0, height = 0, data_size = 0;
     // The same 1024x1024 sky texture vulkan_earth's SkyboxFactory.cpp
     // loads as SkyBox.raw, decodable directly via stb_image here.
     std::vector<char> texture_data = Tools::getImageData(
@@ -1383,14 +1384,14 @@ bool Tutorial11::draw() {
     return true;
 }
 
-void Tutorial11::onMouseButton(int button,
+void Tutorial11::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial11::onMouseMove(int pos_x, int pos_y) {
+void Tutorial11::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 

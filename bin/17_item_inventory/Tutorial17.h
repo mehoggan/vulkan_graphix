@@ -197,10 +197,10 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
 
 private:
     // A title/explain line, a (possibly multi-line, wrapped) description,

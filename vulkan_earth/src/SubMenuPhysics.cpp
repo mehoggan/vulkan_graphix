@@ -13,7 +13,7 @@ using namespace std;
 
 SubMenuPhysics::SubMenuPhysics() = default;
 
-SubMenuPhysics::SubMenuPhysics(int id,
+SubMenuPhysics::SubMenuPhysics(std::int32_t id,
                                float new_x_pos,
                                float new_y_pos,
                                float new_z_pos,
@@ -38,7 +38,7 @@ SubMenuPhysics::SubMenuPhysics(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -90,12 +90,15 @@ SubMenuPhysics::SubMenuPhysics(int id,
 }
 
 SubMenuPhysics::~SubMenuPhysics() {
-    for (int i = 0; i < num_control_items_phy; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_phy; i++)
+        delete sub_menu_button[i];
     delete label;
 }
 
-int SubMenuPhysics::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuPhysics::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuPhysics::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuPhysics::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuPhysics::getXPos() { return x_pos; }
 void SubMenuPhysics::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuPhysics::getYPos() { return y_pos; }
@@ -160,7 +163,7 @@ void SubMenuPhysics::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_phy; i++) {
+    for (std::int32_t i = 0; i < num_control_items_phy; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -169,7 +172,7 @@ void SubMenuPhysics::draw() {
 
 std::string SubMenuPhysics::collectData() {
     std::string optionsarray = "/Physics/";
-    for (int x = 0; x < num_control_items_phy; x++) {
+    for (std::int32_t x = 0; x < num_control_items_phy; x++) {
         if (sub_menu_button[x]) {
             optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
@@ -178,9 +181,11 @@ std::string SubMenuPhysics::collectData() {
     return optionsarray;
 }
 
-void SubMenuPhysics::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuPhysics::subMenuMouseTest(std::int32_t x,
+                                      std::int32_t y,
+                                      std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_phy;
+        for (std::int32_t button_i = 0; button_i < num_control_items_phy;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -228,4 +233,4 @@ void SubMenuPhysics::subMenuMouseTest(int x, int y, int button_down) {
     }
 }
 
-void SubMenuPhysics::updateMouse(int x, int y) {}
+void SubMenuPhysics::updateMouse(std::int32_t x, std::int32_t y) {}

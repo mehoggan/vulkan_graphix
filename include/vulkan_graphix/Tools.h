@@ -59,11 +59,11 @@ private:
 std::vector<char> getBinaryFileContents(std::string const& filename);
 
 std::vector<char> getImageData(std::string const& filename,
-                               int requested_components,
-                               int* width,
-                               int* height,
-                               int* components,
-                               int* data_size);
+                               std::int32_t requested_components,
+                               std::int32_t* width,
+                               std::int32_t* height,
+                               std::int32_t* components,
+                               std::int32_t* data_size);
 
 // Loads a headerless raw RGB (3 bytes/pixel) file of exactly width*height*3
 // bytes - the format every .raw asset under vulkan_earth/src/ uses (no

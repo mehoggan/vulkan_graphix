@@ -5,6 +5,7 @@
 // binaries exercise directly. Needs a live X11 DISPLAY, same as those.
 
 #include <chrono>
+#include <cstdint>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -29,10 +30,10 @@ public:
 
     bool readyToDraw() const override { return true; }
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override {
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override {
         if (pressed) {
             ++button_press_count;
         } else {
@@ -43,31 +44,31 @@ public:
         last_y = pos_y;
     }
 
-    void onMouseMove(int pos_x, int pos_y) override {
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override {
         ++move_count;
         last_move_x = pos_x;
         last_move_y = pos_y;
     }
 
-    int resize_count = 0;
-    int draw_count = 0;
-    int button_press_count = 0;
-    int button_release_count = 0;
-    int move_count = 0;
-    int last_button = 0;
-    int last_x = 0;
-    int last_y = 0;
-    int last_move_x = 0;
-    int last_move_y = 0;
+    std::int32_t resize_count = 0;
+    std::int32_t draw_count = 0;
+    std::int32_t button_press_count = 0;
+    std::int32_t button_release_count = 0;
+    std::int32_t move_count = 0;
+    std::int32_t last_button = 0;
+    std::int32_t last_x = 0;
+    std::int32_t last_y = 0;
+    std::int32_t last_move_x = 0;
+    std::int32_t last_move_y = 0;
 };
 
 void sendButtonEvent(Display* send_display,
                      ::Window handle,
-                     int event_type,
-                     unsigned long mask,
-                     unsigned int button,
-                     int pos_x,
-                     int pos_y) {
+                     std::int32_t event_type,
+                     std::uint64_t mask,
+                     std::uint32_t button,
+                     std::int32_t pos_x,
+                     std::int32_t pos_y) {
     XEvent event{};
     event.xbutton.type = event_type;
     event.xbutton.display = send_display;
@@ -87,8 +88,8 @@ void sendButtonEvent(Display* send_display,
 
 void sendMotionEvent(Display* send_display,
                      ::Window handle,
-                     int pos_x,
-                     int pos_y) {
+                     std::int32_t pos_x,
+                     std::int32_t pos_y) {
     XEvent event{};
     event.xmotion.type = MotionNotify;
     event.xmotion.display = send_display;
@@ -115,7 +116,7 @@ void sendDeleteWindowMessage(Display* send_display,
     event.xclient.window = handle;
     event.xclient.message_type = wm_protocols;
     event.xclient.format = 32;
-    event.xclient.data.l[0] = static_cast<long>(wm_delete_window);
+    event.xclient.data.l[0] = static_cast<std::int64_t>(wm_delete_window);
     XSendEvent(send_display, handle, False, NoEventMask, &event);
 }
 
@@ -189,5 +190,5 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
     EXPECT_EQ(project.button_press_count, 1);
     EXPECT_EQ(project.button_release_count, 1);
     EXPECT_GT(project.move_count, 0);
-    EXPECT_EQ(project.last_button, static_cast<int>(Button1));
+    EXPECT_EQ(project.last_button, static_cast<std::int32_t>(Button1));
 }

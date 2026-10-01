@@ -1,4 +1,5 @@
 #include "vulkan_earth/WorldCam.h"
+#include <cstdint>
 #include "vulkan_earth/MacroCrtdbg.h"
 
 WorldCam::WorldCam() = default;
@@ -51,7 +52,7 @@ void WorldCam::moveCam(float x, float y, float z) {
 
 float* WorldCam::getMatrix() { return matrix; }
 
-void WorldCam::setShakeCam(int magnitude) {
+void WorldCam::setShakeCam(std::int32_t magnitude) {
     shake_cam_pos[0] = magnitude;
     shake_cam_pos[1] = magnitude;
     shake_cam_pos[2] = magnitude;

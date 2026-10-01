@@ -1,4 +1,5 @@
 #include "vulkan_earth/Player.h"
+#include <cstdint>
 #include <glm/gtc/type_ptr.hpp>
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/GlobalSettings.h"
@@ -9,7 +10,7 @@
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 Player::Player() {
     state_of_ai = NEED_NEW_TARGET;
@@ -182,7 +183,7 @@ char Player::minimumYawAngle(float right_degrees, float left_degrees) {
 }
 
 void Player::updateBalsticMatrix() {
-    for (int x = 0; x < 16; x++) {
+    for (std::int32_t x = 0; x < 16; x++) {
         balistic_matrix[x] = getCurrentTank()->getTurretMatrix()[x];
     }
     balistic_matrix[1] = 0;
@@ -442,7 +443,7 @@ void Player::displayProjectilePhysiscs() {
          << endl;
 }
 
-int Player::getAIState() { return state_of_ai; }
+std::int32_t Player::getAIState() { return state_of_ai; }
 
 void Player::restoreTurretTo0Degrees() {
     float restore_angle = getCurrentTank()->getTurretDegrees();

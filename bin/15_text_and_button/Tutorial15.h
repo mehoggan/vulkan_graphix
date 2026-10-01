@@ -151,10 +151,10 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
 
 private:
     // Generous fixed capacity - a title plus one short button label is a
@@ -227,7 +227,7 @@ private:
     VulkanTutorial15Parameters m_vulkan_tutorial15_parameters;
     BitmapFont m_font;
     bool m_button_pressed;
-    int m_click_count;
+    std::int32_t m_click_count;
 };
 
 }  // namespace vulkan_graphix

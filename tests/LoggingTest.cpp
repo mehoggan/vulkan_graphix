@@ -3,6 +3,7 @@
 // testClearAll is named to match the FRIEND_TEST(TestLogging, testClearAll)
 // already declared in Logging.h, giving it access to the private
 // s_loggers map.
+#include <cstdint>
 #include "vulkan_graphix/Logging.h"
 
 #include <filesystem>
@@ -84,7 +85,7 @@ TEST(LoggingTest, LogTagStreamsItsTagStringToAStringstream) {
 }
 
 TEST(LoggingTest, LogTagForThisIsStableForTheSameInstance) {
-    int value = 0;
+    std::int32_t value = 0;
     LogTag first = Logging::logTagForThis(value);
     LogTag second = Logging::logTagForThis(value);
     EXPECT_TRUE(first == second);
@@ -132,7 +133,7 @@ TEST(LoggingTest, SeverityLevelLoggingCallsDoNotCrash) {
 }
 
 TEST(LoggingTest, AddStdCoutStdErrLoggerForTypeInstanceRegistersBothSinks) {
-    int value = 0;
+    std::int32_t value = 0;
     LogTag log_tag =
             vulkan_graphix::addStdCoutStdErrLoggerForTypeInstance(value);
 

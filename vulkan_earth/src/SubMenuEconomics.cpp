@@ -13,7 +13,7 @@ using namespace std;
 
 SubMenuEconomics::SubMenuEconomics() = default;
 
-SubMenuEconomics::SubMenuEconomics(int id,
+SubMenuEconomics::SubMenuEconomics(std::int32_t id,
                                    float new_x_pos,
                                    float new_y_pos,
                                    float new_z_pos,
@@ -38,7 +38,7 @@ SubMenuEconomics::SubMenuEconomics(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -111,12 +111,17 @@ SubMenuEconomics::SubMenuEconomics(int id,
 }
 
 SubMenuEconomics::~SubMenuEconomics() {
-    for (int i = 0; i < num_control_items_econ; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_econ; i++)
+        delete sub_menu_button[i];
     delete label;
 }
 
-int SubMenuEconomics::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuEconomics::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuEconomics::getUNIQUEIDENTIFIER() {
+    return uniqueidentifier;
+}
+void SubMenuEconomics::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuEconomics::getXPos() { return x_pos; }
 void SubMenuEconomics::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuEconomics::getYPos() { return y_pos; }
@@ -182,7 +187,7 @@ void SubMenuEconomics::draw() {
     glEnd();
     label->draw();
 
-    for (int i = 0; i < num_control_items_econ; i++) {
+    for (std::int32_t i = 0; i < num_control_items_econ; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -191,7 +196,7 @@ void SubMenuEconomics::draw() {
 
 std::string SubMenuEconomics::collectData() {
     std::string optionsarray = "/Economics/";
-    for (int x = 0; x < num_control_items_econ; x++) {
+    for (std::int32_t x = 0; x < num_control_items_econ; x++) {
         if (sub_menu_button[x]) {
             optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
@@ -200,9 +205,11 @@ std::string SubMenuEconomics::collectData() {
     return optionsarray;
 }
 
-void SubMenuEconomics::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuEconomics::subMenuMouseTest(std::int32_t x,
+                                        std::int32_t y,
+                                        std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_econ;
+        for (std::int32_t button_i = 0; button_i < num_control_items_econ;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -250,4 +257,4 @@ void SubMenuEconomics::subMenuMouseTest(int x, int y, int button_down) {
     }
 }
 
-void SubMenuEconomics::updateMouse(int x, int y) {}
+void SubMenuEconomics::updateMouse(std::int32_t x, std::int32_t y) {}

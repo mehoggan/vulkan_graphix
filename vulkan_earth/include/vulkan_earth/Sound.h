@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+#include <cstdint>
 
 enum SFX {
     BIG_CLICK,
@@ -51,20 +52,20 @@ enum SFX {
     MANUAL
 };
 
-const int max_sfx_files = 100;
+const std::int32_t max_sfx_files = 100;
 
-const int mainmenu = 0;
-const int readymenu_start = 1;
-const int readymenu_loop = 2;
-const int shopmenu = 3;
-const int gamestate_rock = 4;
-const int gamestate_snow = 5;
-const int gamestate_ice = 6;
-const int gamestate_mars = 7;
-const int gamestate_beach_start = 8;
-const int gamestate_beach_loop = 9;
-const int gamestate_desert = 10;
-const int gamestate_lava = 11;
-const int total_music_files = 12;
+const std::int32_t mainmenu = 0;
+const std::int32_t readymenu_start = 1;
+const std::int32_t readymenu_loop = 2;
+const std::int32_t shopmenu = 3;
+const std::int32_t gamestate_rock = 4;
+const std::int32_t gamestate_snow = 5;
+const std::int32_t gamestate_ice = 6;
+const std::int32_t gamestate_mars = 7;
+const std::int32_t gamestate_beach_start = 8;
+const std::int32_t gamestate_beach_loop = 9;
+const std::int32_t gamestate_desert = 10;
+const std::int32_t gamestate_lava = 11;
+const std::int32_t total_music_files = 12;
 
 #endif

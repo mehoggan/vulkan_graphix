@@ -1,9 +1,10 @@
 #include "vulkan_earth/ItemDoubleAction.h"
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 ItemDoubleAction::ItemDoubleAction() = default;
-ItemDoubleAction::ItemDoubleAction(int id) {
+ItemDoubleAction::ItemDoubleAction(std::int32_t id) {
     uniqueidentifier = id;
     package_num = 1;
     max_stack = 5;

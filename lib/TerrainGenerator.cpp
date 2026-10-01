@@ -1,4 +1,5 @@
 #include "vulkan_graphix/TerrainGenerator.h"
+#include <cstdint>
 
 #include <array>
 #include <cmath>
@@ -6,41 +7,44 @@
 
 namespace vulkan_graphix {
 
-TerrainGenerator::TerrainGenerator(int grid_size, int grid_scale)
+TerrainGenerator::TerrainGenerator(std::int32_t grid_size,
+                                   std::int32_t grid_scale)
         : m_grid_size(grid_size)
         , m_grid_scale(grid_scale)
-        , m_heights(grid_size, std::vector<int>(grid_size, 0)) {}
+        , m_heights(grid_size, std::vector<std::int32_t>(grid_size, 0)) {}
 
-int TerrainGenerator::gridSize() const { return m_grid_size; }
-int TerrainGenerator::gridScale() const { return m_grid_scale; }
+std::int32_t TerrainGenerator::gridSize() const { return m_grid_size; }
+std::int32_t TerrainGenerator::gridScale() const { return m_grid_scale; }
 
-int TerrainGenerator::heightAt(int x, int z) const { return m_heights[z][x]; }
+std::int32_t TerrainGenerator::heightAt(std::int32_t x, std::int32_t z) const {
+    return m_heights[z][x];
+}
 
-bool TerrainGenerator::inGrid(int x, int z) const {
+bool TerrainGenerator::inGrid(std::int32_t x, std::int32_t z) const {
     return x >= 0 && x < m_grid_size && z >= 0 && z < m_grid_size;
 }
 
-void TerrainGenerator::generate(int steps,
-                                int increase,
+void TerrainGenerator::generate(std::int32_t steps,
+                                std::int32_t increase,
                                 float radius,
-                                int random_jump,
-                                int smoothing_passes) {
-    m_heights.assign(m_grid_size, std::vector<int>(m_grid_size, 0));
+                                std::int32_t random_jump,
+                                std::int32_t smoothing_passes) {
+    m_heights.assign(m_grid_size, std::vector<std::int32_t>(m_grid_size, 0));
     terrainGen(steps, increase, radius, random_jump);
-    for (int i = -1; i < smoothing_passes; ++i) {
+    for (std::int32_t i = -1; i < smoothing_passes; ++i) {
         terrainSmoothe(10);
     }
 }
 
-void TerrainGenerator::terrainGen(int steps,
-                                  int increase,
+void TerrainGenerator::terrainGen(std::int32_t steps,
+                                  std::int32_t increase,
                                   float radius,
-                                  int random_jump) {
+                                  std::int32_t random_jump) {
     float current_x = static_cast<float>(m_grid_size / 2);
     float current_y = static_cast<float>(m_grid_size / 2);
 
-    for (int current_step = 1; current_step < steps; ++current_step) {
-        int const random_value = rand() % 100;
+    for (std::int32_t current_step = 1; current_step < steps; ++current_step) {
+        std::int32_t const random_value = rand() % 100;
 
         if (random_value > random_jump) {
             switch (rand() % 4) {
@@ -69,12 +73,16 @@ void TerrainGenerator::terrainGen(int steps,
             current_y = static_cast<float>(rand() % m_grid_size);
         }
 
-        int const x_min = static_cast<int>(current_x - radius);
-        int const x_max = static_cast<int>(current_x + radius);
-        int const y_min = static_cast<int>(current_y - radius);
-        int const y_max = static_cast<int>(current_y + radius);
-        for (int x = x_min; x < x_max; ++x) {
-            for (int y = y_min; y < y_max; ++y) {
+        std::int32_t const x_min =
+                static_cast<std::int32_t>(current_x - radius);
+        std::int32_t const x_max =
+                static_cast<std::int32_t>(current_x + radius);
+        std::int32_t const y_min =
+                static_cast<std::int32_t>(current_y - radius);
+        std::int32_t const y_max =
+                static_cast<std::int32_t>(current_y + radius);
+        for (std::int32_t x = x_min; x < x_max; ++x) {
+            for (std::int32_t y = y_min; y < y_max; ++y) {
                 float const distance = std::sqrt(
                         std::pow(static_cast<double>(current_x - x), 2) +
                         std::pow(static_cast<double>(current_y) - y, 2));
@@ -87,15 +95,17 @@ void TerrainGenerator::terrainGen(int steps,
     }
 }
 
-void TerrainGenerator::terrainSmoothe(int box_width) {
+void TerrainGenerator::terrainSmoothe(std::int32_t box_width) {
     // In place, exactly as TerrainMaker::terrainSmoothe() does it: cells
     // later in the pass average over neighbors already smoothed earlier in
     // this same pass.
-    for (int y = 0; y < m_grid_size; ++y) {
-        for (int x = 0; x < m_grid_size; ++x) {
-            int height_sum = 0;
-            for (int i = y - (box_width / 2); i < y + (box_width / 2); ++i) {
-                for (int j = x - (box_width / 2); j < x + (box_width / 2);
+    for (std::int32_t y = 0; y < m_grid_size; ++y) {
+        for (std::int32_t x = 0; x < m_grid_size; ++x) {
+            std::int32_t height_sum = 0;
+            for (std::int32_t i = y - (box_width / 2); i < y + (box_width / 2);
+                 ++i) {
+                for (std::int32_t j = x - (box_width / 2);
+                     j < x + (box_width / 2);
                      ++j) {
                     if ((i >= 0 && i < m_grid_size) &&
                         (j >= 0 && j < m_grid_size)) {
@@ -110,8 +120,8 @@ void TerrainGenerator::terrainSmoothe(int box_width) {
     // Zero the four grid edges - collapses TerrainMaker::terrainSmoothe()'s
     // four separate (but overlapping) edge-clearing conditions into the one
     // condition they're together equivalent to.
-    for (int y = 0; y < m_grid_size; ++y) {
-        for (int x = 0; x < m_grid_size; ++x) {
+    for (std::int32_t y = 0; y < m_grid_size; ++y) {
+        for (std::int32_t x = 0; x < m_grid_size; ++x) {
             if (x == 0 || y == 0 || x == m_grid_size - 1 ||
                 y == m_grid_size - 1) {
                 m_heights[y][x] = 0;
@@ -124,9 +134,9 @@ void TerrainGenerator::terrainSmoothe(int box_width) {
 // from the th[z][x] its own vertices were built from - so every vertex was
 // lit with the normal of the terrain mirrored across its diagonal. This
 // reads m_heights[z][x], the same orientation as heightAt().
-void TerrainGenerator::calcNormal(int x,
-                                  int z,
-                                  int flag,
+void TerrainGenerator::calcNormal(std::int32_t x,
+                                  std::int32_t z,
+                                  std::int32_t flag,
                                   Math::Vec3<float>* normal) const {
     std::array<float, 3> v1 = {};
     std::array<float, 3> v2 = {};
@@ -177,7 +187,8 @@ void TerrainGenerator::calcNormal(int x,
     }
 }
 
-Math::Vec3<float> TerrainGenerator::normalAt(int x, int z) const {
+Math::Vec3<float> TerrainGenerator::normalAt(std::int32_t x,
+                                             std::int32_t z) const {
     Math::Vec3<float> n0(0.0f, 0.0f, 0.0f);
     Math::Vec3<float> n1(0.0f, 0.0f, 0.0f);
     Math::Vec3<float> n2(0.0f, 0.0f, 0.0f);
@@ -205,8 +216,8 @@ float TerrainGenerator::heightAtWorld(float world_x, float world_z) const {
     float const scale = static_cast<float>(m_grid_scale);
     if ((world_x >= 0 && world_x < (m_grid_size - 1) * scale) &&
         (world_z >= 0 && world_z < (m_grid_size - 1) * scale)) {
-        int v_x = static_cast<int>(world_x / scale);
-        int v_z = static_cast<int>(world_z / scale);
+        std::int32_t v_x = static_cast<std::int32_t>(world_x / scale);
+        std::int32_t v_z = static_cast<std::int32_t>(world_z / scale);
         float const d_x = world_x / scale - static_cast<float>(v_x);
         float const d_z = world_z / scale - static_cast<float>(v_z);
 
@@ -236,8 +247,8 @@ float TerrainGenerator::heightAtWorld(float world_x, float world_z) const {
 Math::Vec3<float> TerrainGenerator::normalAtWorld(float world_x,
                                                   float world_z) const {
     float const scale = static_cast<float>(m_grid_scale);
-    int n_x = static_cast<int>(world_x / scale);
-    int n_z = static_cast<int>(world_z / scale);
+    std::int32_t n_x = static_cast<std::int32_t>(world_x / scale);
+    std::int32_t n_z = static_cast<std::int32_t>(world_z / scale);
     float const d_x = world_x / scale - static_cast<float>(n_x);
     float const d_z = world_z / scale - static_cast<float>(n_z);
 
@@ -290,7 +301,8 @@ Math::Vec3<float> TerrainGenerator::normalAtWorld(float world_x,
 // printed "Tank out of bounds" and then normalized a zero vector (NaN)
 // outside the grid, and its bounds check let (x + 1, z + 1) read one past
 // the grid's edge; both now return a flat (0, 1, 0) instead.
-Math::Vec3<float> TerrainGenerator::triangleNormalAt(int x, int z) const {
+Math::Vec3<float> TerrainGenerator::triangleNormalAt(std::int32_t x,
+                                                     std::int32_t z) const {
     if (!inGrid(x, z) || !inGrid(x + 1, z + 1)) {
         return Math::Vec3<float>(0.0f, 1.0f, 0.0f);
     }
@@ -334,17 +346,18 @@ std::vector<TerrainGridCell> TerrainGenerator::makeCrater(float impact_x,
                                                           float blast_size) {
     std::vector<TerrainGridCell> affected;
     float const scale = static_cast<float>(m_grid_scale);
-    int const x = static_cast<int>(impact_x / scale);
-    int const z = static_cast<int>(impact_z / scale);
-    int const crater_size = static_cast<int>(blast_size * 1.5);
+    std::int32_t const x = static_cast<std::int32_t>(impact_x / scale);
+    std::int32_t const z = static_cast<std::int32_t>(impact_z / scale);
+    std::int32_t const crater_size =
+            static_cast<std::int32_t>(blast_size * 1.5);
 
     if (!inGrid(x, z)) {
         return affected;
     }
 
     float const impact_y = static_cast<float>(m_heights[z][x]);
-    for (int i = x - crater_size; i < x + crater_size; i++) {
-        for (int j = z - crater_size; j < z + crater_size; j++) {
+    for (std::int32_t i = x - crater_size; i < x + crater_size; i++) {
+        for (std::int32_t j = z - crater_size; j < z + crater_size; j++) {
             float const distance = std::sqrt(
                     static_cast<float>((x - i) * (x - i) + (z - j) * (z - j)));
             if (!inGrid(i, j) || distance > blast_size) {
@@ -365,14 +378,14 @@ std::vector<TerrainGridCell> TerrainGenerator::makeCrater(float impact_x,
             } else if (adjust_height > (impact_y - damage_depth)) {
                 adjust_height = impact_y - damage_depth;
             }
-            m_heights[j][i] = static_cast<int>(adjust_height);
+            m_heights[j][i] = static_cast<std::int32_t>(adjust_height);
             if (i == x && j == z && j > 1 && i > 1) {
                 adjust_height = static_cast<float>((m_heights[j - 1][i] +
                                                     m_heights[j][i - 1] +
                                                     m_heights[j][i]) /
                                                    3);
             }
-            m_heights[j][i] = static_cast<int>(adjust_height);
+            m_heights[j][i] = static_cast<std::int32_t>(adjust_height);
             affected.push_back({i, j});
         }
     }

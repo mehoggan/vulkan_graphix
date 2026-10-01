@@ -22,7 +22,7 @@ Normal toNormal(vulkan_graphix::Math::Vec3<float> const& normal) {
 }
 }  // namespace
 
-TerrainMaker::TerrainMaker(int i_scale, int i_size)
+TerrainMaker::TerrainMaker(std::int32_t i_scale, std::int32_t i_size)
         : terrain(i_size, i_scale) {
     srand(time(nullptr));
     scale = i_scale;
@@ -75,12 +75,12 @@ std::uint32_t TerrainMaker::selectTexture(const std::string& tex) {
 }
 
 std::uint32_t TerrainMaker::loadTexture(const char* filename,
-                                        int width,
-                                        int height) {
+                                        std::int32_t width,
+                                        std::int32_t height) {
     std::uint32_t texture;
     std::ifstream file(filename, std::ios::binary);
     if (!file) return 0;
-    std::vector<unsigned char> data(width * height * 3);
+    std::vector<std::uint8_t> data(width * height * 3);
     file.read(reinterpret_cast<char*>(data.data()), data.size());
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -102,9 +102,9 @@ std::uint32_t TerrainMaker::loadTexture(const char* filename,
 }
 
 void TerrainMaker::draw() {
-    int draw_size = size;
-    int draw_scale = scale;
-    int buffersize = tri_strip_buffer_size;
+    std::int32_t draw_size = size;
+    std::int32_t draw_scale = scale;
+    std::int32_t buffersize = tri_strip_buffer_size;
     glEnable(GL_COLOR_MATERIAL);
 
     if (wireframe_active) {
@@ -117,8 +117,8 @@ void TerrainMaker::draw() {
         glDisableClientState(GL_VERTEX_ARRAY);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glColor4f(1, 1, 1, .75);
-        for (int i = 0; i < 255; i += 4) {
-            for (int j = 0; j < 255; j += 4) {
+        for (std::int32_t i = 0; i < 255; i += 4) {
+            for (std::int32_t j = 0; j < 255; j += 4) {
                 glBegin(GL_LINES);
                 /*glVertex3f(i*draw_scale,terrain.heightAt(i, j),j*draw_scale);
                 glVertex3f(	i*draw_scale+500*normals[(i*255+j)*6].compoX,
@@ -153,14 +153,14 @@ void TerrainMaker::draw() {
 
         glActiveTexture(GL_TEXTURE0);
         glEnable(GL_TEXTURE_2D);
-        int texture_location =
+        std::int32_t texture_location =
                 glGetUniformLocation(shader->id(), "color_texture");
         glUniform1i(texture_location, 0);
         glBindTexture(GL_TEXTURE_2D, color_texture);
 
         glActiveTexture(GL_TEXTURE1);
         glEnable(GL_TEXTURE_2D);
-        int normal_location =
+        std::int32_t normal_location =
                 glGetUniformLocation(shader->id(), "normal_texture");
         glUniform1i(normal_location, 1);
         glBindTexture(GL_TEXTURE_2D, normal_texture);
@@ -207,19 +207,19 @@ void TerrainMaker::initData() {
     material_diffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
-void TerrainMaker::prepareData(int new_steps,
-                               int new_increase,
+void TerrainMaker::prepareData(std::int32_t new_steps,
+                               std::int32_t new_increase,
                                float new_radius,
-                               int new_random_jump,
-                               int smoothness) {
-    int chunk_size = size / 2;
+                               std::int32_t new_random_jump,
+                               std::int32_t smoothness) {
+    std::int32_t chunk_size = size / 2;
     steps = new_steps;
     increase = new_increase;
     radius = new_radius;
     random_jump = new_random_jump;
-    int buffersize = tri_strip_buffer_size;
-    int prep_size = size;
-    int prep_scale = scale;
+    std::int32_t buffersize = tri_strip_buffer_size;
+    std::int32_t prep_size = size;
+    std::int32_t prep_scale = scale;
     terrain.generate(
             new_steps, new_increase, new_radius, new_random_jump, smoothness);
 
@@ -233,11 +233,11 @@ void TerrainMaker::prepareData(int new_steps,
     //		x-----x
     //	v_j			v_y
     //	v_x
-    int index = 0;
-    int index_normals = 0;
-    int index_texture = 0;
-    for (int i = 0; i < prep_size - 1; i++) {
-        for (int j = 0; j < prep_size - 1; j++) {
+    std::int32_t index = 0;
+    std::int32_t index_normals = 0;
+    std::int32_t index_texture = 0;
+    for (std::int32_t i = 0; i < prep_size - 1; i++) {
+        for (std::int32_t j = 0; j < prep_size - 1; j++) {
             /************************************************************/
             /*	V_I -- N_I												*/
             /************************************************************/
@@ -448,8 +448,8 @@ void TerrainMaker::verifyVBOs() {
 void TerrainMaker::toggleWireframe() { wireframe_active = !wireframe_active; }
 
 Normal TerrainMaker::getTriangleNormal(float x, float z) {
-    return toNormal(terrain.triangleNormalAt(static_cast<int>(x),
-                                             static_cast<int>(z)));
+    return toNormal(terrain.triangleNormalAt(static_cast<std::int32_t>(x),
+                                             static_cast<std::int32_t>(z)));
 }
 
 Normal TerrainMaker::getNormalAt(float x, float z) {
@@ -476,8 +476,10 @@ void TerrainMaker::makeCrater(float impact_x,
     Vertex* buffer_ptr = static_cast<Vertex*>(
             pgl_map_buffer_arb(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
 
-    int const cells_per_row = size - 1;
-    auto slot = [&](int row, int col, int corner) -> int {
+    std::int32_t const cells_per_row = size - 1;
+    auto slot = [&](std::int32_t row,
+                    std::int32_t col,
+                    std::int32_t corner) -> std::int32_t {
         if (row < 0 || col < 0 || row >= cells_per_row ||
             col >= cells_per_row) {
             return -1;
@@ -485,8 +487,8 @@ void TerrainMaker::makeCrater(float impact_x,
         return (row * cells_per_row + col) * 6 + corner;
     };
     // Every slot grid vertex (i, j) occupies, per TerrainMaker's layout.
-    auto slots_for = [&](int grid_x, int grid_z) {
-        std::vector<int> slots = {slot(grid_z, grid_x, 0)};
+    auto slots_for = [&](std::int32_t grid_x, std::int32_t grid_z) {
+        std::vector<std::int32_t> slots = {slot(grid_z, grid_x, 0)};
         if ((grid_z - 1) > 0) {
             slots.push_back(slot(grid_z - 1, grid_x, 1));
             slots.push_back(slot(grid_z - 1, grid_x, 3));
@@ -504,17 +506,17 @@ void TerrainMaker::makeCrater(float impact_x,
     for (vulkan_graphix::TerrainGridCell const& cell : cells) {
         float const height =
                 static_cast<float>(terrain.heightAt(cell.x, cell.z));
-        for (int index : slots_for(cell.x, cell.z)) {
+        for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
                 buffer_ptr[index].coord_y = height;  // VBO
             }
         }
     }
 
-    int const normal_offset = tri_strip_buffer_size;
+    std::int32_t const normal_offset = tri_strip_buffer_size;
     for (vulkan_graphix::TerrainGridCell const& cell : cells) {
         Normal const normal = toNormal(terrain.normalAt(cell.x, cell.z));
-        for (int index : slots_for(cell.x, cell.z)) {
+        for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
                 buffer_ptr[normal_offset + index].coord_x = normal.compo_x;
                 buffer_ptr[normal_offset + index].coord_y = normal.compo_y;

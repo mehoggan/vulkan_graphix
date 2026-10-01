@@ -1,6 +1,7 @@
 #ifndef VULKAN_GRAPHIX_ORBITCAMERA_H
 #define VULKAN_GRAPHIX_ORBITCAMERA_H
 
+#include <cstdint>
 #include "vulkan_graphix/Math/MathTypes.hpp"
 
 namespace vulkan_graphix {
@@ -22,8 +23,11 @@ public:
                 float initial_pitch_radians,
                 float initial_distance);
 
-    void onMouseButton(int button, bool pressed, int pos_x, int pos_y);
-    void onMouseMove(int pos_x, int pos_y);
+    void onMouseButton(std::int32_t button,
+                       bool pressed,
+                       std::int32_t pos_x,
+                       std::int32_t pos_y);
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
 
     Math::Vec3<float> eye() const;
     Math::Vec3<float> const& target() const;
@@ -33,8 +37,8 @@ private:
     float m_pitch;
     float m_distance;
     bool m_dragging;
-    int m_last_x;
-    int m_last_y;
+    std::int32_t m_last_x;
+    std::int32_t m_last_y;
     Math::Vec3<float> m_target;
 };
 
