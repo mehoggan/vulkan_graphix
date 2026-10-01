@@ -1,4 +1,5 @@
 #include "vulkan_graphix/OperatingSystem.h"
+#include <cstdint>
 
 #include <thread>
 
@@ -14,12 +15,13 @@ ProjectBase& ProjectBase::operator=(const ProjectBase& other) = default;
 
 bool ProjectBase::readyToDraw() const { return m_can_render; }
 
-void ProjectBase::onMouseButton(int /*button*/,
+void ProjectBase::onMouseButton(std::int32_t /*button*/,
                                 bool /*pressed*/,
-                                int /*pos_x*/,
-                                int /*pos_y*/) {}
+                                std::int32_t /*pos_x*/,
+                                std::int32_t /*pos_y*/) {}
 
-void ProjectBase::onMouseMove(int /*pos_x*/, int /*pos_y*/) {}
+void ProjectBase::onMouseMove(std::int32_t /*pos_x*/, std::int32_t /*pos_y*/) {
+}
 
 WindowParameters::WindowParameters() : m_display_ptr(nullptr), m_handle{} {}
 
@@ -57,7 +59,7 @@ bool Window::create(const std::string& title) {
         return false;
     }
 
-    int default_screen = DefaultScreen(m_parameters.getDisplayPtr());
+    std::int32_t default_screen = DefaultScreen(m_parameters.getDisplayPtr());
 
     ::Window handle = XCreateSimpleWindow(
             m_parameters.getDisplayPtr(),
@@ -115,8 +117,8 @@ bool Window::renderingLoop(ProjectBase& project) {
             switch (event.type) {
                     // Process events
                 case ConfigureNotify: {
-                    static int width = event.xconfigure.width;
-                    static int height = event.xconfigure.height;
+                    static std::int32_t width = event.xconfigure.width;
+                    static std::int32_t height = event.xconfigure.height;
 
                     if (((event.xconfigure.width > 0) &&
                          (event.xconfigure.width != width)) ||
@@ -134,21 +136,21 @@ bool Window::renderingLoop(ProjectBase& project) {
                     loop = false;
                     break;
                 case ClientMessage:
-                    if (static_cast<unsigned int>(event.xclient.data.l[0]) ==
+                    if (static_cast<std::uint32_t>(event.xclient.data.l[0]) ==
                         delete_window_atom) {
                         loop = false;
                     }
                     break;
                 case ButtonPress:
                     project.onMouseButton(
-                            static_cast<int>(event.xbutton.button),
+                            static_cast<std::int32_t>(event.xbutton.button),
                             true,
                             event.xbutton.x,
                             event.xbutton.y);
                     break;
                 case ButtonRelease:
                     project.onMouseButton(
-                            static_cast<int>(event.xbutton.button),
+                            static_cast<std::int32_t>(event.xbutton.button),
                             false,
                             event.xbutton.x,
                             event.xbutton.y);

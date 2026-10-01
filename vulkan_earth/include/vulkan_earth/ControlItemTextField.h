@@ -33,15 +33,15 @@ public:
     float getWidth() override;
     bool isTextFieldActive();
     std::string collectData() override;
-    void updateMouse(int x, int y) override;
-    void keyHandler(unsigned char key);
+    void updateMouse(std::int32_t x, std::int32_t y) override;
+    void keyHandler(std::uint8_t key);
     void deactivate();
     void setOptionText(const std::string& new_text) override;
     void clearTextBuffer();
     void setTextBuffer(const std::string& new_text);
 
 private:
-    void setOptionText(int index) override;
+    void setOptionText(std::int32_t index) override;
 
     float x_pos;
     float y_pos;
@@ -52,8 +52,8 @@ private:
     TextObject* current_text;
     bool text_field_active;
     std::string current_chars;
-    int current_length;
-    int number_of_frames;
-    int text_cursor_on;  // this is a toggle, -1 off, 1 on
+    std::int32_t current_length;
+    std::int32_t number_of_frames;
+    std::int32_t text_cursor_on;  // this is a toggle, -1 off, 1 on
 };
 #endif  // Control_ITEM_TEXT_FIELD_H

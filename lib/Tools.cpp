@@ -1,4 +1,5 @@
 #include "vulkan_graphix/Tools.h"
+#include <cstdint>
 
 #include <unistd.h>
 #include <cmath>
@@ -60,20 +61,20 @@ std::vector<char> getBinaryFileContents(std::string const& filename) {
 // Function loading image (texture) data from a specified file  //
 // ************************************************************ //
 std::vector<char> getImageData(std::string const& filename,
-                               int requested_components,
-                               int* width,
-                               int* height,
-                               int* components,
-                               int* data_size) {
+                               std::int32_t requested_components,
+                               std::int32_t* width,
+                               std::int32_t* height,
+                               std::int32_t* components,
+                               std::int32_t* data_size) {
     std::vector<char> file_data = Tools::getBinaryFileContents(filename);
     if (file_data.empty()) {
         return std::vector<char>();
     }
 
-    int tmp_width = 0, tmp_height = 0, tmp_components = 0;
-    unsigned char* image_data = stbi_load_from_memory(
-            reinterpret_cast<unsigned char*>(&file_data[0]),
-            static_cast<int>(file_data.size()),
+    std::int32_t tmp_width = 0, tmp_height = 0, tmp_components = 0;
+    std::uint8_t* image_data = stbi_load_from_memory(
+            reinterpret_cast<std::uint8_t*>(&file_data[0]),
+            static_cast<std::int32_t>(file_data.size()),
             &tmp_width,
             &tmp_height,
             &tmp_components,
@@ -84,9 +85,9 @@ std::vector<char> getImageData(std::string const& filename,
         return std::vector<char>();
     }
 
-    int size = (tmp_width) * (tmp_height) *
-               (requested_components <= 0 ? tmp_components
-                                          : requested_components);
+    std::int32_t size = (tmp_width) * (tmp_height) *
+                        (requested_components <= 0 ? tmp_components
+                                                   : requested_components);
     if (data_size) {
         *data_size = size;
     }

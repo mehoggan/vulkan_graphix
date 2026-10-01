@@ -1,4 +1,5 @@
 #include "Tutorial17.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -18,8 +19,8 @@ struct ItemDisplayData {
     const char* icon_file;
     const char* short_name;
     const char* description;
-    int price;
-    int remaining;
+    std::int32_t price;
+    std::int32_t remaining;
 };
 
 // Real data from vulkan_earth/src/ItemXxx.cpp's own constructors, not
@@ -1618,11 +1619,11 @@ bool Tutorial17::draw() {
     return true;
 }
 
-void Tutorial17::onMouseButton(int button,
+void Tutorial17::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
-    constexpr int c_left_button = 1;
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
+    constexpr std::int32_t c_left_button = 1;
     if (button != c_left_button || !pressed) {
         return;
     }

@@ -1,4 +1,5 @@
 #include "Tutorial22.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -325,11 +326,11 @@ Tutorial22::Tutorial22()
 
 Tutorial22::~Tutorial22() { childClear(); }
 
-void Tutorial22::onMouseButton(int button,
+void Tutorial22::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
-    constexpr int c_left_button = 1;
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
+    constexpr std::int32_t c_left_button = 1;
     if (button != c_left_button) {
         return;
     }

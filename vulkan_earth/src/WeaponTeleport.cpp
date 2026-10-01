@@ -1,12 +1,13 @@
 #include "vulkan_earth/WeaponTeleport.h"
+#include <cstdint>
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 WeaponTeleport::WeaponTeleport() = default;
-WeaponTeleport::WeaponTeleport(int id) {
+WeaponTeleport::WeaponTeleport(std::int32_t id) {
     uniqueidentifier = id;
     max_stack = 15;
     package_num = 3;
@@ -23,7 +24,7 @@ WeaponTeleport::WeaponTeleport(int id) {
     float temp_colors2[3] = {Silver};
     float temp_colors3[3] = {Silver};
     float temp_colors4[3] = {Quartz};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
         explosion_color3[i] = temp_colors3[i];

@@ -23,7 +23,7 @@ Shader::~Shader() {
 }
 
 void Shader::validateShader(std::uint32_t shader, const char* file) {
-    const unsigned int buffer_size = 512;
+    const std::uint32_t buffer_size = 512;
     char buffer[buffer_size];
     memset(buffer, 0, buffer_size);
     std::int32_t length = 0;
@@ -37,7 +37,7 @@ void Shader::validateShader(std::uint32_t shader, const char* file) {
 }
 
 void Shader::validateProgram(std::uint32_t program) {
-    const unsigned int buffer_size = 512;
+    const std::uint32_t buffer_size = 512;
     char buffer[buffer_size];
     memset(buffer, 0, buffer_size);
     std::int32_t length = 0;
@@ -92,7 +92,7 @@ void Shader::init(const char* vs_file, const char* fs_file) {
     validateProgram(shader_id);
 }
 
-unsigned int Shader::id() { return shader_id; }
+std::uint32_t Shader::id() { return shader_id; }
 
 void Shader::bind() { glUseProgram(shader_id); }
 

@@ -1,6 +1,7 @@
 #ifndef VULKAN_GRAPHIX_LOGGING_H
 #define VULKAN_GRAPHIX_LOGGING_H
 
+#include <cstdint>
 #include "vulkan_graphix/LoggerHelpers.h"
 
 #include <gtest/gtest_prod.h>
@@ -399,7 +400,7 @@ private:
     static std::atomic<bool> s_init;
     static Dict s_loggers;
     static std::mutex s_loggers_mutex;
-    static std::atomic<unsigned int> s_line_id;
+    static std::atomic<std::uint32_t> s_line_id;
 
 private:
     FRIEND_TEST(TestLogging, testClearAll);

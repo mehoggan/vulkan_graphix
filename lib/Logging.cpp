@@ -1,4 +1,5 @@
 #include "vulkan_graphix/Logging.h"
+#include <cstdint>
 
 #include <chrono>
 #include <ctime>
@@ -11,7 +12,7 @@ namespace vulkan_graphix {
 std::atomic<bool> Logging::s_init(false);
 Logging::Dict Logging::s_loggers;
 std::mutex Logging::s_loggers_mutex;
-std::atomic<unsigned int> Logging::s_line_id(0);
+std::atomic<std::uint32_t> Logging::s_line_id(0);
 
 namespace {
 const char* severityName(SeverityLevel level) {
@@ -41,7 +42,7 @@ const char* severityName(SeverityLevel level) {
 std::filesystem::path substitutePercents(const std::filesystem::path& model) {
     static std::mt19937_64 engine{std::random_device{}()};
     static constexpr char c_hex_digits[] = "0123456789abcdef";
-    std::uniform_int_distribution<int> distribution(0, 15);
+    std::uniform_int_distribution<std::int32_t> distribution(0, 15);
 
     std::string result = model.string();
     for (char& character : result) {
@@ -116,7 +117,7 @@ void Logging::writeSeverityLog(const LogTag& tag,
                                const std::string& message) {
     Logging::init();
 
-    unsigned int line_id = ++Logging::s_line_id;
+    std::uint32_t line_id = ++Logging::s_line_id;
 
     std::lock_guard<std::mutex> lock(Logging::s_loggers_mutex);
     auto sink_it = Logging::s_loggers.find(tag);

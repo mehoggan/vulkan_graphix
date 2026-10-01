@@ -1,4 +1,5 @@
 #include "vulkan_earth/ParticleAcid.h"
+#include <cstdint>
 
 ParticleAcid::ParticleAcid() = default;
 ParticleAcid::ParticleAcid(float new_x,
@@ -8,7 +9,7 @@ ParticleAcid::ParticleAcid(float new_x,
                            float dir_y,
                            float dir_z,
                            float new_speed,
-                           int frames) {
+                           std::int32_t frames) {
     x = new_x;
     y = new_y;
     z = new_z;

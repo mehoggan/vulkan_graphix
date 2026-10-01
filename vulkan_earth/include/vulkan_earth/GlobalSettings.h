@@ -1,10 +1,11 @@
 #ifndef GLOBAL_SETTINGS_H
 #define GLOBAL_SETTINGS_H
 
+#include <cstdint>
 #include <string>
 
-const int num_options = 23;
-const int max_num_players = 10;
+const std::int32_t num_options = 23;
+const std::int32_t max_num_players = 10;
 
 class TerrainMaker;
 
@@ -37,8 +38,8 @@ public:
     std::string getTunneling();
     std::string getScale();
     std::string getTracePath();
-    int getPlayerCount();
-    int getRoundCount();
+    std::int32_t getPlayerCount();
+    std::int32_t getRoundCount();
     void setCurrentTerrain(TerrainMaker* new_terrain);
     TerrainMaker* getCurrentTerrain();
 
@@ -75,10 +76,10 @@ private:
     std::string scale;
     std::string trace_path;
     /*	PLAYER AND ROUND DATA	*/
-    int player_count;
-    int round_count;
+    std::int32_t player_count;
+    std::int32_t round_count;
 
-    void printSelf(int index);
+    void printSelf(std::int32_t index);
     void copyData();
 
     TerrainMaker* current_terrain;

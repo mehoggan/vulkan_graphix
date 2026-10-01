@@ -5,6 +5,7 @@
 #include <GL/freeglut.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+#include <cstdint>
 #include <iostream>
 #include <new>
 #include "math.h"
@@ -27,23 +28,23 @@
 
 using namespace std;
 
-void resize(int, int);
+void resize(std::int32_t, std::int32_t);
 void draw();
-void timerEvent(int);
-void keyHandler(unsigned char, int, int);
-void keyHandlerUp(unsigned char key, int x, int y);
-void specKeyHandler(int key, int x, int y);
-void specKeyHandlerUp(int key, int x, int y);
-void mouseHandler(int, int, int, int);
-void mouseMotionHandler(int, int);
+void timerEvent(std::int32_t);
+void keyHandler(std::uint8_t, std::int32_t, std::int32_t);
+void keyHandlerUp(std::uint8_t key, std::int32_t x, std::int32_t y);
+void specKeyHandler(std::int32_t key, std::int32_t x, std::int32_t y);
+void specKeyHandlerUp(std::int32_t key, std::int32_t x, std::int32_t y);
+void mouseHandler(std::int32_t, std::int32_t, std::int32_t, std::int32_t);
+void mouseMotionHandler(std::int32_t, std::int32_t);
 extern void initSound();
 void initStuff();
 
-int screen_state;
-int prev_screen_state;
+std::int32_t screen_state;
+std::int32_t prev_screen_state;
 enum removeGlutStates { UP, DOWN };
-int win_width, win_height;
-int timer;
+std::int32_t win_width, win_height;
+std::int32_t timer;
 MainMenu* mainmenu;
 ReadyMenu* readymenu;
 ShopMenu* shopmenu;
@@ -57,10 +58,10 @@ LoadingScreen* loading_screen;
 // (unlike Windows, where it's the primary display's resolution). Ask
 // RandR for the primary monitor's real geometry instead, so the window
 // created from it stays confined to that one monitor.
-static void primaryMonitorGeometry(int* pos_x,
-                                   int* pos_y,
-                                   int* width,
-                                   int* height) {
+static void primaryMonitorGeometry(std::int32_t* pos_x,
+                                   std::int32_t* pos_y,
+                                   std::int32_t* width,
+                                   std::int32_t* height) {
     *pos_x = 0;
     *pos_y = 0;
     *width = 1280;
@@ -101,7 +102,7 @@ int main(int argc, char* argv[]) {
 
     initSound();
     glutInit(&argc, argv);
-    int win_pos_x, win_pos_y;
+    std::int32_t win_pos_x, win_pos_y;
     primaryMonitorGeometry(&win_pos_x, &win_pos_y, &win_width, &win_height);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowPosition(win_pos_x, win_pos_y);
@@ -156,7 +157,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void resize(int width, int height) {
+void resize(std::int32_t width, std::int32_t height) {
     win_width = glutGet(GLUT_WINDOW_WIDTH);
     win_height = glutGet(GLUT_WINDOW_HEIGHT);
     glViewport(0, 0, win_width, win_height);
@@ -180,7 +181,7 @@ void resize(int width, int height) {
     }
 }
 
-void timerEvent(int msec) {
+void timerEvent(std::int32_t msec) {
     glutTimerFunc(msec, timerEvent, 1);
     draw();
 }
@@ -226,14 +227,14 @@ void draw() {
                         0, 0, 0, 0, 0);
                 glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
             }
-            int distance = win_height / 2 * tan(1.04719755);
+            std::int32_t distance = win_height / 2 * tan(1.04719755);
             gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
             mainmenu->draw();
             break;
         }
         case READY_MENU: {
             if (readymenu == nullptr) {
-                int distance = win_height / 2 * tan(1.04719755);
+                std::int32_t distance = win_height / 2 * tan(1.04719755);
                 gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
                 loading_screen->draw();
                 glutSwapBuffers();
@@ -247,7 +248,7 @@ void draw() {
             if (prev_screen_state != READY_MENU) {
                 readymenu->updatePageInfo();
             }
-            int distance = win_height / 2 * tan(1.04719755);
+            std::int32_t distance = win_height / 2 * tan(1.04719755);
             gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
             readymenu->draw();
             break;
@@ -265,7 +266,7 @@ void draw() {
                 delete game_state;
                 game_state = nullptr;
             }
-            int distance = win_height / 2 * tan(1.04719755);
+            std::int32_t distance = win_height / 2 * tan(1.04719755);
             gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
             if (screen_state == SHOP_MENU) shopmenu->draw();
             break;
@@ -287,7 +288,7 @@ void draw() {
                 delete shopmenu;
                 shopmenu = nullptr;
             }
-            int distance = win_height / 2 * tan(1.04719755);
+            std::int32_t distance = win_height / 2 * tan(1.04719755);
             game_state->draw();
 
             glPushMatrix();
@@ -332,7 +333,7 @@ void draw() {
     glutSwapBuffers();
 }
 
-void keyHandler(unsigned char key, int x, int y) {
+void keyHandler(std::uint8_t key, std::int32_t x, std::int32_t y) {
     if (screen_state == READY_MENU) {
         if (key == 27) {
             screen_state = QUIT_GAME;
@@ -383,9 +384,9 @@ void keyHandler(unsigned char key, int x, int y) {
     }
 }
 
-void keyHandlerUp(unsigned char key, int x, int y) {
+void keyHandlerUp(std::uint8_t key, std::int32_t x, std::int32_t y) {
     if (screen_state == GAME_PLAY) {
-        if (key == static_cast<int>('l')) {
+        if (key == static_cast<std::int32_t>('l')) {
             global_settings->getCurrentTerrain()->toggleWireframe();
         } else {
             game_state->handleKeyboardInput(key, false);
@@ -393,7 +394,7 @@ void keyHandlerUp(unsigned char key, int x, int y) {
     }
 }
 
-void specKeyHandler(int key, int x, int y) {
+void specKeyHandler(std::int32_t key, std::int32_t x, std::int32_t y) {
     if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, true);
@@ -420,7 +421,7 @@ void specKeyHandler(int key, int x, int y) {
     }
 }
 
-void specKeyHandlerUp(int key, int x, int y) {
+void specKeyHandlerUp(std::int32_t key, std::int32_t x, std::int32_t y) {
     if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, false);
@@ -443,7 +444,10 @@ void specKeyHandlerUp(int key, int x, int y) {
     }
 }
 
-void mouseHandler(int button, int state, int x, int y) {
+void mouseHandler(std::int32_t button,
+                  std::int32_t state,
+                  std::int32_t x,
+                  std::int32_t y) {
     switch (screen_state) {
         case MAIN_MENU: {
             if (button == GLUT_LEFT_BUTTON) {
@@ -504,7 +508,7 @@ void mouseHandler(int button, int state, int x, int y) {
     }
 }
 
-void mouseMotionHandler(int x, int y) {
+void mouseMotionHandler(std::int32_t x, std::int32_t y) {
     if (mainmenu->getActiveSubMenu() != nullptr) {
         if (mainmenu->getActiveSubMenu()->getUNIQUEIDENTIFIER() == 1) {
             mainmenu->getActiveSubMenu()->updateMouse(x - (win_width / 2),

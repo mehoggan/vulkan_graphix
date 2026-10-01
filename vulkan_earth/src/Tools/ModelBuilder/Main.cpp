@@ -1,5 +1,6 @@
 #include <glew.h>
 #include <glut.h>
+#include <cstdint>
 #include <iostream>
 #include "math.h"
 #include "vulkan_earth/Tools/ModelBuilder/VBOShaderLibrary.h"
@@ -45,18 +46,18 @@ float normals[18] = {0.0,
 float tex_coord[12] = {
         0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0};
 
-int winWidth, winHeight;
+std::int32_t winWidth, winHeight;
 VBOShaderLibrary vbo_shader_turret;
 VBOShaderLibrary vbo_shader_body;
 VBOShaderLibrary vbo_shader_head;
-int prevMousePositionX = 0;
-int rotation = 0;
+std::int32_t prevMousePositionX = 0;
+std::int32_t rotation = 0;
 
-void resize(int, int);
+void resize(std::int32_t, std::int32_t);
 void draw();
-void timerEvent(int);
+void timerEvent(std::int32_t);
 void initStuff();
-void mouseFunc(int x, int y);
+void mouseFunc(std::int32_t x, std::int32_t y);
 
 int main(int argc, char** argv) {
     bool run = true;
@@ -112,7 +113,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-void resize(int width, int height) {
+void resize(std::int32_t width, std::int32_t height) {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -120,7 +121,7 @@ void resize(int width, int height) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void timerEvent(int msec) {
+void timerEvent(std::int32_t msec) {
     glutTimerFunc(msec, timerEvent, 1);
     draw();
 }
@@ -171,7 +172,7 @@ void initStuff() {
     glEnable(GL_BLEND);
 }
 
-void mouseFunc(int x, int y) {
+void mouseFunc(std::int32_t x, std::int32_t y) {
     if (x < prevMousePositionX) {
         rotation += 2;
         if (rotation > 360) rotation -= 360;

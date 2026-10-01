@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 
 class WeaponPadlock : public Weapon {
 public:
     WeaponPadlock();
-    WeaponPadlock(int id);
+    WeaponPadlock(std::int32_t id);
     ~WeaponPadlock() override;
     WeaponPadlock* getWeaponInstance() override;
     void causeEffectToTank(float distance, Tank* tank) override;

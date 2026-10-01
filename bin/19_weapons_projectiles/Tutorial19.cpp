@@ -1,4 +1,5 @@
 #include "Tutorial19.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -48,8 +49,8 @@ struct WeaponDisplayData {
     const char* icon_file;
     const char* short_name;
     const char* description;
-    int price;
-    int damage;
+    std::int32_t price;
+    std::int32_t damage;
 };
 
 // Real data from vulkan_earth/src/WeaponXxx.cpp's own constructors, not
@@ -430,11 +431,11 @@ Tutorial19::Tutorial19()
 
 Tutorial19::~Tutorial19() { childClear(); }
 
-void Tutorial19::onMouseButton(int button,
+void Tutorial19::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
-    constexpr int c_left_button = 1;
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
+    constexpr std::int32_t c_left_button = 1;
     if (button == c_left_button && pressed) {
         float const x = static_cast<float>(pos_x);
         float const y = static_cast<float>(pos_y);
@@ -452,7 +453,7 @@ void Tutorial19::onMouseButton(int button,
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial19::onMouseMove(int pos_x, int pos_y) {
+void Tutorial19::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 

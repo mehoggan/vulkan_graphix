@@ -109,8 +109,8 @@ struct Tutorial18PlayerInfo {
     Math::Vec3<float> world_position;
     Math::Vec4<float> team_color;
     std::string name;
-    int hp;
-    int max_hp;
+    std::int32_t hp;
+    std::int32_t max_hp;
     float power_ratio;
 };
 
@@ -294,11 +294,11 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
-    void onMouseMove(int pos_x, int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
     static constexpr std::size_t c_max_hud_quads = 256;

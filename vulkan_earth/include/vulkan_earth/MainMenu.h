@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 
 class MainMenuButton;
@@ -27,12 +28,12 @@ class PlayerFactory;
 
 using namespace std;
 
-const int quit = 9;
+const std::int32_t quit = 9;
 
-const int num_button = 10;
-const int num_submenus = 8;
-const int num_images = 2;
-const int num_arrow_buttons = 2;
+const std::int32_t num_button = 10;
+const std::int32_t num_submenus = 8;
+const std::int32_t num_images = 2;
+const std::int32_t num_arrow_buttons = 2;
 
 class MainMenu {
 public:
@@ -42,7 +43,7 @@ public:
              float new_percent_border,
              GlobalSettings* new_global_settings,
              PlayerFactory* new_player_factory,
-             int* game_state);
+             std::int32_t* game_state);
     ~MainMenu();
     float* getPos();
     float getHeight();
@@ -50,16 +51,16 @@ public:
     float getWidth();
     void setWidth(float new_width);
     float* getColor();
-    SubMenu* getSubMenuI(int i);
+    SubMenu* getSubMenuI(std::int32_t i);
     SubMenu* getActiveSubMenu();
     void draw();
-    void buttonTest(int x, int y, int button_down);
+    void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);
     void collectData();
     SubMenuLandscape* getSubMenuLandscape();
 
 private:
     float pos[3], width, height, color[4], border;
-    int* current_game_state;
+    std::int32_t* current_game_state;
     float percent_border;
     MainMenuButton* buttons[num_button];
     SubMenu* submenus[num_submenus];

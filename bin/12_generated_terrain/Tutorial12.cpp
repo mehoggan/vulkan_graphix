@@ -1,4 +1,5 @@
 #include "Tutorial12.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -188,7 +189,7 @@ Tutorial12::Tutorial12()
         // Pulled back to OrbitCamera's max distance (40) and pitched down
         // moderately, showing the grid's full silhouette with sky around it.
         : m_camera(0.5f, 0.35f, 40.0f) {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    std::srand(static_cast<std::uint32_t>(std::time(nullptr)));
 }
 
 Tutorial12::~Tutorial12() { childClear(); }
@@ -1017,7 +1018,7 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
                        c_gen_random_jump,
                        c_smoothing_passes);
 
-    int const chunk_size = c_grid_size / 2;
+    std::int32_t const chunk_size = c_grid_size / 2;
     float const chunk_span = static_cast<float>(chunk_size - 1);
     float const half_extent =
             static_cast<float>(c_grid_size - 1) * c_grid_scale / 2.0f;
@@ -1025,9 +1026,10 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
     m_vertex_data.reserve(static_cast<std::size_t>(c_grid_size - 1) *
                           static_cast<std::size_t>(c_grid_size - 1) * 6);
 
-    for (int i = 0; i < c_grid_size - 1; ++i) {
-        for (int j = 0; j < c_grid_size - 1; ++j) {
-            auto make_position = [&](int grid_x, int grid_z) {
+    for (std::int32_t i = 0; i < c_grid_size - 1; ++i) {
+        for (std::int32_t j = 0; j < c_grid_size - 1; ++j) {
+            auto make_position = [&](std::int32_t grid_x,
+                                     std::int32_t grid_z) {
                 return Math::Vec4<float>(
                         static_cast<float>(grid_x * c_grid_scale) -
                                 half_extent,
@@ -1431,14 +1433,14 @@ bool Tutorial12::draw() {
     return true;
 }
 
-void Tutorial12::onMouseButton(int button,
+void Tutorial12::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial12::onMouseMove(int pos_x, int pos_y) {
+void Tutorial12::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 

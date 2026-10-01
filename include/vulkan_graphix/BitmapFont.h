@@ -70,8 +70,9 @@ public:
                                       float max_width) const;
 
 private:
-    static constexpr int c_first_char = 32;
-    static constexpr int c_glyph_count = 95;  // ASCII 32-126 inclusive
+    static constexpr std::int32_t c_first_char = 32;
+    static constexpr std::int32_t c_glyph_count =
+            95;  // ASCII 32-126 inclusive
 
     struct Glyph {
         Math::Vec2<float> size;

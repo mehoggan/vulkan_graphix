@@ -20,11 +20,19 @@ public:
     bool loadClientData(float* vertex_data,
                         float* normal_data,
                         float* tex_coord_data,
-                        int number_of_vertices);
-    void swapTexture(const char* filename, int width, int height);
-    void loadTexture(const char* filename, int width, int height);
-    void swapTextureNormals(const char* filename, int width, int height);
-    void loadTextureNormals(const char* filename, int width, int height);
+                        std::int32_t number_of_vertices);
+    void swapTexture(const char* filename,
+                     std::int32_t width,
+                     std::int32_t height);
+    void loadTexture(const char* filename,
+                     std::int32_t width,
+                     std::int32_t height);
+    void swapTextureNormals(const char* filename,
+                            std::int32_t width,
+                            std::int32_t height);
+    void loadTextureNormals(const char* filename,
+                            std::int32_t width,
+                            std::int32_t height);
     bool getVBOPointerFunctions();
     static bool initGlew();
     static bool areVbOsSupported();
@@ -33,7 +41,7 @@ private:
     bool use_vb_os;
     bool use_textures;
     bool use_shaders;
-    int vertices_loaded;
+    std::int32_t vertices_loaded;
     std::uint32_t vbo_id;
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
@@ -53,9 +61,9 @@ private:
 
     std::string vs_text;
     std::string fs_text;
-    unsigned int shader_id;
-    unsigned int shader_vp;
-    unsigned int shader_fp;
+    std::uint32_t shader_id;
+    std::uint32_t shader_vp;
+    std::uint32_t shader_fp;
     std::uint32_t color_texture;
     std::uint32_t normal_texture;
 };

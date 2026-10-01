@@ -1,4 +1,5 @@
 #include "Tutorial18.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -370,14 +371,14 @@ Tutorial18::Tutorial18()
 
 Tutorial18::~Tutorial18() { childClear(); }
 
-void Tutorial18::onMouseButton(int button,
+void Tutorial18::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial18::onMouseMove(int pos_x, int pos_y) {
+void Tutorial18::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 
@@ -1730,7 +1731,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
                   &getHealthBarColor);
 
         std::string const power_text =
-                "Power: " + std::to_string(static_cast<int>(
+                "Power: " + std::to_string(static_cast<std::int32_t>(
                                     players[i].power_ratio * 1000.0f));
         appendText(vertex_data,
                    power_text,

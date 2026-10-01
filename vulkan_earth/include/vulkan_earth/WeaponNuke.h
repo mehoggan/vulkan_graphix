@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 
 class WeaponNuke : public Weapon {
 public:
     WeaponNuke();
-    WeaponNuke(int id);
+    WeaponNuke(std::int32_t id);
     ~WeaponNuke() override;
     WeaponNuke* getWeaponInstance() override;
     void playExplosionSFX() override;

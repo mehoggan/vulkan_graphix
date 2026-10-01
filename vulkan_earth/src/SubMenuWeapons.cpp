@@ -13,7 +13,7 @@ using namespace std;
 
 SubMenuWeapons::SubMenuWeapons() = default;
 
-SubMenuWeapons::SubMenuWeapons(int id,
+SubMenuWeapons::SubMenuWeapons(std::int32_t id,
                                float new_x_pos,
                                float new_y_pos,
                                float new_z_pos,
@@ -38,7 +38,7 @@ SubMenuWeapons::SubMenuWeapons(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -112,11 +112,14 @@ SubMenuWeapons::SubMenuWeapons(int id,
 
 SubMenuWeapons::~SubMenuWeapons() {
     delete label;
-    for (int i = 0; i < num_control_items_wpn; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_wpn; i++)
+        delete sub_menu_button[i];
 }
 
-int SubMenuWeapons::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuWeapons::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuWeapons::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuWeapons::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuWeapons::getXPos() { return x_pos; }
 void SubMenuWeapons::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuWeapons::getYPos() { return y_pos; }
@@ -181,7 +184,7 @@ void SubMenuWeapons::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_wpn; i++) {
+    for (std::int32_t i = 0; i < num_control_items_wpn; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -190,7 +193,7 @@ void SubMenuWeapons::draw() {
 
 std::string SubMenuWeapons::collectData() {
     std::string optionsarray = "/Weapons/";
-    for (int x = 0; x < num_control_items_wpn; x++) {
+    for (std::int32_t x = 0; x < num_control_items_wpn; x++) {
         if (sub_menu_button[x]) {
             optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
@@ -199,9 +202,11 @@ std::string SubMenuWeapons::collectData() {
     return optionsarray;
 }
 
-void SubMenuWeapons::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuWeapons::subMenuMouseTest(std::int32_t x,
+                                      std::int32_t y,
+                                      std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_wpn;
+        for (std::int32_t button_i = 0; button_i < num_control_items_wpn;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -249,4 +254,4 @@ void SubMenuWeapons::subMenuMouseTest(int x, int y, int button_down) {
     }
 }
 
-void SubMenuWeapons::updateMouse(int x, int y) {}
+void SubMenuWeapons::updateMouse(std::int32_t x, std::int32_t y) {}

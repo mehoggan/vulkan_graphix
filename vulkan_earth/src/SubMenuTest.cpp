@@ -10,7 +10,7 @@ using namespace std;
 
 SubMenuTest::SubMenuTest() = default;
 
-SubMenuTest::SubMenuTest(int id,
+SubMenuTest::SubMenuTest(std::int32_t id,
                          float new_x_pos,
                          float new_y_pos,
                          float new_z_pos,
@@ -35,7 +35,7 @@ SubMenuTest::SubMenuTest(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -55,8 +55,10 @@ SubMenuTest::SubMenuTest(int id,
 
 SubMenuTest::~SubMenuTest() = default;
 
-int SubMenuTest::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuTest::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuTest::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+void SubMenuTest::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuTest::getXPos() { return x_pos; }
 void SubMenuTest::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuTest::getYPos() { return y_pos; }

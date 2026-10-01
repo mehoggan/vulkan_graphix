@@ -9,13 +9,14 @@
 // included per .cpp (as every tutorialNN_main.cpp already does), but an
 // ODR violation the moment two of them share a translation unit.
 
+#include <cstdint>
 #include <cstdlib>
 
 namespace vulkan_graphix::test {
 
 inline bool hasDisplay() { return std::getenv("DISPLAY") != nullptr; }
 
-inline constexpr int c_draw_iterations = 3;
+inline constexpr std::int32_t c_draw_iterations = 3;
 
 }  // namespace vulkan_graphix::test
 

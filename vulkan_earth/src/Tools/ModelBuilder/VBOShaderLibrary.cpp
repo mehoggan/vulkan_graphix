@@ -66,14 +66,14 @@ void VBOShaderLibrary::drawClientData() {
         if (this->useShaders) {
             glEnable(GL_TEXTURE_2D);
             glActiveTexture(GL_TEXTURE0);
-            int texture_location =
+            std::int32_t texture_location =
                     glGetUniformLocation(this->shader_id, "color_texture");
             glUniform1i(texture_location, 0);
             glBindTexture(GL_TEXTURE_2D, this->color_texture);
 
             glEnable(GL_TEXTURE_2D);
             glActiveTexture(GL_TEXTURE1);
-            int normal_location =
+            std::int32_t normal_location =
                     glGetUniformLocation(this->shader_id, "normal_texture");
             glUniform1i(normal_location, 1);
             glBindTexture(GL_TEXTURE_2D, this->normal_texture);
@@ -81,7 +81,7 @@ void VBOShaderLibrary::drawClientData() {
     }
     if (this->useVBOs) {
         glColor3f(1.0, 0.0, 0.0);
-        int SIZE = this->verticesLoaded;
+        std::int32_t SIZE = this->verticesLoaded;
         this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, this->VBOId);
 
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -130,7 +130,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     fopen_s(&vs_file, vsFileName, "rt");
     if (vs_file) {
         fseek(vs_file, 0, SEEK_END);
-        int count = ftell(vs_file);
+        std::int32_t count = ftell(vs_file);
         rewind(vs_file);
         if (count > 0) {
             this->vsText = new char[count + 1];
@@ -151,7 +151,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     fopen_s(&fs_file, fsFileName, "rt");
     if (fs_file) {
         fseek(fs_file, 0, SEEK_END);
-        int count = ftell(fs_file);
+        std::int32_t count = ftell(fs_file);
         rewind(fs_file);
         if (count > 0) {
             this->fsText = new char[count + 1];
@@ -180,7 +180,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     const char* tempVSText = this->vsText;
     glShaderSource(this->shader_vp, 1, &tempVSText, 0);
     glCompileShader(this->shader_vp);
-    const unsigned int VERTEX_BUFFER_SIZE = 2048;
+    const std::uint32_t VERTEX_BUFFER_SIZE = 2048;
     char buffer1[VERTEX_BUFFER_SIZE];
     memset(buffer1, 0, VERTEX_BUFFER_SIZE);
     std::int32_t length1 = 0;
@@ -196,7 +196,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     const char* tempFSText = this->fsText;
     glShaderSource(this->shader_fp, 1, &tempFSText, 0);
     glCompileShader(this->shader_fp);
-    const unsigned int FRAGMENT_BUFFER_SIZE = 2048;
+    const std::uint32_t FRAGMENT_BUFFER_SIZE = 2048;
     char buffer2[FRAGMENT_BUFFER_SIZE];
     memset(buffer2, 0, FRAGMENT_BUFFER_SIZE);
     std::int32_t length2 = 0;
@@ -214,7 +214,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     glAttachShader(this->shader_id, this->shader_fp);
     glAttachShader(this->shader_id, this->shader_vp);
     glLinkProgram(this->shader_id);
-    const unsigned int BUFFER_SIZE = 512;
+    const std::uint32_t BUFFER_SIZE = 512;
     char buffer[BUFFER_SIZE];
     memset(buffer, 0, BUFFER_SIZE);
     std::int32_t length = 0;
@@ -247,7 +247,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
 
 bool VBOShaderLibrary::loadClientData(char* modelFile) {
     bool contentLoaded = true;
-    unsigned int c;
+    std::uint32_t c;
     bool done = false;
 
     FILE* ogl_file =
@@ -259,7 +259,7 @@ bool VBOShaderLibrary::loadClientData(char* modelFile) {
     } else if (contentLoaded && ogl_file) {
         cout << "Reading File..." << endl;
         fseek(ogl_file, 0, SEEK_END);
-        int read_file_size = ftell(ogl_file);
+        std::int32_t read_file_size = ftell(ogl_file);
         rewind(ogl_file);
         char* buffer;
         buffer = (char*)malloc(sizeof(char) * read_file_size + 1);
@@ -280,13 +280,13 @@ bool VBOShaderLibrary::loadClientData(char* modelFile) {
         vector<float> normal_vec(0);
 
         cout << "Total data loaded is " << results.size() << endl;
-        int line_number = 0;
+        std::int32_t line_number = 0;
         if (results.size() % 8 != 0) {
             cerr << "Wrong number of data stored results.size()%8 = "
                  << (results.size() % 8) << endl;
             // exit(0);
         }
-        for (int x = 0; x < results.size(); x += 8) {
+        for (std::int32_t x = 0; x < results.size(); x += 8) {
             /*	GRAB 1 TEXCOORD PAIR	*/
             float tc1 = 0.0; /*	TexCoord S	*/
             std::istringstream iss0(results[x]);
@@ -333,12 +333,12 @@ bool VBOShaderLibrary::loadClientData(char* modelFile) {
         this->normals = new Normal[this->verticesLoaded];
         this->tex_coord = new TexCoord[this->verticesLoaded];
 
-        int vert_index = 0;
-        int vert_insert_index = 0;
-        int norm_index = 0;
-        int norm_insert_index = 0;
-        int texc_index = 0;
-        int texc_insert_index = 0;
+        std::int32_t vert_index = 0;
+        std::int32_t vert_insert_index = 0;
+        std::int32_t norm_index = 0;
+        std::int32_t norm_insert_index = 0;
+        std::int32_t texc_index = 0;
+        std::int32_t texc_insert_index = 0;
 
         for (; texc_index < texcoord_vec.size();
              vert_index += 3, norm_index += 3, texc_index += 2) {
@@ -365,7 +365,7 @@ bool VBOShaderLibrary::loadClientData(char* modelFile) {
         }
 
         try {
-            int SIZE = this->verticesLoaded;
+            std::int32_t SIZE = this->verticesLoaded;
             this->pglGenBuffersARB(1, &VBOId);
             this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, VBOId);
             this->pglBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -408,7 +408,7 @@ bool VBOShaderLibrary::loadClientData(char* modelFile) {
 bool VBOShaderLibrary::loadClientData(float* V,
                                       float* N,
                                       float* T,
-                                      int number_of_vertices) {
+                                      std::int32_t number_of_vertices) {
     bool contentLoaded = true;
     try {
         this->vertices = new Vertex[number_of_vertices];
@@ -416,8 +416,8 @@ bool VBOShaderLibrary::loadClientData(float* V,
         this->tex_coord = new TexCoord[number_of_vertices];
 
         cout << "Vertices Data " << endl;
-        int vert_index = 0;
-        for (int x = 0; x < number_of_vertices * 3; x += 3) {
+        std::int32_t vert_index = 0;
+        for (std::int32_t x = 0; x < number_of_vertices * 3; x += 3) {
             Vertex v(V[x], V[x + 1], V[x + 2]);
             this->vertices[vert_index] = v;
             // cout	<< "<" << this->vertices[vert_index].coordX << ", "
@@ -427,8 +427,8 @@ bool VBOShaderLibrary::loadClientData(float* V,
             vert_index++;
         }
         cout << "Normal Data" << endl;
-        int norm_index = 0;
-        for (int y = 0; y < number_of_vertices * 3; y += 3) {
+        std::int32_t norm_index = 0;
+        for (std::int32_t y = 0; y < number_of_vertices * 3; y += 3) {
             Normal n(N[y], N[y + 1], N[y + 2]);
             this->normals[norm_index] = n;
             // cout	<< "<" << this->normals[norm_index].compoX << ", "
@@ -438,8 +438,8 @@ bool VBOShaderLibrary::loadClientData(float* V,
             norm_index++;
         }
         cout << "TexCoord Data " << endl;
-        int tex_coord_index = 0;
-        for (int z = 0; z < number_of_vertices * 2; z += 2) {
+        std::int32_t tex_coord_index = 0;
+        for (std::int32_t z = 0; z < number_of_vertices * 2; z += 2) {
             TexCoord t(T[z], T[z + 1]);
             this->tex_coord[tex_coord_index] = t;
             // cout	<< "<" << tex_coord[tex_coord_index].texcoordS << ", "
@@ -450,7 +450,7 @@ bool VBOShaderLibrary::loadClientData(float* V,
         cout << endl;
 
         this->verticesLoaded = number_of_vertices;
-        int SIZE = this->verticesLoaded;
+        std::int32_t SIZE = this->verticesLoaded;
         this->pglGenBuffersARB(1, &VBOId);
         this->pglBindBufferARB(GL_ARRAY_BUFFER_ARB, VBOId);
         this->pglBufferDataARB(
@@ -484,8 +484,8 @@ bool VBOShaderLibrary::loadClientData(float* V,
 }
 
 void VBOShaderLibrary::SwapTexture(const char* filename,
-                                   int width,
-                                   int height) {
+                                   std::int32_t width,
+                                   std::int32_t height) {
     if (!this->color_texture) {
         cout << "ERROR: You must first load a texture" << endl;
     } else {
@@ -495,15 +495,15 @@ void VBOShaderLibrary::SwapTexture(const char* filename,
 }
 
 void VBOShaderLibrary::LoadTexture(const char* filename,
-                                   int width,
-                                   int height) {
-    unsigned char* data;
+                                   std::int32_t width,
+                                   std::int32_t height) {
+    std::uint8_t* data;
     FILE* file;
     file = fopen(filename, "rb");
     if (!file) {
         cout << "ERROR: File Does Not Exist Not Going to Use Textures" << endl;
     } else {
-        data = new unsigned char[width * height * 3];
+        data = new std::uint8_t[width * height * 3];
         fread(data, width * height * 3, 1, file);
         fclose(file);
         glGenTextures(1, &(this->color_texture));
@@ -529,8 +529,8 @@ void VBOShaderLibrary::LoadTexture(const char* filename,
 }
 
 void VBOShaderLibrary::SwapTextureNormals(const char* filename,
-                                          int width,
-                                          int height) {
+                                          std::int32_t width,
+                                          std::int32_t height) {
     if (!this->color_texture) {
         cout << "ERROR: You must first load a normal texture" << endl;
     } else {
@@ -540,16 +540,16 @@ void VBOShaderLibrary::SwapTextureNormals(const char* filename,
 }
 
 void VBOShaderLibrary::LoadTextureNormals(const char* filename,
-                                          int width,
-                                          int height) {
-    unsigned char* data;
+                                          std::int32_t width,
+                                          std::int32_t height) {
+    std::uint8_t* data;
     FILE* file;
     file = fopen(filename, "rb");
     if (!file) {
         cout << "ERROR: File Does Not Exist Not Going to Use Texture Normals"
              << endl;
     } else {
-        data = new unsigned char[width * height * 3];
+        data = new std::uint8_t[width * height * 3];
         fread(data, width * height * 3, 1, file);
         fclose(file);
         glGenTextures(1, &(this->normal_texture));
@@ -628,21 +628,21 @@ bool VBOShaderLibrary::AreVBOsSupported() {
     char* vendor;
     char* renderer;
     char* version;
-    int extensions_supported;
+    std::int32_t extensions_supported;
     char** extensions;
-    int redBits;
-    int greenBits;
-    int blueBits;
-    int alphaBits;
-    int depthBits;
-    int stencilBits;
-    int maxTextureSize;
-    int maxLights;
-    int maxAttribStacks;
-    int maxModelViewStacks;
-    int maxProjectionStacks;
-    int maxClipPlanes;
-    int maxTextureStacks;
+    std::int32_t redBits;
+    std::int32_t greenBits;
+    std::int32_t blueBits;
+    std::int32_t alphaBits;
+    std::int32_t depthBits;
+    std::int32_t stencilBits;
+    std::int32_t maxTextureSize;
+    std::int32_t maxLights;
+    std::int32_t maxAttribStacks;
+    std::int32_t maxModelViewStacks;
+    std::int32_t maxProjectionStacks;
+    std::int32_t maxClipPlanes;
+    std::int32_t maxTextureStacks;
 
     str = (char*)glGetString(GL_VENDOR);
     if (str) {
@@ -669,9 +669,9 @@ bool VBOShaderLibrary::AreVBOsSupported() {
     str = (char*)glGetString(GL_EXTENSIONS);
     if (str) {
         char* tok = str;
-        int index = 0;
-        int size = strlen(tok);
-        int iteration = 0;
+        std::int32_t index = 0;
+        std::int32_t size = strlen(tok);
+        std::int32_t iteration = 0;
         while (iteration++ < size) {
             if (*(tok + index) == ' ' || *(tok + index) == '\n' ||
                 *(tok + index) == '\t') {
@@ -685,10 +685,10 @@ bool VBOShaderLibrary::AreVBOsSupported() {
     }
 
     char* tok = str;
-    int size = strlen(tok);
-    int array_index = 0;
-    int char_pos = 0;
-    int iteration = 0;
+    std::int32_t size = strlen(tok);
+    std::int32_t array_index = 0;
+    std::int32_t char_pos = 0;
+    std::int32_t iteration = 0;
     char extension[256];
     while (iteration < size) {
         if (*(tok + iteration) != ' ') {
@@ -720,7 +720,7 @@ bool VBOShaderLibrary::AreVBOsSupported() {
     const char* exten = "GL_ARB_vertex_buffer_object";
 
     bool extension_exists = false;
-    for (int x = 0; x < extensions_supported; x++) {
+    for (std::int32_t x = 0; x < extensions_supported; x++) {
         const char* compare = extensions[x];
         if (strcmp(compare, exten) == 0) {
             extension_exists = true;
@@ -730,7 +730,7 @@ bool VBOShaderLibrary::AreVBOsSupported() {
         qualified = false;
     }
 
-    for (int i = 0; i < extensions_supported; i++) {
+    for (std::int32_t i = 0; i < extensions_supported; i++) {
         if (extensions[i]) {
             delete[] extensions[i];
             extensions[i] = NULL;

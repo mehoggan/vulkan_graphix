@@ -3,6 +3,7 @@
 // binaries, so this runs unconditionally (no DISPLAY check).
 
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <string>
@@ -42,7 +43,7 @@ TEST(ToolsTest, GetBinaryFileContentsReturnsEmptyForAMissingFile) {
 }
 
 TEST(ToolsTest, GetImageDataLoadsARealPngAndReportsItsDimensions) {
-    int width = 0, height = 0, components = 0, data_size = 0;
+    std::int32_t width = 0, height = 0, components = 0, data_size = 0;
     std::vector<char> data = vulkan_graphix::Tools::getImageData(
             "texture.06.png", 4, &width, &height, &components, &data_size);
 
@@ -51,11 +52,11 @@ TEST(ToolsTest, GetImageDataLoadsARealPngAndReportsItsDimensions) {
     EXPECT_GT(height, 0);
     EXPECT_GT(components, 0);
     EXPECT_EQ(data_size, width * height * 4);
-    EXPECT_EQ(static_cast<int>(data.size()), data_size);
+    EXPECT_EQ(static_cast<std::int32_t>(data.size()), data_size);
 }
 
 TEST(ToolsTest, GetImageDataReturnsEmptyForAMissingFile) {
-    int width = 0, height = 0;
+    std::int32_t width = 0, height = 0;
     std::vector<char> data = vulkan_graphix::Tools::getImageData(
             "this_texture_does_not_exist.png",
             4,

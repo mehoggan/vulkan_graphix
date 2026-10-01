@@ -1,12 +1,13 @@
 #include "vulkan_earth/WeaponRevive.h"
+#include <cstdint>
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 WeaponRevive::WeaponRevive() = default;
-WeaponRevive::WeaponRevive(int id) {
+WeaponRevive::WeaponRevive(std::int32_t id) {
     uniqueidentifier = id;
     max_stack = 6;
     package_num = 1;
@@ -23,7 +24,7 @@ WeaponRevive::WeaponRevive(int id) {
     float temp_colors2[3] = {Silver};
     float temp_colors3[3] = {White};
     float temp_colors4[3] = {LightGray};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
         explosion_color3[i] = temp_colors3[i];

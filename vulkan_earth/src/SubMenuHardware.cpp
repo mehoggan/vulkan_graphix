@@ -13,7 +13,7 @@ using namespace std;
 
 SubMenuHardware::SubMenuHardware() = default;
 
-SubMenuHardware::SubMenuHardware(int id,
+SubMenuHardware::SubMenuHardware(std::int32_t id,
                                  float new_x_pos,
                                  float new_y_pos,
                                  float new_z_pos,
@@ -38,7 +38,7 @@ SubMenuHardware::SubMenuHardware(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -70,11 +70,16 @@ SubMenuHardware::SubMenuHardware(int id,
 
 SubMenuHardware::~SubMenuHardware() {
     delete label;
-    for (int i = 0; i < num_control_items_hw; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_hw; i++)
+        delete sub_menu_button[i];
 }
 
-int SubMenuHardware::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuHardware::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuHardware::getUNIQUEIDENTIFIER() {
+    return uniqueidentifier;
+}
+void SubMenuHardware::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuHardware::getXPos() { return x_pos; }
 void SubMenuHardware::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuHardware::getYPos() { return y_pos; }
@@ -139,7 +144,7 @@ void SubMenuHardware::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_hw; i++) {
+    for (std::int32_t i = 0; i < num_control_items_hw; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -148,7 +153,7 @@ void SubMenuHardware::draw() {
 
 std::string SubMenuHardware::collectData() {
     std::string optionsarray = "/Hardware/";
-    for (int x = 0; x < num_control_items_hw; x++) {
+    for (std::int32_t x = 0; x < num_control_items_hw; x++) {
         if (sub_menu_button[x]) {
             optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
@@ -157,9 +162,11 @@ std::string SubMenuHardware::collectData() {
     return optionsarray;
 }
 
-void SubMenuHardware::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuHardware::subMenuMouseTest(std::int32_t x,
+                                       std::int32_t y,
+                                       std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_hw;
+        for (std::int32_t button_i = 0; button_i < num_control_items_hw;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -206,4 +213,4 @@ void SubMenuHardware::subMenuMouseTest(int x, int y, int button_down) {
         }
     }
 }
-void SubMenuHardware::updateMouse(int x, int y) {}
+void SubMenuHardware::updateMouse(std::int32_t x, std::int32_t y) {}

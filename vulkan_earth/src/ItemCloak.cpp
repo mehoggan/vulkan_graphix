@@ -1,9 +1,10 @@
 #include "vulkan_earth/ItemCloak.h"
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 ItemCloak::ItemCloak() = default;
-ItemCloak::ItemCloak(int id) {
+ItemCloak::ItemCloak(std::int32_t id) {
     uniqueidentifier = id;
     package_num = 2;
     max_stack = 10;

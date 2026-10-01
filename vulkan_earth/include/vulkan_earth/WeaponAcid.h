@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 
 class WeaponAcid : public Weapon {
 public:
     WeaponAcid();
-    WeaponAcid(int id);
+    WeaponAcid(std::int32_t id);
     ~WeaponAcid() override;
     WeaponAcid* getWeaponInstance() override;
     void causeEffectToTank(float distance, Tank* tank) override;

@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 
 class ItemFloat : public Item {
 public:
     ItemFloat();
-    ItemFloat(int id);
+    ItemFloat(std::int32_t id);
     ~ItemFloat() override;
     ItemFloat* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

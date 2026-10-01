@@ -3,6 +3,7 @@
 // helpers.
 
 #include <gtest/gtest.h>
+#include <cstdint>
 
 #include "Tutorial02.h"
 #include "vulkan_graphix/OperatingSystem.h"
@@ -23,13 +24,15 @@ TEST(Tutorial02IntegrationTest, FullLifecycle) {
     ASSERT_TRUE(tutorial.createSwapChain());
     ASSERT_TRUE(tutorial.createCommandBuffers());
 
-    for (int i = 0; i < vulkan_graphix::test::c_draw_iterations; ++i) {
+    for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
+         ++i) {
         EXPECT_TRUE(tutorial.draw());
     }
 
     EXPECT_TRUE(tutorial.onWindowSizeChanged());
 
-    for (int i = 0; i < vulkan_graphix::test::c_draw_iterations; ++i) {
+    for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
+         ++i) {
         EXPECT_TRUE(tutorial.draw());
     }
 }

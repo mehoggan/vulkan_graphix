@@ -1,6 +1,7 @@
 #ifndef VBO_QUALIFER_H
 #define VBO_QUALIFER_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -16,21 +17,21 @@ private:
     std::string vendor;
     std::string renderer;
     std::string version;
-    int extensions_supported;
+    std::int32_t extensions_supported;
     std::vector<std::string> extensions;
-    int red_bits;
-    int green_bits;
-    int blue_bits;
-    int alpha_bits;
-    int depth_bits;
-    int stencil_bits;
-    int max_texture_size;
-    int max_lights;
-    int max_attrib_stacks;
-    int max_model_view_stacks;
-    int max_projection_stacks;
-    int max_clip_planes;
-    int max_texture_stacks;
+    std::int32_t red_bits;
+    std::int32_t green_bits;
+    std::int32_t blue_bits;
+    std::int32_t alpha_bits;
+    std::int32_t depth_bits;
+    std::int32_t stencil_bits;
+    std::int32_t max_texture_size;
+    std::int32_t max_lights;
+    std::int32_t max_attrib_stacks;
+    std::int32_t max_model_view_stacks;
+    std::int32_t max_projection_stacks;
+    std::int32_t max_clip_planes;
+    std::int32_t max_texture_stacks;
     bool qualified;
 };
 

@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 
 class ItemCloak : public Item {
 public:
     ItemCloak();
-    ItemCloak(int id);
+    ItemCloak(std::int32_t id);
     ~ItemCloak() override;
     ItemCloak* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

@@ -1,12 +1,13 @@
 #include "vulkan_earth/ItemBigRepair.h"
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ItemBigRepair::ItemBigRepair() = default;
-ItemBigRepair::ItemBigRepair(int id) {
+ItemBigRepair::ItemBigRepair(std::int32_t id) {
     uniqueidentifier = id;
     package_num = 3;
     max_stack = 9;

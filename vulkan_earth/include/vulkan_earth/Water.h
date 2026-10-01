@@ -15,11 +15,14 @@ class Shader;
 class Water {
 public:
     Water();
-    Water(int new_scale, int new_size);
+    Water(std::int32_t new_scale, std::int32_t new_size);
     ~Water();
     void draw();
     void initData();
-    void prepareData(int steps, int increase, float radius, int random_jump);
+    void prepareData(std::int32_t steps,
+                     std::int32_t increase,
+                     float radius,
+                     std::int32_t random_jump);
     void calcAverageofSixNormals(Vertex* v_0,
                                  float x1,
                                  float y1,
@@ -43,20 +46,25 @@ public:
     void verifyVBOs();
     void prepTerrain();
     void prepareData();
-    void terrainGen(int steps, int increase, float radius, int random_jump);
+    void terrainGen(std::int32_t steps,
+                    std::int32_t increase,
+                    float radius,
+                    std::int32_t random_jump);
     std::int32_t getActualSize();
     std::int32_t getScale();
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
-    std::uint32_t loadTexture(const char* filename, int width, int height);
+    std::uint32_t loadTexture(const char* filename,
+                              std::int32_t width,
+                              std::int32_t height);
 
 private:
     VBOQualifer* vbo_qualify;
-    int scale;
-    int size;
-    int total_vertices;
-    int tri_strip_buffer_size;
-    int** surfaceheight;
+    std::int32_t scale;
+    std::int32_t size;
+    std::int32_t total_vertices;
+    std::int32_t tri_strip_buffer_size;
+    std::int32_t** surfaceheight;
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
     std::vector<TexCoord> tex_coord;
@@ -66,9 +74,9 @@ private:
     std::vector<float> material_shininess;
     std::vector<float> material_diffuse;
     void configVBOs();
-    unsigned int vertex_vbo_id;
-    unsigned int normal_vbo_id;
-    unsigned int texture_vbo_id;
+    std::uint32_t vertex_vbo_id;
+    std::uint32_t normal_vbo_id;
+    std::uint32_t texture_vbo_id;
     PFNGLGENBUFFERSARBPROC
     pgl_gen_buffers_arb;  // VBO Name Generation Procedure
     PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb;  // VBO Bind Procedure

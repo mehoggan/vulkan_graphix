@@ -1,13 +1,14 @@
 #include "vulkan_earth/TankD.h"
+#include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_d_name = "Panzer";
-const int tank_d_hp = 1000;
-const int tank_d_power = 9;
-const int tank_d_armor = 5;
-const int tank_d_speed = 30;
+const std::int32_t tank_d_hp = 1000;
+const std::int32_t tank_d_power = 9;
+const std::int32_t tank_d_armor = 5;
+const std::int32_t tank_d_speed = 30;
 
 TankD::TankD() = default;
 TankD::TankD(float x, float y, float z) {
@@ -27,7 +28,7 @@ TankD::TankD(float x, float y, float z) {
     body_offset[1] = 45;
     body_offset[2] = 0;
 
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         body_scale[i] = 50;
         head_scale[i] = 50;
         turret_scale[i] = 50;
@@ -78,8 +79,8 @@ TankD::~TankD() {
 }
 
 // GETTERS
-int TankD::getBaseHP() { return tank_d_hp; }
-int TankD::getBasePower() { return tank_d_power; }
-int TankD::getBaseArmor() { return tank_d_armor; }
-int TankD::getBaseSpeed() { return tank_d_speed; }
+std::int32_t TankD::getBaseHP() { return tank_d_hp; }
+std::int32_t TankD::getBasePower() { return tank_d_power; }
+std::int32_t TankD::getBaseArmor() { return tank_d_armor; }
+std::int32_t TankD::getBaseSpeed() { return tank_d_speed; }
 std::string TankD::getName() { return tank_d_name; }

@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <string>
 
 // class Normal;
@@ -29,11 +30,11 @@ public:
     void rotateWheel(float degrees);
     void adjustPower(float amount);
     float getCurrentPower();
-    void setPreviousPower(int new_previous_power);
-    void setPreviousAngle(int new_previous_angle);
+    void setPreviousPower(std::int32_t new_previous_power);
+    void setPreviousAngle(std::int32_t new_previous_angle);
     void setProjectileLandPos(float x, float y);
-    int getPreviousPower();
-    int getPreviousAngle();
+    std::int32_t getPreviousPower();
+    std::int32_t getPreviousAngle();
     float* getProjectileLandPos();
     const float* getBodyMatrix();
     const float* getBodyColor();
@@ -48,15 +49,15 @@ public:
     const float* getWheelMatrix();
     const float* getWheelColor();
     float* getWheelScale();
-    int getHP();
-    int getPower();
-    int getArmor();
-    int getSpeed();
+    std::int32_t getHP();
+    std::int32_t getPower();
+    std::int32_t getArmor();
+    std::int32_t getSpeed();
     Tank* getTankPointer();
-    virtual int getBaseHP();
-    virtual int getBasePower();
-    virtual int getBaseArmor();
-    virtual int getBaseSpeed();
+    virtual std::int32_t getBaseHP();
+    virtual std::int32_t getBasePower();
+    virtual std::int32_t getBaseArmor();
+    virtual std::int32_t getBaseSpeed();
     virtual std::string getName();
 
     // SETTERS
@@ -75,15 +76,15 @@ public:
     void setWheelColor(float r, float g, float b, float a);
     void setWheelScale(float x, float y, float z);
 
-    void setHP(int new_hp);
-    void setPower(int p);
-    void setArmor(int a);
-    void setSpeed(int d);
+    void setHP(std::int32_t new_hp);
+    void setPower(std::int32_t p);
+    void setArmor(std::int32_t a);
+    void setSpeed(std::int32_t d);
 
-    int getCurrentHeight();
-    void setCurrentHeight(int curr_height);
-    int getPreviousHeight();
-    void setPreviousHeight(int prev_height);
+    std::int32_t getCurrentHeight();
+    void setCurrentHeight(std::int32_t curr_height);
+    std::int32_t getPreviousHeight();
+    void setPreviousHeight(std::int32_t prev_height);
 
     // Other functions
     bool checkCollision(float x, float y, float z);
@@ -92,8 +93,8 @@ public:
     void draw();
     virtual void drawTankHitBox();
     virtual void updateHitBox();
-    void changeHeadTexture(int current_player_index);
-    void dealDamage(int damage);
+    void changeHeadTexture(std::int32_t current_player_index);
+    void dealDamage(std::int32_t damage);
     void checkFallingDamage();
     bool isAlive();
     void tankRevive();
@@ -105,23 +106,23 @@ public:
     void initDuration();
 
     // Getters for durations
-    int getDurationAcid();
-    int getDurationShield();
-    int getDurationEMP();
-    int getDurationFloat();
-    int getDurationDoubleAction();
-    int getDurationPadlock();
-    int getDurationCloak();
-    int getDurationParalyze();
+    std::int32_t getDurationAcid();
+    std::int32_t getDurationShield();
+    std::int32_t getDurationEMP();
+    std::int32_t getDurationFloat();
+    std::int32_t getDurationDoubleAction();
+    std::int32_t getDurationPadlock();
+    std::int32_t getDurationCloak();
+    std::int32_t getDurationParalyze();
     // Setters for durations
-    void setDurationAcid(int value);
-    void setDurationShield(int value);
-    void setDurationEMP(int value);
-    void setDurationFloat(int value);
-    void setDurationDoubleAction(int value);
-    void setDurationPadlock(int value);
-    void setDurationCloak(int value);
-    void setDurationParalyze(int value);
+    void setDurationAcid(std::int32_t value);
+    void setDurationShield(std::int32_t value);
+    void setDurationEMP(std::int32_t value);
+    void setDurationFloat(std::int32_t value);
+    void setDurationDoubleAction(std::int32_t value);
+    void setDurationPadlock(std::int32_t value);
+    void setDurationCloak(std::int32_t value);
+    void setDurationParalyze(std::int32_t value);
 
     void setDurationAllPassTurn();
 
@@ -183,26 +184,26 @@ protected:
     ParticleGenerator* float_gen;
 
     float current_power;
-    int previous_power;
-    int previous_angle;
-    int previous_height;
-    int current_height;
+    std::int32_t previous_power;
+    std::int32_t previous_angle;
+    std::int32_t previous_height;
+    std::int32_t current_height;
 
-    int hp;
-    int power;
-    int armor;
-    int speed;
+    std::int32_t hp;
+    std::int32_t power;
+    std::int32_t armor;
+    std::int32_t speed;
 
     float projectile_land_pos[2];
 
-    int duration_acid;
-    int duration_shield;
-    int duration_emp;
-    int duration_float;
-    int duration_double_action;
-    int duration_padlock;
-    int duration_cloak;
-    int duration_paralyze;
+    std::int32_t duration_acid;
+    std::int32_t duration_shield;
+    std::int32_t duration_emp;
+    std::int32_t duration_float;
+    std::int32_t duration_double_action;
+    std::int32_t duration_padlock;
+    std::int32_t duration_cloak;
+    std::int32_t duration_paralyze;
 
     Vertex tank_pos;
     Vector right;

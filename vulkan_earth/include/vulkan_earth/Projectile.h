@@ -4,11 +4,12 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <string>
 #include "vulkan_graphix/Ballistics.h"
 
-const int default_damage = 100;
-const int default_radius = 5;
+const std::int32_t default_damage = 100;
+const std::int32_t default_radius = 5;
 
 class ChaseCam;
 class Weapon;
@@ -36,11 +37,11 @@ public:
     Weapon* getWeapon();
     void setWeapon(Weapon* wpn);
     Weapon* getDefaultWeapon();
-    int getDefaultDamage();
-    int getDefaultRadius();
+    std::int32_t getDefaultDamage();
+    std::int32_t getDefaultRadius();
     ChaseCam* getChaseCam();
-    int getRadius();
-    int getDamage();
+    std::int32_t getRadius();
+    std::int32_t getDamage();
     // Where and how fast this shell left the barrel - feed to
     // vulkan_graphix::Ballistics::positionAt() for its flight.
     const vulkan_graphix::Ballistics::Launch& getLaunch();
@@ -57,7 +58,7 @@ private:
     VBOShaderLibrary** projectile_models;
     float rotate;
     float y_not;
-    int timer;
+    std::int32_t timer;
     bool printed;
     GameState* parent;
     vulkan_graphix::Ballistics::Launch launch;

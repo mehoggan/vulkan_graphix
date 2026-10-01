@@ -1,4 +1,5 @@
 #include "Tutorial09.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -240,14 +241,14 @@ Tutorial09::Tutorial09() = default;
 
 Tutorial09::~Tutorial09() { childClear(); }
 
-void Tutorial09::onMouseButton(int button,
+void Tutorial09::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial09::onMouseMove(int pos_x, int pos_y) {
+void Tutorial09::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 
@@ -490,7 +491,7 @@ bool Tutorial09::copyTextureData(char* texture_data,
 }
 
 bool Tutorial09::createTexture() {
-    int width = 0, height = 0, data_size = 0;
+    std::int32_t width = 0, height = 0, data_size = 0;
     std::vector<char> texture_data = Tools::getImageData(
             "texture.09.png", 4, &width, &height, nullptr, &data_size);
     if (texture_data.empty()) {

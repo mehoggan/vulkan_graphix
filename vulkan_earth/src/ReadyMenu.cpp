@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstdint>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemSelectionBox.h"
 #include "vulkan_earth/ControlItemSliderbar.h"
@@ -31,7 +32,7 @@
 #include "vulkan_earth/Vertex.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playMusic(int music);
+extern void playMusic(std::int32_t music);
 
 using namespace std;
 
@@ -41,20 +42,20 @@ ReadyMenu::ReadyMenu(float new_width,
                      float new_percent_border,
                      GlobalSettings* new_global_settings,
                      PlayerFactory* new_player_factory,
-                     int* game_state) {
+                     std::int32_t* game_state) {
     start_music_played = false;
     global_settings = new_global_settings;
     player_factory = new_player_factory;
     current_game_state = game_state;
 
     num_players = max_num_players;
-    for (int i = 0; i < num_buttons; i++) {
+    for (std::int32_t i = 0; i < num_buttons; i++) {
         buttons[i] = nullptr;
     }
-    for (int i = 0; i < num_stat_images; i++) {
+    for (std::int32_t i = 0; i < num_stat_images; i++) {
         stat_images[i] = nullptr;
     }
-    for (int i = 0; i < num_control_items; i++) {
+    for (std::int32_t i = 0; i < num_control_items; i++) {
         control_items[i] = nullptr;
     }
 
@@ -179,7 +180,7 @@ ReadyMenu::ReadyMenu(float new_width,
                                      0.0f,
                                      0.0f);
 
-    for (int i = 0; i < num_tank_stats; i++) {
+    for (std::int32_t i = 0; i < num_tank_stats; i++) {
         std::string stat;
         if (i == 0)
             stat = "Power:";
@@ -212,13 +213,13 @@ ReadyMenu::ReadyMenu(float new_width,
     tanks[7] = new TankH(0, 0, 0);
     tank_angle = 0;
 
-    for (int i = 0; i < num_tank_types; i++) {
+    for (std::int32_t i = 0; i < num_tank_types; i++) {
         tanks[i]->setTankPos(0, 0, 0);
     }
 
     // STAT IMAGES
     float img_start_pos_x = pos[0] - width * 0.325;
-    for (int i = 0; i < num_stat_images; i++) {
+    for (std::int32_t i = 0; i < num_stat_images; i++) {
         // For Off Lights
         if (i < 30) {
             // For Power Lights
@@ -315,11 +316,13 @@ ReadyMenu::ReadyMenu(float new_width,
 }
 
 ReadyMenu::~ReadyMenu() {
-    for (int i = 0; i < num_buttons; i++) delete buttons[i];
-    for (int i = 0; i < num_stat_images; i++) delete stat_images[i];
-    for (int i = 0; i < num_control_items; i++) delete control_items[i];
-    for (int i = 0; i < num_tank_types; i++) delete tanks[i];
-    for (int i = 0; i < num_tank_stats; i++) delete tank_stat_labels[i];
+    for (std::int32_t i = 0; i < num_buttons; i++) delete buttons[i];
+    for (std::int32_t i = 0; i < num_stat_images; i++) delete stat_images[i];
+    for (std::int32_t i = 0; i < num_control_items; i++)
+        delete control_items[i];
+    for (std::int32_t i = 0; i < num_tank_types; i++) delete tanks[i];
+    for (std::int32_t i = 0; i < num_tank_stats; i++)
+        delete tank_stat_labels[i];
     delete text_field;
     delete player_page_num;
 }
@@ -331,7 +334,7 @@ float ReadyMenu::getHeight() { return height; }
 float* ReadyMenu::getColor() { return &(color[0]); }
 void ReadyMenu::setWidth(float new_width) { width = new_width; }
 void ReadyMenu::setHeight(float new_height) { height = new_height; }
-void ReadyMenu::updateNumPlayers(int n) { num_players = n; }
+void ReadyMenu::updateNumPlayers(std::int32_t n) { num_players = n; }
 void ReadyMenu::setColor(float r, float g, float b, float a) {
     color[0] = r;
     color[1] = g;
@@ -397,7 +400,7 @@ void ReadyMenu::showNextPlayerPage() {
 }
 
 void ReadyMenu::updatePageInfo() {
-    for (int i = 0; i < num_tank_types; i++) {
+    for (std::int32_t i = 0; i < num_tank_types; i++) {
         tanks[i]->changeHeadTexture(current_player_index);
     }
     std::string player_type =
@@ -413,7 +416,7 @@ void ReadyMenu::updatePageInfo() {
 
         std::string ai_type =
                 player_factory->getPlayer(current_player_index)->getAiType();
-        int i = 0;
+        std::int32_t i = 0;
         while (control_items[0]->collectData() != ai_type) {
             control_items[0]->setOptionText(i);
             i++;
@@ -442,7 +445,7 @@ void ReadyMenu::updatePageInfo() {
 
     std::string tank_type =
             player_factory->getPlayer(current_player_index)->getTankType();
-    int i = 0;
+    std::int32_t i = 0;
     while (control_items[1]->collectData() != tank_type) {
         control_items[1]->setOptionText(i);
         i++;
@@ -465,7 +468,7 @@ void ReadyMenu::updatePageInfo() {
             player_factory->collectPlayerColor(current_player_index)[2];
 }
 
-void ReadyMenu::setPlayerPageNum(int i) {
+void ReadyMenu::setPlayerPageNum(std::int32_t i) {
     delete player_page_num;
     caption = "Player " + std::to_string(i + 1);
     float label_x_pos = pos[0] - width * 0.25;
@@ -480,9 +483,11 @@ void ReadyMenu::setPlayerPageNum(int i) {
                                      0.0f);
 }
 
-void ReadyMenu::buttonTest(int x, int y, int button_down) {
+void ReadyMenu::buttonTest(std::int32_t x,
+                           std::int32_t y,
+                           std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_buttons;
+        for (std::int32_t button_i = 0; button_i < num_buttons;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF CLICK LANDS IN BUTTON I
             if (buttons[button_i]) {  // JUST TO MAKE SURE
@@ -498,7 +503,7 @@ void ReadyMenu::buttonTest(int x, int y, int button_down) {
                 }
             }
         }
-        for (int control_i = 0; control_i < num_control_items;
+        for (std::int32_t control_i = 0; control_i < num_control_items;
              control_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                              // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                              // CLICKED A ARROW BUTTON???
@@ -573,7 +578,7 @@ void ReadyMenu::buttonTest(int x, int y, int button_down) {
                 }
             }
         }
-        for (int control_i = 0; control_i < num_control_items;
+        for (std::int32_t control_i = 0; control_i < num_control_items;
              control_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                              // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                              // CLICKED A ARROW BUTTON???
@@ -613,7 +618,7 @@ void ReadyMenu::buttonTest(int x, int y, int button_down) {
     }
 }
 
-void ReadyMenu::updateMouse(int x, int y) {
+void ReadyMenu::updateMouse(std::int32_t x, std::int32_t y) {
     control_items[1]->updateMouse(x, y);
 }
 
@@ -756,10 +761,10 @@ void ReadyMenu::draw() {
                tank_prv_scr_pos[2]);
     glEnd();
 
-    for (int i = 0; i < num_tank_stats; i++) {
+    for (std::int32_t i = 0; i < num_tank_stats; i++) {
         tank_stat_labels[i]->draw();
     }
-    for (int i = 0; i < num_buttons; i++) {
+    for (std::int32_t i = 0; i < num_buttons; i++) {
         buttons[i]->draw();
     }
     if (buttons[0]->isActive()) {
@@ -814,7 +819,7 @@ void ReadyMenu::draw() {
         prv_scr_color_control = -1;
     }
     // Draw Stat Images
-    for (int i = 0; i < num_stat_images; i++) {
+    for (std::int32_t i = 0; i < num_stat_images; i++) {
         if (i < 30) {
             stat_images[i]->draw();
         } else {
@@ -963,8 +968,8 @@ void ReadyMenu::draw() {
     glEnable(GL_LIGHT0);
     glPopMatrix();
 
-    int win_width = glutGet(GLUT_WINDOW_WIDTH);
-    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
+    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -980,7 +985,7 @@ void ReadyMenu::draw() {
     glLoadIdentity();
 }
 
-void ReadyMenu::keyTest(unsigned char key) {
+void ReadyMenu::keyTest(std::uint8_t key) {
     if (text_field->isTextFieldActive()) {
         text_field->keyHandler(key);
     }

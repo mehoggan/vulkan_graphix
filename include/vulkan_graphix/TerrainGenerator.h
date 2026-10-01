@@ -16,6 +16,7 @@
 // queries take coordinates in that same space (grid vertex (0, 0) at the
 // world origin) - a caller that centers or offsets its mesh converts first.
 
+#include <cstdint>
 #include <vector>
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
@@ -24,15 +25,15 @@ namespace vulkan_graphix {
 
 // One grid vertex, by (x, z) grid index.
 struct TerrainGridCell {
-    int x;
-    int z;
+    std::int32_t x;
+    std::int32_t z;
 };
 
 class TerrainGenerator {
 public:
     // grid_size x grid_size height cells, grid_scale world units apart, all
     // starting at height 0 (as TerrainMaker::prepTerrain() zeroed them).
-    TerrainGenerator(int grid_size, int grid_scale);
+    TerrainGenerator(std::int32_t grid_size, std::int32_t grid_scale);
 
     // Resets the height field, then runs steps random-walk/jump steps
     // (each raising every cell within radius of the current point by
@@ -40,20 +41,20 @@ public:
     // passes (matching TerrainMaker::prepareData()'s own `for (int i = -1;
     // i < smoothness; i++) terrainSmoothe(10);` loop). Uses the C library's
     // rand(), exactly as TerrainMaker did - seed it with srand() first.
-    void generate(int steps,
-                  int increase,
+    void generate(std::int32_t steps,
+                  std::int32_t increase,
                   float radius,
-                  int random_jump,
-                  int smoothing_passes);
+                  std::int32_t random_jump,
+                  std::int32_t smoothing_passes);
 
-    int gridSize() const;
-    int gridScale() const;
-    int heightAt(int x, int z) const;
+    std::int32_t gridSize() const;
+    std::int32_t gridScale() const;
+    std::int32_t heightAt(std::int32_t x, std::int32_t z) const;
 
     // Averages the six adjacent triangle normals around grid vertex (x, z) -
     // ported from TerrainMaker::smoothShadeNormal(). Returns (0, 1, 0) at
     // points where every adjacent triangle falls outside the grid.
-    Math::Vec3<float> normalAt(int x, int z) const;
+    Math::Vec3<float> normalAt(std::int32_t x, std::int32_t z) const;
 
     // Height of the grid vertex nearest world position (world_x, world_z),
     // or 0 outside the grid - ported from TerrainMaker::getHeightAt().
@@ -71,7 +72,7 @@ public:
     // TerrainMaker::getTriangleNormal(), which vulkan_earth uses to tilt a
     // tank to the ground under it. Returns (0, 1, 0) where the triangle
     // falls outside the grid.
-    Math::Vec3<float> triangleNormalAt(int x, int z) const;
+    Math::Vec3<float> triangleNormalAt(std::int32_t x, std::int32_t z) const;
 
     // Blasts a crater of radius blast_size (in grid cells) centered on
     // world position (impact_x, impact_z) - ported from
@@ -85,15 +86,21 @@ public:
                                             float blast_size);
 
 private:
-    void terrainGen(int steps, int increase, float radius, int random_jump);
-    void terrainSmoothe(int box_width);
-    void calcNormal(int x, int z, int flag, Math::Vec3<float>* normal) const;
-    bool inGrid(int x, int z) const;
+    void terrainGen(std::int32_t steps,
+                    std::int32_t increase,
+                    float radius,
+                    std::int32_t random_jump);
+    void terrainSmoothe(std::int32_t box_width);
+    void calcNormal(std::int32_t x,
+                    std::int32_t z,
+                    std::int32_t flag,
+                    Math::Vec3<float>* normal) const;
+    bool inGrid(std::int32_t x, std::int32_t z) const;
 
-    int m_grid_size;
-    int m_grid_scale;
+    std::int32_t m_grid_size;
+    std::int32_t m_grid_scale;
     // m_heights[z][x], exactly like TerrainMaker's th[z][x].
-    std::vector<std::vector<int>> m_heights;
+    std::vector<std::vector<std::int32_t>> m_heights;
 };
 
 }  // namespace vulkan_graphix

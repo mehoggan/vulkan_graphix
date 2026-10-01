@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 
 class WorldCam {
 public:
@@ -12,12 +13,12 @@ public:
     void view();
     void moveCam(float x, float y, float z);
     float* getMatrix();
-    void setShakeCam(int magnitude);
+    void setShakeCam(std::int32_t magnitude);
     void updateShakeCam();
 
 private:
     float matrix[16];
-    int shake_cam_pos[3];
+    std::int32_t shake_cam_pos[3];
 };
 
 #endif

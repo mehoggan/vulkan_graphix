@@ -1,12 +1,13 @@
 #include "vulkan_earth/ItemShield.h"
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ItemShield::ItemShield() = default;
-ItemShield::ItemShield(int id) {
+ItemShield::ItemShield(std::int32_t id) {
     uniqueidentifier = id;
     package_num = 1;
     max_stack = 5;

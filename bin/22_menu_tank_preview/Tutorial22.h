@@ -254,10 +254,10 @@ public:
 
     bool draw() override;
 
-    void onMouseButton(int button,
+    void onMouseButton(std::int32_t button,
                        bool pressed,
-                       int pos_x,
-                       int pos_y) override;
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override;
 
 private:
     // Generous fixed capacity, same reasoning as Tutorial15's own
@@ -361,7 +361,7 @@ private:
     VulkanTutorial22Parameters m_vulkan_tutorial22_parameters;
     BitmapFont m_font;
     bool m_button_pressed;
-    int m_click_count;
+    std::int32_t m_click_count;
     float m_tank_angle;
 };
 

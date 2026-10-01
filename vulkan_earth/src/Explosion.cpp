@@ -6,6 +6,7 @@
  */
 
 #include "vulkan_earth/Explosion.h"
+#include <cstdint>
 #include "vulkan_earth/OpenGLColors.h"
 #include "vulkan_earth/Shader.h"
 #include "vulkan_earth/Vector.h"
@@ -17,7 +18,7 @@ Explosion::Explosion() = default;
 Explosion::Explosion(float new_x,
                      float new_y,
                      float new_z,
-                     int new_weapon_radius) {
+                     std::int32_t new_weapon_radius) {
     glPushMatrix();
     glLoadIdentity();
     glGetFloatv(GL_MODELVIEW_MATRIX, trans_matrix);
@@ -40,7 +41,7 @@ Explosion::Explosion(float new_x,
     float temp_colors2[3] = {Yellow};
     float temp_colors3[3] = {Orange};
     float temp_colors4[3] = {Red};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         colors1[i] = temp_colors1[i];
         colors2[i] = temp_colors2[i];
         colors3[i] = temp_colors3[i];
@@ -98,7 +99,7 @@ void Explosion::setDefaultColors() {
     float temp_colors2[3] = {Yellow};
     float temp_colors3[3] = {Orange};
     float temp_colors4[3] = {Red};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         colors1[i] = temp_colors1[i];
         colors2[i] = temp_colors2[i];
         colors3[i] = temp_colors3[i];

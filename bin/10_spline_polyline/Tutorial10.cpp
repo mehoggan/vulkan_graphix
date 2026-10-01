@@ -1,4 +1,5 @@
 #include "Tutorial10.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -288,14 +289,14 @@ Tutorial10::Tutorial10()
 
 Tutorial10::~Tutorial10() { childClear(); }
 
-void Tutorial10::onMouseButton(int button,
+void Tutorial10::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial10::onMouseMove(int pos_x, int pos_y) {
+void Tutorial10::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 

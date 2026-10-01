@@ -1,13 +1,14 @@
 #include "vulkan_earth/TankE.h"
+#include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_e_name = "Eggroid";
-const int tank_e_hp = 1000;
-const int tank_e_power = 4;
-const int tank_e_armor = 3;
-const int tank_e_speed = 80;
+const std::int32_t tank_e_hp = 1000;
+const std::int32_t tank_e_power = 4;
+const std::int32_t tank_e_armor = 3;
+const std::int32_t tank_e_speed = 80;
 
 TankE::TankE() = default;
 TankE::TankE(float x, float y, float z) {
@@ -31,7 +32,7 @@ TankE::TankE(float x, float y, float z) {
     hit_box_length = 300;
     hit_box_width = 300;
 
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         body_scale[i] = 40;
         head_scale[i] = 40;
         turret_scale[i] = 40;
@@ -88,8 +89,8 @@ TankE::~TankE() {
 }
 
 // GETTERS
-int TankE::getBaseHP() { return tank_e_hp; }
-int TankE::getBasePower() { return tank_e_power; }
-int TankE::getBaseArmor() { return tank_e_armor; }
-int TankE::getBaseSpeed() { return tank_e_speed; }
+std::int32_t TankE::getBaseHP() { return tank_e_hp; }
+std::int32_t TankE::getBasePower() { return tank_e_power; }
+std::int32_t TankE::getBaseArmor() { return tank_e_armor; }
+std::int32_t TankE::getBaseSpeed() { return tank_e_speed; }
 std::string TankE::getName() { return tank_e_name; }

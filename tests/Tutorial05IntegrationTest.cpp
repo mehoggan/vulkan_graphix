@@ -2,6 +2,7 @@
 // per translation unit, and IntegrationTestCommon.h for the shared
 // helpers.
 
+#include <cstdint>
 #include <memory>
 
 #include <gtest/gtest.h>
@@ -29,13 +30,15 @@ TEST(Tutorial05IntegrationTest, FullLifecycle) {
     ASSERT_TRUE(tutorial->createStagingBuffer());
     ASSERT_TRUE(tutorial->copyVertexData());
 
-    for (int i = 0; i < vulkan_graphix::test::c_draw_iterations; ++i) {
+    for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
+         ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 
     EXPECT_TRUE(tutorial->onWindowSizeChanged());
 
-    for (int i = 0; i < vulkan_graphix::test::c_draw_iterations; ++i) {
+    for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
+         ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 }

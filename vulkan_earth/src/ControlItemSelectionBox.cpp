@@ -10,7 +10,7 @@
 
 using namespace std;
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ControlItemSelectionBox::ControlItemSelectionBox() = default;
 
@@ -47,14 +47,14 @@ ControlItemSelectionBox::ControlItemSelectionBox(
             current += ch;
         }
     }
-    number_of_options = static_cast<int>(all_options.size());
+    number_of_options = static_cast<std::int32_t>(all_options.size());
 
     menu_state = 0;
     button_state = 0;
     option_text = nullptr;
     setOptionText(menu_state);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -159,9 +159,9 @@ float ControlItemSelectionBox::getHeight() { return height; }
 float ControlItemSelectionBox::getWidth() { return width; }
 std::string ControlItemSelectionBox::collectData() { return current_option; }
 
-void ControlItemSelectionBox::setOptionText(int index) {
+void ControlItemSelectionBox::setOptionText(std::int32_t index) {
     current_option = all_options[index];
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : current_option) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -231,4 +231,4 @@ void ControlItemSelectionBox::mouseClickEvent(
     }
 }
 
-void ControlItemSelectionBox::updateMouse(int x, int y) {}
+void ControlItemSelectionBox::updateMouse(std::int32_t x, std::int32_t y) {}

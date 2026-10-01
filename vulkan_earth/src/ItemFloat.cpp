@@ -1,12 +1,13 @@
 #include "vulkan_earth/ItemFloat.h"
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ItemFloat::ItemFloat() = default;
-ItemFloat::ItemFloat(int id) {
+ItemFloat::ItemFloat(std::int32_t id) {
     uniqueidentifier = id;
     package_num = 2;
     max_stack = 10;

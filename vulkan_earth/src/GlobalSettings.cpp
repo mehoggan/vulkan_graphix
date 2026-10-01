@@ -1,6 +1,7 @@
 #include "vulkan_earth/GlobalSettings.h"
 #include <stdio.h>
 #include <string.h>
+#include <cstdint>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -42,17 +43,18 @@ GlobalSettings::~GlobalSettings() = default;
 
 void GlobalSettings::setVariables(const std::string& global_options,
                                   const std::string& round_and_player_count) {
-    for (int i = 0; i < num_options; i++) {
+    for (std::int32_t i = 0; i < num_options; i++) {
         options[i].clear();
     }
 
-    int cur_char = 0;
-    int cur_token_count = 0;
-    while (cur_char < static_cast<int>(global_options.size())) {
+    std::int32_t cur_char = 0;
+    std::int32_t cur_token_count = 0;
+    while (cur_char < static_cast<std::int32_t>(global_options.size())) {
         if (global_options[cur_char] == '/') {
             cur_char++;
             std::string data;
-            while (cur_char < static_cast<int>(global_options.size()) &&
+            while (cur_char <
+                           static_cast<std::int32_t>(global_options.size()) &&
                    global_options[cur_char] != '/') {
                 data += global_options[cur_char];
                 cur_char++;
@@ -71,14 +73,15 @@ void GlobalSettings::setVariables(const std::string& global_options,
     copyData();
 
     /*	GET NUMBER OF PLAYERS AND ROUNDS	*/
-    int cur_char1 = 0;
-    int cur_token_count1 = 0;
-    while (cur_char1 < static_cast<int>(round_and_player_count.size())) {
+    std::int32_t cur_char1 = 0;
+    std::int32_t cur_token_count1 = 0;
+    while (cur_char1 <
+           static_cast<std::int32_t>(round_and_player_count.size())) {
         if (round_and_player_count[cur_char1] == '/') {
             cur_char1++;
             std::string data;
-            while (cur_char1 <
-                           static_cast<int>(round_and_player_count.size()) &&
+            while (cur_char1 < static_cast<std::int32_t>(
+                                       round_and_player_count.size()) &&
                    round_and_player_count[cur_char1] != '/') {
                 data += round_and_player_count[cur_char1];
                 cur_char1++;
@@ -133,7 +136,7 @@ void GlobalSettings::copyData() {
     trace_path = options[22];
 }
 
-void GlobalSettings::printSelf(int index) {
+void GlobalSettings::printSelf(std::int32_t index) {
     printf("Number of Players == %d\n", player_count);
     printf("Number of Rounds == %d\n", round_count);
 
@@ -185,8 +188,8 @@ std::string GlobalSettings::getBombIcon() { return bomb_icon; }
 std::string GlobalSettings::getTunneling() { return tunneling; }
 std::string GlobalSettings::getScale() { return scale; }
 std::string GlobalSettings::getTracePath() { return trace_path; }
-int GlobalSettings::getPlayerCount() { return player_count; }
-int GlobalSettings::getRoundCount() { return round_count; }
+std::int32_t GlobalSettings::getPlayerCount() { return player_count; }
+std::int32_t GlobalSettings::getRoundCount() { return round_count; }
 void GlobalSettings::setCurrentTerrain(TerrainMaker* new_terrain) {
     current_terrain = new_terrain;
 }

@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include "vulkan_earth/Player.h"
@@ -25,7 +26,7 @@ public:
               const std::string& new_name,
               char new_team_label,
               const std::string& new_player_type,
-              int starting_cash);
+              std::int32_t starting_cash);
     ~PlayerCPU() override;
     void updateTank(
             /* Pass in all paramaters that are associated with a tank */)
@@ -43,8 +44,8 @@ public:
     std::string getPlayerName() override;
     void setPlayerName(const std::string& new_name) override;
     void setPlayerType(const std::string& new_player_type) override;
-    int getCash() override;
-    void setCash(int cash) override;
+    std::int32_t getCash() override;
+    void setCash(std::int32_t cash) override;
     float getCurrentWait() override;
     void setCurrentWait(float time) override;
     float getRed() override;
@@ -57,7 +58,7 @@ public:
 
 private:
     Tank* current_tank;
-    int current_cash;
+    std::int32_t current_cash;
     std::string tank_type;
     Item* current_items[player_max_items];
     Weapon* current_weapons[player_max_weapons];

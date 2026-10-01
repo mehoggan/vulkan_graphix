@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/Player.h"
@@ -19,10 +20,10 @@ PlayerFactory::PlayerFactory(GlobalSettings* new_game_global_settings) {
     prev_number_of_players = number_of_players;
     player_set = new Player*[max_number_of_players]; /*	10 IS THE MAXIMUM
                                                         NUMBER OF PLAYERS	*/
-    for (int p = 0; p < max_number_of_players; p++) {
+    for (std::int32_t p = 0; p < max_number_of_players; p++) {
         player_set[p] = nullptr;
     }
-    for (int p = 0; p < number_of_players; p++) {
+    for (std::int32_t p = 0; p < number_of_players; p++) {
         if (!(player_set[p])) {
             player_set[p] = new PlayerCPU(
                     player_color[p][0],
@@ -67,30 +68,30 @@ PlayerFactory::PlayerFactory(GlobalSettings* new_game_global_settings) {
     player_color[9][0] = 0.95;
     player_color[9][1] = 0.95;
     player_color[9][2] = 0.95;
-    for (int x = 0; x < 10; x++) {
+    for (std::int32_t x = 0; x < 10; x++) {
         player_color[x][3] = 1.0;
     }
 }
 
 PlayerFactory::~PlayerFactory() {
-    for (int i = 0; i < number_of_players; i++) delete player_set[i];
+    for (std::int32_t i = 0; i < number_of_players; i++) delete player_set[i];
     delete[] player_set;
 }
 
-void PlayerFactory::setNumberofPlayers(int new_number_of_players) {
+void PlayerFactory::setNumberofPlayers(std::int32_t new_number_of_players) {
     number_of_players = new_number_of_players;
 }
-int PlayerFactory::getNumberofPlayers() { return number_of_players; }
+std::int32_t PlayerFactory::getNumberofPlayers() { return number_of_players; }
 
 void PlayerFactory::initializePlayerDataBase() {
-    int change_in_number_of_players =
+    std::int32_t change_in_number_of_players =
             number_of_players - prev_number_of_players;
     if (!change_in_number_of_players) { /* No Need To Initialize Or Remove
                                            Players	*/
         prev_number_of_players = number_of_players;
     } else if (change_in_number_of_players <
                0) { /* Number of Players Decreased Remove Players	*/
-        for (int p = prev_number_of_players - 1;
+        for (std::int32_t p = prev_number_of_players - 1;
              p > (prev_number_of_players + change_in_number_of_players) - 1;
              p--) {
             delete player_set[p];
@@ -99,7 +100,8 @@ void PlayerFactory::initializePlayerDataBase() {
         prev_number_of_players = number_of_players;
     } else if (change_in_number_of_players >
                0) { /* Number of Players Increased	Add Players*/
-        for (int p = prev_number_of_players; p < (number_of_players); p++) {
+        for (std::int32_t p = prev_number_of_players; p < (number_of_players);
+             p++) {
             player_set[p] = new PlayerCPU(
                     player_color[p][0],
                     player_color[p][1],
@@ -120,7 +122,7 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                                              const std::string& name,
                                              char team_label,
                                              const std::string& tank_type,
-                                             int player_number) {
+                                             std::int32_t player_number) {
     if (player_type == "CPU") {
         delete player_set[player_number];
         player_set[player_number] = new PlayerCPU(
@@ -159,6 +161,8 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                 player_number);
     }
 }
-float* PlayerFactory::collectPlayerColor(int i) { return player_color[i]; }
+float* PlayerFactory::collectPlayerColor(std::int32_t i) {
+    return player_color[i];
+}
 
-Player* PlayerFactory::getPlayer(int i) { return player_set[i]; }
+Player* PlayerFactory::getPlayer(std::int32_t i) { return player_set[i]; }

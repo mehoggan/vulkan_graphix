@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <errno.h>
+#include <cstdint>
 #include <cstdio>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -39,18 +40,18 @@
  * unload their weapons. Call player(i)->setLoadedWeapon(NULL)*/
 /* For the same reason, initialize all the durations of status of tanks*/
 
-extern void playSFX(int sfx);
-extern void playMusic(int music);
+extern void playSFX(std::int32_t sfx);
+extern void playMusic(std::int32_t music);
 
 using namespace std;
 
 GameState::GameState() = default;
 
-GameState::GameState(int new_width,
-                     int new_height,
+GameState::GameState(std::int32_t new_width,
+                     std::int32_t new_height,
                      PlayerFactory* new_player_factory,
                      GlobalSettings* new_global_settings,
-                     int* new_current_game_state) {
+                     std::int32_t* new_current_game_state) {
     scale_gravity = 30;
     balistic_scalar = 50;
     gravity = -9.8 * scale_gravity;
@@ -67,7 +68,7 @@ GameState::GameState(int new_width,
     special_effects = nullptr;
     draw_hit_box = false;
 
-    for (int x = 0; x < 256; x++) {
+    for (std::int32_t x = 0; x < 256; x++) {
         key_monitor[x] = 0;
     }
 
@@ -100,11 +101,11 @@ GameState::GameState(int new_width,
     current_player = new_player_factory->getPlayer(current_player_index);
 
     // PLACE TANKS
-    for (int i = 0; i < new_global_settings->getPlayerCount(); i++) {
+    for (std::int32_t i = 0; i < new_global_settings->getPlayerCount(); i++) {
         float x, y, z;
-        int size = static_cast<int>(
+        std::int32_t size = static_cast<std::int32_t>(
                 new_global_settings->getCurrentTerrain()->getActualSize());
-        int scale = static_cast<int>(
+        std::int32_t scale = static_cast<std::int32_t>(
                 new_global_settings->getCurrentTerrain()->getScale());
 
         x = 5 + rand() % ((size / scale) - 10);
@@ -185,7 +186,7 @@ GameState::GameState(int new_width,
     } else if (!(VBOShaderLibrary::areVbOsSupported())) {
         exit(1);
     }
-    for (int i = 0; i < max_projectile_models; i++) {
+    for (std::int32_t i = 0; i < max_projectile_models; i++) {
         projectile_models[i] = new VBOShaderLibrary();
         projectile_models[i]->getVBOPointerFunctions();
         projectile_models[i]->loadShaders("VertexTank.vs", "FragmentTank.vs");
@@ -249,12 +250,13 @@ GameState::GameState(int new_width,
     tank_reachable = new bool*[player_factory->getNumberofPlayers()];
     tank_list = new Tank**[player_factory->getNumberofPlayers()];
     distance_to_target = new float*[player_factory->getNumberofPlayers()];
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         tank_list[i] = new Tank*[player_factory->getNumberofPlayers()];
         distance_to_target[i] =
                 new float[player_factory->getNumberofPlayers()];
         tank_reachable[i] = new bool[player_factory->getNumberofPlayers()];
-        for (int j = 0; j < player_factory->getNumberofPlayers(); j++) {
+        for (std::int32_t j = 0; j < player_factory->getNumberofPlayers();
+             j++) {
             tank_list[i][j] = player_factory->getPlayer(j)->getCurrentTank();
             distance_to_target[i][j] = 1E+37;  // MAX FLOAT
             tank_reachable[i][j] = true;
@@ -263,13 +265,13 @@ GameState::GameState(int new_width,
     cout << "Done Building Table" << endl;
     /* END OF AI VARIABLES */
 
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         player_factory->getPlayer(i)->setLoadedWeapon(nullptr);
         player_factory->getPlayer(i)->getCurrentTank()->initDuration();
         player_factory->getPlayer(i)->getCurrentTank()->updateHitBox();
     }
 
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         player_factory->getPlayer(i)->setGameState(this);
     }
 }
@@ -283,19 +285,19 @@ GameState::~GameState() {
     delete selected_weapon_img;
     delete selected_weapon_remain;
     delete weapon_slot;
-    for (int x = 0; x < max_projectile_models; x++) {
+    for (std::int32_t x = 0; x < max_projectile_models; x++) {
         delete projectile_models[x];
     }
     delete manual;
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         delete[] tank_reachable[i];
     }
     delete[] tank_reachable;
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         delete[] tank_list[i];
     }
     delete[] tank_list;
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         delete[] distance_to_target[i];
     }
     delete[] distance_to_target;
@@ -437,7 +439,7 @@ void GameState::draw() {
     glColor3f(player_factory->getPlayer(current_player_index)->getRed(),
               player_factory->getPlayer(current_player_index)->getGreen(),
               player_factory->getPlayer(current_player_index)->getBlue());
-    for (int i = 0; i < global_settings->getPlayerCount(); i++) {
+    for (std::int32_t i = 0; i < global_settings->getPlayerCount(); i++) {
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationCloak() == 0) {
@@ -455,7 +457,7 @@ void GameState::draw() {
     // (int)(SPECIAL_EFFECT_TIME_LIMIT/TIME_DIVISORS);
     if (game_sub_state == SPECIAL_EFFECT) {
         if (special_effect_type == EXPLOSION) {
-            for (int x = 0; x < special_effects_count; x++) {
+            for (std::int32_t x = 0; x < special_effects_count; x++) {
                 if (special_effect_timer > 0) {
                     special_effects[0]->draw();
                 }
@@ -532,7 +534,7 @@ void GameState::drawHUD() {
     drawHUDText("HP", -0.87 * new_x, 0.75 * new_y);
     drawHUDText("Player Name", -0.76 * new_x, 0.75 * new_y);
     drawHUDText("Team", -0.525 * new_x, 0.75 * new_y);
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         glColor3f(player_factory->getPlayer(i)->getRed(),
                   player_factory->getPlayer(i)->getGreen(),
                   player_factory->getPlayer(i)->getBlue());
@@ -546,8 +548,9 @@ void GameState::drawHUD() {
         memset(buffer, 0, 128);
         drawHUDText((sprintf(buffer,
                              "%d",
-                             static_cast<int>(player_factory->getPlayer(i)
-                                                      ->getCurrentWait())),
+                             static_cast<std::int32_t>(
+                                     player_factory->getPlayer(i)
+                                             ->getCurrentWait())),
                      buffer),
                     -0.95 * new_x,
                     0.70 * new_y - 0.05 * new_y * i);
@@ -584,11 +587,12 @@ void GameState::drawHUD() {
         memset(buffer, 0, 128);
         glColor3f(1, 1, 1);
         drawHUDText("Power:", 0.7 * new_x, -0.7 * new_y);
-        drawHUDText(
-                (sprintf(buffer, "%d", static_cast<int>(power_ratio * 1000)),
-                 buffer),
-                0.95 * new_x,
-                -0.7 * new_y);
+        drawHUDText((sprintf(buffer,
+                             "%d",
+                             static_cast<std::int32_t>(power_ratio * 1000)),
+                     buffer),
+                    0.95 * new_x,
+                    -0.7 * new_y);
         // show previous power
         char buffer1[128];
         memset(buffer1, 0, 128);
@@ -610,7 +614,7 @@ void GameState::drawHUD() {
         drawHUDText("Angle:", 0.7 * new_x, -0.8 * new_y);
         drawHUDText((sprintf(buffer2,
                              "%d",
-                             static_cast<int>(
+                             static_cast<std::int32_t>(
                                      player_factory
                                              ->getPlayer(current_player_index)
                                              ->getCurrentTank()
@@ -759,14 +763,14 @@ void GameState::drawHUD() {
 void GameState::drawHUDText(const std::string& input, float x, float y) {
     float x_pos = x;
     for (char ch : input) {
-        int step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        std::int32_t step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
         glRasterPos2f(x_pos, y);
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ch);
         x_pos += step;
     }
 }
 
-void GameState::updateMouse(int x, int y) {
+void GameState::updateMouse(std::int32_t x, std::int32_t y) {
     if (player_cam) {
         float t_height = global_settings->getCurrentTerrain()->getHeightAt(
                 current_player->getCurrentTank()->getHeadMatrix()[12] -
@@ -832,10 +836,10 @@ void GameState::useTurn() {
 // NOTE: call this once when game starts to check the case in which everyone is
 // on the same team. Return values: -1==Draw game, 0==Nobody's won, n==Solo
 // player num, n+100==Team num
-int GameState::getWinner() {
-    int winner = 0;
+std::int32_t GameState::getWinner() {
+    std::int32_t winner = 0;
 
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         if (player_factory->getPlayer(i)->getCurrentTank()->getHP() > 0) {
             // CHECK FOR SOLO WINNER
             if (player_factory->getPlayer(i)->getTeamLabel() == '-' &&
@@ -961,7 +965,7 @@ void GameState::drawMinimap() {
     glClearColor(.22, .65, .60, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    int size = static_cast<int>(
+    std::int32_t size = static_cast<std::int32_t>(
             global_settings->getCurrentTerrain()->getActualSize());
 
     gluLookAt(size / 2,
@@ -977,7 +981,7 @@ void GameState::drawMinimap() {
     global_settings->getCurrentTerrain()->draw();
 
     // Draw Tank Marks
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationCloak() == 0) {
@@ -1172,8 +1176,8 @@ void GameState::drawMinimap() {
             current_player->getCurrentTank()->getProjectileLandPos()[1] + 900);
     glEnd();
 
-    int win_width = glutGet(GLUT_WINDOW_WIDTH);
-    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
+    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -1314,14 +1318,14 @@ void GameState::drawHelp() {
     glClearColor(0.75, 0.75, 0.75, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    int distance = static_cast<int>(glutGet(GLUT_WINDOW_HEIGHT) / 4 *
-                                    tan(1.04719755));
+    std::int32_t distance = static_cast<std::int32_t>(
+            glutGet(GLUT_WINDOW_HEIGHT) / 4 * tan(1.04719755));
     gluLookAt(0, 0, distance, 0, 0, 0, 0.0f, 1.0f, 0.0f);
 
     manual->draw();
 
-    int win_width = glutGet(GLUT_WINDOW_WIDTH);
-    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
+    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -1450,11 +1454,11 @@ void GameState::createSpecialEffect() {
                         10.0;
     player_factory->getPlayer(current_player_index)
             ->getCurrentTank()
-            ->setPreviousPower(static_cast<int>(power_ratio * 1000));
+            ->setPreviousPower(static_cast<std::int32_t>(power_ratio * 1000));
     player_factory->getPlayer(current_player_index)
             ->getCurrentTank()
             ->setPreviousAngle(
-                    static_cast<int>(
+                    static_cast<std::int32_t>(
                             player_factory->getPlayer(current_player_index)
                                     ->getCurrentTank()
                                     ->getTurretDegrees()) +
@@ -1468,23 +1472,27 @@ void GameState::createSpecialEffect() {
     special_effect_z = projectile->getPos()[2];
     // Teleport weapon effect handling
     if (projectile->getWeapon()->getImageFileName() == "WeaponTeleport.raw") {
-        int size = global_settings->getCurrentTerrain()->getActualSize();
+        std::int32_t size =
+                global_settings->getCurrentTerrain()->getActualSize();
         // Make sure the projectile has not landed on the water
         if (0 < projectile->getPos()[0] && projectile->getPos()[0] < size &&
             0 < projectile->getPos()[2] && projectile->getPos()[2] < size) {
-            int new_x =
-                    static_cast<int>(projectile->getPos()[0] / 100.0) * 100;
-            int new_y =
-                    static_cast<int>(projectile->getPos()[1] / 100.0) * 100;
-            int new_z =
-                    static_cast<int>(projectile->getPos()[2] / 100.0) * 100;
+            std::int32_t new_x = static_cast<std::int32_t>(
+                                         projectile->getPos()[0] / 100.0) *
+                                 100;
+            std::int32_t new_y = static_cast<std::int32_t>(
+                                         projectile->getPos()[1] / 100.0) *
+                                 100;
+            std::int32_t new_z = static_cast<std::int32_t>(
+                                         projectile->getPos()[2] / 100.0) *
+                                 100;
             current_player->getCurrentTank()->setTankPos(new_x, new_y, new_z);
             const float* body_matrix =
                     current_player->getCurrentTank()->getBodyMatrix();
             float new_height =
                     global_settings->getCurrentTerrain()->getHeightAt(
                             body_matrix[12], body_matrix[14]);
-            int scale = static_cast<int>(
+            std::int32_t scale = static_cast<std::int32_t>(
                     global_settings->getCurrentTerrain()->getScale());
             Normal n = global_settings->getCurrentTerrain()->getTriangleNormal(
                     body_matrix[12] / scale, body_matrix[14] / scale);
@@ -1500,12 +1508,12 @@ void GameState::createSpecialEffect() {
     if (special_effect_type == EXPLOSION) {
         special_effects_count = (special_effect_time_limit / time_divisors);
         special_effects = new SpecialEffect*[special_effects_count];
-        for (int x = 0; x < special_effects_count; x++) {
+        for (std::int32_t x = 0; x < special_effects_count; x++) {
             special_effects[x] = new Explosion(
                     special_effect_x,
                     special_effect_y,
                     special_effect_z,
-                    static_cast<int>(radius_of_current_explosion));
+                    static_cast<std::int32_t>(radius_of_current_explosion));
             if (projectile->getWeapon() != nullptr) {
                 special_effects[x]->setColors1(
                         projectile->getWeapon()->getExplosionColor1());
@@ -1529,7 +1537,7 @@ void GameState::handleProjectileState() {
                     projectile->getPos()[0], projectile->getPos()[2])) {
             collision_occured = true;
         } else {
-            for (int i = 0; i < number_of_players; i++) {
+            for (std::int32_t i = 0; i < number_of_players; i++) {
                 if (player_factory->getPlayer(i)
                             ->getCurrentTank()
                             ->checkCollision(projectile->getPos()[0],
@@ -1570,7 +1578,7 @@ void GameState::handleProjectileState() {
                         ->getCurrentTank()
                         ->getTurretMatrix();
         float matrix[16];
-        for (int i = 0; i < 16; i++) {
+        for (std::int32_t i = 0; i < 16; i++) {
             matrix[i] = turret_matrix[i];
         }
         matrix[12] = turret_matrix[12] + 1000 * turret_matrix[4];
@@ -1672,8 +1680,8 @@ void GameState::handleSpecialEffectState() {
                         projectile->getPos()[2],
                         radius_of_current_explosion);
             }
-            int total_players = global_settings->getPlayerCount();
-            for (int p = 0; p < total_players; p++) {
+            std::int32_t total_players = global_settings->getPlayerCount();
+            for (std::int32_t p = 0; p < total_players; p++) {
                 if (player_factory->getPlayer(p)->getCurrentTank() !=
                     nullptr) {
                     const float* body_matrix = player_factory->getPlayer(p)
@@ -1716,10 +1724,10 @@ void GameState::handleSpecialEffectState() {
                                                     ->getBodyMatrix()[14]);
                             delete n;
                         } else {
-                            int size = static_cast<int>(
+                            std::int32_t size = static_cast<std::int32_t>(
                                     global_settings->getCurrentTerrain()
                                             ->getActualSize());
-                            int scale_int = static_cast<int>(
+                            std::int32_t scale_int = static_cast<std::int32_t>(
                                     global_settings->getCurrentTerrain()
                                             ->getScale());
                             float new_height =
@@ -1751,11 +1759,11 @@ void GameState::handleSpecialEffectState() {
             }
         }
         projectile->getChaseCam()->updateFactor();
-        int shake_it_baby = rand() % 30;
+        std::int32_t shake_it_baby = rand() % 30;
         projectile->getChaseCam()->setShakeCam(20 + shake_it_baby);
     } else {
         if (special_effect_type == EXPLOSION) {
-            for (int x = 0; x < special_effects_count; x++) {
+            for (std::int32_t x = 0; x < special_effects_count; x++) {
                 if (special_effects[x]) {
                     delete special_effects[x];
                 }
@@ -1774,12 +1782,12 @@ void GameState::handleSpecialEffectState() {
         radius_of_current_explosion = 0;
         useTurn();
         game_sub_state = PASS_TIME;
-        int inven_index = 0;
+        std::int32_t inven_index = 0;
         inventory->handleInventory(current_player, inven_index);
     }
 }
 
-void GameState::handleKeyboardInput(int key, bool key_status) {
+void GameState::handleKeyboardInput(std::int32_t key, bool key_status) {
     if (current_player->getPlayerType() == "CPU") {
         handleNonInventoryKeyboard(key, key_status);
     }
@@ -1794,14 +1802,14 @@ void GameState::handleKeyboardInput(int key, bool key_status) {
     }
 }
 
-void GameState::handleInventoryKeyboard(int key, bool key_status) {
+void GameState::handleInventoryKeyboard(std::int32_t key, bool key_status) {
     if (key_status) {
         if (key == 27 || key == 'i') {
             Mix_VolumeMusic(prev_music_volume * 3);
             game_sub_state = PLAYER_CONTROL;
         } else if (key == 13) {
             Mix_VolumeMusic(prev_music_volume * 3);
-            int index = inventory->getSelectedIndex();
+            std::int32_t index = inventory->getSelectedIndex();
             // UN/LOAD A WEAPON
             if (index < player_max_weapons &&
                 current_player->getCurrentWeapons()[index] != nullptr) {
@@ -1880,7 +1888,7 @@ void GameState::handleInventoryKeyboard(int key, bool key_status) {
     }
 }
 
-void GameState::handleNonInventoryKeyboard(int key, bool key_status) {
+void GameState::handleNonInventoryKeyboard(std::int32_t key, bool key_status) {
     if ((key == 'c') && (key_status))
         toggleCamera();
     else if ((key == ' ') && (key_status) &&
@@ -2026,16 +2034,19 @@ void GameState::handlePassTime() {
     }
 }
 
-void GameState::resetTables(int index) {
+void GameState::resetTables(std::int32_t index) {
     if (index == -1) {
-        for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
-            for (int j = 0; j < player_factory->getNumberofPlayers(); j++) {
+        for (std::int32_t i = 0; i < player_factory->getNumberofPlayers();
+             i++) {
+            for (std::int32_t j = 0; j < player_factory->getNumberofPlayers();
+                 j++) {
                 tank_reachable[i][j] = true;
                 distance_to_target[i][j] = 1E+37;  // MAX FLOAT
             }
         }
     } else if (index < player_factory->getNumberofPlayers() && index >= 0) {
-        for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
+        for (std::int32_t i = 0; i < player_factory->getNumberofPlayers();
+             i++) {
             tank_reachable[index][i] = true;
             distance_to_target[index][i] = 1E+37;  // MAX FLOAT
         }
@@ -2043,8 +2054,9 @@ void GameState::resetTables(int index) {
 }
 
 void GameState::printTables() {
-    for (int i = 0; i < player_factory->getNumberofPlayers(); i++) {
-        for (int j = 0; j < player_factory->getNumberofPlayers(); j++) {
+    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
+        for (std::int32_t j = 0; j < player_factory->getNumberofPlayers();
+             j++) {
             cout << " || " << tank_list[i][j] << " | " << tank_reachable[i][j]
                  << " | " << distance_to_target[i][j] << " || ";
         }
@@ -2063,7 +2075,7 @@ void GameState::nearestEnemy() {
         /*	RECALULATE ALL DISTANCE	*/
         const float* tank_matrix =
                 current_player->getCurrentTank()->getBodyMatrix();
-        for (int i = 0; i < number_of_players; i++) {
+        for (std::int32_t i = 0; i < number_of_players; i++) {
             if (tank_list[current_player_index][i] !=
                         current_player->getCurrentTank() &&
                 tank_list[i] != nullptr) {
@@ -2081,9 +2093,9 @@ void GameState::nearestEnemy() {
         }
 
         /*	FIND THE MINIMUM DISTANCE/ REACHABLE TARGET	*/
-        int minimum_reachable_tank_index = -1;
+        std::int32_t minimum_reachable_tank_index = -1;
         float minimum_distance = 1E+37;
-        for (int i = 0; i < number_of_players; i++) {
+        for (std::int32_t i = 0; i < number_of_players; i++) {
             if (tank_list[current_player_index][i] !=
                         current_player->getCurrentTank() &&
                 tank_list[current_player_index][i] != nullptr) {

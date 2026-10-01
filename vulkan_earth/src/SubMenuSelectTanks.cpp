@@ -13,7 +13,7 @@ using namespace std;
 
 SubMenuSelectTanks::SubMenuSelectTanks() = default;
 
-SubMenuSelectTanks::SubMenuSelectTanks(int id,
+SubMenuSelectTanks::SubMenuSelectTanks(std::int32_t id,
                                        float new_x_pos,
                                        float new_y_pos,
                                        float new_z_pos,
@@ -38,7 +38,7 @@ SubMenuSelectTanks::SubMenuSelectTanks(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -58,8 +58,12 @@ SubMenuSelectTanks::SubMenuSelectTanks(int id,
 
 SubMenuSelectTanks::~SubMenuSelectTanks() { delete label; }
 
-int SubMenuSelectTanks::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuSelectTanks::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuSelectTanks::getUNIQUEIDENTIFIER() {
+    return uniqueidentifier;
+}
+void SubMenuSelectTanks::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuSelectTanks::getXPos() { return x_pos; }
 void SubMenuSelectTanks::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuSelectTanks::getYPos() { return y_pos; }
@@ -126,7 +130,7 @@ void SubMenuSelectTanks::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_st; i++) {
+    for (std::int32_t i = 0; i < num_control_items_st; i++) {
         if (sub_menu_button[i]) {
             // subMenuButton[i]->draw();
         }
@@ -135,7 +139,9 @@ void SubMenuSelectTanks::draw() {
 
 std::string SubMenuSelectTanks::collectData() { return "SelectTanks:"; }
 
-void SubMenuSelectTanks::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuSelectTanks::subMenuMouseTest(std::int32_t x,
+                                          std::int32_t y,
+                                          std::int32_t button_down) {
     /*
     if(buttonDown){
     //FIRST CONDITION IS LEFT MOUSE BUTTON DOWN for(int
@@ -173,4 +179,4 @@ void SubMenuSelectTanks::subMenuMouseTest(int x, int y, int button_down) {
     */
 }
 
-void SubMenuSelectTanks::updateMouse(int x, int y) {}
+void SubMenuSelectTanks::updateMouse(std::int32_t x, std::int32_t y) {}

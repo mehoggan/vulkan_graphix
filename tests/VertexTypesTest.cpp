@@ -21,7 +21,7 @@ struct CustomAttribute {
 };
 
 struct ZeroInitAttribute {
-    int value = 0;
+    std::int32_t value = 0;
 };
 
 }  // namespace

@@ -1,13 +1,14 @@
 #include "vulkan_earth/TankH.h"
+#include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_h_name = "Predator";
-const int tank_h_hp = 1000;
-const int tank_h_power = 10;
-const int tank_h_armor = 10;
-const int tank_h_speed = 100;
+const std::int32_t tank_h_hp = 1000;
+const std::int32_t tank_h_power = 10;
+const std::int32_t tank_h_armor = 10;
+const std::int32_t tank_h_speed = 100;
 
 TankH::TankH() = default;
 TankH::TankH(float x, float y, float z) {
@@ -27,7 +28,7 @@ TankH::TankH(float x, float y, float z) {
     body_offset[1] = 80;
     body_offset[2] = 0;
 
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         body_scale[i] = 70;
         head_scale[i] = 80;
         turret_scale[i] = 70;
@@ -77,8 +78,8 @@ TankH::~TankH() {
 }
 
 // GETTERS
-int TankH::getBaseHP() { return tank_h_hp; }
-int TankH::getBasePower() { return tank_h_power; }
-int TankH::getBaseArmor() { return tank_h_armor; }
-int TankH::getBaseSpeed() { return tank_h_speed; }
+std::int32_t TankH::getBaseHP() { return tank_h_hp; }
+std::int32_t TankH::getBasePower() { return tank_h_power; }
+std::int32_t TankH::getBaseArmor() { return tank_h_armor; }
+std::int32_t TankH::getBaseSpeed() { return tank_h_speed; }
 std::string TankH::getName() { return tank_h_name; }

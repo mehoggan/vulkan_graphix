@@ -1,4 +1,5 @@
 #include "Tutorial14.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -1150,14 +1151,14 @@ bool Tutorial14::draw() {
     return true;
 }
 
-void Tutorial14::onMouseButton(int button,
+void Tutorial14::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial14::onMouseMove(int pos_x, int pos_y) {
+void Tutorial14::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 

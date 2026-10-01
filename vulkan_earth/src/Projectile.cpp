@@ -1,4 +1,5 @@
 #include "vulkan_earth/Projectile.h"
+#include <cstdint>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
@@ -91,11 +92,11 @@ void Projectile::chaseView() { chase_cam->view(); }
 Weapon* Projectile::getWeapon() { return weapon; }
 void Projectile::setWeapon(Weapon* wpn) { weapon = wpn; }
 Weapon* Projectile::getDefaultWeapon() { return default_weapon; }
-int Projectile::getDefaultDamage() { return default_damage; }
-int Projectile::getDefaultRadius() { return default_radius; }
+std::int32_t Projectile::getDefaultDamage() { return default_damage; }
+std::int32_t Projectile::getDefaultRadius() { return default_radius; }
 ChaseCam* Projectile::getChaseCam() { return chase_cam; }
-int Projectile::getRadius() { return default_radius; }
-int Projectile::getDamage() { return default_damage; }
+std::int32_t Projectile::getRadius() { return default_radius; }
+std::int32_t Projectile::getDamage() { return default_damage; }
 const vulkan_graphix::Ballistics::Launch& Projectile::getLaunch() {
     return launch;
 }

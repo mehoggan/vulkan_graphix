@@ -3,12 +3,13 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include "vulkan_earth/Item.h"
 
 class ItemShield : public Item {
 public:
     ItemShield();
-    ItemShield(int id);
+    ItemShield(std::int32_t id);
     ~ItemShield() override;
     ItemShield* getItemInstance() override;
     bool causeEffectToTank(Tank* tank) override;

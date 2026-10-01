@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemCheckBox.h"
@@ -26,7 +27,7 @@
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playMusic(int music);
+extern void playMusic(std::int32_t music);
 
 MainMenu::MainMenu() = default;
 
@@ -35,21 +36,21 @@ MainMenu::MainMenu(float new_width,
                    float new_percent_border,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
-                   int* game_state) {
+                   std::int32_t* game_state) {
     global_settings = new_global_settings;
     player_factory = new_player_factory;
     current_game_state = game_state;
 
-    for (int x = 0; x < num_button; x++) {
+    for (std::int32_t x = 0; x < num_button; x++) {
         buttons[x] = nullptr;
     }
-    for (int x = 0; x < num_submenus; x++) {
+    for (std::int32_t x = 0; x < num_submenus; x++) {
         submenus[x] = nullptr;
     }
-    for (int x = 0; x < num_images; x++) {
+    for (std::int32_t x = 0; x < num_images; x++) {
         images[x] = nullptr;
     }
-    for (int x = 0; x < num_arrow_buttons; x++) {
+    for (std::int32_t x = 0; x < num_arrow_buttons; x++) {
         arrowsbutton[x] = nullptr;
     }
     button_pressed = nullptr;
@@ -318,10 +319,11 @@ MainMenu::MainMenu(float new_width,
 }
 
 MainMenu::~MainMenu() {
-    for (int i = 0; i < num_images; i++) delete images[i];
-    for (int i = 0; i < num_button; i++) delete buttons[i];
-    for (int i = 0; i < num_submenus; i++) delete submenus[i];
-    for (int i = 0; i < num_arrow_buttons; i++) delete arrowsbutton[i];
+    for (std::int32_t i = 0; i < num_images; i++) delete images[i];
+    for (std::int32_t i = 0; i < num_button; i++) delete buttons[i];
+    for (std::int32_t i = 0; i < num_submenus; i++) delete submenus[i];
+    for (std::int32_t i = 0; i < num_arrow_buttons; i++)
+        delete arrowsbutton[i];
 }
 
 float* MainMenu::getPos() { return &(pos[0]); }
@@ -330,7 +332,7 @@ void MainMenu::setHeight(float new_height) { height = new_height; }
 float MainMenu::getWidth() { return height; }
 void MainMenu::setWidth(float new_width) { width = new_width; }
 float* MainMenu::getColor() { return &(color[0]); }
-SubMenu* MainMenu::getSubMenuI(int i) { return submenus[i]; }
+SubMenu* MainMenu::getSubMenuI(std::int32_t i) { return submenus[i]; }
 SubMenu* MainMenu::getActiveSubMenu() { return active_sub_menu; }
 SubMenuLandscape* MainMenu::getSubMenuLandscape() {
     return static_cast<SubMenuLandscape*>(submenus[5]);
@@ -401,17 +403,17 @@ void MainMenu::draw() {
     glVertex3f((width / 2.0), (height / 2.0), 0);
     glEnd();
 
-    for (int i = 0; i < num_images; i++) {
+    for (std::int32_t i = 0; i < num_images; i++) {
         if (images[i]) {
             images[i]->draw();
         }
     }
-    for (int i = 0; i < num_arrow_buttons; i++) {
+    for (std::int32_t i = 0; i < num_arrow_buttons; i++) {
         if (arrowsbutton[i]) {
             arrowsbutton[i]->draw();
         }
     }
-    for (int x = 0; x < num_button; x++) {
+    for (std::int32_t x = 0; x < num_button; x++) {
         if (buttons[x]) {
             buttons[x]->draw();
         }
@@ -420,9 +422,11 @@ void MainMenu::draw() {
     glPopMatrix();
 }
 
-void MainMenu::buttonTest(int x, int y, int button_down) {
+void MainMenu::buttonTest(std::int32_t x,
+                          std::int32_t y,
+                          std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_button;
+        for (std::int32_t button_i = 0; button_i < num_button;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF CLICK LANDS IN BUTTON I
             if (buttons[button_i]) {  // JUST TO MAKE SURE
@@ -521,7 +525,7 @@ void MainMenu::buttonTest(int x, int y, int button_down) {
                     if (button_pressed->getUNIQUEIDENTIFIER() == 8) {
                         collectData();
                     } else {
-                        for (int i = 0; i < num_button;
+                        for (std::int32_t i = 0; i < num_button;
                              i++) {            // DEACTIVATE ALL OTHER MENUS
                             if (buttons[i]) {  // SAFEGUARD AGAINST NULL
                                                // POINTER
@@ -592,7 +596,7 @@ void MainMenu::buttonTest(int x, int y, int button_down) {
 
 void MainMenu::collectData() {
     std::string optionsarray;
-    for (int x = 2; x < num_submenus;
+    for (std::int32_t x = 2; x < num_submenus;
          x++) {  // SOUND AND START GAME ARE 1 AND 0 RESPECTIVLY
         if (submenus[x]) {
             optionsarray += submenus[x]->collectData();

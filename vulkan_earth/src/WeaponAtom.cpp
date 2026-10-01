@@ -1,9 +1,10 @@
 #include "vulkan_earth/WeaponAtom.h"
+#include <cstdint>
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponAtom::WeaponAtom() = default;
-WeaponAtom::WeaponAtom(int id) {
+WeaponAtom::WeaponAtom(std::int32_t id) {
     uniqueidentifier = id;
     max_stack = 5;
     package_num = 1;
@@ -20,7 +21,7 @@ WeaponAtom::WeaponAtom(int id) {
     float temp_colors2[3] = {Red};
     float temp_colors3[3] = {White};
     float temp_colors4[3] = {Red};
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
         explosion_color3[i] = temp_colors3[i];

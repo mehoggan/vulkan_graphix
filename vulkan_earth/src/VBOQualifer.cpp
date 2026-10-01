@@ -2,6 +2,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -70,7 +71,7 @@ bool VBOQualifer::establishIfQualified() {
     if (!current.empty()) {
         extensions.push_back(current);
     }
-    extensions_supported = static_cast<int>(extensions.size());
+    extensions_supported = static_cast<std::int32_t>(extensions.size());
 
     glGetIntegerv(GL_RED_BITS, &red_bits);
     glGetIntegerv(GL_GREEN_BITS, &green_bits);
@@ -91,7 +92,7 @@ bool VBOQualifer::establishIfQualified() {
 
 bool VBOQualifer::isExtensionSupported(const std::string& exten) {
     bool extension_exists = false;
-    for (int x = 0; x < extensions_supported; x++) {
+    for (std::int32_t x = 0; x < extensions_supported; x++) {
         if (extensions[x] == exten) {
             extension_exists = true;
         }

@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 
 class TextObject;
@@ -16,12 +17,12 @@ class Item;
 class GlobalSettings;
 class PlayerFactory;
 
-const int shop_grid_row = 3;
-const int shop_grid_col = 4;
-const int inven_grid_row = 5;
-const int inven_grid_col = 2;
-const int num_sales_weapon = 10;
-const int num_sales_item = 8;
+const std::int32_t shop_grid_row = 3;
+const std::int32_t shop_grid_col = 4;
+const std::int32_t inven_grid_row = 5;
+const std::int32_t inven_grid_col = 2;
+const std::int32_t num_sales_weapon = 10;
+const std::int32_t num_sales_item = 8;
 
 class ShopMenu {
 public:
@@ -31,26 +32,26 @@ public:
              float new_percent_border,
              GlobalSettings* new_global_settings,
              PlayerFactory* new_player_factory,
-             int* game_state);
+             std::int32_t* game_state);
     ~ShopMenu();
     void draw();
-    void buttonTest(int x, int y, int button_down);
+    void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);
     void saveCurrentPlayerInfo();
     void displayCurrentPlayerInfo();
     void updateBuyDiscriptLabel();
     void updateSellLabel();
     void buyHandler();
     void sellHandler();
-    void updateNumPlayers(int n);
+    void updateNumPlayers(std::int32_t n);
 
 private:
     void printDebugInfo();
     float pos[3], width, height, color[4], border;
     float percent_border;
-    int* current_game_state;
-    int num_players;
-    int current_player_index;
-    int current_player_balance;
+    std::int32_t* current_game_state;
+    std::int32_t num_players;
+    std::int32_t current_player_index;
+    std::int32_t current_player_balance;
     ControlItemButton* buttons[5];
     ControlItemGrid* grids[2];
     TextObject* label_wpn;

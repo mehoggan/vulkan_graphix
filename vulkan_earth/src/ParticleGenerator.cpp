@@ -1,10 +1,14 @@
 #include "vulkan_earth/ParticleGenerator.h"
+#include <cstdint>
 #include <cstdlib>
 #include "math.h"
 
 ParticleGenerator::ParticleGenerator() = default;
-ParticleGenerator::ParticleGenerator(
-        int spawn, int rate, int speed, int life, int new_type) {
+ParticleGenerator::ParticleGenerator(std::int32_t spawn,
+                                     std::int32_t rate,
+                                     std::int32_t speed,
+                                     std::int32_t life,
+                                     std::int32_t new_type) {
     max = 1000;
     x = 0;
     y = 0;
@@ -14,14 +18,14 @@ ParticleGenerator::ParticleGenerator(
     emission_speed = speed;
     emission_life = life;
     type = new_type;
-    for (int i = 0; i < max; i++) particle_array[i] = nullptr;
+    for (std::int32_t i = 0; i < max; i++) particle_array[i] = nullptr;
 }
 
 void ParticleGenerator::update(float new_x, float new_y, float new_z) {
     x = new_x;
     y = new_y;
     z = new_z;
-    for (int i = 0; i < max; i++) {
+    for (std::int32_t i = 0; i < max; i++) {
         if (particle_array[i] != nullptr) {
             if (!particle_array[i]->update()) {
                 delete particle_array[i];
@@ -32,14 +36,14 @@ void ParticleGenerator::update(float new_x, float new_y, float new_z) {
     addParticles();
 }
 void ParticleGenerator::draw() {
-    for (int i = 0; i < max; i++) {
+    for (std::int32_t i = 0; i < max; i++) {
         if (particle_array[i] != nullptr) {
             particle_array[i]->draw();
         }
     }
 }
 void ParticleGenerator::addParticles() {
-    int i = 0, count = 0;
+    std::int32_t i = 0, count = 0;
     while ((i < max) && (count < particles_per_emission)) {
         if (particle_array[i] == nullptr) {
             float dir_x = static_cast<float>(rand()) * 2 / RAND_MAX - 1;
@@ -88,7 +92,7 @@ void ParticleGenerator::addParticles() {
     }
 }
 void ParticleGenerator::killGenerator() {
-    for (int i = 0; i < max; i++) {
+    for (std::int32_t i = 0; i < max; i++) {
         if (particle_array[i] != nullptr) {
             delete particle_array[i];
         }

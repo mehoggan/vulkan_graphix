@@ -9,11 +9,11 @@
 
 using namespace std;
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 MainMenuButton::MainMenuButton() = default;
 
-MainMenuButton::MainMenuButton(int id,
+MainMenuButton::MainMenuButton(std::int32_t id,
                                float new_x_pos,
                                float new_y_pos,
                                float new_z_pos,
@@ -38,7 +38,7 @@ MainMenuButton::MainMenuButton(int id,
     height = new_height;
     caption = new_caption;
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -149,7 +149,7 @@ void MainMenuButton::draw() {
     glPopMatrix();
 }
 
-int MainMenuButton::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
+std::int32_t MainMenuButton::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 float MainMenuButton::getXPos() { return x_pos; }
 float MainMenuButton::getYPos() { return y_pos; }
 float MainMenuButton::getHeight() { return height; }
@@ -166,7 +166,7 @@ void MainMenuButton::setLabel(const std::string& c) {
     delete label;
     caption = c;
 
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -197,7 +197,7 @@ void MainMenuButton::activateSubMenu() { active = true; }
 
 void MainMenuButton::deactivateSubMenu() { active = false; }
 
-void MainMenuButton::printSelf(int i) {
+void MainMenuButton::printSelf(std::int32_t i) {
     cout << " Button[" << i << "].x=" << (getXPos()) << " Button[" << i
          << "].y=" << (getYPos()) << " Button[" << i
          << "].width=" << (getWidth()) << " Button[" << i

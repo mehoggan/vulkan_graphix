@@ -57,14 +57,14 @@ void VBOShaderLibrary::drawClientData() {
         if (use_shaders) {
             glEnable(GL_TEXTURE_2D);
             glActiveTexture(GL_TEXTURE0);
-            int texture_location =
+            std::int32_t texture_location =
                     glGetUniformLocation(shader_id, "color_texture");
             glUniform1i(texture_location, 0);
             glBindTexture(GL_TEXTURE_2D, color_texture);
 
             glEnable(GL_TEXTURE_2D);
             glActiveTexture(GL_TEXTURE1);
-            int normal_location =
+            std::int32_t normal_location =
                     glGetUniformLocation(shader_id, "normal_texture");
             glUniform1i(normal_location, 1);
             glBindTexture(GL_TEXTURE_2D, normal_texture);
@@ -72,7 +72,7 @@ void VBOShaderLibrary::drawClientData() {
     }
     if (use_vb_os) {
         glColor3f(1.0, 0.0, 0.0);
-        int size = vertices_loaded;
+        std::int32_t size = vertices_loaded;
         pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vbo_id);
 
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -163,7 +163,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     const char* temp_vs_text = vs_text.c_str();
     glShaderSource(shader_vp, 1, &temp_vs_text, nullptr);
     glCompileShader(shader_vp);
-    const unsigned int vertex_buffer_size = 2048;
+    const std::uint32_t vertex_buffer_size = 2048;
     char buffer1[vertex_buffer_size];
     memset(buffer1, 0, vertex_buffer_size);
     std::int32_t length1 = 0;
@@ -179,7 +179,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     const char* temp_fs_text = fs_text.c_str();
     glShaderSource(shader_fp, 1, &temp_fs_text, nullptr);
     glCompileShader(shader_fp);
-    const unsigned int fragment_buffer_size = 2048;
+    const std::uint32_t fragment_buffer_size = 2048;
     char buffer2[fragment_buffer_size];
     memset(buffer2, 0, fragment_buffer_size);
     std::int32_t length2 = 0;
@@ -196,7 +196,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     glAttachShader(shader_id, shader_fp);
     glAttachShader(shader_id, shader_vp);
     glLinkProgram(shader_id);
-    const unsigned int buffer_size = 512;
+    const std::uint32_t buffer_size = 512;
     char buffer[buffer_size];
     memset(buffer, 0, buffer_size);
     std::int32_t length = 0;
@@ -226,7 +226,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
 
 bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
     bool content_loaded = true;
-    unsigned int c;
+    std::uint32_t c;
     bool done = false;
 
     std::ifstream ogl_file(model_file, std::ios::binary | std::ios::ate);
@@ -250,12 +250,13 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
         vector<float> normal_vec(0);
 
         // cout << "Total data loaded is " << results.size() << endl;
-        int line_number = 0;
+        std::int32_t line_number = 0;
         if (results.size() % 8 != 0) {
             // cerr << "Wrong number of data stored results.size()%8 = " <<
             // (results.size()%8) <<  endl; exit(0);
         }
-        for (int x = 0; x < results.size() - (results.size() % 8); x += 8) {
+        for (std::int32_t x = 0; x < results.size() - (results.size() % 8);
+             x += 8) {
             /*	GRAB 1 TEXCOORD PAIR	*/
             float tc1 = 0.0; /*	TexCoord S	*/
             std::istringstream iss0(results[x]);
@@ -302,12 +303,12 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
         normals.resize(vertices_loaded);
         tex_coord.resize(vertices_loaded);
 
-        int vert_index = 0;
-        int vert_insert_index = 0;
-        int norm_index = 0;
-        int norm_insert_index = 0;
-        int texc_index = 0;
-        int texc_insert_index = 0;
+        std::int32_t vert_index = 0;
+        std::int32_t vert_insert_index = 0;
+        std::int32_t norm_index = 0;
+        std::int32_t norm_insert_index = 0;
+        std::int32_t texc_index = 0;
+        std::int32_t texc_insert_index = 0;
 
         for (; texc_index < texcoord_vec.size();
              vert_index += 3, norm_index += 3, texc_index += 2) {
@@ -334,7 +335,7 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
         }
 
         try {
-            int size = vertices_loaded;
+            std::int32_t size = vertices_loaded;
             pgl_gen_buffers_arb(1, &vbo_id);
             pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vbo_id);
             pgl_buffer_data_arb(GL_ARRAY_BUFFER_ARB,
@@ -375,7 +376,7 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
 bool VBOShaderLibrary::loadClientData(float* vertex_data,
                                       float* normal_data,
                                       float* tex_coord_data,
-                                      int number_of_vertices) {
+                                      std::int32_t number_of_vertices) {
     bool content_loaded = true;
     try {
         vertices.resize(number_of_vertices);
@@ -383,8 +384,8 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
         tex_coord.resize(number_of_vertices);
 
         // cout << "Vertices Data " << endl;
-        int vert_index = 0;
-        for (int x = 0; x < number_of_vertices * 3; x += 3) {
+        std::int32_t vert_index = 0;
+        for (std::int32_t x = 0; x < number_of_vertices * 3; x += 3) {
             Vertex v(vertex_data[x], vertex_data[x + 1], vertex_data[x + 2]);
             vertices[vert_index] = v;
             // cout	<< "<" << vertices[vert_index].coordX << ", "
@@ -394,8 +395,8 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
             vert_index++;
         }
         // cout << "Normal Data" << endl;
-        int norm_index = 0;
-        for (int y = 0; y < number_of_vertices * 3; y += 3) {
+        std::int32_t norm_index = 0;
+        for (std::int32_t y = 0; y < number_of_vertices * 3; y += 3) {
             Normal n(normal_data[y], normal_data[y + 1], normal_data[y + 2]);
             normals[norm_index] = n;
             // cout	<< "<" << normals[norm_index].compoX << ", "
@@ -405,8 +406,8 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
             norm_index++;
         }
         // cout << "TexCoord Data " << endl;
-        int tex_coord_index = 0;
-        for (int z = 0; z < number_of_vertices * 2; z += 2) {
+        std::int32_t tex_coord_index = 0;
+        for (std::int32_t z = 0; z < number_of_vertices * 2; z += 2) {
             TexCoord t(tex_coord_data[z], tex_coord_data[z + 1]);
             tex_coord[tex_coord_index] = t;
             // cout	<< "<" << tex_coord[tex_coord_index].texcoordS << ", "
@@ -417,7 +418,7 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
         // cout << endl;
 
         vertices_loaded = number_of_vertices;
-        int size = vertices_loaded;
+        std::int32_t size = vertices_loaded;
         pgl_gen_buffers_arb(1, &vbo_id);
         pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vbo_id);
         pgl_buffer_data_arb(
@@ -454,8 +455,8 @@ bool VBOShaderLibrary::loadClientData(float* vertex_data,
 }
 
 void VBOShaderLibrary::swapTexture(const char* filename,
-                                   int width,
-                                   int height) {
+                                   std::int32_t width,
+                                   std::int32_t height) {
     if (!color_texture) {
         cerr << "ERROR: You must first load a texture" << endl;
     } else {
@@ -465,14 +466,14 @@ void VBOShaderLibrary::swapTexture(const char* filename,
 }
 
 void VBOShaderLibrary::loadTexture(const char* filename,
-                                   int width,
-                                   int height) {
+                                   std::int32_t width,
+                                   std::int32_t height) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
         // cout << "ERROR: File Does Not Exist Not Going to Use Textures" <<
         // endl;
     } else {
-        std::vector<unsigned char> data(width * height * 3);
+        std::vector<std::uint8_t> data(width * height * 3);
         file.read(reinterpret_cast<char*>(data.data()), data.size());
         glGenTextures(1, &(color_texture));
         glBindTexture(GL_TEXTURE_2D, color_texture);
@@ -496,8 +497,8 @@ void VBOShaderLibrary::loadTexture(const char* filename,
 }
 
 void VBOShaderLibrary::swapTextureNormals(const char* filename,
-                                          int width,
-                                          int height) {
+                                          std::int32_t width,
+                                          std::int32_t height) {
     if (!color_texture) {
         cerr << "ERROR: You must first load a normal texture" << endl;
     } else {
@@ -507,14 +508,14 @@ void VBOShaderLibrary::swapTextureNormals(const char* filename,
 }
 
 void VBOShaderLibrary::loadTextureNormals(const char* filename,
-                                          int width,
-                                          int height) {
+                                          std::int32_t width,
+                                          std::int32_t height) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
         cerr << "ERROR: File Does Not Exist Not Going to Use Texture Normals"
              << endl;
     } else {
-        std::vector<unsigned char> data(width * height * 3);
+        std::vector<std::uint8_t> data(width * height * 3);
         file.read(reinterpret_cast<char*>(data.data()), data.size());
         glGenTextures(1, &(normal_texture));
         glBindTexture(GL_TEXTURE_2D, normal_texture);
@@ -627,9 +628,11 @@ bool VBOShaderLibrary::areVbOsSupported() {
         }
     }
 
-    int red_bits, green_bits, blue_bits, alpha_bits, depth_bits, stencil_bits;
-    int max_texture_size, max_lights, max_attrib_stacks, max_model_view_stacks;
-    int max_projection_stacks, max_clip_planes, max_texture_stacks;
+    std::int32_t red_bits, green_bits, blue_bits, alpha_bits, depth_bits,
+            stencil_bits;
+    std::int32_t max_texture_size, max_lights, max_attrib_stacks,
+            max_model_view_stacks;
+    std::int32_t max_projection_stacks, max_clip_planes, max_texture_stacks;
     glGetIntegerv(GL_RED_BITS, &red_bits);
     glGetIntegerv(GL_GREEN_BITS, &green_bits);
     glGetIntegerv(GL_BLUE_BITS, &blue_bits);

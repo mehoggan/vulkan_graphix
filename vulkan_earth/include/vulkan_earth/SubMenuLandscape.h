@@ -15,13 +15,13 @@ class ControlItemSelectionBox;
 class ControlItemSliderbar;
 class TerrainMaker;
 
-const int num_control_items_lnd = 4;
-const int preview_button = 3;
+const std::int32_t num_control_items_lnd = 4;
+const std::int32_t preview_button = 3;
 
 class SubMenuLandscape : public SubMenu {
 public:
     SubMenuLandscape();
-    SubMenuLandscape(int id,
+    SubMenuLandscape(std::int32_t id,
                      float new_x_pos,
                      float new_y_pos,
                      float new_z_pos,
@@ -33,8 +33,8 @@ public:
                      const std::string& new_caption,
                      float new_percent_border);
     ~SubMenuLandscape() override;
-    int getUNIQUEIDENTIFIER() override;
-    void setUNIQUEIDENTIFIER(int id) override;
+    std::int32_t getUNIQUEIDENTIFIER() override;
+    void setUNIQUEIDENTIFIER(std::int32_t id) override;
     float getXPos() override;
     void setXPos(float new_xpos) override;
     float getYPos() override;
@@ -57,8 +57,10 @@ public:
     void setPercentBorder(float percent) override;
     void draw() override;
     std::string collectData() override;
-    void subMenuMouseTest(int x, int y, int button_down) override;
-    void updateMouse(int x, int y) override;
+    void subMenuMouseTest(std::int32_t x,
+                          std::int32_t y,
+                          std::int32_t button_down) override;
+    void updateMouse(std::int32_t x, std::int32_t y) override;
     TerrainMaker* tm;  // PUBLIC BECAUSE I AM TOO LAZY TO UPDATE ENTIRE
                        // INTERFACE FOR ONE GET FUNCTION
     ControlItem*
@@ -67,8 +69,8 @@ public:
                                                      // WHICH MEANS UPDATE TO
                                                      // INTERFACE
 private:
-    int uniqueidentifier;
-    int old_mouse_x, old_mouse_y;
+    std::int32_t uniqueidentifier;
+    std::int32_t old_mouse_x, old_mouse_y;
     float cam_x, cam_y, cam_z;
     float x_pos;
     float y_pos;
@@ -80,7 +82,7 @@ private:
     float percent_border;
     TextObject* label;
     ControlItem* button_pressed;
-    int numberpressed;
+    std::int32_t numberpressed;
 };
 
 #endif  //	SUB_MENU_LANDSCAPE_H

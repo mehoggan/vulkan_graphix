@@ -15,8 +15,8 @@ public:
     WeaponTest();
     ~WeaponTest() override = 0;
     /*	GETTERS AND SETTERS	*/
-    virtual int getUNIQUEIDENTIFIER() = 0;
-    virtual void setUNIQUEIDENTIFIER(int id) = 0;
+    virtual std::int32_t getUNIQUEIDENTIFIER() = 0;
+    virtual void setUNIQUEIDENTIFIER(std::int32_t id) = 0;
     virtual float getXPos() = 0;
     virtual void setXPos(float new_xpos) = 0;
     virtual float getYPos() = 0;

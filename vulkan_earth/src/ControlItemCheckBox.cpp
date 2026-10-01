@@ -10,7 +10,7 @@
 
 using namespace std;
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ControlItemCheckBox::ControlItemCheckBox() = default;
 
@@ -38,7 +38,7 @@ ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
     menu_state = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -247,7 +247,7 @@ std::string ControlItemCheckBox::collectData() {
         return "true";
 }
 
-void ControlItemCheckBox::setOptionText(int index) {}
+void ControlItemCheckBox::setOptionText(std::int32_t index) {}
 void ControlItemCheckBox::setOptionText(const std::string& new_text) {}
 
 // NOTE: I use height for the x value check, this is intentional to
@@ -280,4 +280,4 @@ void ControlItemCheckBox::mouseClickEvent(
     }
 }
 
-void ControlItemCheckBox::updateMouse(int x, int y) {}
+void ControlItemCheckBox::updateMouse(std::int32_t x, std::int32_t y) {}

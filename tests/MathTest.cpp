@@ -21,10 +21,10 @@
 using namespace vulkan_graphix::Math;
 
 TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
-    std::vector<int> values = {0, 1, 2, 3, 4};
+    std::vector<std::int32_t> values = {0, 1, 2, 3, 4};
     std::size_t const select_count = 3;
 
-    std::vector<std::vector<int>> const expected = {
+    std::vector<std::vector<std::int32_t>> const expected = {
             {0, 1, 2},
             {0, 1, 3},
             {0, 1, 4},
@@ -40,11 +40,12 @@ TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
     std::size_t index = 0;
     do {
         ASSERT_LT(index, expected.size());
-        std::vector<int> const combination(values.begin(),
-                                           values.begin() + select_count);
+        std::vector<std::int32_t> const combination(
+                values.begin(), values.begin() + select_count);
         EXPECT_EQ(expected[index], combination);
         ++index;
-    } while (nextCombination<std::vector<int>, 5>(values, select_count));
+    } while (nextCombination<std::vector<std::int32_t>, 5>(values,
+                                                           select_count));
 
     EXPECT_EQ(expected.size(), index);
 }

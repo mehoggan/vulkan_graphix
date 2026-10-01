@@ -1,4 +1,5 @@
 #include "Tutorial20.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -218,7 +219,7 @@ Tutorial20::Tutorial20()
             // Stagger initial ages so particles from the same emitter
             // don't all spawn/die in lockstep - reads as a continuous
             // stream instead of pulses.
-            particle.current_frame = static_cast<int>(
+            particle.current_frame = static_cast<std::int32_t>(
                     i * (c_active_frames / c_particles_per_emitter));
             m_particles.push_back(particle);
         }
@@ -227,14 +228,14 @@ Tutorial20::Tutorial20()
 
 Tutorial20::~Tutorial20() { childClear(); }
 
-void Tutorial20::onMouseButton(int button,
+void Tutorial20::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial20::onMouseMove(int pos_x, int pos_y) {
+void Tutorial20::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 

@@ -1,4 +1,5 @@
 #include "Tutorial21.h"
+#include <cstdint>
 
 #include <vulkan/vulkan_core.h>
 
@@ -395,14 +396,14 @@ Tutorial21::Tutorial21()
 
 Tutorial21::~Tutorial21() { childClear(); }
 
-void Tutorial21::onMouseButton(int button,
+void Tutorial21::onMouseButton(std::int32_t button,
                                bool pressed,
-                               int pos_x,
-                               int pos_y) {
+                               std::int32_t pos_x,
+                               std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
-void Tutorial21::onMouseMove(int pos_x, int pos_y) {
+void Tutorial21::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 
@@ -666,9 +667,9 @@ bool Tutorial21::createTankTexture() {
 }
 
 bool Tutorial21::createSkyboxTexture() {
-    int width = 0;
-    int height = 0;
-    int data_size = 0;
+    std::int32_t width = 0;
+    std::int32_t height = 0;
+    std::int32_t data_size = 0;
     std::vector<char> texture_data = Tools::getImageData(
             "SkyBox.jpg", 4, &width, &height, nullptr, &data_size);
     if (texture_data.empty()) {
@@ -1612,7 +1613,7 @@ Tutorial21::getTerrainVertexData() {
     // along the grid's near edge (reproducible regardless of the actual
     // generated height values, confirming it was this normal bug and not
     // a height-generation or skybox depth issue).
-    int const chunk_size = c_grid_size / 2;
+    std::int32_t const chunk_size = c_grid_size / 2;
     float const chunk_span = static_cast<float>(chunk_size - 1);
     float const half_extent =
             static_cast<float>(c_grid_size - 1) * c_grid_scale / 2.0f;
@@ -1621,9 +1622,10 @@ Tutorial21::getTerrainVertexData() {
                                   static_cast<std::size_t>(c_grid_size - 1) *
                                   6);
 
-    for (int i = 0; i < c_grid_size - 1; ++i) {
-        for (int j = 0; j < c_grid_size - 1; ++j) {
-            auto make_position = [&](int grid_x, int grid_z) {
+    for (std::int32_t i = 0; i < c_grid_size - 1; ++i) {
+        for (std::int32_t j = 0; j < c_grid_size - 1; ++j) {
+            auto make_position = [&](std::int32_t grid_x,
+                                     std::int32_t grid_z) {
                 return Math::Vec4<float>(
                         static_cast<float>(grid_x * c_grid_scale) -
                                 half_extent,

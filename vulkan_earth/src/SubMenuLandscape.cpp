@@ -19,11 +19,11 @@
 #define PI 3.1415926535898
 
 using namespace std;
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 SubMenuLandscape::SubMenuLandscape() = default;
 
-SubMenuLandscape::SubMenuLandscape(int id,
+SubMenuLandscape::SubMenuLandscape(std::int32_t id,
                                    float new_x_pos,
                                    float new_y_pos,
                                    float new_z_pos,
@@ -58,7 +58,7 @@ SubMenuLandscape::SubMenuLandscape(int id,
     old_mouse_y = -1;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -127,11 +127,16 @@ SubMenuLandscape::SubMenuLandscape(int id,
 SubMenuLandscape::~SubMenuLandscape() {
     delete label;
     delete tm;
-    for (int i = 0; i < num_control_items_lnd; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_lnd; i++)
+        delete sub_menu_button[i];
 }
 
-int SubMenuLandscape::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuLandscape::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuLandscape::getUNIQUEIDENTIFIER() {
+    return uniqueidentifier;
+}
+void SubMenuLandscape::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuLandscape::getXPos() { return x_pos; }
 void SubMenuLandscape::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuLandscape::getYPos() { return y_pos; }
@@ -196,7 +201,7 @@ void SubMenuLandscape::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_lnd; i++) {
+    for (std::int32_t i = 0; i < num_control_items_lnd; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -266,8 +271,8 @@ void SubMenuLandscape::draw() {
     tm->draw();
     // glPopMatrix();
 
-    int win_width = glutGet(GLUT_WINDOW_WIDTH);
-    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
+    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -285,7 +290,7 @@ void SubMenuLandscape::draw() {
 
 std::string SubMenuLandscape::collectData() {
     std::string optionsarray = "/Landscape/";
-    for (int x = 0; x < num_control_items_lnd; x++) {
+    for (std::int32_t x = 0; x < num_control_items_lnd; x++) {
         if (sub_menu_button[x]) {
             optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
@@ -294,9 +299,11 @@ std::string SubMenuLandscape::collectData() {
     return optionsarray;
 }
 
-void SubMenuLandscape::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuLandscape::subMenuMouseTest(std::int32_t x,
+                                        std::int32_t y,
+                                        std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_lnd;
+        for (std::int32_t button_i = 0; button_i < num_control_items_lnd;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -340,10 +347,10 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int button_down) {
                      */
                     /********************************************************************************/
                     stringstream ss1(sub_menu_button[0]->collectData());
-                    int i1;
+                    std::int32_t i1;
                     if (!(ss1 >> i1)) i1 = 0;
                     stringstream ss2(sub_menu_button[1]->collectData());
-                    int i2;
+                    std::int32_t i2;
                     if (!(ss2 >> i2)) i2 = 0;
                     tm->prepareData(2500,          // int steps
                                     i2 * i2 + 10,  // int increase
@@ -381,7 +388,7 @@ void SubMenuLandscape::subMenuMouseTest(int x, int y, int button_down) {
     }
 }
 
-void SubMenuLandscape::updateMouse(int x, int y) {
+void SubMenuLandscape::updateMouse(std::int32_t x, std::int32_t y) {
     if (((x >= x_pos + 0.8 * width) &&
          (x <= x_pos + 0.8 * width + (0.9417 * width))) &&
         ((y >= y_pos - 0.15 * height) &&
@@ -415,8 +422,8 @@ void SubMenuLandscape::updateMouse(int x, int y) {
         old_mouse_x = x;
         old_mouse_y = y;
     }
-    int win_width = glutGet(GLUT_WINDOW_WIDTH);
-    int win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
+    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
     sub_menu_button[0]->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     sub_menu_button[1]->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     sub_menu_button[2]->updateMouse(x - (win_width / 2), (win_height / 2) - y);

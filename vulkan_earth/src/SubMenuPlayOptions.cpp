@@ -13,7 +13,7 @@ using namespace std;
 
 SubMenuPlayOptions::SubMenuPlayOptions() = default;
 
-SubMenuPlayOptions::SubMenuPlayOptions(int id,
+SubMenuPlayOptions::SubMenuPlayOptions(std::int32_t id,
                                        float new_x_pos,
                                        float new_y_pos,
                                        float new_z_pos,
@@ -38,7 +38,7 @@ SubMenuPlayOptions::SubMenuPlayOptions(int id,
     caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -122,12 +122,17 @@ SubMenuPlayOptions::SubMenuPlayOptions(int id,
 }
 
 SubMenuPlayOptions::~SubMenuPlayOptions() {
-    for (int i = 0; i < num_control_items_po; i++) delete sub_menu_button[i];
+    for (std::int32_t i = 0; i < num_control_items_po; i++)
+        delete sub_menu_button[i];
     delete label;
 }
 
-int SubMenuPlayOptions::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-void SubMenuPlayOptions::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
+std::int32_t SubMenuPlayOptions::getUNIQUEIDENTIFIER() {
+    return uniqueidentifier;
+}
+void SubMenuPlayOptions::setUNIQUEIDENTIFIER(std::int32_t id) {
+    uniqueidentifier = id;
+}
 float SubMenuPlayOptions::getXPos() { return x_pos; }
 void SubMenuPlayOptions::setXPos(float new_xpos) { x_pos = new_xpos; }
 float SubMenuPlayOptions::getYPos() { return y_pos; }
@@ -194,7 +199,7 @@ void SubMenuPlayOptions::draw() {
     glVertex3f(x_pos + width, y_pos + -height, z_pos);
     glEnd();
     label->draw();
-    for (int i = 0; i < num_control_items_po; i++) {
+    for (std::int32_t i = 0; i < num_control_items_po; i++) {
         if (sub_menu_button[i]) {
             sub_menu_button[i]->draw();
         }
@@ -203,7 +208,7 @@ void SubMenuPlayOptions::draw() {
 
 std::string SubMenuPlayOptions::collectData() {
     std::string optionsarray = "/Game Options/";
-    for (int x = 0; x < num_control_items_po; x++) {
+    for (std::int32_t x = 0; x < num_control_items_po; x++) {
         if (sub_menu_button[x]) {
             optionsarray += sub_menu_button[x]->collectData();
             optionsarray += "/";
@@ -212,9 +217,11 @@ std::string SubMenuPlayOptions::collectData() {
     return optionsarray;
 }
 
-void SubMenuPlayOptions::subMenuMouseTest(int x, int y, int button_down) {
+void SubMenuPlayOptions::subMenuMouseTest(std::int32_t x,
+                                          std::int32_t y,
+                                          std::int32_t button_down) {
     if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
-        for (int button_i = 0; button_i < num_control_items_po;
+        for (std::int32_t button_i = 0; button_i < num_control_items_po;
              button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                             // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
                             // CLICKED A ARROW BUTTON???
@@ -262,4 +269,4 @@ void SubMenuPlayOptions::subMenuMouseTest(int x, int y, int button_down) {
     }
 }
 
-void SubMenuPlayOptions::updateMouse(int x, int y) {}
+void SubMenuPlayOptions::updateMouse(std::int32_t x, std::int32_t y) {}

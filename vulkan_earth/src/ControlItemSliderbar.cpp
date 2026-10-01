@@ -7,20 +7,21 @@
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-extern void playSFX(int sfx);
+extern void playSFX(std::int32_t sfx);
 
 ControlItemSliderbar::ControlItemSliderbar() = default;
-ControlItemSliderbar::ControlItemSliderbar(float new_x_pos,
-                                           float new_y_pos,
-                                           float new_z_pos,
-                                           float red,
-                                           float green,
-                                           float blue,
-                                           std::int32_t new_width,
-                                           std::int32_t new_height,
-                                           const std::string& new_caption,
-                                           const std::string& menu_string,
-                                           int slider_starting_index) {
+ControlItemSliderbar::ControlItemSliderbar(
+        float new_x_pos,
+        float new_y_pos,
+        float new_z_pos,
+        float red,
+        float green,
+        float blue,
+        std::int32_t new_width,
+        std::int32_t new_height,
+        const std::string& new_caption,
+        const std::string& menu_string,
+        std::int32_t slider_starting_index) {
     x_pos = new_x_pos;
     y_pos = new_y_pos;
     z_pos = new_z_pos;
@@ -56,7 +57,7 @@ ControlItemSliderbar::ControlItemSliderbar(float new_x_pos,
             current += ch;
         }
     }
-    number_of_options = static_cast<int>(all_options.size());
+    number_of_options = static_cast<std::int32_t>(all_options.size());
     interval = bar_width / (number_of_options -
                             1.0);  // if it's divided by an integer, the whole
                                    // thing becomes an integer value???
@@ -66,7 +67,7 @@ ControlItemSliderbar::ControlItemSliderbar(float new_x_pos,
     option_text = nullptr;
     setOptionText(menu_state);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -141,7 +142,7 @@ void ControlItemSliderbar::draw() {
     glVertex3f(bar_x_pos, bar_y_pos - 1, bar_z_pos);
     glVertex3f(bar_x_pos + bar_width, bar_y_pos - 1, bar_z_pos);
     glEnd();
-    for (int i = 0; i < number_of_options; i++) {
+    for (std::int32_t i = 0; i < number_of_options; i++) {
         glBegin(GL_LINES);
         glColor3f(0, 0, 0);
         glVertex3f(bar_x_pos + (interval * i),
@@ -281,9 +282,9 @@ std::string ControlItemSliderbar::collectData() { return current_option; }
 
 void ControlItemSliderbar::setOptionText(const std::string& new_text) {}
 
-void ControlItemSliderbar::setOptionText(int index) {
+void ControlItemSliderbar::setOptionText(std::int32_t index) {
     current_option = all_options[index];
-    int real_length = 0;
+    std::int32_t real_length = 0;
     for (char ch : current_option) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
@@ -339,7 +340,7 @@ void ControlItemSliderbar::mouseClickEvent(
     }
 }
 
-void ControlItemSliderbar::updateMouse(int x, int y) {
+void ControlItemSliderbar::updateMouse(std::int32_t x, std::int32_t y) {
     if (is_slider_clicked) {
         // check if the mouse pointer is either left or right side from the
         // slider

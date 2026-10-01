@@ -1,13 +1,14 @@
 #include "vulkan_earth/TankG.h"
+#include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_g_name = "Cubix";
-const int tank_g_hp = 1000;
-const int tank_g_power = 10;
-const int tank_g_armor = 5;
-const int tank_g_speed = 75;
+const std::int32_t tank_g_hp = 1000;
+const std::int32_t tank_g_power = 10;
+const std::int32_t tank_g_armor = 5;
+const std::int32_t tank_g_speed = 75;
 
 TankG::TankG() = default;
 TankG::TankG(float x, float y, float z) {
@@ -27,7 +28,7 @@ TankG::TankG(float x, float y, float z) {
     body_offset[1] = 120;
     body_offset[2] = 0;
 
-    for (int i = 0; i < 3; i++) {
+    for (std::int32_t i = 0; i < 3; i++) {
         body_scale[i] = 100;
         head_scale[i] = 100;
         turret_scale[i] = 100;
@@ -78,10 +79,10 @@ TankG::~TankG() {
 }
 
 // GETTERS
-int TankG::getBaseHP() { return tank_g_hp; }
-int TankG::getBasePower() { return tank_g_power; }
-int TankG::getBaseArmor() { return tank_g_armor; }
-int TankG::getBaseSpeed() { return tank_g_speed; }
+std::int32_t TankG::getBaseHP() { return tank_g_hp; }
+std::int32_t TankG::getBasePower() { return tank_g_power; }
+std::int32_t TankG::getBaseArmor() { return tank_g_armor; }
+std::int32_t TankG::getBaseSpeed() { return tank_g_speed; }
 std::string TankG::getName() { return tank_g_name; }
 
 void TankG::drawTankHitBox() {

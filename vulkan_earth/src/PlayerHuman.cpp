@@ -1,4 +1,5 @@
 #include "vulkan_earth/PlayerHuman.h"
+#include <cstdint>
 #include <string>
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/PlayerFactory.h"
@@ -23,10 +24,10 @@ PlayerHuman::PlayerHuman(float red, float green, float blue) {
     color[3] = 1.0;
 
     current_tank = new TankA(0, 0, 0);
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         current_items[i] = nullptr;
     }
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         current_weapons[i] = nullptr;
     }
 
@@ -47,7 +48,7 @@ PlayerHuman::PlayerHuman(float red,
                          const std::string& new_name,
                          char new_team_label,
                          const std::string& new_player_type,
-                         int starting_cash) {
+                         std::int32_t starting_cash) {
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -57,10 +58,10 @@ PlayerHuman::PlayerHuman(float red,
     current_wait = 0;
     team_label = new_team_label;
 
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         current_items[i] = nullptr;
     }
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         current_weapons[i] = nullptr;
     }
     loaded_weapon = nullptr;
@@ -96,13 +97,13 @@ PlayerHuman::~PlayerHuman() {
 
     // before we delete inventory, where should we store the inventory? figure
     // out this later
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         if (current_items[i] != nullptr) {
             delete current_items[i];
             current_items[i] = nullptr;
         }
     }
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         if (current_weapons[i] != nullptr) {
             delete current_weapons[i];
             current_items[i] = nullptr;
@@ -128,8 +129,8 @@ std::string PlayerHuman::getPlayerName() { return name; }
 void PlayerHuman::setPlayerName(const std::string& new_name) {
     name = new_name;
 }
-int PlayerHuman::getCash() { return current_cash; }
-void PlayerHuman::setCash(int cash) { current_cash = cash; }
+std::int32_t PlayerHuman::getCash() { return current_cash; }
+void PlayerHuman::setCash(std::int32_t cash) { current_cash = cash; }
 float PlayerHuman::getRed() { return color[0]; }
 float PlayerHuman::getGreen() { return color[1]; }
 float PlayerHuman::getBlue() { return color[2]; }
@@ -141,7 +142,7 @@ Weapon* PlayerHuman::getLoadedWeapon() { return loaded_weapon; }
 void PlayerHuman::setLoadedWeapon(Weapon* wpn) { loaded_weapon = wpn; }
 float* PlayerHuman::getBalisticMatrix() { return balistic_matrix; }
 void PlayerHuman::setItems(Item** item_set) {
-    for (int i = 0; i < player_max_items; i++) {
+    for (std::int32_t i = 0; i < player_max_items; i++) {
         current_items[i] = item_set[i];
     }
 }
@@ -171,7 +172,7 @@ void PlayerHuman::setTankType(const std::string& new_tank_type) {
     }
 }
 void PlayerHuman::setWeapons(Weapon** weapon_set) {
-    for (int i = 0; i < player_max_weapons; i++) {
+    for (std::int32_t i = 0; i < player_max_weapons; i++) {
         current_weapons[i] = weapon_set[i];
     }
 }

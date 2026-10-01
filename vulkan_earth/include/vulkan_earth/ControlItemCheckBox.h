@@ -33,10 +33,10 @@ public:
     float getHeight() override;
     float getWidth() override;
     std::string collectData() override;
-    void updateMouse(int x, int y) override;
+    void updateMouse(std::int32_t x, std::int32_t y) override;
 
 private:
-    void setOptionText(int index) override;
+    void setOptionText(std::int32_t index) override;
     void setOptionText(const std::string& new_text) override;
     float x_pos;
     float y_pos;
@@ -46,8 +46,8 @@ private:
     std::int32_t height;
     TextObject* label;
     std::string caption;
-    int menu_state;
-    int button_state;  // 0 = no button pressed, 1 = up button pressed, 2 =
-                       // down button pressed
+    std::int32_t menu_state;
+    std::int32_t button_state;  // 0 = no button pressed, 1 = up button
+                                // pressed, 2 = down button pressed
 };
 #endif  // Control_ITEM_Check_BOX_H
