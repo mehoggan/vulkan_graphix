@@ -20,19 +20,19 @@ public:
     // How far out along the turret's barrel a shell starts. Player's CPU
     // shot simulation uses this same constant, so its predicted arc starts
     // where a real shot does.
-    static constexpr GLfloat c_muzzle_distance = 500.0f;
+    static constexpr float c_muzzle_distance = 500.0f;
 
     Projectile();
     Projectile(GameState* new_parent,
-               GLfloat* turret_matrix,
-               GLfloat new_speed,
+               float* turret_matrix,
+               float new_speed,
                VBOShaderLibrary** new_projectile_models);
     ~Projectile();
     void draw();
-    // void update(GLfloat gravity);
-    void update(GLfloat x, GLfloat y, GLfloat z);
+    // void update(float gravity);
+    void update(float x, float y, float z);
     void chaseView();
-    GLfloat* getPos();
+    float* getPos();
     Weapon* getWeapon();
     void setWeapon(Weapon* wpn);
     Weapon* getDefaultWeapon();
@@ -47,10 +47,10 @@ public:
 
 private:
     ChaseCam* chase_cam;
-    GLfloat pos[3];
-    GLfloat v_vec[3];
-    GLfloat speed;
-    GLfloat wind;  // implement later
+    float pos[3];
+    float v_vec[3];
+    float speed;
+    float wind;  // implement later
     Weapon* weapon;
     Weapon* default_weapon;
     VBOShaderLibrary* projectile_default;

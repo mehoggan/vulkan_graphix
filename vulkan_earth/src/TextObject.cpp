@@ -7,13 +7,13 @@ using namespace std;
 TextObject::TextObject() = default;
 
 TextObject::TextObject(const std::string& input,
-                       GLfloat new_pos_x,
-                       GLfloat new_pos_y,
-                       GLfloat new_pos_z,
+                       float new_pos_x,
+                       float new_pos_y,
+                       float new_pos_z,
                        void* new_font_size,
-                       GLfloat red,
-                       GLfloat green,
-                       GLfloat blue) {
+                       float red,
+                       float green,
+                       float blue) {
     output = input;
     pos_x = new_pos_x;
     pos_y = new_pos_y;
@@ -31,12 +31,12 @@ TextObject::TextObject(const std::string& input,
 TextObject::~TextObject() = default;
 
 const std::string& TextObject::getOutput() { return output; }
-void TextObject::setXpos(GLfloat x) { pos_x = x; }
-void TextObject::setYpos(GLfloat y) { pos_y = y; }
-void TextObject::setZpos(GLfloat z) { pos_z = z; }
+void TextObject::setXpos(float x) { pos_x = x; }
+void TextObject::setYpos(float y) { pos_y = y; }
+void TextObject::setZpos(float z) { pos_z = z; }
 
-GLvoid TextObject::draw() {
-    GLfloat x_pos = pos_x;
+void TextObject::draw() {
+    float x_pos = pos_x;
     glColor3f(color[0], color[1], color[2]);
     for (char ch : output) {
         int step = glutBitmapWidth(font_size, ch);

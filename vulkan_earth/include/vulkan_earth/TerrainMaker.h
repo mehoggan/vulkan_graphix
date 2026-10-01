@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include "vulkan_earth/Normal.h"
@@ -33,16 +34,16 @@ public:
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
     void toggleWireframe();
-    void makeCrater(GLfloat x, GLfloat z, GLfloat size);
+    void makeCrater(float x, float z, float size);
     // x/z in grid units (truncated to a grid vertex).
     Normal getTriangleNormal(float x, float z);
     // x/z in world units.
-    Normal getNormalAt(GLfloat x, GLfloat z);
-    GLfloat getHeightAt(GLfloat x, GLfloat z);
-    GLint getActualSize();
-    GLint getScale();
-    GLuint loadTexture(const char* filename, int width, int height);
-    GLuint selectTexture(const std::string& tex);
+    Normal getNormalAt(float x, float z);
+    float getHeightAt(float x, float z);
+    std::int32_t getActualSize();
+    std::int32_t getScale();
+    std::uint32_t loadTexture(const char* filename, int width, int height);
+    std::uint32_t selectTexture(const std::string& tex);
 
 private:
     int scale;
@@ -58,15 +59,15 @@ private:
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
     std::vector<TexCoord> tex_coord;
-    GLuint color_texture;
-    GLuint normal_texture;
-    std::vector<GLfloat> material_specular;
-    std::vector<GLfloat> material_shininess;
-    std::vector<GLfloat> material_diffuse;
+    std::uint32_t color_texture;
+    std::uint32_t normal_texture;
+    std::vector<float> material_specular;
+    std::vector<float> material_shininess;
+    std::vector<float> material_diffuse;
     void configVBOs();
-    GLuint vertex_vbo_id;
-    GLuint normal_vbo_id;
-    GLuint texture_vbo_id;
+    std::uint32_t vertex_vbo_id;
+    std::uint32_t normal_vbo_id;
+    std::uint32_t texture_vbo_id;
     PFNGLGENBUFFERSARBPROC
     pgl_gen_buffers_arb;  // VBO Name Generation Procedure
     PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb;  // VBO Bind Procedure
@@ -80,7 +81,7 @@ private:
     PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb;      // map VBO procedure
     PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb;  // unmap VBO procedure
     Shader* shader;
-    GLfloat rotation_angle;
+    float rotation_angle;
     bool wireframe_active;
 };
 

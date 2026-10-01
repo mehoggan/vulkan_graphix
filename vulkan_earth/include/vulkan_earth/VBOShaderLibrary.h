@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include "vulkan_earth/Normal.h"
@@ -33,7 +34,7 @@ private:
     bool use_textures;
     bool use_shaders;
     int vertices_loaded;
-    GLuint vbo_id;
+    std::uint32_t vbo_id;
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
     std::vector<TexCoord> tex_coord;
@@ -55,8 +56,8 @@ private:
     unsigned int shader_id;
     unsigned int shader_vp;
     unsigned int shader_fp;
-    GLuint color_texture;
-    GLuint normal_texture;
+    std::uint32_t color_texture;
+    std::uint32_t normal_texture;
 };
 
 #endif /* VBO_SHADER_LIBRARY_H_	*/

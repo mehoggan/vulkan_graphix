@@ -7,7 +7,7 @@ Vector::Vector() {
     compo_z = 0.0f;
 }
 
-Vector::Vector(GLfloat new_compo_x, GLfloat new_compo_y, GLfloat new_compo_z) {
+Vector::Vector(float new_compo_x, float new_compo_y, float new_compo_z) {
     compo_x = new_compo_x;
     compo_y = new_compo_y;
     compo_z = new_compo_z;

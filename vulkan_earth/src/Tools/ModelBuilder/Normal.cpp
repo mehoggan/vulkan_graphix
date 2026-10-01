@@ -2,7 +2,7 @@
 
 Normal::Normal() {}
 
-Normal::Normal(GLfloat x, GLfloat y, GLfloat z) {
+Normal::Normal(float x, float y, float z) {
     this->compoX = x;
     this->compoY = y;
     this->compoZ = z;

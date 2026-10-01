@@ -16,10 +16,10 @@ class PlayerFactory;
 class PlayerHuman : public Player {
 public:
     PlayerHuman();
-    PlayerHuman(GLfloat red, GLfloat green, GLfloat blue);
-    PlayerHuman(GLfloat red,
-                GLfloat green,
-                GLfloat blue,
+    PlayerHuman(float red, float green, float blue);
+    PlayerHuman(float red,
+                float green,
+                float blue,
                 const std::string& new_tank_type,
                 const std::string& new_ai_type,
                 const std::string& new_name,
@@ -47,9 +47,9 @@ public:
     void setCash(int cash) override;
     float getCurrentWait() override;
     void setCurrentWait(float time) override;
-    GLfloat getRed() override;
-    GLfloat getGreen() override;
-    GLfloat getBlue() override;
+    float getRed() override;
+    float getGreen() override;
+    float getBlue() override;
     char getTeamLabel() override;
     void setTeamLabel(char t) override;
     Weapon* getLoadedWeapon() override;
@@ -57,7 +57,7 @@ public:
     void selectTarget(PlayerFactory* player_factory_ref);
     Tank* getCurrentTarget(int i);
     Vector getEnemyPosition();
-    GLfloat* getBalisticMatrix();
+    float* getBalisticMatrix();
     void updateBalsticMatrix();
 
 private:
@@ -69,7 +69,7 @@ private:
     std::string ai_type;
     std::string name;
     std::string player_type;
-    GLfloat color[4];
+    float color[4];
     float current_wait;
     char team_label;
     Weapon* loaded_weapon;

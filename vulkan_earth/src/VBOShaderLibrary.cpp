@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
@@ -165,7 +166,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     const unsigned int vertex_buffer_size = 2048;
     char buffer1[vertex_buffer_size];
     memset(buffer1, 0, vertex_buffer_size);
-    GLsizei length1 = 0;
+    std::int32_t length1 = 0;
     glGetShaderInfoLog(shader_vp, vertex_buffer_size, &length1, buffer1);
     if (length1 > 0) {
         cerr << "(" << vs_file_name << ") -- " << buffer1 << endl;
@@ -181,7 +182,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     const unsigned int fragment_buffer_size = 2048;
     char buffer2[fragment_buffer_size];
     memset(buffer2, 0, fragment_buffer_size);
-    GLsizei length2 = 0;
+    std::int32_t length2 = 0;
     glGetShaderInfoLog(shader_fp, fragment_buffer_size, &length2, buffer2);
     if (length2 > 0) {
         cerr << "(" << fs_file_name << ") -- " << buffer2 << endl;
@@ -198,7 +199,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
     const unsigned int buffer_size = 512;
     char buffer[buffer_size];
     memset(buffer, 0, buffer_size);
-    GLsizei length = 0;
+    std::int32_t length = 0;
     glGetProgramInfoLog(shader_id, buffer_size, &length, buffer);
     if (length > 0) {
         if (strcmp(buffer,
@@ -211,7 +212,7 @@ bool VBOShaderLibrary::loadShaders(const char* vs_file_name,
         }
     }
     glValidateProgram(shader_id);
-    GLint status;
+    std::int32_t status;
     glGetProgramiv(shader_id, GL_VALIDATE_STATUS, &status);
     if (status == GL_FALSE) {
         cerr << "Error validating shader " << shader_id << endl;
@@ -540,29 +541,29 @@ bool VBOShaderLibrary::getVBOPointerFunctions() {
     bool status = true;
     pgl_gen_buffers_arb =
             reinterpret_cast<PFNGLGENBUFFERSARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glGenBuffersARB")));
+                    reinterpret_cast<const std::uint8_t*>("glGenBuffersARB")));
     pgl_bind_buffer_arb =
             reinterpret_cast<PFNGLBINDBUFFERARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glBindBufferARB")));
+                    reinterpret_cast<const std::uint8_t*>("glBindBufferARB")));
     pgl_buffer_data_arb =
             reinterpret_cast<PFNGLBUFFERDATAARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glBufferDataARB")));
-    pgl_buffer_sub_data_arb =
-            reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glBufferSubDataARB")));
-    pgl_delete_buffers_arb =
-            reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glDeleteBuffersARB")));
+                    reinterpret_cast<const std::uint8_t*>("glBufferDataARB")));
+    pgl_buffer_sub_data_arb = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
+            glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
+                    "glBufferSubDataARB")));
+    pgl_delete_buffers_arb = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
+            glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
+                    "glDeleteBuffersARB")));
     pgl_get_buffer_parameteriv_arb =
             reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glGetBufferParameterivARB")));
     pgl_map_buffer_arb =
             reinterpret_cast<PFNGLMAPBUFFERARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glMapBufferARB")));
-    pgl_unmap_buffer_arb =
-            reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(glXGetProcAddress(
-                    reinterpret_cast<const GLubyte*>("glUnmapBufferARB")));
+                    reinterpret_cast<const std::uint8_t*>("glMapBufferARB")));
+    pgl_unmap_buffer_arb = reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
+            glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
+                    "glUnmapBufferARB")));
     if (!pgl_gen_buffers_arb || !pgl_bind_buffer_arb || !pgl_buffer_data_arb ||
         !pgl_buffer_sub_data_arb || !pgl_delete_buffers_arb ||
         !pgl_get_buffer_parameteriv_arb || !pgl_map_buffer_arb ||
@@ -579,7 +580,7 @@ bool VBOShaderLibrary::getVBOPointerFunctions() {
 /*	STATIC FUNCTION */
 bool VBOShaderLibrary::initGlew() {
     bool init_ok = false;
-    GLenum glew_err = glewInit();
+    std::uint32_t glew_err = glewInit();
     if (GLEW_OK != glew_err) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(glew_err));
     } else {

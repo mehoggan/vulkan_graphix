@@ -30,9 +30,9 @@ extern void playMusic(int music);
 
 MainMenu::MainMenu() = default;
 
-MainMenu::MainMenu(GLfloat new_width,
-                   GLfloat new_height,
-                   GLfloat new_percent_border,
+MainMenu::MainMenu(float new_width,
+                   float new_height,
+                   float new_percent_border,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
                    int* game_state) {
@@ -324,12 +324,12 @@ MainMenu::~MainMenu() {
     for (int i = 0; i < num_arrow_buttons; i++) delete arrowsbutton[i];
 }
 
-GLfloat* MainMenu::getPos() { return &(pos[0]); }
-GLfloat MainMenu::getHeight() { return width; }
-void MainMenu::setHeight(GLfloat new_height) { height = new_height; }
-GLfloat MainMenu::getWidth() { return height; }
-void MainMenu::setWidth(GLfloat new_width) { width = new_width; }
-GLfloat* MainMenu::getColor() { return &(color[0]); }
+float* MainMenu::getPos() { return &(pos[0]); }
+float MainMenu::getHeight() { return width; }
+void MainMenu::setHeight(float new_height) { height = new_height; }
+float MainMenu::getWidth() { return height; }
+void MainMenu::setWidth(float new_width) { width = new_width; }
+float* MainMenu::getColor() { return &(color[0]); }
 SubMenu* MainMenu::getSubMenuI(int i) { return submenus[i]; }
 SubMenu* MainMenu::getActiveSubMenu() { return active_sub_menu; }
 SubMenuLandscape* MainMenu::getSubMenuLandscape() {

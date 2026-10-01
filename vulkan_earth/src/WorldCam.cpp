@@ -2,7 +2,7 @@
 #include "vulkan_earth/MacroCrtdbg.h"
 
 WorldCam::WorldCam() = default;
-WorldCam::WorldCam(GLfloat x, GLfloat y, GLfloat z) {
+WorldCam::WorldCam(float x, float y, float z) {
     matrix[0] = 0;
     matrix[1] = 0;
     matrix[2] = 1;
@@ -49,7 +49,7 @@ void WorldCam::moveCam(float x, float y, float z) {
     matrix[14] += z;
 }
 
-GLfloat* WorldCam::getMatrix() { return matrix; }
+float* WorldCam::getMatrix() { return matrix; }
 
 void WorldCam::setShakeCam(int magnitude) {
     shake_cam_pos[0] = magnitude;

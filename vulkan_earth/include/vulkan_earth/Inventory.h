@@ -17,7 +17,7 @@ class Item;
 class Inventory {
 public:
     Inventory();
-    Inventory(GLfloat x, GLfloat y, int width, int height);
+    Inventory(float x, float y, int width, int height);
     ~Inventory();
     void draw();
     void setupInventory(Player* player);
@@ -26,7 +26,7 @@ public:
     int getSelectedIndex();
 
 private:
-    GLfloat x_pos, y_pos;
+    float x_pos, y_pos;
     int width, height;
     ControlItemGrid* inven_grid;
     TextObject* title;

@@ -19,10 +19,10 @@ WeaponEMP::WeaponEMP(int id) {
     damage = 0;
     special_number = 5;
 
-    GLfloat temp_colors1[3] = {White};
-    GLfloat temp_colors2[3] = {Silver};
-    GLfloat temp_colors3[3] = {White};
-    GLfloat temp_colors4[3] = {Silver};
+    float temp_colors1[3] = {White};
+    float temp_colors2[3] = {Silver};
+    float temp_colors3[3] = {White};
+    float temp_colors4[3] = {Silver};
     for (int i = 0; i < 3; i++) {
         explosion_color1[i] = temp_colors1[i];
         explosion_color2[i] = temp_colors2[i];
@@ -35,7 +35,7 @@ WeaponEMP::~WeaponEMP() = default;
 WeaponEMP* WeaponEMP::getWeaponInstance() {
     return new WeaponEMP(uniqueidentifier);
 }
-void WeaponEMP::causeEffectToTank(GLfloat distance, Tank* tank) {
+void WeaponEMP::causeEffectToTank(float distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->setDurationEMP(special_number);
     }

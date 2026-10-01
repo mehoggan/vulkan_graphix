@@ -8,9 +8,9 @@
 class TexCoord {
 public:
     TexCoord();
-    TexCoord(GLfloat s, GLfloat t);
+    TexCoord(float s, float t);
     ~TexCoord();
-    GLfloat texcoord_s;
-    GLfloat texcoord_t;
+    float texcoord_s;
+    float texcoord_t;
 };
 #endif  // TEX_COORD_H

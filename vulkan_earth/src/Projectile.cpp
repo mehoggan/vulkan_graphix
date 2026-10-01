@@ -16,8 +16,8 @@ using namespace std;
 Projectile::Projectile() = default;
 
 Projectile::Projectile(GameState* new_parent,
-                       GLfloat* turret_matrix,
-                       GLfloat new_speed,
+                       float* turret_matrix,
+                       float new_speed,
                        VBOShaderLibrary** new_projectile_models) {
     default_weapon = new WeaponDefault(10);
     parent = new_parent;
@@ -56,14 +56,14 @@ Projectile::~Projectile() {
     delete projectile_default;
 }
 
-// void Projectile::update(GLfloat gravity) {
+// void Projectile::update(float gravity) {
 //	pos[0]+=vVec[0];
 //	pos[1]+=vVec[1];
 //	pos[2]+=vVec[2];
 //	vVec[1]+=gravity;
 // }
 
-void Projectile::update(GLfloat x, GLfloat y, GLfloat z) {
+void Projectile::update(float x, float y, float z) {
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
@@ -84,7 +84,7 @@ void Projectile::draw() {
     rotate += 4;
 }
 
-GLfloat* Projectile::getPos() { return pos; }
+float* Projectile::getPos() { return pos; }
 
 void Projectile::chaseView() { chase_cam->view(); }
 

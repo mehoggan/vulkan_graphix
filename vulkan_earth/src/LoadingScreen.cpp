@@ -1,17 +1,18 @@
 #include "vulkan_earth/LoadingScreen.h"
+#include <cstdint>
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 LoadingScreen::LoadingScreen() = default;
-LoadingScreen::LoadingScreen(GLfloat x,
-                             GLfloat y,
-                             GLfloat z,
-                             GLint new_width,
-                             GLint new_height,
-                             GLfloat red,
-                             GLfloat green,
-                             GLfloat blue,
-                             GLfloat alpha) {
+LoadingScreen::LoadingScreen(float x,
+                             float y,
+                             float z,
+                             std::int32_t new_width,
+                             std::int32_t new_height,
+                             float red,
+                             float green,
+                             float blue,
+                             float alpha) {
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;

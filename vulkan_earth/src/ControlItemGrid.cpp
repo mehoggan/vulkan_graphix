@@ -1,4 +1,5 @@
 #include "vulkan_earth/ControlItemGrid.h"
+#include <cstdint>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemButton.h"
 #include "vulkan_earth/ImageObject.h"
@@ -9,16 +10,16 @@
 extern void playSFX(int sfx);
 
 ControlItemGrid::ControlItemGrid() = default;
-ControlItemGrid::ControlItemGrid(GLfloat new_x_pos,
-                                 GLfloat new_y_pos,
-                                 GLfloat new_z_pos,
-                                 GLint new_width,
-                                 GLint new_height,
+ControlItemGrid::ControlItemGrid(float new_x_pos,
+                                 float new_y_pos,
+                                 float new_z_pos,
+                                 std::int32_t new_width,
+                                 std::int32_t new_height,
                                  int new_rows,
                                  int new_cols,
-                                 GLfloat active_cell_color_red,
-                                 GLfloat active_cell_color_green,
-                                 GLfloat active_cell_color_blue,
+                                 float active_cell_color_red,
+                                 float active_cell_color_green,
+                                 float active_cell_color_blue,
                                  bool new_visible_lines,
                                  bool new_multi_selectable) {
     x_pos = new_x_pos;
@@ -163,9 +164,9 @@ void ControlItemGrid::draw() {
     glPopMatrix();
 }
 
-void ControlItemGrid::mouseClickEvent(GLint x,
-                                      GLint y,
-                                      GLint state,
+void ControlItemGrid::mouseClickEvent(std::int32_t x,
+                                      std::int32_t y,
+                                      std::int32_t state,
                                       bool still_over_arrow_button) {
     if (state == 1) {
         // If THE CLICK OCUURED INSIDE OF THE GRID
@@ -217,10 +218,10 @@ void ControlItemGrid::mouseClickEvent(GLint x,
 }
 
 // GETTERS & SETTERS
-GLfloat ControlItemGrid::getXPos() { return x_pos; }
-GLfloat ControlItemGrid::getYPos() { return y_pos; }
-GLfloat ControlItemGrid::getHeight() { return height; }
-GLfloat ControlItemGrid::getWidth() { return width; }
+float ControlItemGrid::getXPos() { return x_pos; }
+float ControlItemGrid::getYPos() { return y_pos; }
+float ControlItemGrid::getHeight() { return height; }
+float ControlItemGrid::getWidth() { return width; }
 bool* ControlItemGrid::getSelectedCells() { return &selected_cells[0]; }
 
 void ControlItemGrid::selectCell(int row_index, int col_index) {

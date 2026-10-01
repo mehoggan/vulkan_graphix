@@ -1,4 +1,5 @@
 #include "vulkan_earth/Shader.h"
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -21,11 +22,11 @@ Shader::~Shader() {
     glDeleteProgram(shader_id);
 }
 
-void Shader::validateShader(GLuint shader, const char* file) {
+void Shader::validateShader(std::uint32_t shader, const char* file) {
     const unsigned int buffer_size = 512;
     char buffer[buffer_size];
     memset(buffer, 0, buffer_size);
-    GLsizei length = 0;
+    std::int32_t length = 0;
     glGetShaderInfoLog(shader, buffer_size, &length, buffer);
     if (length > 0) {
         cerr << "(" << file << ") -- " << buffer << endl;
@@ -35,11 +36,11 @@ void Shader::validateShader(GLuint shader, const char* file) {
     }
 }
 
-void Shader::validateProgram(GLuint program) {
+void Shader::validateProgram(std::uint32_t program) {
     const unsigned int buffer_size = 512;
     char buffer[buffer_size];
     memset(buffer, 0, buffer_size);
-    GLsizei length = 0;
+    std::int32_t length = 0;
 
     memset(buffer, 0, buffer_size);
     glGetProgramInfoLog(program, buffer_size, &length, buffer);
@@ -51,7 +52,7 @@ void Shader::validateProgram(GLuint program) {
     }
 
     glValidateProgram(program);
-    GLint status;
+    std::int32_t status;
     glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
     if (status == GL_FALSE) {
         cerr << "Error validating shader " << program << endl;

@@ -3,7 +3,7 @@
 
 Normal::Normal() = default;
 
-Normal::Normal(GLfloat x, GLfloat y, GLfloat z) {
+Normal::Normal(float x, float y, float z) {
     compo_x = x;
     compo_y = y;
     compo_z = z;

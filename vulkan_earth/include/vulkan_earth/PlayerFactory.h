@@ -25,7 +25,7 @@ public:
                                   char team_label,
                                   const std::string& tank_type,
                                   int player_number);
-    GLfloat* collectPlayerColor(int i);
+    float* collectPlayerColor(int i);
     Player* getPlayer(int i);
 
 private:
@@ -33,7 +33,7 @@ private:
     GlobalSettings* game_global_settings;
     int number_of_players;
     int prev_number_of_players;
-    GLfloat player_color[10][4];
+    float player_color[10][4];
 };
 
 #endif /*	PLAYER_FACTORY_H	*/

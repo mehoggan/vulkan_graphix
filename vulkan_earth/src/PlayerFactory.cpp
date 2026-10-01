@@ -159,6 +159,6 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                 player_number);
     }
 }
-GLfloat* PlayerFactory::collectPlayerColor(int i) { return player_color[i]; }
+float* PlayerFactory::collectPlayerColor(int i) { return player_color[i]; }
 
 Player* PlayerFactory::getPlayer(int i) { return player_set[i]; }

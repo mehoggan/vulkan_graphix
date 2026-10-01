@@ -10,10 +10,10 @@ public:
     SpecialEffect();
     virtual ~SpecialEffect();
     virtual void draw() = 0;
-    virtual void setColors1(GLfloat* colors1) = 0;
-    virtual void setColors2(GLfloat* colors2) = 0;
-    virtual void setColors3(GLfloat* colors3) = 0;
-    virtual void setColors4(GLfloat* colors4) = 0;
+    virtual void setColors1(float* colors1) = 0;
+    virtual void setColors2(float* colors2) = 0;
+    virtual void setColors3(float* colors3) = 0;
+    virtual void setColors4(float* colors4) = 0;
     virtual void setDefaultColors() = 0;
 };
 

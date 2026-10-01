@@ -12,13 +12,13 @@
 class ParticleAcid : public Particle {
 public:
     ParticleAcid();
-    ParticleAcid(GLfloat new_x,
-                 GLfloat new_y,
-                 GLfloat new_z,
-                 GLfloat dir_x,
-                 GLfloat dir_y,
-                 GLfloat dir_z,
-                 GLfloat new_speed,
+    ParticleAcid(float new_x,
+                 float new_y,
+                 float new_z,
+                 float dir_x,
+                 float dir_y,
+                 float dir_z,
+                 float new_speed,
                  int frames);
 
     bool update() override;

@@ -10,7 +10,7 @@ const int tank_g_armor = 5;
 const int tank_g_speed = 75;
 
 TankG::TankG() = default;
-TankG::TankG(GLfloat x, GLfloat y, GLfloat z) {
+TankG::TankG(float x, float y, float z) {
     initBody();
     initHead();
     initTurret();

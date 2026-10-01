@@ -15,7 +15,7 @@ public:
     void draw();
 
 protected:
-    GLfloat size, x, y, z, speed, dir[3], red, green, blue;
+    float size, x, y, z, speed, dir[3], red, green, blue;
     int active_frames, current_frame;
 };
 

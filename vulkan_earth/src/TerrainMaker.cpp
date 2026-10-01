@@ -1,5 +1,6 @@
 #include "vulkan_earth/TerrainMaker.h"
 #include <GL/glx.h>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -51,10 +52,10 @@ TerrainMaker::~TerrainMaker() {
     glDeleteTextures(1, &normal_texture);
 }
 
-GLint TerrainMaker::getScale() { return scale; }
-GLint TerrainMaker::getActualSize() { return (size) * (scale); }
+std::int32_t TerrainMaker::getScale() { return scale; }
+std::int32_t TerrainMaker::getActualSize() { return (size) * (scale); }
 
-GLuint TerrainMaker::selectTexture(const std::string& tex) {
+std::uint32_t TerrainMaker::selectTexture(const std::string& tex) {
     glDeleteTextures(1, &color_texture);
 
     if (tex == "Rock")
@@ -73,8 +74,10 @@ GLuint TerrainMaker::selectTexture(const std::string& tex) {
         return 0;
 }
 
-GLuint TerrainMaker::loadTexture(const char* filename, int width, int height) {
-    GLuint texture;
+std::uint32_t TerrainMaker::loadTexture(const char* filename,
+                                        int width,
+                                        int height) {
+    std::uint32_t texture;
     std::ifstream file(filename, std::ios::binary);
     if (!file) return 0;
     std::vector<unsigned char> data(width * height * 3);
@@ -394,31 +397,34 @@ void TerrainMaker::verifyVBOs() {
     if (vbo_qualify->getQualified()) {
         if (vbo_qualify->isExtensionSupported("GL_ARB_vertex_buffer_object")) {
             pgl_gen_buffers_arb = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glGenBuffersARB")));
             pgl_bind_buffer_arb = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glBindBufferARB")));
             pgl_buffer_data_arb = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glBufferDataARB")));
             pgl_buffer_sub_data_arb =
                     reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
-                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                                    "glBufferSubDataARB")));
+                            glXGetProcAddress(
+                                    reinterpret_cast<const std::uint8_t*>(
+                                            "glBufferSubDataARB")));
             pgl_delete_buffers_arb =
                     reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
-                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                                    "glDeleteBuffersARB")));
+                            glXGetProcAddress(
+                                    reinterpret_cast<const std::uint8_t*>(
+                                            "glDeleteBuffersARB")));
             pgl_get_buffer_parameteriv_arb =
                     reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
-                            glXGetProcAddress(reinterpret_cast<const GLubyte*>(
-                                    "glGetBufferParameterivARB")));
+                            glXGetProcAddress(
+                                    reinterpret_cast<const std::uint8_t*>(
+                                            "glGetBufferParameterivARB")));
             pgl_map_buffer_arb = reinterpret_cast<PFNGLMAPBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glMapBufferARB")));
             pgl_unmap_buffer_arb = reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const GLubyte*>(
+                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
                             "glUnmapBufferARB")));
             if (pgl_gen_buffers_arb && pgl_bind_buffer_arb &&
                 pgl_buffer_data_arb && pgl_buffer_sub_data_arb &&
@@ -446,11 +452,11 @@ Normal TerrainMaker::getTriangleNormal(float x, float z) {
                                              static_cast<int>(z)));
 }
 
-Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
+Normal TerrainMaker::getNormalAt(float x, float z) {
     return toNormal(terrain.normalAtWorld(x, z));
 }
 
-GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
+float TerrainMaker::getHeightAt(float x, float z) {
     return terrain.heightAtWorld(x, z);
 }
 
@@ -462,9 +468,9 @@ GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
 // neighbors via `> 0`) is TerrainMaker's own. Unlike the original, a slot
 // outside the (size - 1) x (size - 1) cell grid is skipped rather than
 // written past the end of the buffer.
-void TerrainMaker::makeCrater(GLfloat impact_x,
-                              GLfloat impact_z,
-                              GLfloat blast_size) {
+void TerrainMaker::makeCrater(float impact_x,
+                              float impact_z,
+                              float blast_size) {
     std::vector<vulkan_graphix::TerrainGridCell> const cells =
             terrain.makeCrater(impact_x, impact_z, blast_size);
     Vertex* buffer_ptr = static_cast<Vertex*>(
@@ -496,8 +502,8 @@ void TerrainMaker::makeCrater(GLfloat impact_x,
     };
 
     for (vulkan_graphix::TerrainGridCell const& cell : cells) {
-        GLfloat const height =
-                static_cast<GLfloat>(terrain.heightAt(cell.x, cell.z));
+        float const height =
+                static_cast<float>(terrain.heightAt(cell.x, cell.z));
         for (int index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
                 buffer_ptr[index].coord_y = height;  // VBO

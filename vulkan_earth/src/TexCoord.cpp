@@ -3,7 +3,7 @@
 
 TexCoord::TexCoord() = default;
 
-TexCoord::TexCoord(GLfloat s, GLfloat t) {
+TexCoord::TexCoord(float s, float t) {
     texcoord_s = s;
     texcoord_t = t;
 }

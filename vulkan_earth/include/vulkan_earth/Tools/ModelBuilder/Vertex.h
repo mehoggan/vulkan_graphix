@@ -9,10 +9,10 @@
 class Vertex {
 public:
     Vertex();
-    Vertex(GLfloat x, GLfloat y, GLfloat z);
+    Vertex(float x, float y, float z);
     ~Vertex();
-    GLfloat coordX;
-    GLfloat coordY;
-    GLfloat coordZ;
+    float coordX;
+    float coordY;
+    float coordZ;
 };
 #endif  // Vertex

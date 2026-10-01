@@ -11,26 +11,26 @@ class TextObject {
 public:
     TextObject();
     TextObject(const std::string& input,
-               GLfloat new_pos_x,
-               GLfloat new_pos_y,
-               GLfloat new_pos_z,
+               float new_pos_x,
+               float new_pos_y,
+               float new_pos_z,
                void* new_font_size,
-               GLfloat red,
-               GLfloat green,
-               GLfloat blue);
+               float red,
+               float green,
+               float blue);
     ~TextObject();
     const std::string& getOutput();
-    void setXpos(GLfloat x);
-    void setYpos(GLfloat y);
-    void setZpos(GLfloat z);
-    GLvoid draw();
+    void setXpos(float x);
+    void setYpos(float y);
+    void setZpos(float z);
+    void draw();
 
 private:
     std::string output;
-    GLfloat pos_x;
-    GLfloat pos_y;
-    GLfloat pos_z;
-    GLfloat color[4];
+    float pos_x;
+    float pos_y;
+    float pos_z;
+    float color[4];
     void* font_size;
 };
 

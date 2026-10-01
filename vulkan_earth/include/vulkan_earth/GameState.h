@@ -73,22 +73,22 @@ public:
     void debugMode();
     void drawMinimap();
     void currentPlayerFire();
-    void timerEvent(GLfloat new_timer);
+    void timerEvent(float new_timer);
     bool getProjectileFired();
     void destroyProjectile();
-    GLfloat calcAngleBetweenVectors(Vector one, Vector two);
+    float calcAngleBetweenVectors(Vector one, Vector two);
     void calcNormalVector(Vertex* v0, Vertex* v1, Vertex* v2, Normal* n);
-    GLfloat calcDistanceBetweenVertices(Vertex* v0, Vertex* v1);
+    float calcDistanceBetweenVertices(Vertex* v0, Vertex* v1);
     void playBackgroundSounds();
     void drawHelp();
     GlobalSettings* getGlobalSettings();
     PlayerFactory* getPlayerFactory();
-    GLfloat getGravity();
-    GLfloat getBalisticScalar();
+    float getGravity();
+    float getBalisticScalar();
     // Looks into table for given player
     void nearestEnemy();
     Vertex getPositionOfLastProjectile();
-    void setPositionOfLastProjectile(GLfloat x, GLfloat y, GLfloat z);
+    void setPositionOfLastProjectile(float x, float y, float z);
 
 private:
     void createSpecialEffect();
@@ -129,10 +129,10 @@ private:
     int key_monitor[256];
     int number_of_players;
 
-    GLfloat gravity;
+    float gravity;
     Projectile* projectile;
-    GLfloat scale_gravity;
-    GLfloat balistic_scalar;
+    float scale_gravity;
+    float balistic_scalar;
     bool projectile_fired;
     Inventory* inventory;
     ImageObject* weapon_slot;
@@ -141,12 +141,12 @@ private:
     VBOShaderLibrary* projectile_models[max_projectile_models];
 
     SpecialEffect** special_effects;
-    GLfloat radius_increase1;
+    float radius_increase1;
     int special_effect_timer;
-    GLfloat special_effect_x;
-    GLfloat special_effect_y;
-    GLfloat special_effect_z;
-    GLfloat radius_of_current_explosion;
+    float special_effect_x;
+    float special_effect_y;
+    float special_effect_z;
+    float radius_of_current_explosion;
     int special_effect_type;
     int special_effects_count;
     bool start_music_played;
@@ -158,13 +158,13 @@ private:
     bool draw_hit_box;
 
     /*	AI VARIABLES AND MEMBER FUNCTIONS	*/
-    GLfloat timer;  // Should match frames per second
+    float timer;  // Should match frames per second
     void controlAI();
     void resetTables(int index);  // Tell it which player to reset or -1 for
                                   // all
     void printTables();
     bool** tank_reachable;
-    GLfloat** distance_to_target;
+    float** distance_to_target;
     Tank*** tank_list;
     Vertex position_of_last_projectile;
     ofstream myfile;

@@ -18,35 +18,35 @@ class Tank {
 public:
     Tank();
     virtual ~Tank();
-    GLfloat calcAngleBetweenVectors(Vector one, Vector two);
+    float calcAngleBetweenVectors(Vector one, Vector two);
 
     // GETTERS
     Normal getAlignmentVector();
     Normal getRotateAbout();
     void resetTurret();
-    void rotateHead(GLfloat degrees);
-    void rotateTurret(GLfloat degrees);
-    void rotateWheel(GLfloat degrees);
-    void adjustPower(GLfloat amount);
-    GLfloat getCurrentPower();
+    void rotateHead(float degrees);
+    void rotateTurret(float degrees);
+    void rotateWheel(float degrees);
+    void adjustPower(float amount);
+    float getCurrentPower();
     void setPreviousPower(int new_previous_power);
     void setPreviousAngle(int new_previous_angle);
-    void setProjectileLandPos(GLfloat x, GLfloat y);
+    void setProjectileLandPos(float x, float y);
     int getPreviousPower();
     int getPreviousAngle();
-    GLfloat* getProjectileLandPos();
-    const GLfloat* getBodyMatrix();
-    const GLfloat* getBodyColor();
+    float* getProjectileLandPos();
+    const float* getBodyMatrix();
+    const float* getBodyColor();
     float* getBodyScale();
-    const GLfloat* getHeadMatrix();
-    const GLfloat* getHeadColor();
+    const float* getHeadMatrix();
+    const float* getHeadColor();
     float* getHeadScale();
-    GLfloat* getTurretMatrix();
-    const GLfloat* getTurretColor();
+    float* getTurretMatrix();
+    const float* getTurretColor();
     float* getTurretScale();
-    GLfloat getTurretDegrees();
-    const GLfloat* getWheelMatrix();
-    const GLfloat* getWheelColor();
+    float getTurretDegrees();
+    const float* getWheelMatrix();
+    const float* getWheelColor();
     float* getWheelScale();
     int getHP();
     int getPower();
@@ -60,19 +60,19 @@ public:
     virtual std::string getName();
 
     // SETTERS
-    void setTankPos(GLfloat x, GLfloat y, GLfloat z);
+    void setTankPos(float x, float y, float z);
     void orientTank(Normal* n);
 
-    void setBodyColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    void setBodyColor(float r, float g, float b, float a);
     void setBodyScale(float x, float y, float z);
 
-    void setHeadColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    void setHeadColor(float r, float g, float b, float a);
     void setHeadScale(float x, float y, float z);
 
-    void setTurretColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    void setTurretColor(float r, float g, float b, float a);
     void setTurretScale(float x, float y, float z);
 
-    void setWheelColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    void setWheelColor(float r, float g, float b, float a);
     void setWheelScale(float x, float y, float z);
 
     void setHP(int new_hp);
@@ -86,7 +86,7 @@ public:
     void setPreviousHeight(int prev_height);
 
     // Other functions
-    bool checkCollision(GLfloat x, GLfloat y, GLfloat z);
+    bool checkCollision(float x, float y, float z);
     void fire();
     void keyHandler();
     void draw();
@@ -130,47 +130,47 @@ public:
     void printHeadMatrix();
 
 protected:
-    GLfloat body_pos[3];
-    GLfloat head_pos[3];
-    GLfloat turret_pos[3];
-    GLfloat wheel_pos[3];
-    GLfloat body_right[3];
-    GLfloat head_right[3];
-    GLfloat turret_right[3];
-    GLfloat wheel_right[3];
-    GLfloat body_up[3];
-    GLfloat head_up[3];
-    GLfloat turret_up[3];
-    GLfloat wheel_up[3];
-    GLfloat body_at[3];
-    GLfloat head_at[3];
-    GLfloat turret_at[3];
-    GLfloat wheel_at[3];
-    GLfloat body_color[4];
-    GLfloat head_color[4];
-    GLfloat turret_color[4];
-    GLfloat wheel_color[4];
-    GLfloat body_scale[3];
-    GLfloat head_scale[3];
-    GLfloat turret_scale[3];
-    GLfloat wheel_scale[3];
-    GLfloat body_matrix[16];
-    GLfloat head_matrix[16];
-    GLfloat turret_matrix[16];
-    GLfloat wheel_matrix[16];
-    GLfloat rotate_degrees;
-    GLfloat turret_degrees;
-    GLfloat wheel_degrees;
+    float body_pos[3];
+    float head_pos[3];
+    float turret_pos[3];
+    float wheel_pos[3];
+    float body_right[3];
+    float head_right[3];
+    float turret_right[3];
+    float wheel_right[3];
+    float body_up[3];
+    float head_up[3];
+    float turret_up[3];
+    float wheel_up[3];
+    float body_at[3];
+    float head_at[3];
+    float turret_at[3];
+    float wheel_at[3];
+    float body_color[4];
+    float head_color[4];
+    float turret_color[4];
+    float wheel_color[4];
+    float body_scale[3];
+    float head_scale[3];
+    float turret_scale[3];
+    float wheel_scale[3];
+    float body_matrix[16];
+    float head_matrix[16];
+    float turret_matrix[16];
+    float wheel_matrix[16];
+    float rotate_degrees;
+    float turret_degrees;
+    float wheel_degrees;
     Normal alignment_vector;
     Normal rotate_about;
 
-    GLfloat turret_offset[3];
-    GLfloat head_offset[3];
-    GLfloat body_offset[3];
+    float turret_offset[3];
+    float head_offset[3];
+    float body_offset[3];
 
-    GLfloat hit_box_length;
-    GLfloat hit_box_height;
-    GLfloat hit_box_width;
+    float hit_box_length;
+    float hit_box_height;
+    float hit_box_width;
 
     VBOShaderLibrary* vbo_shader_turret;
     VBOShaderLibrary* vbo_shader_body;
@@ -182,7 +182,7 @@ protected:
     ParticleGenerator* acid_gen;
     ParticleGenerator* float_gen;
 
-    GLfloat current_power;
+    float current_power;
     int previous_power;
     int previous_angle;
     int previous_height;
@@ -193,7 +193,7 @@ protected:
     int armor;
     int speed;
 
-    GLfloat projectile_land_pos[2];
+    float projectile_land_pos[2];
 
     int duration_acid;
     int duration_shield;

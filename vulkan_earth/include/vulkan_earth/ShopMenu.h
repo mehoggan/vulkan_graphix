@@ -26,9 +26,9 @@ const int num_sales_item = 8;
 class ShopMenu {
 public:
     ShopMenu();
-    ShopMenu(GLfloat new_width,
-             GLfloat new_height,
-             GLfloat new_percent_border,
+    ShopMenu(float new_width,
+             float new_height,
+             float new_percent_border,
              GlobalSettings* new_global_settings,
              PlayerFactory* new_player_factory,
              int* game_state);
@@ -45,8 +45,8 @@ public:
 
 private:
     void printDebugInfo();
-    GLfloat pos[3], width, height, color[4], border;
-    GLfloat percent_border;
+    float pos[3], width, height, color[4], border;
+    float percent_border;
     int* current_game_state;
     int num_players;
     int current_player_index;

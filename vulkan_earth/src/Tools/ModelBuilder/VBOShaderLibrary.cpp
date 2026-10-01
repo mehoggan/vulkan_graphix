@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <istream>
@@ -182,7 +183,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     const unsigned int VERTEX_BUFFER_SIZE = 2048;
     char buffer1[VERTEX_BUFFER_SIZE];
     memset(buffer1, 0, VERTEX_BUFFER_SIZE);
-    GLsizei length1 = 0;
+    std::int32_t length1 = 0;
     glGetShaderInfoLog(this->shader_vp, VERTEX_BUFFER_SIZE, &length1, buffer1);
     if (length1 > 0) {
         cerr << "(" << vsFileName << ") -- " << buffer1 << endl;
@@ -198,7 +199,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     const unsigned int FRAGMENT_BUFFER_SIZE = 2048;
     char buffer2[FRAGMENT_BUFFER_SIZE];
     memset(buffer2, 0, FRAGMENT_BUFFER_SIZE);
-    GLsizei length2 = 0;
+    std::int32_t length2 = 0;
     glGetShaderInfoLog(
             this->shader_fp, FRAGMENT_BUFFER_SIZE, &length2, buffer2);
     if (length2 > 0) {
@@ -216,7 +217,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
     const unsigned int BUFFER_SIZE = 512;
     char buffer[BUFFER_SIZE];
     memset(buffer, 0, BUFFER_SIZE);
-    GLsizei length = 0;
+    std::int32_t length = 0;
     glGetProgramInfoLog(this->shader_id, BUFFER_SIZE, &length, buffer);
     if (length > 0) {
         if (strcmp(buffer,
@@ -229,7 +230,7 @@ bool VBOShaderLibrary::loadShaders(const char* vsFileName,
         }
     }
     glValidateProgram(this->shader_id);
-    GLint status;
+    std::int32_t status;
     glGetProgramiv(this->shader_id, GL_VALIDATE_STATUS, &status);
     if (status == GL_FALSE) {
         cerr << "Error validating shader " << this->shader_id << endl;
@@ -608,7 +609,7 @@ bool VBOShaderLibrary::getVBOPointerFunctions() {
 /*	STATIC FUNCTION */
 bool VBOShaderLibrary::InitGlew() {
     bool rtn = false;
-    GLenum err = glewInit();
+    std::uint32_t err = glewInit();
     if (GLEW_OK != err) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     } else {

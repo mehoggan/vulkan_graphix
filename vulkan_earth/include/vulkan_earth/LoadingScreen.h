@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 
 class ImageObject;
@@ -11,22 +12,22 @@ class ImageObject;
 class LoadingScreen {
 public:
     LoadingScreen();
-    LoadingScreen(GLfloat x,
-                  GLfloat y,
-                  GLfloat z,
-                  GLint new_width,
-                  GLint new_height,
-                  GLfloat red,
-                  GLfloat green,
-                  GLfloat blue,
-                  GLfloat alpha);
+    LoadingScreen(float x,
+                  float y,
+                  float z,
+                  std::int32_t new_width,
+                  std::int32_t new_height,
+                  float red,
+                  float green,
+                  float blue,
+                  float alpha);
     ~LoadingScreen();
     void draw();
 
 private:
-    GLfloat pos[3];
-    GLfloat color[4];
-    GLint width, height;
+    float pos[3];
+    float color[4];
+    std::int32_t width, height;
     ImageObject* image;
 };
 #endif

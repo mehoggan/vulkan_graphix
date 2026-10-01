@@ -8,7 +8,7 @@
 class TankC : public Tank {
 public:
     TankC();
-    TankC(GLfloat x, GLfloat y, GLfloat z);
+    TankC(float x, float y, float z);
     ~TankC() override;
 
     int getBaseHP() override;

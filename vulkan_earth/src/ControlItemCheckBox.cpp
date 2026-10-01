@@ -1,5 +1,6 @@
 #include "vulkan_earth/ControlItemCheckBox.h"
 #include <stdio.h>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,14 +14,14 @@ extern void playSFX(int sfx);
 
 ControlItemCheckBox::ControlItemCheckBox() = default;
 
-ControlItemCheckBox::ControlItemCheckBox(GLfloat new_x_pos,
-                                         GLfloat new_y_pos,
-                                         GLfloat new_z_pos,
-                                         GLfloat red,
-                                         GLfloat green,
-                                         GLfloat blue,
-                                         GLint new_width,
-                                         GLint new_height,
+ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
+                                         float new_y_pos,
+                                         float new_z_pos,
+                                         float red,
+                                         float green,
+                                         float blue,
+                                         std::int32_t new_width,
+                                         std::int32_t new_height,
                                          const std::string& new_caption) {
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -42,9 +43,8 @@ ControlItemCheckBox::ControlItemCheckBox(GLfloat new_x_pos,
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
 
-    GLfloat label_x_pos = x_pos + (width / 2) - (real_length / 2);
-    GLfloat label_y_pos =
-            y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = x_pos + (width / 2) - (real_length / 2);
+    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     label = new TextObject(caption,
                            label_x_pos,
@@ -236,10 +236,10 @@ void ControlItemCheckBox::draw() {
     label->draw();
 }
 
-GLfloat ControlItemCheckBox::getXPos() { return x_pos; }
-GLfloat ControlItemCheckBox::getYPos() { return y_pos; }
-GLfloat ControlItemCheckBox::getHeight() { return height; }
-GLfloat ControlItemCheckBox::getWidth() { return width; }
+float ControlItemCheckBox::getXPos() { return x_pos; }
+float ControlItemCheckBox::getYPos() { return y_pos; }
+float ControlItemCheckBox::getHeight() { return height; }
+float ControlItemCheckBox::getWidth() { return width; }
 std::string ControlItemCheckBox::collectData() {
     if (menu_state == 0)
         return "false";
@@ -253,9 +253,9 @@ void ControlItemCheckBox::setOptionText(const std::string& new_text) {}
 // NOTE: I use height for the x value check, this is intentional to
 // maintain a square
 void ControlItemCheckBox::mouseClickEvent(
-        GLint x,
-        GLint y,
-        GLint state,
+        std::int32_t x,
+        std::int32_t y,
+        std::int32_t state,
         bool still_over_control_item_check_box) {
     if ((x >= (x_pos + width - (height * 0.9)) &&
          (x <= x_pos + width - (height * 0.1))) &&

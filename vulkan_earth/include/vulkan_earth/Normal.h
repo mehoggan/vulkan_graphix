@@ -9,10 +9,10 @@
 class Normal {
 public:
     Normal();
-    Normal(GLfloat x, GLfloat y, GLfloat z);
+    Normal(float x, float y, float z);
     ~Normal();
-    GLfloat compo_x;
-    GLfloat compo_y;
-    GLfloat compo_z;
+    float compo_x;
+    float compo_y;
+    float compo_z;
 };
 #endif  // NORMAL

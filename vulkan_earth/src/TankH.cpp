@@ -10,7 +10,7 @@ const int tank_h_armor = 10;
 const int tank_h_speed = 100;
 
 TankH::TankH() = default;
-TankH::TankH(GLfloat x, GLfloat y, GLfloat z) {
+TankH::TankH(float x, float y, float z) {
     initBody();
     initHead();
     initTurret();

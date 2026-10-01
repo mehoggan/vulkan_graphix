@@ -1,4 +1,5 @@
 #include "vulkan_earth/SubMenuHardware.h"
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
@@ -13,16 +14,16 @@ using namespace std;
 SubMenuHardware::SubMenuHardware() = default;
 
 SubMenuHardware::SubMenuHardware(int id,
-                                 GLfloat new_x_pos,
-                                 GLfloat new_y_pos,
-                                 GLfloat new_z_pos,
-                                 GLfloat red,
-                                 GLfloat green,
-                                 GLfloat blue,
-                                 GLint new_width,
-                                 GLint new_height,
+                                 float new_x_pos,
+                                 float new_y_pos,
+                                 float new_z_pos,
+                                 float red,
+                                 float green,
+                                 float blue,
+                                 std::int32_t new_width,
+                                 std::int32_t new_height,
                                  const std::string& new_caption,
-                                 GLfloat new_percent_border) {
+                                 float new_percent_border) {
     uniqueidentifier = id;
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -41,8 +42,8 @@ SubMenuHardware::SubMenuHardware(int id,
     for (char ch : caption) {
         real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
     }
-    GLfloat label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    GLfloat label_y_pos = y_pos - height / 20;
+    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
+    float label_y_pos = y_pos - height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     label = new TextObject(caption,
@@ -74,28 +75,30 @@ SubMenuHardware::~SubMenuHardware() {
 
 int SubMenuHardware::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
 void SubMenuHardware::setUNIQUEIDENTIFIER(int id) { uniqueidentifier = id; }
-GLfloat SubMenuHardware::getXPos() { return x_pos; }
-void SubMenuHardware::setXPos(GLfloat new_xpos) { x_pos = new_xpos; }
-GLfloat SubMenuHardware::getYPos() { return y_pos; }
-void SubMenuHardware::setYPos(GLfloat new_ypos) { y_pos = new_ypos; }
-GLfloat SubMenuHardware::getZPos() { return z_pos; }
-void SubMenuHardware::setZPos(GLfloat new_zpos) { z_pos = new_zpos; }
-GLfloat SubMenuHardware::getRed() { return color[0]; }
-void SubMenuHardware::setRed(GLfloat red) { color[0] = red; }
-GLfloat SubMenuHardware::getGreen() { return color[1]; }
-void SubMenuHardware::setGreen(GLfloat green) { color[1] = green; }
-GLfloat SubMenuHardware::getBlue() { return color[2]; }
-void SubMenuHardware::setBlue(GLfloat blue) { color[2] = blue; }
-GLint SubMenuHardware::getWidth() { return width; }
-void SubMenuHardware::setWdith(GLint new_width) { width = new_width; }
-GLint SubMenuHardware::getHeight() { return height; }
-void SubMenuHardware::setHeight(GLint new_height) { height = new_height; }
+float SubMenuHardware::getXPos() { return x_pos; }
+void SubMenuHardware::setXPos(float new_xpos) { x_pos = new_xpos; }
+float SubMenuHardware::getYPos() { return y_pos; }
+void SubMenuHardware::setYPos(float new_ypos) { y_pos = new_ypos; }
+float SubMenuHardware::getZPos() { return z_pos; }
+void SubMenuHardware::setZPos(float new_zpos) { z_pos = new_zpos; }
+float SubMenuHardware::getRed() { return color[0]; }
+void SubMenuHardware::setRed(float red) { color[0] = red; }
+float SubMenuHardware::getGreen() { return color[1]; }
+void SubMenuHardware::setGreen(float green) { color[1] = green; }
+float SubMenuHardware::getBlue() { return color[2]; }
+void SubMenuHardware::setBlue(float blue) { color[2] = blue; }
+std::int32_t SubMenuHardware::getWidth() { return width; }
+void SubMenuHardware::setWdith(std::int32_t new_width) { width = new_width; }
+std::int32_t SubMenuHardware::getHeight() { return height; }
+void SubMenuHardware::setHeight(std::int32_t new_height) {
+    height = new_height;
+}
 std::string SubMenuHardware::getCaption() { return caption; }
 void SubMenuHardware::setCaption(const std::string& new_caption) {
     caption = new_caption;
 }
-GLfloat SubMenuHardware::getPerecentBorder() { return percent_border; }
-void SubMenuHardware::setPercentBorder(GLfloat percent) {
+float SubMenuHardware::getPerecentBorder() { return percent_border; }
+void SubMenuHardware::setPercentBorder(float percent) {
     percent_border = percent;
 }
 

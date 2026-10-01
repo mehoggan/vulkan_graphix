@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <cstdint>
 #include <string>
 
 #include "vulkan_earth/ControlItem.h"
@@ -14,29 +15,29 @@ class TextObject;
 class ControlItemGrid : public ControlItem {
 public:
     ControlItemGrid();
-    ControlItemGrid(GLfloat new_x_pos,
-                    GLfloat new_y_pos,
-                    GLfloat new_z_pos,
-                    GLint new_width,
-                    GLint new_height,
+    ControlItemGrid(float new_x_pos,
+                    float new_y_pos,
+                    float new_z_pos,
+                    std::int32_t new_width,
+                    std::int32_t new_height,
                     int new_rows,
                     int new_cols,
-                    GLfloat active_cell_color_red,
-                    GLfloat active_cell_color_green,
-                    GLfloat active_cell_color_blue,
+                    float active_cell_color_red,
+                    float active_cell_color_green,
+                    float active_cell_color_blue,
                     bool new_visible_lines,
                     bool new_multi_selectable);
     ~ControlItemGrid() override;
     void draw() override;
-    void mouseClickEvent(GLint x,
-                         GLint y,
-                         GLint state,
+    void mouseClickEvent(std::int32_t x,
+                         std::int32_t y,
+                         std::int32_t state,
                          bool still_over_arrow_button) override;
     void updateMouse(int x, int y) override;
-    GLfloat getXPos() override;
-    GLfloat getYPos() override;
-    GLfloat getHeight() override;
-    GLfloat getWidth() override;
+    float getXPos() override;
+    float getYPos() override;
+    float getHeight() override;
+    float getWidth() override;
     std::string collectData() override;
     void setOptionText(int index) override;
     void setOptionText(const std::string& new_text) override;
@@ -48,10 +49,10 @@ public:
     void selectCell(int row, int col);
 
 private:
-    GLfloat x_pos, y_pos, z_pos;
-    GLfloat active_cell_color[4];
-    GLint width, height;
-    GLfloat cell_width, cell_height;
+    float x_pos, y_pos, z_pos;
+    float active_cell_color[4];
+    std::int32_t width, height;
+    float cell_width, cell_height;
     int rows, cols;
     bool visible_lines;
     bool multi_selectable;

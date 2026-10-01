@@ -17,13 +17,13 @@ public:
     ParticleGenerator();
     ParticleGenerator(int spawn, int rate, int speed, int life, int new_type);
 
-    void update(GLfloat new_x, GLfloat new_y, GLfloat new_z);
+    void update(float new_x, float new_y, float new_z);
     void draw();
     void addParticles();
     void killGenerator();
 
 private:
-    GLfloat x, y, z;
+    float x, y, z;
     int max, particles_per_emission, emission_rate, emission_speed,
             emission_life, type;
     Particle* particle_array[1000];

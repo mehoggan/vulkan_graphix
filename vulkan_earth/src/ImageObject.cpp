@@ -1,18 +1,19 @@
 #include "vulkan_earth/ImageObject.h"
+#include <cstdint>
 #include <fstream>
 #include <vector>
 #include "vulkan_earth/MacroCrtdbg.h"
 
 ImageObject::ImageObject() = default;
 
-ImageObject::ImageObject(GLfloat new_x_pos,
-                         GLfloat new_y_pos,
-                         GLfloat new_z_pos,
-                         GLint new_width,
-                         GLint new_height,
-                         GLfloat border,
-                         GLint i_width,
-                         GLint i_height,
+ImageObject::ImageObject(float new_x_pos,
+                         float new_y_pos,
+                         float new_z_pos,
+                         std::int32_t new_width,
+                         std::int32_t new_height,
+                         float border,
+                         std::int32_t i_width,
+                         std::int32_t i_height,
                          const std::string& filename) {
     x_pos = new_x_pos;
     y_pos = new_y_pos;
@@ -44,16 +45,16 @@ ImageObject::ImageObject(GLfloat new_x_pos,
 ImageObject::~ImageObject() { glDeleteTextures(1, &texture); }
 
 /*GETTERS & SETTERS*/
-GLfloat ImageObject::getXpos() { return x_pos; }
-GLfloat ImageObject::getYpos() { return y_pos; }
-GLfloat ImageObject::getZpos() { return z_pos; }
-GLint ImageObject::getWidth() { return width; }
-GLint ImageObject::getHeight() { return height; }
-void ImageObject::setXpos(GLfloat x) { x_pos = x; }
-void ImageObject::setYpos(GLfloat y) { y_pos = y; }
-void ImageObject::setZpos(GLfloat z) { z_pos = z; }
-void ImageObject::setWidth(GLint w) { width = w; }
-void ImageObject::setHeight(GLint h) { height = h; }
+float ImageObject::getXpos() { return x_pos; }
+float ImageObject::getYpos() { return y_pos; }
+float ImageObject::getZpos() { return z_pos; }
+std::int32_t ImageObject::getWidth() { return width; }
+std::int32_t ImageObject::getHeight() { return height; }
+void ImageObject::setXpos(float x) { x_pos = x; }
+void ImageObject::setYpos(float y) { y_pos = y; }
+void ImageObject::setZpos(float z) { z_pos = z; }
+void ImageObject::setWidth(std::int32_t w) { width = w; }
+void ImageObject::setHeight(std::int32_t h) { height = h; }
 
 void ImageObject::draw() {
     glEnable(GL_TEXTURE_2D);

@@ -17,7 +17,7 @@ ParticleGenerator::ParticleGenerator(
     for (int i = 0; i < max; i++) particle_array[i] = nullptr;
 }
 
-void ParticleGenerator::update(GLfloat new_x, GLfloat new_y, GLfloat new_z) {
+void ParticleGenerator::update(float new_x, float new_y, float new_z) {
     x = new_x;
     y = new_y;
     z = new_z;
@@ -42,10 +42,10 @@ void ParticleGenerator::addParticles() {
     int i = 0, count = 0;
     while ((i < max) && (count < particles_per_emission)) {
         if (particle_array[i] == nullptr) {
-            GLfloat dir_x = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
-            GLfloat dir_y = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
-            GLfloat dir_z = static_cast<GLfloat>(rand()) * 2 / RAND_MAX - 1;
-            GLfloat mag = sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
+            float dir_x = static_cast<float>(rand()) * 2 / RAND_MAX - 1;
+            float dir_y = static_cast<float>(rand()) * 2 / RAND_MAX - 1;
+            float dir_z = static_cast<float>(rand()) * 2 / RAND_MAX - 1;
+            float mag = sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
             dir_x /= mag;
             dir_y /= mag;
             dir_z /= mag;

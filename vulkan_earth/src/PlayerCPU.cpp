@@ -16,7 +16,7 @@
 
 PlayerCPU::PlayerCPU() = default;
 
-PlayerCPU::PlayerCPU(GLfloat red, GLfloat green, GLfloat blue) {
+PlayerCPU::PlayerCPU(float red, float green, float blue) {
     color[0] = red;
     color[1] = green;
     color[2] = blue;
@@ -40,9 +40,9 @@ PlayerCPU::PlayerCPU(GLfloat red, GLfloat green, GLfloat blue) {
     loaded_weapon = nullptr;
 }
 
-PlayerCPU::PlayerCPU(GLfloat red,
-                     GLfloat green,
-                     GLfloat blue,
+PlayerCPU::PlayerCPU(float red,
+                     float green,
+                     float blue,
                      const std::string& new_tank_type,
                      const std::string& new_ai_type,
                      const std::string& new_name,
@@ -115,9 +115,9 @@ std::string PlayerCPU::getPlayerType() { return player_type; }
 void PlayerCPU::setPlayerType(const std::string& new_player_type) {
     player_type = new_player_type;
 }
-GLfloat PlayerCPU::getRed() { return color[0]; }
-GLfloat PlayerCPU::getGreen() { return color[1]; }
-GLfloat PlayerCPU::getBlue() { return color[2]; }
+float PlayerCPU::getRed() { return color[0]; }
+float PlayerCPU::getGreen() { return color[1]; }
+float PlayerCPU::getBlue() { return color[2]; }
 std::string PlayerCPU::getPlayerName() { return player_type; }
 int PlayerCPU::getCash() { return current_cash; }
 void PlayerCPU::setCash(int cash) { current_cash = cash; }

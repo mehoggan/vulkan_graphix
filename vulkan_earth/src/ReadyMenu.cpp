@@ -36,9 +36,9 @@ extern void playMusic(int music);
 using namespace std;
 
 ReadyMenu::ReadyMenu() = default;
-ReadyMenu::ReadyMenu(GLfloat new_width,
-                     GLfloat new_height,
-                     GLfloat new_percent_border,
+ReadyMenu::ReadyMenu(float new_width,
+                     float new_height,
+                     float new_percent_border,
                      GlobalSettings* new_global_settings,
                      PlayerFactory* new_player_factory,
                      int* game_state) {
@@ -189,9 +189,8 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
             stat = "Speed:";
         else
             stat = "Meh...:";
-        GLfloat stat_label_x_pos = pos[0] - width * 0.385;
-        GLfloat stat_label_y_pos =
-                pos[1] + height * 0.12 - height * (i * 0.07);
+        float stat_label_x_pos = pos[0] - width * 0.385;
+        float stat_label_y_pos = pos[1] + height * 0.12 - height * (i * 0.07);
         tank_stat_labels[i] = new TextObject(stat,
                                              stat_label_x_pos,
                                              stat_label_y_pos,
@@ -218,7 +217,7 @@ ReadyMenu::ReadyMenu(GLfloat new_width,
     }
 
     // STAT IMAGES
-    GLfloat img_start_pos_x = pos[0] - width * 0.325;
+    float img_start_pos_x = pos[0] - width * 0.325;
     for (int i = 0; i < num_stat_images; i++) {
         // For Off Lights
         if (i < 30) {
@@ -326,14 +325,14 @@ ReadyMenu::~ReadyMenu() {
 }
 
 // GETTERS & SETTERS //
-GLfloat* ReadyMenu::getPos() { return &(pos[0]); }
-GLfloat ReadyMenu::getWidth() { return width; }
-GLfloat ReadyMenu::getHeight() { return height; }
-GLfloat* ReadyMenu::getColor() { return &(color[0]); }
-void ReadyMenu::setWidth(GLfloat new_width) { width = new_width; }
-void ReadyMenu::setHeight(GLfloat new_height) { height = new_height; }
+float* ReadyMenu::getPos() { return &(pos[0]); }
+float ReadyMenu::getWidth() { return width; }
+float ReadyMenu::getHeight() { return height; }
+float* ReadyMenu::getColor() { return &(color[0]); }
+void ReadyMenu::setWidth(float new_width) { width = new_width; }
+void ReadyMenu::setHeight(float new_height) { height = new_height; }
 void ReadyMenu::updateNumPlayers(int n) { num_players = n; }
-void ReadyMenu::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
+void ReadyMenu::setColor(float r, float g, float b, float a) {
     color[0] = r;
     color[1] = g;
     color[2] = b;
@@ -469,8 +468,8 @@ void ReadyMenu::updatePageInfo() {
 void ReadyMenu::setPlayerPageNum(int i) {
     delete player_page_num;
     caption = "Player " + std::to_string(i + 1);
-    GLfloat label_x_pos = pos[0] - width * 0.25;
-    GLfloat label_y_pos = pos[1] + height * 0.4;
+    float label_x_pos = pos[0] - width * 0.25;
+    float label_y_pos = pos[1] + height * 0.4;
     player_page_num = new TextObject(caption,
                                      label_x_pos,
                                      label_y_pos,
