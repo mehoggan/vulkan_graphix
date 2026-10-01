@@ -160,3 +160,9 @@ tests/texture.*.png
 **/*.gcda
 coverage-html/
 coverage.info
+
+# vulkan_earth textures live only in resources/vulkan_earth/Data/; an
+# in-tree build copies them next to the game binary (see
+# vulkan_earth/src/Makefile.am), so never track those copies.
+vulkan_earth/src/*.raw
+vulkan_earth/src/Projectiles/*.raw

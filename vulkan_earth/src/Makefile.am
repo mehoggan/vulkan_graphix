@@ -117,28 +117,48 @@ vulkan_earth_runner_LDFLAGS = -pthread
 # sides are free to diverge independently. The game itself still loads
 # everything by bare relative filename (e.g. "SkyBox.raw",
 # "Projectiles/projectileDefault.ogl") with no path-prefix logic of its
-# own (unmodified vendored code, see the comment above). For an
-# out-of-tree build ($(srcdir) != $(builddir), e.g. a separate build/
-# directory configured via ../configure - see the top-level CLAUDE.md)
-# this copies resources/vulkan_earth/Data/'s contents into $(builddir)
-# next to the built binary, the same role each Vulkan tutorial's own
-# all-local: rule in bin/Makefile.am plays for itself. For an in-tree
-# build the assets already sit right there (this subdir's own
-# $(srcdir)), so both rules are guarded to do nothing - critically,
-# never rm -rf anything here when $(srcdir) == $(builddir), since that
-# would delete the vendored game's own original asset files instead of
-# a copy of them.
+# own (unmodified vendored code, see the comment above), so every asset
+# has to sit next to the built binary.
+#
+# The .raw textures live ONLY in resources/vulkan_earth/Data/ (and its
+# Projectiles/ subdirectory); the other asset types still also have their
+# vendored originals here in this subdir's $(srcdir).
+#
+# Out-of-tree build ($(srcdir) != $(builddir), e.g. a separate build/
+# directory configured via ../configure - see the top-level CLAUDE.md):
+# copy all of resources/vulkan_earth/Data/ into $(builddir), the same role
+# each Vulkan tutorial's own all-local: rule plays for itself, and remove
+# those copies again on clean.
+#
+# In-tree build ($(srcdir) == $(builddir)): every non-.raw asset already
+# sits right here, so copy in just the .raw textures - and on clean,
+# remove just those .raw copies. Never rm -rf whole Data/ entries here,
+# since that would delete the vendored game's own original (tracked)
+# non-.raw asset files instead of a copy of them.
+raw_textures = $(top_srcdir)/resources/vulkan_earth/Data
+
 all-local:
 	@if test "$(srcdir)" != "$(builddir)"; then \
 		mkdir -p $(builddir); \
-		for entry in $(top_srcdir)/resources/vulkan_earth/Data/*; do \
+		for entry in $(raw_textures)/*; do \
 			cp -r "$$entry" $(builddir)/; \
 		done; \
+	else \
+		mkdir -p $(builddir)/Projectiles; \
+		cp $(raw_textures)/*.raw $(builddir)/; \
+		cp $(raw_textures)/Projectiles/*.raw $(builddir)/Projectiles/; \
 	fi
 
 clean-local:
 	@if test "$(srcdir)" != "$(builddir)"; then \
-		for entry in $(top_srcdir)/resources/vulkan_earth/Data/*; do \
+		for entry in $(raw_textures)/*; do \
 			rm -rf $(builddir)/`basename "$$entry"`; \
+		done; \
+	else \
+		for entry in $(raw_textures)/*.raw; do \
+			rm -f $(builddir)/`basename "$$entry"`; \
+		done; \
+		for entry in $(raw_textures)/Projectiles/*.raw; do \
+			rm -f $(builddir)/Projectiles/`basename "$$entry"`; \
 		done; \
 	fi
