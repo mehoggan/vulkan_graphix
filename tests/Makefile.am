@@ -1,5 +1,5 @@
 if HAVE_GTEST
-TESTS = vertex_types_test math_test tools_test \
+TESTS = vertex_types_test math_test tools_test game_logic_test \
 		operating_system_test logging_test logger_helpers_test \
 		tutorial_base_helpers_test tutorial_base_fault_injection_test \
 		tutorial_base_fault_injection_swapchain_test \
@@ -46,6 +46,17 @@ tools_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 tools_test_LDFLAGS = -pthread
+
+# Exercises the gameplay math shared with vulkan_earth (TerrainGenerator's
+# world queries/craters, Ballistics, TankOrientation) - see
+# GameLogicTest.cpp's header comment. Pure math, no device or window.
+game_logic_test_SOURCES = ./GameLogicTest.cpp
+game_logic_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+game_logic_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		$(VULKAN_LIBS) $(X11_LIBS)
+game_logic_test_LDFLAGS = -pthread
 
 # Drives os::Window::renderingLoop() with synthetic X11 events (see
 # OperatingSystemTest.cpp's header comment) - needs a live DISPLAY, like the
@@ -380,6 +391,8 @@ vertex_types_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 math_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 math_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tools_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+game_logic_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+game_logic_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tools_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 operating_system_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 operating_system_test_LDFLAGS += $(COVERAGE_LDFLAGS)

@@ -1,9 +1,13 @@
 #include "vulkan_earth/Tank.h"
+#include <algorithm>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <optional>
 #include "vulkan_earth/Normal.h"
 #include "vulkan_earth/ParticleGenerator.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/Vector.h"
+#include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
@@ -116,29 +120,12 @@ void Tank::resetTurret() {
                         turret_offset[2] * head_matrix[10];
 }
 
-void Tank::normalizeVector(Vector* v) {
-    GLfloat mag = sqrt(v->compo_x * v->compo_x + v->compo_y * v->compo_y +
-                       v->compo_z * v->compo_z);
-    if (mag != 0) {
-        v->compo_x /= mag;
-        v->compo_y /= mag;
-        v->compo_z /= mag;
-    }
-}
-
 GLfloat Tank::calcAngleBetweenVectors(Vector one, Vector two) {
-    normalizeVector(&one);
-    normalizeVector(&two);
-    errno = 0;
-    GLfloat pi_value = 3.141592653f;
-    GLfloat u[3] = {one.compo_x, one.compo_y, one.compo_z};
-    GLfloat v[3] = {two.compo_x, two.compo_y, two.compo_z};
-    GLfloat angle =
-            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / pi_value);
-    if (errno) {
-        return .01;
-    }
-    return angle;
+    return vulkan_graphix::TankOrientation::angleBetweenDegrees(
+            vulkan_graphix::Math::Vec3<float>(
+                    one.compo_x, one.compo_y, one.compo_z),
+            vulkan_graphix::Math::Vec3<float>(
+                    two.compo_x, two.compo_y, two.compo_z));
 }
 
 void Tank::orientTank(Normal* n) {
@@ -146,39 +133,29 @@ void Tank::orientTank(Normal* n) {
     alignment_vector.compo_x = n->compo_x;
     alignment_vector.compo_y = n->compo_y;
     alignment_vector.compo_z = n->compo_z;
-    Vector tanks_up(body_matrix[4], body_matrix[5], body_matrix[6]);
-    Vector perp(alignment_vector.compo_x,
-                alignment_vector.compo_y,
-                alignment_vector.compo_z);
-    GLfloat angle = calcAngleBetweenVectors(perp, tanks_up);
 
-    GLfloat u[3] = {perp.compo_x, perp.compo_y, perp.compo_z};
-    GLfloat v[3] = {tanks_up.compo_x, tanks_up.compo_y, tanks_up.compo_z};
-
-    rotate_about.compo_x = u[1] * v[2] - v[1] * u[2];
-    rotate_about.compo_y = u[2] * v[0] - u[0] * v[2];
-    rotate_about.compo_z = u[0] * v[1] - v[0] * u[1];
-
-    GLfloat mag = static_cast<GLfloat>(
-            sqrt(pow(static_cast<double>(rotate_about.compo_x), 2.0) +
-                 pow(static_cast<double>(rotate_about.compo_y), 2.0) +
-                 pow(static_cast<double>(rotate_about.compo_z), 2.0)));
-    if (mag != 0) {
-        rotate_about.compo_x /= mag;
-        rotate_about.compo_y /= mag;
-        rotate_about.compo_z /= mag;
-        glPushMatrix();
-        glLoadMatrixf(body_matrix);
-        glRotatef(angle,
-                  rotate_about.compo_z,
-                  rotate_about.compo_y,
-                  rotate_about.compo_x);
-        glGetFloatv(GL_MODELVIEW_MATRIX, body_matrix);
-        glGetFloatv(GL_MODELVIEW_MATRIX, head_matrix);
-        glGetFloatv(GL_MODELVIEW_MATRIX, turret_matrix);
-        glGetFloatv(GL_MODELVIEW_MATRIX, wheel_matrix);
-        glPopMatrix();
+    std::optional<vulkan_graphix::TankOrientation::Alignment> const alignment =
+            vulkan_graphix::TankOrientation::alignToGround(
+                    glm::make_mat4(body_matrix),
+                    vulkan_graphix::Math::Vec3<float>(
+                            n->compo_x, n->compo_y, n->compo_z));
+    if (alignment) {
+        rotate_about.compo_x = alignment->axis.x;
+        rotate_about.compo_y = alignment->axis.y;
+        rotate_about.compo_z = alignment->axis.z;
+        // Body/head/turret/wheel all take the same aligned matrix, as the
+        // original's four glGetFloatv(GL_MODELVIEW_MATRIX, ...) calls did.
+        float const* aligned = glm::value_ptr(alignment->matrix);
+        std::copy(aligned, aligned + 16, body_matrix);
+        std::copy(aligned, aligned + 16, head_matrix);
+        std::copy(aligned, aligned + 16, turret_matrix);
+        std::copy(aligned, aligned + 16, wheel_matrix);
         turret_degrees = 0;
+    } else {
+        // Already upright along the normal: no rotation axis.
+        rotate_about.compo_x = 0;
+        rotate_about.compo_y = 0;
+        rotate_about.compo_z = 0;
     }
 
     updateHitBox();

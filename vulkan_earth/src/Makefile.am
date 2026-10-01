@@ -91,11 +91,16 @@ vulkan_earth_runner_SOURCES = \
 	WeaponThor.cpp \
 	WorldCam.cpp
 
+# The game calls into libvulkan_graphix for everything it shares with the
+# Vulkan tutorials (terrain height field/queries/craters, ballistics, tank
+# orientation) instead of keeping its own copies - see CLAUDE.md.
 vulkan_earth_runner_CPPFLAGS = \
 	-I$(top_srcdir)/vulkan_earth/include \
+	-I$(abs_top_srcdir)/include $(GLM_CFLAGS) \
 	$(VULKAN_EARTH_GL_CFLAGS) $(VULKAN_EARTH_GLEW_CFLAGS) $(VULKAN_EARTH_SDL_CFLAGS) \
 	$(VULKAN_EARTH_XRANDR_CFLAGS)
 vulkan_earth_runner_LDADD = \
+	$(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) \
 	$(VULKAN_EARTH_GL_LIBS) $(VULKAN_EARTH_GLEW_LIBS) $(VULKAN_EARTH_SDL_LIBS) \
 	$(VULKAN_EARTH_XRANDR_LIBS) $(X11_LIBS)
 vulkan_earth_runner_LDFLAGS = -pthread

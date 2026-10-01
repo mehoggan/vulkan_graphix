@@ -1623,15 +1623,12 @@ Tutorial21::getTerrainVertexData() {
 
     for (int i = 0; i < c_grid_size - 1; ++i) {
         for (int j = 0; j < c_grid_size - 1; ++j) {
-            auto make_position = [&](int grid_x,
-                                     int grid_z,
-                                     int height_row,
-                                     int height_col) {
+            auto make_position = [&](int grid_x, int grid_z) {
                 return Math::Vec4<float>(
                         static_cast<float>(grid_x * c_grid_scale) -
                                 half_extent,
-                        static_cast<float>(m_terrain_generator.heightAt(
-                                height_row, height_col)),
+                        static_cast<float>(
+                                m_terrain_generator.heightAt(grid_x, grid_z)),
                         static_cast<float>(grid_z * c_grid_scale) -
                                 half_extent,
                         1.0f);
@@ -1641,8 +1638,7 @@ Tutorial21::getTerrainVertexData() {
                     static_cast<float>(i % (chunk_size - 1)) / chunk_span,
                     static_cast<float>(j % (chunk_size - 1)) / chunk_span);
             Math::Vec3<float> const n_i = m_terrain_generator.normalAt(j, i);
-            m_terrain_vertex_data.push_back(
-                    {make_position(j, i, i, j), n_i, t_i});
+            m_terrain_vertex_data.push_back({make_position(j, i), n_i, t_i});
 
             Math::Vec2<float> t_j(
                     (static_cast<float>(i % (chunk_size - 1)) + 1) /
@@ -1651,7 +1647,7 @@ Tutorial21::getTerrainVertexData() {
             Math::Vec3<float> const n_j =
                     m_terrain_generator.normalAt(j, i + 1);
             m_terrain_vertex_data.push_back(
-                    {make_position(j, i + 1, i + 1, j), n_j, t_j});
+                    {make_position(j, i + 1), n_j, t_j});
 
             Math::Vec2<float> t_k(
                     static_cast<float>(i % (chunk_size - 1)) / chunk_span,
@@ -1660,10 +1656,10 @@ Tutorial21::getTerrainVertexData() {
             Math::Vec3<float> const n_k =
                     m_terrain_generator.normalAt(j + 1, i);
             m_terrain_vertex_data.push_back(
-                    {make_position(j + 1, i, i, j + 1), n_k, t_k});
+                    {make_position(j + 1, i), n_k, t_k});
 
             m_terrain_vertex_data.push_back(
-                    {make_position(j, i + 1, i + 1, j), n_j, t_j});
+                    {make_position(j, i + 1), n_j, t_j});
 
             Math::Vec2<float> t_y((static_cast<float>(i % (chunk_size - 1)) +
                                    1) / chunk_span,
@@ -1672,10 +1668,10 @@ Tutorial21::getTerrainVertexData() {
             Math::Vec3<float> const n_y =
                     m_terrain_generator.normalAt(j + 1, i + 1);
             m_terrain_vertex_data.push_back(
-                    {make_position(j + 1, i + 1, i + 1, j + 1), n_y, t_y});
+                    {make_position(j + 1, i + 1), n_y, t_y});
 
             m_terrain_vertex_data.push_back(
-                    {make_position(j + 1, i, i, j + 1), n_k, t_k});
+                    {make_position(j + 1, i), n_k, t_k});
         }
     }
 

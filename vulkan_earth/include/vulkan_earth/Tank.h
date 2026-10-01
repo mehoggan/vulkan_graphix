@@ -35,7 +35,6 @@ public:
     int getPreviousPower();
     int getPreviousAngle();
     GLfloat* getProjectileLandPos();
-    void normalizeVector(Vector* v);
     const GLfloat* getBodyMatrix();
     const GLfloat* getBodyColor();
     float* getBodyScale();

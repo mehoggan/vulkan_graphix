@@ -5,6 +5,7 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <string>
+#include "vulkan_graphix/Ballistics.h"
 
 const int default_damage = 100;
 const int default_radius = 5;
@@ -16,6 +17,11 @@ class GameState;
 
 class Projectile {
 public:
+    // How far out along the turret's barrel a shell starts. Player's CPU
+    // shot simulation uses this same constant, so its predicted arc starts
+    // where a real shot does.
+    static constexpr GLfloat c_muzzle_distance = 500.0f;
+
     Projectile();
     Projectile(GameState* new_parent,
                GLfloat* turret_matrix,
@@ -35,13 +41,9 @@ public:
     ChaseCam* getChaseCam();
     int getRadius();
     int getDamage();
-    GLfloat getVox();
-    GLfloat getVoy();
-    GLfloat getVoz();
-    GLfloat getXo();
-    GLfloat getYo();
-    GLfloat getZo();
-    GLfloat getInitialPositionScalar();
+    // Where and how fast this shell left the barrel - feed to
+    // vulkan_graphix::Ballistics::positionAt() for its flight.
+    const vulkan_graphix::Ballistics::Launch& getLaunch();
 
 private:
     ChaseCam* chase_cam;
@@ -55,13 +57,10 @@ private:
     VBOShaderLibrary** projectile_models;
     float rotate;
     float y_not;
-    GLfloat scalar;
     int timer;
     bool printed;
     GameState* parent;
-    GLfloat xo;
-    GLfloat yo;
-    GLfloat zo;
+    vulkan_graphix::Ballistics::Launch launch;
 };
 
 #endif /*	PROJECTILE_H_	*/

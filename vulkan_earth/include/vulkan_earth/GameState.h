@@ -79,7 +79,6 @@ public:
     GLfloat calcAngleBetweenVectors(Vector one, Vector two);
     void calcNormalVector(Vertex* v0, Vertex* v1, Vertex* v2, Normal* n);
     GLfloat calcDistanceBetweenVertices(Vertex* v0, Vertex* v1);
-    void normalizeVector(Vector* v);
     void playBackgroundSounds();
     void drawHelp();
     GlobalSettings* getGlobalSettings();

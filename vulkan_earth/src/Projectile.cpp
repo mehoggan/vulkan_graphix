@@ -1,4 +1,5 @@
 #include "vulkan_earth/Projectile.h"
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include "vulkan_earth/ChaseCam.h"
@@ -20,19 +21,14 @@ Projectile::Projectile(GameState* new_parent,
                        VBOShaderLibrary** new_projectile_models) {
     default_weapon = new WeaponDefault(10);
     parent = new_parent;
-    scalar = 500;
-    pos[0] = turret_matrix[12] - scalar * turret_matrix[8];
-    pos[1] = turret_matrix[13] - scalar * turret_matrix[9];
-    pos[2] = turret_matrix[14] - scalar * turret_matrix[10];
-
-    xo = pos[0];
-    yo = pos[1];
-    zo = pos[2];
-
-    /*	THE COORD SYSTEM WE USE HAS X AND Z INVERSED X = -X and Z = -Z	*/
-    v_vec[0] = -turret_matrix[8] * new_speed;
-    v_vec[1] = -turret_matrix[9] * new_speed;
-    v_vec[2] = -turret_matrix[10] * new_speed;
+    launch = vulkan_graphix::Ballistics::launchFromBarrel(
+            glm::make_mat4(turret_matrix), new_speed, c_muzzle_distance);
+    pos[0] = launch.origin.x;
+    pos[1] = launch.origin.y;
+    pos[2] = launch.origin.z;
+    v_vec[0] = launch.velocity.x;
+    v_vec[1] = launch.velocity.y;
+    v_vec[2] = launch.velocity.z;
 
     chase_cam = new ChaseCam(pos, v_vec);
     weapon = nullptr;
@@ -100,10 +96,6 @@ int Projectile::getDefaultRadius() { return default_radius; }
 ChaseCam* Projectile::getChaseCam() { return chase_cam; }
 int Projectile::getRadius() { return default_radius; }
 int Projectile::getDamage() { return default_damage; }
-GLfloat Projectile::getInitialPositionScalar() { return scalar; }
-GLfloat Projectile::getVox() { return v_vec[0]; }
-GLfloat Projectile::getVoy() { return v_vec[1]; }
-GLfloat Projectile::getVoz() { return v_vec[2]; }
-GLfloat Projectile::getXo() { return xo; }
-GLfloat Projectile::getYo() { return yo; }
-GLfloat Projectile::getZo() { return zo; }
+const vulkan_graphix::Ballistics::Launch& Projectile::getLaunch() {
+    return launch;
+}
