@@ -161,8 +161,26 @@ tests/texture.*.png
 coverage-html/
 coverage.info
 
-# vulkan_earth textures live only in resources/vulkan_earth/Data/; an
-# in-tree build copies them next to the game binary (see
-# vulkan_earth/src/Makefile.am), so never track those copies.
+# vulkan_earth's runtime assets live only in resources/vulkan_earth/Data/;
+# an in-tree build copies them next to the game binary (see
+# vulkan_earth/src/Makefile.am), so never track those copies. Predator/
+# also holds tracked .ac/.x3d source models, so only its copied types are
+# ignored there.
 vulkan_earth/src/*.raw
-vulkan_earth/src/Projectiles/*.raw
+vulkan_earth/src/*.jpg
+vulkan_earth/src/*.png
+vulkan_earth/src/*.vs
+vulkan_earth/src/*.wav
+vulkan_earth/src/*.mp3
+vulkan_earth/src/Behemoth/
+vulkan_earth/src/Crap/
+vulkan_earth/src/Cubix/
+vulkan_earth/src/Eggroid/
+vulkan_earth/src/HeavyD/
+vulkan_earth/src/Hellfire/
+vulkan_earth/src/LongShot/
+vulkan_earth/src/Panzer/
+vulkan_earth/src/Projectiles/
+vulkan_earth/src/Rhinoxx_Tank/
+vulkan_earth/src/Sounds/
+vulkan_earth/src/Predator/*.ogl

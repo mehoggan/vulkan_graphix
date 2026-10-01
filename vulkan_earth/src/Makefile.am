@@ -110,55 +110,37 @@ vulkan_earth_runner_LDFLAGS = -pthread
 # graduated to Tutorial11-14 - see bin/Makefile.am and each tutorial's own
 # resources/NN/Data/.
 
-# The game's own textures/meshes/shaders/sound files are duplicated (not
-# shared/symlinked) into resources/vulkan_earth/Data/, deliberately kept
-# separate from any Vulkan tutorial's own resources/NN/Data/ even where
-# the content overlaps (e.g. Hellfire_*.ogl, TestImage.raw) - the two
-# sides are free to diverge independently. The game itself still loads
-# everything by bare relative filename (e.g. "SkyBox.raw",
-# "Projectiles/projectileDefault.ogl") with no path-prefix logic of its
-# own (unmodified vendored code, see the comment above), so every asset
-# has to sit next to the built binary.
+# The game's runtime assets (textures, meshes, shaders, sounds) live only
+# in resources/vulkan_earth/Data/, deliberately kept separate from any
+# Vulkan tutorial's own resources/NN/Data/ even where the content overlaps
+# (e.g. Hellfire_*.ogl, TestImage.raw) - the two sides are free to diverge
+# independently. The game itself loads everything by bare relative
+# filename (e.g. "SkyBox.raw", "Projectiles/projectileDefault.ogl") with
+# no path-prefix logic of its own (unmodified vendored code, see the
+# comment above), so all-local: copies that whole tree next to the built
+# binary - into $(builddir) for an out-of-tree build (CLAUDE.md's build/),
+# and into this subdir itself for an in-tree one, where the copies are
+# gitignored.
 #
-# The .raw textures live ONLY in resources/vulkan_earth/Data/ (and its
-# Projectiles/ subdirectory); the other asset types still also have their
-# vendored originals here in this subdir's $(srcdir).
-#
-# Out-of-tree build ($(srcdir) != $(builddir), e.g. a separate build/
-# directory configured via ../configure - see the top-level CLAUDE.md):
-# copy all of resources/vulkan_earth/Data/ into $(builddir), the same role
-# each Vulkan tutorial's own all-local: rule plays for itself, and remove
-# those copies again on clean.
-#
-# In-tree build ($(srcdir) == $(builddir)): every non-.raw asset already
-# sits right here, so copy in just the .raw textures - and on clean,
-# remove just those .raw copies. Never rm -rf whole Data/ entries here,
-# since that would delete the vendored game's own original (tracked)
-# non-.raw asset files instead of a copy of them.
-raw_textures = $(top_srcdir)/resources/vulkan_earth/Data
+# Both rules work file by file, never on whole directories: in-tree,
+# $(builddir) is this source directory, and some asset directories also
+# hold tracked files of their own (Predator/'s .ac/.x3d source models), so
+# clean-local removes exactly the files resources/vulkan_earth/Data/
+# provides, then only the directories that are left empty.
+game_assets = $(top_srcdir)/resources/vulkan_earth/Data
 
 all-local:
-	@if test "$(srcdir)" != "$(builddir)"; then \
-		mkdir -p $(builddir); \
-		for entry in $(raw_textures)/*; do \
-			cp -r "$$entry" $(builddir)/; \
-		done; \
-	else \
-		mkdir -p $(builddir)/Projectiles; \
-		cp $(raw_textures)/*.raw $(builddir)/; \
-		cp $(raw_textures)/Projectiles/*.raw $(builddir)/Projectiles/; \
-	fi
+	@mkdir -p $(builddir)
+	@cd $(game_assets) && find . -type f | while read -r asset; do \
+		mkdir -p "$(abs_builddir)/`dirname "$$asset"`"; \
+		cp "$$asset" "$(abs_builddir)/$$asset"; \
+	done
 
 clean-local:
-	@if test "$(srcdir)" != "$(builddir)"; then \
-		for entry in $(raw_textures)/*; do \
-			rm -rf $(builddir)/`basename "$$entry"`; \
-		done; \
-	else \
-		for entry in $(raw_textures)/*.raw; do \
-			rm -f $(builddir)/`basename "$$entry"`; \
-		done; \
-		for entry in $(raw_textures)/Projectiles/*.raw; do \
-			rm -f $(builddir)/Projectiles/`basename "$$entry"`; \
-		done; \
-	fi
+	@cd $(game_assets) && find . -type f | while read -r asset; do \
+		rm -f "$(abs_builddir)/$$asset"; \
+	done
+	@cd $(game_assets) && find . -mindepth 1 -type d | sort -r | \
+		while read -r dir; do \
+			rmdir "$(abs_builddir)/$$dir" 2>/dev/null || true; \
+		done
