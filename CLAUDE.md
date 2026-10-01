@@ -62,8 +62,10 @@ Tutorial01-10's own `bin/NN_*/TutorialNN.cpp` in directly, so those are
 instrumented and reported too). All ten tutorials get a real
 integration test (drives each through a live Vulkan device/X11 window -
 skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
-`OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`, and
-`Tools` each have their own direct unit tests. `TutorialBase` and every
+`OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`,
+`Tools`, and the gameplay math shared with vulkan_earth
+(`TerrainGenerator`/`Ballistics`/`TankOrientation`, in
+`tests/GameLogicTest.cpp`) each have their own direct unit tests. `TutorialBase` and every
 tutorial's own `create*()` Vulkan-call failure branches (`if (result !=
 VK_SUCCESS) return false;`) are covered by a fault-injection layer: since
 every Vulkan call here goes through a mutable `vulkan_graphix::vkSomething`
@@ -116,8 +118,18 @@ Files" section for the exact invocation.
   - `TutorialBase.cpp` - Shared base class every tutorial derives from
     (the tutorials themselves live in `bin/`, see below)
   - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
-  - `TerrainGenerator.cpp/.h` - Diamond-square height-field generator
-    shared by Tutorial12 and (eventually) a real vulkan_earth port
+  - `TerrainGenerator.cpp/.h` - The terrain height field ported from
+    vulkan_earth's `TerrainMaker`: generation/smoothing, per-vertex
+    normals, world-position queries (`heightAtWorld()`/`normalAtWorld()`/
+    `triangleNormalAt()`), and crater deformation (`makeCrater()`, which
+    returns the grid vertices a renderer must re-upload). Stored
+    `[z][x]` like the game's own grid; every accessor takes `(x, z)`.
+    Used by Tutorial12/21 and by vulkan_earth's `TerrainMaker` itself
+  - `Ballistics.cpp/.h` - Shell launch-from-barrel and flight-position
+    math, used by vulkan_earth's `Projectile`/`GameState`/`Player`
+  - `TankOrientation.cpp/.h` - Tilting a tank to the ground normal under
+    it (`alignToGround()`, ported from `Tank::orientTank()`) and the
+    angle-between-vectors helper, used by vulkan_earth's `Tank`/`GameState`
   - `BitmapFont.cpp/.h` - Bakes a TrueType font into a glyph atlas via
     the vendored `STBTrueType.h` (kept fully behind std types - no
     `stbtt_*` symbol is reachable outside `BitmapFont.cpp`), plus
@@ -170,7 +182,12 @@ Files" section for the exact invocation.
   - `vk_platform.h` - Platform-specific Vulkan definitions
 
 - **vulkan_earth/**: The standalone legacy OpenGL/GLUT game the later
-  tutorials port from (built as `vulkan_earth_runner`)
+  tutorials port from (built as `vulkan_earth_runner`, linked against
+  `libvulkan_graphix.la`). Rule: anything that exists in both the game
+  and a tutorial lives once, in `lib/`, and both call it - the game is
+  never left with its own copy of ported logic (see `TerrainGenerator`/
+  `Ballistics`/`TankOrientation` above; the game keeps only its GL/SDL
+  code and thin wrappers converting to its own `Normal`/`Vector` types)
   - `src/` - its `.cpp` files (plus the MSVC-only `Tools/ModelBuilder/`
     mesh-conversion tool, not part of the autotools build)
   - `include/vulkan_earth/` - every header, included as

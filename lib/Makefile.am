@@ -3,12 +3,14 @@ lib_LTLIBRARIES = libvulkan_graphix.la
 libvulkan_graphix_la_CPPFLAGS = -Werror -Wall -pedantic \
 		-I$(abs_top_srcdir)/include $(GLM_CFLAGS)
 
-libvulkan_graphix_la_SOURCES = ./BitmapFont.cpp \
+libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
+														./BitmapFont.cpp \
 															./HellfireTank.cpp \
 															./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
 															./OrbitCamera.cpp \
+															./TankOrientation.cpp \
 															./TerrainGenerator.cpp \
 															./Tools.cpp \
 															./TutorialBase.cpp \

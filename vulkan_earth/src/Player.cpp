@@ -1,7 +1,9 @@
 #include "vulkan_earth/Player.h"
+#include <glm/gtc/type_ptr.hpp>
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/PlayerFactory.h"
+#include "vulkan_earth/Projectile.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TerrainMaker.h"
@@ -350,26 +352,29 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
     /*	Xf = Xo + Vox*time */
     /*	Zf = Zo + Voz*time */
     /****************************************************************************************/
-    GLfloat* turret_matrix = getCurrentTank()->getTurretMatrix();
-    // MAKE SURE TO UPDATE 200 TO WHAT EVER SCALAR IS IN PROJECTILE.CPP
-    GLfloat xo = turret_matrix[12] - 200 * turret_matrix[8];
-    GLfloat yo = turret_matrix[13] - 200 * turret_matrix[9];
-    GLfloat zo = turret_matrix[14] - 200 * turret_matrix[10];
-    GLfloat vox = -turret_matrix[8] * speed;
-    GLfloat voy = -turret_matrix[9] * speed;
-    GLfloat voz = -turret_matrix[10] * speed;
-    GLfloat xf = xo;
-    GLfloat yf = yo;
-    GLfloat zf = zo;
+    // Same launch a real shot gets (Projectile's constructor) - this used to
+    // start the simulated shell 200 units out along the barrel while a real
+    // one starts at Projectile::c_muzzle_distance (500), despite the old
+    // "MAKE SURE TO UPDATE 200" note asking for the two to match.
+    vulkan_graphix::Ballistics::Launch const launch =
+            vulkan_graphix::Ballistics::launchFromBarrel(
+                    glm::make_mat4(getCurrentTank()->getTurretMatrix()),
+                    speed,
+                    Projectile::c_muzzle_distance);
+    GLfloat xf = launch.origin.x;
+    GLfloat yf = launch.origin.y;
+    GLfloat zf = launch.origin.z;
     GLfloat xe = getEnemyPosition().coord_x;
     GLfloat ye = getEnemyPosition().coord_y;
     GLfloat ze = getEnemyPosition().coord_z;
     GLfloat t = 0;
     bool on_target = false;
     while (yf > 0) {
-        xf = vox * t + xo;
-        yf = .5 * g * pow(t, 2.0f) + voy * t + yo;
-        zf = voz * t + zo;
+        vulkan_graphix::Math::Vec3<float> const position =
+                vulkan_graphix::Ballistics::positionAt(launch, g, t);
+        xf = position.x;
+        yf = position.y;
+        zf = position.z;
 
         if (abs(xf - xe) <= percent_errorxz &&
             abs(zf - ze) <= percent_errorxz &&
@@ -380,7 +385,7 @@ bool Player::calculateProjectilePhysics(GLfloat xerr,
 
         GLfloat terrain_height = game_state->getGlobalSettings()
                                          ->getCurrentTerrain()
-                                         ->getHeightAt(zf, xf);
+                                         ->getHeightAt(xf, zf);
         if (terrain_height >= yf) {
             break;
         }
@@ -398,33 +403,38 @@ void Player::displayProjectilePhysiscs() {
     GLfloat speed = tank_attribute_power * power_bar * balistic_scalar;
     GLfloat g = game_state->getGravity();  // Note: gravity is negative
 
-    GLfloat* turret_matrix = getCurrentTank()->getTurretMatrix();
-    // MAKE SURE TO UPDATE 200 TO WHAT EVER SCALAR IS IN PROJECTILE.CPP
-    GLfloat xo = turret_matrix[12] - 200 * turret_matrix[8];
-    GLfloat yo = turret_matrix[13] - 200 * turret_matrix[9];
-    GLfloat zo = turret_matrix[14] - 200 * turret_matrix[10];
-    GLfloat vox = -turret_matrix[8] * speed;
-    GLfloat voy = -turret_matrix[9] * speed;
-    GLfloat voz = -turret_matrix[10] * speed;
-    GLfloat xf = xo;
-    GLfloat yf = yo;
-    GLfloat zf = zo;
+    // Same launch a real shot gets (Projectile's constructor) - this used to
+    // start the simulated shell 200 units out along the barrel while a real
+    // one starts at Projectile::c_muzzle_distance (500), despite the old
+    // "MAKE SURE TO UPDATE 200" note asking for the two to match.
+    vulkan_graphix::Ballistics::Launch const launch =
+            vulkan_graphix::Ballistics::launchFromBarrel(
+                    glm::make_mat4(getCurrentTank()->getTurretMatrix()),
+                    speed,
+                    Projectile::c_muzzle_distance);
+    GLfloat xf = launch.origin.x;
+    GLfloat yf = launch.origin.y;
+    GLfloat zf = launch.origin.z;
     GLfloat xe = getEnemyPosition().coord_x;
     GLfloat ye = getEnemyPosition().coord_y;
     GLfloat ze = getEnemyPosition().coord_z;
 
     GLfloat t = 0;
     while (yf > 0) {
-        xf = vox * t + xo;
-        yf = .5 * g * pow(t, 2.0f) + voy * t + yo;
-        zf = voz * t + zo;
+        vulkan_graphix::Math::Vec3<float> const position =
+                vulkan_graphix::Ballistics::positionAt(launch, g, t);
+        xf = position.x;
+        yf = position.y;
+        zf = position.z;
         t = t + .02;
     }
 
     cout << "Variables:" << endl;
-    cout << " Vox = " << vox << " Voy = " << voy << " Voz = " << voz << endl
+    cout << " Vox = " << launch.velocity.x << " Voy = " << launch.velocity.y
+         << " Voz = " << launch.velocity.z << endl
          << endl
-         << " Xo = " << xo << " Yo = " << yo << " Zo = " << zo << endl
+         << " Xo = " << launch.origin.x << " Yo = " << launch.origin.y
+         << " Zo = " << launch.origin.z << endl
          << endl
          << " Xf = " << xf << " Yf = " << yf << " Zf = " << zf << endl
          << endl

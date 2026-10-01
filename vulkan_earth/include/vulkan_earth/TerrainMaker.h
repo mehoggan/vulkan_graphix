@@ -10,11 +10,16 @@
 #include "vulkan_earth/TexCoord.h"
 #include "vulkan_earth/VBOQualifer.h"
 #include "vulkan_earth/Vertex.h"
+#include "vulkan_graphix/TerrainGenerator.h"
 class Shader;
+
+// The height field itself - generation, normals, world-position queries,
+// and crater deformation - is libvulkan_graphix's TerrainGenerator (shared
+// with the Vulkan tutorials); TerrainMaker keeps only its GL buffers/draw
+// code plus thin wrappers converting to this game's own Normal type.
 
 class TerrainMaker {
 public:
-    TerrainMaker();
     TerrainMaker(int i_scale, int i_size);
     ~TerrainMaker();
     void draw();
@@ -24,32 +29,20 @@ public:
                      float new_radius,
                      int new_random_jump,
                      int smoothness);
-    void smoothShadeNormal(int x, int z, Normal* n);
-    void calcNormal(int x, int z, int flag, Normal* n);
     void verifyVBOs();
-    void prepTerrain();
-    void terrainSlope(int new_vertices);
-    void terrainGen(int new_steps,
-                    int new_increase,
-                    float new_radius,
-                    int new_random_jump);
-    void terrainSqDi(
-            int left, int right, int top, int bottom, int seed, int subtract);
-    void terrainSmoothe(int box_width);
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
     void toggleWireframe();
     void makeCrater(GLfloat x, GLfloat z, GLfloat size);
+    // x/z in grid units (truncated to a grid vertex).
     Normal getTriangleNormal(float x, float z);
+    // x/z in world units.
     Normal getNormalAt(GLfloat x, GLfloat z);
     GLfloat getHeightAt(GLfloat x, GLfloat z);
     GLint getActualSize();
     GLint getScale();
     GLuint loadTexture(const char* filename, int width, int height);
     GLuint selectTexture(const std::string& tex);
-    void collectVerticesForTriangleNormal(int x,
-                                          int z,
-                                          Vertex* three_vertices_array[3]);
 
 private:
     int scale;
@@ -60,7 +53,7 @@ private:
     int random_jump;
     int total_vertices;
     int tri_strip_buffer_size;
-    int** th;
+    vulkan_graphix::TerrainGenerator terrain;
     VBOQualifer* vbo_qualify;
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;

@@ -15,15 +15,19 @@
 
 using namespace std;
 
-TerrainMaker::TerrainMaker() = default;
+namespace {
+Normal toNormal(vulkan_graphix::Math::Vec3<float> const& normal) {
+    return Normal(normal.x, normal.y, normal.z);
+}
+}  // namespace
 
-TerrainMaker::TerrainMaker(int i_scale, int i_size) {
+TerrainMaker::TerrainMaker(int i_scale, int i_size)
+        : terrain(i_size, i_scale) {
     srand(time(nullptr));
     scale = i_scale;
     size = i_size;
     total_vertices = size * size;
     tri_strip_buffer_size = (size - 1) * (size - 1) * 6;
-    prepTerrain();
     initData();
 
     shader = new Shader();
@@ -38,12 +42,6 @@ TerrainMaker::TerrainMaker(int i_scale, int i_size) {
 }
 
 TerrainMaker::~TerrainMaker() {
-    if (th) {
-        for (int i = 0; i < size; i++) {
-            delete th[i];
-        }
-        delete th;
-    }
     delete vbo_qualify;
     delete shader;
     pgl_delete_buffers_arb(1, &vertex_vbo_id);
@@ -119,17 +117,21 @@ void TerrainMaker::draw() {
         for (int i = 0; i < 255; i += 4) {
             for (int j = 0; j < 255; j += 4) {
                 glBegin(GL_LINES);
-                /*glVertex3f(i*draw_scale,th[j][i],j*draw_scale);
+                /*glVertex3f(i*draw_scale,terrain.heightAt(i, j),j*draw_scale);
                 glVertex3f(	i*draw_scale+500*normals[(i*255+j)*6].compoX,
-                            th[j][i]+500*normals[(i*255+j)*6].compoY,
+                            terrain.heightAt(i,
+                j)+500*normals[(i*255+j)*6].compoY,
                             j*draw_scale+500*normals[(i*255+j)*6].compoZ);*/
-                glVertex3f(i * draw_scale, th[j][i], j * draw_scale);
+                glVertex3f(i * draw_scale,
+                           terrain.heightAt(i, j),
+                           j * draw_scale);
                 glVertex3f(i * draw_scale + 500 * getNormalAt(i * draw_scale,
                                                               j * draw_scale)
                                                             .compo_x,
-                           th[j][i] + 500 * getNormalAt(i * draw_scale,
-                                                        j * draw_scale)
-                                                      .compo_y,
+                           terrain.heightAt(i, j) +
+                                   500 * getNormalAt(i * draw_scale,
+                                                     j * draw_scale)
+                                                   .compo_y,
                            j * draw_scale + 500 * getNormalAt(i * draw_scale,
                                                               j * draw_scale)
                                                             .compo_z);
@@ -202,77 +204,6 @@ void TerrainMaker::initData() {
     material_diffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
-void TerrainMaker::smoothShadeNormal(int x, int z, Normal* n) {
-    calcNormal(x, z - 1, 0, n);
-    Normal n0(n->compo_x, n->compo_y, n->compo_z);
-    calcNormal(x, z, 0, n);
-    Normal n1(n->compo_x, n->compo_y, n->compo_z);
-    calcNormal(x, z, 1, n);
-    Normal n2(n->compo_x, n->compo_y, n->compo_z);
-    calcNormal(x + 1, z + 1, 1, n);
-    Normal n3(n->compo_x, n->compo_y, n->compo_z);
-    calcNormal(x + 1, z, 1, n);
-    Normal n4(n->compo_x, n->compo_y, n->compo_z);
-    calcNormal(x + 1, z, 0, n);
-    Normal n5(n->compo_x, n->compo_y, n->compo_z);
-
-    n->compo_x = (n0.compo_x + n1.compo_x + n2.compo_x + n3.compo_x +
-                  n4.compo_x + n5.compo_x) /
-                 6;
-    n->compo_y = (n0.compo_y + n1.compo_y + n2.compo_y + n3.compo_y +
-                  n4.compo_y + n5.compo_y) /
-                 6;
-    n->compo_z = (n0.compo_z + n1.compo_z + n2.compo_z + n3.compo_z +
-                  n4.compo_z + n5.compo_z) /
-                 6;
-}
-
-void TerrainMaker::calcNormal(int x, int z, int flag, Normal* n) {
-    float v1[3], v2[3];
-    bool can_calculate = true;
-    if (flag == 1) {
-        if (((x - 1) >= 0) && ((z - 1) >= 0) && (x < size) && (z < size)) {
-            v1[0] = ((x - 1) * scale) - (x * scale);
-            v1[1] = (th[x - 1][z - 1]) - th[x][z];
-            v1[2] = ((z - 1) * scale) - (z * scale);
-
-            v2[0] = ((x - 1) * scale) - (x * scale);
-            v2[1] = (th[x - 1][z]) - th[x][z];
-            v2[2] = 0;
-        } else {
-            can_calculate = false;
-        }
-    } else {
-        if ((((x - 1) >= 0) && (x < size)) && ((z + 1) < size) && (z > 0)) {
-            v1[0] = ((x - 1) * scale) - (x * scale);
-            v1[1] = (th[x - 1][z]) - th[x][z];
-            v1[2] = 0;
-
-            v2[0] = 0;
-            v2[1] = (th[x][z + 1]) - th[x][z];
-            v2[2] = (((z + 1) * scale) - (z * scale));
-        } else {
-            can_calculate = false;
-        }
-    }
-
-    if (can_calculate) {
-        n->compo_x = v1[1] * v2[2] - v1[2] * v2[1];
-        n->compo_y = v1[2] * v2[0] - v1[0] * v2[2];
-        n->compo_z = v1[0] * v2[1] - v1[1] * v2[0];
-        float mag =
-                sqrt((n->compo_x * n->compo_x) + (n->compo_y * n->compo_y) +
-                     (n->compo_z * n->compo_z));
-        n->compo_x /= mag;
-        n->compo_y /= mag;
-        n->compo_z /= mag;
-    } else {
-        n->compo_x = 0;
-        n->compo_y = 1;
-        n->compo_z = 0;
-    }
-}
-
 void TerrainMaker::prepareData(int new_steps,
                                int new_increase,
                                float new_radius,
@@ -286,8 +217,8 @@ void TerrainMaker::prepareData(int new_steps,
     int buffersize = tri_strip_buffer_size;
     int prep_size = size;
     int prep_scale = scale;
-    terrainGen(new_steps, new_increase, new_radius, new_random_jump);
-    for (int i = -1; i < smoothness; i++) terrainSmoothe(10);
+    terrain.generate(
+            new_steps, new_increase, new_radius, new_random_jump, smoothness);
 
     //
     // 				v_k
@@ -307,7 +238,9 @@ void TerrainMaker::prepareData(int new_steps,
             /************************************************************/
             /*	V_I -- N_I												*/
             /************************************************************/
-            Vertex v_i(j * prep_scale, th[i][j] /*SCALE*/, i * prep_scale);
+            Vertex v_i(j * prep_scale,
+                       terrain.heightAt(j, i) /*SCALE*/,
+                       i * prep_scale);
             vertices[index++] = v_i;
             TexCoord t_i((static_cast<float>(i % (chunk_size - 1))) /
                                  static_cast<float>(chunk_size - 1),
@@ -319,7 +252,7 @@ void TerrainMaker::prepareData(int new_steps,
             } else if (i == 0) {
             } else if (j == 0) {
             } else {
-                smoothShadeNormal(j, i, &n_i);
+                n_i = toNormal(terrain.normalAt(j, i));
             }
             normals[index_normals++] = n_i;
 
@@ -327,7 +260,7 @@ void TerrainMaker::prepareData(int new_steps,
             /*	V_J -- N_J												*/
             /************************************************************/
             Vertex v_j(j * prep_scale,
-                       th[i + 1][j] /*SCALE*/,
+                       terrain.heightAt(j, i + 1) /*SCALE*/,
                        (i + 1) * prep_scale);
             vertices[index++] = v_j;
             TexCoord t_j((static_cast<float>(i % (chunk_size - 1)) + 1) /
@@ -340,7 +273,7 @@ void TerrainMaker::prepareData(int new_steps,
             } else if (j == 0) {
             } else if (i == prep_size - 2) {
             } else {
-                smoothShadeNormal(j, i + 1, &n_j);
+                n_j = toNormal(terrain.normalAt(j, i + 1));
             }
             normals[index_normals++] = n_j;
 
@@ -348,7 +281,7 @@ void TerrainMaker::prepareData(int new_steps,
             /*	V_K -- N_K												*/
             /************************************************************/
             Vertex v_k((j + 1) * prep_scale,
-                       th[i][j + 1] /*SCALE*/,
+                       terrain.heightAt(j + 1, i) /*SCALE*/,
                        (i)*prep_scale);
             vertices[index++] = v_k;
             TexCoord t_k((static_cast<float>(i % (chunk_size - 1))) /
@@ -361,7 +294,7 @@ void TerrainMaker::prepareData(int new_steps,
             } else if (i == 0) {
             } else if (j == prep_size - 2) {
             } else {
-                smoothShadeNormal(j + 1, i, &n_k);
+                n_k = toNormal(terrain.normalAt(j + 1, i));
             }
             normals[index_normals++] = n_k;
 
@@ -369,7 +302,7 @@ void TerrainMaker::prepareData(int new_steps,
             /*	V_X -- N_X	(SAME AS V_J/N_J)							*/
             /************************************************************/
             Vertex v_x(j * prep_scale,
-                       th[i + 1][j] /*SCALE*/,
+                       terrain.heightAt(j, i + 1) /*SCALE*/,
                        (i + 1) * prep_scale);
             vertices[index++] = v_x;
             TexCoord t_x((static_cast<float>(i % (chunk_size - 1)) + 1) /
@@ -382,7 +315,7 @@ void TerrainMaker::prepareData(int new_steps,
             } else if (j == 0) {
             } else if (i == prep_size - 2) {
             } else {
-                smoothShadeNormal(j, i + 1, &n_x);
+                n_x = toNormal(terrain.normalAt(j, i + 1));
             }
             normals[index_normals++] = n_x;
 
@@ -390,7 +323,7 @@ void TerrainMaker::prepareData(int new_steps,
             /*	V_Y -- N_Y												*/
             /************************************************************/
             Vertex v_y((j + 1) * prep_scale,
-                       th[i + 1][j + 1] /*SCALE*/,
+                       terrain.heightAt(j + 1, i + 1) /*SCALE*/,
                        (i + 1) * prep_scale);
             vertices[index++] = v_y;
             TexCoord t_y((static_cast<float>(i % (chunk_size - 1)) + 1) /
@@ -403,7 +336,7 @@ void TerrainMaker::prepareData(int new_steps,
             } else if (i == prep_size - 2) {
             } else if (j == prep_size - 2) {
             } else {
-                smoothShadeNormal(j + 1, i + 1, &n_y);
+                n_y = toNormal(terrain.normalAt(j + 1, i + 1));
             }
             normals[index_normals++] = n_y;
 
@@ -411,7 +344,7 @@ void TerrainMaker::prepareData(int new_steps,
             /*	V_Z -- N_Z												*/
             /************************************************************/
             Vertex v_z((j + 1) * prep_scale,
-                       th[i][j + 1] /*SCALE*/,
+                       terrain.heightAt(j + 1, i) /*SCALE*/,
                        (i)*prep_scale);
             vertices[index++] = v_z;
             TexCoord t_z((static_cast<float>(i % (chunk_size - 1))) /
@@ -424,7 +357,7 @@ void TerrainMaker::prepareData(int new_steps,
             } else if (i == 0) {
             } else if (j == prep_size - 2) {
             } else {
-                smoothShadeNormal(j + 1, i, &n_z);
+                n_z = toNormal(terrain.normalAt(j + 1, i));
             }
             normals[index_normals++] = n_z;
         }
@@ -506,464 +439,80 @@ void TerrainMaker::verifyVBOs() {
     }
 }
 
-void TerrainMaker::prepTerrain() {
-    th = new int*[size];
-    for (int i = 0; i < size; i++) {
-        th[i] = new int[size];
-    }
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            th[x][y] = 0;
-        }
-    }
-}
-
-void TerrainMaker::terrainGen(int new_steps,
-                              int new_increase,
-                              float new_radius,
-                              int new_random_jump) {
-    float current_x = size / 2;
-    float current_y = size / 2;
-    float distance = 0;
-
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            th[i][j] = 0;
-        }
-    }
-
-    for (int current_step = 1; current_step < new_steps; current_step++) {
-        int random = (rand() % 100);
-
-        if (random > new_random_jump) {
-            switch ((rand() % 4)) {
-                case 0:
-                    current_x--;
-                    break;
-                case 1:
-                    current_x++;
-                    break;
-                case 2:
-                    current_y--;
-                    break;
-                case 3:
-                    current_y++;
-                    break;
-            }
-            if (((current_x >= size) || (current_x < 0)) ||
-                ((current_y >= size) || (current_y < 0))) {
-                current_x = (rand() % size);
-                current_y = (rand() % size);
-            }
-        } else {
-            current_x = (rand() % size);
-            current_y = (rand() % size);
-        }
-
-        for (int x = current_x - new_radius; x < current_x + new_radius; x++)
-            for (int y = current_y - new_radius; y < current_y + new_radius;
-                 y++) {
-                distance = static_cast<float>(
-                        sqrt(pow(static_cast<double>(current_x - x), 2) +
-                             pow(static_cast<double>(current_y) - y, 2)));
-                if ((distance < new_radius) &&
-                    ((x >= 0 && x < size) && (y >= 0 && y < size)))
-                    th[x][y] += new_increase;
-            }
-    }
-}
-
-void TerrainMaker::terrainSqDi(
-        int left, int right, int top, int bottom, int seed, int subtract) {
-    if ((left - right) == 0 || (bottom - top) == 1) {
-    }  // DO NOTHING BUT RETURN
-    else {
-        while (seed <= 1) {
-            seed = rand();
-            if (seed < 0) {
-                seed *= -1;
-            }
-        }
-
-        th[top][left] = rand() % seed;
-        th[bottom][left] = rand() % seed;
-        th[top][right] = rand() % seed;
-        th[bottom][right] = rand() % seed;
-        th[(top + bottom) / 2][(left + right) / 2] =
-                (((th[top][left]) + (th[bottom][left]) + (th[top][right]) +
-                  (th[bottom][right])) /
-                 4) +
-                rand() % seed;
-
-        th[(top + bottom) / 2][left] = rand() % seed;
-        th[bottom][(left + right) / 2] = rand() % seed;
-        th[top][(left + right) / 2] = rand() % seed;
-        th[(top + bottom) / 2][right] = rand() % seed;
-        th[(top + bottom) / 2][(left + right) / 2] =
-                (((th[(top + bottom) / 2][left]) +
-                  (th[bottom][(left + right) / 2]) +
-                  (th[top][(left + right) / 2] = rand() % seed) +
-                  (th[(top + bottom) / 2][right])) /
-                 4) +
-                rand() % seed;
-
-        seed -= subtract;
-        terrainSqDi(left,
-                    (left + right) / 2,
-                    top,
-                    (top + bottom) / 2,
-                    seed,
-                    subtract);
-        terrainSqDi(left,
-                    (left + right) / 2,
-                    (top + bottom) / 2,
-                    bottom,
-                    seed,
-                    subtract);
-        terrainSqDi((left + right) / 2,
-                    right,
-                    top,
-                    (top + bottom) / 2,
-                    seed,
-                    subtract);
-        terrainSqDi((left + right) / 2,
-                    right,
-                    (top + bottom) / 2,
-                    bottom,
-                    seed,
-                    subtract);
-    }
-}
-
-void TerrainMaker::terrainSmoothe(int box_width) {
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            int height_sum = 0;
-            for (int i = y - (box_width / 2); i < y + (box_width / 2); i++) {
-                for (int j = x - (box_width / 2); j < x + (box_width / 2);
-                     j++) {
-                    if ((i >= 0 && i < size) && (j >= 0 && j < size)) {
-                        height_sum += th[i][j];
-                    }
-                }
-            }
-            th[y][x] = height_sum / (box_width * box_width);
-        }
-    }
-
-    //*
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            if (x == 0 || y == 0) {
-                th[y][x] = 0;
-            }
-            if (x == 0 || y == size - 1) {
-                th[y][x] = 0;
-            }
-            if (x == size - 1 || y == 0) {
-                th[y][x] = 0;
-            }
-            if (x == size - 1 || y == size - 1) {
-                th[y][x] = 0;
-            }
-        }
-    }
-    //*/
-}
-
-void TerrainMaker::terrainSlope(int new_vertices) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (i < new_vertices) {
-                th[i][j] -= (new_vertices - i) * scale;
-            } else if (i > size - new_vertices) {
-                th[i][j] -= (new_vertices - (size - i)) * scale;
-            }
-            if (j < new_vertices) {
-                th[i][j] -= (new_vertices - j) * scale;
-
-            } else if (j > size - new_vertices) {
-                th[i][j] -= (new_vertices - (size - j)) * scale;
-            }
-        }
-    }
-}
-
 void TerrainMaker::toggleWireframe() { wireframe_active = !wireframe_active; }
 
 Normal TerrainMaker::getTriangleNormal(float x, float z) {
-    /*	NORMAL ORIENTATION VECTOR CODE FOR TANK ORIENTATION	*/
-    Vertex* v0 = new Vertex(0, 0, 0);
-    Vertex* v1 = new Vertex(0, 0, 0);
-    Vertex* v2 = new Vertex(0, 0, 0);
-    Vertex* vert_collection[3] = {v0, v1, v2};
-    collectVerticesForTriangleNormal(x, z, vert_collection);
-
-    GLfloat u[3] = {(v1->coord_x - v0->coord_x),
-                    (v1->coord_y / 100 - v0->coord_y / 100),
-                    (v1->coord_z - v0->coord_z)};
-    GLfloat v[3] = {(v2->coord_x - v0->coord_x),
-                    (v2->coord_y / 100 - v0->coord_y / 100),
-                    (v2->coord_z - v0->coord_z)};
-
-    Normal n((u[1] * v[2] - v[1] * u[2]),
-             (u[2] * v[0] - u[0] * v[2]),
-             (u[0] * v[1] - v[0] * u[1]));
-
-    GLfloat mag = static_cast<GLfloat>(
-            sqrt(pow(static_cast<double>(n.compo_x), 2.0) +
-                 pow(static_cast<double>(n.compo_y), 2.0) +
-                 pow(static_cast<double>(n.compo_z), 2.0)));
-    n.compo_x /= mag;
-    n.compo_y /= mag;
-    n.compo_z /= mag;
-    if (n.compo_y < 0) {
-        n.compo_x *= -1;
-        n.compo_y *= -1;
-        n.compo_z *= -1;
-    }
-    delete vert_collection[0];
-    delete vert_collection[1];
-    delete vert_collection[2];
-    return Normal(n.compo_x, n.compo_y, n.compo_z);
+    return toNormal(terrain.triangleNormalAt(static_cast<int>(x),
+                                             static_cast<int>(z)));
 }
 
 Normal TerrainMaker::getNormalAt(GLfloat x, GLfloat z) {
-    int n_x = static_cast<int>(x / scale);
-    int n_z = static_cast<int>(z / scale);
-    float d_x = x / scale - n_x;
-    float d_z = z / scale - n_z;
-
-    if (d_x > 0) {
-        if (abs(d_x) > 0.5) {
-            n_x++;
-        }
-    } else {
-        if (abs(d_x) < 0.5) {
-            n_x++;
-        }
-    }
-    if (d_z > 0) {
-        if (abs(d_z) > 0.5) {
-            n_z++;
-        }
-    } else {
-        if (abs(d_z) < 0.5) {
-            n_z++;
-        }
-    }
-    float n[3];
-    float v[3] = {0,
-                  static_cast<float>(th[n_z][n_x + 1] - th[n_z][n_x]),
-                  static_cast<float>(scale)};
-    float u[3] = {static_cast<float>(scale),
-                  static_cast<float>(th[n_z + 1][n_x] - th[n_z][n_x]),
-                  0};
-
-    n[0] = (v[1] * u[2] - u[1] * v[2]);
-    n[1] = (u[0] * v[2] - v[0] * u[2]);
-    n[2] = (v[0] * u[1] - u[0] * v[1]);
-
-    float mag = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-    n[0] /= mag;
-    n[1] /= mag;
-    n[2] /= mag;
-    return Normal(n[0], n[1], n[2]);
-    /*int i;
-    for(i=0;i<(size-1)*(size-1)*6;i++){
-        if((vertices[i].coordX==nX*scale)&&(vertices[i].coordZ==nZ*scale))
-    break;
-    }
-    return &normals[i];*/
+    return toNormal(terrain.normalAtWorld(x, z));
 }
 
 GLfloat TerrainMaker::getHeightAt(GLfloat x, GLfloat z) {
-    if ((x >= 0 && x < (size - 1) * scale) &&
-        (z >= 0 && z < (size - 1) * scale)) {
-        int v_x = static_cast<int>(x / scale);
-        int v_z = static_cast<int>(z / scale);
-        float d_x = x / scale - v_x;
-        float d_z = z / scale - v_z;
-
-        if (d_x < 0) {
-            if (abs(d_x) < 0.5) {
-                v_x++;
-            }
-        } else {
-            if (abs(d_x) > 0.5) {
-                v_x++;
-            }
-        }
-        if (d_z < 0) {
-            if (abs(d_z) < 0.5) {
-                v_z++;
-            }
-        } else {
-            if (abs(d_z) > 0.5) {
-                v_z++;
-            }
-        }
-        return th[v_x][v_z];
-    }
-    return 0.0;
+    return terrain.heightAtWorld(x, z);
 }
 
-void TerrainMaker::collectVerticesForTriangleNormal(
-        int x, int z, Vertex* three_vertices_array[3]) {
-    if ((x >= 0 && x < size) && (z >= 0 && z < size)) {
-        three_vertices_array[0]->coord_x = x;
-        three_vertices_array[0]->coord_y = th[z][x];
-        three_vertices_array[0]->coord_z = z;
-
-        three_vertices_array[1]->coord_x = x + 1;
-        three_vertices_array[1]->coord_y = th[z][x + 1];
-        three_vertices_array[1]->coord_z = z;
-
-        three_vertices_array[2]->coord_x = x;
-        three_vertices_array[2]->coord_y = th[z + 1][x];
-        three_vertices_array[2]->coord_z = z + 1;
-    } else {
-        cout << "Tank out of bounds" << endl;
-    }
-}
-
+// The crater's height math is TerrainGenerator::makeCrater(); this only
+// re-uploads the affected grid vertices into the VBO. prepareData() lays
+// the mesh out as six triangle-list slots per grid cell (row z, column x),
+// so each grid vertex is repeated in up to six slots across the cells
+// around it - the slot choice (including skipping row/column 0's
+// neighbors via `> 0`) is TerrainMaker's own. Unlike the original, a slot
+// outside the (size - 1) x (size - 1) cell grid is skipped rather than
+// written past the end of the buffer.
 void TerrainMaker::makeCrater(GLfloat impact_x,
                               GLfloat impact_z,
                               GLfloat blast_size) {
-    int x = static_cast<int>(impact_x / scale);
-    int z = static_cast<int>(impact_z / scale);
+    std::vector<vulkan_graphix::TerrainGridCell> const cells =
+            terrain.makeCrater(impact_x, impact_z, blast_size);
     Vertex* buffer_ptr = static_cast<Vertex*>(
             pgl_map_buffer_arb(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
-    int crater_size = static_cast<int>(blast_size * 1.5);
 
-    if (((x >= 0) && (x < size)) && ((z >= 0) && (z < size))) {
-        GLfloat impact_y = th[z][x];
-        for (int i = x - crater_size; i < x + crater_size; i++) {
-            for (int j = z - crater_size; j < z + crater_size; j++) {
-                GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
-                                                           (z - j) * (z - j)));
-                if ((((i >= 0) && (j >= 0)) && ((i < size) && (j < size))) &&
-                    (distance <= blast_size)) {
-                    GLfloat x_dis, y_dis, z_dis, dist_radius;
-                    x_dis = abs(i - x);
-                    z_dis = abs(j - z);
-                    dist_radius = sqrt(x_dis * x_dis + z_dis * z_dis);
-
-                    GLfloat damage_depth =
-                            -((sqrt(dist_radius * dist_radius + x_dis * x_dis +
-                                    z_dis * z_dis) -
-                               blast_size * 2) *
-                              scale / 2);
-                    GLfloat adjust_height = th[j][i];
-                    if (adjust_height > (impact_y + (damage_depth))) {
-                        adjust_height -= damage_depth;
-                    } else if (adjust_height > (impact_y - damage_depth)) {
-                        adjust_height = impact_y - damage_depth;
-                    }
-                    // lower vertex height in local th[][]
-                    // lower vertex height for the 6 vertices that share the
-                    // same location in VBO
-                    th[j][i] = adjust_height;  // local
-                    if (i == x && j == z && j > 1 && i > 1) {
-                        adjust_height =
-                                (th[j - 1][i] + th[j][i - 1] + th[j][i]) / 3;
-                    }
-                    th[j][i] = adjust_height;  // local
-                    buffer_ptr[(j * (size - 1) + i) * 6].coord_y =
-                            adjust_height;  // VBO
-                    if ((j - 1) > 0) {
-                        buffer_ptr[((j - 1) * (size - 1) + i) * 6 + 1]
-                                .coord_y = adjust_height;  // VBO
-                        buffer_ptr[((j - 1) * (size - 1) + i) * 6 + 3]
-                                .coord_y = adjust_height;  // VBO
-                        if ((i - 1) > 0) {
-                            buffer_ptr[((j - 1) * (size - 1) + (i - 1)) * 6 +
-                                       4]
-                                    .coord_y = adjust_height;  // VBO
-                        }
-                    }
-                    if ((i - 1) > 0) {
-                        buffer_ptr[((j) * (size - 1) + (i - 1)) * 6 + 2]
-                                .coord_y = adjust_height;  // VBO
-                        buffer_ptr[((j) * (size - 1) + (i - 1)) * 6 + 5]
-                                .coord_y = adjust_height;  // VBO
-                    }
-                }
+    int const cells_per_row = size - 1;
+    auto slot = [&](int row, int col, int corner) -> int {
+        if (row < 0 || col < 0 || row >= cells_per_row ||
+            col >= cells_per_row) {
+            return -1;
+        }
+        return (row * cells_per_row + col) * 6 + corner;
+    };
+    // Every slot grid vertex (i, j) occupies, per TerrainMaker's layout.
+    auto slots_for = [&](int grid_x, int grid_z) {
+        std::vector<int> slots = {slot(grid_z, grid_x, 0)};
+        if ((grid_z - 1) > 0) {
+            slots.push_back(slot(grid_z - 1, grid_x, 1));
+            slots.push_back(slot(grid_z - 1, grid_x, 3));
+            if ((grid_x - 1) > 0) {
+                slots.push_back(slot(grid_z - 1, grid_x - 1, 4));
             }
         }
+        if ((grid_x - 1) > 0) {
+            slots.push_back(slot(grid_z, grid_x - 1, 2));
+            slots.push_back(slot(grid_z, grid_x - 1, 5));
+        }
+        return slots;
+    };
 
-        // adjust normals
+    for (vulkan_graphix::TerrainGridCell const& cell : cells) {
+        GLfloat const height =
+                static_cast<GLfloat>(terrain.heightAt(cell.x, cell.z));
+        for (int index : slots_for(cell.x, cell.z)) {
+            if (index >= 0) {
+                buffer_ptr[index].coord_y = height;  // VBO
+            }
+        }
+    }
 
-        int normal_offset = tri_strip_buffer_size;
-        for (int i = x - crater_size; i < x + crater_size; i++) {
-            for (int j = z - crater_size; j < z + crater_size; j++) {
-                Normal adjust_normal;
-                GLfloat distance = sqrt(static_cast<float>((x - i) * (x - i) +
-                                                           (z - j) * (z - j)));
-                if ((i >= 0 && j >= 0 && i < size && j < size) &&
-                    (distance <= blast_size)) {
-                    smoothShadeNormal(j, i, &adjust_normal);
-                    buffer_ptr[normal_offset + (j * (size - 1) + i) * 6]
-                            .coord_x = adjust_normal.compo_x;  // VBO
-                    buffer_ptr[normal_offset + (j * (size - 1) + i) * 6]
-                            .coord_y = adjust_normal.compo_y;  // VBO
-                    buffer_ptr[normal_offset + (j * (size - 1) + i) * 6]
-                            .coord_z = adjust_normal.compo_z;  // VBO
-                    if ((j - 1) > 0) {
-                        buffer_ptr[normal_offset +
-                                   ((j - 1) * (size - 1) + i) * 6 + 1]
-                                .coord_x = adjust_normal.compo_x;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j - 1) * (size - 1) + i) * 6 + 1]
-                                .coord_y = adjust_normal.compo_y;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j - 1) * (size - 1) + i) * 6 + 1]
-                                .coord_z = adjust_normal.compo_z;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j - 1) * (size - 1) + i) * 6 + 3]
-                                .coord_x = adjust_normal.compo_x;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j - 1) * (size - 1) + i) * 6 + 3]
-                                .coord_y = adjust_normal.compo_y;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j - 1) * (size - 1) + i) * 6 + 3]
-                                .coord_z = adjust_normal.compo_z;  // VBO
-                        if ((i - 1) > 0) {
-                            buffer_ptr[normal_offset +
-                                       ((j - 1) * (size - 1) + (i - 1)) * 6 +
-                                       4]
-                                    .coord_x = adjust_normal.compo_x;  // VBO
-                            buffer_ptr[normal_offset +
-                                       ((j - 1) * (size - 1) + (i - 1)) * 6 +
-                                       4]
-                                    .coord_y = adjust_normal.compo_y;  // VBO
-                            buffer_ptr[normal_offset +
-                                       ((j - 1) * (size - 1) + (i - 1)) * 6 +
-                                       4]
-                                    .coord_z = adjust_normal.compo_z;  // VBO
-                        }
-                    }
-                    if ((i - 1) > 0) {
-                        buffer_ptr[normal_offset +
-                                   ((j) * (size - 1) + (i - 1)) * 6 + 2]
-                                .coord_x = adjust_normal.compo_x;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j) * (size - 1) + (i - 1)) * 6 + 2]
-                                .coord_y = adjust_normal.compo_y;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j) * (size - 1) + (i - 1)) * 6 + 2]
-                                .coord_z = adjust_normal.compo_z;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j) * (size - 1) + (i - 1)) * 6 + 5]
-                                .coord_x = adjust_normal.compo_x;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j) * (size - 1) + (i - 1)) * 6 + 5]
-                                .coord_y = adjust_normal.compo_y;  // VBO
-                        buffer_ptr[normal_offset +
-                                   ((j) * (size - 1) + (i - 1)) * 6 + 5]
-                                .coord_z = adjust_normal.compo_z;  // VBO
-                    }
-                }
+    int const normal_offset = tri_strip_buffer_size;
+    for (vulkan_graphix::TerrainGridCell const& cell : cells) {
+        Normal const normal = toNormal(terrain.normalAt(cell.x, cell.z));
+        for (int index : slots_for(cell.x, cell.z)) {
+            if (index >= 0) {
+                buffer_ptr[normal_offset + index].coord_x = normal.compo_x;
+                buffer_ptr[normal_offset + index].coord_y = normal.compo_y;
+                buffer_ptr[normal_offset + index].coord_z = normal.compo_z;
             }
         }
     }

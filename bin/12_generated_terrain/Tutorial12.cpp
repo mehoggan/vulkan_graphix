@@ -1027,15 +1027,11 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
 
     for (int i = 0; i < c_grid_size - 1; ++i) {
         for (int j = 0; j < c_grid_size - 1; ++j) {
-            auto make_position = [&](int grid_x,
-                                     int grid_z,
-                                     int height_row,
-                                     int height_col) {
+            auto make_position = [&](int grid_x, int grid_z) {
                 return Math::Vec4<float>(
                         static_cast<float>(grid_x * c_grid_scale) -
                                 half_extent,
-                        static_cast<float>(
-                                generator.heightAt(height_row, height_col)),
+                        static_cast<float>(generator.heightAt(grid_x, grid_z)),
                         static_cast<float>(grid_z * c_grid_scale) -
                                 half_extent,
                         1.0f);
@@ -1049,7 +1045,7 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
             if (i != 0 && j != 0) {
                 n_i = generator.normalAt(j, i);
             }
-            m_vertex_data.push_back({make_position(j, i, i, j), n_i, t_i});
+            m_vertex_data.push_back({make_position(j, i), n_i, t_i});
 
             // V_J
             Math::Vec2<float> t_j(
@@ -1060,8 +1056,7 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
             if (j != 0 && i != c_grid_size - 2) {
                 n_j = generator.normalAt(j, i + 1);
             }
-            m_vertex_data.push_back(
-                    {make_position(j, i + 1, i + 1, j), n_j, t_j});
+            m_vertex_data.push_back({make_position(j, i + 1), n_j, t_j});
 
             // V_K
             Math::Vec2<float> t_k(
@@ -1072,12 +1067,10 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
             if (i != 0 && j != c_grid_size - 2) {
                 n_k = generator.normalAt(j + 1, i);
             }
-            m_vertex_data.push_back(
-                    {make_position(j + 1, i, i, j + 1), n_k, t_k});
+            m_vertex_data.push_back({make_position(j + 1, i), n_k, t_k});
 
             // V_X (same position/UV pattern as V_J)
-            m_vertex_data.push_back(
-                    {make_position(j, i + 1, i + 1, j), n_j, t_j});
+            m_vertex_data.push_back({make_position(j, i + 1), n_j, t_j});
 
             // V_Y
             Math::Vec2<float> t_y((static_cast<float>(i % (chunk_size - 1)) +
@@ -1088,12 +1081,10 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
             if (i != c_grid_size - 2 && j != c_grid_size - 2) {
                 n_y = generator.normalAt(j + 1, i + 1);
             }
-            m_vertex_data.push_back(
-                    {make_position(j + 1, i + 1, i + 1, j + 1), n_y, t_y});
+            m_vertex_data.push_back({make_position(j + 1, i + 1), n_y, t_y});
 
             // V_Z (same position/UV pattern as V_K)
-            m_vertex_data.push_back(
-                    {make_position(j + 1, i, i, j + 1), n_k, t_k});
+            m_vertex_data.push_back({make_position(j + 1, i), n_k, t_k});
         }
     }
 

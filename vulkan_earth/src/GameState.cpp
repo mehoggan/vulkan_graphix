@@ -3,6 +3,7 @@
 #include <GL/freeglut.h>
 #include <errno.h>
 #include <cstdio>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <string>
 #include "math.h"
@@ -30,6 +31,8 @@
 #include "vulkan_earth/Water.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WorldCam.h"
+#include "vulkan_graphix/Ballistics.h"
+#include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must
@@ -119,8 +122,8 @@ GameState::GameState(int new_width,
         // delete n;
 
         /*	FINALLY POSITION TANKS	*/
-        y = new_global_settings->getCurrentTerrain()->getHeightAt(z * scale,
-                                                                  x * scale);
+        y = new_global_settings->getCurrentTerrain()->getHeightAt(x * scale,
+                                                                  z * scale);
         new_player_factory->getPlayer(i)->getCurrentTank()->setTankPos(
                 x * scale, y, z * scale);
         number_of_players = new_global_settings->getPlayerCount();
@@ -309,30 +312,13 @@ GLfloat GameState::calcDistanceBetweenVertices(Vertex* v0, Vertex* v1) {
 
 void GameState::timerEvent(GLfloat new_timer) {}
 
-void GameState::normalizeVector(Vector* v) {
-    GLfloat mag = sqrt(v->compo_x * v->compo_x + v->compo_y * v->compo_y +
-                       v->compo_z * v->compo_z);
-    if (mag != 0) {
-        v->compo_x /= mag;
-        v->compo_y /= mag;
-        v->compo_z /= mag;
-    }
-}
-
 //!!!!!//
 GLfloat GameState::calcAngleBetweenVectors(Vector one, Vector two) {
-    normalizeVector(&one);
-    normalizeVector(&two);
-    errno = 0;
-    GLfloat pi_value = 3.141592653f;
-    GLfloat u[3] = {one.compo_x, one.compo_y, one.compo_z};
-    GLfloat v[3] = {two.compo_x, two.compo_y, two.compo_z};
-    GLfloat angle =
-            acos(u[0] * v[0] + u[1] * v[1] + u[2] * v[2]) * (180.0 / pi_value);
-    if (errno) {
-        return .01;
-    }
-    return angle;
+    return vulkan_graphix::TankOrientation::angleBetweenDegrees(
+            vulkan_graphix::Math::Vec3<float>(
+                    one.compo_x, one.compo_y, one.compo_z),
+            vulkan_graphix::Math::Vec3<float>(
+                    two.compo_x, two.compo_y, two.compo_z));
 }
 //!!!!!//
 
@@ -1497,7 +1483,7 @@ void GameState::createSpecialEffect() {
                     current_player->getCurrentTank()->getBodyMatrix();
             GLfloat new_height =
                     global_settings->getCurrentTerrain()->getHeightAt(
-                            body_matrix[14], body_matrix[12]);
+                            body_matrix[12], body_matrix[14]);
             int scale = static_cast<int>(
                     global_settings->getCurrentTerrain()->getScale());
             Normal n = global_settings->getCurrentTerrain()->getTriangleNormal(
@@ -1540,7 +1526,7 @@ void GameState::handleProjectileState() {
     if (projectile) {
         if (projectile->getPos()[1] <=
             global_settings->getCurrentTerrain()->getHeightAt(
-                    projectile->getPos()[2], projectile->getPos()[0])) {
+                    projectile->getPos()[0], projectile->getPos()[2])) {
             collision_occured = true;
         } else {
             for (int i = 0; i < number_of_players; i++) {
@@ -1565,23 +1551,11 @@ void GameState::handleProjectileState() {
             createSpecialEffect();
         } else {
             timer = timer + .02f;
-            GLfloat scalar = projectile->getInitialPositionScalar();
-            GLfloat* physics_matrix =
-                    current_player->getCurrentTank()->getTurretMatrix();
-            GLfloat xo = projectile->getXo();
-            GLfloat yo = projectile->getYo();
-            GLfloat zo = projectile->getZo();
-            ;
-            GLfloat vox = projectile->getVox();
-            GLfloat voy = projectile->getVoy();
-            GLfloat voz = projectile->getVoz();
-            GLfloat g = gravity;  // Note: gravity is negative
-
-            GLfloat x = vox * timer + xo;
-            GLfloat y = 0.5f * g * pow(static_cast<double>(timer), 2.0) +
-                        voy * timer + yo;
-            GLfloat z = voz * timer + zo;
-            projectile->update(x, y, z);
+            // Note: gravity is negative
+            vulkan_graphix::Math::Vec3<float> const position =
+                    vulkan_graphix::Ballistics::positionAt(
+                            projectile->getLaunch(), gravity, timer);
+            projectile->update(position.x, position.y, position.z);
         }
     } else {
         GLfloat tank_attribute_power =
@@ -1666,14 +1640,15 @@ void GameState::constructProjectile() {
 
     const GLfloat* turret_matrix =
             current_player->getCurrentTank()->getTurretMatrix();
-    GLfloat scalar = 700.0f;
-    // YOU DON'T HAVE PROJECTILE SO SCALAR NEEDS TO BE MODIFIED IN TWO PLACES
-    GLfloat land_pos[3] = {turret_matrix[12] - scalar * turret_matrix[8],
-                           turret_matrix[13] - scalar * turret_matrix[9],
-                           turret_matrix[14] - scalar * turret_matrix[10]};
+    // Refuses to fire if a point just past the muzzle is already below the
+    // terrain (e.g. the barrel is buried in a hillside).
+    vulkan_graphix::Math::Vec3<float> const barrel_probe =
+            vulkan_graphix::Ballistics::pointAlongBarrel(
+                    glm::make_mat4(turret_matrix), 700.0f);
+    GLfloat land_pos[3] = {barrel_probe.x, barrel_probe.y, barrel_probe.z};
 
     if (land_pos[1] < global_settings->getCurrentTerrain()->getHeightAt(
-                              land_pos[2], land_pos[0])) {
+                              land_pos[0], land_pos[2])) {
         projectile = nullptr;
     } else {
         projectile = new Projectile(
@@ -1749,8 +1724,8 @@ void GameState::handleSpecialEffectState() {
                                             ->getScale());
                             GLfloat new_height =
                                     global_settings->getCurrentTerrain()
-                                            ->getHeightAt(body_matrix[14],
-                                                          body_matrix[12]);
+                                            ->getHeightAt(body_matrix[12],
+                                                          body_matrix[14]);
 
                             Normal n = global_settings->getCurrentTerrain()
                                                ->getTriangleNormal(
