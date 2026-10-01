@@ -159,6 +159,20 @@ TEST(TutorialBaseHelpersTest,
 }
 
 TEST(TutorialBaseHelpersTest,
+     GetSwapChainUsageFlagsAddsTransferSourceWhenSupported) {
+    TestableTutorialBase tutorial;
+    VkSurfaceCapabilitiesKHR capabilities{};
+    capabilities.supportedUsageFlags = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+                                       VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
+                                       VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+
+    EXPECT_EQ(tutorial.getSwapChainUsageFlags(capabilities),
+              static_cast<VkImageUsageFlags>(
+                      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+                      VK_IMAGE_USAGE_TRANSFER_SRC_BIT));
+}
+
+TEST(TutorialBaseHelpersTest,
      GetSwapChainUsageFlagsReturnsAllOnesWhenColorAttachmentUnsupported) {
     TestableTutorialBase tutorial;
     VkSurfaceCapabilitiesKHR capabilities{};

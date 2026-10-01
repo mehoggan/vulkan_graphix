@@ -20,6 +20,16 @@ namespace vulkan_graphix::os {
 
 using LibraryHandle = void*;
 
+// One keyboard press or release. keysym is the X11 KeySym (XK_Escape,
+// XK_Left, XK_F1, ...); character is the ASCII character the key types
+// under the current modifiers (e.g. 'a', 'A', ' ', 27 for Escape), or 0 for
+// keys that type nothing (arrows, function keys, modifiers).
+struct KeyEvent {
+    std::uint64_t keysym;
+    char character;
+    bool pressed;
+};
+
 class ProjectBase {
 public:
     ProjectBase();
@@ -45,6 +55,17 @@ public:
                                std::int32_t pos_x,
                                std::int32_t pos_y);
     virtual void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
+
+    // Keyboard hook. Returns whether the rendering loop should keep
+    // running. The default ends the loop on any key press - every
+    // tutorial's long-standing "press a key to quit" behavior - and ignores
+    // releases.
+    virtual bool onKey(const KeyEvent& event);
+
+    // Polled once per loop iteration: an application that decides to exit
+    // on its own (e.g. a menu's Quit button) returns true to end the loop
+    // cleanly. Default: never.
+    virtual bool quitRequested() const;
 
 protected:
     bool m_can_render;
@@ -74,11 +95,25 @@ public:
 
     WindowParameters getParameters() const;
 
+    // 500x500 at (20, 20) - every tutorial's window.
     bool create(const std::string& title);
+    bool create(const std::string& title,
+                std::int32_t pos_x,
+                std::int32_t pos_y,
+                std::int32_t width,
+                std::int32_t height);
     bool renderingLoop(ProjectBase& project);
+
+    // With key repeat off, holding a key reports one press and one release
+    // (X11's auto-repeat press/release pairs are suppressed), like GLUT's
+    // glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF). On by default.
+    void setKeyRepeat(bool enabled);
+    void setCursorVisible(bool visible);
 
 private:
     WindowParameters m_parameters;
+    bool m_key_repeat = true;
+    Cursor m_blank_cursor = None;
 };
 
 }  // namespace vulkan_graphix::os
