@@ -226,14 +226,10 @@ Files" section for the exact invocation.
     GLSL sources are in `resources/vulkan_earth/Shaders/` (run its
     `compile.sh` after editing one); the SPIR-V it loads is committed in
     `resources/vulkan_earth/Data/shaders/`
-  - `src/` - its `.cpp` files (plus the MSVC-only `Tools/ModelBuilder/`
-    mesh-conversion tool, not part of the autotools build - still
-    OpenGL/GLUT, as it was never part of the game itself)
+  - `src/` - its `.cpp` files
   - `include/vulkan_earth/` - every header, included as
     `"vulkan_earth/Foo.h"` (`src/Makefile.am` adds
-    `-I$(top_srcdir)/vulkan_earth/include`); ModelBuilder's own headers
-    sit in `include/vulkan_earth/Tools/ModelBuilder/`, since four of
-    them share a name with a different game header. `MacroCrtdbg.h`
+    `-I$(top_srcdir)/vulkan_earth/include`). `MacroCrtdbg.h`
     must stay the last include (it `#define`s `new`/`malloc`/`free`
     under `_DEBUG`) - `.clang-format`'s `IncludeCategories` pins it last
   - Assets: the game loads everything by bare filename relative to its
@@ -245,9 +241,6 @@ Files" section for the exact invocation.
     gitignored). Its rules work file by file, so `make clean` removes
     exactly the copied files - `src/Predator/` also holds tracked
     `.ac`/`.x3d` source models, which stay
-    ModelBuilder's own two textures are in
-    `resources/vulkan_earth/Tools/ModelBuilder/Data/` - its
-    `TestImage.raw` differs from the game's - so run that tool from there
 
 - **resources/NN/Data/** - Each tutorial's own GLSL sources
   (`shader.NN.{vert,frag}`), compiled SPIR-V (`shader.{vert,frag}.NN.spv`
