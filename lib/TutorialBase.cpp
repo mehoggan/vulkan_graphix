@@ -342,15 +342,36 @@ TutorialBase::~TutorialBase() {
     // matching destroy function was ever resolved: if prepareVulkan() fails
     // partway - e.g. the device was created but loadDeviceLevelEntryPoints()
     // then failed on an earlier function than vkDeviceWaitIdle/
-    // vkDestroyDevice - those pointers are still null, and calling through
-    // a null function pointer here segfaults. Guard each one explicitly;
-    // vkDestroySwapchainKHR/vkDestroySurfaceKHR aren't namespaced the same
-    // way (see ListOfFunctions.inl's USE_SWAPCHAIN_EXTENSIONS comment) and
-    // always resolve to the real libvulkan.so symbol, so they don't need
-    // this guard.
+    // vkDestroyDevice - those pointers are still null. Calling through a
+    // null pointer would segfault, but skipping the device's destruction is
+    // no better: vkDestroyInstance() with a device still alive crashes
+    // inside the driver. So the device-level teardown functions are taken
+    // from their loaded pointers when there are some, else resolved here
+    // straight from vkGetDeviceProcAddr (an instance-level function, so
+    // loaded whenever a device exists), and each is still guarded in case
+    // even that fails. vkDestroySwapchainKHR/vkDestroySurfaceKHR aren't
+    // namespaced the same way (see ListOfFunctions.inl's
+    // USE_SWAPCHAIN_EXTENSIONS comment) and always resolve to the real
+    // libvulkan.so symbol, so they don't need this.
     if (m_vulkan_common_parameters.getVkDevice() != VK_NULL_HANDLE) {
-        if (vkDeviceWaitIdle != nullptr) {
-            vkDeviceWaitIdle(m_vulkan_common_parameters.getVkDevice());
+        VkDevice const device = m_vulkan_common_parameters.getVkDevice();
+        auto resolve = [device](auto loaded, char const* name) {
+            using Function = decltype(loaded);
+            if ((loaded == nullptr) && (vkGetDeviceProcAddr != nullptr)) {
+                loaded = reinterpret_cast<Function>(
+                        vkGetDeviceProcAddr(device, name));
+            }
+            return loaded;
+        };
+        PFN_vkDeviceWaitIdle const device_wait_idle =
+                resolve(vkDeviceWaitIdle, "vkDeviceWaitIdle");
+        PFN_vkDestroyImageView const destroy_image_view =
+                resolve(vkDestroyImageView, "vkDestroyImageView");
+        PFN_vkDestroyDevice const destroy_device =
+                resolve(vkDestroyDevice, "vkDestroyDevice");
+
+        if (device_wait_idle != nullptr) {
+            device_wait_idle(device);
         }
 
         if (m_vulkan_common_parameters.getVkDebugUtilsMessenger() !=
@@ -362,7 +383,7 @@ TutorialBase::~TutorialBase() {
             }
         }
 
-        if (vkDestroyImageView != nullptr) {
+        if (destroy_image_view != nullptr) {
             for (size_t i = 0;
                  i < m_vulkan_common_parameters.getSwapchainParameters()
                              .getImageParameters()
@@ -371,7 +392,7 @@ TutorialBase::~TutorialBase() {
                 if (m_vulkan_common_parameters.getSwapchainParameters()
                             .getImageParameters()[i]
                             .getVkImageView() != VK_NULL_HANDLE) {
-                    vkDestroyImageView(
+                    destroy_image_view(
                             getVkDevice(),
                             m_vulkan_common_parameters.getSwapchainParameters()
                                     .getImageParameters()[i]
@@ -389,8 +410,8 @@ TutorialBase::~TutorialBase() {
                             .getVkSwapchainKhr(),
                     nullptr);
         }
-        if (vkDestroyDevice != nullptr) {
-            vkDestroyDevice(m_vulkan_common_parameters.getVkDevice(), nullptr);
+        if (destroy_device != nullptr) {
+            destroy_device(device, nullptr);
         }
     }
 
