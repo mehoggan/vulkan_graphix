@@ -1,6 +1,4 @@
 #include "vulkan_earth/GameState.h"
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <errno.h>
 #include <cstdint>
 #include <cstdio>
@@ -32,6 +30,9 @@
 #include "vulkan_earth/Water.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WorldCam.h"
+#include "vulkan_earth/render/Camera.h"
+#include "vulkan_earth/render/GlMatrix.h"
+#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_graphix/Ballistics.h"
 #include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_earth/MacroCrtdbg.h"
@@ -44,6 +45,17 @@ extern void playSFX(std::int32_t sfx);
 extern void playMusic(std::int32_t music);
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
+
+namespace {
+// The HUD sizes itself by GLUT_SCREEN_WIDTH and GLUT_SCREEN_HEIGHT - the
+// glutGet() query enums themselves (0x00C8 and 0x00C9), never passed to
+// glutGet() - so its layout was really built on a 200 x 201 "screen".
+// Kept as-is so the HUD looks exactly as it did.
+constexpr std::int32_t c_glut_screen_width = 0x00C8;
+constexpr std::int32_t c_glut_screen_height = 0x00C9;
+}  // namespace
 
 GameState::GameState() = default;
 
@@ -181,15 +193,8 @@ GameState::GameState(std::int32_t new_width,
     // Creating models for projectile.
     // IMPORTANT: Be careful about the order. It should match with the order in
     // that the weapons are created in the ShopMenu constructor
-    if (!(VBOShaderLibrary::initGlew())) {
-        exit(1);
-    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
-        exit(1);
-    }
     for (std::int32_t i = 0; i < max_projectile_models; i++) {
         projectile_models[i] = new VBOShaderLibrary();
-        projectile_models[i]->getVBOPointerFunctions();
-        projectile_models[i]->loadShaders("VertexTank.vs", "FragmentTank.vs");
     }
 
     projectile_models[10]->loadClientData("Projectiles/projectileDefault.ogl");
@@ -388,66 +393,72 @@ void GameState::update() {
     }
 }
 
-void GameState::draw() {
+void GameState::draw(render::RenderContext& context) {
     playBackgroundSounds();
     update();
 
+    // This frame's camera: the gameplay projection the caller set, and
+    // whichever view gluLookAt() used to multiply into the modelview.
+    render::Mat4 view = context.view();
     if (game_sub_state == PROJECTILE || game_sub_state == SPECIAL_EFFECT) {
-        if (chase_cam_active) projectile->chaseView();
+        if (chase_cam_active) view = view * projectile->chaseView();
     }
     if (!chase_cam_active) {
         if (!player_cam) {
-            world_cam->view();
+            view = view * world_cam->view();
         } else {
             const float* turret_matrix =
                     current_player->getCurrentTank()->getTurretMatrix();
             const float* head_matrix =
                     current_player->getCurrentTank()->getHeadMatrix();
-            gluLookAt(head_matrix[12] + head_matrix[8] * 4000,
-                      head_matrix[13] + 2000,
-                      head_matrix[14] + head_matrix[10] * 4000,
-                      head_matrix[12] - head_matrix[8] * 3000,
-                      head_matrix[13] + head_matrix[9] * 0,
-                      head_matrix[14] - head_matrix[10] * 3000,
-                      0,
-                      1,
-                      0);
+            view = view *
+                   render::camera::lookAt(
+                           render::Vec3(
+                                   head_matrix[12] + head_matrix[8] * 4000,
+                                   head_matrix[13] + 2000,
+                                   head_matrix[14] + head_matrix[10] * 4000),
+                           render::Vec3(
+                                   head_matrix[12] - head_matrix[8] * 3000,
+                                   head_matrix[13] + head_matrix[9] * 0,
+                                   head_matrix[14] - head_matrix[10] * 3000),
+                           render::Vec3(0, 1, 0));
         }
     }
+    context.setCamera(context.projection(), view);
 
-    global_settings->getCurrentTerrain()->draw();
-    skybox_factory->draw();
+    global_settings->getCurrentTerrain()->draw(context);
+    skybox_factory->draw(context);
 
     if (current_player->getPlayerType() == "CPU") {
         if (current_player->getDrawDebugLinesandPlanes()) {
-            current_player->drawTestLinesandPlanes();
+            current_player->drawTestLinesandPlanes(context);
         }
     }
 
     if (game_sub_state != SPECIAL_EFFECT) {
         if (projectile) {
-            projectile->draw();
+            projectile->draw(context);
         }
     }
 
-    glPushMatrix();
-    glTranslatef(-256.00f * 400, -5000.00f, -256.00f * 400);
-    ocean->draw();
-    glPopMatrix();
+    // The ocean alone is translated (glPushMatrix()/glPopMatrix()).
+    context.setCamera(
+            context.projection(),
+            render::glmatrix::translated(
+                    view, -256.00f * 400, -5000.00f, -256.00f * 400));
+    ocean->draw(context);
+    context.setCamera(context.projection(), view);
 
-    // DRAW TANKS
-    glColor3f(player_factory->getPlayer(current_player_index)->getRed(),
-              player_factory->getPlayer(current_player_index)->getGreen(),
-              player_factory->getPlayer(current_player_index)->getBlue());
+    // DRAW TANKS (the original set the current player's color here first,
+    // but the tank shader never read it)
     for (std::int32_t i = 0; i < global_settings->getPlayerCount(); i++) {
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationCloak() == 0) {
-            player_factory->getPlayer(i)->getCurrentTank()->draw();
+            player_factory->getPlayer(i)->getCurrentTank()->draw(context);
             if (draw_hit_box) {
-                player_factory->getPlayer(i)
-                        ->getCurrentTank()
-                        ->drawTankHitBox();
+                player_factory->getPlayer(i)->getCurrentTank()->drawTankHitBox(
+                        context);
             }
         }
     }
@@ -459,13 +470,13 @@ void GameState::draw() {
         if (special_effect_type == EXPLOSION) {
             for (std::int32_t x = 0; x < special_effects_count; x++) {
                 if (special_effect_timer > 0) {
-                    special_effects[0]->draw();
+                    special_effects[0]->draw(context);
                 }
                 if (special_effect_timer > 10) {
-                    special_effects[1]->draw();
+                    special_effects[1]->draw(context);
                 }
                 if (special_effect_timer > 20) {
-                    special_effects[2]->draw();
+                    special_effects[2]->draw(context);
                 }
             }
         }
@@ -477,13 +488,26 @@ void GameState::draw() {
                     current_player->getCurrentTank()->getTurretMatrix();
             const float* body_matrix =
                     current_player->getCurrentTank()->getBodyMatrix();
-            glLineWidth(1000);
-            glBegin(GL_LINES);
-            glVertex3f(
-                    turret_matrix[12], turret_matrix[13], turret_matrix[14]);
-            glVertex3f(body_matrix[12], body_matrix[13], body_matrix[14]);
-            glEnd();
-            glLineWidth(1);
+            // No color of its own: the original drew this in whatever GL's
+            // current color was, which each tank mesh's draw call had just
+            // set to red.
+            render::Vec4 const color(1.0f, 0.0f, 0.0f, 1.0f);
+            std::vector<render::UiVertex> const line = {
+                    {render::Vec3(turret_matrix[12],
+                                  turret_matrix[13],
+                                  turret_matrix[14]),
+                     color,
+                     render::Vec2(0.0f)},
+                    {render::Vec3(body_matrix[12],
+                                  body_matrix[13],
+                                  body_matrix[14]),
+                     color,
+                     render::Vec2(0.0f)}};
+            context.drawTransient(line,
+                                  render::PipelineId::UiLines,
+                                  nullptr,
+                                  render::Mat4(1.0f),
+                                  1000);
         }
     }
 
@@ -491,62 +515,78 @@ void GameState::draw() {
         // the current player is in effect of EMP, so do not draw HUD and
         // minimap. He doesn't deserve them.
     } else {
-        drawHUD();
-        drawMinimap();
+        drawHUD(context);
+        drawMinimap(context);
     }
     if (game_sub_state == INVENTORY) {
-        inventory->draw();
+        inventory->draw(context);
     } else if (game_sub_state == HELP) {
-        drawHelp();
+        drawHelp(context);
     }
 }
 
-void GameState::drawHUD() {
+void GameState::drawHUD(render::RenderContext& context) {
     if (player_cam || chase_cam_active) {
         world_cam->setShakeCam(0);
     }
-    glPushMatrix();
-    glDisable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
+    // Drawn over the scene with blending and depth testing off (every color
+    // here is opaque, so only the latter matters), modelview reset to a
+    // translation 800 units into the screen.
+    render::Mat4 const saved_view = context.view();
+    render::Mat4 projection = context.projection();
+    render::Mat4 const hud_view = render::glmatrix::translated(
+            render::Mat4(1.0f), 0.0f, 0.0f, -800.0f);
+    context.setDepthTest(false);
+    context.setCamera(projection, hud_view);
+    render::Vec4 color(1.0f);
 
-    glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -800.0f);
-
-    float new_x = GLUT_SCREEN_WIDTH / 2 +
+    float new_x = c_glut_screen_width / 2 +
                   800 * tan(30 * pi / 180);  // this is wrong, change later
-    float new_y = GLUT_SCREEN_HEIGHT / 2 + 800 * tan(30 * pi / 180);
+    float new_y = c_glut_screen_height / 2 + 800 * tan(30 * pi / 180);
 
     // Current Player Name
     if (game_sub_state == PLAYER_CONTROL) {
-        glColor3f(player_factory->getPlayer(current_player_index)->getRed(),
-                  player_factory->getPlayer(current_player_index)->getGreen(),
-                  player_factory->getPlayer(current_player_index)->getBlue());
-        drawHUDText(player_factory->getPlayer(current_player_index)
+        color = render::Vec4(
+                player_factory->getPlayer(current_player_index)->getRed(),
+                player_factory->getPlayer(current_player_index)->getGreen(),
+                player_factory->getPlayer(current_player_index)->getBlue(),
+                1);
+        drawHUDText(context,
+                    color,
+                    player_factory->getPlayer(current_player_index)
                             ->getPlayerName(),
                     0,
                     0.75 * new_y);
     }
 
     // List of Players and health/delay/team
-    glColor3f(1, 1, 1);
-    drawHUDText("Wait", -0.99 * new_x, 0.75 * new_y);
-    drawHUDText("HP", -0.87 * new_x, 0.75 * new_y);
-    drawHUDText("Player Name", -0.76 * new_x, 0.75 * new_y);
-    drawHUDText("Team", -0.525 * new_x, 0.75 * new_y);
+    color = render::Vec4(1, 1, 1, 1);
+    drawHUDText(context, color, "Wait", -0.99 * new_x, 0.75 * new_y);
+    drawHUDText(context, color, "HP", -0.87 * new_x, 0.75 * new_y);
+    drawHUDText(context, color, "Player Name", -0.76 * new_x, 0.75 * new_y);
+    drawHUDText(context, color, "Team", -0.525 * new_x, 0.75 * new_y);
     for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
-        glColor3f(player_factory->getPlayer(i)->getRed(),
-                  player_factory->getPlayer(i)->getGreen(),
-                  player_factory->getPlayer(i)->getBlue());
-        drawHUDText(player_factory->getPlayer(i)->getPlayerName(),
+        color = render::Vec4(player_factory->getPlayer(i)->getRed(),
+                             player_factory->getPlayer(i)->getGreen(),
+                             player_factory->getPlayer(i)->getBlue(),
+                             1);
+        drawHUDText(context,
+                    color,
+                    player_factory->getPlayer(i)->getPlayerName(),
                     -0.76 * new_x,
                     0.70 * new_y - 0.05 * new_y * i);
         std::string team(1, player_factory->getPlayer(i)->getTeamLabel());
-        glColor3f(1, 1, 1);
-        drawHUDText(team, -0.475 * new_x, 0.70 * new_y - 0.05 * new_y * i);
+        color = render::Vec4(1, 1, 1, 1);
+        drawHUDText(context,
+                    color,
+                    team,
+                    -0.475 * new_x,
+                    0.70 * new_y - 0.05 * new_y * i);
         char buffer[128];
         memset(buffer, 0, 128);
-        drawHUDText((sprintf(buffer,
+        drawHUDText(context,
+                    color,
+                    (sprintf(buffer,
                              "%d",
                              static_cast<std::int32_t>(
                                      player_factory->getPlayer(i)
@@ -555,18 +595,20 @@ void GameState::drawHUD() {
                     -0.95 * new_x,
                     0.70 * new_y - 0.05 * new_y * i);
         if (!player_factory->getPlayer(i)->getCurrentTank()->isAlive()) {
-            glColor3f(1, 0, 0);
+            color = render::Vec4(1, 0, 0, 1);
         }
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationShield() > 0) {
-            glColor3f(0, 0, 1);
+            color = render::Vec4(0, 0, 1, 1);
         }
         if (player_factory->getPlayer(i)->getCurrentTank()->getDurationAcid() >
             0) {
-            glColor3f(0, 1, 0);
+            color = render::Vec4(0, 1, 0, 1);
         }
-        drawHUDText((sprintf(buffer,
+        drawHUDText(context,
+                    color,
+                    (sprintf(buffer,
                              "%d",
                              player_factory->getPlayer(i)
                                      ->getCurrentTank()
@@ -585,9 +627,11 @@ void GameState::drawHUD() {
                             10.0;
         char buffer[128];
         memset(buffer, 0, 128);
-        glColor3f(1, 1, 1);
-        drawHUDText("Power:", 0.7 * new_x, -0.7 * new_y);
-        drawHUDText((sprintf(buffer,
+        color = render::Vec4(1, 1, 1, 1);
+        drawHUDText(context, color, "Power:", 0.7 * new_x, -0.7 * new_y);
+        drawHUDText(context,
+                    color,
+                    (sprintf(buffer,
                              "%d",
                              static_cast<std::int32_t>(power_ratio * 1000)),
                      buffer),
@@ -596,9 +640,11 @@ void GameState::drawHUD() {
         // show previous power
         char buffer1[128];
         memset(buffer1, 0, 128);
-        glColor3f(0.55, 0.55, 0.55);
-        drawHUDText("Power:", 0.7 * new_x, -0.65 * new_y);
-        drawHUDText((sprintf(buffer1,
+        color = render::Vec4(0.55, 0.55, 0.55, 1);
+        drawHUDText(context, color, "Power:", 0.7 * new_x, -0.65 * new_y);
+        drawHUDText(context,
+                    color,
+                    (sprintf(buffer1,
                              "%d",
                              player_factory->getPlayer(current_player_index)
                                      ->getCurrentTank()
@@ -610,9 +656,11 @@ void GameState::drawHUD() {
         // Angle
         char buffer2[128];
         memset(buffer2, 0, 128);
-        glColor3f(1, 1, 1);
-        drawHUDText("Angle:", 0.7 * new_x, -0.8 * new_y);
-        drawHUDText((sprintf(buffer2,
+        color = render::Vec4(1, 1, 1, 1);
+        drawHUDText(context, color, "Angle:", 0.7 * new_x, -0.8 * new_y);
+        drawHUDText(context,
+                    color,
+                    (sprintf(buffer2,
                              "%d",
                              static_cast<std::int32_t>(
                                      player_factory
@@ -626,9 +674,11 @@ void GameState::drawHUD() {
         // show previous angle
         char buffer3[128];
         memset(buffer3, 0, 128);
-        glColor3f(0.55, 0.55, 0.55);
-        drawHUDText("Angle:", 0.7 * new_x, -0.75 * new_y);
-        drawHUDText((sprintf(buffer3,
+        color = render::Vec4(0.55, 0.55, 0.55, 1);
+        drawHUDText(context, color, "Angle:", 0.7 * new_x, -0.75 * new_y);
+        drawHUDText(context,
+                    color,
+                    (sprintf(buffer3,
                              "%d",
                              player_factory->getPlayer(current_player_index)
                                      ->getCurrentTank()
@@ -641,7 +691,7 @@ void GameState::drawHUD() {
         weapon_slot->setXpos(-new_x * 0.7);
         weapon_slot->setYpos(-0.6 * new_y);
         weapon_slot->setZpos(2);
-        weapon_slot->draw();
+        weapon_slot->draw(context);
         if (current_player->getLoadedWeapon() != nullptr) {
             selected_weapon_img->setXpos(weapon_slot->getXpos() * 0.965);
             selected_weapon_img->setYpos(weapon_slot->getYpos() * 0.985);
@@ -649,57 +699,124 @@ void GameState::drawHUD() {
             selected_weapon_remain->setXpos(weapon_slot->getXpos() * 0.965);
             selected_weapon_remain->setYpos(weapon_slot->getYpos() * 1.3);
             selected_weapon_remain->setZpos(22);
-            selected_weapon_img->draw();
-            selected_weapon_remain->draw();
+            selected_weapon_img->draw(context);
+            selected_weapon_remain->draw(context);
         }
 
         // Display Need Help?
         if (need_help) {
-            glColor3f(1, 1, 0);
-            drawHUDText("Press F1 for help", -1.3 * new_x, -0.5 * new_y);
+            color = render::Vec4(1, 1, 0, 1);
+            drawHUDText(context,
+                        color,
+                        "Press F1 for help",
+                        -1.3 * new_x,
+                        -0.5 * new_y);
         }
 
         // Graphic meter: Power
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, GLUT_SCREEN_WIDTH, 0, GLUT_SCREEN_HEIGHT, 1, 2000000);
-        glMatrixMode(GL_MODELVIEW);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glBegin(GL_QUADS);
-        glColor3f(1, 0, 0);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.05 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.08 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) + (0.1 * GLUT_SCREEN_WIDTH),
-                   0.08 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) + (0.1 * GLUT_SCREEN_WIDTH),
-                   0.05 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glEnd();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glBegin(GL_QUADS);
-        glColor3f(power_ratio, 1 - power_ratio, 0);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.05 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.08 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (power_ratio * 0.2) * GLUT_SCREEN_WIDTH,
-                   0.08 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (power_ratio * 0.2) * GLUT_SCREEN_WIDTH,
-                   0.05 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glEnd();
-        glPopMatrix();
+        // glOrtho() over c_glut_screen_width x c_glut_screen_height; as in
+        // the original, it stays in effect for the rest of the HUD.
+        projection = render::camera::ortho(
+                0, c_glut_screen_width, 0, c_glut_screen_height, 1, 2000000);
+        context.setCamera(projection, hud_view);
+        {
+            std::vector<render::UiVertex> out_tris;
+            std::vector<render::UiVertex> out_lines;
+            std::vector<render::UiVertex> quad;
+            std::vector<render::UiVertex> loop;
+            // glPolygonMode(GL_LINE): the quad's outline
+            color = render::Vec4(1, 0, 0, 1.0f);
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.05 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.08 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) +
+                                         (0.1 * c_glut_screen_width),
+                                 0.08 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) +
+                                         (0.1 * c_glut_screen_width),
+                                 0.05 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            for (std::size_t v = 0; v < loop.size(); ++v) {
+                out_lines.push_back(loop[v]);
+                out_lines.push_back(loop[(v + 1) % loop.size()]);
+            }
+            loop.clear();
+            context.drawTransient(
+                    out_lines, render::PipelineId::UiLines, nullptr);
+            color = render::Vec4(power_ratio, 1 - power_ratio, 0, 1.0f);
+            quad.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.05 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            quad.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.08 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            quad.push_back(render::UiVertex{
+                    render::Vec3(
+                            (c_glut_screen_width / 2) -
+                                    (0.1 * c_glut_screen_width) +
+                                    (power_ratio * 0.2) * c_glut_screen_width,
+                            0.08 * c_glut_screen_height,
+                            2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            quad.push_back(render::UiVertex{
+                    render::Vec3(
+                            (c_glut_screen_width / 2) -
+                                    (0.1 * c_glut_screen_width) +
+                                    (power_ratio * 0.2) * c_glut_screen_width,
+                            0.05 * c_glut_screen_height,
+                            2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            context.drawTransient(
+                    out_tris, render::PipelineId::UiTriangles, nullptr);
+        }
 
         // Graphic meter: Health
         float health_ratio =
@@ -712,60 +829,132 @@ void GameState::drawHUD() {
                                 ->getCurrentTank()
                                 ->getArmor() *
                         100);
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, GLUT_SCREEN_WIDTH, 0, GLUT_SCREEN_HEIGHT, 1, 2000000);
-        glMatrixMode(GL_MODELVIEW);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glBegin(GL_QUADS);
-        glColor3f(1, 0, 0);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.90 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.93 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) + (0.1 * GLUT_SCREEN_WIDTH),
-                   0.93 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) + (0.1 * GLUT_SCREEN_WIDTH),
-                   0.90 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glEnd();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glBegin(GL_QUADS);
-        glColor3f(1 - health_ratio, health_ratio, 0);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.90 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH),
-                   0.93 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (health_ratio * 0.2) * GLUT_SCREEN_WIDTH,
-                   0.93 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glVertex3f((GLUT_SCREEN_WIDTH / 2) - (0.1 * GLUT_SCREEN_WIDTH) +
-                           (health_ratio * 0.2) * GLUT_SCREEN_WIDTH,
-                   0.90 * GLUT_SCREEN_HEIGHT,
-                   2);
-        glEnd();
-        glPopMatrix();
+        // glOrtho() over c_glut_screen_width x c_glut_screen_height; as in
+        // the original, it stays in effect for the rest of the HUD.
+        projection = render::camera::ortho(
+                0, c_glut_screen_width, 0, c_glut_screen_height, 1, 2000000);
+        context.setCamera(projection, hud_view);
+        {
+            std::vector<render::UiVertex> out_tris;
+            std::vector<render::UiVertex> out_lines;
+            std::vector<render::UiVertex> quad;
+            std::vector<render::UiVertex> loop;
+            // glPolygonMode(GL_LINE): the quad's outline
+            color = render::Vec4(1, 0, 0, 1.0f);
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.90 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.93 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) +
+                                         (0.1 * c_glut_screen_width),
+                                 0.93 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            loop.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) +
+                                         (0.1 * c_glut_screen_width),
+                                 0.90 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            for (std::size_t v = 0; v < loop.size(); ++v) {
+                out_lines.push_back(loop[v]);
+                out_lines.push_back(loop[(v + 1) % loop.size()]);
+            }
+            loop.clear();
+            context.drawTransient(
+                    out_lines, render::PipelineId::UiLines, nullptr);
+            color = render::Vec4(1 - health_ratio, health_ratio, 0, 1.0f);
+            quad.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.90 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            quad.push_back(render::UiVertex{
+                    render::Vec3((c_glut_screen_width / 2) -
+                                         (0.1 * c_glut_screen_width),
+                                 0.93 * c_glut_screen_height,
+                                 2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            quad.push_back(render::UiVertex{
+                    render::Vec3(
+                            (c_glut_screen_width / 2) -
+                                    (0.1 * c_glut_screen_width) +
+                                    (health_ratio * 0.2) * c_glut_screen_width,
+                            0.93 * c_glut_screen_height,
+                            2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            quad.push_back(render::UiVertex{
+                    render::Vec3(
+                            (c_glut_screen_width / 2) -
+                                    (0.1 * c_glut_screen_width) +
+                                    (health_ratio * 0.2) * c_glut_screen_width,
+                            0.90 * c_glut_screen_height,
+                            2),
+                    color,
+                    render::Vec2(0.0f)});
+            if (quad.size() == 4) {
+                for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                    out_tris.push_back(quad[corner]);
+                quad.clear();
+            }
+            context.drawTransient(
+                    out_tris, render::PipelineId::UiTriangles, nullptr);
+        }
     }
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glDepthMask(GL_TRUE);
-    glPopMatrix();
+    context.setDepthTest(true);
+    context.setCamera(projection, saved_view);
 }
 
-void GameState::drawHUDText(const std::string& input, float x, float y) {
+void GameState::drawHUDText(render::RenderContext& context,
+                            render::Vec4 const& color,
+                            const std::string& input,
+                            float x,
+                            float y) {
+    // One glRasterPos2f() per character, advanced by its pixel width in
+    // world units (so, as in the original, the spacing shrinks with the
+    // HUD's distance from the camera).
+    render::GlutFont const& font =
+            render::Renderer::instance().font(render::FontId::TimesRoman24);
     float x_pos = x;
     for (char ch : input) {
-        std::int32_t step = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
-        glRasterPos2f(x_pos, y);
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        std::int32_t step = font.advance(ch);
+        context.drawBitmapText(font,
+                               render::Vec3(x_pos, y, 0),
+                               std::string_view(&ch, 1),
+                               color);
         x_pos += step;
     }
 }
@@ -894,303 +1083,457 @@ void GameState::toggleCamera() {
     }
 }
 
-void GameState::debugMode() {
+void GameState::debugMode(render::RenderContext& context) {
+    std::vector<render::UiVertex> out_lines;
+    render::Vec4 color(1.0f);
     /*THIS IS DEBUG TEXT REMOVE LATER THIS JUST HELPS TO SEE IF TANKS ARE
      * ORIENTED CORRECTLY*/
     //*
     Normal n = current_player->getCurrentTank()->getAlignmentVector();
-    glColor3f(0.00, 0.50, 0.50);
-    glBegin(GL_LINES);
-    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12],
-               current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
-               current_player->getCurrentTank()->getHeadMatrix()[14]);
-    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12] +
-                       800 * n.compo_x,
-               current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
-                       800 * n.compo_y,
-               current_player->getCurrentTank()->getHeadMatrix()[14] +
-                       800 * n.compo_z);
-    glEnd();
+    color = render::Vec4(0.00, 0.50, 0.50, 1.0f);
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12],
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            100,
+                    current_player->getCurrentTank()->getHeadMatrix()[14]),
+            color,
+            render::Vec2(0.0f)});
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] +
+                            800 * n.compo_x,
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            100 + 800 * n.compo_y,
+                    current_player->getCurrentTank()->getHeadMatrix()[14] +
+                            800 * n.compo_z),
+            color,
+            render::Vec2(0.0f)});
     //*/
     //*/
-    glColor3f(0.00, 0.00, 1.00);
-    glBegin(GL_LINES);
-    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12],
-               current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
-               current_player->getCurrentTank()->getHeadMatrix()[14]);
-    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12] +
-                       1000 * (current_player->getCurrentTank()
-                                       ->getHeadMatrix()[4]),
-               current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
-                       1000 * (current_player->getCurrentTank()
-                                       ->getHeadMatrix()[5]),
-               current_player->getCurrentTank()->getHeadMatrix()[14] +
-                       1000 * (current_player->getCurrentTank()
-                                       ->getHeadMatrix()[6]));
-    glEnd();
+    color = render::Vec4(0.00, 0.00, 1.00, 1.0f);
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12],
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            100,
+                    current_player->getCurrentTank()->getHeadMatrix()[14]),
+            color,
+            render::Vec2(0.0f)});
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] +
+                            1000 * (current_player->getCurrentTank()
+                                            ->getHeadMatrix()[4]),
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            100 +
+                            1000 * (current_player->getCurrentTank()
+                                            ->getHeadMatrix()[5]),
+                    current_player->getCurrentTank()->getHeadMatrix()[14] +
+                            1000 * (current_player->getCurrentTank()
+                                            ->getHeadMatrix()[6])),
+            color,
+            render::Vec2(0.0f)});
     //*/
     //*/
     Normal m = current_player->getCurrentTank()->getRotateAbout();
-    glColor3f(0.75, 0.50, 0.50);
-    glBegin(GL_LINES);
-    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12],
-               current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
-               current_player->getCurrentTank()->getHeadMatrix()[14]);
-    glVertex3f(current_player->getCurrentTank()->getHeadMatrix()[12] +
-                       1000 * m.compo_x,
-               current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
-                       1000 * m.compo_y,
-               current_player->getCurrentTank()->getHeadMatrix()[14] +
-                       1000 * m.compo_z);
-    glEnd();
+    color = render::Vec4(0.75, 0.50, 0.50, 1.0f);
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12],
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            100,
+                    current_player->getCurrentTank()->getHeadMatrix()[14]),
+            color,
+            render::Vec2(0.0f)});
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] +
+                            1000 * m.compo_x,
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            100 + 1000 * m.compo_y,
+                    current_player->getCurrentTank()->getHeadMatrix()[14] +
+                            1000 * m.compo_z),
+            color,
+            render::Vec2(0.0f)});
     //*/
     /*END OF TANK ORIENTATION DEBUGGING*/
+    context.drawTransient(out_lines, render::PipelineId::UiLines, nullptr);
 }
 
-void GameState::drawMinimap() {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    glViewport(width - width / 5.8,
-               height - height / 4.8,
-               width / 6.0,
-               height / 5.0);
-    glOrtho(-18000, 18000, -15000, 15000, 1, 20000000);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glScissor(width - width / 5.8,
-              height - height / 4.8,
-              width / 6.0,
-              height / 5.0);
-    glClearColor(.22, .65, .60, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void GameState::drawMinimap(render::RenderContext& context) {
+    // Its own viewport (glViewport()'s float -> int truncation kept),
+    // cleared to the sea color.
+    context.setViewport({static_cast<std::int32_t>(width - width / 5.8),
+                         static_cast<std::int32_t>(height - height / 4.8),
+                         static_cast<std::int32_t>(width / 6.0),
+                         static_cast<std::int32_t>(height / 5.0)});
+    context.clearColorAndDepth(render::Vec4(.22, .65, .60, 1));
 
     std::int32_t size = static_cast<std::int32_t>(
             global_settings->getCurrentTerrain()->getActualSize());
 
-    gluLookAt(size / 2,
-              size + (size / width),
-              size / 2,
-              size / 2,
-              0,
-              size / 2,
-              1.0f,
-              0.0f,
-              0.0f);
+    context.setCamera(
+            render::camera::ortho(-18000, 18000, -15000, 15000, 1, 20000000),
+            render::camera::lookAt(
+                    render::Vec3(size / 2, size + (size / width), size / 2),
+                    render::Vec3(size / 2, 0, size / 2),
+                    render::Vec3(1.0f, 0.0f, 0.0f)));
 
-    global_settings->getCurrentTerrain()->draw();
+    global_settings->getCurrentTerrain()->draw(context);
 
+    std::vector<render::UiVertex> out_tris;
+    std::vector<render::UiVertex> out_lines;
+    std::vector<render::UiVertex> quad;
+    std::vector<render::UiVertex> loop;
+    render::Vec4 color(1.0f);
     // Draw Tank Marks
     for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationCloak() == 0) {
-            glBegin(GL_TRIANGLES);
-            glColor3f(player_factory->collectPlayerColor(i)[0],
-                      player_factory->collectPlayerColor(i)[1],
-                      player_factory->collectPlayerColor(i)[2]);
-            glVertex3f(player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[12] -
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[8] *
-                                       900,
-                       player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[13] +
-                               12000,
-                       player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[14] -
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[10] *
-                                       900);
-            glVertex3f(player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[12] +
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[0] *
-                                       700 +
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[8] *
-                                       900,
-                       player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[13] +
-                               12000,
-                       player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[14] +
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[2] *
-                                       700 +
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[10] *
-                                       900);
-            glVertex3f(player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[12] -
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[0] *
-                                       700 +
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[8] *
-                                       900,
-                       player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[13] +
-                               12000,
-                       player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[14] -
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[2] *
-                                       700 +
-                               player_factory->getPlayer(i)
-                                               ->getCurrentTank()
-                                               ->getHeadMatrix()[10] *
-                                       900);
-            glEnd();
+            color = render::Vec4(player_factory->collectPlayerColor(i)[0],
+                                 player_factory->collectPlayerColor(i)[1],
+                                 player_factory->collectPlayerColor(i)[2],
+                                 1.0f);
+            out_tris.push_back(render::UiVertex{
+                    render::Vec3(
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[12] -
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[8] *
+                                            900,
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[13] +
+                                    12000,
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[14] -
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[10] *
+                                            900),
+                    color,
+                    render::Vec2(0.0f)});
+            out_tris.push_back(render::UiVertex{
+                    render::Vec3(
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[12] +
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[0] *
+                                            700 +
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[8] *
+                                            900,
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[13] +
+                                    12000,
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[14] +
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[2] *
+                                            700 +
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[10] *
+                                            900),
+                    color,
+                    render::Vec2(0.0f)});
+            out_tris.push_back(render::UiVertex{
+                    render::Vec3(
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[12] -
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[0] *
+                                            700 +
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[8] *
+                                            900,
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[13] +
+                                    12000,
+                            player_factory->getPlayer(i)
+                                            ->getCurrentTank()
+                                            ->getHeadMatrix()[14] -
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[2] *
+                                            700 +
+                                    player_factory->getPlayer(i)
+                                                    ->getCurrentTank()
+                                                    ->getHeadMatrix()[10] *
+                                            900),
+                    color,
+                    render::Vec2(0.0f)});
         }
     }
     // Draw Current Player Tank's Aiming Line
-    glBegin(GL_QUADS);
-    glColor4f(player_factory->collectPlayerColor(current_player_index)[0],
-              player_factory->collectPlayerColor(current_player_index)[1],
-              player_factory->collectPlayerColor(current_player_index)[2],
-              0.50);
-    glVertex3f(
-            current_player->getCurrentTank()->getHeadMatrix()[12] +
-                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
-            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            current_player->getCurrentTank()->getHeadMatrix()[14] +
-                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60);
-    glVertex3f(
-            current_player->getCurrentTank()->getHeadMatrix()[12] +
-                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
-                    current_player->getCurrentTank()->getHeadMatrix()[8] *
-                            24000,
-            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            current_player->getCurrentTank()->getHeadMatrix()[14] +
-                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
-                    current_player->getCurrentTank()->getHeadMatrix()[10] *
-                            24000);
-    glVertex3f(
-            current_player->getCurrentTank()->getHeadMatrix()[12] -
-                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
-                    current_player->getCurrentTank()->getHeadMatrix()[8] *
-                            24000,
-            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            current_player->getCurrentTank()->getHeadMatrix()[14] -
-                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
-                    current_player->getCurrentTank()->getHeadMatrix()[10] *
-                            24000);
-    glVertex3f(
-            current_player->getCurrentTank()->getHeadMatrix()[12] -
-                    current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
-            current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-            current_player->getCurrentTank()->getHeadMatrix()[14] -
-                    current_player->getCurrentTank()->getHeadMatrix()[2] * 60);
-    glEnd();
+    color = render::Vec4(
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2],
+            0.50);
+    quad.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] +
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[0] *
+                                    60,
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            10000,
+                    current_player->getCurrentTank()->getHeadMatrix()[14] +
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[2] *
+                                    60),
+            color,
+            render::Vec2(0.0f)});
+    if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+            out_tris.push_back(quad[corner]);
+        quad.clear();
+    }
+    quad.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] +
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[0] *
+                                    60 -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[8] *
+                                    24000,
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            10000,
+                    current_player->getCurrentTank()->getHeadMatrix()[14] +
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[2] *
+                                    60 -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[10] *
+                                    24000),
+            color,
+            render::Vec2(0.0f)});
+    if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+            out_tris.push_back(quad[corner]);
+        quad.clear();
+    }
+    quad.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[0] *
+                                    60 -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[8] *
+                                    24000,
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            10000,
+                    current_player->getCurrentTank()->getHeadMatrix()[14] -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[2] *
+                                    60 -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[10] *
+                                    24000),
+            color,
+            render::Vec2(0.0f)});
+    if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+            out_tris.push_back(quad[corner]);
+        quad.clear();
+    }
+    quad.push_back(render::UiVertex{
+            render::Vec3(
+                    current_player->getCurrentTank()->getHeadMatrix()[12] -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[0] *
+                                    60,
+                    current_player->getCurrentTank()->getHeadMatrix()[13] +
+                            10000,
+                    current_player->getCurrentTank()->getHeadMatrix()[14] -
+                            current_player->getCurrentTank()
+                                            ->getHeadMatrix()[2] *
+                                    60),
+            color,
+            render::Vec2(0.0f)});
+    if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+            out_tris.push_back(quad[corner]);
+        quad.clear();
+    }
 
     // Draw Lines of Sight of World Camera
     if (!player_cam && !chase_cam_active) {
-        glBegin(GL_LINE_LOOP);
-        glColor4f(1, 1, 1, 0.8);
-        glVertex3f(
-                world_cam->getMatrix()[12] - world_cam->getMatrix()[13] * 0.38,
-                10000,
-                world_cam->getMatrix()[14] + world_cam->getMatrix()[13] -
-                        15000 / width);
-        glVertex3f(
-                world_cam->getMatrix()[12] - world_cam->getMatrix()[13] * 0.38,
-                10000,
-                world_cam->getMatrix()[14] - world_cam->getMatrix()[13] +
-                        15000 / width);
-        glVertex3f(
-                world_cam->getMatrix()[12] + world_cam->getMatrix()[13] * 0.82,
-                10000,
-                world_cam->getMatrix()[14] - world_cam->getMatrix()[13] +
-                        15000 / width - 1350);
-        glVertex3f(
-                world_cam->getMatrix()[12] + world_cam->getMatrix()[13] * 0.82,
-                10000,
-                world_cam->getMatrix()[14] + world_cam->getMatrix()[13] -
-                        15000 / width + 1350);
-        glEnd();
+        color = render::Vec4(1, 1, 1, 0.8);
+        loop.push_back(render::UiVertex{
+                render::Vec3(world_cam->getMatrix()[12] -
+                                     world_cam->getMatrix()[13] * 0.38,
+                             10000,
+                             world_cam->getMatrix()[14] +
+                                     world_cam->getMatrix()[13] -
+                                     15000 / width),
+                color,
+                render::Vec2(0.0f)});
+        loop.push_back(render::UiVertex{
+                render::Vec3(world_cam->getMatrix()[12] -
+                                     world_cam->getMatrix()[13] * 0.38,
+                             10000,
+                             world_cam->getMatrix()[14] -
+                                     world_cam->getMatrix()[13] +
+                                     15000 / width),
+                color,
+                render::Vec2(0.0f)});
+        loop.push_back(render::UiVertex{
+                render::Vec3(world_cam->getMatrix()[12] +
+                                     world_cam->getMatrix()[13] * 0.82,
+                             10000,
+                             world_cam->getMatrix()[14] -
+                                     world_cam->getMatrix()[13] +
+                                     15000 / width - 1350),
+                color,
+                render::Vec2(0.0f)});
+        loop.push_back(render::UiVertex{
+                render::Vec3(world_cam->getMatrix()[12] +
+                                     world_cam->getMatrix()[13] * 0.82,
+                             10000,
+                             world_cam->getMatrix()[14] +
+                                     world_cam->getMatrix()[13] -
+                                     15000 / width + 1350),
+                color,
+                render::Vec2(0.0f)});
+        for (std::size_t v = 0; v < loop.size(); ++v) {
+            out_lines.push_back(loop[v]);
+            out_lines.push_back(loop[(v + 1) % loop.size()]);
+        }
+        loop.clear();
     }
+
+    // Flushed here to keep the original's draw order: the projectile's
+    // quad below shares the line of sight's height, so whichever is drawn
+    // first wins the depth test.
+    context.drawTransient(out_tris, render::PipelineId::UiTriangles, nullptr);
+    context.drawTransient(out_lines, render::PipelineId::UiLines, nullptr);
+    out_tris.clear();
+    out_lines.clear();
 
     // Draw Projectile
     if (projectile) {
-        glBegin(GL_QUADS);
-        glColor3f(1, 1, 1);
-        glVertex3f(projectile->getPos()[0] - 200,
-                   10000,
-                   projectile->getPos()[2] - 200);
-        glVertex3f(projectile->getPos()[0] - 200,
-                   10000,
-                   projectile->getPos()[2] + 200);
-        glVertex3f(projectile->getPos()[0] + 200,
-                   10000,
-                   projectile->getPos()[2] + 200);
-        glVertex3f(projectile->getPos()[0] + 200,
-                   10000,
-                   projectile->getPos()[2] - 200);
-        glEnd();
+        color = render::Vec4(1, 1, 1, 1.0f);
+        quad.push_back(
+                render::UiVertex{render::Vec3(projectile->getPos()[0] - 200,
+                                              10000,
+                                              projectile->getPos()[2] - 200),
+                                 color,
+                                 render::Vec2(0.0f)});
+        if (quad.size() == 4) {
+            for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                out_tris.push_back(quad[corner]);
+            quad.clear();
+        }
+        quad.push_back(
+                render::UiVertex{render::Vec3(projectile->getPos()[0] - 200,
+                                              10000,
+                                              projectile->getPos()[2] + 200),
+                                 color,
+                                 render::Vec2(0.0f)});
+        if (quad.size() == 4) {
+            for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                out_tris.push_back(quad[corner]);
+            quad.clear();
+        }
+        quad.push_back(
+                render::UiVertex{render::Vec3(projectile->getPos()[0] + 200,
+                                              10000,
+                                              projectile->getPos()[2] + 200),
+                                 color,
+                                 render::Vec2(0.0f)});
+        if (quad.size() == 4) {
+            for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                out_tris.push_back(quad[corner]);
+            quad.clear();
+        }
+        quad.push_back(
+                render::UiVertex{render::Vec3(projectile->getPos()[0] + 200,
+                                              10000,
+                                              projectile->getPos()[2] - 200),
+                                 color,
+                                 render::Vec2(0.0f)});
+        if (quad.size() == 4) {
+            for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+                out_tris.push_back(quad[corner]);
+            quad.clear();
+        }
     }
 
     // Draw Projectile Land Mark
-    glBegin(GL_LINES);
-    glColor3f(player_factory->collectPlayerColor(current_player_index)[0],
-              player_factory->collectPlayerColor(current_player_index)[1],
-              player_factory->collectPlayerColor(current_player_index)[2]);
-    glVertex3f(
-            current_player->getCurrentTank()->getProjectileLandPos()[0] - 900,
-            10000,
-            current_player->getCurrentTank()->getProjectileLandPos()[1] - 900);
-    glVertex3f(
-            current_player->getCurrentTank()->getProjectileLandPos()[0] + 900,
-            10000,
-            current_player->getCurrentTank()->getProjectileLandPos()[1] + 900);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(player_factory->collectPlayerColor(current_player_index)[0],
-              player_factory->collectPlayerColor(current_player_index)[1],
-              player_factory->collectPlayerColor(current_player_index)[2]);
-    glVertex3f(
-            current_player->getCurrentTank()->getProjectileLandPos()[0] + 900,
-            10000,
-            current_player->getCurrentTank()->getProjectileLandPos()[1] - 900);
-    glVertex3f(
-            current_player->getCurrentTank()->getProjectileLandPos()[0] - 900,
-            10000,
-            current_player->getCurrentTank()->getProjectileLandPos()[1] + 900);
-    glEnd();
+    color = render::Vec4(
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2],
+            1.0f);
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[0] -
+                                 900,
+                         10000,
+                         current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[1] -
+                                 900),
+            color,
+            render::Vec2(0.0f)});
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[0] +
+                                 900,
+                         10000,
+                         current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[1] +
+                                 900),
+            color,
+            render::Vec2(0.0f)});
+    color = render::Vec4(
+            player_factory->collectPlayerColor(current_player_index)[0],
+            player_factory->collectPlayerColor(current_player_index)[1],
+            player_factory->collectPlayerColor(current_player_index)[2],
+            1.0f);
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[0] +
+                                 900,
+                         10000,
+                         current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[1] -
+                                 900),
+            color,
+            render::Vec2(0.0f)});
+    out_lines.push_back(render::UiVertex{
+            render::Vec3(current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[0] -
+                                 900,
+                         10000,
+                         current_player->getCurrentTank()
+                                         ->getProjectileLandPos()[1] +
+                                 900),
+            color,
+            render::Vec2(0.0f)});
 
-    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
-    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    context.drawTransient(out_tris, render::PipelineId::UiTriangles, nullptr);
+    context.drawTransient(out_lines, render::PipelineId::UiLines, nullptr);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, win_width, win_height);
-    gluPerspective(
-            60.0,
-            static_cast<float>(win_width) / static_cast<float>(win_height),
-            1.0,
-            1000000.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, win_width, win_height);
-    glLoadIdentity();
+    render::resetToFullWindow(context);
 }
 
 void GameState::playBackgroundSounds() {
@@ -1302,43 +1645,19 @@ void GameState::playBackgroundSounds() {
     }
 }
 
-void GameState::drawHelp() {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+void GameState::drawHelp(render::RenderContext& context) {
+    // glViewport()'s float -> int truncation kept.
+    render::beginOverlayPanel(context,
+                              {static_cast<std::int32_t>(width * 0.25),
+                               static_cast<std::int32_t>(height * 0.1),
+                               static_cast<std::int32_t>(width * 0.5),
+                               static_cast<std::int32_t>(height * 0.8)},
+                              width,
+                              height);
 
-    glViewport(width * 0.25, height * 0.1, width * 0.5, height * 0.8);
-    gluPerspective(
-            60.0,
-            (static_cast<float>(width) / (1.5 * static_cast<float>(height))),
-            1,
-            199999999);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glScissor(width * 0.25, height * 0.1, width * 0.5, height * 0.8);
-    glClearColor(0.75, 0.75, 0.75, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    manual->draw(context);
 
-    std::int32_t distance = static_cast<std::int32_t>(
-            glutGet(GLUT_WINDOW_HEIGHT) / 4 * tan(1.04719755));
-    gluLookAt(0, 0, distance, 0, 0, 0, 0.0f, 1.0f, 0.0f);
-
-    manual->draw();
-
-    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
-    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, win_width, win_height);
-    gluPerspective(
-            60.0,
-            static_cast<float>(win_width) / static_cast<float>(win_height),
-            1.0,
-            1000000.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, win_width, win_height);
-    glLoadIdentity();
+    render::resetToFullWindow(context);
 }
 
 void GameState::handlePlayerControlUpdates() {
@@ -1854,7 +2173,7 @@ void GameState::handleInventoryKeyboard(std::int32_t key, bool key_status) {
                                            0,
                                            0,
                                            3,
-                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           render::FontId::TimesRoman24,
                                            0.6,
                                            0.2,
                                            0.4);
@@ -2022,7 +2341,7 @@ void GameState::handlePassTime() {
                                        weapon_slot->getXpos() * 1.1,
                                        weapon_slot->getYpos() * 1.3,
                                        3,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       render::FontId::TimesRoman24,
                                        0.6,
                                        0.2,
                                        0.4);

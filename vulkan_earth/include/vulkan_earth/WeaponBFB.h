@@ -1,8 +1,6 @@
 #ifndef WEAPON_BFB_H
 #define WEAPON_BFB_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"
 

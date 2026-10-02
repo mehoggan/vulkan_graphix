@@ -1,14 +1,17 @@
 #ifndef MAINMENUBUTTON_H
 #define MAINMENUBUTTON_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/Item.h"
+#include "vulkan_earth/render/Mesh.h"
 
 class TextObject;
 class SubMenu;
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class MainMenuButton {
 public:
@@ -25,8 +28,7 @@ public:
                    const std::string& new_caption,
                    SubMenu* new_submenu);
     ~MainMenuButton();
-    void pressDraw();
-    void draw();
+    void draw(vulkan_earth::render::RenderContext& context);
     void pressButton();
     void activateSubMenu();
     void deactivateSubMenu();
@@ -57,5 +59,8 @@ private:
     bool pressed;
     bool active;
     SubMenu* submenu;
+    vulkan_earth::render::UiMesh mesh;
+    bool built_pressed = false;
+    vulkan_earth::render::Vec4 built_color = vulkan_earth::render::Vec4(-1.0f);
 };
 #endif  // MAINMENUBUTTON_H

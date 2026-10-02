@@ -1,4 +1,5 @@
 #include "vulkan_earth/Player.h"
+#include <array>
 #include <cstdint>
 #include <glm/gtc/type_ptr.hpp>
 #include "vulkan_earth/GameState.h"
@@ -8,7 +9,10 @@
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_earth/MacroCrtdbg.h"
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -462,58 +466,67 @@ void Player::pitchDown(float degrees) {
     getCurrentTank()->rotateTurret(-degrees);
 }
 
-void Player::drawTestLinesandPlanes() {
+void Player::drawTestLinesandPlanes(render::RenderContext& context) {
     float scalar = 1000;
+    std::vector<render::UiVertex> lines;
+    std::vector<render::UiVertex> quads;
+    auto line = [&](render::Vec4 const& color,
+                    Vertex const& from,
+                    Vertex const& to) {
+        lines.push_back(
+                {render::Vec3(from.coord_x, from.coord_y, from.coord_z),
+                 color,
+                 render::Vec2(0.0f)});
+        lines.push_back({render::Vec3(to.coord_x, to.coord_y, to.coord_z),
+                         color,
+                         render::Vec2(0.0f)});
+    };
+    auto quad = [&](render::Vec4 const& color,
+                    std::array<render::Vec3, 4> const& corners) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U}) {
+            quads.push_back({corners[corner], color, render::Vec2(0.0f)});
+        }
+    };
     /*	START BALISTIC AXES	*/
-    glBegin(GL_LINES);
-    glColor3f(Red);
     Vertex xyzri(
             balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
     Vertex xyzrf(scalar * balistic_matrix[0],
                  scalar * balistic_matrix[1],
                  scalar * balistic_matrix[2]);
-    glVertex3f(xyzri.coord_x, xyzri.coord_y, xyzri.coord_z);
-    glVertex3f(xyzri.coord_x + xyzrf.coord_x,
-               xyzri.coord_y + xyzrf.coord_y,
-               xyzri.coord_z + xyzrf.coord_z);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(Green);
+    line(render::Vec4(Red, 1.0f),
+         xyzri,
+         Vertex(xyzri.coord_x + xyzrf.coord_x,
+                xyzri.coord_y + xyzrf.coord_y,
+                xyzri.coord_z + xyzrf.coord_z));
     Vertex xyzui(
             balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
     Vertex xyzuf(scalar * balistic_matrix[4],
                  scalar * balistic_matrix[5],
                  scalar * balistic_matrix[6]);
-    glVertex3f(xyzui.coord_x, xyzui.coord_y, xyzui.coord_z);
-    glVertex3f(xyzui.coord_x + xyzuf.coord_x,
-               xyzui.coord_y + xyzuf.coord_y,
-               xyzui.coord_z + xyzuf.coord_z);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(Blue);
+    line(render::Vec4(Green, 1.0f),
+         xyzui,
+         Vertex(xyzui.coord_x + xyzuf.coord_x,
+                xyzui.coord_y + xyzuf.coord_y,
+                xyzui.coord_z + xyzuf.coord_z));
     Vertex xyzai(
             balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
     Vertex xyzaf(scalar * balistic_matrix[8],
                  scalar * balistic_matrix[9],
                  scalar * balistic_matrix[10]);
-    glVertex3f(xyzai.coord_x, xyzai.coord_y, xyzai.coord_z);
-    glVertex3f(xyzai.coord_x + xyzaf.coord_x,
-               xyzai.coord_y + xyzaf.coord_y,
-               xyzai.coord_z + xyzaf.coord_z);
-    glEnd();
+    line(render::Vec4(Blue, 1.0f),
+         xyzai,
+         Vertex(xyzai.coord_x + xyzaf.coord_x,
+                xyzai.coord_y + xyzaf.coord_y,
+                xyzai.coord_z + xyzaf.coord_z));
     /*	END BALISTIC AXES	*/
 
     if (target) {
         /*	START ENEMY VECTOR AXES	*/
-        glBegin(GL_LINES);
-        glColor3f(LightSteelBlue);
         Vertex mypos(
                 balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
         Vertex enemypos(
                 enemy_position.coord_x, mypos.coord_y, enemy_position.coord_z);
-        glVertex3f(mypos.coord_x, mypos.coord_y, mypos.coord_z);
-        glVertex3f(enemypos.coord_x, enemypos.coord_y, enemypos.coord_z);
-        glEnd();
+        line(render::Vec4(LightSteelBlue, 1.0f), mypos, enemypos);
         /*	END ENEMY VECTOR AXES	*/
         ///*	START PERP VECTORS	*/
         // glBegin(GL_LINES);
@@ -538,52 +551,50 @@ void Player::drawTestLinesandPlanes() {
         // glEnd();
         ///*	END PERP VECTORS	*/
         /*	START PROJECTILE PATH	*/
-        glBegin(GL_LINES);
-        glColor3f(MediumGoldenrod);
         Vertex o3(
                 balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
         Vertex path_end(o3.coord_x - 100000 * balistic_matrix[8],
                         o3.coord_y,
                         o3.coord_z - 100000 * balistic_matrix[10]);
-        glVertex3f(o3.coord_x, o3.coord_y, o3.coord_z);
-        glVertex3f(path_end.coord_x, path_end.coord_y, path_end.coord_z);
-        glEnd();
+        line(render::Vec4(MediumGoldenrod, 1.0f), o3, path_end);
         /*	END	PROJECTILE PATH		*/
 
-        glBegin(GL_QUADS);
         const float* matrix = getBalisticMatrix();
-        glColor4f(Pink, 0.75f);
-        glVertex3f(matrix[12] - 1000 * matrix[0],
-                   matrix[13],
-                   matrix[14] - 1000 * matrix[2]);
-        glVertex3f(matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
-                   matrix[13],
-                   matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]);
-        glVertex3f(matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
-                   matrix[13],
-                   matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]);
-        glVertex3f(matrix[12] + 1000 * matrix[0],
-                   matrix[13],
-                   matrix[14] + 1000 * matrix[2]);
-        glEnd();
+        quad(render::Vec4(Pink, 0.75f),
+             {render::Vec3(matrix[12] - 1000 * matrix[0],
+                           matrix[13],
+                           matrix[14] - 1000 * matrix[2]),
+              render::Vec3(matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
+                           matrix[13],
+                           matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]),
+              render::Vec3(matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
+                           matrix[13],
+                           matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]),
+              render::Vec3(matrix[12] + 1000 * matrix[0],
+                           matrix[13],
+                           matrix[14] + 1000 * matrix[2])});
 
-        glBegin(GL_QUADS);
         const float* t_matrix = getCurrentTank()->getTurretMatrix();
-        glColor4f(Red, 0.75f);
-        glVertex3f(t_matrix[12] - 1000 * t_matrix[0],
-                   t_matrix[13] - 1000 * t_matrix[1],
-                   t_matrix[14] - 1000 * t_matrix[2]);
-        glVertex3f(t_matrix[12] - 1000 * t_matrix[0] - 10000 * t_matrix[8],
-                   t_matrix[13] - 1000 * t_matrix[1] - 10000 * t_matrix[9],
-                   t_matrix[14] - 1000 * t_matrix[2] - 10000 * t_matrix[10]);
-        glVertex3f(t_matrix[12] + 1000 * t_matrix[0] - 10000 * t_matrix[8],
-                   t_matrix[13] + 1000 * t_matrix[1] - 10000 * t_matrix[9],
-                   t_matrix[14] + 1000 * t_matrix[2] - 10000 * t_matrix[10]);
-        glVertex3f(t_matrix[12] + 1000 * t_matrix[0],
-                   t_matrix[13] + 1000 * t_matrix[1],
-                   t_matrix[14] + 1000 * t_matrix[2]);
-        glEnd();
+        quad(render::Vec4(Red, 0.75f),
+             {render::Vec3(t_matrix[12] - 1000 * t_matrix[0],
+                           t_matrix[13] - 1000 * t_matrix[1],
+                           t_matrix[14] - 1000 * t_matrix[2]),
+              render::Vec3(
+                      t_matrix[12] - 1000 * t_matrix[0] - 10000 * t_matrix[8],
+                      t_matrix[13] - 1000 * t_matrix[1] - 10000 * t_matrix[9],
+                      t_matrix[14] - 1000 * t_matrix[2] -
+                              10000 * t_matrix[10]),
+              render::Vec3(
+                      t_matrix[12] + 1000 * t_matrix[0] - 10000 * t_matrix[8],
+                      t_matrix[13] + 1000 * t_matrix[1] - 10000 * t_matrix[9],
+                      t_matrix[14] + 1000 * t_matrix[2] -
+                              10000 * t_matrix[10]),
+              render::Vec3(t_matrix[12] + 1000 * t_matrix[0],
+                           t_matrix[13] + 1000 * t_matrix[1],
+                           t_matrix[14] + 1000 * t_matrix[2])});
     }
+    context.drawTransient(lines, render::PipelineId::UiLines, nullptr);
+    context.drawTransient(quads, render::PipelineId::UiTriangles, nullptr);
 }
 
 bool Player::getDrawDebugLinesandPlanes() {

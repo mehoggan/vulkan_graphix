@@ -14,16 +14,13 @@ PKG_CHECK_MODULES([VULKAN], [vulkan])
 PKG_CHECK_MODULES([X11], [x11])
 PKG_CHECK_MODULES([GLM], [glm])
 
-# vulkan_earth: a legacy OpenGL/GLUT game vendored under vulkan_earth/,
-# ported off MSVC/Win32 onto X11 via GLUT (see vulkan_earth/src/Makefile.am).
-PKG_CHECK_MODULES([VULKAN_EARTH_GL], [gl glu glut])
-PKG_CHECK_MODULES([VULKAN_EARTH_GLEW], [glew])
+# vulkan_earth: a legacy game vendored under vulkan_earth/, originally
+# OpenGL/GLUT on MSVC/Win32, now on Vulkan (see vulkan_earth/src/Makefile.am).
 PKG_CHECK_MODULES([VULKAN_EARTH_SDL], [sdl SDL_mixer])
-# Queries the primary monitor's real geometry via RandR: GLUT's own
-# GLUT_SCREEN_WIDTH/HEIGHT is the combined virtual screen across every
-# monitor on X11 (unlike Windows, where it's the primary display), so
-# sizing/positioning the game's window off RandR instead is what keeps
-# it confined to one monitor on a multi-monitor X11 desktop.
+# Queries the primary monitor's real geometry via RandR: the X11 screen
+# is the combined virtual desktop across every monitor, so sizing/
+# positioning the game's window off RandR's primary output instead is
+# what keeps it confined to one monitor on a multi-monitor X11 desktop.
 PKG_CHECK_MODULES([VULKAN_EARTH_XRANDR], [xrandr])
 
 PKG_CHECK_MODULES([GTEST], [gtest gtest_main],

@@ -55,3 +55,22 @@ void Weapon::playExplosionSFX() {
     else
         playSFX(EXPLOSION2);
 }
+
+void Weapon::loadSpec(vulkan_graphix::GameCatalog::WeaponSpec const& spec) {
+    max_stack = spec.max_stack;
+    package_num = spec.package_num;
+    remaining = spec.remaining;
+    scale = spec.scale;
+    image_file_name = spec.image_file;
+    description = spec.description;
+    price = spec.price;
+    radius = spec.radius;
+    damage = spec.damage;
+    special_number = spec.special_number;
+    for (std::int32_t i = 0; i < 3; i++) {
+        explosion_color1[i] = spec.explosion_colors[0][i];
+        explosion_color2[i] = spec.explosion_colors[1][i];
+        explosion_color3[i] = spec.explosion_colors[2][i];
+        explosion_color4[i] = spec.explosion_colors[3][i];
+    }
+}

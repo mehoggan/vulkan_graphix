@@ -10,9 +10,13 @@
 #include "vulkan_earth/Vector.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WeaponDefault.h"
+#include "vulkan_earth/render/GlMatrix.h"
+#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 Projectile::Projectile() = default;
 
@@ -35,15 +39,8 @@ Projectile::Projectile(GameState* new_parent,
     weapon = nullptr;
     projectile_models = new_projectile_models;
 
-    if (!(VBOShaderLibrary::initGlew())) {
-        exit(1);
-    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
-        exit(1);
-    }
     projectile_default = new VBOShaderLibrary();
-    projectile_default->getVBOPointerFunctions();
     projectile_default->loadClientData("Projectiles/projectileDefault.ogl");
-    projectile_default->loadShaders("VertexTank.vs", "FragmentTank.vs");
     projectile_default->loadTexture(
             "Projectiles/projectileDefault.raw", 512, 512);
 
@@ -70,24 +67,27 @@ void Projectile::update(float x, float y, float z) {
     pos[2] = z;
 }
 
-void Projectile::draw() {
-    glPushMatrix();
-    glTranslatef(pos[0], pos[1], pos[2]);
-    glRotatef(rotate, -1, .3, -.4);
+void Projectile::draw(render::RenderContext& context) {
+    render::Mat4 model = render::glmatrix::translated(
+            render::Mat4(1.0f), pos[0], pos[1], pos[2]);
+    model = render::glmatrix::rotated(model, rotate, -1, .3, -.4);
     if (weapon == nullptr) {
-        glScalef(60, 60, 60);
-        projectile_default->drawClientData();
+        projectile_default->draw(context,
+                                 render::glmatrix::scaled(model, 60, 60, 60));
     } else {
-        glScalef(weapon->getScale(), weapon->getScale(), weapon->getScale());
-        projectile_models[weapon->getUNIQUEIDENTIFIER()]->drawClientData();
+        projectile_models[weapon->getUNIQUEIDENTIFIER()]->draw(
+                context,
+                render::glmatrix::scaled(model,
+                                         weapon->getScale(),
+                                         weapon->getScale(),
+                                         weapon->getScale()));
     }
-    glPopMatrix();
     rotate += 4;
 }
 
 float* Projectile::getPos() { return pos; }
 
-void Projectile::chaseView() { chase_cam->view(); }
+render::Mat4 Projectile::chaseView() { return chase_cam->view(); }
 
 Weapon* Projectile::getWeapon() { return weapon; }
 void Projectile::setWeapon(Weapon* wpn) { weapon = wpn; }

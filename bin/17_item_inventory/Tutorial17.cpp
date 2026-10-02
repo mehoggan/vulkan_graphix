@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstring>
 
+#include "vulkan_graphix/GameCatalog.h"
 #include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
@@ -15,64 +16,22 @@
 namespace vulkan_graphix {
 
 namespace {
-struct ItemDisplayData {
-    const char* icon_file;
-    const char* short_name;
-    const char* description;
-    std::int32_t price;
-    std::int32_t remaining;
-};
-
-// Real data from vulkan_earth/src/ItemXxx.cpp's own constructors, not
-// fabricated - only short_name (this tutorial's own per-cell label, taken
-// from each description's own lead-in before its colon) isn't a field
-// Item itself stores.
-std::array<ItemDisplayData, c_inventory_item_count> const&
+// All 8 real items - the shared GameCatalog, the same data the game's own
+// Item subclasses load - in this tutorial's alphabetical grid order.
+std::array<GameCatalog::ItemSpec, c_inventory_item_count> const&
 getItemDisplayData() {
-    static std::array<ItemDisplayData, c_inventory_item_count> const data = {{
-            {"ItemAntiAcid.raw",
-             "Anti-Acid",
-             "Anti-Acid:     Cures acid status.",
-             70,
-             3},
-            {"ItemBigRepair.raw",
-             "Big Repair",
-             "Big Repair:     Heals 700 damage (uses 1 turn).",
-             100,
-             3},
-            {"ItemCloak.raw",
-             "Cloak",
-             "Cloak:     Makes the player's tank disappear (users 1 turn).",
-             100,
-             2},
-            {"ItemDoubleAction.raw",
-             "Double Action",
-             "Double Action:     Allows the player to perform an action "
-             "twice in one turn.",
-             120,
-             1},
-            {"ItemExtraBattery.raw",
-             "Extra Battery",
-             "Extra Battery:     Recovers from the damage of EMP.",
-             50,
-             3},
-            {"ItemFloat.raw",
-             "Float",
-             "Float:     Allows the player to float (uses 1 turn).",
-             80,
-             2},
-            {"ItemShield.raw",
-             "Shield",
-             "Shield:     Neutralize the damage taken for 5 times (uses 1 "
-             "turn).",
-             150,
-             1},
-            {"ItemSmallRepair.raw",
-             "Small Repair",
-             "Small Repair:     Heals 200 damage.",
-             50,
-             3},
-    }};
+    static_assert(c_inventory_item_count == GameCatalog::c_item_count);
+    using GameCatalog::item;
+    using GameCatalog::ItemKind;
+    static std::array<GameCatalog::ItemSpec, c_inventory_item_count> const
+            data = {item(ItemKind::AntiAcid),
+                    item(ItemKind::BigRepair),
+                    item(ItemKind::Cloak),
+                    item(ItemKind::DoubleAction),
+                    item(ItemKind::ExtraBattery),
+                    item(ItemKind::Float),
+                    item(ItemKind::Shield),
+                    item(ItemKind::SmallRepair)};
     return data;
 }
 }  // namespace
@@ -468,15 +427,15 @@ std::vector<char> Tutorial17::buildIconAtlasPixels() const {
                                     c_icon_atlas_height * 4,
                             0);
 
-    std::array<ItemDisplayData, c_inventory_item_count> const& items =
+    std::array<GameCatalog::ItemSpec, c_inventory_item_count> const& items =
             getItemDisplayData();
     for (std::size_t index = 0; index < items.size(); ++index) {
         std::vector<char> const icon_pixels = Tools::getRawImageData(
-                items[index].icon_file, c_icon_size, c_icon_size);
+                items[index].image_file, c_icon_size, c_icon_size);
         if (icon_pixels.empty()) {
             Logging::error(LOG_TAG,
                            "Could not load icon \"",
-                           items[index].icon_file,
+                           items[index].image_file,
                            "\"!");
             return {};
         }
@@ -1161,7 +1120,7 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
                                  panel_top_left.y + 58.0f),
                text_color);
 
-    std::array<ItemDisplayData, c_inventory_item_count> const& items =
+    std::array<GameCatalog::ItemSpec, c_inventory_item_count> const& items =
             getItemDisplayData();
     Math::Vec2<float> const cell_size = getCellSize();
     for (std::size_t index = 0; index < items.size(); ++index) {

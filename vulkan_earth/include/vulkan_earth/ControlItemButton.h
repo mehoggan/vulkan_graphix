@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 
@@ -7,6 +5,7 @@
 #define Control_ITEM_BUTTON_H
 
 #include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/render/Mesh.h"
 
 class TextObject;
 class SubMenu;
@@ -26,7 +25,7 @@ public:
                       std::int32_t new_height,
                       const std::string& new_caption);
     ~ControlItemButton() override;
-    void draw() override;
+    void draw(vulkan_earth::render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
@@ -57,5 +56,7 @@ private:
                                 // pressed, 2 = down button pressed
     SubMenuLandscape* parent;
     bool toggled;
+    vulkan_earth::render::UiMesh mesh;
+    std::int32_t built_button_state = -1;
 };
 #endif  // Control_ITEM_BUTTON_H

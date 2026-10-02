@@ -1,12 +1,19 @@
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#ifndef IMAGE_OBJECT_H
+#define IMAGE_OBJECT_H
+
 #include <cstdint>
+#include <memory>
 #include <string>
-#include "stdio.h"
 
-#ifndef IMAGEOBJECT
-#define IMAGEOBJECT
+#include "vulkan_earth/render/Mesh.h"
 
+namespace vulkan_earth::render {
+class RenderContext;
+class Texture;
+}  // namespace vulkan_earth::render
+
+// A textured rectangle (one of the game's headerless RGB .raw images, drawn
+// GL_REPLACE - texels only) with an optional two-tone frame.
 class ImageObject {
 public:
     ImageObject();
@@ -30,15 +37,21 @@ public:
     void setZpos(float z);
     void setWidth(std::int32_t w);
     void setHeight(std::int32_t h);
-    void draw();
+    void draw(vulkan_earth::render::RenderContext& context);
 
 private:
+    void buildGeometry();
+
     float x_pos;
     float y_pos;
     float z_pos;
     std::int32_t width;
     std::int32_t height;
     float border_size;
-    std::uint32_t texture;
+    std::shared_ptr<vulkan_earth::render::Texture> texture;
+    vulkan_earth::render::UiMesh image_mesh;
+    vulkan_earth::render::UiMesh border_mesh;
+    bool geometry_dirty = true;
 };
+
 #endif

@@ -1,8 +1,6 @@
 #ifndef ITEM_CLOAK_H
 #define ITEM_CLOAK_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Item.h"
 

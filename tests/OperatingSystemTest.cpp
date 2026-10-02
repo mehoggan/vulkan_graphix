@@ -10,6 +10,8 @@
 
 #include <gtest/gtest.h>
 
+#include <X11/keysym.h>
+
 #include "vulkan_graphix/OperatingSystem.h"
 
 #include "IntegrationTestCommon.h"
@@ -191,4 +193,92 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
     EXPECT_EQ(project.button_release_count, 1);
     EXPECT_GT(project.move_count, 0);
     EXPECT_EQ(project.last_button, static_cast<std::int32_t>(Button1));
+}
+
+namespace {
+
+// Keeps running on key presses (unlike ProjectBase's quit-on-any-key
+// default), records every key event, and asks to quit once 'q' is
+// released - exercising onKey() plus quitRequested() together.
+class KeyProject : public vulkan_graphix::os::ProjectBase {
+public:
+    bool onWindowSizeChanged() override { return true; }
+    bool draw() override { return true; }
+    bool readyToDraw() const override { return true; }
+
+    bool onKey(const vulkan_graphix::os::KeyEvent& event) override {
+        (event.pressed ? press_count : release_count) += 1;
+        last_character = event.character;
+        if (!event.pressed && event.character == 'q') {
+            quit = true;
+        }
+        return true;
+    }
+
+    bool quitRequested() const override { return quit; }
+
+    std::int32_t press_count = 0;
+    std::int32_t release_count = 0;
+    char last_character = 0;
+    bool quit = false;
+};
+
+void sendKeyEvent(Display* send_display,
+                  ::Window handle,
+                  std::int32_t event_type,
+                  std::uint64_t mask,
+                  KeySym keysym) {
+    XEvent event{};
+    event.xkey.type = event_type;
+    event.xkey.display = send_display;
+    event.xkey.window = handle;
+    event.xkey.root = DefaultRootWindow(send_display);
+    event.xkey.subwindow = None;
+    event.xkey.time = CurrentTime;
+    event.xkey.state = 0;
+    event.xkey.keycode = XKeysymToKeycode(send_display, keysym);
+    event.xkey.same_screen = True;
+    XSendEvent(send_display, handle, False, mask, &event);
+}
+
+}  // namespace
+
+TEST(OperatingSystemTest, KeyEventsReachOnKeyAndQuitRequestEndsTheLoop) {
+    if (!vulkan_graphix::test::hasDisplay()) {
+        GTEST_SKIP() << "No DISPLAY - skipping (needs a live X11 server)";
+    }
+
+    vulkan_graphix::os::Window window;
+    ASSERT_TRUE(window.create("os-key-test", 30, 30, 320, 240));
+    window.setKeyRepeat(false);
+    window.setCursorVisible(false);
+    window.setCursorVisible(true);
+    ::Window handle = window.getParameters().getWindowHandle();
+
+    Display* send_display = XOpenDisplay(nullptr);
+    ASSERT_NE(send_display, nullptr);
+
+    KeyProject project;
+    bool loop_result = false;
+    std::thread loop_thread(
+            [&]() { loop_result = window.renderingLoop(project); });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    sendKeyEvent(send_display, handle, KeyPress, KeyPressMask, XK_a);
+    sendKeyEvent(send_display, handle, KeyRelease, KeyReleaseMask, XK_a);
+    XFlush(send_display);
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    EXPECT_EQ(project.last_character, 'a');
+
+    sendKeyEvent(send_display, handle, KeyPress, KeyPressMask, XK_q);
+    sendKeyEvent(send_display, handle, KeyRelease, KeyReleaseMask, XK_q);
+    XFlush(send_display);
+
+    loop_thread.join();
+    XCloseDisplay(send_display);
+
+    EXPECT_TRUE(loop_result);
+    EXPECT_EQ(project.press_count, 2);
+    EXPECT_EQ(project.release_count, 2);
+    EXPECT_TRUE(project.quit);
 }

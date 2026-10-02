@@ -1,11 +1,10 @@
 #ifndef SUB_MENU_TEST_H
 #define SUB_MENU_TEST_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/render/Mesh.h"
 
 class TextObject;
 class SubMenu;
@@ -47,7 +46,7 @@ public:
     void setCaption(const std::string& new_caption) override;
     float getPerecentBorder() override;
     void setPercentBorder(float percent) override;
-    void draw() override;
+    void draw(vulkan_earth::render::RenderContext& context) override;
     std::string collectData() override;
 
 private:
@@ -61,6 +60,7 @@ private:
     std::string caption;
     float percent_border;
     TextObject* label;
+    vulkan_earth::render::UiMesh frame_mesh;
 };
 
 #endif  //	SUB_MENU_TEST_H

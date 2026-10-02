@@ -1,8 +1,6 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <fstream>
@@ -11,6 +9,11 @@
 #include "vulkan_earth/Normal.h"
 #include "vulkan_earth/Vector.h"
 #include "vulkan_earth/Vertex.h"
+#include "vulkan_earth/render/RenderTypes.h"
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 using namespace std;
 
@@ -63,16 +66,20 @@ public:
               std::int32_t* new_current_game_state);
     ~GameState();
     void update();
-    void draw();
-    void drawHUD();
-    void drawHUDText(const std::string& input, float x, float y);
+    void draw(vulkan_earth::render::RenderContext& context);
+    void drawHUD(vulkan_earth::render::RenderContext& context);
+    void drawHUDText(vulkan_earth::render::RenderContext& context,
+                     vulkan_earth::render::Vec4 const& color,
+                     const std::string& input,
+                     float x,
+                     float y);
     void updateMouse(std::int32_t x, std::int32_t y);
     void useTurn();
     std::int32_t getWinner();
     void toggleCamera();
     void handleKeyboardInput(std::int32_t key, bool key_status);
-    void debugMode();
-    void drawMinimap();
+    void debugMode(vulkan_earth::render::RenderContext& context);
+    void drawMinimap(vulkan_earth::render::RenderContext& context);
     void currentPlayerFire();
     void timerEvent(float new_timer);
     bool getProjectileFired();
@@ -81,7 +88,7 @@ public:
     void calcNormalVector(Vertex* v0, Vertex* v1, Vertex* v2, Normal* n);
     float calcDistanceBetweenVertices(Vertex* v0, Vertex* v1);
     void playBackgroundSounds();
-    void drawHelp();
+    void drawHelp(vulkan_earth::render::RenderContext& context);
     GlobalSettings* getGlobalSettings();
     PlayerFactory* getPlayerFactory();
     float getGravity();

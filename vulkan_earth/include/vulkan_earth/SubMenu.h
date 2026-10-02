@@ -1,12 +1,14 @@
 #ifndef SUB_MENU_H
 #define SUB_MENU_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 
 class TextObject;
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class SubMenu {
 public:
@@ -48,7 +50,7 @@ public:
     virtual void setPercentBorder(float percent) = 0;
     /*	END OF GETTERS AND SETTERS	*/
     /*	ACTUAL ACTIONS A SUBMENU CAN MAKE	*/
-    virtual void draw() = 0;
+    virtual void draw(vulkan_earth::render::RenderContext& context) = 0;
     virtual std::string collectData() = 0;
     virtual void subMenuMouseTest(std::int32_t x,
                                   std::int32_t y,

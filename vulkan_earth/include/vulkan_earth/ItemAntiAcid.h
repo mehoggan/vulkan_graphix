@@ -1,8 +1,6 @@
 #ifndef ITEM_ANTI_ACID_H
 #define ITEM_ANTI_ACID_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Item.h"
 

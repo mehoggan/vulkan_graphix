@@ -6,14 +6,8 @@
 ItemCloak::ItemCloak() = default;
 ItemCloak::ItemCloak(std::int32_t id) {
     uniqueidentifier = id;
-    package_num = 2;
-    max_stack = 10;
-    remaining = 2;
-    image_file_name = "ItemCloak.raw";
-    description =
-            "Cloak:     Makes the player's tank disappear (users 1 turn).";
-    price = 100;
-    special_num = 5;
+    loadSpec(vulkan_graphix::GameCatalog::item(
+            vulkan_graphix::GameCatalog::ItemKind::Cloak));
 }
 ItemCloak::~ItemCloak() = default;
 

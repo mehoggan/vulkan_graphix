@@ -10,9 +10,14 @@
 #include "vulkan_earth/SubMenuLandscape.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Font.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -48,7 +53,8 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -57,7 +63,7 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           vulkan_earth::render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -65,87 +71,22 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
 
 ControlItemButton::~ControlItemButton() { delete label; }
 
-void ControlItemButton::draw() {
-    glPushMatrix();
-    if (button_state) {
-        glPushMatrix();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(x_pos, y_pos, z_pos);
-        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos + width, y_pos, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos, y_pos - height, z_pos);
-        glVertex3f(x_pos, y_pos, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0], color[1], color[2], color[3]);
-        glVertex3f(x_pos, y_pos, z_pos);
-        glVertex3f(x_pos, y_pos - height, z_pos);
-        glVertex3f(x_pos + width, y_pos - height, z_pos);
-        glVertex3f(x_pos + width, y_pos, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos + width, y_pos - height, z_pos);
-        glVertex3f(x_pos, y_pos - height, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(x_pos + width, y_pos, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos + width, y_pos + -height, z_pos);
-        glEnd();
-        glPopMatrix();
-    } else {
-        glPushMatrix();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(x_pos, y_pos, z_pos);
-        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos + width, y_pos, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-        glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos, y_pos - height, z_pos);
-        glVertex3f(x_pos, y_pos, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0], color[1], color[2], color[3]);
-        glVertex3f(x_pos, y_pos, z_pos);
-        glVertex3f(x_pos, y_pos - height, z_pos);
-        glVertex3f(x_pos + width, y_pos - height, z_pos);
-        glVertex3f(x_pos + width, y_pos, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos + width, y_pos - height, z_pos);
-        glVertex3f(x_pos, y_pos - height, z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-        glVertex3f(x_pos + width, y_pos, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-        glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-        glVertex3f(x_pos + width, y_pos + -height, z_pos);
-        glEnd();
-        glPopMatrix();
+void ControlItemButton::draw(render::RenderContext& context) {
+    if (built_button_state != button_state) {
+        mesh.clear();
+        render::appendBevel(
+                mesh,
+                x_pos,
+                y_pos,
+                z_pos,
+                width,
+                height,
+                render::Vec4(color[0], color[1], color[2], color[3]),
+                button_state != 0);
+        built_button_state = button_state;
     }
-    label->draw();
-    glPopMatrix();
+    context.draw(mesh);
+    label->draw(context);
 }
 
 float ControlItemButton::getXPos() { return x_pos; }

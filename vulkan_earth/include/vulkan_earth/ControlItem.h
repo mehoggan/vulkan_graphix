@@ -1,18 +1,20 @@
 #ifndef Control_ITEM_H
 #define Control_ITEM_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <iostream>
 #include <string>
 
+namespace vulkan_earth::render {
+class RenderContext;
+}
+
 class ControlItem {
 public:
     ControlItem();
     virtual ~ControlItem();
-    virtual void draw() = 0;
+    virtual void draw(vulkan_earth::render::RenderContext& context) = 0;
     virtual void mouseClickEvent(std::int32_t x,
                                  std::int32_t y,
                                  std::int32_t state,

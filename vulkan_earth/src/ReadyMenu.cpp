@@ -30,11 +30,17 @@
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/Vertex.h"
+#include "vulkan_earth/render/Camera.h"
+#include "vulkan_earth/render/GlMatrix.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playMusic(std::int32_t music);
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 ReadyMenu::ReadyMenu() = default;
 ReadyMenu::ReadyMenu(float new_width,
@@ -175,7 +181,7 @@ ReadyMenu::ReadyMenu(float new_width,
                                      pos[0] - width * 0.25,
                                      pos[1] + height * 0.4,
                                      (pos[2] + 1),
-                                     GLUT_BITMAP_TIMES_ROMAN_24,
+                                     render::FontId::TimesRoman24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
@@ -196,7 +202,7 @@ ReadyMenu::ReadyMenu(float new_width,
                                              stat_label_x_pos,
                                              stat_label_y_pos,
                                              (pos[2] + 1),
-                                             GLUT_BITMAP_TIMES_ROMAN_24,
+                                             render::FontId::TimesRoman24,
                                              0.0f,
                                              0.0f,
                                              0.0f);
@@ -477,7 +483,7 @@ void ReadyMenu::setPlayerPageNum(std::int32_t i) {
                                      label_x_pos,
                                      label_y_pos,
                                      (pos[2] + 1),
-                                     GLUT_BITMAP_TIMES_ROMAN_24,
+                                     render::FontId::TimesRoman24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
@@ -622,159 +628,73 @@ void ReadyMenu::updateMouse(std::int32_t x, std::int32_t y) {
     control_items[1]->updateMouse(x, y);
 }
 
-void ReadyMenu::draw() {
+void ReadyMenu::draw(render::RenderContext& context) {
     if (!start_music_played) {
         playMusic(readymenu_start);
         start_music_played = true;
     }
     playMusic(readymenu_loop);
-    glPushMatrix();
-    /*	ALWAYS START AT UPPER LEFT CORNER -> LOWER LEFT CORNER -> LOWER RIGHT
-     * CORNER -> UPPER RIGHT	*/
-    glBegin(GL_QUADS);
-    glColor3f(0.85f, 0.85f, 0.85f);
-    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0);      /*	|\ 	*/
-    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*	| |	*/
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*	|/ 	*/
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.80f, 0.80f, 0.80f);
-    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0); /*_____ */
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*\	  / */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /* ---	*/
-    glVertex3f((width / 2.0), (height / 2.0), 0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.75f, 0.75f, 0.75f);
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*_____ */
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*|	  | */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*----- */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.45f, 0.45f, 0.45f);
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);                                          /* ___  */
-    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*/	  \ */
-    glVertex3f((width / 2.0), -1 * (height / 2.0), 0);      /*----- */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*	 /| 	*/
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);                                     /*	| | 	*/
-    glVertex3f((width / 2.0), -1 * (height / 2.0), 0); /* 	 \| 	*/
-    glVertex3f((width / 2.0), (height / 2.0), 0);
-    glEnd();
-
-    // Draw tank preview screen
-    glBegin(GL_QUADS);
-    glColor4f(0.45, 0.45, 0.45, 1);
-    glVertex3f(tank_prv_scr_pos[0], tank_prv_scr_pos[1], tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] - 6,
-               tank_prv_scr_pos[1] + 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width + 6,
-               tank_prv_scr_pos[1] + 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width,
-               tank_prv_scr_pos[1],
-               tank_prv_scr_pos[2]);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(0.4, 0.4, 0.4, 1);
-    glVertex3f(tank_prv_scr_pos[0] - 6,
-               tank_prv_scr_pos[1] + 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] - 6,
-               tank_prv_scr_pos[1] - tank_prv_scr_height - 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0],
-               tank_prv_scr_pos[1] - tank_prv_scr_height,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0], tank_prv_scr_pos[1], tank_prv_scr_pos[2]);
-    glEnd();
-
-    /* Middle pane replaced by viewport
-    glBegin(GL_QUADS);
-        glColor4f(tankPrvScrColor[0], tankPrvScrColor[1], tankPrvScrColor[2],
-    1); glVertex3f(tankPrvScrPos[0], tankPrvScrPos[1],
-    tankPrvScrPos[2]); glVertex3f(tankPrvScrPos[0],
-    tankPrvScrPos[1]-tankPrvScrHeight, tankPrvScrPos[2]);
-        glVertex3f(tankPrvScrPos[0]+tankPrvScrWidth,
-    tankPrvScrPos[1]-tankPrvScrHeight, tankPrvScrPos[2]);
-        glVertex3f(tankPrvScrPos[0]+tankPrvScrWidth,
-    tankPrvScrPos[1], tankPrvScrPos[2]); glEnd();*/
-
-    glBegin(GL_QUADS);
-    glColor4f(0.8, 0.8, 0.8, 1);
-    glVertex3f(tank_prv_scr_pos[0] - 6,
-               tank_prv_scr_pos[1] - tank_prv_scr_height - 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width + 6,
-               tank_prv_scr_pos[1] - tank_prv_scr_height - 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width,
-               tank_prv_scr_pos[1] - tank_prv_scr_height,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0],
-               tank_prv_scr_pos[1] - tank_prv_scr_height,
-               tank_prv_scr_pos[2]);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(0.85, 0.85, 0.85, 1);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width,
-               tank_prv_scr_pos[1],
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width + 6,
-               tank_prv_scr_pos[1] + 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width + 6,
-               tank_prv_scr_pos[1] - tank_prv_scr_height - 6,
-               tank_prv_scr_pos[2]);
-    glVertex3f(tank_prv_scr_pos[0] + tank_prv_scr_width,
-               tank_prv_scr_pos[1] + -tank_prv_scr_height,
-               tank_prv_scr_pos[2]);
-    glEnd();
+    using render::Vec3;
+    using render::Vec4;
+    // The whole-window background panel (see appendMenuPanel()), then the
+    // tank preview screen's 6-pixel frame: top 0.45, left 0.4, bottom 0.8,
+    // right 0.85 (its middle pane is the preview viewport drawn below).
+    if (panel_mesh.triangles().empty() || built_width != width ||
+        built_height != height) {
+        panel_mesh.clear();
+        render::appendMenuPanel(panel_mesh, width, height, percent_border);
+        float const x = tank_prv_scr_pos[0];
+        float const y = tank_prv_scr_pos[1];
+        float const z = tank_prv_scr_pos[2];
+        render::appendQuad(panel_mesh,
+                           Vec3(x, y, z),
+                           Vec3(x - 6, y + 6, z),
+                           Vec3(x + tank_prv_scr_width + 6, y + 6, z),
+                           Vec3(x + tank_prv_scr_width, y, z),
+                           Vec4(0.45, 0.45, 0.45, 1));
+        render::appendQuad(panel_mesh,
+                           Vec3(x - 6, y + 6, z),
+                           Vec3(x - 6, y - tank_prv_scr_height - 6, z),
+                           Vec3(x, y - tank_prv_scr_height, z),
+                           Vec3(x, y, z),
+                           Vec4(0.4, 0.4, 0.4, 1));
+        render::appendQuad(
+                panel_mesh,
+                Vec3(x - 6, y - tank_prv_scr_height - 6, z),
+                Vec3(x + tank_prv_scr_width + 6,
+                     y - tank_prv_scr_height - 6,
+                     z),
+                Vec3(x + tank_prv_scr_width, y - tank_prv_scr_height, z),
+                Vec3(x, y - tank_prv_scr_height, z),
+                Vec4(0.8, 0.8, 0.8, 1));
+        render::appendQuad(
+                panel_mesh,
+                Vec3(x + tank_prv_scr_width, y, z),
+                Vec3(x + tank_prv_scr_width + 6, y + 6, z),
+                Vec3(x + tank_prv_scr_width + 6,
+                     y - tank_prv_scr_height - 6,
+                     z),
+                Vec3(x + tank_prv_scr_width, y + -tank_prv_scr_height, z),
+                Vec4(0.85, 0.85, 0.85, 1));
+        built_width = width;
+        built_height = height;
+    }
+    context.draw(panel_mesh);
 
     for (std::int32_t i = 0; i < num_tank_stats; i++) {
-        tank_stat_labels[i]->draw();
+        tank_stat_labels[i]->draw(context);
     }
     for (std::int32_t i = 0; i < num_buttons; i++) {
-        buttons[i]->draw();
+        buttons[i]->draw(context);
     }
     if (buttons[0]->isActive()) {
-        control_items[0]->draw();
+        control_items[0]->draw(context);
     } else {
-        text_field->draw();
+        text_field->draw(context);
     }
-    control_items[1]->draw();
-    control_items[2]->draw();
-    player_page_num->draw();
+    control_items[1]->draw(context);
+    control_items[2]->draw(context);
+    player_page_num->draw(context);
 
     // Flashing color effect in the tank preview screen
     if (0 <= tank_prv_scr_color[0] &&
@@ -821,168 +741,148 @@ void ReadyMenu::draw() {
     // Draw Stat Images
     for (std::int32_t i = 0; i < num_stat_images; i++) {
         if (i < 30) {
-            stat_images[i]->draw();
+            stat_images[i]->draw(context);
         } else {
             if (i < 40) {
                 if (control_items[1]->collectData() == "Rhinoxx" &&
                     i - 30 < tanks[0]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Hellfire" &&
                            i - 30 < tanks[1]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "HeavyD" &&
                            i - 30 < tanks[2]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Panzer" &&
                            i - 30 < tanks[3]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Eggroid" &&
                            i - 30 < tanks[4]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Behemoth" &&
                            i - 30 < tanks[5]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Cubix" &&
                            i - 30 < tanks[6]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Predator" &&
                            i - 30 < tanks[7]->getBasePower()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 }
             } else if (i < 50) {
                 if (control_items[1]->collectData() == "Rhinoxx" &&
                     i - 40 < tanks[0]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Hellfire" &&
                            i - 40 < tanks[1]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "HeavyD" &&
                            i - 40 < tanks[2]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Panzer" &&
                            i - 40 < tanks[3]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Eggroid" &&
                            i - 40 < tanks[4]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Behemoth" &&
                            i - 40 < tanks[5]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Cubix" &&
                            i - 40 < tanks[6]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Predator" &&
                            i - 40 < tanks[7]->getBaseArmor()) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 }
             } else {
                 if (control_items[1]->collectData() == "Rhinoxx" &&
                     i - 50 < tanks[0]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Hellfire" &&
                            i - 50 < tanks[1]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "HeavyD" &&
                            i - 50 < tanks[2]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Panzer" &&
                            i - 50 < tanks[3]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Eggroid" &&
                            i - 50 < tanks[4]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Behemoth" &&
                            i - 50 < tanks[5]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Cubix" &&
                            i - 50 < tanks[6]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 } else if (control_items[1]->collectData() == "Predator" &&
                            i - 50 < tanks[7]->getBaseSpeed() / 10) {
-                    stat_images[i]->draw();
+                    stat_images[i]->draw(context);
                 }
             }
         }
     }
 
-    glEnable(GL_LIGHTING);
-    glDisable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-    glEnable(GL_COLOR_MATERIAL);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    glViewport(tank_prv_scr_pos[0] + getWidth() / 2,
-               tank_prv_scr_height + 1,
-               tank_prv_scr_width,
-               tank_prv_scr_height);
-    gluPerspective(
-            60.0,
-            (static_cast<float>(width) / (1.5 * static_cast<float>(height))),
-            1,
-            199999999);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glScissor(tank_prv_scr_pos[0] + getWidth() / 2,
-              tank_prv_scr_height + 1,
-              tank_prv_scr_width,
-              tank_prv_scr_height);
-    glClearColor(tank_prv_scr_color[0],
-                 tank_prv_scr_color[1],
-                 tank_prv_scr_color[2],
-                 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // The live tank preview, in its own viewport (glViewport()'s float ->
+    // int truncation kept), cleared to the flashing preview color.
+    render::GlRect const preview = {
+            static_cast<std::int32_t>(tank_prv_scr_pos[0] + getWidth() / 2),
+            static_cast<std::int32_t>(tank_prv_scr_height + 1),
+            static_cast<std::int32_t>(tank_prv_scr_width),
+            static_cast<std::int32_t>(tank_prv_scr_height)};
+    context.setViewport(preview);
+    context.clearColorAndDepth(Vec4(tank_prv_scr_color[0],
+                                    tank_prv_scr_color[1],
+                                    tank_prv_scr_color[2],
+                                    1));
 
     // gluLookAt(	0,0,400,	0, 0, 0,		0.0f,1.0f,0.0f);
-    gluLookAt(0, 200, 500, 0, 0, 0, 0.0f, 1.0f, 0.0f);
+    render::Mat4 view = render::camera::lookAt(
+            Vec3(0, 200, 500), Vec3(0, 0, 0), Vec3(0.0f, 1.0f, 0.0f));
 
     // Draw Tanks
-    glTranslatef(pos[0], pos[1] - tank_prv_scr_height * 0.2, pos[2]);
-    glRotatef(tank_angle, 0, 1, 0);
+    view = render::glmatrix::translated(
+            view, pos[0], pos[1] - tank_prv_scr_height * 0.2, pos[2]);
+    view = render::glmatrix::rotated(view, tank_angle, 0, 1, 0);
+    context.setCamera(
+            render::camera::perspective(60.0,
+                                        (static_cast<float>(width) /
+                                         (1.5 * static_cast<float>(height))),
+                                        1,
+                                        199999999),
+            view);
     if (control_items[1]->collectData() == "Rhinoxx")
-        tanks[0]->draw();
+        tanks[0]->draw(context);
     else if (control_items[1]->collectData() == "Hellfire")
-        tanks[1]->draw();
+        tanks[1]->draw(context);
     else if (control_items[1]->collectData() == "HeavyD")
-        tanks[2]->draw();
+        tanks[2]->draw(context);
     else if (control_items[1]->collectData() == "Panzer")
-        tanks[3]->draw();
+        tanks[3]->draw(context);
     else if (control_items[1]->collectData() == "Eggroid")
-        tanks[4]->draw();
+        tanks[4]->draw(context);
     else if (control_items[1]->collectData() == "Behemoth")
-        tanks[5]->draw();
+        tanks[5]->draw(context);
     else if (control_items[1]->collectData() == "Cubix")
-        tanks[6]->draw();
+        tanks[6]->draw(context);
     else if (control_items[1]->collectData() == "Predator")
-        tanks[7]->draw();
+        tanks[7]->draw(context);
     else {
         printf("ERROR: Unkown tank type\n");
-        glutSolidSphere(100, 30, 30);
+        // glutSolidSphere(100, 30, 30)
+        context.drawMesh(
+                render::Renderer::instance().sphere(30, 30),
+                render::PipelineId::FlatColor,
+                nullptr,
+                render::glmatrix::scaled(render::Mat4(1.0f), 100, 100, 100),
+                Vec4(1, 1, 1, 1));
     }
 
     tank_angle += 0.25f;
-    glDisable(GL_COLOR_MATERIAL);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_LIGHT1);
-    glEnable(GL_LIGHT0);
-    glPopMatrix();
 
-    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
-    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, win_width, win_height);
-    gluPerspective(
-            60.0,
-            static_cast<float>(win_width) / static_cast<float>(win_height),
-            1.0,
-            1000000.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, win_width, win_height);
-    glLoadIdentity();
+    render::resetToFullWindow(context);
 }
 
 void ReadyMenu::keyTest(std::uint8_t key) {

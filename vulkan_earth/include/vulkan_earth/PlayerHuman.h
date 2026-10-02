@@ -1,8 +1,6 @@
 #ifndef PLAYER_HUMAN_H
 #define PLAYER_HUMAN_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <iostream>

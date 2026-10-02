@@ -1,8 +1,6 @@
 #ifndef TEX_COORD_H
 #define TEX_COORD_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 
 class TexCoord {

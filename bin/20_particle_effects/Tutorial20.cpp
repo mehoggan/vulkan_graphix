@@ -10,6 +10,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "vulkan_graphix/GameCatalog.h"
 #include "vulkan_graphix/Math/Sphere.hpp"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
@@ -30,14 +31,27 @@ Math::Vec3<float> const c_shield_position(0.0f, 1.8f, 0.0f);
 constexpr float c_shield_radius = 0.9f;
 Math::Vec4<float> const c_shield_color(0.1f, 0.25f, 0.95f, 0.2f);
 
-// WeaponBFB's real explosion_color1..4 palette (White/Yellow/Orange/Red
-// - see WeaponBFB.cpp) and real radius field (30) - the same weapon
-// already used for Tutorial19's "Big Force Bomb" projectile.
-Math::Vec4<float> const c_explosion_color1(1.0f, 1.0f, 1.0f, 1.0f);
-Math::Vec4<float> const c_explosion_color2(1.0f, 1.0f, 0.0f, 1.0f);
-Math::Vec4<float> const c_explosion_color3(1.0f, 0.5f, 0.0f, 1.0f);
-Math::Vec4<float> const c_explosion_color4(1.0f, 0.0f, 0.0f, 1.0f);
-constexpr float c_weapon_radius = 30.0f;
+// Particle positions and sizes, and the explosion's radius, are simulated
+// in vulkan_earth's own world units; these bring them down to this
+// tutorial's.
+constexpr float c_particle_position_scale = 0.01f;
+constexpr float c_particle_size_scale = 0.03f;
+constexpr float c_explosion_scale = 0.0003f;
+Math::Vec3<float> const c_explosion_position(0.0f, -1.0f, 2.5f);
+
+// WeaponBFB - the weapon Tutorial19's "Big Force Bomb" projectile already
+// shows - supplies the explosion's real colors and blast radius.
+GameCatalog::WeaponSpec const& explosionWeapon() {
+    return GameCatalog::weapon(GameCatalog::WeaponKind::BFB);
+}
+
+Math::Vec4<float> explosionColor(std::int32_t index, float alpha) {
+    auto const& color = explosionWeapon().explosion_colors[index];
+    return Math::Vec4<float>(static_cast<float>(color[0]),
+                             static_cast<float>(color[1]),
+                             static_cast<float>(color[2]),
+                             alpha);
+}
 
 Math::Mat4<float> buildInstanceMatrix(Math::Vec3<float> const& position,
                                       float radius) {
@@ -201,30 +215,26 @@ void VulkanTutorial20Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 Tutorial20::Tutorial20()
         : m_camera(0.5f, 0.2f, 6.0f)
-        , m_explosion_radius(0.0f)
-        , m_explosion_timer(0.0f) {
-    m_particles.reserve(c_particles_per_emitter * 3);
-    struct EmitterSpec {
-        ParticleKind kind;
-        Math::Vec3<float> const& origin;
-    };
-    std::array<EmitterSpec, 3> const emitters = {
-            {{ParticleKind::kSmoke, c_smoke_emitter},
-             {ParticleKind::kAcid, c_acid_emitter},
-             {ParticleKind::kFloat, c_float_emitter}}};
-    for (EmitterSpec const& emitter : emitters) {
-        for (std::size_t i = 0; i < c_particles_per_emitter; ++i) {
-            EffectParticle particle;
-            respawnParticle(particle, emitter.kind, emitter.origin);
-            // Stagger initial ages so particles from the same emitter
-            // don't all spawn/die in lockstep - reads as a continuous
-            // stream instead of pulses.
-            particle.current_frame = static_cast<std::int32_t>(
-                    i * (c_active_frames / c_particles_per_emitter));
-            m_particles.push_back(particle);
-        }
-    }
-}
+        // Tank.cpp's own smoke_gen/acid_gen/float_gen arguments.
+        , m_emitters{EffectSimulation::ParticleEmitter(
+                             10,
+                             5,
+                             1,
+                             100,
+                             EffectSimulation::ParticleKind::Smoke),
+                     EffectSimulation::ParticleEmitter(
+                             10,
+                             5,
+                             2,
+                             100,
+                             EffectSimulation::ParticleKind::Acid),
+                     EffectSimulation::ParticleEmitter(
+                             10,
+                             5,
+                             2,
+                             100,
+                             EffectSimulation::ParticleKind::Float)}
+        , m_explosion_color(explosionColor(0, 1.0f)) {}
 
 Tutorial20::~Tutorial20() { childClear(); }
 
@@ -239,124 +249,23 @@ void Tutorial20::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 
-Math::Vec3<float> Tutorial20::randomUnitVector() const {
-    float const x = (static_cast<float>(std::rand()) / RAND_MAX) * 2.0f - 1.0f;
-    float const y = (static_cast<float>(std::rand()) / RAND_MAX) * 2.0f - 1.0f;
-    float const z = (static_cast<float>(std::rand()) / RAND_MAX) * 2.0f - 1.0f;
-    Math::Vec3<float> const vector(x, y, z);
-    float const length = glm::length(vector);
-    if (length < 0.0001f) {
-        return Math::Vec3<float>(0.0f, 1.0f, 0.0f);
-    }
-    return vector / length;
-}
-
-void Tutorial20::respawnParticle(
-        EffectParticle& particle,
-        ParticleKind kind,
-        Math::Vec3<float> const& emitter_position) const {
-    particle.kind = kind;
-    particle.position = emitter_position;
-    particle.direction = randomUnitVector();
-    // Real per-type speed (ParticleGenerator's own constructor args at
-    // each real call site - Tank.cpp:350,830-855): smoke=1, acid/
-    // float=2.
-    particle.speed = (kind == ParticleKind::kSmoke) ? 1.0f : 2.0f;
-    particle.current_frame = 0;
-    particle.active_frames = c_active_frames;
-}
-
-void Tutorial20::updateParticle(EffectParticle& particle) const {
-    switch (particle.kind) {
-        case ParticleKind::kSmoke: {
-            // ParticleSmoke::update() (ParticleSmoke.cpp:27-45): x/z
-            // drift by direction*speed; y rises by an accelerating
-            // amount as the particle ages; color fades white -> yellow
-            // -> red -> black over its lifetime.
-            particle.position.x +=
-                    particle.direction.x * particle.speed * c_world_scale;
-            particle.position.z +=
-                    particle.direction.z * particle.speed * c_world_scale;
-            particle.position.y +=
-                    7.0f * c_world_scale *
-                    (static_cast<float>(particle.current_frame) /
-                     static_cast<float>(particle.active_frames));
-
-            float const t = static_cast<float>(particle.current_frame);
-            float red_value = 1.0f;
-            float green_value = 1.0f;
-            float blue_value = 1.0f;
-            if (t <= 30.0f) {
-                blue_value = 1.0f - t / 30.0f;
-            } else if (t <= 60.0f) {
-                blue_value = 0.0f;
-                green_value = 1.0f - (t - 30.0f) / 30.0f;
-            } else {
-                blue_value = 0.0f;
-                green_value = 0.0f;
-                red_value = 1.0f - (t - 60.0f) / 40.0f;
-            }
-            particle.color = Math::Vec4<float>(
-                    red_value, green_value, blue_value, 0.4f);
-            break;
-        }
-        case ParticleKind::kAcid: {
-            // ParticleAcid::update() (ParticleAcid.cpp:27-33): plain
-            // linear motion, constant green, no color-over-time.
-            particle.position +=
-                    particle.direction * particle.speed * c_world_scale;
-            particle.color = Math::Vec4<float>(0.0f, 1.0f, 0.0f, 0.4f);
-            break;
-        }
-        case ParticleKind::kFloat:
-        default: {
-            // ParticleFloat::update() (ParticleFloat.cpp:27-33): x/z
-            // drift normally, y drift damped by /10, constant white.
-            particle.position.x +=
-                    particle.direction.x * particle.speed * c_world_scale;
-            particle.position.z +=
-                    particle.direction.z * particle.speed * c_world_scale;
-            particle.position.y += particle.direction.y * particle.speed *
-                                   c_world_scale / 10.0f;
-            particle.color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 0.4f);
-            break;
-        }
-    }
-}
-
 void Tutorial20::updateParticles() {
-    for (EffectParticle& particle : m_particles) {
-        updateParticle(particle);
-        ++particle.current_frame;
-        if (particle.current_frame >= particle.active_frames) {
-            // Matches ParticleGenerator::addParticles() refilling a
-            // dead slot with a fresh particle at the emitter origin.
-            Math::Vec3<float> const& origin =
-                    particle.kind == ParticleKind::kSmoke  ? c_smoke_emitter
-                    : particle.kind == ParticleKind::kAcid ? c_acid_emitter
-                                                           : c_float_emitter;
-            respawnParticle(particle, particle.kind, origin);
-            // Gives the freshly respawned particle a valid position/
-            // color for this frame instead of showing stale state from
-            // right before it died.
-            updateParticle(particle);
-        }
+    // Each generator simulates around the origin; prepareFrame() places it
+    // at its own emitter.
+    for (EffectSimulation::ParticleEmitter& emitter : m_emitters) {
+        emitter.update(0.0f, 0.0f, 0.0f);
     }
 }
 
 void Tutorial20::updateExplosion() {
-    // Explosion::draw()'s own real structure (Explosion.cpp:53-74):
-    // radius grows linearly, a timer advances, color is picked from
-    // thresholds against the real weapon's 4 colors (including the
-    // real 75-100 "gap" that leaves the color unchanged - not a typo,
-    // ported as-is), alpha fades out, then it loops. Growth rate here
-    // is this tutorial's own small-world value, not the original's
-    // (which was calibrated to vulkan_earth's own much larger units).
-    m_explosion_radius += 0.01f;
-    m_explosion_timer += 0.5f;
-    if (m_explosion_timer >= 150.0f) {
-        m_explosion_radius = 0.0f;
-        m_explosion_timer = 0.0f;
+    EffectSimulation::ExplosionFrame const frame =
+            EffectSimulation::advanceExplosion(m_explosion);
+    if (frame.color_index >= 0) {
+        m_explosion_color = explosionColor(frame.color_index, frame.alpha);
+    }
+    // Faded out: start over.
+    if (m_explosion.timer >= 150.0f) {
+        m_explosion = EffectSimulation::Explosion{};
     }
 }
 
@@ -1185,51 +1094,47 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
             &shield_push_constants);
     vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
 
-    // Particles: 3 emitters x c_particles_per_emitter live spheres. Color
-    // was already computed this frame by updateParticle() (see
-    // updateParticles(), called from draw() before prepareFrame()).
-    constexpr float c_particle_radius = 0.12f;
-    for (EffectParticle const& particle : m_particles) {
-        Tutorial20PushConstants particle_push_constants{
-                buildInstanceMatrix(particle.position, c_particle_radius),
-                particle.color};
-        vkCmdPushConstants(
-                command_buffer,
-                m_vulkan_tutorial20_parameters.getVkPipelineLayout(),
-                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                0,
-                sizeof(Tutorial20PushConstants),
-                &particle_push_constants);
-        vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
+    // Particles: every live particle of each generator, at its emitter.
+    std::array<Math::Vec3<float>, 3> const emitter_origins = {
+            c_smoke_emitter, c_acid_emitter, c_float_emitter};
+    for (std::size_t emitter = 0; emitter < m_emitters.size(); ++emitter) {
+        for (auto const& slot : m_emitters[emitter].slots()) {
+            if (!slot) {
+                continue;
+            }
+            EffectSimulation::Particle const& particle = *slot;
+            Tutorial20PushConstants particle_push_constants{
+                    buildInstanceMatrix(
+                            emitter_origins[emitter] +
+                                    Math::Vec3<float>(particle.x,
+                                                      particle.y,
+                                                      particle.z) *
+                                            c_particle_position_scale,
+                            particle.size * c_particle_size_scale),
+                    Math::Vec4<float>(particle.red,
+                                      particle.green,
+                                      particle.blue,
+                                      EffectSimulation::c_particle_alpha)};
+            vkCmdPushConstants(
+                    command_buffer,
+                    m_vulkan_tutorial20_parameters.getVkPipelineLayout(),
+                    VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                    0,
+                    sizeof(Tutorial20PushConstants),
+                    &particle_push_constants);
+            vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
+        }
     }
 
     // Explosion: one growing/fading/color-cycling sphere.
-    Math::Vec4<float> explosion_color = c_explosion_color1;
-    if (m_explosion_timer < 25.0f) {
-        explosion_color = c_explosion_color1;
-    } else if (m_explosion_timer < 50.0f) {
-        explosion_color = c_explosion_color2;
-    } else if (m_explosion_timer < 75.0f) {
-        explosion_color = c_explosion_color3;
-    } else if (m_explosion_timer < 100.0f) {
-        // Real "no color set" gap (Explosion.cpp) - color intentionally
-        // left unchanged from the previous bracket.
-        explosion_color = c_explosion_color3;
-    } else {
-        explosion_color = c_explosion_color4;
-    }
-    float const explosion_alpha =
-            std::max(0.0f, 1.0f - m_explosion_timer / 150.0f);
-    float const weapon_size_factor = c_weapon_radius * 5.56f + 22.22f;
-    float const explosion_world_radius =
-            m_explosion_radius * weapon_size_factor * 0.003f;
     Tutorial20PushConstants explosion_push_constants{
-            buildInstanceMatrix(Math::Vec3<float>(0.0f, -1.0f, 2.5f),
-                                explosion_world_radius),
-            Math::Vec4<float>(explosion_color.r,
-                              explosion_color.g,
-                              explosion_color.b,
-                              explosion_alpha)};
+            buildInstanceMatrix(c_explosion_position,
+                                EffectSimulation::explosionSphereRadius(
+                                        m_explosion,
+                                        static_cast<std::int32_t>(
+                                                explosionWeapon().radius)) *
+                                        c_explosion_scale),
+            m_explosion_color};
     vkCmdPushConstants(
             command_buffer,
             m_vulkan_tutorial20_parameters.getVkPipelineLayout(),

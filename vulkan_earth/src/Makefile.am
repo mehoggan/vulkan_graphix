@@ -1,9 +1,11 @@
 bin_PROGRAMS = vulkan_earth_runner
 
-# Vendored legacy OpenGL/GLUT game, ported off MSVC/Win32 onto X11 via
-# GLUT rather than held to this project's own -Werror/-Wall/-pedantic
-# policy (see the top-level CLAUDE.md) - it predates this codebase and
-# isn't ours to bring up to that bar in one pass.
+# Vendored legacy game, originally OpenGL/GLUT on MSVC/Win32, now running
+# on Vulkan through libvulkan_graphix's TutorialBase bring-up and its own
+# renderer (render/), rather than held to this project's own
+# -Werror/-Wall/-pedantic policy (see the top-level CLAUDE.md) - it
+# predates this codebase and isn't ours to bring up to that bar in one
+# pass.
 vulkan_earth_runner_SOURCES = \
 	ChaseCam.cpp \
 	ControlItem.cpp \
@@ -32,11 +34,7 @@ vulkan_earth_runner_SOURCES = \
 	MainMenu.cpp \
 	MainMenuButton.cpp \
 	Normal.cpp \
-	Particle.cpp \
-	ParticleAcid.cpp \
-	ParticleFloat.cpp \
 	ParticleGenerator.cpp \
-	ParticleSmoke.cpp \
 	Player.cpp \
 	PlayerCPU.cpp \
 	PlayerFactory.cpp \
@@ -44,7 +42,6 @@ vulkan_earth_runner_SOURCES = \
 	Projectile.cpp \
 	ReadyMenu.cpp \
 	VulkanEarth.cpp \
-	Shader.cpp \
 	ShopMenu.cpp \
 	SkyboxFactory.cpp \
 	Sound.cpp \
@@ -71,7 +68,6 @@ vulkan_earth_runner_SOURCES = \
 	TerrainMaker.cpp \
 	TexCoord.cpp \
 	TextObject.cpp \
-	VBOQualifer.cpp \
 	VBOShaderLibrary.cpp \
 	Vector.cpp \
 	Vertex.cpp \
@@ -89,7 +85,14 @@ vulkan_earth_runner_SOURCES = \
 	WeaponTeleport.cpp \
 	WeaponTest.cpp \
 	WeaponThor.cpp \
-	WorldCam.cpp
+	WorldCam.cpp \
+	render/Camera.cpp \
+	render/Font.cpp \
+	render/GlMatrix.cpp \
+	render/Mesh.cpp \
+	render/Renderer.cpp \
+	render/Texture.cpp \
+	render/UiBuilders.cpp
 
 # The game calls into libvulkan_graphix for everything it shares with the
 # Vulkan tutorials (terrain height field/queries/craters, ballistics, tank
@@ -97,12 +100,10 @@ vulkan_earth_runner_SOURCES = \
 vulkan_earth_runner_CPPFLAGS = \
 	-I$(top_srcdir)/vulkan_earth/include \
 	-I$(abs_top_srcdir)/include $(GLM_CFLAGS) \
-	$(VULKAN_EARTH_GL_CFLAGS) $(VULKAN_EARTH_GLEW_CFLAGS) $(VULKAN_EARTH_SDL_CFLAGS) \
-	$(VULKAN_EARTH_XRANDR_CFLAGS)
+	$(VULKAN_EARTH_SDL_CFLAGS) $(VULKAN_EARTH_XRANDR_CFLAGS)
 vulkan_earth_runner_LDADD = \
 	$(abs_top_builddir)/lib/libvulkan_graphix.la $(VULKAN_LIBS) \
-	$(VULKAN_EARTH_GL_LIBS) $(VULKAN_EARTH_GLEW_LIBS) $(VULKAN_EARTH_SDL_LIBS) \
-	$(VULKAN_EARTH_XRANDR_LIBS) $(X11_LIBS)
+	$(VULKAN_EARTH_SDL_LIBS) $(VULKAN_EARTH_XRANDR_LIBS) $(X11_LIBS)
 vulkan_earth_runner_LDFLAGS = -pthread
 
 # All four Vulkan-migration pilots (skybox, terrain, projectile, particle)
@@ -110,7 +111,8 @@ vulkan_earth_runner_LDFLAGS = -pthread
 # graduated to Tutorial11-14 - see bin/Makefile.am and each tutorial's own
 # resources/NN/Data/.
 
-# The game's runtime assets (textures, meshes, shaders, sounds) live only
+# The game's runtime assets (textures, meshes, SPIR-V shaders compiled from
+# resources/vulkan_earth/Shaders/, GLUT font atlases, sounds) live only
 # in resources/vulkan_earth/Data/, deliberately kept separate from any
 # Vulkan tutorial's own resources/NN/Data/ even where the content overlaps
 # (e.g. Hellfire_*.ogl, TestImage.raw) - the two sides are free to diverge

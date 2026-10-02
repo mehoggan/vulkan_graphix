@@ -65,6 +65,9 @@ VK_INSTANCE_LEVEL_FUNCTION(vkCreateXlibSurfaceKHR)
 // Tutorial 04
 VK_INSTANCE_LEVEL_FUNCTION(vkGetPhysicalDeviceMemoryProperties)
 
+// vulkan_earth
+VK_INSTANCE_LEVEL_FUNCTION(vkGetPhysicalDeviceFormatProperties)
+
 #undef VK_INSTANCE_LEVEL_FUNCTION
 
 // ************************************************************ //
@@ -156,5 +159,17 @@ VK_DEVICE_LEVEL_FUNCTION(vkDestroyDescriptorPool)
 VK_DEVICE_LEVEL_FUNCTION(vkDestroyDescriptorSetLayout)
 VK_DEVICE_LEVEL_FUNCTION(vkDestroySampler)
 VK_DEVICE_LEVEL_FUNCTION(vkDestroyImage)
+
+// vulkan_earth
+VK_DEVICE_LEVEL_FUNCTION(vkCmdClearAttachments)
+VK_DEVICE_LEVEL_FUNCTION(vkCmdPushConstants)
+VK_DEVICE_LEVEL_FUNCTION(vkCmdCopyImageToBuffer)
+VK_DEVICE_LEVEL_FUNCTION(vkCmdDrawIndexed)
+VK_DEVICE_LEVEL_FUNCTION(vkCmdBindIndexBuffer)
+VK_DEVICE_LEVEL_FUNCTION(vkCmdSetLineWidth)
+VK_DEVICE_LEVEL_FUNCTION(vkResetCommandBuffer)
+VK_DEVICE_LEVEL_FUNCTION(vkQueueWaitIdle)
+VK_DEVICE_LEVEL_FUNCTION(vkFreeDescriptorSets)
+VK_DEVICE_LEVEL_FUNCTION(vkResetDescriptorPool)
 
 #undef VK_DEVICE_LEVEL_FUNCTION

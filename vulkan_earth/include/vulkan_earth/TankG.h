@@ -1,8 +1,6 @@
 #ifndef TANK_G_H
 #define TANK_G_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
 
@@ -18,7 +16,6 @@ public:
     std::int32_t getBaseSpeed() override;
     std::string getName() override;
     void buildList();
-    void drawTankHitBox() override;
     void updateHitBox() override;
 };
 

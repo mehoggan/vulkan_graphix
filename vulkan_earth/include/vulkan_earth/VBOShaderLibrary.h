@@ -1,71 +1,46 @@
-#ifndef VBO_SHADER_LIBRARY_H_
-#define VBO_SHADER_LIBRARY_H_
+#ifndef VBO_SHADER_LIBRARY_H
+#define VBO_SHADER_LIBRARY_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
+#include <memory>
 #include <string>
-#include <vector>
-#include "vulkan_earth/Normal.h"
-#include "vulkan_earth/TexCoord.h"
-#include "vulkan_earth/Vertex.h"
 
+#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_earth/render/RenderTypes.h"
+#include "vulkan_earth/render/Texture.h"
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
+
+// One textured .ogl model (a tank part, a projectile) in GPU memory, drawn
+// with the unlit textured mesh pipeline - what the original's tank shaders
+// (VertexTank.vs/FragmentTank.vs) amounted to: the texture color, no
+// lighting.
 class VBOShaderLibrary {
 public:
     VBOShaderLibrary();
     ~VBOShaderLibrary();
-    void drawClientData();
-    bool loadShaders(const char* vs_file_name, const char* fs_file_name);
+    // model is the part's transform relative to the current camera (the
+    // original's glMultMatrixf()/glScalef() before drawClientData()); tint
+    // multiplies the texel (rgb) and sets the alpha.
+    void draw(vulkan_earth::render::RenderContext& context,
+              vulkan_earth::render::Mat4 const& model,
+              vulkan_earth::render::Vec4 const& tint =
+                      vulkan_earth::render::Vec4(1.0f));
+    // Loads a .ogl model (libvulkan_graphix's Tools::loadOglMeshData()).
     bool loadClientData(const std::string& model_file);
-    bool loadClientData(float* vertex_data,
-                        float* normal_data,
-                        float* tex_coord_data,
-                        std::int32_t number_of_vertices);
-    void swapTexture(const char* filename,
-                     std::int32_t width,
-                     std::int32_t height);
+    // The model's color texture: a headerless RGB .raw image, repeated.
     void loadTexture(const char* filename,
                      std::int32_t width,
                      std::int32_t height);
-    void swapTextureNormals(const char* filename,
-                            std::int32_t width,
-                            std::int32_t height);
-    void loadTextureNormals(const char* filename,
-                            std::int32_t width,
-                            std::int32_t height);
-    bool getVBOPointerFunctions();
-    static bool initGlew();
-    static bool areVbOsSupported();
+    void swapTexture(const char* filename,
+                     std::int32_t width,
+                     std::int32_t height);
 
 private:
-    bool use_vb_os;
-    bool use_textures;
-    bool use_shaders;
-    std::int32_t vertices_loaded;
-    std::uint32_t vbo_id;
-    std::vector<Vertex> vertices;
-    std::vector<Normal> normals;
-    std::vector<TexCoord> tex_coord;
-    PFNGLGENBUFFERSARBPROC
-    pgl_gen_buffers_arb;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC
-    pgl_buffer_sub_data_arb;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC
-    pgl_delete_buffers_arb;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC
-    pgl_get_buffer_parameteriv_arb;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb;      // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb;  // unmap VBO procedure
-
-    std::string vs_text;
-    std::string fs_text;
-    std::uint32_t shader_id;
-    std::uint32_t shader_vp;
-    std::uint32_t shader_fp;
-    std::uint32_t color_texture;
-    std::uint32_t normal_texture;
+    std::unique_ptr<vulkan_earth::render::StaticMesh> mesh;
+    std::shared_ptr<vulkan_earth::render::Texture> color_texture;
 };
 
-#endif /* VBO_SHADER_LIBRARY_H_	*/
+#endif

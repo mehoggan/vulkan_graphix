@@ -1,12 +1,11 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/OpenGLColors.h"
 #include "vulkan_earth/Tank.h"
+#include "vulkan_graphix/GameCatalog.h"
 
 class Weapon {
 public:
@@ -35,6 +34,9 @@ public:
     virtual void playExplosionSFX();
 
 protected:
+    // Every field but the id, from the game's catalog.
+    void loadSpec(vulkan_graphix::GameCatalog::WeaponSpec const& spec);
+
     std::int32_t uniqueidentifier;
     float explosion_color1[3];
     float explosion_color2[3];

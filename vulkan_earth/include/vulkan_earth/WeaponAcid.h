@@ -1,8 +1,6 @@
 #ifndef WEAPON_ACID_H
 #define WEAPON_ACID_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"
 

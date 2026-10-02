@@ -63,9 +63,10 @@ instrumented and reported too). All ten tutorials get a real
 integration test (drives each through a live Vulkan device/X11 window -
 skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
 `OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`,
-`Tools`, and the gameplay math shared with vulkan_earth
-(`TerrainGenerator`/`Ballistics`/`TankOrientation`, in
-`tests/GameLogicTest.cpp`) each have their own direct unit tests. `TutorialBase` and every
+`Tools`, and the gameplay code shared with vulkan_earth
+(`TerrainGenerator`/`Ballistics`/`TankOrientation`/`GameCatalog`/
+`EffectSimulation`, in `tests/GameLogicTest.cpp`) each have their own
+direct unit tests. `TutorialBase` and every
 tutorial's own `create*()` Vulkan-call failure branches (`if (result !=
 VK_SUCCESS) return false;`) are covered by a fault-injection layer: since
 every Vulkan call here goes through a mutable `vulkan_graphix::vkSomething`
@@ -133,23 +134,37 @@ Files" section for the exact invocation.
   - `BitmapFont.cpp/.h` - Bakes a TrueType font into a glyph atlas via
     the vendored `STBTrueType.h` (kept fully behind std types - no
     `stbtt_*` symbol is reachable outside `BitmapFont.cpp`), plus
-    `wrapText()` word-wrapping, shared by Tutorial15/17/18/19/22 and any
-    future vulkan_earth UI port
+    `wrapText()` word-wrapping, shared by Tutorial15/17/18/19/22 (the
+    game itself draws GLUT's own bitmap fonts instead, so its text looks
+    exactly as it did - see vulkan_earth/ below)
   - `UiGeometry.cpp/.h` - Beveled 2D button-quad geometry, ported from
-    vulkan_earth's `ControlItemButton::draw()`, plus header-only
+    vulkan_earth's `ControlItemButton::draw()` (which the game's own
+    bevels are built from again), plus header-only
     `append{GlyphQuad,ColoredQuad,Text,ImageQuad}()` templates that turn
     glyph/bevel/icon quads into two-triangle vertex lists for any
-    `{position, texcoord, color}` vertex struct - shared the same way
-  - `HellfireTank.cpp/.h` - The Hellfire tank's per-part placement math
-    (TankB's offsets/basis/50x scale composed hierarchically exactly as
-    `Tank::setTankPos()` does), shared by Tutorial16/18/21/22 and any
-    future vulkan_earth Tank port
+    `{position, texcoord, color}` vertex struct
+  - `TankPlacement.cpp/.h` - Every tank's hierarchical part placement
+    (`Tank::setTankPos()`: a child part's offset rotated through its
+    parent's basis), used by vulkan_earth's `Tank` and by
+  - `HellfireTank.cpp/.h` - The Hellfire tank's own part offsets/basis/
+    50x scale on top of `TankPlacement`, shared by Tutorial16/18/21/22
+    and vulkan_earth's `TankB`
+  - `GameCatalog.cpp/.h` - Every item and weapon vulkan_earth sells
+    (description, price, stack sizes, effect strength, projectile scale,
+    blast radius, explosion colors), exactly as the game's `ItemXxx`/
+    `WeaponXxx` constructors had them; those constructors and
+    Tutorial17/19/20 all read it
+  - `EffectSimulation.cpp/.h` - vulkan_earth's particle effects (each
+    kind's update, `ParticleGenerator`'s 1000-slot pool and spawning)
+    and `Explosion`'s growth/color timeline as plain simulations, run by
+    the game and Tutorial20 alike
   - `Logging.cpp/.h` - std::-based (filesystem/ostream/chrono/thread)
     per-tag logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
   - `Tools.cpp/.h` - Utility functions (also holds `loadOglMeshData()`,
-    a shared parser for vulkan_earth's `.ogl` mesh format used by
-    Tutorial13 and any future vulkan_earth Vulkan port)
+    the one parser for vulkan_earth's `.ogl` mesh format, used by
+    Tutorial13/16/19 and the game's `VBOShaderLibrary`, and
+    `executableDir()`, where every binary finds its copied assets)
   - `OperatingSystem.cpp/.h` - Platform-specific abstractions
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
 
@@ -173,41 +188,59 @@ Files" section for the exact invocation.
 - **include/vulkan_graphix/**: Public headers
   - `Tutorial/` - `TutorialBase.h` only, included as
     `"vulkan_graphix/Tutorial/TutorialBase.h"` (every `TutorialNN.h` lives
-    in its own `bin/NN_*/` folder instead; the standalone OpenGL
-    `vulkan_earth/` game includes neither)
+    in its own `bin/NN_*/` folder instead; the `vulkan_earth/` game
+    builds on `TutorialBase.h` too)
   - `ListOfFunctions.inl` - Pre-defined Vulkan function list
   - `STBImage.h` - Vendored single-header image loading library
   - `STBTrueType.h` - Vendored single-header TrueType font rasterizer,
     used only by `lib/BitmapFont.cpp` (see above)
   - `vk_platform.h` - Platform-specific Vulkan definitions
 
-- **vulkan_earth/**: The standalone legacy OpenGL/GLUT game the later
-  tutorials port from (built as `vulkan_earth_runner`, linked against
-  `libvulkan_graphix.la`). Rule: anything that exists in both the game
-  and a tutorial lives once, in `lib/`, and both call it - the game is
-  never left with its own copy of ported logic (see `TerrainGenerator`/
-  `Ballistics`/`TankOrientation` above; the game keeps only its GL/SDL
-  code and thin wrappers converting to its own `Normal`/`Vector` types)
-  - `src/` - its `.cpp` files (plus the MSVC-only `Tools/ModelBuilder/`
-    mesh-conversion tool, not part of the autotools build)
+- **vulkan_earth/**: The legacy game the later tutorials port from
+  (built as `vulkan_earth_runner`, linked against `libvulkan_graphix.la`),
+  originally OpenGL/GLUT and now running entirely on Vulkan - no GL, GLU,
+  GLUT, or GLEW anywhere in it. Rule: anything that exists in both the
+  game and a tutorial lives once, in `lib/`, and both call it - the game
+  is never left with its own copy of ported logic (see `TerrainGenerator`/
+  `Ballistics`/`TankOrientation`/`TankPlacement`/`GameCatalog`/
+  `EffectSimulation` above; the game keeps only its own rendering and
+  thin wrappers converting to its own `Normal`/`Vector` types)
+  - `src/VulkanEarth.cpp` - `VulkanEarthApp`, a `TutorialBase` that owns
+    the device/swapchain and forwards X11 events to the game's original
+    GLUT-style handlers and screen state machine, paced at GLUT's 20 ms
+    timer. `VE_SCRIPT=<file>` replays scripted input and frame captures
+    (`<frame> down|up|move x y`, `key|keyup <c|space|esc>`, `spec|specup
+    <GLUT special key>`, `capture <file.ppm>`, `quit`) and
+    `VE_WINDOW=<w>x<h>` fixes the window size - for comparing frames
+    across runs
+  - `src/render/`, `include/vulkan_earth/render/` - the game's renderer:
+    one render pass (color + depth), two frames in flight, deferred
+    resource release, a per-frame transient vertex ring, and one pipeline
+    per kind of draw (UI triangles/lines, bitmap text, meshes, terrain,
+    water, flat-colored spheres), each with a depth-test-off variant for
+    the HUD. It reproduces the GL game's look exactly - GL's projection
+    and viewport conventions, `glRasterPos`/`glutBitmapCharacter` text
+    (pixel-exact GLUT font atlases in `resources/vulkan_earth/Data/
+    fonts/`, `glBitmap`'s pixel snapping), `GL_CLAMP`'s border filtering -
+    so a menu frame matches a capture of the original to within 1/255.
+    GLSL sources are in `resources/vulkan_earth/Shaders/` (run its
+    `compile.sh` after editing one); the SPIR-V it loads is committed in
+    `resources/vulkan_earth/Data/shaders/`
+  - `src/` - its `.cpp` files
   - `include/vulkan_earth/` - every header, included as
     `"vulkan_earth/Foo.h"` (`src/Makefile.am` adds
-    `-I$(top_srcdir)/vulkan_earth/include`); ModelBuilder's own headers
-    sit in `include/vulkan_earth/Tools/ModelBuilder/`, since four of
-    them share a name with a different game header. `MacroCrtdbg.h`
+    `-I$(top_srcdir)/vulkan_earth/include`). `MacroCrtdbg.h`
     must stay the last include (it `#define`s `new`/`malloc`/`free`
     under `_DEBUG`) - `.clang-format`'s `IncludeCategories` pins it last
-  - Assets: the game loads everything by bare filename from its working
-    directory. Every runtime asset (textures, `.ogl` meshes, `.vs`
-    shaders, sounds) lives only in `resources/vulkan_earth/Data/`, and
+  - Assets: the game loads everything by bare filename relative to its
+    own directory (it changes to it at startup). Every runtime asset
+    (textures, `.ogl` meshes, SPIR-V shaders, font atlases, sounds) lives
+    only in `resources/vulkan_earth/Data/`, and
     `src/Makefile.am`'s `all-local:` copies that tree next to the binary
     (into `src/` itself for an in-tree build, where the copies are
     gitignored). Its rules work file by file, so `make clean` removes
     exactly the copied files - `src/Predator/` also holds tracked
     `.ac`/`.x3d` source models, which stay
-    ModelBuilder's own two textures are in
-    `resources/vulkan_earth/Tools/ModelBuilder/Data/` - its
-    `TestImage.raw` differs from the game's - so run that tool from there
 
 - **resources/NN/Data/** - Each tutorial's own GLSL sources
   (`shader.NN.{vert,frag}`), compiled SPIR-V (`shader.{vert,frag}.NN.spv`
@@ -354,8 +387,9 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   part's draw call, the first push constant here carrying a matrix rather
   than Tutorial10's flat color
 - Tutorial17: a titled bevel-panel grid of all 8 real vulkan_earth items
-  (`vulkan_earth/src/ItemXxx.cpp` - `Item` itself has no `draw()` method,
-  so there was nothing to port there beyond this real data), ported from
+  (`GameCatalog`'s item data, the same the game's `ItemXxx` classes load -
+  `Item` itself has no `draw()` method, so there was nothing to port
+  there beyond this real data), ported from
   `Inventory`'s own rendering (`ControlItemGrid`'s bevel, built the same
   way as Tutorial15's button). Two textures - the `BitmapFont` glyph atlas
   and a combined icon atlas stitched at runtime from the 8 real
@@ -387,7 +421,8 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   BFB - each scaled by its own weapon's real `scale`, each with its own
   texture and descriptor set bound in turn before its draw call) and a
   5x2 weapon inventory grid mirroring Tutorial17's Item grid exactly,
-  fed the 10 real shop-purchasable weapons' data (`WeaponDefault`/id 10
+  fed the 10 real shop-purchasable weapons' `GameCatalog` data, also the
+  source of each projectile's scale (`WeaponDefault`/id 10
   is an internal `Projectile` fallback, never shop-purchasable, and is
   excluded). Same one-render-pass-two-pipelines technique Tutorial18
   introduced, without a depth buffer this time (three separate,
@@ -397,12 +432,13 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   are untextured, unlit, alpha-blended `glutSolidSphere` geometry
   (confirmed no particle/explosion texture asset exists anywhere in
   vulkan_earth/src/, and `GL_LIGHTING` is only ever enabled for the
-  terrain in the real game). Live per-frame CPU simulations of three
-  real particle types (smoke's white->yellow->red->black color-over-time
-  fade, acid's green linear motion, float's white damped-Y drift, each
-  respawning at end of life like `ParticleGenerator::addParticles()`
-  refills a dead slot) plus a real weapon-colored growing/fading
-  explosion sphere and the real translucent shield sphere, all drawn as
+  terrain in the real game). Three real particle generators (smoke's
+  white->yellow->red->black color-over-time fade, acid's green linear
+  motion, float's white damped-Y drift) with the game's own arguments,
+  plus a real weapon-colored growing/fading explosion sphere (WeaponBFB's
+  `GameCatalog` colors/radius) - all simulated by `EffectSimulation`, the
+  same code the game runs, and only scaled down to this tutorial's world
+  - and the real translucent shield sphere, all drawn as
   one shared `Math::Sphere` mesh with a per-instance push constant. This
   project's first tutorial with no texture at all (flat-colored,
   matching the real unlit spheres) and its first continuously-animating,

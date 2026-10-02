@@ -178,7 +178,8 @@ bool ImageFactory::createImageView(VkImage image,
 }
 
 bool ImageFactory::createSampler(VkSamplerAddressMode address_mode,
-                                 VkSampler* out) const {
+                                 VkSampler* out,
+                                 VkBorderColor border_color) const {
     VkSamplerCreateInfo sampler_create_info = {
             .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
             .pNext = nullptr,
@@ -196,7 +197,7 @@ bool ImageFactory::createSampler(VkSamplerAddressMode address_mode,
             .compareOp = VK_COMPARE_OP_ALWAYS,
             .minLod = 0.0f,
             .maxLod = 0.0f,
-            .borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
+            .borderColor = border_color,
             .unnormalizedCoordinates = VK_FALSE};
 
     return vkCreateSampler(m_device, &sampler_create_info, nullptr, out) ==
@@ -516,7 +517,8 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
                              std::uint32_t height,
                              const std::vector<char>& pixels,
                              VkSamplerAddressMode address_mode,
-                             ImageParameters& out) {
+                             ImageParameters& out,
+                             VkBorderColor border_color) {
     // Every existing tutorial's own createTextureFromPixels() hardcodes
     // this format/usage combination - it's always an uploaded RGBA color
     // texture, never anything else, so it stays hardcoded here too rather
@@ -548,7 +550,8 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
     }
 
     VkSampler vk_sampler;
-    if (!image_factory.createSampler(address_mode, &vk_sampler)) {
+    if (!image_factory.createSampler(
+                address_mode, &vk_sampler, border_color)) {
         return false;
     }
     out.setVkSampler(vk_sampler);

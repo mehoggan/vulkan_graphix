@@ -2,6 +2,7 @@
 #define VULKAN_GRAPHIX_TOOLS_H
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -55,6 +56,11 @@ private:
     F deleter;
     VkDevice device;
 };
+
+// The directory of the running executable (/proc/self/exe's), skipping a
+// libtool .libs/ wrapper directory: where the build copies every asset,
+// and what the file readers below resolve relative filenames against.
+std::filesystem::path executableDir();
 
 std::vector<char> getBinaryFileContents(std::string const& filename);
 

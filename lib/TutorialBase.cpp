@@ -733,6 +733,11 @@ bool TutorialBase::createDevice() {
             &available_device_features);
     VkPhysicalDeviceFeatures enabled_device_features = {};
     enabled_device_features.wideLines = available_device_features.wideLines;
+    // Same opt-in-when-available treatment for line-mode polygon
+    // rasterization (VK_POLYGON_MODE_LINE), which vulkan_earth's terrain
+    // wireframe toggle uses.
+    enabled_device_features.fillModeNonSolid =
+            available_device_features.fillModeNonSolid;
 
     VkDeviceCreateInfo device_create_info = {
             .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
@@ -1262,7 +1267,12 @@ VkImageUsageFlags TutorialBase::getSwapChainUsageFlags(
     // supported
     if (surface_capabilities.supportedUsageFlags &
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) {
-        return VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        // Also request transfer-source usage where supported, so a
+        // presented image can be copied back to the host (vulkan_earth's
+        // frame capture); harmless for anything that never copies from it.
+        return VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+               (surface_capabilities.supportedUsageFlags &
+                VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
     }
     Logging::error(LOG_TAG,
                    "VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT image usage is not "

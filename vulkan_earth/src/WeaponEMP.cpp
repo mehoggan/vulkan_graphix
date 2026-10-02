@@ -9,27 +9,8 @@ extern void playSFX(std::int32_t sfx);
 WeaponEMP::WeaponEMP() = default;
 WeaponEMP::WeaponEMP(std::int32_t id) {
     uniqueidentifier = id;
-    max_stack = 8;
-    package_num = 2;
-    remaining = 2;
-    scale = 40;
-    image_file_name = "WeaponEMP.raw";
-    description = "EMP:     Disrupt tanks in the target area for 5 turns.";
-    price = 60;
-    radius = 12;
-    damage = 0;
-    special_number = 5;
-
-    float temp_colors1[3] = {White};
-    float temp_colors2[3] = {Silver};
-    float temp_colors3[3] = {White};
-    float temp_colors4[3] = {Silver};
-    for (std::int32_t i = 0; i < 3; i++) {
-        explosion_color1[i] = temp_colors1[i];
-        explosion_color2[i] = temp_colors2[i];
-        explosion_color3[i] = temp_colors3[i];
-        explosion_color4[i] = temp_colors4[i];
-    }
+    loadSpec(vulkan_graphix::GameCatalog::weapon(
+            vulkan_graphix::GameCatalog::WeaponKind::EMP));
 }
 WeaponEMP::~WeaponEMP() = default;
 

@@ -5,12 +5,15 @@ libvulkan_graphix_la_CPPFLAGS = -Werror -Wall -pedantic \
 
 libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 														./BitmapFont.cpp \
+															./EffectSimulation.cpp \
+															./GameCatalog.cpp \
 															./HellfireTank.cpp \
 															./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
 															./OrbitCamera.cpp \
 															./TankOrientation.cpp \
+															./TankPlacement.cpp \
 															./TerrainGenerator.cpp \
 															./Tools.cpp \
 															./TutorialBase.cpp \

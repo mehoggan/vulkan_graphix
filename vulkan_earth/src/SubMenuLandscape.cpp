@@ -14,11 +14,17 @@
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Camera.h"
+#include "vulkan_earth/render/Font.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 #define PI 3.1415926535898
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 extern void playSFX(std::int32_t sfx);
 
 SubMenuLandscape::SubMenuLandscape() = default;
@@ -60,7 +66,8 @@ SubMenuLandscape::SubMenuLandscape(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos - height / 20;
@@ -70,7 +77,7 @@ SubMenuLandscape::SubMenuLandscape(std::int32_t id,
                            label_x_pos,
                            label_y_pos,
                            (z_pos + 1),
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           vulkan_earth::render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -164,128 +171,98 @@ void SubMenuLandscape::setPercentBorder(float percent) {
     percent_border = percent;
 }
 
-void SubMenuLandscape::draw() {
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos + -height, z_pos);
-    glEnd();
-    label->draw();
+void SubMenuLandscape::draw(render::RenderContext& context) {
+    using render::Vec3;
+    using render::Vec4;
+    // The same raised 3-pixel bevel every button draws.
+    if (frame_mesh.triangles().empty()) {
+        render::appendBevel(
+                frame_mesh,
+                x_pos,
+                y_pos,
+                z_pos,
+                width,
+                height,
+                render::Vec4(color[0], color[1], color[2], color[3]),
+                false);
+    }
+    context.draw(frame_mesh);
+    label->draw(context);
     for (std::int32_t i = 0; i < num_control_items_lnd; i++) {
         if (sub_menu_button[i]) {
-            sub_menu_button[i]->draw();
+            sub_menu_button[i]->draw(context);
         }
     }
 
-    float border_x = x_pos + 0.03 * width;
-    float border_y = y_pos - 0.07 * height;
+    // The preview's sunken border (top/left -0.2, bottom/right +0.4).
+    if (border_mesh.triangles().empty()) {
+        float border_x = x_pos + 0.03 * width;
+        float border_y = y_pos - 0.07 * height;
+        float const z1 = z_pos + 1;
+        Vec4 const dark(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
+        Vec4 const light(
+                color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
+        // top-left
+        render::appendQuad(
+                border_mesh,
+                Vec3(border_x, border_y, z1),
+                Vec3(border_x - 3, border_y + 3, z1),
+                Vec3(border_x + 0.936 * width + 3, border_y + 3, z1),
+                Vec3(border_x + 0.936 * width, border_y, z1),
+                dark);
+        render::appendQuad(
+                border_mesh,
+                Vec3(border_x - 3, border_y + 3, z1),
+                Vec3(border_x - 3, border_y - 0.597 * height - 3, z1),
+                Vec3(border_x, border_y - 0.597 * height, z1),
+                Vec3(border_x, border_y, z1),
+                dark);
+        // bottom-right
+        render::appendQuad(
+                border_mesh,
+                Vec3(border_x - 3, border_y - 0.597 * height - 3, z1),
+                Vec3(border_x + 0.936 * width + 3,
+                     border_y - 0.597 * height - 3,
+                     z1),
+                Vec3(border_x + 0.936 * width, border_y - 0.597 * height, z1),
+                Vec3(border_x, border_y - 0.597 * height, z1),
+                light);
+        render::appendQuad(
+                border_mesh,
+                Vec3(border_x + 0.936 * width, border_y, z1),
+                Vec3(border_x + 0.936 * width + 3, border_y + 3, z1),
+                Vec3(border_x + 0.936 * width + 3,
+                     border_y - 0.597 * height - 3,
+                     z1),
+                Vec3(border_x + 0.936 * width, border_y + -0.597 * height, z1),
+                light);
+    }
+    context.draw(border_mesh);
 
-    // top-left
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
-    glVertex3f(border_x, border_y, z_pos + 1);
-    glVertex3f(border_x - 3, border_y + 3, z_pos + 1);
-    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, z_pos + 1);
-    glVertex3f(border_x + 0.936 * width, border_y, z_pos + 1);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
-    glVertex3f(border_x - 3, border_y + 3, z_pos + 1);
-    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, z_pos + 1);
-    glVertex3f(border_x, border_y - 0.597 * height, z_pos + 1);
-    glVertex3f(border_x, border_y, z_pos + 1);
-    glEnd();
-
-    // bottom-right
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
-    glVertex3f(border_x - 3, border_y - 0.597 * height - 3, z_pos + 1);
-    glVertex3f(border_x + 0.936 * width + 3,
-               border_y - 0.597 * height - 3,
-               z_pos + 1);
-    glVertex3f(border_x + 0.936 * width, border_y - 0.597 * height, z_pos + 1);
-    glVertex3f(border_x, border_y - 0.597 * height, z_pos + 1);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
-    glVertex3f(border_x + 0.936 * width, border_y, z_pos + 1);
-    glVertex3f(border_x + 0.936 * width + 3, border_y + 3, z_pos + 1);
-    glVertex3f(border_x + 0.936 * width + 3,
-               border_y - 0.597 * height - 3,
-               z_pos + 1);
-    glVertex3f(
-            border_x + 0.936 * width, border_y + -0.597 * height, z_pos + 1);
-    glEnd();
-
-    glMatrixMode(GL_PROJECTION);
-    // glPushMatrix();
-    glLoadIdentity();
-    glViewport(x_pos + 0.8 * width, y_pos, (0.9417 * width), (0.6 * height));
-    gluPerspective(45.0, ((0.9417 * width) / (0.6 * height)), 1, 199999999);
-    // glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    // glPushMatrix();
-    glLoadIdentity();
-    glScissor(x_pos + 0.8 * width, y_pos, (0.9417 * width), (0.6 * height));
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    gluLookAt(cam_x,
-              cam_y,
-              cam_z,
-              (tm->getActualSize() / 2.0),
-              0.0f,
-              (tm->getActualSize() / 2.0),
-              0.0f,
-              1.0f,
-              0.0f);
-    tm->draw();
-    // glPopMatrix();
-
-    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
-    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, win_width, win_height);
-    gluPerspective(
-            60.0,
-            static_cast<float>(win_width) / static_cast<float>(win_height),
-            1.0,
-            1000000.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, win_width, win_height);
-    glLoadIdentity();
+    // The live terrain preview, in its own viewport (glViewport()'s float
+    // -> int truncation kept), cleared to black, then the menu's own
+    // viewport and camera restored.
+    render::GlRect const saved_viewport = context.viewport();
+    render::Mat4 const saved_projection = context.projection();
+    render::Mat4 const saved_view = context.view();
+    render::GlRect const preview = {
+            static_cast<std::int32_t>(x_pos + 0.8 * width),
+            static_cast<std::int32_t>(y_pos),
+            static_cast<std::int32_t>(0.9417 * width),
+            static_cast<std::int32_t>(0.6 * height)};
+    context.setViewport(preview);
+    context.clearColorAndDepth(Vec4(0, 0, 0, 0));
+    context.setCamera(
+            render::camera::perspective(
+                    45.0, ((0.9417 * width) / (0.6 * height)), 1, 199999999),
+            render::camera::lookAt(Vec3(cam_x, cam_y, cam_z),
+                                   Vec3((tm->getActualSize() / 2.0),
+                                        0.0f,
+                                        (tm->getActualSize() / 2.0)),
+                                   Vec3(0.0f, 1.0f, 0.0f)));
+    tm->draw(context);
+    context.setViewport(saved_viewport);
+    context.setCamera(saved_projection, saved_view);
 }
 
 std::string SubMenuLandscape::collectData() {
@@ -422,8 +399,8 @@ void SubMenuLandscape::updateMouse(std::int32_t x, std::int32_t y) {
         old_mouse_x = x;
         old_mouse_y = y;
     }
-    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
-    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
+    std::int32_t win_width = vulkan_earth::render::windowWidth();
+    std::int32_t win_height = vulkan_earth::render::windowHeight();
     sub_menu_button[0]->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     sub_menu_button[1]->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     sub_menu_button[2]->updateMouse(x - (win_width / 2), (win_height / 2) - y);

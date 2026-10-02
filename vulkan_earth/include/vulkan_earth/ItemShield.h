@@ -1,8 +1,6 @@
 #ifndef ITEM_SHIELD_H
 #define ITEM_SHIELD_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Item.h"
 

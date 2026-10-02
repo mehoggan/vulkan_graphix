@@ -30,7 +30,11 @@
 #include "vulkan_earth/WeaponRevive.h"
 #include "vulkan_earth/WeaponTeleport.h"
 #include "vulkan_earth/WeaponThor.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 extern void playMusic(std::int32_t music);
@@ -147,7 +151,7 @@ ShopMenu::ShopMenu(float new_width,
                            grids[1]->getXPos() + grids[1]->getWidth() * 0.05,
                            grids[1]->getYPos() + 15,
                            (pos[2] + 1),
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -156,7 +160,7 @@ ShopMenu::ShopMenu(float new_width,
                            grids[1]->getXPos() + grids[1]->getWidth() / 1.6,
                            grids[1]->getYPos() + 15,
                            (pos[2] + 1),
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -164,7 +168,7 @@ ShopMenu::ShopMenu(float new_width,
                                       pos[0] - width * 0.35,
                                       pos[1] - height * 0.39,
                                       (pos[2] + 1),
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      render::FontId::TimesRoman24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
@@ -172,7 +176,7 @@ ShopMenu::ShopMenu(float new_width,
                                        pos[0] - width * 0.4,
                                        pos[1] - height * 0.1,
                                        pos[2] + 1,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       render::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
@@ -180,7 +184,7 @@ ShopMenu::ShopMenu(float new_width,
                                      pos[0] - width * 0.35,
                                      pos[1] - height * 0.2,
                                      pos[2] + 1,
-                                     GLUT_BITMAP_TIMES_ROMAN_24,
+                                     render::FontId::TimesRoman24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
@@ -188,7 +192,7 @@ ShopMenu::ShopMenu(float new_width,
                                       pos[0] + width * 0.15,
                                       pos[1] - height * 0.2,
                                       pos[2] + 1,
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      render::FontId::TimesRoman24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
@@ -197,7 +201,7 @@ ShopMenu::ShopMenu(float new_width,
                                           pos[0] - width * 0.2,
                                           pos[1] - height * 0.39,
                                           (pos[2] + 1),
-                                          GLUT_BITMAP_TIMES_ROMAN_24,
+                                          render::FontId::TimesRoman24,
                                           0.0f,
                                           0.0f,
                                           0.0f);
@@ -240,8 +244,15 @@ ShopMenu::ShopMenu(float new_width,
 
         std::string remain =
                 "x " + std::to_string(shop_wpns[i]->getPackageNum());
-        label_shop_wpn_remains[i] = new TextObject(
-                remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
+        label_shop_wpn_remains[i] =
+                new TextObject(remain,
+                               0,
+                               0,
+                               0,
+                               render::FontId::TimesRoman24,
+                               0.6f,
+                               0.3f,
+                               0.4f);
     }
     for (std::int32_t i = 0; i < num_sales_item; i++) {
         img_shop_items[i] = new ImageObject(0,
@@ -257,8 +268,15 @@ ShopMenu::ShopMenu(float new_width,
 
         std::string remain =
                 "x " + std::to_string(shop_items[i]->getPackageNum());
-        label_shop_item_remains[i] = new TextObject(
-                remain, 0, 0, 0, GLUT_BITMAP_TIMES_ROMAN_24, 0.6f, 0.3f, 0.4f);
+        label_shop_item_remains[i] =
+                new TextObject(remain,
+                               0,
+                               0,
+                               0,
+                               render::FontId::TimesRoman24,
+                               0.6f,
+                               0.3f,
+                               0.4f);
     }
 
     /*Set position of images and remainsLabels to shopping cells*/
@@ -376,7 +394,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0,
                                        0,
                                        0,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       render::FontId::TimesRoman24,
                                        0.6f,
                                        0.3f,
                                        0.4f);
@@ -407,7 +425,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0,
                                        0,
                                        0,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       render::FontId::TimesRoman24,
                                        0.6f,
                                        0.3f,
                                        0.4f);
@@ -424,7 +442,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                           pos[0] - width * 0.35,
                                           pos[1] - height * 0.39,
                                           (pos[2] + 1),
-                                          GLUT_BITMAP_TIMES_ROMAN_24,
+                                          render::FontId::TimesRoman24,
                                           0.0f,
                                           0.0f,
                                           0.0f);
@@ -438,7 +456,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                               pos[0] - width * 0.2,
                                               pos[1] - height * 0.39,
                                               (pos[2] + 1),
-                                              GLUT_BITMAP_TIMES_ROMAN_24,
+                                              render::FontId::TimesRoman24,
                                               0.0f,
                                               0.0f,
                                               0.0f);
@@ -517,7 +535,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                        pos[0] - width * 0.4,
                                        pos[1] - height * 0.1,
                                        pos[2] + 1,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       render::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
@@ -527,7 +545,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                                  pos[0] - width * 0.35,
                                                  pos[1] - height * 0.2,
                                                  pos[2] + 1,
-                                                 GLUT_BITMAP_TIMES_ROMAN_24,
+                                                 render::FontId::TimesRoman24,
                                                  0.0f,
                                                  0.0f,
                                                  0.0f);
@@ -535,10 +553,10 @@ void ShopMenu::updateBuyDiscriptLabel() {
             } else {
                 delete label_discription;
                 delete label_buy_price;
-                label_discription =
-                        new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-                label_buy_price =
-                        new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+                label_discription = new TextObject(
+                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                label_buy_price = new TextObject(
+                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
             }
         }
     } else {
@@ -551,7 +569,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                        pos[0] - width * 0.4,
                                        pos[1] - height * 0.1,
                                        pos[2] + 1,
-                                       GLUT_BITMAP_TIMES_ROMAN_24,
+                                       render::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
@@ -561,7 +579,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                                  pos[0] - width * 0.35,
                                                  pos[1] - height * 0.2,
                                                  pos[2] + 1,
-                                                 GLUT_BITMAP_TIMES_ROMAN_24,
+                                                 render::FontId::TimesRoman24,
                                                  0.0f,
                                                  0.0f,
                                                  0.0f);
@@ -569,10 +587,10 @@ void ShopMenu::updateBuyDiscriptLabel() {
             } else {
                 delete label_discription;
                 delete label_buy_price;
-                label_discription =
-                        new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-                label_buy_price =
-                        new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+                label_discription = new TextObject(
+                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                label_buy_price = new TextObject(
+                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
             }
         }
     }
@@ -606,7 +624,7 @@ void ShopMenu::updateSellLabel() {
                                       pos[0] + width * 0.15,
                                       pos[1] - height * 0.2,
                                       pos[2] + 1,
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      render::FontId::TimesRoman24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
@@ -671,7 +689,7 @@ void ShopMenu::buyHandler() {
                                            pos[0] - width * 0.2,
                                            pos[1] - height * 0.39,
                                            (pos[2] + 1),
-                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           render::FontId::TimesRoman24,
                                            0.0f,
                                            0.0f,
                                            0.0f);
@@ -686,7 +704,7 @@ void ShopMenu::buyHandler() {
                                            0,
                                            0,
                                            0,
-                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           render::FontId::TimesRoman24,
                                            0.6f,
                                            0.3f,
                                            0.4f);
@@ -754,7 +772,7 @@ void ShopMenu::buyHandler() {
                                            pos[0] - width * 0.2,
                                            pos[1] - height * 0.39,
                                            (pos[2] + 1),
-                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           render::FontId::TimesRoman24,
                                            0.0f,
                                            0.0f,
                                            0.0f);
@@ -769,7 +787,7 @@ void ShopMenu::buyHandler() {
                                            0,
                                            0,
                                            0,
-                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           render::FontId::TimesRoman24,
                                            0.6f,
                                            0.3f,
                                            0.4f);
@@ -827,159 +845,92 @@ void ShopMenu::sellHandler() {
                                               pos[0] - width * 0.2,
                                               pos[1] - height * 0.39,
                                               (pos[2] + 1),
-                                              GLUT_BITMAP_TIMES_ROMAN_24,
+                                              render::FontId::TimesRoman24,
                                               0.0f,
                                               0.0f,
                                               0.0f);
     }
 }
 
-void ShopMenu::draw() {
+void ShopMenu::draw(render::RenderContext& context) {
     playMusic(shopmenu);
-    glPushMatrix();
-    /*	ALWAYS START AT UPPER LEFT CORNER -> LOWER LEFT CORNER -> LOWER RIGHT
-     * CORNER -> UPPER RIGHT	*/
-    glBegin(GL_QUADS);
-    glColor3f(0.85f, 0.85f, 0.85f);
-    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0);      /*	|\ 	*/
-    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*	| |	*/
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*	|/ 	*/
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.80f, 0.80f, 0.80f);
-    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0); /*_____ */
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*\	  / */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /* ---	*/
-    glVertex3f((width / 2.0), (height / 2.0), 0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.75f, 0.75f, 0.75f);
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*_____ */
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*|	  | */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*----- */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.45f, 0.45f, 0.45f);
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);                                          /* ___  */
-    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*/	  \ */
-    glVertex3f((width / 2.0), -1 * (height / 2.0), 0);      /*----- */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*	 /| 	*/
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);                                     /*	| | 	*/
-    glVertex3f((width / 2.0), -1 * (height / 2.0), 0); /* 	 \| 	*/
-    glVertex3f((width / 2.0), (height / 2.0), 0);
-    glEnd();
+    using render::Vec3;
+    using render::Vec4;
+    // The whole-window background panel (see appendMenuPanel()), then the
+    // black separating lines (each three pixels thick, as three lines).
+    if (panel_mesh.triangles().empty() || built_width != width ||
+        built_height != height) {
+        panel_mesh.clear();
+        render::appendMenuPanel(panel_mesh, width, height, percent_border);
+        Vec4 const black(0, 0, 0, 1);
+        for (float offset : {-1.0f, 0.0f, 1.0f}) {
+            panel_mesh.addLine(Vec3(pos[0] + width * 0.04 + offset,
+                                    pos[1] + height * 0.45,
+                                    pos[2] + 1),
+                               Vec3(pos[0] + width * 0.04 + offset,
+                                    pos[1] - height * 0.277,
+                                    pos[2] + 1),
+                               black);
+        }
+        for (float offset : {1.0f, 0.0f, -1.0f}) {
+            panel_mesh.addLine(Vec3(pos[0] - width * 0.45,
+                                    pos[1] - height * 0.29 + offset,
+                                    pos[2] + 1),
+                               Vec3(pos[0] + width * 0.45,
+                                    pos[1] - height * 0.29 + offset,
+                                    pos[2] + 1),
+                               black);
+        }
+        panel_mesh.addLine(
+                Vec3(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
+                     grids[1]->getYPos() + 35,
+                     pos[2] + 1),
+                Vec3(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
+                     grids[1]->getYPos() + 5,
+                     pos[2] + 1),
+                black);
+        built_width = width;
+        built_height = height;
+    }
+    context.draw(panel_mesh);
 
-    // Draw separating lines
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(pos[0] + width * 0.04 - 1, pos[1] + height * 0.45, pos[2] + 1);
-    glVertex3f(pos[0] + width * 0.04 - 1, pos[1] - height * 0.277, pos[2] + 1);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(pos[0] + width * 0.04, pos[1] + height * 0.45, pos[2] + 1);
-    glVertex3f(pos[0] + width * 0.04, pos[1] - height * 0.277, pos[2] + 1);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(pos[0] + width * 0.04 + 1, pos[1] + height * 0.45, pos[2] + 1);
-    glVertex3f(pos[0] + width * 0.04 + 1, pos[1] - height * 0.277, pos[2] + 1);
-    glEnd();
-
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(pos[0] - width * 0.45, pos[1] - height * 0.29 + 1, pos[2] + 1);
-    glVertex3f(pos[0] + width * 0.45, pos[1] - height * 0.29 + 1, pos[2] + 1);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(pos[0] - width * 0.45, pos[1] - height * 0.29, pos[2] + 1);
-    glVertex3f(pos[0] + width * 0.45, pos[1] - height * 0.29, pos[2] + 1);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(pos[0] - width * 0.45, pos[1] - height * 0.29 - 1, pos[2] + 1);
-    glVertex3f(pos[0] + width * 0.45, pos[1] - height * 0.29 - 1, pos[2] + 1);
-    glEnd();
-
-    glBegin(GL_LINES);
-    glColor3f(0, 0, 0);
-    glVertex3f(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
-               grids[1]->getYPos() + 35,
-               pos[2] + 1);
-    glVertex3f(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
-               grids[1]->getYPos() + 5,
-               pos[2] + 1);
-    glEnd();
-
-    grids[0]->draw();
-    grids[1]->draw();
-    buttons[0]->draw();
-    buttons[1]->draw();
-    buttons[2]->draw();
-    buttons[3]->draw();
-    buttons[4]->draw();
-    label_wpn->draw();
-    label_item->draw();
-    label_player_num->draw();
-    label_player_balance->draw();
-    label_discription->draw();
-    label_buy_price->draw();
-    label_sell_price->draw();
+    grids[0]->draw(context);
+    grids[1]->draw(context);
+    buttons[0]->draw(context);
+    buttons[1]->draw(context);
+    buttons[2]->draw(context);
+    buttons[3]->draw(context);
+    buttons[4]->draw(context);
+    label_wpn->draw(context);
+    label_item->draw(context);
+    label_player_num->draw(context);
+    label_player_balance->draw(context);
+    label_discription->draw(context);
+    label_buy_price->draw(context);
+    label_sell_price->draw(context);
 
     if (buttons[0]->isToggled()) {
         for (std::int32_t i = 0; i < num_sales_weapon; i++) {
-            img_shop_wpns[i]->draw();
-            label_shop_wpn_remains[i]->draw();
+            img_shop_wpns[i]->draw(context);
+            label_shop_wpn_remains[i]->draw(context);
         }
     } else {
         for (std::int32_t i = 0; i < num_sales_item; i++) {
-            img_shop_items[i]->draw();
-            label_shop_item_remains[i]->draw();
+            img_shop_items[i]->draw(context);
+            label_shop_item_remains[i]->draw(context);
         }
     }
 
     for (std::int32_t i = 0; i < inven_grid_row; i++) {
         if (img_inven_wpns[i] != nullptr) {
-            img_inven_wpns[i]->draw();
-            label_inven_wpn_remains[i]->draw();
+            img_inven_wpns[i]->draw(context);
+            label_inven_wpn_remains[i]->draw(context);
         }
         if (img_inven_items[i] != nullptr) {
-            img_inven_items[i]->draw();
-            label_inven_item_remains[i]->draw();
+            img_inven_items[i]->draw(context);
+            label_inven_item_remains[i]->draw(context);
         }
     }
-    glPopMatrix();
 }
 
 void ShopMenu::buttonTest(std::int32_t x,
@@ -998,8 +949,10 @@ void ShopMenu::buttonTest(std::int32_t x,
         grids[0]->deselectAllCells();
         delete label_discription;
         delete label_buy_price;
-        label_discription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-        label_buy_price = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+        label_discription = new TextObject(
+                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+        label_buy_price = new TextObject(
+                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
         buttons[0]->mouseClickEvent(x, y, button_down, true);
         if (buttons[0]->isToggled()) {
             buttons[1]->setToggled(false);
@@ -1016,8 +969,10 @@ void ShopMenu::buttonTest(std::int32_t x,
         grids[0]->deselectAllCells();
         delete label_discription;
         delete label_buy_price;
-        label_discription = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
-        label_buy_price = new TextObject("", 0, 0, 0, nullptr, 0, 0, 0);
+        label_discription = new TextObject(
+                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+        label_buy_price = new TextObject(
+                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
         buttons[1]->mouseClickEvent(x, y, button_down, true);
         if (buttons[1]->isToggled()) {
             buttons[0]->setToggled(false);

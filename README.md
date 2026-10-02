@@ -47,6 +47,23 @@ disassemble or validate an existing `.spv` directly instead of
 recompiling from source — `spirv-dis` produces the same disassembly
 style `glslc -S` does, since `glslc` uses it internally.
 
+### vulkan_earth
+
+`vulkan_earth/` is the legacy game the later tutorials are ported from,
+now running entirely on Vulkan (it needs `libsdl1.2-dev`,
+`libsdl-mixer1.2-dev`, and `libxrandr-dev` besides the packages above).
+After `make`, run `./build/vulkan_earth/src/vulkan_earth_runner`. Its
+GLSL sources live in `resources/vulkan_earth/Shaders/`; recompile them
+with that directory's `compile.sh` (it uses `glslc`, writing the SPIR-V
+the game loads into `resources/vulkan_earth/Data/shaders/`).
+
+To replay input and capture frames, e.g. for comparing renders across
+changes, set `VE_WINDOW=1280x800` and `VE_SCRIPT=<file>`, where each line
+of the file is `<frame> <op> [args]`: `down x y`/`up x y` (left mouse
+button), `move x y`, `key c`/`keyup c` (`space` and `esc` by name),
+`spec n`/`specup n` (a GLUT special key code, e.g. 1 for F1),
+`capture out.ppm`, or `quit`.
+
 ### Code Coverage
 
 `tests/MathTest.cpp`/`tests/VertexTypesTest.cpp` exercise the header-only

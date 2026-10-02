@@ -1,23 +1,26 @@
 #ifndef WATER_H_
 #define WATER_H_
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
+#include <memory>
 #include <vector>
 #include "vulkan_earth/Normal.h"
 #include "vulkan_earth/TexCoord.h"
-#include "vulkan_earth/VBOQualifer.h"
 #include "vulkan_earth/Vertex.h"
-class Shader;
+#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_earth/render/Texture.h"
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class Water {
 public:
     Water();
     Water(std::int32_t new_scale, std::int32_t new_size);
     ~Water();
-    void draw();
+    void draw(vulkan_earth::render::RenderContext& context);
     void initData();
     void prepareData(std::int32_t steps,
                      std::int32_t increase,
@@ -43,7 +46,6 @@ public:
                                  float y6,
                                  float z6,
                                  Normal* n);
-    void verifyVBOs();
     void prepTerrain();
     void prepareData();
     void terrainGen(std::int32_t steps,
@@ -54,12 +56,8 @@ public:
     std::int32_t getScale();
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
-    std::uint32_t loadTexture(const char* filename,
-                              std::int32_t width,
-                              std::int32_t height);
 
 private:
-    VBOQualifer* vbo_qualify;
     std::int32_t scale;
     std::int32_t size;
     std::int32_t total_vertices;
@@ -68,29 +66,8 @@ private:
     std::vector<Vertex> vertices;
     std::vector<Normal> normals;
     std::vector<TexCoord> tex_coord;
-    std::uint32_t color_texture;
-    std::uint32_t normal_texture;
-    std::vector<float> material_specular;
-    std::vector<float> material_shininess;
-    std::vector<float> material_diffuse;
-    void configVBOs();
-    std::uint32_t vertex_vbo_id;
-    std::uint32_t normal_vbo_id;
-    std::uint32_t texture_vbo_id;
-    PFNGLGENBUFFERSARBPROC
-    pgl_gen_buffers_arb;  // VBO Name Generation Procedure
-    PFNGLBINDBUFFERARBPROC pgl_bind_buffer_arb;  // VBO Bind Procedure
-    PFNGLBUFFERDATAARBPROC pgl_buffer_data_arb;  // VBO Data Loading Procedure
-    PFNGLBUFFERSUBDATAARBPROC
-    pgl_buffer_sub_data_arb;  // VBO Sub Data Loading Procedure
-    PFNGLDELETEBUFFERSARBPROC
-    pgl_delete_buffers_arb;  // VBO Deletion Procedure
-    PFNGLGETBUFFERPARAMETERIVARBPROC
-    pgl_get_buffer_parameteriv_arb;  // return various parameters of VBO
-    PFNGLMAPBUFFERARBPROC pgl_map_buffer_arb;      // map VBO procedure
-    PFNGLUNMAPBUFFERARBPROC pgl_unmap_buffer_arb;  // unmap VBO procedure
-    Shader* shader;
-    std::int32_t timer_loc;
+    std::shared_ptr<vulkan_earth::render::Texture> color_texture;
+    std::unique_ptr<vulkan_earth::render::StaticMesh> mesh;
     float timer;
 };
 

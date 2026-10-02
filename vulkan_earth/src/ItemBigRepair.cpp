@@ -9,13 +9,8 @@ extern void playSFX(std::int32_t sfx);
 ItemBigRepair::ItemBigRepair() = default;
 ItemBigRepair::ItemBigRepair(std::int32_t id) {
     uniqueidentifier = id;
-    package_num = 3;
-    max_stack = 9;
-    remaining = 3;
-    image_file_name = "ItemBigRepair.raw";
-    description = "Big Repair:     Heals 700 damage (uses 1 turn).";
-    price = 100;
-    special_num = 700;
+    loadSpec(vulkan_graphix::GameCatalog::item(
+            vulkan_graphix::GameCatalog::ItemKind::BigRepair));
 }
 ItemBigRepair::~ItemBigRepair() = default;
 

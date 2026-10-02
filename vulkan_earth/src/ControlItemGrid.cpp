@@ -1,11 +1,17 @@
 #include "vulkan_earth/ControlItemGrid.h"
+#include <array>
 #include <cstdint>
+#include <vector>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemButton.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -72,65 +78,53 @@ ControlItemGrid::~ControlItemGrid() {
     delete[] selected_cells;
 }
 
-void ControlItemGrid::draw() {
-    glPushMatrix();
+void ControlItemGrid::draw(render::RenderContext& context) {
+    using render::Vec3;
+    using render::Vec4;
+    std::vector<bool> toggled(rows * cols);
+    for (std::int32_t i = 0; i < rows * cols; i++) {
+        toggled[i] = buttons[i]->isToggled();
+    }
+    if (mesh_built && toggled == built_toggled) {
+        context.draw(mesh);
+        return;
+    }
+    mesh.clear();
 
-    // Draw main body
-    glBegin(GL_QUADS);
-    glColor4f(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1);
-    glVertex3f(x_pos, y_pos, z_pos + 0.4);
-    glVertex3f(x_pos - 4, y_pos + 4, z_pos + 0.4);
-    glVertex3f(x_pos + width + 4, y_pos + 4, z_pos + 0.4);
-    glVertex3f(x_pos + width, y_pos, z_pos + 0.4);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1);
-    glVertex3f(x_pos - 4, y_pos + 4, z_pos + 0.4);
-    glVertex3f(x_pos - 4, y_pos - height - 4, z_pos + 0.4);
-    glVertex3f(x_pos, y_pos - height, z_pos + 0.4);
-    glVertex3f(x_pos, y_pos, z_pos + 0.4);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(0.45, 0.45, 0.45, 1);
-    glVertex3f(x_pos, y_pos, z_pos + 0.4);
-    glVertex3f(x_pos, y_pos - height, z_pos + 0.4);
-    glVertex3f(x_pos + width, y_pos - height, z_pos + 0.4);
-    glVertex3f(x_pos + width, y_pos, z_pos + 0.4);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1);
-    glVertex3f(x_pos - 4, y_pos - height - 4, z_pos + 0.4);
-    glVertex3f(x_pos + width + 4, y_pos - height - 4, z_pos + 0.4);
-    glVertex3f(x_pos + width, y_pos - height, z_pos + 0.4);
-    glVertex3f(x_pos, y_pos - height, z_pos + 0.4);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1);
-    glVertex3f(x_pos + width, y_pos, z_pos + 0.4);
-    glVertex3f(x_pos + width + 4, y_pos + 4, z_pos + 0.4);
-    glVertex3f(x_pos + width + 4, y_pos - height - 4, z_pos + 0.4);
-    glVertex3f(x_pos + width, y_pos + -height, z_pos + 0.4);
-    glEnd();
+    // Draw main body (sunken bevel: -0.2 top/left, +0.4 bottom/right)
+    render::appendFrame(mesh,
+                        x_pos,
+                        y_pos,
+                        z_pos + 0.4,
+                        width,
+                        height,
+                        Vec4(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1),
+                        Vec4(0.45, 0.45, 0.45, 1),
+                        Vec4(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1),
+                        4);
 
     // Draw cell lines if they are set to visible
     if (visible_lines) {
+        Vec4 const black(0, 0, 0, 1);
         for (std::int32_t r = 0; r < rows; r++)
             for (std::int32_t c = 0; c < cols; c++) {
-                glBegin(GL_LINE_LOOP);
-                glColor3f(0, 0, 0);
-                glVertex3f(x_pos + cell_width * c,
-                           y_pos - cell_height * r,
-                           z_pos + 0.5);
-                glVertex3f(x_pos + cell_width * c,
-                           y_pos - cell_height * (r + 1),
-                           z_pos + 0.5);
-                glVertex3f(x_pos + cell_width * (c + 1),
-                           y_pos - cell_height * (r + 1),
-                           z_pos + 0.5);
-                glVertex3f(x_pos + cell_width * (c + 1),
-                           y_pos - cell_height * r,
-                           z_pos + 0.5);
-                glEnd();
+                // GL_LINE_LOOP: the four edges, closing back to the start.
+                std::array<Vec3, 4> const loop = {
+                        Vec3(x_pos + cell_width * c,
+                             y_pos - cell_height * r,
+                             z_pos + 0.5),
+                        Vec3(x_pos + cell_width * c,
+                             y_pos - cell_height * (r + 1),
+                             z_pos + 0.5),
+                        Vec3(x_pos + cell_width * (c + 1),
+                             y_pos - cell_height * (r + 1),
+                             z_pos + 0.5),
+                        Vec3(x_pos + cell_width * (c + 1),
+                             y_pos - cell_height * r,
+                             z_pos + 0.5)};
+                for (std::size_t v = 0; v < loop.size(); ++v) {
+                    mesh.addLine(loop[v], loop[(v + 1) % loop.size()], black);
+                }
             }
     }
     // Check button placements
@@ -142,27 +136,30 @@ void ControlItemGrid::draw() {
 
     // Change the color of active cells
     for (std::int32_t i = 0; i < rows * cols; i++) {
-        if (buttons[i]->isToggled()) {
-            glBegin(GL_QUADS);
-            glColor3f(active_cell_color[0],
-                      active_cell_color[1],
-                      active_cell_color[2]);
-            glVertex3f(buttons[i]->getXPos() + 3,
-                       buttons[i]->getYPos() - 3,
-                       z_pos + 0.6);
-            glVertex3f(buttons[i]->getXPos() + 3,
-                       buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
-                       z_pos + 0.6);
-            glVertex3f(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
-                       buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
-                       z_pos + 0.6);
-            glVertex3f(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
-                       buttons[i]->getYPos() - 3,
-                       z_pos + 0.6);
-            glEnd();
+        if (toggled[i]) {
+            render::appendQuad(
+                    mesh,
+                    Vec3(buttons[i]->getXPos() + 3,
+                         buttons[i]->getYPos() - 3,
+                         z_pos + 0.6),
+                    Vec3(buttons[i]->getXPos() + 3,
+                         buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
+                         z_pos + 0.6),
+                    Vec3(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
+                         buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
+                         z_pos + 0.6),
+                    Vec3(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
+                         buttons[i]->getYPos() - 3,
+                         z_pos + 0.6),
+                    Vec4(active_cell_color[0],
+                         active_cell_color[1],
+                         active_cell_color[2],
+                         1));
         }
     }
-    glPopMatrix();
+    built_toggled = toggled;
+    mesh_built = true;
+    context.draw(mesh);
 }
 
 void ControlItemGrid::mouseClickEvent(std::int32_t x,

@@ -9,13 +9,8 @@ extern void playSFX(std::int32_t sfx);
 ItemExtraBattery::ItemExtraBattery() = default;
 ItemExtraBattery::ItemExtraBattery(std::int32_t id) {
     uniqueidentifier = id;
-    package_num = 3;
-    max_stack = 9;
-    remaining = 3;
-    image_file_name = "ItemExtraBattery.raw";
-    description = "Extra Battery:     Recovers from the damage of EMP.";
-    price = 50;
-    special_num = 0;
+    loadSpec(vulkan_graphix::GameCatalog::item(
+            vulkan_graphix::GameCatalog::ItemKind::ExtraBattery));
 }
 ItemExtraBattery::~ItemExtraBattery() = default;
 
