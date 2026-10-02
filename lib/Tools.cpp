@@ -12,7 +12,6 @@
 
 namespace vulkan_graphix::Tools {
 
-namespace {
 std::filesystem::path executableDir() {
     char exec_buf[4096];
     ssize_t nread =
@@ -28,7 +27,6 @@ std::filesystem::path executableDir() {
     }
     return exec_dir;
 }
-}  // namespace
 
 std::vector<char> getBinaryFileContents(std::string const& filename) {
     std::filesystem::path path(filename);

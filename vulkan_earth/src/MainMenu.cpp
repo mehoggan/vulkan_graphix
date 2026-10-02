@@ -25,7 +25,11 @@
 #include "vulkan_earth/SubMenuTest.h"
 #include "vulkan_earth/SubMenuWeapons.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
+
+namespace render = vulkan_earth::render;
 
 extern void playMusic(std::int32_t music);
 
@@ -338,88 +342,34 @@ SubMenuLandscape* MainMenu::getSubMenuLandscape() {
     return static_cast<SubMenuLandscape*>(submenus[5]);
 }
 
-void MainMenu::draw() {
+void MainMenu::draw(render::RenderContext& context) {
     playMusic(mainmenu);
-    glPushMatrix();
-    /*	ALWAYS START AT UPPER LEFT CORNER -> LOWER LEFT CORNER -> LOWER RIGHT
-     * CORNER -> UPPER RIGHT	*/
-    glBegin(GL_QUADS);
-    glColor3f(0.85f, 0.85f, 0.85f);
-    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0);      /*	|\ 	*/
-    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*	| |	*/
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*	|/ 	*/
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.80f, 0.80f, 0.80f);
-    glVertex3f(-1 * (width / 2.0), (height / 2.0), 0); /*_____ */
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*\	  / */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /* ---	*/
-    glVertex3f((width / 2.0), (height / 2.0), 0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.75f, 0.75f, 0.75f);
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*_____ */
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*|	  | */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0); /*----- */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.45f, 0.45f, 0.45f);
-    glVertex3f(-1 * (width / 2.0) + (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);                                          /* ___  */
-    glVertex3f(-1 * (width / 2.0), -1 * (height / 2.0), 0); /*/	  \ */
-    glVertex3f((width / 2.0), -1 * (height / 2.0), 0);      /*----- */
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor3f(0.40f, 0.40f, 0.40f);
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               (height / 2.0) - (percent_border * (height)),
-               0); /*	 /| 	*/
-    glVertex3f((width / 2.0) - (percent_border * (height)),
-               -1 * (height / 2.0) + (percent_border * (height)),
-               0);                                     /*	| | 	*/
-    glVertex3f((width / 2.0), -1 * (height / 2.0), 0); /* 	 \| 	*/
-    glVertex3f((width / 2.0), (height / 2.0), 0);
-    glEnd();
+    // The whole-window background panel (see appendMenuPanel()).
+    if (background_mesh.triangles().empty() || built_width != width ||
+        built_height != height) {
+        background_mesh.clear();
+        render::appendMenuPanel(
+                background_mesh, width, height, percent_border);
+        built_width = width;
+        built_height = height;
+    }
+    context.draw(background_mesh);
 
     for (std::int32_t i = 0; i < num_images; i++) {
         if (images[i]) {
-            images[i]->draw();
+            images[i]->draw(context);
         }
     }
     for (std::int32_t i = 0; i < num_arrow_buttons; i++) {
         if (arrowsbutton[i]) {
-            arrowsbutton[i]->draw();
+            arrowsbutton[i]->draw(context);
         }
     }
     for (std::int32_t x = 0; x < num_button; x++) {
         if (buttons[x]) {
-            buttons[x]->draw();
+            buttons[x]->draw(context);
         }
     }
-
-    glPopMatrix();
 }
 
 void MainMenu::buttonTest(std::int32_t x,

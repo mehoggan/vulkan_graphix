@@ -1,8 +1,6 @@
 #ifndef ITEM_TEST_H
 #define ITEM_TEST_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 

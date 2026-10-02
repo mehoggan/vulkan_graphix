@@ -6,9 +6,14 @@
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Font.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -40,7 +45,8 @@ ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
 
     float label_x_pos = x_pos + (width / 2) - (real_length / 2);
@@ -50,7 +56,7 @@ ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           vulkan_earth::render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -58,182 +64,171 @@ ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
 
 ControlItemCheckBox::~ControlItemCheckBox() { delete label; }
 
-void ControlItemCheckBox::draw() {
-    // draw main button box
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos + -height, z_pos);
-    glEnd();
+void ControlItemCheckBox::draw(render::RenderContext& context) {
+    using render::Vec3;
+    using render::Vec4;
+    if (built_button_state != button_state || built_menu_state != menu_state) {
+        mesh.clear();
+        // draw main button box (sunken bevel: -0.2 top/left, +0.4
+        // bottom/right)
+        Vec4 const dark(
+                color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
+        Vec4 const face(color[0], color[1], color[2], color[3]);
+        Vec4 const light(
+                color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
+        render::appendQuad(mesh,
+                           Vec3(x_pos, y_pos, z_pos),
+                           Vec3(x_pos - 3, y_pos + 3, z_pos),
+                           Vec3(x_pos + width + 3, y_pos + 3, z_pos),
+                           Vec3(x_pos + width, y_pos, z_pos),
+                           dark);
+        render::appendQuad(mesh,
+                           Vec3(x_pos - 3, y_pos + 3, z_pos),
+                           Vec3(x_pos - 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos, y_pos - height, z_pos),
+                           Vec3(x_pos, y_pos, z_pos),
+                           dark);
+        render::appendQuad(mesh,
+                           Vec3(x_pos, y_pos, z_pos),
+                           Vec3(x_pos, y_pos - height, z_pos),
+                           Vec3(x_pos + width, y_pos - height, z_pos),
+                           Vec3(x_pos + width, y_pos, z_pos),
+                           face);
+        render::appendQuad(mesh,
+                           Vec3(x_pos - 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos + width + 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos + width, y_pos - height, z_pos),
+                           Vec3(x_pos, y_pos - height, z_pos),
+                           light);
+        render::appendQuad(mesh,
+                           Vec3(x_pos + width, y_pos, z_pos),
+                           Vec3(x_pos + width + 3, y_pos + 3, z_pos),
+                           Vec3(x_pos + width + 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos + width, y_pos + -height, z_pos),
+                           light);
 
-    // draw the actual check box itself
-    // composed of 4 smallers squares, the inside vertex of each square gets
-    // colored darker when pressed square order:    1 4 				   2 3
-    // NOTE: Squares are actually composed of 2 triangles, drawn counter
-    // clockwise
-    //       You can identify the innermost (center) vertex by the if statement
-    //       preceding it
+        // draw the actual check box itself: 4 smaller squares (2 triangles
+        // each) whose innermost vertex is colored darker when pressed.
+        Vec4 const up(color[0] + .2, color[1] + .2, color[2] + .2, 1.0f);
+        Vec4 const center_color = button_state == 1 ? Vec4(color[0] - .2,
+                                                           color[1] - .2,
+                                                           color[2] - .2,
+                                                           1.0f)
+                                                    : up;
+        float const z1 = z_pos + 1;
+        Vec3 const center(
+                x_pos + (width - height / 2), (y_pos - height / 2), z1);
+        Vec3 const center4(x_pos + (width - height) + (height / 2),
+                           (y_pos - height / 2),
+                           z1);
+        // square 1
+        mesh.addTriangle({Vec3(x_pos + (width - height * 0.9),
+                               (y_pos - height * 0.1),
+                               z1),
+                          Vec3(x_pos + (width - height * 0.9),
+                               (y_pos - height / 2),
+                               z1),
+                          center},
+                         {up, up, center_color});
+        mesh.addTriangle({Vec3(x_pos + (width - height * 0.9),
+                               (y_pos - height * 0.1),
+                               z1),
+                          center,
+                          Vec3(x_pos + (width - height / 2),
+                               (y_pos - height * 0.1),
+                               z1)},
+                         {up, center_color, up});
+        // square 2
+        mesh.addTriangle({Vec3(x_pos + (width - height * 0.9),
+                               (y_pos - height / 2),
+                               z1),
+                          Vec3(x_pos + (width - height * 0.9),
+                               (y_pos - height * 0.9),
+                               z1),
+                          center},
+                         {up, up, center_color});
+        mesh.addTriangle({Vec3(x_pos + (width - height * 0.9),
+                               (y_pos - height * 0.9),
+                               z1),
+                          Vec3(x_pos + (width - height / 2),
+                               (y_pos - height * 0.9),
+                               z1),
+                          center},
+                         {up, up, center_color});
+        // square 3
+        mesh.addTriangle({center,
+                          Vec3(x_pos + (width - height / 2),
+                               (y_pos - height * 0.9),
+                               z1),
+                          Vec3(x_pos + (width - height) + height * 0.9,
+                               (y_pos - height * 0.9),
+                               z1)},
+                         {center_color, up, up});
+        mesh.addTriangle({center,
+                          Vec3(x_pos + (width - height * 0.1),
+                               (y_pos - height * 0.9),
+                               z1),
+                          Vec3(x_pos + (width - height * 0.1),
+                               (y_pos - height / 2),
+                               z1)},
+                         {center_color, up, up});
+        // square 4
+        mesh.addTriangle({Vec3(x_pos + (width - height / 2),
+                               (y_pos - height * 0.1),
+                               z1),
+                          center4,
+                          Vec3(x_pos + (width - height * 0.1),
+                               (y_pos - height * 0.1),
+                               z1)},
+                         {up, center_color, up});
+        mesh.addTriangle({center4,
+                          Vec3(x_pos + (width - height * 0.1),
+                               (y_pos - height / 2),
+                               z1),
+                          Vec3(x_pos + (width - height * 0.1),
+                               (y_pos - height * 0.1),
+                               z1)},
+                         {center_color, up, up});
 
-    // square 1
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.9), (y_pos - height * 0.1), z_pos + 1);
-    glVertex3f(
-            x_pos + (width - height * 0.9), (y_pos - height / 2), z_pos + 1);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 1);
-    glEnd();
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.9), (y_pos - height * 0.1), z_pos + 1);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 1);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height / 2), (y_pos - height * 0.1), z_pos + 1);
-    glEnd();
-
-    // square 2
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.9), (y_pos - height / 2), z_pos + 1);
-    glVertex3f(
-            x_pos + (width - height * 0.9), (y_pos - height * 0.9), z_pos + 1);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 1);
-    glEnd();
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.9), (y_pos - height * 0.9), z_pos + 1);
-    glVertex3f(
-            x_pos + (width - height / 2), (y_pos - height * 0.9), z_pos + 1);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 1);
-    glEnd();
-
-    // square 3
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 1);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height / 2), (y_pos - height * 0.9), z_pos + 1);
-    glVertex3f(x_pos + (width - height) + height * 0.9,
-               (y_pos - height * 0.9),
-               z_pos + 1);
-    glEnd();
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 1);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.1), (y_pos - height * 0.9), z_pos + 1);
-    glVertex3f(
-            x_pos + (width - height * 0.1), (y_pos - height / 2), z_pos + 1);
-    glEnd();
-
-    // square 4
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height / 2), (y_pos - height * 0.1), z_pos + 1);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height) + (height / 2),
-               (y_pos - height / 2),
-               z_pos + 1);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.1), (y_pos - height * 0.1), z_pos + 1);
-    glEnd();
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    if (button_state == 1)
-        glColor3f(color[0] - .2, color[1] - .2, color[2] - .2);
-    glVertex3f(x_pos + (width - height) + (height / 2),
-               (y_pos - height / 2),
-               z_pos + 1);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2);
-    glVertex3f(
-            x_pos + (width - height * 0.1), (y_pos - height / 2), z_pos + 1);
-    glVertex3f(
-            x_pos + (width - height * 0.1), (y_pos - height * 0.1), z_pos + 1);
-    glEnd();
-
-    // draw check mark if it was toggled on, otherwise dont
-    if (menu_state == 1) {
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glBegin(GL_QUADS);
-        glVertex3f(x_pos + (width - height + (height * 0.2)),
-                   (y_pos - height / 2) + (0.015 * width),
-                   z_pos + 2);
-        glVertex3f(x_pos + (width - height + (height * 0.2)),
-                   (y_pos - height / 2) + (0.005 * width),
-                   z_pos + 2);
-        glVertex3f(x_pos + (width - height / 2),
-                   (y_pos - height / 2) - (0.015 * width),
-                   z_pos + 2);
-        glVertex3f(
-                x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 2);
-        glEnd();
-        glBegin(GL_QUADS);
-        glVertex3f(x_pos + (width - height / 2),
-                   (y_pos - height / 2) - (0.015 * width),
-                   z_pos + 2);
-        glVertex3f(
-                x_pos + (width - height / 2), (y_pos - height / 2), z_pos + 2);
-        glVertex3f(x_pos + (width - height) + (0.95 * height),
-                   (y_pos - height / 2) + (0.025 * width),
-                   z_pos + 2);
-        glVertex3f(x_pos + (width - height) + (0.95 * height),
-                   (y_pos - height / 2) + (0.015 * width),
-                   z_pos + 2);
-        glEnd();
+        // draw check mark if it was toggled on, otherwise dont
+        if (menu_state == 1) {
+            Vec4 const green(0.0f, 1.0f, 0.0f, 1.0f);
+            float const z2 = z_pos + 2;
+            render::appendQuad(mesh,
+                               Vec3(x_pos + (width - height + (height * 0.2)),
+                                    (y_pos - height / 2) + (0.015 * width),
+                                    z2),
+                               Vec3(x_pos + (width - height + (height * 0.2)),
+                                    (y_pos - height / 2) + (0.005 * width),
+                                    z2),
+                               Vec3(x_pos + (width - height / 2),
+                                    (y_pos - height / 2) - (0.015 * width),
+                                    z2),
+                               Vec3(x_pos + (width - height / 2),
+                                    (y_pos - height / 2),
+                                    z2),
+                               green);
+            render::appendQuad(mesh,
+                               Vec3(x_pos + (width - height / 2),
+                                    (y_pos - height / 2) - (0.015 * width),
+                                    z2),
+                               Vec3(x_pos + (width - height / 2),
+                                    (y_pos - height / 2),
+                                    z2),
+                               Vec3(x_pos + (width - height) + (0.95 * height),
+                                    (y_pos - height / 2) + (0.025 * width),
+                                    z2),
+                               Vec3(x_pos + (width - height) + (0.95 * height),
+                                    (y_pos - height / 2) + (0.015 * width),
+                                    z2),
+                               green);
+        }
+        built_button_state = button_state;
+        built_menu_state = menu_state;
     }
+    context.draw(mesh);
 
-    label->draw();
+    label->draw(context);
 }
 
 float ControlItemCheckBox::getXPos() { return x_pos; }

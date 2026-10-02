@@ -1,8 +1,6 @@
 #ifndef PLAYER_CPU_H
 #define PLAYER_CPU_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <iostream>

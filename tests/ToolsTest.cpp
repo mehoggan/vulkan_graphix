@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <string>
 
@@ -17,6 +18,15 @@ namespace {
 constexpr float c_epsilon = 1e-4f;
 
 }  // namespace
+
+TEST(ToolsTest, ExecutableDirIsTheTestBinarysOwnDirectory) {
+    // Run through libtool's wrapper, the real binary lives in .libs/;
+    // executableDir() reports the directory above it either way.
+    std::filesystem::path const dir = vulkan_graphix::Tools::executableDir();
+    ASSERT_FALSE(dir.empty());
+    EXPECT_TRUE(std::filesystem::is_directory(dir));
+    EXPECT_NE(dir.filename(), ".libs");
+}
 
 TEST(ToolsTest, GetBinaryFileContentsReadsAnExistingFile) {
     const std::string path = "tools_test_binary_fixture.bin";

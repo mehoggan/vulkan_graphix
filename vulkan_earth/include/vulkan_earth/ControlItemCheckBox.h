@@ -1,12 +1,11 @@
 #ifndef Control_ITEM_Check_BOX_H
 #define Control_ITEM_Check_BOX_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 
 #include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/render/Mesh.h"
 
 class TextObject;
 
@@ -23,7 +22,7 @@ public:
                         std::int32_t new_height,
                         const std::string& new_caption);
     ~ControlItemCheckBox() override;
-    void draw() override;
+    void draw(vulkan_earth::render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
@@ -49,5 +48,8 @@ private:
     std::int32_t menu_state;
     std::int32_t button_state;  // 0 = no button pressed, 1 = up button
                                 // pressed, 2 = down button pressed
+    vulkan_earth::render::UiMesh mesh;
+    std::int32_t built_button_state = -1;
+    std::int32_t built_menu_state = -1;
 };
 #endif  // Control_ITEM_Check_BOX_H

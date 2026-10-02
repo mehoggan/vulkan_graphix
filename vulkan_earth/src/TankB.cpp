@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_graphix/HellfireTank.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_b_name = "Hellfire";
@@ -18,21 +19,21 @@ TankB::TankB(float x, float y, float z) {
     initWheel();
     initDuration();
 
-    turret_offset[0] = 0;
-    turret_offset[1] = 0.0001;
-    turret_offset[2] = -50.0001;
-    head_offset[0] = 0;
-    head_offset[1] = 70;
-    head_offset[2] = 0;
-    body_offset[0] = 0;
-    body_offset[1] = 65;
-    body_offset[2] = 0;
+    // The Hellfire's part offsets and scale live in libvulkan_graphix's
+    // HellfireTank, shared with the tutorials that draw it.
+    vulkan_graphix::TankPlacement::PartOffsets const& offsets =
+            vulkan_graphix::HellfireTank::getPartOffsets();
+    for (std::int32_t i = 0; i < 3; i++) {
+        turret_offset[i] = offsets.turret[i];
+        head_offset[i] = offsets.head[i];
+        body_offset[i] = offsets.body[i];
+    }
 
     for (std::int32_t i = 0; i < 3; i++) {
-        body_scale[i] = 50;
-        head_scale[i] = 50;
-        turret_scale[i] = 50;
-        wheel_scale[i] = 50;
+        body_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+        head_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+        turret_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+        wheel_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
     }
 
     power = tank_b_power;
@@ -47,24 +48,9 @@ TankB::TankB(float x, float y, float z) {
     vbo_shader_body = new VBOShaderLibrary();
     vbo_shader_turret = new VBOShaderLibrary();
 
-    /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
-    if (!(VBOShaderLibrary::initGlew())) {
-        exit(1);
-    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
-        exit(1);
-    }
-
-    vbo_shader_turret->getVBOPointerFunctions();
-    vbo_shader_body->getVBOPointerFunctions();
-    vbo_shader_head->getVBOPointerFunctions();
-
     vbo_shader_turret->loadClientData("./Hellfire/Hellfire_Turret.ogl");
     vbo_shader_body->loadClientData("./Hellfire/Hellfire_Body.ogl");
     vbo_shader_head->loadClientData("./Hellfire/Hellfire_Head.ogl");
-
-    vbo_shader_turret->loadShaders("VertexTank.vs", "FragmentTank.vs");
-    vbo_shader_body->loadShaders("VertexTank.vs", "FragmentTank.vs");
-    vbo_shader_head->loadShaders("VertexTank.vs", "FragmentTank.vs");
 
     vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
     vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);

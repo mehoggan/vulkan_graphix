@@ -1,37 +1,36 @@
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
-#include "vulkan_earth/Particle.h"
-#include "vulkan_earth/ParticleAcid.h"
-#include "vulkan_earth/ParticleFloat.h"
-#include "vulkan_earth/ParticleSmoke.h"
 #include "vulkan_earth/SpecialEffect.h"
+#include "vulkan_earth/render/RenderTypes.h"
+#include "vulkan_graphix/EffectSimulation.h"
 
 #ifndef PARTICLEGENERATOR_H
 #define PARTICLEGENERATOR_H
 
+namespace vulkan_earth::render {
+class RenderContext;
+}
+
+// A tank's smoke/acid/float particle stream: libvulkan_graphix's
+// EffectSimulation::ParticleEmitter (the simulation, shared with
+// Tutorial20), drawn as translucent spheres.
 class ParticleGenerator {
 public:
-    ParticleGenerator();
     ParticleGenerator(std::int32_t spawn,
                       std::int32_t rate,
                       std::int32_t speed,
                       std::int32_t life,
                       std::int32_t new_type);
-
     void update(float new_x, float new_y, float new_z);
-    void draw();
-    void addParticles();
+    void draw(vulkan_earth::render::RenderContext& context,
+              vulkan_earth::render::Mat4 const& model =
+                      vulkan_earth::render::Mat4(1.0f));
     void killGenerator();
 
 private:
-    float x, y, z;
-    std::int32_t max, particles_per_emission, emission_rate, emission_speed,
-            emission_life, type;
-    Particle* particle_array[1000];
+    vulkan_graphix::EffectSimulation::ParticleEmitter emitter;
 };
 
 #endif

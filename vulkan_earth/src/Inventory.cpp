@@ -9,7 +9,10 @@
 #include "vulkan_earth/PlayerHuman.h"
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/Weapon.h"
+#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_earth/MacroCrtdbg.h"
+
+namespace render = vulkan_earth::render;
 
 Inventory::Inventory() = default;
 Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
@@ -37,7 +40,7 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
                            -width / 3.3,
                            height / 2.5,
                            1,
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           render::FontId::TimesRoman24,
                            0,
                            0,
                            0);
@@ -46,7 +49,7 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
             -width / 3.3,
             height / 3.0,
             1,
-            GLUT_BITMAP_TIMES_ROMAN_24,
+            render::FontId::TimesRoman24,
             0,
             0,
             0);
@@ -54,7 +57,7 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
                               -width / 3.6,
                               -height / 3.0,
                               1,
-                              GLUT_BITMAP_TIMES_ROMAN_24,
+                              render::FontId::TimesRoman24,
                               0,
                               0,
                               0);
@@ -102,7 +105,7 @@ void Inventory::setupInventory(Player* player) {
                                            0,
                                            0,
                                            0,
-                                           GLUT_BITMAP_TIMES_ROMAN_24,
+                                           render::FontId::TimesRoman24,
                                            0.6f,
                                            0.3f,
                                            0.4f);
@@ -133,7 +136,7 @@ void Inventory::setupInventory(Player* player) {
                                    0,
                                    0,
                                    0,
-                                   GLUT_BITMAP_TIMES_ROMAN_24,
+                                   render::FontId::TimesRoman24,
                                    0.6f,
                                    0.3f,
                                    0.4f);
@@ -166,7 +169,7 @@ void Inventory::setupInventory(Player* player) {
                                   -width / 3.6,
                                   -height / 3.0,
                                   1,
-                                  GLUT_BITMAP_TIMES_ROMAN_24,
+                                  render::FontId::TimesRoman24,
                                   0,
                                   0,
                                   0);
@@ -176,7 +179,7 @@ void Inventory::setupInventory(Player* player) {
                                   -width / 3.6,
                                   -height / 3.0,
                                   1,
-                                  GLUT_BITMAP_TIMES_ROMAN_24,
+                                  render::FontId::TimesRoman24,
                                   0,
                                   0,
                                   0);
@@ -266,7 +269,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                    -width / 3.6,
                                    -height / 3.0,
                                    1,
-                                   GLUT_BITMAP_TIMES_ROMAN_24,
+                                   render::FontId::TimesRoman24,
                                    0,
                                    0,
                                    0);
@@ -276,7 +279,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                       -width / 3.6,
                                       -height / 3.0,
                                       1,
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      render::FontId::TimesRoman24,
                                       0,
                                       0,
                                       0);
@@ -290,7 +293,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                       -width / 3.6,
                                       -height / 3.0,
                                       1,
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      render::FontId::TimesRoman24,
                                       0,
                                       0,
                                       0);
@@ -300,7 +303,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                       -width / 3.6,
                                       -height / 3.0,
                                       1,
-                                      GLUT_BITMAP_TIMES_ROMAN_24,
+                                      render::FontId::TimesRoman24,
                                       0,
                                       0,
                                       0);
@@ -308,49 +311,26 @@ void Inventory::keyHandler(std::int32_t key) {
     }
 }
 
-void Inventory::draw() {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+void Inventory::draw(render::RenderContext& context) {
+    // glViewport()'s float -> int truncation kept.
+    render::beginOverlayPanel(context,
+                              {static_cast<std::int32_t>(x_pos),
+                               static_cast<std::int32_t>(y_pos),
+                               width,
+                               height},
+                              width,
+                              height);
 
-    glViewport(x_pos, y_pos, width, height);
-    gluPerspective(
-            60.0,
-            (static_cast<float>(width) / (1.5 * static_cast<float>(height))),
-            1,
-            199999999);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glScissor(x_pos, y_pos, width, height);
-    glClearColor(0.75, 0.75, 0.75, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    std::int32_t distance = static_cast<std::int32_t>(
-            glutGet(GLUT_WINDOW_HEIGHT) / 4 * tan(1.04719755));
-    gluLookAt(0, 0, distance, 0, 0, 0, 0.0f, 1.0f, 0.0f);
-
-    inven_grid->draw();
-    title->draw();
-    explain->draw();
-    descript->draw();
+    inven_grid->draw(context);
+    title->draw(context);
+    explain->draw(context);
+    descript->draw(context);
     for (std::int32_t i = 0; i < player_max_weapons + player_max_items; i++) {
         if (img_inven[i] != nullptr) {
-            img_inven[i]->draw();
-            remainings[i]->draw();
+            img_inven[i]->draw(context);
+            remainings[i]->draw(context);
         }
     }
 
-    std::int32_t win_width = glutGet(GLUT_WINDOW_WIDTH);
-    std::int32_t win_height = glutGet(GLUT_WINDOW_HEIGHT);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, win_width, win_height);
-    gluPerspective(
-            60.0,
-            static_cast<float>(win_width) / static_cast<float>(win_height),
-            1.0,
-            1000000.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glScissor(0, 0, win_width, win_height);
-    glLoadIdentity();
+    render::resetToFullWindow(context);
 }

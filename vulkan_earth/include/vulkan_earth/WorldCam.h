@@ -1,16 +1,20 @@
 #ifndef WORLDCAM_H
 #define WORLDCAM_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
+#include "vulkan_earth/render/RenderTypes.h"
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class WorldCam {
 public:
     WorldCam();
     WorldCam(float x, float y, float z);
     ~WorldCam();
-    void view();
+    // The camera's view matrix (what gluLookAt() applied).
+    vulkan_earth::render::Mat4 view();
     void moveCam(float x, float y, float z);
     float* getMatrix();
     void setShakeCam(std::int32_t magnitude);

@@ -1,11 +1,10 @@
 #ifndef SUB_MENU_SELECT_TANKS_H
 #define SUB_MENU_SELECT_TANKS_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/SubMenu.h"
+#include "vulkan_earth/render/Mesh.h"
 
 class TextObject;
 class SubMenu;
@@ -54,7 +53,7 @@ public:
     void setCaption(const std::string& new_caption) override;
     float getPerecentBorder() override;
     void setPercentBorder(float percent) override;
-    void draw() override;
+    void draw(vulkan_earth::render::RenderContext& context) override;
     std::string collectData() override;
     void subMenuMouseTest(std::int32_t x,
                           std::int32_t y,
@@ -74,6 +73,7 @@ private:
     TextObject* label;
     ControlItem* sub_menu_button[num_control_items_st];
     ControlItem* button_pressed;
+    vulkan_earth::render::UiMesh frame_mesh;
 };
 
 #endif  //	SUB_MENU_SELECT_TANKS_H

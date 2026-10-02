@@ -8,8 +8,11 @@
 #include "vulkan_earth/Explosion.h"
 #include <cstdint>
 #include "vulkan_earth/OpenGLColors.h"
-#include "vulkan_earth/Shader.h"
 #include "vulkan_earth/Vector.h"
+#include "vulkan_earth/render/GlMatrix.h"
+#include "vulkan_earth/render/Renderer.h"
+
+namespace render = vulkan_earth::render;
 
 /*
  * Constructors and De-constructors
@@ -19,10 +22,7 @@ Explosion::Explosion(float new_x,
                      float new_y,
                      float new_z,
                      std::int32_t new_weapon_radius) {
-    glPushMatrix();
-    glLoadIdentity();
-    glGetFloatv(GL_MODELVIEW_MATRIX, trans_matrix);
-    glPopMatrix();
+    render::glmatrix::store(render::Mat4(1.0f), trans_matrix);
     x = new_x;
     y = new_y;
     z = new_z;
@@ -30,12 +30,6 @@ Explosion::Explosion(float new_x,
     trans_matrix[13] = y;
     trans_matrix[14] = z;
     weapon_radius = new_weapon_radius;
-
-    shader = new Shader();
-    shader->init("VertexExplosion.vs", "FragmentExplosion.vs");
-
-    timer = 50.0f;
-    radius = 0.0f;
 
     float temp_colors1[3] = {White};
     float temp_colors2[3] = {Yellow};
@@ -49,29 +43,33 @@ Explosion::Explosion(float new_x,
     }
 }
 
-Explosion::~Explosion() { delete shader; }
+Explosion::~Explosion() = default;
 
-void Explosion::draw() {
-    shader->bind();
-    radius += .1;
-    timer += .5;
-    // Please See OpenGLColors.h for definitions of colors
-    if (timer > 0 && timer < 25) {
-        glColor4f(colors1[0], colors1[1], colors1[2], 1.0 - timer / 150.0);
-    } else if (timer >= 25 && timer < 50) {
-        glColor4f(colors2[0], colors2[1], colors2[2], 1.0 - timer / 150.0);
-    } else if (timer >= 50 && timer < 75) {
-        glColor4f(colors3[0], colors3[1], colors3[2], 1.0 - timer / 150.0);
-    } else if (timer >= 100) {
-        glColor4f(colors4[0], colors4[1], colors4[2], 1.0 - timer / 150.0);
+void Explosion::draw(render::RenderContext& context) {
+    // The growth and color timeline are libvulkan_graphix's
+    // EffectSimulation (shared with Tutorial20).
+    vulkan_graphix::EffectSimulation::ExplosionFrame const frame =
+            vulkan_graphix::EffectSimulation::advanceExplosion(simulation);
+    float const* const colors[4] = {colors1, colors2, colors3, colors4};
+    if (frame.color_index >= 0) {
+        float const* color = colors[frame.color_index];
+        current_color =
+                render::Vec4(color[0], color[1], color[2], frame.alpha);
     }
 
-    glPushMatrix();
-    glTranslatef(x, y, z);
-    // ASSUMING SCALE ON TERRAIN IS 150 I NEED TO GET ACTUAL VALUE
-    glutSolidSphere(radius * (weapon_radius * 5.56 + 22.22), 90, 180);
-    glPopMatrix();
-    shader->unbind();
+    float const sphere_radius =
+            vulkan_graphix::EffectSimulation::explosionSphereRadius(
+                    simulation, weapon_radius);
+    context.drawMesh(
+            render::Renderer::instance().sphere(90, 180),
+            render::PipelineId::FlatColor,
+            nullptr,
+            render::glmatrix::scaled(
+                    render::glmatrix::translated(render::Mat4(1.0f), x, y, z),
+                    sphere_radius,
+                    sphere_radius,
+                    sphere_radius),
+            current_color);
 }
 
 void Explosion::setColors1(float* new_colors1) {

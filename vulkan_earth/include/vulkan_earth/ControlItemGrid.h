@@ -1,12 +1,12 @@
 #ifndef CONTROL_ITEM_GRID_H
 #define CONTROL_ITEM_GRID_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/render/Mesh.h"
 
 class ControlItemButton;
 class ImageObject;
@@ -28,7 +28,7 @@ public:
                     bool new_visible_lines,
                     bool new_multi_selectable);
     ~ControlItemGrid() override;
-    void draw() override;
+    void draw(vulkan_earth::render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
@@ -60,6 +60,9 @@ private:
     bool multi_selectable;
     bool* selected_cells;
     ControlItemButton** buttons;
+    vulkan_earth::render::UiMesh mesh;
+    std::vector<bool> built_toggled;
+    bool mesh_built = false;
 };
 
 #endif

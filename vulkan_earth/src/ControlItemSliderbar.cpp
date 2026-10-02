@@ -5,7 +5,12 @@
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Font.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -69,7 +74,8 @@ ControlItemSliderbar::ControlItemSliderbar(
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = bar_x_pos;
     float label_y_pos = y_pos - height * 0.45;
@@ -78,7 +84,7 @@ ControlItemSliderbar::ControlItemSliderbar(
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           vulkan_earth::render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -88,186 +94,93 @@ ControlItemSliderbar::~ControlItemSliderbar() {
     delete label;
 }
 
-void ControlItemSliderbar::draw() {
-    // draw main button box
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos + -height, z_pos);
-    glEnd();
-
-    // draw bar lines
-    glBegin(GL_LINES);
-    glColor4f(0, 0, 0, 1);
-    glVertex3f(bar_x_pos, bar_y_pos + 1, bar_z_pos);
-    glVertex3f(bar_x_pos + bar_width, bar_y_pos + 1, bar_z_pos);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor4f(0, 0, 0, 1);
-    glVertex3f(bar_x_pos, bar_y_pos, bar_z_pos);
-    glVertex3f(bar_x_pos + bar_width, bar_y_pos, bar_z_pos);
-    glEnd();
-    glBegin(GL_LINES);
-    glColor4f(0, 0, 0, 1);
-    glVertex3f(bar_x_pos, bar_y_pos - 1, bar_z_pos);
-    glVertex3f(bar_x_pos + bar_width, bar_y_pos - 1, bar_z_pos);
-    glEnd();
-    for (std::int32_t i = 0; i < number_of_options; i++) {
-        glBegin(GL_LINES);
-        glColor3f(0, 0, 0);
-        glVertex3f(bar_x_pos + (interval * i),
-                   bar_y_pos + height * 0.07,
-                   bar_z_pos);
-        glVertex3f(bar_x_pos + (interval * i),
-                   bar_y_pos - height * 0.07,
-                   bar_z_pos);
-        glEnd();
+void ControlItemSliderbar::draw(render::RenderContext& context) {
+    using render::Vec3;
+    using render::Vec4;
+    if (frame_mesh.triangles().empty()) {
+        // draw main button box (sunken bevel: -0.2 top/left, +0.4
+        // bottom/right)
+        render::appendFrame(frame_mesh,
+                            x_pos,
+                            y_pos,
+                            z_pos,
+                            width,
+                            height,
+                            Vec4(color[0] - 0.2f,
+                                 color[1] - 0.2f,
+                                 color[2] - 0.2f,
+                                 color[3]),
+                            Vec4(color[0], color[1], color[2], color[3]),
+                            Vec4(color[0] + 0.4f,
+                                 color[1] + 0.4f,
+                                 color[2] + 0.4f,
+                                 color[3]));
+        // draw bar lines
+        Vec4 const black(0, 0, 0, 1);
+        frame_mesh.addLine(
+                Vec3(bar_x_pos, bar_y_pos + 1, bar_z_pos),
+                Vec3(bar_x_pos + bar_width, bar_y_pos + 1, bar_z_pos),
+                black);
+        frame_mesh.addLine(Vec3(bar_x_pos, bar_y_pos, bar_z_pos),
+                           Vec3(bar_x_pos + bar_width, bar_y_pos, bar_z_pos),
+                           black);
+        frame_mesh.addLine(
+                Vec3(bar_x_pos, bar_y_pos - 1, bar_z_pos),
+                Vec3(bar_x_pos + bar_width, bar_y_pos - 1, bar_z_pos),
+                black);
+        for (std::int32_t i = 0; i < number_of_options; i++) {
+            frame_mesh.addLine(Vec3(bar_x_pos + (interval * i),
+                                    bar_y_pos + height * 0.07,
+                                    bar_z_pos),
+                               Vec3(bar_x_pos + (interval * i),
+                                    bar_y_pos - height * 0.07,
+                                    bar_z_pos),
+                               black);
+        }
     }
+    context.draw(frame_mesh);
 
-    // draw slider
-    if (!is_slider_clicked) {
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + 0.2f, color[1] + 0.2f, color[2] + 0.2f, color[3]);
-        glVertex3f(slider_x_pos, slider_y_pos, slider_z_pos);
-        glVertex3f(slider_x_pos - 3, slider_y_pos + 3, slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos + 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width, slider_y_pos, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + 0.2f, color[1] + 0.2f, color[2] + 0.2f, color[3]);
-        glVertex3f(slider_x_pos - 3, slider_y_pos + 3, slider_z_pos);
-        glVertex3f(slider_x_pos - 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos - slider_height, slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0], color[1], color[2], color[3]);
-        glVertex3f(slider_x_pos, slider_y_pos, slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos - slider_height, slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width,
-                   slider_y_pos - slider_height,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width, slider_y_pos, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - 0.4f, color[1] - 0.4f, color[2] - 0.4f, color[3]);
-        glVertex3f(slider_x_pos - 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width,
-                   slider_y_pos - slider_height,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos - slider_height, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - 0.4f, color[1] - 0.4f, color[2] - 0.4f, color[3]);
-        glVertex3f(slider_x_pos + slider_width, slider_y_pos, slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos + 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width,
-                   slider_y_pos + -slider_height,
-                   slider_z_pos);
-        glEnd();
-
-    } else {
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-        glVertex3f(slider_x_pos, slider_y_pos, slider_z_pos);
-        glVertex3f(slider_x_pos - 3, slider_y_pos + 3, slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos + 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width, slider_y_pos, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-        glVertex3f(slider_x_pos - 3, slider_y_pos + 3, slider_z_pos);
-        glVertex3f(slider_x_pos - 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos - slider_height, slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] + 0.2f, color[1] + 0.2f, color[2] + 0.2f, color[3]);
-        glVertex3f(slider_x_pos, slider_y_pos, slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos - slider_height, slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width,
-                   slider_y_pos - slider_height,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width, slider_y_pos, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-        glVertex3f(slider_x_pos - 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width,
-                   slider_y_pos - slider_height,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos, slider_y_pos - slider_height, slider_z_pos);
-        glEnd();
-        glBegin(GL_QUADS);
-        glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-        glVertex3f(slider_x_pos + slider_width, slider_y_pos, slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos + 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width + 3,
-                   slider_y_pos - slider_height - 3,
-                   slider_z_pos);
-        glVertex3f(slider_x_pos + slider_width,
-                   slider_y_pos + -slider_height,
-                   slider_z_pos);
-        glEnd();
+    // draw slider: raised when idle, highlighted while being dragged
+    if (slider_built_x != slider_x_pos || slider_built_y != slider_y_pos ||
+        slider_built_clicked != static_cast<std::int32_t>(is_slider_clicked)) {
+        slider_mesh.clear();
+        if (!is_slider_clicked) {
+            render::appendBevel(slider_mesh,
+                                slider_x_pos,
+                                slider_y_pos,
+                                slider_z_pos,
+                                slider_width,
+                                slider_height,
+                                Vec4(color[0], color[1], color[2], color[3]),
+                                false);
+        } else {
+            render::appendFrame(slider_mesh,
+                                slider_x_pos,
+                                slider_y_pos,
+                                slider_z_pos,
+                                slider_width,
+                                slider_height,
+                                Vec4(color[0] + 0.4f,
+                                     color[1] + 0.4f,
+                                     color[2] + 0.4f,
+                                     color[3]),
+                                Vec4(color[0] + 0.2f,
+                                     color[1] + 0.2f,
+                                     color[2] + 0.2f,
+                                     color[3]),
+                                Vec4(color[0] - 0.2f,
+                                     color[1] - 0.2f,
+                                     color[2] - 0.2f,
+                                     color[3]));
+        }
+        slider_built_x = slider_x_pos;
+        slider_built_y = slider_y_pos;
+        slider_built_clicked = static_cast<std::int32_t>(is_slider_clicked);
     }
+    context.draw(slider_mesh);
 
-    label->draw();
-    option_text->draw();
+    label->draw(context);
+    option_text->draw(context);
 }
 
 float ControlItemSliderbar::getXPos() { return x_pos; }
@@ -286,7 +199,8 @@ void ControlItemSliderbar::setOptionText(std::int32_t index) {
     current_option = all_options[index];
     std::int32_t real_length = 0;
     for (char ch : current_option) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + (width / 2) - (real_length / 2);
     float label_y_pos = y_pos - height * 0.45;
@@ -295,7 +209,7 @@ void ControlItemSliderbar::setOptionText(std::int32_t index) {
                                  label_x_pos,
                                  label_y_pos,
                                  z_pos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
+                                 vulkan_earth::render::FontId::TimesRoman24,
                                  0.0f,
                                  0.0f,
                                  0.0f);

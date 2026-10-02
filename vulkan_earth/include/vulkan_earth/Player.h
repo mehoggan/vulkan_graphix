@@ -6,8 +6,6 @@
 const std::int32_t player_max_weapons = 5;
 const std::int32_t player_max_items = 5;
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -37,6 +35,10 @@ enum AI_SUB_STATUS {
     MAKE_MINOR_ADJUSTMENTS_OUT,
     ON_TARGET
 };
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class Player {
 public:
@@ -86,7 +88,7 @@ public:
     /*	END OF ACCESS AI TO OUTSIDE WORLD	*/
 
     /*	TEST DRAW FUNCTIONS				*/
-    void drawTestLinesandPlanes();
+    void drawTestLinesandPlanes(vulkan_earth::render::RenderContext& context);
     bool getDrawDebugLinesandPlanes();
     void setDrawDebugLinesandPlanes(bool flag);
     /*	DONE WITH TEST DRAW FUNCTIONS	*/

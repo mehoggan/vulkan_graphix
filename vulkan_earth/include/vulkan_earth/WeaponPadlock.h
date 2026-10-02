@@ -1,8 +1,6 @@
 #ifndef WEAPON_PADLOCK_H
 #define WEAPON_PADLOCK_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"
 

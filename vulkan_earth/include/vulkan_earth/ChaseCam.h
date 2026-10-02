@@ -1,16 +1,20 @@
 #ifndef CHASECAM_H
 #define CHASECAM_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
+#include "vulkan_earth/render/RenderTypes.h"
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class ChaseCam {
 public:
     ChaseCam();
     ChaseCam(float* new_target_pos, float* new_target_at);
     ~ChaseCam();
-    void view();
+    // The camera's view matrix (what gluLookAt() applied).
+    vulkan_earth::render::Mat4 view();
     void setShakeCam(std::int32_t magnitude);
     void updateShakeCam();
     void updateFactor();

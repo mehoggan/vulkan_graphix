@@ -1,13 +1,22 @@
 // Vulkan Earth
 //<Insert Team Name Here>
 //
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/keysym.h>
+#include <unistd.h>
+#include <chrono>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <new>
+#include <sstream>
+#include <string>
+#include <thread>
+#include <vector>
 #include "math.h"
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/GlobalSettings.h"
@@ -20,6 +29,11 @@
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/SubMenuLandscape.h"
 #include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_earth/render/Camera.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_graphix/OperatingSystem.h"
+#include "vulkan_graphix/Tools.h"
+#include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 #ifdef new
@@ -28,9 +42,17 @@
 
 using namespace std;
 
+namespace render = vulkan_earth::render;
+namespace os = vulkan_graphix::os;
+
+// GLUT's mouse button and state values, which the handlers below were
+// written against.
+constexpr std::int32_t GLUT_LEFT_BUTTON = 0;
+constexpr std::int32_t GLUT_DOWN = 0;
+constexpr std::int32_t GLUT_UP = 1;
+
 void resize(std::int32_t, std::int32_t);
-void draw();
-void timerEvent(std::int32_t);
+bool draw();
 void keyHandler(std::uint8_t, std::int32_t, std::int32_t);
 void keyHandlerUp(std::uint8_t key, std::int32_t x, std::int32_t y);
 void specKeyHandler(std::int32_t key, std::int32_t x, std::int32_t y);
@@ -38,7 +60,7 @@ void specKeyHandlerUp(std::int32_t key, std::int32_t x, std::int32_t y);
 void mouseHandler(std::int32_t, std::int32_t, std::int32_t, std::int32_t);
 void mouseMotionHandler(std::int32_t, std::int32_t);
 extern void initSound();
-void initStuff();
+void quitGame(bool delete_game_state);
 
 std::int32_t screen_state;
 std::int32_t prev_screen_state;
@@ -52,6 +74,8 @@ GlobalSettings* global_settings;
 PlayerFactory* player_factory;
 GameState* game_state;
 LoadingScreen* loading_screen;
+os::Window* window;
+bool quit_requested = false;
 
 // GLUT_SCREEN_WIDTH/HEIGHT is the whole X11 screen - the combined
 // virtual desktop spanning every monitor, not just the primary one
@@ -96,31 +120,242 @@ static void primaryMonitorGeometry(std::int32_t* pos_x,
     XCloseDisplay(display);
 }
 
+// glutTimerFunc(20, timerEvent, 1): the game advances one draw() per 20
+// milliseconds at most - all of its animation and physics count frames.
+constexpr std::chrono::milliseconds c_frame_interval(20);
+
+// A debugging aid, standing in for a person at the keyboard and mouse:
+// with VE_SCRIPT=<file>, each "<frame> <op> [args]" line is replayed at the
+// start of that frame's draw() - "down x y" / "up x y" (left mouse button),
+// "move x y", "key c" / "keyup c" (a character, or "space" / "esc"),
+// "spec n" / "specup n" (a GLUT special key code), "capture <file.ppm>"
+// (that frame, as a binary PPM), and "quit". VE_WINDOW=<w>x<h> overrides
+// the window size, so captures line up across runs.
+struct ScriptEvent {
+    std::int64_t frame = 0;
+    std::string op;
+    std::string argument;
+    std::int32_t x = 0;
+    std::int32_t y = 0;
+};
+std::vector<ScriptEvent> script;
+std::int64_t script_frame = 0;
+
+void loadScript() {
+    const char* path = std::getenv("VE_SCRIPT");
+    if (path == nullptr) {
+        return;
+    }
+    std::ifstream in(path);
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+        std::istringstream fields(line);
+        ScriptEvent event;
+        fields >> event.frame >> event.op;
+        if (event.op == "capture" || event.op == "key" ||
+            event.op == "keyup" || event.op == "spec" ||
+            event.op == "specup") {
+            fields >> event.argument;
+        } else {
+            fields >> event.x >> event.y;
+        }
+        script.push_back(event);
+    }
+}
+
+std::uint8_t scriptKey(const std::string& name) {
+    if (name == "esc") return 27;
+    if (name == "space") return ' ';
+    return static_cast<std::uint8_t>(name[0]);
+}
+
+void runScriptFrame() {
+    ++script_frame;
+    for (const ScriptEvent& event : script) {
+        if (event.frame != script_frame) continue;
+        if (event.op == "down")
+            mouseHandler(GLUT_LEFT_BUTTON, GLUT_DOWN, event.x, event.y);
+        else if (event.op == "up")
+            mouseHandler(GLUT_LEFT_BUTTON, GLUT_UP, event.x, event.y);
+        else if (event.op == "move")
+            mouseMotionHandler(event.x, event.y);
+        else if (event.op == "key")
+            keyHandler(scriptKey(event.argument), 0, 0);
+        else if (event.op == "keyup")
+            keyHandlerUp(scriptKey(event.argument), 0, 0);
+        else if (event.op == "spec")
+            specKeyHandler(std::atoi(event.argument.c_str()), 0, 0);
+        else if (event.op == "specup")
+            specKeyHandlerUp(std::atoi(event.argument.c_str()), 0, 0);
+        else if (event.op == "capture")
+            render::Renderer::instance().requestCapture(event.argument);
+        else if (event.op == "quit")
+            quitGame(true);
+    }
+}
+
+// The game on top of the tutorials' Vulkan bring-up: TutorialBase owns the
+// instance, device, and swapchain; the Renderer draws into them; X11 events
+// are forwarded to the game's original GLUT-style handlers.
+class VulkanEarthApp : public vulkan_graphix::TutorialBase {
+public:
+    ~VulkanEarthApp() override { m_renderer.shutdown(); }
+
+    bool initializeRenderer() {
+        return m_renderer.initialize(deviceInfo(), swapchainInfo());
+    }
+
+    bool draw() override {
+        auto now = std::chrono::steady_clock::now();
+        if (now < m_next_frame) {
+            std::this_thread::sleep_until(m_next_frame);
+            now = m_next_frame;
+        }
+        m_next_frame = now + c_frame_interval;
+        if (!::draw()) {
+            // The swapchain no longer matches the window.
+            return onWindowSizeChanged();
+        }
+        return true;
+    }
+
+    bool onKey(const os::KeyEvent& event) override {
+        // GLUT's keyboard callbacks get the character a key types (Escape is
+        // 27, Enter 13, ...); its special callbacks get function and arrow
+        // keys as GLUT_KEY_* codes.
+        if (event.character != '\0') {
+            auto const key = static_cast<std::uint8_t>(event.character);
+            if (event.pressed) {
+                keyHandler(key, 0, 0);
+            } else {
+                keyHandlerUp(key, 0, 0);
+            }
+            return true;
+        }
+        std::int32_t special = -1;
+        if (event.keysym >= XK_F1 && event.keysym <= XK_F12) {
+            special = static_cast<std::int32_t>(event.keysym - XK_F1) + 1;
+        } else if (event.keysym == XK_Left) {
+            special = 100;
+        } else if (event.keysym == XK_Up) {
+            special = 101;
+        } else if (event.keysym == XK_Right) {
+            special = 102;
+        } else if (event.keysym == XK_Down) {
+            special = 103;
+        }
+        if (special != -1) {
+            if (event.pressed) {
+                specKeyHandler(special, 0, 0);
+            } else {
+                specKeyHandlerUp(special, 0, 0);
+            }
+        }
+        return true;
+    }
+
+    void onMouseButton(std::int32_t button,
+                       bool pressed,
+                       std::int32_t pos_x,
+                       std::int32_t pos_y) override {
+        // X11 numbers buttons from 1; GLUT from 0 (left, middle, right).
+        if (button >= 1 && button <= 3) {
+            m_held_buttons += pressed ? 1 : -1;
+        }
+        mouseHandler(button - 1, pressed ? GLUT_DOWN : GLUT_UP, pos_x, pos_y);
+    }
+
+    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override {
+        // glutMotionFunc(): motion is only reported while a button is held.
+        if (m_held_buttons > 0) {
+            mouseMotionHandler(pos_x, pos_y);
+        }
+    }
+
+    bool quitRequested() const override { return quit_requested; }
+
+protected:
+    void childClear() override {
+        if (render::Renderer::hasInstance()) {
+            m_renderer.releaseSwapchainResources();
+        }
+    }
+
+    bool childOnWindowSizeChanged() override {
+        if (!m_renderer.onSwapchainRecreated(swapchainInfo())) {
+            return false;
+        }
+        resize(render::windowWidth(), render::windowHeight());
+        return true;
+    }
+
+private:
+    render::DeviceInfo deviceInfo() const {
+        render::DeviceInfo info;
+        info.device = m_vulkan_common_parameters.getVkDevice();
+        info.physical_device =
+                m_vulkan_common_parameters.getVkPhysicalDevice();
+        info.graphics_queue = getGraphicsQueueParameters().getVkQueue();
+        info.graphics_family = getGraphicsQueueParameters().getFamilyIndex();
+        info.present_queue = getPresentQueueParameters().getVkQueue();
+        return info;
+    }
+
+    render::SwapchainInfo swapchainInfo() const {
+        auto const& swapchain = getSwapchainParameters();
+        render::SwapchainInfo info;
+        info.swapchain = swapchain.getVkSwapchainKhr();
+        info.format = swapchain.getVkFormat();
+        info.extent = swapchain.getVkExtent2d();
+        for (auto const& image : swapchain.getImageParameters()) {
+            info.images.push_back(image.getVkImage());
+            info.views.push_back(image.getVkImageView());
+        }
+        return info;
+    }
+
+    render::Renderer m_renderer;
+    std::chrono::steady_clock::time_point m_next_frame;
+    std::int32_t m_held_buttons = 0;
+};
+
 int main(int argc, char* argv[]) {
     screen_state = MAIN_MENU;
     prev_screen_state = screen_state;
 
+    // The game opens its assets (textures, meshes, sounds) by paths
+    // relative to its own directory, where the build copies them.
+    std::error_code error;
+    std::filesystem::current_path(vulkan_graphix::Tools::executableDir(),
+                                  error);
+
     initSound();
-    glutInit(&argc, argv);
     std::int32_t win_pos_x, win_pos_y;
     primaryMonitorGeometry(&win_pos_x, &win_pos_y, &win_width, &win_height);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowPosition(win_pos_x, win_pos_y);
-    glutInitWindowSize(win_width, win_height);
-    glutCreateWindow("VulkanEarth");
-    glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+    if (const char* size = std::getenv("VE_WINDOW")) {
+        std::sscanf(size, "%dx%d", &win_width, &win_height);
+    }
+    loadScript();
 
-    glewInit();
+    os::Window game_window;
+    window = &game_window;
+    if (!game_window.create(
+                "VulkanEarth", win_pos_x, win_pos_y, win_width, win_height)) {
+        return EXIT_FAILURE;
+    }
+    game_window.setKeyRepeat(false);
 
-    glutReshapeFunc(resize);
-    glutDisplayFunc(draw);
-    glutTimerFunc(20, timerEvent, 1);
-    glutKeyboardFunc(keyHandler);
-    glutKeyboardUpFunc(keyHandlerUp);
-    glutSpecialFunc(specKeyHandler);
-    glutSpecialUpFunc(specKeyHandlerUp);
-    glutMouseFunc(mouseHandler);
-    glutMotionFunc(mouseMotionHandler);
+    VulkanEarthApp app;
+    if (!app.prepareVulkan(game_window.getParameters()) ||
+        !app.initializeRenderer()) {
+        return EXIT_FAILURE;
+    }
+    // The window can come up at a different size than requested.
+    win_width = render::windowWidth();
+    win_height = render::windowHeight();
     screen_state = MAIN_MENU;
 
     global_settings = new GlobalSettings();
@@ -145,30 +380,38 @@ int main(int argc, char* argv[]) {
     readymenu = nullptr;
     shopmenu = nullptr;
 
-    initStuff();
-    glutMainLoop();
+    bool const ok = game_window.renderingLoop(app);
+    if (!quit_requested) {
+        quitGame(true);
+    }
+    delete loading_screen;
+    loading_screen = nullptr;
+    window = nullptr;
+    return ok ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+// What every one of the original's exit(0) calls did first: free the
+// game's objects (except where it deliberately left game_state alone),
+// then end the rendering loop.
+void quitGame(bool delete_game_state) {
     delete mainmenu;
     delete readymenu;
     delete shopmenu;
+    if (delete_game_state) {
+        delete game_state;
+    }
     delete global_settings;
     delete player_factory;
-    delete game_state;
-    delete loading_screen;
-    return 0;
+    mainmenu = nullptr;
+    readymenu = nullptr;
+    shopmenu = nullptr;
+    game_state = nullptr;
+    global_settings = nullptr;
+    player_factory = nullptr;
+    quit_requested = true;
 }
 
 void resize(std::int32_t width, std::int32_t height) {
-    win_width = glutGet(GLUT_WINDOW_WIDTH);
-    win_height = glutGet(GLUT_WINDOW_HEIGHT);
-    glViewport(0, 0, win_width, win_height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(
-            60.0,
-            static_cast<float>(win_width) / static_cast<float>(win_height),
-            1.0,
-            1000000.0);
-    glMatrixMode(GL_MODELVIEW);
     win_width = width;
     win_height = height;
     mainmenu->setWidth(width);
@@ -181,76 +424,84 @@ void resize(std::int32_t width, std::int32_t height) {
     }
 }
 
-void timerEvent(std::int32_t msec) {
-    glutTimerFunc(msec, timerEvent, 1);
-    draw();
+// The menus' camera: looking down -z at the z = 0 plane from the distance
+// where one unit is one pixel.
+void menuLookAt(render::RenderContext& context) {
+    std::int32_t distance = win_height / 2 * tan(1.04719755);
+    context.setCamera(context.projection(),
+                      context.view() * render::camera::lookAt(
+                                               render::Vec3(0, 0, distance),
+                                               render::Vec3(0, 0, 0),
+                                               render::Vec3(0, 1, 0)));
 }
 
-void draw() {
-    glClearColor(0, 0, 0, 0);  // background color
-    glClearDepth(1.0f);        // 0 is near, 1 is far
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_SCISSOR_TEST);
-    if (screen_state != GAME_PLAY) {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glViewport(0, 0, win_width, win_height);
-        gluPerspective(
-                60.0,
-                static_cast<float>(win_width) / static_cast<float>(win_height),
-                1.0,
-                1000000.0);
-
-        glMatrixMode(GL_MODELVIEW);
-        glScissor(0, 0, win_width, win_height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glLoadIdentity();
-    } else {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glViewport(0, 0, win_width, win_height);
-        gluPerspective(
-                60.0,
-                static_cast<float>(win_width) / static_cast<float>(win_height),
-                100.0,
-                100000000.0);
-
-        glMatrixMode(GL_MODELVIEW);
-        glScissor(0, 0, win_width, win_height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glLoadIdentity();
+// Draws one frame; returns false when the swapchain has to be rebuilt
+// first.
+bool draw() {
+    runScriptFrame();
+    if (quit_requested) {
+        return true;
     }
+    render::Renderer& renderer = render::Renderer::instance();
+    // glClearColor(0, 0, 0, 0), glClearDepth(1.0f), then a fresh full-window
+    // projection - near/far 1/1000000 for the menus, 100/100000000 in game
+    // - and an identity modelview.
+    render::RenderContext* context = renderer.beginFrame(render::Vec4(0.0f));
+    if (context == nullptr) {
+        return false;
+    }
+    float const near_plane = screen_state != GAME_PLAY ? 1.0 : 100.0;
+    float const far_plane =
+            screen_state != GAME_PLAY ? 1000000.0 : 100000000.0;
+    context->setViewport({0, 0, win_width, win_height});
+    context->setCamera(
+            render::camera::perspective(60.0,
+                                        static_cast<float>(win_width) /
+                                                static_cast<float>(win_height),
+                                        near_plane,
+                                        far_plane),
+            render::Mat4(1.0f));
     switch (screen_state) {
         case MAIN_MENU: {
             if (prev_screen_state != MAIN_MENU) {
                 mainmenu->getSubMenuLandscape()->tm->prepareData(
                         0, 0, 0, 0, 0);
-                glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+                window->setCursorVisible(true);
             }
-            std::int32_t distance = win_height / 2 * tan(1.04719755);
-            gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
-            mainmenu->draw();
+            menuLookAt(*context);
+            mainmenu->draw(*context);
             break;
         }
         case READY_MENU: {
             if (readymenu == nullptr) {
-                std::int32_t distance = win_height / 2 * tan(1.04719755);
-                gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
-                loading_screen->draw();
-                glutSwapBuffers();
+                menuLookAt(*context);
+                loading_screen->draw(*context);
+                // glutSwapBuffers(): the loading screen goes up while the
+                // ready menu is built, and drawing carries on into the next
+                // frame with the same camera.
+                render::Mat4 const projection = context->projection();
+                render::Mat4 const view = context->view();
+                if (!renderer.endFrame()) {
+                    return false;
+                }
                 readymenu = new ReadyMenu(win_width,
                                           win_height,
                                           0.01f,
                                           global_settings,
                                           player_factory,
                                           &screen_state);
+                context = renderer.beginFrame(render::Vec4(0.0f));
+                if (context == nullptr) {
+                    return false;
+                }
+                context->setViewport({0, 0, win_width, win_height});
+                context->setCamera(projection, view);
             }
             if (prev_screen_state != READY_MENU) {
                 readymenu->updatePageInfo();
             }
-            std::int32_t distance = win_height / 2 * tan(1.04719755);
-            gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
-            readymenu->draw();
+            menuLookAt(*context);
+            readymenu->draw(*context);
             break;
         }
         case SHOP_MENU: {
@@ -266,9 +517,8 @@ void draw() {
                 delete game_state;
                 game_state = nullptr;
             }
-            std::int32_t distance = win_height / 2 * tan(1.04719755);
-            gluLookAt(0, 0, distance, 0, 0, 0, 0, 1, 0);
-            if (screen_state == SHOP_MENU) shopmenu->draw();
+            menuLookAt(*context);
+            if (screen_state == SHOP_MENU) shopmenu->draw(*context);
             break;
         }
         case GAME_PLAY: {
@@ -278,7 +528,7 @@ void draw() {
                                            player_factory,
                                            global_settings,
                                            &screen_state);
-                glutSetCursor(GLUT_CURSOR_NONE);
+                window->setCursorVisible(false);
             }
             if (readymenu) {
                 delete readymenu;
@@ -288,41 +538,42 @@ void draw() {
                 delete shopmenu;
                 shopmenu = nullptr;
             }
-            std::int32_t distance = win_height / 2 * tan(1.04719755);
-            game_state->draw();
+            game_state->draw(*context);
 
-            glPushMatrix();
-            glBegin(GL_LINES);
-            glColor3f(1, 0, 0);
-            glVertex3f(0, 0, 0);
-            glVertex3f(1000, 0, 0);
-            glColor3f(0, 1, 0);
-            glVertex3f(0, 0, 0);
-            glVertex3f(0, 1000, 0);
-            glColor3f(0, 0, 1);
-            glVertex3f(0, 0, 0);
-            glVertex3f(0, 0, 1000);
-            glColor3f(1, 1, 1);
-            glEnd();
-            glPopMatrix();
+            // World axes at the origin (red x, green y, blue z).
+            std::vector<render::UiVertex> const axes = {
+                    {render::Vec3(0, 0, 0),
+                     render::Vec4(1, 0, 0, 1),
+                     render::Vec2(0.0f)},
+                    {render::Vec3(1000, 0, 0),
+                     render::Vec4(1, 0, 0, 1),
+                     render::Vec2(0.0f)},
+                    {render::Vec3(0, 0, 0),
+                     render::Vec4(0, 1, 0, 1),
+                     render::Vec2(0.0f)},
+                    {render::Vec3(0, 1000, 0),
+                     render::Vec4(0, 1, 0, 1),
+                     render::Vec2(0.0f)},
+                    {render::Vec3(0, 0, 0),
+                     render::Vec4(0, 0, 1, 1),
+                     render::Vec2(0.0f)},
+                    {render::Vec3(0, 0, 1000),
+                     render::Vec4(0, 0, 1, 1),
+                     render::Vec2(0.0f)}};
+            context->drawTransient(axes, render::PipelineId::UiLines, nullptr);
 
             break;
         }
         case QUIT_GAME: {
-            delete mainmenu;
-            delete readymenu;
-            delete shopmenu;
-            delete game_state;
-            delete global_settings;
-            delete player_factory;
-            exit(0);  // this is just temporary, delete this later
+            quitGame(true);
+            break;
         }
         default: {
             cout << "Error" << endl;
         }
     }
 
-    if (screen_state != prev_screen_state) {
+    if (screen_state != prev_screen_state && !quit_requested) {
         if (readymenu)
             readymenu->updateNumPlayers(global_settings->getPlayerCount());
         if (shopmenu)
@@ -330,7 +581,7 @@ void draw() {
         prev_screen_state = screen_state;
     }
 
-    glutSwapBuffers();
+    return renderer.endFrame();
 }
 
 void keyHandler(std::uint8_t key, std::int32_t x, std::int32_t y) {
@@ -342,38 +593,22 @@ void keyHandler(std::uint8_t key, std::int32_t x, std::int32_t y) {
     }
     if (screen_state == SHOP_MENU) {
         if (key == 27) {
-            delete mainmenu;
-            delete readymenu;
-            delete shopmenu;
-            delete game_state;
-            delete global_settings;
-            delete player_factory;
-            exit(0);  // this is just temporary, delete this later
+            quitGame(true);  // this is just temporary, delete this later
+            return;
         }
     }
     if (screen_state == MAIN_MENU) {
         switch (key) {
             case 27: {  // ESCAPE KEY
-                delete mainmenu;
-                delete readymenu;
-                delete shopmenu;
-                delete game_state;
-                delete global_settings;
-                delete player_factory;
-                exit(0);
-                break;
+                quitGame(true);
+                return;
             }
         }
     }
     if (screen_state == GAME_PLAY) {
         if (key == 27) {
-            delete mainmenu;
-            delete readymenu;
-            delete shopmenu;
-            // delete game_state;			//UNCOMMENT ON RELEASE
-            delete global_settings;
-            delete player_factory;
-            exit(0);
+            quitGame(false);  // game_state: UNCOMMENT ON RELEASE
+            return;
         } else if (key == 'n')
             global_settings->getCurrentTerrain()->toggleWireframe();
         else if (key == 'm')
@@ -525,34 +760,4 @@ void mouseMotionHandler(std::int32_t x, std::int32_t y) {
         if (game_state)
             game_state->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     }
-}
-
-void initStuff() {
-    float light_a[] = {0.3f, 0.3f, 0.3f, 1.0f};  // ambient light
-    float light_d[] = {1.0f, 1.0f, 1.0f, 1.0f};  // diffuse light
-    float light_s[] = {1.0f, 1.0f, 1.0f, 0.0f};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_a);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_d);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_s);
-    float light_pos0[4] = {1.0f, -1.0f, 0.0f, 0.0f};
-    float light_pos1[4] = {1.0f, 1.0f, 1.0f, 0.0f};
-    glLightfv(GL_LIGHT0, GL_POSITION, light_pos0);
-
-    // readymenu light
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_d);
-    glLightfv(GL_LIGHT1, GL_POSITION, light_pos1);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClearDepth(1.0f);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-    glDisable(GL_COLOR_MATERIAL);  // If you enable this materials will stop
-                                   // working
-    glDisable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_BLEND);
 }

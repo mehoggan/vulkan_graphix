@@ -1,6 +1,8 @@
 // Exercises the gameplay math libvulkan_graphix shares between the Vulkan
 // tutorials and vulkan_earth - TerrainGenerator's world queries and
-// craters, Ballistics, and TankOrientation - directly. Pure math, no
+// craters, Ballistics, TankOrientation, the GameCatalog item/weapon data,
+// and the EffectSimulation particle/explosion effects - directly. Pure
+// math, no
 // Vulkan device or X11 window, so this runs unconditionally (no DISPLAY
 // check).
 
@@ -8,11 +10,14 @@
 #include <cstdint>
 #include <cstdlib>
 #include <set>
+#include <string>
 #include <utility>
 
 #include <gtest/gtest.h>
 
 #include "vulkan_graphix/Ballistics.h"
+#include "vulkan_graphix/EffectSimulation.h"
+#include "vulkan_graphix/GameCatalog.h"
 #include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_graphix/TerrainGenerator.h"
 
@@ -184,4 +189,131 @@ TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
     // Translation is untouched.
     EXPECT_EQ(vg::Math::Vec3<float>(alignment->matrix[3]),
               vg::Math::Vec3<float>(5, 6, 7));
+}
+
+TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
+    namespace catalog = vg::GameCatalog;
+    EXPECT_EQ(
+            std::string(
+                    catalog::item(catalog::ItemKind::SmallRepair).image_file),
+            "ItemSmallRepair.raw");
+    EXPECT_EQ(catalog::item(catalog::ItemKind::BigRepair).special_num, 700);
+    EXPECT_EQ(std::string(catalog::item(catalog::ItemKind::Float).image_file),
+              "ItemFloat.raw");
+    EXPECT_EQ(catalog::weapon(catalog::WeaponKind::MFB).damage, 300);
+    EXPECT_EQ(catalog::weapon(catalog::WeaponKind::Nuke).price, 500);
+    EXPECT_EQ(
+            std::string(
+                    catalog::weapon(catalog::WeaponKind::Default).image_file),
+            "TestImage.raw");
+    // Every entry is filled in.
+    for (catalog::ItemSpec const& item : catalog::items()) {
+        EXPECT_NE(item.image_file, nullptr);
+        EXPECT_GT(item.price, 0);
+        EXPECT_GE(item.max_stack, item.remaining);
+    }
+    for (catalog::WeaponSpec const& weapon : catalog::weapons()) {
+        EXPECT_NE(weapon.description, nullptr);
+        EXPECT_GT(weapon.scale, 0.0f);
+        EXPECT_GE(weapon.max_stack, weapon.remaining);
+    }
+}
+
+TEST(GameLogicTest, CatalogKeepsThorsTwoComponentMediumSlateBlue) {
+    namespace catalog = vg::GameCatalog;
+    // OpenGLColors.h's MediumSlateBlue has no blue component.
+    auto const& color =
+            catalog::weapon(catalog::WeaponKind::Thor).explosion_colors[1];
+    EXPECT_DOUBLE_EQ(color[0], 0.498039);
+    EXPECT_DOUBLE_EQ(color[1], 1.0);
+    EXPECT_DOUBLE_EQ(color[2], 0.0);
+}
+
+TEST(GameLogicTest, SmokeParticleRisesAndFadesThroughItsColorBands) {
+    namespace effects = vg::EffectSimulation;
+    effects::Particle particle = effects::makeParticle(
+            effects::ParticleKind::Smoke, 0, 0, 0, 1, 0, 0, 1, 100);
+    EXPECT_EQ(particle.size, 2.0f);
+    float previous_y = particle.y;
+    for (std::int32_t frame = 0; frame < 31; ++frame) {
+        ASSERT_TRUE(effects::updateParticle(particle));
+    }
+    EXPECT_GT(particle.y, previous_y);
+    EXPECT_NEAR(particle.x, 31.0f, c_epsilon);
+    EXPECT_NEAR(particle.blue, 0.0f, c_epsilon);
+    EXPECT_EQ(particle.green, 1.0f);
+    for (std::int32_t frame = 31; frame < 61; ++frame) {
+        ASSERT_TRUE(effects::updateParticle(particle));
+    }
+    EXPECT_NEAR(particle.green, 0.0f, c_epsilon);
+    ASSERT_TRUE(effects::updateParticle(particle));
+    // Frame 61: (61 - 30) / 40 - the game's own formula.
+    EXPECT_NEAR(particle.red, 1.0f - 31.0f / 40.0f, c_epsilon);
+    previous_y = particle.y;
+    for (std::int32_t frame = 62; frame < 99; ++frame) {
+        ASSERT_TRUE(effects::updateParticle(particle));
+    }
+    EXPECT_FALSE(effects::updateParticle(particle));
+    EXPECT_GT(particle.y, previous_y);
+}
+
+TEST(GameLogicTest, FloatParticleDampsItsVerticalMotion) {
+    namespace effects = vg::EffectSimulation;
+    effects::Particle particle = effects::makeParticle(
+            effects::ParticleKind::Float, 0, 0, 0, 0, 1, 0, 2, 10);
+    EXPECT_TRUE(effects::updateParticle(particle));
+    EXPECT_NEAR(particle.y, 0.2f, c_epsilon);
+    EXPECT_EQ(particle.size, 4.0f);
+}
+
+TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
+    namespace effects = vg::EffectSimulation;
+    effects::ParticleEmitter emitter(10, 5, 2, 3, effects::ParticleKind::Acid);
+    auto live = [&emitter] {
+        std::size_t count = 0;
+        for (auto const& slot : emitter.slots()) {
+            count += slot.has_value() ? 1 : 0;
+        }
+        return count;
+    };
+    srand(99);
+    emitter.update(1.0f, 2.0f, 3.0f);
+    EXPECT_EQ(live(), 10U);
+    for (auto const& slot : emitter.slots()) {
+        if (slot) {
+            EXPECT_EQ(slot->x, 1.0f);
+            float const length = std::sqrt(slot->dir[0] * slot->dir[0] +
+                                           slot->dir[1] * slot->dir[1] +
+                                           slot->dir[2] * slot->dir[2]);
+            EXPECT_NEAR(length, 1.0f, c_epsilon);
+        }
+    }
+    emitter.update(0, 0, 0);
+    emitter.update(0, 0, 0);
+    EXPECT_EQ(live(), 30U);
+    // The first ten have lived their three frames; their slots refill.
+    emitter.update(0, 0, 0);
+    EXPECT_EQ(live(), 30U);
+    emitter.clear();
+    EXPECT_EQ(live(), 0U);
+}
+
+TEST(GameLogicTest, ExplosionStepsThroughItsColorsAndLeavesTheGap) {
+    namespace effects = vg::EffectSimulation;
+    effects::Explosion explosion;
+    // Starts at timer 50: the third color band.
+    effects::ExplosionFrame frame = effects::advanceExplosion(explosion);
+    EXPECT_EQ(frame.color_index, 2);
+    EXPECT_NEAR(frame.alpha, 1.0f - 50.5f / 150.0f, c_epsilon);
+    while (explosion.timer < 75.0f) {
+        frame = effects::advanceExplosion(explosion);
+    }
+    EXPECT_EQ(frame.color_index, -1);
+    while (explosion.timer < 100.0f) {
+        frame = effects::advanceExplosion(explosion);
+    }
+    EXPECT_EQ(frame.color_index, 3);
+    EXPECT_NEAR(effects::explosionSphereRadius(explosion, 30),
+                explosion.radius * (30 * 5.56f + 22.22f),
+                1e-2f);
 }

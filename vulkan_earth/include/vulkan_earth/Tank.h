@@ -1,8 +1,6 @@
 #ifndef TANK_H
 #define TANK_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <string>
@@ -14,6 +12,10 @@
 
 class ParticleGenerator;
 class VBOShaderLibrary;
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class Tank {
 public:
@@ -90,8 +92,8 @@ public:
     bool checkCollision(float x, float y, float z);
     void fire();
     void keyHandler();
-    void draw();
-    virtual void drawTankHitBox();
+    void draw(vulkan_earth::render::RenderContext& context);
+    virtual void drawTankHitBox(vulkan_earth::render::RenderContext& context);
     virtual void updateHitBox();
     void changeHeadTexture(std::int32_t current_player_index);
     void dealDamage(std::int32_t damage);

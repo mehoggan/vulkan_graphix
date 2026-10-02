@@ -1,11 +1,13 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include "vulkan_earth/Player.h"
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class TextObject;
 class ControlItemGrid;
@@ -20,7 +22,7 @@ public:
     Inventory();
     Inventory(float x, float y, std::int32_t width, std::int32_t height);
     ~Inventory();
-    void draw();
+    void draw(vulkan_earth::render::RenderContext& context);
     void setupInventory(Player* player);
     void handleInventory(Player* current_player, std::int32_t inven_index);
     void keyHandler(std::int32_t key);

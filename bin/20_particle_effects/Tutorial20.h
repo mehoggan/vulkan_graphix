@@ -28,25 +28,20 @@
 //     ParticleGenerator, type Float: white, damped vertical drift
 //     (ParticleFloat::update(), ParticleFloat.cpp:27-33).
 // Plus a fourth, non-status-effect generator type already real in the
-// source (Tank's own death effect, Tank.cpp:350): smoke - white fading
-// through yellow/red to black over its lifetime, rising as it ages
-// (ParticleSmoke::update(), ParticleSmoke.cpp:27-45). All four are
-// live, per-frame-updated CPU simulations using the real per-type
-// update() formulas (position/velocity/lifetime, and smoke's real
-// color-over-time fade), respawning at end of life exactly like
-// ParticleGenerator::addParticles() refills a dead slot - not a static
-// snapshot. Absolute position/speed/size scale is this tutorial's own
-// choice (the originals are calibrated to vulkan_earth's own much
-// larger world units), tuned via screenshot like every other
-// tutorial's world scale.
+// source (Tank's own death effect): smoke - white fading through yellow/
+// red to black over its lifetime, rising as it ages. All of it - each
+// particle kind's update(), ParticleGenerator's 1000-slot pool and
+// spawning, and Explosion::draw()'s growth and color timeline - runs on
+// libvulkan_graphix's EffectSimulation, the same code the game itself
+// now runs, with each generator's real constructor arguments (Tank.cpp:
+// spawn 10, life 100, speed 1 for smoke and 2 for acid/float). Only the
+// drawing scale is this tutorial's own (the simulation is in vulkan_earth's
+// much larger world units): each cloud spans a couple of units around its
+// emitter, and smoke rises a few units over a particle's life.
 //
-// Explosion::draw() (Explosion.cpp:53-74) is ported the same way: one
-// sphere whose radius grows and whose color cycles through a real
-// weapon's real explosion_color1..4 (WeaponBFB's Yellow/Orange/Red/
-// White palette, already used in Tutorial19), fading out and looping -
-// same real formula structure (radius += rate; timer advances; color
-// picked by timer thresholds; alpha = 1 - timer/limit), rescaled to
-// this tutorial's own small world.
+// The explosion uses a real weapon's real explosion colors and blast
+// radius from the shared GameCatalog (WeaponBFB's, already used in
+// Tutorial19), looping once it has faded out.
 
 #include <array>
 #include <cstddef>
@@ -56,6 +51,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#include "vulkan_graphix/EffectSimulation.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/Tools.h"
@@ -82,21 +78,6 @@ struct Tutorial20UniformBufferData {
 struct Tutorial20PushConstants {
     Math::Mat4<float> model;
     Math::Vec4<float> color;
-};
-
-enum class ParticleKind { kSmoke, kAcid, kFloat };
-
-// One live particle - mirrors vulkan_earth's own Particle base fields
-// (position/direction/speed/lifetime) plus a kind tag standing in for
-// the separate ParticleSmoke/ParticleAcid/ParticleFloat subclasses.
-struct EffectParticle {
-    ParticleKind kind;
-    Math::Vec3<float> position;
-    Math::Vec3<float> direction;
-    Math::Vec4<float> color;
-    float speed = 0.0f;
-    std::int32_t current_frame = 0;
-    std::int32_t active_frames = 0;
 };
 
 // ************************************************************ //
@@ -208,14 +189,6 @@ public:
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
-    // Real per-type constants (vulkan_earth/src/ParticleGenerator's own
-    // constructor args at each real call site: spawn=10, life=100 - see
-    // Tank.cpp:350,830-855) - rescaled position/speed/size below to this
-    // tutorial's own small world.
-    static constexpr std::int32_t c_active_frames = 100;
-    static constexpr std::size_t c_particles_per_emitter = 8;
-    static constexpr float c_world_scale = 0.03f;
-
     bool createCommandBuffers();
     bool createCommandPool(std::uint32_t queue_family_index,
                            VkCommandPool* pool);
@@ -239,16 +212,6 @@ private:
     const std::vector<Tutorial20VertexData>& getVertexData() const;
     const std::vector<std::uint32_t>& getIndexData() const;
 
-    Math::Vec3<float> randomUnitVector() const;
-    void respawnParticle(EffectParticle& particle,
-                         ParticleKind kind,
-                         Math::Vec3<float> const& emitter_position) const;
-    // Ported from ParticleSmoke/ParticleAcid/ParticleFloat::update() -
-    // advances one particle by one frame and stores its current color
-    // in particle.color (alpha fixed at 0.4, matching every Particle::
-    // draw()'s own glColor4f(r, g, b, 0.4)) so prepareFrame() doesn't
-    // need to recompute it.
-    void updateParticle(EffectParticle& particle) const;
     void updateParticles();
     void updateExplosion();
 
@@ -264,9 +227,11 @@ private:
     VulkanTutorial20Parameters m_vulkan_tutorial20_parameters;
     OrbitCamera m_camera;
 
-    std::vector<EffectParticle> m_particles;
-    float m_explosion_radius;
-    float m_explosion_timer;
+    // Smoke, acid, and float, in that order.
+    std::array<EffectSimulation::ParticleEmitter, 3> m_emitters;
+    EffectSimulation::Explosion m_explosion;
+    // The explosion's current color (the last one its timeline set).
+    Math::Vec4<float> m_explosion_color;
 };
 
 }  // namespace vulkan_graphix

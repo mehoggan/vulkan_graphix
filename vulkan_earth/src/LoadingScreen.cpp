@@ -1,6 +1,8 @@
 #include "vulkan_earth/LoadingScreen.h"
 #include <cstdint>
 #include "vulkan_earth/ImageObject.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 LoadingScreen::LoadingScreen() = default;
@@ -34,42 +36,20 @@ LoadingScreen::LoadingScreen(float x,
 }
 LoadingScreen::~LoadingScreen() { delete image; }
 
-void LoadingScreen::draw() {
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(pos[0], pos[1], pos[2]);
-    glVertex3f(pos[0] - 3, pos[1] + 3, pos[2]);
-    glVertex3f(pos[0] + width + 3, pos[1] + 3, pos[2]);
-    glVertex3f(pos[0] + width, pos[1], pos[2]);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(pos[0] - 3, pos[1] + 3, pos[2]);
-    glVertex3f(pos[0] - 3, pos[1] - height - 3, pos[2]);
-    glVertex3f(pos[0], pos[1] - height, pos[2]);
-    glVertex3f(pos[0], pos[1], pos[2]);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(pos[0], pos[1], pos[2]);
-    glVertex3f(pos[0], pos[1] - height, pos[2]);
-    glVertex3f(pos[0] + width, pos[1] - height, pos[2]);
-    glVertex3f(pos[0] + width, pos[1], pos[2]);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(pos[0] - 3, pos[1] - height - 3, pos[2]);
-    glVertex3f(pos[0] + width + 3, pos[1] - height - 3, pos[2]);
-    glVertex3f(pos[0] + width, pos[1] - height, pos[2]);
-    glVertex3f(pos[0], pos[1] - height, pos[2]);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(pos[0] + width, pos[1], pos[2]);
-    glVertex3f(pos[0] + width + 3, pos[1] + 3, pos[2]);
-    glVertex3f(pos[0] + width + 3, pos[1] - height - 3, pos[2]);
-    glVertex3f(pos[0] + width, pos[1] + -height, pos[2]);
-    glEnd();
-
-    image->draw();
+void LoadingScreen::draw(vulkan_earth::render::RenderContext& context) {
+    if (frame_mesh.triangles().empty()) {
+        // The same raised 3-pixel bevel every button draws.
+        vulkan_earth::render::appendBevel(
+                frame_mesh,
+                pos[0],
+                pos[1],
+                pos[2],
+                static_cast<float>(width),
+                static_cast<float>(height),
+                vulkan_earth::render::Vec4(
+                        color[0], color[1], color[2], color[3]),
+                false);
+    }
+    context.draw(frame_mesh);
+    image->draw(context);
 }

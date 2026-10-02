@@ -1,11 +1,10 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/Tank.h"
+#include "vulkan_graphix/GameCatalog.h"
 
 class Item {
 public:
@@ -25,6 +24,9 @@ public:
     virtual void playUseSFX();
 
 protected:
+    // Every field but the id, from the game's catalog.
+    void loadSpec(vulkan_graphix::GameCatalog::ItemSpec const& spec);
+
     std::int32_t uniqueidentifier;
     std::string image_file_name;
     std::string description;

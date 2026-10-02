@@ -9,27 +9,8 @@ extern void playSFX(std::int32_t sfx);
 WeaponRevive::WeaponRevive() = default;
 WeaponRevive::WeaponRevive(std::int32_t id) {
     uniqueidentifier = id;
-    max_stack = 6;
-    package_num = 1;
-    remaining = 1;
-    scale = 60;
-    image_file_name = "WeaponRevive.raw";
-    description = "Revive:     Revive/repair tanks in the target area";
-    price = 50;
-    radius = 6;
-    damage = 0;
-    special_number = 400;
-
-    float temp_colors1[3] = {White};
-    float temp_colors2[3] = {Silver};
-    float temp_colors3[3] = {White};
-    float temp_colors4[3] = {LightGray};
-    for (std::int32_t i = 0; i < 3; i++) {
-        explosion_color1[i] = temp_colors1[i];
-        explosion_color2[i] = temp_colors2[i];
-        explosion_color3[i] = temp_colors3[i];
-        explosion_color4[i] = temp_colors4[i];
-    }
+    loadSpec(vulkan_graphix::GameCatalog::weapon(
+            vulkan_graphix::GameCatalog::WeaponKind::Revive));
 }
 WeaponRevive::~WeaponRevive() = default;
 

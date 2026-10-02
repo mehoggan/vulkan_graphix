@@ -9,13 +9,8 @@ extern void playSFX(std::int32_t sfx);
 ItemSmallRepair::ItemSmallRepair() = default;
 ItemSmallRepair::ItemSmallRepair(std::int32_t id) {
     uniqueidentifier = id;
-    package_num = 3;
-    max_stack = 15;
-    remaining = 3;
-    image_file_name = "ItemSmallRepair.raw";
-    description = "Small Repair:     Heals 200 damage.";
-    price = 50;
-    special_num = 200;
+    loadSpec(vulkan_graphix::GameCatalog::item(
+            vulkan_graphix::GameCatalog::ItemKind::SmallRepair));
 }
 ItemSmallRepair::~ItemSmallRepair() = default;
 

@@ -1,5 +1,4 @@
 #include "vulkan_earth/TerrainMaker.h"
-#include <GL/glx.h>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -9,12 +8,15 @@
 #include <vector>
 #include "math.h"
 #include "vulkan_earth/Normal.h"
-#include "vulkan_earth/Shader.h"
 #include "vulkan_earth/TexCoord.h"
 #include "vulkan_earth/Vertex.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 namespace {
 Normal toNormal(vulkan_graphix::Math::Vec3<float> const& normal) {
@@ -31,180 +33,108 @@ TerrainMaker::TerrainMaker(std::int32_t i_scale, std::int32_t i_size)
     tri_strip_buffer_size = (size - 1) * (size - 1) * 6;
     initData();
 
-    shader = new Shader();
-    shader->init("VertexShader.vs", "FragmentShader.vs");
-    color_texture = loadTexture("Rocky.raw", 2048, 2048);
-    normal_texture = loadTexture("bumpMap.raw", 256, 256);
+    // GL_LINEAR filtering, GL_REPEAT wrapping. (The original also loaded
+    // bumpMap.raw as a normal map, which its terrain shader sampled but
+    // never used.)
+    color_texture = render::Renderer::instance().loadRawTexture(
+            "Rocky.raw", 2048, 2048, VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
     rotation_angle = 0.0;
-    vbo_qualify = nullptr;
-    verifyVBOs();
     wireframe_active = false;
 }
 
-TerrainMaker::~TerrainMaker() {
-    delete vbo_qualify;
-    delete shader;
-    pgl_delete_buffers_arb(1, &vertex_vbo_id);
-    pgl_delete_buffers_arb(1, &normal_vbo_id);
-    pgl_delete_buffers_arb(1, &texture_vbo_id);
-    glDeleteTextures(1, &color_texture);
-    glDeleteTextures(1, &normal_texture);
-}
+TerrainMaker::~TerrainMaker() = default;
 
 std::int32_t TerrainMaker::getScale() { return scale; }
 std::int32_t TerrainMaker::getActualSize() { return (size) * (scale); }
 
-std::uint32_t TerrainMaker::selectTexture(const std::string& tex) {
-    glDeleteTextures(1, &color_texture);
-
+// The original deleted the current texture and returned the newly loaded
+// one, which its only caller discarded - it worked only because GL happened
+// to reuse the freed texture name. This stores the new texture directly.
+void TerrainMaker::selectTexture(const std::string& tex) {
+    char const* filename = nullptr;
     if (tex == "Rock")
-        return loadTexture("Rocky.raw", 2048, 2048);
+        filename = "Rocky.raw";
     else if (tex == "Snow")
-        return loadTexture("Snowy.raw", 2048, 2048);
+        filename = "Snowy.raw";
     else if (tex == "Ice")
-        return loadTexture("Icy.raw", 2048, 2048);
+        filename = "Icy.raw";
     else if (tex == "Mars")
-        return loadTexture("RedPlanet.raw", 2048, 2048);
+        filename = "RedPlanet.raw";
     else if (tex == "Desert")
-        return loadTexture("Desert.raw", 2048, 2048);
+        filename = "Desert.raw";
     else if (tex == "Lava")
-        return loadTexture("LavaRock.raw", 2048, 2048);
-    else
-        return 0;
-}
-
-std::uint32_t TerrainMaker::loadTexture(const char* filename,
-                                        std::int32_t width,
-                                        std::int32_t height) {
-    std::uint32_t texture;
-    std::ifstream file(filename, std::ios::binary);
-    if (!file) return 0;
-    std::vector<std::uint8_t> data(width * height * 3);
-    file.read(reinterpret_cast<char*>(data.data()), data.size());
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGB,
-                 width,
-                 height,
-                 0,
-                 GL_RGB,
-                 GL_UNSIGNED_BYTE,
-                 data.data());
-    return texture;
-}
-
-void TerrainMaker::draw() {
-    std::int32_t draw_size = size;
-    std::int32_t draw_scale = scale;
-    std::int32_t buffersize = tri_strip_buffer_size;
-    glEnable(GL_COLOR_MATERIAL);
-
-    if (wireframe_active) {
-        glColor4f(0, 0, 0, .75);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vertex_vbo_id);
-        glVertexPointer(3, GL_FLOAT, 0, nullptr);
-        glDrawArrays(GL_TRIANGLES, 0, buffersize);
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glColor4f(1, 1, 1, .75);
-        for (std::int32_t i = 0; i < 255; i += 4) {
-            for (std::int32_t j = 0; j < 255; j += 4) {
-                glBegin(GL_LINES);
-                /*glVertex3f(i*draw_scale,terrain.heightAt(i, j),j*draw_scale);
-                glVertex3f(	i*draw_scale+500*normals[(i*255+j)*6].compoX,
-                            terrain.heightAt(i,
-                j)+500*normals[(i*255+j)*6].compoY,
-                            j*draw_scale+500*normals[(i*255+j)*6].compoZ);*/
-                glVertex3f(i * draw_scale,
-                           terrain.heightAt(i, j),
-                           j * draw_scale);
-                glVertex3f(i * draw_scale + 500 * getNormalAt(i * draw_scale,
-                                                              j * draw_scale)
-                                                            .compo_x,
-                           terrain.heightAt(i, j) +
-                                   500 * getNormalAt(i * draw_scale,
-                                                     j * draw_scale)
-                                                   .compo_y,
-                           j * draw_scale + 500 * getNormalAt(i * draw_scale,
-                                                              j * draw_scale)
-                                                            .compo_z);
-                glEnd();
-            }
-        }
-    } else {
-        shader->bind();
-        glEnable(GL_LIGHTING);  // NOT PART OF SHADER CODE
-
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glActiveTexture(GL_TEXTURE0);
-        glEnable(GL_TEXTURE_2D);
-        std::int32_t texture_location =
-                glGetUniformLocation(shader->id(), "color_texture");
-        glUniform1i(texture_location, 0);
-        glBindTexture(GL_TEXTURE_2D, color_texture);
-
-        glActiveTexture(GL_TEXTURE1);
-        glEnable(GL_TEXTURE_2D);
-        std::int32_t normal_location =
-                glGetUniformLocation(shader->id(), "normal_texture");
-        glUniform1i(normal_location, 1);
-        glBindTexture(GL_TEXTURE_2D, normal_texture);
-
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vertex_vbo_id);
-        glVertexPointer(3, GL_FLOAT, 0, nullptr);
-        glNormalPointer(GL_FLOAT,
-                        0,
-                        reinterpret_cast<void*>(buffersize * sizeof(Vertex)));
-        glTexCoordPointer(
-                2,
-                GL_FLOAT,
-                0,
-                reinterpret_cast<void*>(buffersize *
-                                        (sizeof(Vertex) + sizeof(Normal))));
-        glDrawArrays(GL_TRIANGLES, 0, buffersize);
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-
-        glDisable(GL_LIGHTING);  // NOT PART OF SHADER CODE
-        shader->unbind();
+        filename = "LavaRock.raw";
+    if (filename != nullptr) {
+        color_texture = render::Renderer::instance().loadRawTexture(
+                filename, 2048, 2048, VK_SAMPLER_ADDRESS_MODE_REPEAT);
     }
-    glDisable(GL_COLOR_MATERIAL);
+}
+
+void TerrainMaker::rebuildMesh() {
+    std::vector<render::MeshVertex> mesh_vertices(vertices.size());
+    for (std::size_t i = 0; i < vertices.size(); ++i) {
+        mesh_vertices[i] = {render::Vec3(vertices[i].coord_x,
+                                         vertices[i].coord_y,
+                                         vertices[i].coord_z),
+                            render::Vec3(normals[i].compo_x,
+                                         normals[i].compo_y,
+                                         normals[i].compo_z),
+                            render::Vec2(tex_coord[i].texcoord_s,
+                                         tex_coord[i].texcoord_t)};
+    }
+    mesh = render::Renderer::instance().createMesh(mesh_vertices);
+
+    // The wireframe view's debug normals: one 500-unit line per fourth grid
+    // vertex.
+    std::int32_t const draw_scale = scale;
+    normal_lines.clear();
+    render::Vec4 const white(1, 1, 1, .75);
+    for (std::int32_t i = 0; i < 255; i += 4) {
+        for (std::int32_t j = 0; j < 255; j += 4) {
+            Normal const normal = getNormalAt(i * draw_scale, j * draw_scale);
+            normal_lines.addLine(
+                    render::Vec3(i * draw_scale,
+                                 terrain.heightAt(i, j),
+                                 j * draw_scale),
+                    render::Vec3(i * draw_scale + 500 * normal.compo_x,
+                                 terrain.heightAt(i, j) + 500 * normal.compo_y,
+                                 j * draw_scale + 500 * normal.compo_z),
+                    white);
+        }
+    }
+    mesh_dirty = false;
+}
+
+void TerrainMaker::draw(render::RenderContext& context) {
+    if (mesh_dirty) {
+        rebuildMesh();
+    }
+    if (!mesh) {
+        return;
+    }
+    if (wireframe_active) {
+        // Untextured, unlit, line-mode triangles in translucent black, then
+        // the debug normals.
+        context.drawMesh(*mesh,
+                         render::PipelineId::FlatColorWireframe,
+                         nullptr,
+                         render::Mat4(1.0f),
+                         render::Vec4(0, 0, 0, .75));
+        context.draw(normal_lines);
+    } else {
+        context.drawMesh(*mesh,
+                         render::PipelineId::Terrain,
+                         color_texture.get(),
+                         render::Mat4(1.0f),
+                         render::Vec4(1.0f));
+    }
 }
 
 void TerrainMaker::initData() {
     vertices.resize(tri_strip_buffer_size);
     normals.resize(tri_strip_buffer_size);
     tex_coord.resize(tri_strip_buffer_size);
-    material_specular = {1.0, 1.0, 1.0, 1.0};
-    material_shininess = {10000.0};
-    material_diffuse = {0.0, 1.0, 0.0, 1.0};
 }
 
 void TerrainMaker::prepareData(std::int32_t new_steps,
@@ -366,83 +296,7 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
         }
     }
 
-    pgl_gen_buffers_arb(1, &vertex_vbo_id);  // Create VBO for Vertices
-    pgl_bind_buffer_arb(GL_ARRAY_BUFFER_ARB, vertex_vbo_id);
-    pgl_buffer_data_arb(
-            GL_ARRAY_BUFFER_ARB,
-            buffersize * (sizeof(Vertex) + sizeof(Normal) + sizeof(TexCoord)),
-            nullptr,
-            GL_DYNAMIC_DRAW_ARB);
-
-    pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
-                            0,
-                            buffersize * sizeof(Vertex),
-                            vertices.data());
-
-    pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
-                            buffersize * sizeof(Vertex),
-                            buffersize * sizeof(Normal),
-                            normals.data());
-
-    pgl_buffer_sub_data_arb(GL_ARRAY_BUFFER_ARB,
-                            buffersize * (sizeof(Vertex) + sizeof(Normal)),
-                            buffersize * sizeof(TexCoord),
-                            tex_coord.data());
-}
-
-void TerrainMaker::verifyVBOs() {
-    delete vbo_qualify;
-    vbo_qualify = new VBOQualifer();
-    vbo_qualify->establishIfQualified();
-    if (vbo_qualify->getQualified()) {
-        if (vbo_qualify->isExtensionSupported("GL_ARB_vertex_buffer_object")) {
-            pgl_gen_buffers_arb = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
-                            "glGenBuffersARB")));
-            pgl_bind_buffer_arb = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
-                            "glBindBufferARB")));
-            pgl_buffer_data_arb = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
-                            "glBufferDataARB")));
-            pgl_buffer_sub_data_arb =
-                    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(
-                            glXGetProcAddress(
-                                    reinterpret_cast<const std::uint8_t*>(
-                                            "glBufferSubDataARB")));
-            pgl_delete_buffers_arb =
-                    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(
-                            glXGetProcAddress(
-                                    reinterpret_cast<const std::uint8_t*>(
-                                            "glDeleteBuffersARB")));
-            pgl_get_buffer_parameteriv_arb =
-                    reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>(
-                            glXGetProcAddress(
-                                    reinterpret_cast<const std::uint8_t*>(
-                                            "glGetBufferParameterivARB")));
-            pgl_map_buffer_arb = reinterpret_cast<PFNGLMAPBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
-                            "glMapBufferARB")));
-            pgl_unmap_buffer_arb = reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>(
-                    glXGetProcAddress(reinterpret_cast<const std::uint8_t*>(
-                            "glUnmapBufferARB")));
-            if (pgl_gen_buffers_arb && pgl_bind_buffer_arb &&
-                pgl_buffer_data_arb && pgl_buffer_sub_data_arb &&
-                pgl_delete_buffers_arb && pgl_get_buffer_parameteriv_arb &&
-                pgl_map_buffer_arb && pgl_unmap_buffer_arb) {
-            } else {
-                stdMessageBox(
-                        "Pointers to Buffer Functions Failed to be Obtained");
-                exit(0);
-            }
-        } else {
-            stdMessageBox("GL_ARB_vertex_buffer_object IS NOT Supported");
-            exit(0);
-        }
-    } else {
-        stdMessageBox("VBOs Creation Failed");
-        exit(0);
-    }
+    mesh_dirty = true;
 }
 
 void TerrainMaker::toggleWireframe() { wireframe_active = !wireframe_active; }
@@ -461,20 +315,19 @@ float TerrainMaker::getHeightAt(float x, float z) {
 }
 
 // The crater's height math is TerrainGenerator::makeCrater(); this only
-// re-uploads the affected grid vertices into the VBO. prepareData() lays
+// rewrites the affected grid vertices in the mesh. prepareData() lays
 // the mesh out as six triangle-list slots per grid cell (row z, column x),
 // so each grid vertex is repeated in up to six slots across the cells
 // around it - the slot choice (including skipping row/column 0's
 // neighbors via `> 0`) is TerrainMaker's own. Unlike the original, a slot
 // outside the (size - 1) x (size - 1) cell grid is skipped rather than
-// written past the end of the buffer.
+// written past the end of the buffer. The patched arrays are re-uploaded
+// as a whole on the next draw().
 void TerrainMaker::makeCrater(float impact_x,
                               float impact_z,
                               float blast_size) {
     std::vector<vulkan_graphix::TerrainGridCell> const cells =
             terrain.makeCrater(impact_x, impact_z, blast_size);
-    Vertex* buffer_ptr = static_cast<Vertex*>(
-            pgl_map_buffer_arb(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE));
 
     std::int32_t const cells_per_row = size - 1;
     auto slot = [&](std::int32_t row,
@@ -508,23 +361,20 @@ void TerrainMaker::makeCrater(float impact_x,
                 static_cast<float>(terrain.heightAt(cell.x, cell.z));
         for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
-                buffer_ptr[index].coord_y = height;  // VBO
+                vertices[index].coord_y = height;
             }
         }
     }
 
-    std::int32_t const normal_offset = tri_strip_buffer_size;
     for (vulkan_graphix::TerrainGridCell const& cell : cells) {
         Normal const normal = toNormal(terrain.normalAt(cell.x, cell.z));
         for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
-                buffer_ptr[normal_offset + index].coord_x = normal.compo_x;
-                buffer_ptr[normal_offset + index].coord_y = normal.compo_y;
-                buffer_ptr[normal_offset + index].coord_z = normal.compo_z;
+                normals[index] = normal;
             }
         }
     }
-    pgl_unmap_buffer_arb(GL_ARRAY_BUFFER_ARB);
+    mesh_dirty = true;
 }
 
 /************************************************************************/

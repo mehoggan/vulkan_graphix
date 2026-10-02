@@ -10,6 +10,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "vulkan_graphix/GameCatalog.h"
 #include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
@@ -24,18 +25,26 @@ struct ProjectileMeshInfo {
     float world_x;
 };
 
-// Weapon::scale is real (WeaponDefault/WeaponAcid = 60, WeaponBFB =
-// 100); world_x (side-by-side placement) is this tutorial's own layout
-// choice, tuned via screenshot.
+// Each scale is its weapon's real one (the shared GameCatalog); world_x
+// (side-by-side placement) is this tutorial's own layout choice, tuned
+// via screenshot.
 std::array<ProjectileMeshInfo, c_projectile_mesh_count> const&
 getProjectileMeshInfo() {
+    using GameCatalog::weapon;
+    using GameCatalog::WeaponKind;
     static std::array<ProjectileMeshInfo, c_projectile_mesh_count> const info =
             {{{"projectileDefault.ogl",
                "projectileDefault.raw",
-               60.0f,
+               weapon(WeaponKind::Default).scale,
                -220.0f},
-              {"projectileAcid.ogl", "projectileAcid.raw", 60.0f, 0.0f},
-              {"projectileBFB.ogl", "projectileBFB.raw", 100.0f, 220.0f}}};
+              {"projectileAcid.ogl",
+               "projectileAcid.raw",
+               weapon(WeaponKind::Acid).scale,
+               0.0f},
+              {"projectileBFB.ogl",
+               "projectileBFB.raw",
+               weapon(WeaponKind::BFB).scale,
+               220.0f}}};
     return info;
 }
 
@@ -45,73 +54,20 @@ Math::Mat4<float> buildProjectileMatrix(float world_x, float scale) {
            glm::scale(Math::Mat4<float>(1.0f), Math::Vec3<float>(scale));
 }
 
-struct WeaponDisplayData {
-    const char* icon_file;
-    const char* short_name;
-    const char* description;
-    std::int32_t price;
-    std::int32_t damage;
-};
-
-// Real data from vulkan_earth/src/WeaponXxx.cpp's own constructors, not
-// fabricated - ids 0-9, the real shop-purchasable set (ShopMenu.cpp:
-// 205-214); WeaponDefault/id 10 is an internal Projectile fallback,
+// The 10 real shop-purchasable weapons - the shared GameCatalog, the same
+// data the game's own Weapon subclasses load - in the shop's own order
+// (ids 0-9); WeaponDefault (id 10) is an internal Projectile fallback,
 // never shop-purchasable, and is not included here.
-std::array<WeaponDisplayData, c_weapon_grid_item_count> const&
+std::array<GameCatalog::WeaponSpec, c_weapon_grid_item_count> const&
 getWeaponDisplayData() {
-    static std::array<WeaponDisplayData,
-                      c_weapon_grid_item_count> const data = {{
-            {"WeaponMFB.raw",
-             "MFB",
-             "MFB:     (Medium Force Bomb) Damage:300",
-             60,
-             300},
-            {"WeaponBFB.raw",
-             "BFB",
-             "BFB:     (Big Force Bomb) Damage:400",
-             100,
-             400},
-            {"WeaponAcid.raw",
-             "Acid",
-             "Acid:     Damage: 150, DOT: 10%% of total HP for 5 turns",
-             100,
-             150},
-            {"WeaponThor.raw",
-             "Thor",
-             "Thor:     Damage: 200, Paralyze targets for 1 turn",
-             80,
-             200},
-            {"WeaponEMP.raw",
-             "EMP",
-             "EMP:     Disrupt tanks in the target area for 5 turns.",
-             60,
-             0},
-            {"WeaponPadlock.raw",
-             "Padlock",
-             "Padlock:     Damage: 50, Locks target's inventory for 4 turns",
-             40,
-             50},
-            {"WeaponRevive.raw",
-             "Revive",
-             "Revive:     Revive/repair tanks in the target area",
-             50,
-             0},
-            {"WeaponTeleport.raw",
-             "Teleport",
-             "Teleport:     Teleport to where the projectile lands on.",
-             50,
-             0},
-            {"WeaponAtom.raw",
-             "Atom",
-             "Atom:     Damage: 999, Very small radius.",
-             200,
-             999},
-            {"WeaponNuke.raw",
-             "Nuke",
-             "Nuke:     Do NOT use this weapon!!",
-             500,
-             800},
-    }};
+    static_assert(c_weapon_grid_item_count ==
+                  GameCatalog::c_shop_weapon_count);
+    static std::array<GameCatalog::WeaponSpec,
+                      c_weapon_grid_item_count> const data = [] {
+        std::array<GameCatalog::WeaponSpec, c_weapon_grid_item_count> shop{};
+        std::copy_n(GameCatalog::weapons().begin(), shop.size(), shop.begin());
+        return shop;
+    }();
     return data;
 }
 }  // namespace
@@ -633,15 +589,15 @@ std::vector<char> Tutorial19::buildIconAtlasPixels() const {
                                     c_icon_atlas_height * 4,
                             0);
 
-    std::array<WeaponDisplayData, c_weapon_grid_item_count> const& weapons =
-            getWeaponDisplayData();
+    std::array<GameCatalog::WeaponSpec, c_weapon_grid_item_count> const&
+            weapons = getWeaponDisplayData();
     for (std::size_t index = 0; index < weapons.size(); ++index) {
         std::vector<char> const icon_pixels = Tools::getRawImageData(
-                weapons[index].icon_file, c_icon_size, c_icon_size);
+                weapons[index].image_file, c_icon_size, c_icon_size);
         if (icon_pixels.empty()) {
             Logging::error(LOG_TAG,
                            "Could not load icon \"",
-                           weapons[index].icon_file,
+                           weapons[index].image_file,
                            "\"!");
             return {};
         }
@@ -1709,8 +1665,8 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
                                  panel_top_left.y + 16.0f),
                text_color);
 
-    std::array<WeaponDisplayData, c_weapon_grid_item_count> const& weapons =
-            getWeaponDisplayData();
+    std::array<GameCatalog::WeaponSpec, c_weapon_grid_item_count> const&
+            weapons = getWeaponDisplayData();
     Math::Vec2<float> const cell_size = getCellSize();
     for (std::size_t index = 0; index < weapons.size(); ++index) {
         Math::Vec2<float> const cell_top_left = getCellTopLeft(index);

@@ -6,9 +6,14 @@
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Font.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -56,7 +61,8 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + (width / 2) - (real_length / 2);
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -65,7 +71,7 @@ ControlItemSelectionBox::ControlItemSelectionBox(
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           vulkan_earth::render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -76,81 +82,84 @@ ControlItemSelectionBox::~ControlItemSelectionBox() {
     delete label;
 }
 
-void ControlItemSelectionBox::draw() {
-    // draw main button box
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos + -height, z_pos);
-    glEnd();
+void ControlItemSelectionBox::draw(render::RenderContext& context) {
+    using render::Vec3;
+    using render::Vec4;
+    // draw main button box (a sunken bevel: -0.2 top/left, +0.4
+    // bottom/right)
+    if (frame_mesh.triangles().empty()) {
+        Vec4 const dark(
+                color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
+        Vec4 const face(color[0], color[1], color[2], color[3]);
+        Vec4 const light(
+                color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
+        render::appendQuad(frame_mesh,
+                           Vec3(x_pos, y_pos, z_pos),
+                           Vec3(x_pos - 3, y_pos + 3, z_pos),
+                           Vec3(x_pos + width + 3, y_pos + 3, z_pos),
+                           Vec3(x_pos + width, y_pos, z_pos),
+                           dark);
+        render::appendQuad(frame_mesh,
+                           Vec3(x_pos - 3, y_pos + 3, z_pos),
+                           Vec3(x_pos - 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos, y_pos - height, z_pos),
+                           Vec3(x_pos, y_pos, z_pos),
+                           dark);
+        render::appendQuad(frame_mesh,
+                           Vec3(x_pos, y_pos, z_pos),
+                           Vec3(x_pos, y_pos - height, z_pos),
+                           Vec3(x_pos + width, y_pos - height, z_pos),
+                           Vec3(x_pos + width, y_pos, z_pos),
+                           face);
+        render::appendQuad(frame_mesh,
+                           Vec3(x_pos - 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos + width + 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos + width, y_pos - height, z_pos),
+                           Vec3(x_pos, y_pos - height, z_pos),
+                           light);
+        render::appendQuad(frame_mesh,
+                           Vec3(x_pos + width, y_pos, z_pos),
+                           Vec3(x_pos + width + 3, y_pos + 3, z_pos),
+                           Vec3(x_pos + width + 3, y_pos - height - 3, z_pos),
+                           Vec3(x_pos + width, y_pos + -height, z_pos),
+                           light);
+    }
+    context.draw(frame_mesh);
 
-    label->draw();
-    option_text->draw();
+    label->draw(context);
+    option_text->draw(context);
 
-    // draw up arrow
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2); /*		3		*/
-    glVertex3f(x_pos + 0.02 * width,
-               (y_pos - height / 2) + 0.05 * height,
-               z_pos + 1); /*	   / \		*/
-    glVertex3f(x_pos + 0.02 * width + height * 0.7,
-               (y_pos - height / 2) + 0.05 * height,
-               z_pos + 1); /*	  /   \		*/
-    if (button_state == 1)
-        glColor3f(
-                color[0] - .2, color[1] - .2, color[2] - .2); /*   1-----2	*/
-    glVertex3f(x_pos + 0.02 * (width) + height * 0.35,
-               y_pos - 0.05 * height,
-               z_pos + 1);
-    glEnd();
-
-    // draw down arrow
-    glBegin(GL_TRIANGLES);
-    glColor3f(color[0] + .2, color[1] + .2, color[2] + .2); /*	1-----2		*/
-    glVertex3f(x_pos + 0.02 * width,
-               (y_pos - height / 2) - 0.05 * height,
-               z_pos + 1); /*	 \   /		*/
-    glVertex3f(x_pos + 0.02 * width + height * 0.7,
-               (y_pos - height / 2) - 0.05 * height,
-               z_pos + 1); /*	  \ /		*/
-    if (button_state == 2)
-        glColor3f(color[0] - .2,
-                  color[1] - .2,
-                  color[2] - .2); /*	   3		*/
-    glVertex3f(x_pos + 0.02 * width + height * 0.35,
-               y_pos - height + 0.05 * height,
-               z_pos + 1);
-    glEnd();
+    if (arrows_built_for != button_state) {
+        arrow_mesh.clear();
+        Vec4 const raised(color[0] + .2, color[1] + .2, color[2] + .2, 1.0f);
+        Vec4 const pressed(color[0] - .2, color[1] - .2, color[2] - .2, 1.0f);
+        // draw up arrow
+        arrow_mesh.addTriangle(
+                {Vec3(x_pos + 0.02 * width,
+                      (y_pos - height / 2) + 0.05 * height,
+                      z_pos + 1),
+                 Vec3(x_pos + 0.02 * width + height * 0.7,
+                      (y_pos - height / 2) + 0.05 * height,
+                      z_pos + 1),
+                 Vec3(x_pos + 0.02 * (width) + height * 0.35,
+                      y_pos - 0.05 * height,
+                      z_pos + 1)},
+                {raised, raised, button_state == 1 ? pressed : raised});
+        // draw down arrow
+        arrow_mesh.addTriangle(
+                {Vec3(x_pos + 0.02 * width,
+                      (y_pos - height / 2) - 0.05 * height,
+                      z_pos + 1),
+                 Vec3(x_pos + 0.02 * width + height * 0.7,
+                      (y_pos - height / 2) - 0.05 * height,
+                      z_pos + 1),
+                 Vec3(x_pos + 0.02 * width + height * 0.35,
+                      y_pos - height + 0.05 * height,
+                      z_pos + 1)},
+                {raised, raised, button_state == 2 ? pressed : raised});
+        arrows_built_for = button_state;
+    }
+    context.draw(arrow_mesh);
 }
 
 float ControlItemSelectionBox::getXPos() { return x_pos; }
@@ -163,7 +172,8 @@ void ControlItemSelectionBox::setOptionText(std::int32_t index) {
     current_option = all_options[index];
     std::int32_t real_length = 0;
     for (char ch : current_option) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + width - real_length - width / 50;
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -172,7 +182,7 @@ void ControlItemSelectionBox::setOptionText(std::int32_t index) {
                                  label_x_pos,
                                  label_y_pos,
                                  z_pos,
-                                 GLUT_BITMAP_TIMES_ROMAN_24,
+                                 vulkan_earth::render::FontId::TimesRoman24,
                                  0.0f,
                                  0.0f,
                                  0.0f);

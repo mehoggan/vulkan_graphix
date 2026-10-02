@@ -76,8 +76,11 @@ public:
                          VkFormat format,
                          VkImageAspectFlags aspect_mask,
                          VkImageView* out) const;
+    // border_color only matters for VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER.
     bool createSampler(VkSamplerAddressMode address_mode,
-                       VkSampler* out) const;
+                       VkSampler* out,
+                       VkBorderColor border_color =
+                               VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) const;
 
     // Public (unlike BufferFactory's own allocateMemory, which stays
     // private - createBuffer() always does create+allocate+bind as one
@@ -164,14 +167,16 @@ private:
 // sampler-then-upload-pixels pattern several tutorials (17/18/19/21/22)
 // each already have their own near-identical private
 // createTextureFromPixels() for.
-bool createTextureFromPixels(const ImageFactory& image_factory,
-                             const StagedUploader& uploader,
-                             BufferParameters& staging_buffer,
-                             std::uint32_t width,
-                             std::uint32_t height,
-                             const std::vector<char>& pixels,
-                             VkSamplerAddressMode address_mode,
-                             ImageParameters& out);
+bool createTextureFromPixels(
+        const ImageFactory& image_factory,
+        const StagedUploader& uploader,
+        BufferParameters& staging_buffer,
+        std::uint32_t width,
+        std::uint32_t height,
+        const std::vector<char>& pixels,
+        VkSamplerAddressMode address_mode,
+        ImageParameters& out,
+        VkBorderColor border_color = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK);
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
 createShaderModule(VkDevice device, const char* filename);

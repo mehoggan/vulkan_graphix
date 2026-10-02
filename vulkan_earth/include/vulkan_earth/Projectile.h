@@ -1,11 +1,10 @@
 #ifndef PROJECTILE_H_
 #define PROJECTILE_H_
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <string>
+#include "vulkan_earth/render/RenderTypes.h"
 #include "vulkan_graphix/Ballistics.h"
 
 const std::int32_t default_damage = 100;
@@ -15,6 +14,10 @@ class ChaseCam;
 class Weapon;
 class VBOShaderLibrary;
 class GameState;
+
+namespace vulkan_earth::render {
+class RenderContext;
+}
 
 class Projectile {
 public:
@@ -29,10 +32,11 @@ public:
                float new_speed,
                VBOShaderLibrary** new_projectile_models);
     ~Projectile();
-    void draw();
+    void draw(vulkan_earth::render::RenderContext& context);
     // void update(float gravity);
     void update(float x, float y, float z);
-    void chaseView();
+    // The chase camera's view matrix (its gluLookAt()).
+    vulkan_earth::render::Mat4 chaseView();
     float* getPos();
     Weapon* getWeapon();
     void setWeapon(Weapon* wpn);

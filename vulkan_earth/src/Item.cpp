@@ -23,3 +23,13 @@ std::int32_t Item::getMaxStack() { return max_stack; }
 void Item::setRemaining(std::int32_t r) { remaining = r; }
 
 void Item::playUseSFX() { playSFX(ITEM_USE1); }
+
+void Item::loadSpec(vulkan_graphix::GameCatalog::ItemSpec const& spec) {
+    package_num = spec.package_num;
+    max_stack = spec.max_stack;
+    remaining = spec.remaining;
+    image_file_name = spec.image_file;
+    description = spec.description;
+    price = spec.price;
+    special_num = spec.special_num;
+}

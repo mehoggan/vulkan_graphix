@@ -7,9 +7,14 @@
 #include "vulkan_earth/ControlItemSelectionBox.h"
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/TextObject.h"
+#include "vulkan_earth/render/Font.h"
+#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
+
+namespace render = vulkan_earth::render;
 
 SubMenuHardware::SubMenuHardware() = default;
 
@@ -40,7 +45,8 @@ SubMenuHardware::SubMenuHardware(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, ch);
+        real_length += vulkan_earth::render::glutBitmapWidth(
+                vulkan_earth::render::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos - height / 20;
@@ -50,7 +56,7 @@ SubMenuHardware::SubMenuHardware(std::int32_t id,
                            label_x_pos,
                            label_y_pos,
                            (z_pos + 1),
-                           GLUT_BITMAP_TIMES_ROMAN_24,
+                           vulkan_earth::render::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -107,46 +113,24 @@ void SubMenuHardware::setPercentBorder(float percent) {
     percent_border = percent;
 }
 
-void SubMenuHardware::draw() {
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] + .2, color[1] + .2, color[2] + .2, color[3]);
-    glVertex3f(x_pos - 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glVertex3f(x_pos, y_pos, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(x_pos - 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos - height, z_pos);
-    glVertex3f(x_pos, y_pos - height, z_pos);
-    glEnd();
-    glBegin(GL_QUADS);
-    glColor4f(color[0] - .4, color[1] - .4, color[2] - .4, color[3]);
-    glVertex3f(x_pos + width, y_pos, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos + 3, z_pos);
-    glVertex3f(x_pos + width + 3, y_pos - height - 3, z_pos);
-    glVertex3f(x_pos + width, y_pos + -height, z_pos);
-    glEnd();
-    label->draw();
+void SubMenuHardware::draw(render::RenderContext& context) {
+    // The same raised 3-pixel bevel every button draws.
+    if (frame_mesh.triangles().empty()) {
+        render::appendBevel(
+                frame_mesh,
+                x_pos,
+                y_pos,
+                z_pos,
+                width,
+                height,
+                render::Vec4(color[0], color[1], color[2], color[3]),
+                false);
+    }
+    context.draw(frame_mesh);
+    label->draw(context);
     for (std::int32_t i = 0; i < num_control_items_hw; i++) {
         if (sub_menu_button[i]) {
-            sub_menu_button[i]->draw();
+            sub_menu_button[i]->draw(context);
         }
     }
 }

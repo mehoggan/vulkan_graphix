@@ -46,24 +46,10 @@ TankD::TankD(float x, float y, float z) {
     vbo_shader_head = new VBOShaderLibrary();
     vbo_shader_body = new VBOShaderLibrary();
     vbo_shader_turret = new VBOShaderLibrary();
-    /*	CODE NEEDED TO USE SHADERS AND VBOS	*/
-    if (!(VBOShaderLibrary::initGlew())) {
-        exit(1);
-    } else if (!(VBOShaderLibrary::areVbOsSupported())) {
-        exit(1);
-    }
-
-    vbo_shader_turret->getVBOPointerFunctions();
-    vbo_shader_body->getVBOPointerFunctions();
-    vbo_shader_head->getVBOPointerFunctions();
 
     vbo_shader_turret->loadClientData("./Panzer/Panzer_Turret.ogl");
     vbo_shader_body->loadClientData("./Panzer/Panzer_Body.ogl");
     vbo_shader_head->loadClientData("./Panzer/Panzer_Head.ogl");
-
-    vbo_shader_turret->loadShaders("VertexTank.vs", "FragmentTank.vs");
-    vbo_shader_body->loadShaders("VertexTank.vs", "FragmentTank.vs");
-    vbo_shader_head->loadShaders("VertexTank.vs", "FragmentTank.vs");
 
     vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
     vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);

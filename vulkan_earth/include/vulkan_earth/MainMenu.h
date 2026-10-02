@@ -1,11 +1,10 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <stdio.h>
 #include <cstdint>
 #include <iostream>
+#include "vulkan_earth/render/Mesh.h"
 
 class MainMenuButton;
 class TextObject;
@@ -35,6 +34,10 @@ const std::int32_t num_submenus = 8;
 const std::int32_t num_images = 2;
 const std::int32_t num_arrow_buttons = 2;
 
+namespace vulkan_earth::render {
+class RenderContext;
+}
+
 class MainMenu {
 public:
     MainMenu();
@@ -53,7 +56,7 @@ public:
     float* getColor();
     SubMenu* getSubMenuI(std::int32_t i);
     SubMenu* getActiveSubMenu();
-    void draw();
+    void draw(vulkan_earth::render::RenderContext& context);
     void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);
     void collectData();
     SubMenuLandscape* getSubMenuLandscape();
@@ -72,6 +75,9 @@ private:
     ControlItem* arrow_button_pressed;
     GlobalSettings* global_settings;
     PlayerFactory* player_factory;
+    vulkan_earth::render::UiMesh background_mesh;
+    float built_width = -1.0f;
+    float built_height = -1.0f;
 };
 
 #endif

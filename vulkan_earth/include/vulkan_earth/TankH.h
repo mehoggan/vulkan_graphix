@@ -1,8 +1,6 @@
 #ifndef TANK_H_H
 #define TANK_H_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
 

@@ -9,13 +9,8 @@ extern void playSFX(std::int32_t sfx);
 ItemFloat::ItemFloat() = default;
 ItemFloat::ItemFloat(std::int32_t id) {
     uniqueidentifier = id;
-    package_num = 2;
-    max_stack = 10;
-    remaining = 2;
-    image_file_name = "ItemFloat.raw";
-    description = "Float:     Allows the player to float (uses 1 turn).";
-    price = 80;
-    special_num = 5;
+    loadSpec(vulkan_graphix::GameCatalog::item(
+            vulkan_graphix::GameCatalog::ItemKind::Float));
 }
 ItemFloat::~ItemFloat() = default;
 
