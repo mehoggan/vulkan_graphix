@@ -13,7 +13,9 @@ A collection of Vulkan API tutorials and examples, demonstrating progressive con
 Install dependencies:
 ```sh
 sudo apt install -y libvulkan-dev vulkan-validationlayers spirv-tools
-sudo apt install -y fonts-dejavu-core
+sudo apt install -y fonts-dejavu-core glslc
+# vulkan_earth (the game) additionally needs:
+sudo apt install -y libsdl1.2-dev libsdl-mixer1.2-dev libxrandr-dev
 ```
 
 Generate build files (if needed):
@@ -33,6 +35,7 @@ Build output binaries:
 - `./build/bin/NN_<name>/tutorialNN_runner`, e.g.
   `./build/bin/01_device_initialization/tutorial01_runner` through
   `./build/bin/22_menu_tank_preview/tutorial22_runner`
+- `./build/vulkan_earth/src/vulkan_earth_runner` - the game
 
 ### Development Workflow
 
@@ -249,7 +252,9 @@ Files" section for the exact invocation.
 ### Dependencies
 
 - **Vulkan SDK** - GPU API bindings
-- **X11** - Display server protocol (X11 platform)
+- **X11** - Display server protocol (X11 platform); vulkan_earth also
+  uses XRandR (primary-monitor geometry for its window)
+- **SDL 1.2 + SDL_mixer** - vulkan_earth's music and sound effects only
 - **libm** - Math library (C standard)
 - **C++20** - Modern C++ standard (logging uses `<filesystem>`/`<chrono>`/
   `<thread>` directly - no Boost dependency anywhere in the project)
@@ -334,6 +339,11 @@ The project uses a custom, std::-only logging infrastructure (no Boost):
   (`FrameResourceFactory`)
 - Shader module loading (`createShaderModule()`)
 
+`ImageFactory::createSampler()`/`createTextureFromPixels()` take an
+optional `VkBorderColor` (default transparent black) for
+`VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER` - vulkan_earth passes opaque
+black to reproduce GL's `GL_CLAMP` on its RGB textures.
+
 Device/instance/swapchain bring-up (`createInstance()`, `createDevice()`,
 `createSwapChain()`, `createPresentationSurface()`, ...) and each tutorial's
 own presentation/synchronization orchestration (acquire -> record -> submit
@@ -368,8 +378,9 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   the two primitives vulkan_earth's whole UI (`ControlItem*`/`MainMenu`/
   `SubMenu*`/`ReadyMenu`/`ShopMenu`) is built from, without porting that
   entire class hierarchy. Text comes from `BitmapFont` (a TrueType glyph
-  atlas baked via the vendored `STBTrueType.h`, replacing vulkan_earth's
-  `glutBitmapCharacter()` calls, which have no Vulkan equivalent); the
+  atlas baked via the vendored `STBTrueType.h`, standing in for
+  vulkan_earth's `glutBitmapCharacter()` calls - the game itself later
+  got pixel-exact GLUT font atlases of its own instead); the
   button's raised/pressed bevel comes from `UiGeometry::buildButtonBevel()`
   (ported from `ControlItemButton::draw()`). First tutorial to use
   `Tools::getOrthographicProjectionMatrix()` for real UI layout (Tutorial07
@@ -527,6 +538,19 @@ Binaries can be run directly after building:
 ```
 
 The logging system will output debug information. Set logging levels in code via the logging API.
+
+The game runs the same way (`./build/vulkan_earth/src/vulkan_earth_runner`;
+it changes to its own directory for assets). To reproduce a session or
+compare renders across changes, run it with `VE_WINDOW=1280x800` and
+`VE_SCRIPT=<file>` (see the vulkan_earth/ entry under Directory Layout
+for the script format): `capture` lines write binary PPM frames, and a
+`quit` line ends the run. A scripted run should log no validation-layer
+messages; one appearing is a bug.
+
+`~TutorialBase()` destroys the device even when
+`loadDeviceLevelEntryPoints()` failed partway (resolving its teardown
+functions from `vkGetDeviceProcAddr` if they were never loaded) - never
+destroy an instance with a device still alive; NVIDIA's driver crashes.
 
 ### Shader Compilation Issues
 
