@@ -18,12 +18,12 @@ namespace vulkan_graphix {
 namespace {
 // All 8 real items - the shared GameCatalog, the same data the game's own
 // Item subclasses load - in this tutorial's alphabetical grid order.
-std::array<GameCatalog::ItemSpec, c_inventory_item_count> const&
+const std::array<GameCatalog::ItemSpec, c_inventory_item_count>&
 getItemDisplayData() {
     static_assert(c_inventory_item_count == GameCatalog::c_item_count);
     using GameCatalog::item;
     using GameCatalog::ItemKind;
-    static std::array<GameCatalog::ItemSpec, c_inventory_item_count> const
+    static const std::array<GameCatalog::ItemSpec, c_inventory_item_count>
             data = {item(ItemKind::AntiAcid),
                     item(ItemKind::BigRepair),
                     item(ItemKind::Cloak),
@@ -427,10 +427,10 @@ std::vector<char> Tutorial17::buildIconAtlasPixels() const {
                                     c_icon_atlas_height * 4,
                             0);
 
-    std::array<GameCatalog::ItemSpec, c_inventory_item_count> const& items =
+    const std::array<GameCatalog::ItemSpec, c_inventory_item_count>& items =
             getItemDisplayData();
     for (std::size_t index = 0; index < items.size(); ++index) {
-        std::vector<char> const icon_pixels = Tools::getRawImageData(
+        const std::vector<char> icon_pixels = Tools::getRawImageData(
                 items[index].image_file, c_icon_size, c_icon_size);
         if (icon_pixels.empty()) {
             Logging::error(LOG_TAG,
@@ -440,12 +440,12 @@ std::vector<char> Tutorial17::buildIconAtlasPixels() const {
             return {};
         }
 
-        std::uint32_t const column =
+        const std::uint32_t column =
                 static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-        std::uint32_t const grid_row =
+        const std::uint32_t grid_row =
                 static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
-        std::uint32_t const dest_x = column * c_icon_size;
-        std::uint32_t const dest_y = grid_row * c_icon_size;
+        const std::uint32_t dest_x = column * c_icon_size;
+        const std::uint32_t dest_y = grid_row * c_icon_size;
 
         for (std::uint32_t y = 0; y < c_icon_size; ++y) {
             const char* src_row =
@@ -466,7 +466,7 @@ std::vector<char> Tutorial17::buildIconAtlasPixels() const {
 }
 
 bool Tutorial17::createIconAtlas() {
-    std::vector<char> const pixels = buildIconAtlasPixels();
+    const std::vector<char> pixels = buildIconAtlasPixels();
     if (pixels.empty()) {
         return false;
     }
@@ -497,9 +497,9 @@ bool Tutorial17::createUniformBuffer() {
 }
 
 Math::Mat4<float> Tutorial17::getUniformBufferData() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     // Top-left-origin, y-down screen convention, same as Tutorial15.
     return Tools::getOrthographicProjectionMatrix(
@@ -507,7 +507,7 @@ Math::Mat4<float> Tutorial17::getUniformBufferData() const {
 }
 
 bool Tutorial17::updateUniformBufferData() {
-    Math::Mat4<float> const uniform_data = getUniformBufferData();
+    const Math::Mat4<float> uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial17_parameters.getUniformBufferParameters();
 
@@ -970,40 +970,40 @@ bool Tutorial17::createPipeline() {
 }
 
 Math::Vec2<float> Tutorial17::getPanelTopLeft() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     return Math::Vec2<float>(width * 0.05f, height * 0.05f);
 }
 
 Math::Vec2<float> Tutorial17::getPanelSize() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     return Math::Vec2<float>(width * 0.9f, height * 0.9f);
 }
 
 Math::Vec2<float> Tutorial17::getGridTopLeft() const {
-    Math::Vec2<float> const panel_top_left = getPanelTopLeft();
+    const Math::Vec2<float> panel_top_left = getPanelTopLeft();
     return Math::Vec2<float>(panel_top_left.x + 20.0f,
                              panel_top_left.y + 90.0f);
 }
 
 Math::Vec2<float> Tutorial17::getGridSize() const {
-    Math::Vec2<float> const panel_size = getPanelSize();
+    const Math::Vec2<float> panel_size = getPanelSize();
     return Math::Vec2<float>(panel_size.x - 40.0f, 190.0f);
 }
 
 Math::Vec2<float> Tutorial17::getCellSize() const {
-    Math::Vec2<float> const grid_size = getGridSize();
+    const Math::Vec2<float> grid_size = getGridSize();
     constexpr float c_cell_gap = 10.0f;
-    float const cell_width =
+    const float cell_width =
             (grid_size.x -
              static_cast<float>(c_icon_atlas_cols - 1) * c_cell_gap) /
             static_cast<float>(c_icon_atlas_cols);
-    float const cell_height =
+    const float cell_height =
             (grid_size.y -
              static_cast<float>(c_icon_atlas_rows - 1) * c_cell_gap) /
             static_cast<float>(c_icon_atlas_rows);
@@ -1011,12 +1011,12 @@ Math::Vec2<float> Tutorial17::getCellSize() const {
 }
 
 Math::Vec2<float> Tutorial17::getCellTopLeft(std::size_t index) const {
-    Math::Vec2<float> const grid_top_left = getGridTopLeft();
-    Math::Vec2<float> const cell_size = getCellSize();
+    const Math::Vec2<float> grid_top_left = getGridTopLeft();
+    const Math::Vec2<float> cell_size = getCellSize();
     constexpr float c_cell_gap = 10.0f;
-    std::uint32_t const column =
+    const std::uint32_t column =
             static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-    std::uint32_t const grid_row =
+    const std::uint32_t grid_row =
             static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
     return Math::Vec2<float>(
             grid_top_left.x +
@@ -1026,15 +1026,15 @@ Math::Vec2<float> Tutorial17::getCellTopLeft(std::size_t index) const {
 }
 
 float Tutorial17::getDescriptionTop() const {
-    Math::Vec2<float> const grid_top_left = getGridTopLeft();
-    Math::Vec2<float> const grid_size = getGridSize();
+    const Math::Vec2<float> grid_top_left = getGridTopLeft();
+    const Math::Vec2<float> grid_size = getGridSize();
     return grid_top_left.y + grid_size.y + 30.0f;
 }
 
 Math::Vec2<float> Tutorial17::getIconUvMin(std::size_t index) const {
-    std::uint32_t const column =
+    const std::uint32_t column =
             static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-    std::uint32_t const grid_row =
+    const std::uint32_t grid_row =
             static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
     return Math::Vec2<float>(
             static_cast<float>(column) / static_cast<float>(c_icon_atlas_cols),
@@ -1043,9 +1043,9 @@ Math::Vec2<float> Tutorial17::getIconUvMin(std::size_t index) const {
 }
 
 Math::Vec2<float> Tutorial17::getIconUvMax(std::size_t index) const {
-    std::uint32_t const column =
+    const std::uint32_t column =
             static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-    std::uint32_t const grid_row =
+    const std::uint32_t grid_row =
             static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
     return Math::Vec2<float>(static_cast<float>(column + 1) /
                                      static_cast<float>(c_icon_atlas_cols),
@@ -1093,46 +1093,46 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
     std::vector<Tutorial17VertexData> vertex_data;
     vertex_data.reserve(c_max_vertex_count);
 
-    Math::Vec2<float> const panel_top_left = getPanelTopLeft();
-    Math::Vec2<float> const panel_size = getPanelSize();
-    Math::Vec4<float> const panel_color(0.75f, 0.75f, 0.75f, 1.0f);
+    const Math::Vec2<float> panel_top_left = getPanelTopLeft();
+    const Math::Vec2<float> panel_size = getPanelSize();
+    const Math::Vec4<float> panel_color(0.75f, 0.75f, 0.75f, 1.0f);
     // Same five-quad bevel ControlItemGrid::draw() itself uses for the
     // grid panel, tinted the same neutral gray.
-    std::vector<UiGeometry::ColoredQuad> const panel_bevel =
+    const std::vector<UiGeometry::ColoredQuad> panel_bevel =
             UiGeometry::buildButtonBevel(
                     panel_top_left, panel_size, panel_color, false);
-    for (UiGeometry::ColoredQuad const& quad : panel_bevel) {
+    for (const UiGeometry::ColoredQuad& quad : panel_bevel) {
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
 
-    Math::Vec4<float> const text_color(0.05f, 0.05f, 0.05f, 1.0f);
-    std::string const title = "Tutorial 17 - Inventory";
+    const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
+    const std::string title = "Tutorial 17 - Inventory";
     appendText(vertex_data,
                title,
                Math::Vec2<float>(panel_top_left.x + 20.0f,
                                  panel_top_left.y + 30.0f),
                text_color);
 
-    std::string const explain = "(Click an item to see its description)";
+    const std::string explain = "(Click an item to see its description)";
     appendText(vertex_data,
                explain,
                Math::Vec2<float>(panel_top_left.x + 20.0f,
                                  panel_top_left.y + 58.0f),
                text_color);
 
-    std::array<GameCatalog::ItemSpec, c_inventory_item_count> const& items =
+    const std::array<GameCatalog::ItemSpec, c_inventory_item_count>& items =
             getItemDisplayData();
-    Math::Vec2<float> const cell_size = getCellSize();
+    const Math::Vec2<float> cell_size = getCellSize();
     for (std::size_t index = 0; index < items.size(); ++index) {
-        Math::Vec2<float> const cell_top_left = getCellTopLeft(index);
+        const Math::Vec2<float> cell_top_left = getCellTopLeft(index);
 
         if (index == m_selected_index) {
             // A highlight quad behind the icon/label - the icon pass
             // draws on top of this afterward, so it reads as a border
             // around the selected cell (matches ControlItemGrid's own
             // active-cell highlight).
-            Math::Vec4<float> const highlight_color(0.95f, 0.82f, 0.25f, 1.0f);
-            std::array<Math::Vec2<float>, 4> const highlight_corners = {
+            const Math::Vec4<float> highlight_color(0.95f, 0.82f, 0.25f, 1.0f);
+            const std::array<Math::Vec2<float>, 4> highlight_corners = {
                     cell_top_left,
                     Math::Vec2<float>(cell_top_left.x,
                                       cell_top_left.y + cell_size.y),
@@ -1143,9 +1143,9 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
             appendColoredQuad(vertex_data, highlight_corners, highlight_color);
         }
 
-        std::string const label =
+        const std::string label =
                 "x " + std::to_string(items[index].remaining);
-        float const label_width = m_font.textWidth(label);
+        const float label_width = m_font.textWidth(label);
         appendText(vertex_data,
                    label,
                    Math::Vec2<float>(cell_top_left.x + cell_size.x * 0.5f -
@@ -1154,12 +1154,12 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
                    text_color);
     }
 
-    float const description_top = getDescriptionTop();
-    Math::Vec2<float> const panel_bottom_right(
+    const float description_top = getDescriptionTop();
+    const Math::Vec2<float> panel_bottom_right(
             panel_top_left.x + panel_size.x, panel_top_left.y + panel_size.y);
-    float const max_description_width =
+    const float max_description_width =
             panel_bottom_right.x - (panel_top_left.x + 20.0f) - 20.0f;
-    std::vector<std::string> const description_lines = wrapText(
+    const std::vector<std::string> description_lines = wrapText(
             items[m_selected_index].description, max_description_width);
     for (std::size_t line = 0; line < description_lines.size(); ++line) {
         appendText(vertex_data,
@@ -1178,13 +1178,13 @@ std::vector<Tutorial17VertexData> Tutorial17::buildIconPassVertexData() const {
     std::vector<Tutorial17VertexData> vertex_data;
     vertex_data.reserve(c_inventory_item_count * 6);
 
-    Math::Vec2<float> const cell_size = getCellSize();
+    const Math::Vec2<float> cell_size = getCellSize();
     // Icon inset within its cell, leaving room for the "x N" label
     // drawn along the cell's bottom edge in the text pass.
-    float const icon_size = std::min(cell_size.x, cell_size.y - 24.0f) * 0.8f;
+    const float icon_size = std::min(cell_size.x, cell_size.y - 24.0f) * 0.8f;
     for (std::size_t index = 0; index < c_inventory_item_count; ++index) {
-        Math::Vec2<float> const cell_top_left = getCellTopLeft(index);
-        Math::Vec2<float> const icon_top_left(
+        const Math::Vec2<float> cell_top_left = getCellTopLeft(index);
+        const Math::Vec2<float> icon_top_left(
                 cell_top_left.x + cell_size.x * 0.5f - icon_size * 0.5f,
                 cell_top_left.y + 6.0f);
         appendImageQuad(vertex_data,
@@ -1198,9 +1198,9 @@ std::vector<Tutorial17VertexData> Tutorial17::buildIconPassVertexData() const {
 }
 
 bool Tutorial17::updateVertexBufferData() {
-    std::vector<Tutorial17VertexData> const text_vertex_data =
+    const std::vector<Tutorial17VertexData> text_vertex_data =
             buildTextPassVertexData();
-    std::vector<Tutorial17VertexData> const icon_vertex_data =
+    const std::vector<Tutorial17VertexData> icon_vertex_data =
             buildIconPassVertexData();
 
     if (text_vertex_data.size() + icon_vertex_data.size() >
@@ -1412,7 +1412,7 @@ bool Tutorial17::prepareFrame(VkCommandBuffer command_buffer,
 
     // Pass 2: the 8 icon quads, drawn on top against the icon atlas
     // descriptor set, from the second range of the same vertex buffer.
-    VkDeviceSize const icon_offset =
+    const VkDeviceSize icon_offset =
             static_cast<VkDeviceSize>(
                     m_vulkan_tutorial17_parameters.getTextVertexCount()) *
             sizeof(Tutorial17VertexData);
@@ -1587,11 +1587,11 @@ void Tutorial17::onMouseButton(std::int32_t button,
         return;
     }
 
-    float const x = static_cast<float>(pos_x);
-    float const y = static_cast<float>(pos_y);
-    Math::Vec2<float> const cell_size = getCellSize();
+    const float x = static_cast<float>(pos_x);
+    const float y = static_cast<float>(pos_y);
+    const Math::Vec2<float> cell_size = getCellSize();
     for (std::size_t index = 0; index < c_inventory_item_count; ++index) {
-        Math::Vec2<float> const cell_top_left = getCellTopLeft(index);
+        const Math::Vec2<float> cell_top_left = getCellTopLeft(index);
         if (x >= cell_top_left.x && x <= cell_top_left.x + cell_size.x &&
             y >= cell_top_left.y && y <= cell_top_left.y + cell_size.y) {
             m_selected_index = index;

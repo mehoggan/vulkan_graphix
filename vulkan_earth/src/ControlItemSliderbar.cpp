@@ -113,7 +113,7 @@ void ControlItemSliderbar::draw(render::RenderContext& context) {
                                        color[2] + 0.4f,
                                        color[3]));
         // draw bar lines
-        Vec4 const black(0, 0, 0, 1);
+        const Vec4 black(0, 0, 0, 1);
         frame_mesh.addLine(
                 Vec3(bar_x_pos, bar_y_pos + 1, bar_z_pos),
                 Vec3(bar_x_pos + bar_width, bar_y_pos + 1, bar_z_pos),

@@ -51,7 +51,7 @@ struct BevelColors {
 // border wedges.
 std::vector<ColoredQuad> buildBevelFrame(Math::Vec2<float> top_left,
                                          Math::Vec2<float> size,
-                                         BevelColors const& colors,
+                                         const BevelColors& colors,
                                          float bevel_size);
 
 // top_left/size describe the button's flat face in a top-left-origin,
@@ -72,24 +72,24 @@ template <typename VertexData>
 void appendGlyphQuad(std::vector<VertexData>& vertex_data,
                      const BitmapFontGlyphQuad& glyph,
                      Math::Vec4<float> color) {
-    Math::Vec2<float> const& top_left = glyph.top_left;
-    Math::Vec2<float> const& bottom_right = glyph.bottom_right;
-    Math::Vec2<float> const& uv_top_left = glyph.uv_top_left;
-    Math::Vec2<float> const& uv_bottom_right = glyph.uv_bottom_right;
+    const Math::Vec2<float>& top_left = glyph.top_left;
+    const Math::Vec2<float>& bottom_right = glyph.bottom_right;
+    const Math::Vec2<float>& uv_top_left = glyph.uv_top_left;
+    const Math::Vec2<float>& uv_bottom_right = glyph.uv_bottom_right;
 
-    VertexData const top_left_vertex{
+    const VertexData top_left_vertex{
             Math::Vec4<float>(top_left.x, top_left.y, 0.0f, 1.0f),
             uv_top_left,
             color};
-    VertexData const bottom_left_vertex{
+    const VertexData bottom_left_vertex{
             Math::Vec4<float>(top_left.x, bottom_right.y, 0.0f, 1.0f),
             Math::Vec2<float>(uv_top_left.x, uv_bottom_right.y),
             color};
-    VertexData const bottom_right_vertex{
+    const VertexData bottom_right_vertex{
             Math::Vec4<float>(bottom_right.x, bottom_right.y, 0.0f, 1.0f),
             uv_bottom_right,
             color};
-    VertexData const top_right_vertex{
+    const VertexData top_right_vertex{
             Math::Vec4<float>(bottom_right.x, top_left.y, 0.0f, 1.0f),
             Math::Vec2<float>(uv_bottom_right.x, uv_top_left.y),
             color};
@@ -132,9 +132,9 @@ void appendText(std::vector<VertexData>& vertex_data,
                 const std::string& text,
                 Math::Vec2<float> origin,
                 Math::Vec4<float> color) {
-    std::vector<BitmapFontGlyphQuad> const glyphs =
+    const std::vector<BitmapFontGlyphQuad> glyphs =
             font.layoutText(text, origin);
-    for (BitmapFontGlyphQuad const& glyph : glyphs) {
+    for (const BitmapFontGlyphQuad& glyph : glyphs) {
         appendGlyphQuad(vertex_data, glyph, color);
     }
 }
@@ -147,23 +147,23 @@ void appendImageQuad(std::vector<VertexData>& vertex_data,
                      Math::Vec2<float> size,
                      Math::Vec2<float> uv_min,
                      Math::Vec2<float> uv_max) {
-    Math::Vec4<float> const white(1.0f, 1.0f, 1.0f, 1.0f);
-    Math::Vec2<float> const bottom_right(top_left.x + size.x,
+    const Math::Vec4<float> white(1.0f, 1.0f, 1.0f, 1.0f);
+    const Math::Vec2<float> bottom_right(top_left.x + size.x,
                                          top_left.y + size.y);
 
-    VertexData const top_left_vertex{
+    const VertexData top_left_vertex{
             Math::Vec4<float>(top_left.x, top_left.y, 0.0f, 1.0f),
             uv_min,
             white};
-    VertexData const bottom_left_vertex{
+    const VertexData bottom_left_vertex{
             Math::Vec4<float>(top_left.x, bottom_right.y, 0.0f, 1.0f),
             Math::Vec2<float>(uv_min.x, uv_max.y),
             white};
-    VertexData const bottom_right_vertex{
+    const VertexData bottom_right_vertex{
             Math::Vec4<float>(bottom_right.x, bottom_right.y, 0.0f, 1.0f),
             uv_max,
             white};
-    VertexData const top_right_vertex{
+    const VertexData top_right_vertex{
             Math::Vec4<float>(bottom_right.x, top_left.y, 0.0f, 1.0f),
             Math::Vec2<float>(uv_max.x, uv_min.y),
             white};

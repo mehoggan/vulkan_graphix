@@ -34,7 +34,7 @@ public:
 
 protected:
     // Every field but the id, from the game's catalog.
-    void loadSpec(vulkan_graphix::GameCatalog::WeaponSpec const& spec);
+    void loadSpec(const vulkan_graphix::GameCatalog::WeaponSpec& spec);
 
     std::int32_t uniqueidentifier;
     float explosion_color1[3];

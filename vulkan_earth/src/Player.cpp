@@ -363,7 +363,7 @@ bool Player::calculateProjectilePhysics(float xerr,
     // start the simulated shell 200 units out along the barrel while a real
     // one starts at Projectile::c_muzzle_distance (500), despite the old
     // "MAKE SURE TO UPDATE 200" note asking for the two to match.
-    vulkan_graphix::Ballistics::Launch const launch =
+    const vulkan_graphix::Ballistics::Launch launch =
             vulkan_graphix::Ballistics::launchFromBarrel(
                     glm::make_mat4(getCurrentTank()->getTurretMatrix()),
                     speed,
@@ -377,7 +377,7 @@ bool Player::calculateProjectilePhysics(float xerr,
     float t = 0;
     bool on_target = false;
     while (yf > 0) {
-        vulkan_graphix::Math::Vec3<float> const position =
+        const vulkan_graphix::Math::Vec3<float> position =
                 vulkan_graphix::Ballistics::positionAt(launch, g, t);
         xf = position.x;
         yf = position.y;
@@ -414,7 +414,7 @@ void Player::displayProjectilePhysiscs() {
     // start the simulated shell 200 units out along the barrel while a real
     // one starts at Projectile::c_muzzle_distance (500), despite the old
     // "MAKE SURE TO UPDATE 200" note asking for the two to match.
-    vulkan_graphix::Ballistics::Launch const launch =
+    const vulkan_graphix::Ballistics::Launch launch =
             vulkan_graphix::Ballistics::launchFromBarrel(
                     glm::make_mat4(getCurrentTank()->getTurretMatrix()),
                     speed,
@@ -428,7 +428,7 @@ void Player::displayProjectilePhysiscs() {
 
     float t = 0;
     while (yf > 0) {
-        vulkan_graphix::Math::Vec3<float> const position =
+        const vulkan_graphix::Math::Vec3<float> position =
                 vulkan_graphix::Ballistics::positionAt(launch, g, t);
         xf = position.x;
         yf = position.y;
@@ -474,14 +474,14 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
     float scalar = 1000;
     std::vector<render::UiVertex> lines;
     std::vector<render::UiVertex> quads;
-    auto line = [&](math::Vec4<float> const& color,
-                    vulkan_graphix::Math::Vec3<float> const& from,
-                    vulkan_graphix::Math::Vec3<float> const& end) {
+    auto line = [&](const math::Vec4<float>& color,
+                    const vulkan_graphix::Math::Vec3<float>& from,
+                    const vulkan_graphix::Math::Vec3<float>& end) {
         lines.push_back({from, color, math::Vec2<float>(0.0f)});
         lines.push_back({end, color, math::Vec2<float>(0.0f)});
     };
-    auto quad = [&](math::Vec4<float> const& color,
-                    std::array<math::Vec3<float>, 4> const& corners) {
+    auto quad = [&](const math::Vec4<float>& color,
+                    const std::array<math::Vec3<float>, 4>& corners) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U}) {
             quads.push_back({corners[corner], color, math::Vec2<float>(0.0f)});
         }

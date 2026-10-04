@@ -18,13 +18,13 @@ public:
             , m_upper_right(-std::numeric_limits<T>::max(),
                             -std::numeric_limits<T>::max()) {}
 
-    AxisAligned2D(Vec2<T> const& point1, Vec2<T> const& point2)
+    AxisAligned2D(const Vec2<T>& point1, const Vec2<T>& point2)
             : AxisAligned2D() {
         growToContain(point1);
         growToContain(point2);
     }
 
-    AxisAligned2D(Vec2<T> const& lower_left, T const& width, T const& height)
+    AxisAligned2D(const Vec2<T>& lower_left, const T& width, const T& height)
             : AxisAligned2D() {
         growToContain(lower_left);
         growToContain(Vec2<T>(lower_left.x + width, lower_left.y + height));
@@ -35,12 +35,12 @@ public:
                (m_lower_left.y < m_upper_right.y);
     }
 
-    void growToContain(Vec2<T> const& point) {
+    void growToContain(const Vec2<T>& point) {
         m_lower_left = glm::min(m_lower_left, point);
         m_upper_right = glm::max(m_upper_right, point);
     }
 
-    bool contains(Vec2<T> const& point) const {
+    bool contains(const Vec2<T>& point) const {
         return (point.x >= m_lower_left.x && point.y >= m_lower_left.y) &&
                (point.x <= m_upper_right.x && point.y <= m_upper_right.y);
     }
@@ -57,8 +57,8 @@ private:
     Vec2<T> m_lower_left;
     Vec2<T> m_upper_right;
 
-    friend bool operator==(AxisAligned2D const& lhs,
-                           AxisAligned2D const& rhs) {
+    friend bool operator==(const AxisAligned2D& lhs,
+                           const AxisAligned2D& rhs) {
         return (lhs.m_lower_left == rhs.m_lower_left) &&
                (lhs.m_upper_right == rhs.m_upper_right);
     }

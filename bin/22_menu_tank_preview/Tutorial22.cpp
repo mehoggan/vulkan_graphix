@@ -24,7 +24,7 @@ constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 // values (yaw=0.6, pitch=-0.05, distance=650), just evaluated once since
 // ReadyMenu's own preview camera is a static gluLookAt, not mouse-
 // orbitable - only the tank itself spins.
-Math::Vec3<float> const c_preview_eye =
+const Math::Vec3<float> c_preview_eye =
         650.0f * Math::Vec3<float>(std::cos(-0.05f) * std::sin(0.6f),
                                    std::sin(-0.05f),
                                    std::cos(-0.05f) * std::cos(0.6f));
@@ -340,10 +340,10 @@ void Tutorial22::onMouseButton(std::int32_t button,
         return;
     }
 
-    Math::Vec2<float> const top_left = getButtonTopLeft();
-    Math::Vec2<float> const size = getButtonSize();
-    float const x = static_cast<float>(pos_x);
-    float const y = static_cast<float>(pos_y);
+    const Math::Vec2<float> top_left = getButtonTopLeft();
+    const Math::Vec2<float> size = getButtonSize();
+    const float x = static_cast<float>(pos_x);
+    const float y = static_cast<float>(pos_y);
     if (x >= top_left.x && x <= top_left.x + size.x && y >= top_left.y &&
         y <= top_left.y + size.y) {
         m_button_pressed = true;
@@ -601,7 +601,7 @@ bool Tutorial22::createFontAtlas() {
         return false;
     }
 
-    std::vector<char> const atlas_pixels = m_font.atlasPixels();
+    const std::vector<char> atlas_pixels = m_font.atlasPixels();
     return createTextureFromPixels(
             m_font.atlasWidth(),
             m_font.atlasHeight(),
@@ -614,11 +614,11 @@ Math::Vec2<float> Tutorial22::getPreviewSize() const {
 }
 
 Math::Vec2<float> Tutorial22::getPreviewTopLeft() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Vec2<float> const size = getPreviewSize();
+    const Math::Vec2<float> size = getPreviewSize();
     return Math::Vec2<float>(width * 0.5f - size.x * 0.5f,
                              height * 0.5f - size.y * 0.5f - 40.0f);
 }
@@ -629,7 +629,7 @@ Tutorial22TankUniformBufferData Tutorial22::getTankUniformBufferData() const {
                             Math::Vec3<float>(0.0f, 0.0f, 0.0f),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    Math::Vec2<float> const preview_size = getPreviewSize();
+    const Math::Vec2<float> preview_size = getPreviewSize();
     data.projection = Tools::getPerspectiveProjectionMatrix(
             preview_size.x / preview_size.y, 45.0f, 1.0f, 5000.0f);
 
@@ -637,7 +637,7 @@ Tutorial22TankUniformBufferData Tutorial22::getTankUniformBufferData() const {
 }
 
 bool Tutorial22::updateTankUniformBufferData() {
-    Tutorial22TankUniformBufferData const uniform_data =
+    const Tutorial22TankUniformBufferData uniform_data =
             getTankUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial22_parameters.getTankUniformBufferParameters();
@@ -661,16 +661,16 @@ bool Tutorial22::updateTankUniformBufferData() {
 }
 
 Math::Mat4<float> Tutorial22::getPanelUniformBufferData() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     return Tools::getOrthographicProjectionMatrix(
             0.0f, width, 0.0f, height, -1.0f, 1.0f);
 }
 
 bool Tutorial22::updatePanelUniformBufferData() {
-    Math::Mat4<float> const uniform_data = getPanelUniformBufferData();
+    const Math::Mat4<float> uniform_data = getPanelUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial22_parameters.getPanelUniformBufferParameters();
 
@@ -1379,11 +1379,11 @@ bool Tutorial22::createPipelines() {
 
 std::vector<Tutorial22TankVertexData> Tutorial22::loadTankPartVertexData(
         const char* mesh_filename) const {
-    std::vector<Tools::OglVertexData> const mesh_data =
+    const std::vector<Tools::OglVertexData> mesh_data =
             Tools::loadOglMeshData(mesh_filename);
     std::vector<Tutorial22TankVertexData> vertex_data;
     vertex_data.reserve(mesh_data.size());
-    for (Tools::OglVertexData const& vertex : mesh_data) {
+    for (const Tools::OglVertexData& vertex : mesh_data) {
         vertex_data.push_back(
                 {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
     }
@@ -1419,7 +1419,7 @@ bool Tutorial22::copyBufferData(BufferParameters& destination,
 bool Tutorial22::createTankPartVertexBuffer(const char* mesh_filename,
                                             BufferParameters& vertex_buffer,
                                             std::uint32_t& vertex_count) {
-    std::vector<Tutorial22TankVertexData> const vertex_data =
+    const std::vector<Tutorial22TankVertexData> vertex_data =
             loadTankPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
         Logging::error(LOG_TAG,
@@ -1469,7 +1469,7 @@ bool Tutorial22::createTankVertexBuffers() {
 }
 
 Math::Mat4<float> Tutorial22::getTankPartModelMatrix(
-        Math::Vec3<float> const& part_translation) const {
+        const Math::Vec3<float>& part_translation) const {
     return glm::rotate(Math::Mat4<float>(1.0f),
                        m_tank_angle,
                        Math::Vec3<float>(0.0f, 1.0f, 0.0f)) *
@@ -1481,11 +1481,11 @@ Math::Vec2<float> Tutorial22::getButtonSize() const {
 }
 
 Math::Vec2<float> Tutorial22::getButtonTopLeft() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Vec2<float> const size = getButtonSize();
+    const Math::Vec2<float> size = getButtonSize();
     return Math::Vec2<float>(width * 0.5f - size.x * 0.5f, height - 100.0f);
 }
 
@@ -1524,52 +1524,52 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
     std::vector<Tutorial22PanelVertexData> vertex_data;
     vertex_data.reserve(c_max_panel_vertex_count);
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Vec4<float> const text_color(0.05f, 0.05f, 0.05f, 1.0f);
+    const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
 
     // Main menu panel background - the identical 5-quad bevel every real
     // vulkan_earth menu screen (MainMenu/ReadyMenu/ShopMenu/SubMenu*)
     // opens with, confirmed via research (see this header's own top
     // comment).
-    Math::Vec2<float> const panel_top_left(width * 0.5f - 200.0f,
+    const Math::Vec2<float> panel_top_left(width * 0.5f - 200.0f,
                                            height * 0.5f - 240.0f);
-    Math::Vec2<float> const panel_size(400.0f, 480.0f);
-    Math::Vec4<float> const panel_color(0.35f, 0.38f, 0.45f, 1.0f);
-    for (UiGeometry::ColoredQuad const& quad : UiGeometry::buildButtonBevel(
+    const Math::Vec2<float> panel_size(400.0f, 480.0f);
+    const Math::Vec4<float> panel_color(0.35f, 0.38f, 0.45f, 1.0f);
+    for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
                  panel_top_left, panel_size, panel_color, false)) {
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
 
-    std::string const title = "Ready?";
-    float const title_width = m_font.textWidth(title);
-    Math::Vec2<float> const title_origin(width * 0.5f - title_width * 0.5f,
+    const std::string title = "Ready?";
+    const float title_width = m_font.textWidth(title);
+    const Math::Vec2<float> title_origin(width * 0.5f - title_width * 0.5f,
                                          panel_top_left.y + 40.0f);
     appendText(vertex_data, title, title_origin, text_color);
 
     // A sunken "well" frame around the live 3D preview - matches
     // ReadyMenu's own tank preview being composited inside its menu
     // panel, not floating over it unframed.
-    Math::Vec2<float> const preview_top_left = getPreviewTopLeft();
-    Math::Vec2<float> const preview_size = getPreviewSize();
+    const Math::Vec2<float> preview_top_left = getPreviewTopLeft();
+    const Math::Vec2<float> preview_size = getPreviewSize();
     constexpr float c_frame_margin = 10.0f;
-    Math::Vec2<float> const frame_top_left(
+    const Math::Vec2<float> frame_top_left(
             preview_top_left.x - c_frame_margin,
             preview_top_left.y - c_frame_margin);
-    Math::Vec2<float> const frame_size(preview_size.x + 2.0f * c_frame_margin,
+    const Math::Vec2<float> frame_size(preview_size.x + 2.0f * c_frame_margin,
                                        preview_size.y + 2.0f * c_frame_margin);
-    Math::Vec4<float> const frame_color(0.15f, 0.16f, 0.2f, 1.0f);
-    for (UiGeometry::ColoredQuad const& quad : UiGeometry::buildButtonBevel(
+    const Math::Vec4<float> frame_color(0.15f, 0.16f, 0.2f, 1.0f);
+    for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
                  frame_top_left, frame_size, frame_color, true)) {
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
 
-    Math::Vec2<float> const button_top_left = getButtonTopLeft();
-    Math::Vec2<float> const button_size = getButtonSize();
-    Math::Vec4<float> const button_color(0.3f, 0.5f, 0.75f, 1.0f);
-    for (UiGeometry::ColoredQuad const& quad :
+    const Math::Vec2<float> button_top_left = getButtonTopLeft();
+    const Math::Vec2<float> button_size = getButtonSize();
+    const Math::Vec4<float> button_color(0.3f, 0.5f, 0.75f, 1.0f);
+    for (const UiGeometry::ColoredQuad& quad :
          UiGeometry::buildButtonBevel(button_top_left,
                                       button_size,
                                       button_color,
@@ -1577,9 +1577,9 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
 
-    std::string const label = getButtonLabel();
-    float const label_width = m_font.textWidth(label);
-    Math::Vec2<float> const label_origin(
+    const std::string label = getButtonLabel();
+    const float label_width = m_font.textWidth(label);
+    const Math::Vec2<float> label_origin(
             button_top_left.x + button_size.x * 0.5f - label_width * 0.5f,
             button_top_left.y + button_size.y * 0.5f +
                     c_font_pixel_height * 0.3f);
@@ -1589,7 +1589,7 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
 }
 
 bool Tutorial22::updatePanelVertexBufferData() {
-    std::vector<Tutorial22PanelVertexData> const vertex_data =
+    const std::vector<Tutorial22PanelVertexData> vertex_data =
             buildPanelVertexData();
     if (vertex_data.size() > c_max_panel_vertex_count) {
         Logging::error(LOG_TAG,
@@ -1648,7 +1648,7 @@ bool Tutorial22::createFramebuffer(VkFramebuffer& framebuffer,
         framebuffer = VK_NULL_HANDLE;
     }
 
-    std::array<VkImageView, 2> const attachments = {
+    const std::array<VkImageView, 2> attachments = {
             image_view,
             m_vulkan_tutorial22_parameters.getDepthImageParameters()
                     .getVkImageView()};
@@ -1745,7 +1745,7 @@ bool Tutorial22::prepareFrame(VkCommandBuffer command_buffer,
                          &render_pass_begin_info,
                          VK_SUBPASS_CONTENTS_INLINE);
 
-    VkDeviceSize const zero_offset = 0;
+    const VkDeviceSize zero_offset = 0;
 
     // --- Pass 1: 2D panel, full swapchain extent, depth disabled ---
     vkCmdBindPipeline(
@@ -1799,8 +1799,8 @@ bool Tutorial22::prepareFrame(VkCommandBuffer command_buffer,
             VK_PIPELINE_BIND_POINT_GRAPHICS,
             m_vulkan_tutorial22_parameters.getVkTankGraphicsPipeline());
 
-    Math::Vec2<float> const preview_top_left = getPreviewTopLeft();
-    Math::Vec2<float> const preview_size = getPreviewSize();
+    const Math::Vec2<float> preview_top_left = getPreviewTopLeft();
+    const Math::Vec2<float> preview_size = getPreviewSize();
     VkViewport preview_viewport = {.x = preview_top_left.x,
                                    .y = preview_top_left.y,
                                    .width = preview_size.x,
@@ -1827,9 +1827,9 @@ bool Tutorial22::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    HellfireTank::PartTranslations const tank_parts =
+    const HellfireTank::PartTranslations tank_parts =
             HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f));
-    std::array<Math::Vec3<float>, c_tutorial22_tank_part_count> const
+    const std::array<Math::Vec3<float>, c_tutorial22_tank_part_count>
             part_translations = {
                     {tank_parts.body, tank_parts.head, tank_parts.turret}};
     std::array<BufferParameters,

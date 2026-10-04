@@ -17,10 +17,10 @@ class Font {
 public:
     Font(BitmapFont bitmap, std::shared_ptr<Texture> atlas);
 
-    BitmapFont const& bitmap() const;
-    Texture const& atlas() const;
+    const BitmapFont& bitmap() const;
+    const Texture& atlas() const;
     // BitmapFont::textWidth().
-    float textWidth(std::string const& text) const;
+    float textWidth(const std::string& text) const;
 
 private:
     BitmapFont m_bitmap;

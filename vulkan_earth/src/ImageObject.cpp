@@ -66,9 +66,9 @@ void ImageObject::setHeight(std::int32_t h) {
 void ImageObject::buildGeometry() {
     using Vec3 = math::Vec3<float>;
     using Vec4 = math::Vec4<float>;
-    float const w = static_cast<float>(width);
-    float const h = static_cast<float>(height);
-    float const b = border_size;
+    const float w = static_cast<float>(width);
+    const float h = static_cast<float>(height);
+    const float b = border_size;
 
     // image plane
     image_mesh.clear();
@@ -85,7 +85,7 @@ void ImageObject::buildGeometry() {
     border_mesh.clear();
     if (border_size != 0) {
         // top and right borders
-        Vec4 const dark(0.45f, 0.45f, 0.45f, 1.0f);
+        const Vec4 dark(0.45f, 0.45f, 0.45f, 1.0f);
         border_mesh.addQuad({Vec3(x_pos, y_pos, z_pos),
                              Vec3(x_pos - b, y_pos + b, z_pos),
                              Vec3(x_pos + w + b, y_pos + b, z_pos),
@@ -97,7 +97,7 @@ void ImageObject::buildGeometry() {
                              Vec3(x_pos, y_pos, z_pos)},
                             dark);
         // bottom and left borders
-        Vec4 const light(0.85f, 0.85f, 0.85f, 1.0f);
+        const Vec4 light(0.85f, 0.85f, 0.85f, 1.0f);
         border_mesh.addQuad({Vec3(x_pos - b, y_pos - h - b, z_pos),
                              Vec3(x_pos + w + b, y_pos - h - b, z_pos),
                              Vec3(x_pos + w, y_pos - h, z_pos),

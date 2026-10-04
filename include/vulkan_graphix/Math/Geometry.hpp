@@ -16,7 +16,7 @@ enum class AngleMode { Degrees, Radians };
 
 template <typename T>
 bool pointsOfTriangleAreCollinear(
-        Triangle<T> const& tri,
+        const Triangle<T>& tri,
         float epsilon = std::numeric_limits<float>::epsilon()) {
     Vec3<T> edge1 = tri.p1() - tri.p0();
     Vec3<T> edge2 = tri.p2() - tri.p0();
@@ -25,12 +25,12 @@ bool pointsOfTriangleAreCollinear(
 }
 
 template <typename T>
-Vec3<T> centroidOfTriangle(Triangle<T> const& tri) {
+Vec3<T> centroidOfTriangle(const Triangle<T>& tri) {
     return (tri.p0() + tri.p1() + tri.p2()) / T(3);
 }
 
 template <typename T>
-Vec3<T> midpointOfLine(Line<T> const& line) {
+Vec3<T> midpointOfLine(const Line<T>& line) {
     return (line.p0() + line.p1()) / T(2);
 }
 
@@ -52,7 +52,7 @@ private:
 };
 
 template <typename T, AngleMode AM>
-Vec3<T> sphericalToCartesian(SphericalCoordinates<T, AM> const& coords) {
+Vec3<T> sphericalToCartesian(const SphericalCoordinates<T, AM>& coords) {
     T theta = coords.theta();
     T azimuth = coords.phi();
     if constexpr (AM == AngleMode::Degrees) {
@@ -65,7 +65,7 @@ Vec3<T> sphericalToCartesian(SphericalCoordinates<T, AM> const& coords) {
 }
 
 template <typename T, AngleMode AM>
-SphericalCoordinates<T, AM> cartesianToSpherical(Vec3<T> const& point) {
+SphericalCoordinates<T, AM> cartesianToSpherical(const Vec3<T>& point) {
     T radius = glm::length(point);
     T azimuth = std::asin(point.y / radius);
     T theta = std::acos(point.x / (radius * std::cos(azimuth)));

@@ -321,7 +321,12 @@ Configuration in `CPPLINT.cfg`:
 
 ### Clang-Format
 
-Standard formatting applied (`.clang-format` present).
+Standard formatting applied (`.clang-format` present; needs clang-format
+14 or newer). Qualifiers always go before the type - `const Type&`, never
+`Type const&` (`QualifierAlignment: Left`). clang-tidy has no check for
+qualifier placement, so this is enforced by clang-format itself: the
+pre-commit hook rejects staged C++ that doesn't match `.clang-format`, and
+clang-tidy's own fix-its are formatted with it (`FormatStyle: file`).
 
 ## Architecture Notes
 

@@ -32,30 +32,32 @@ constexpr float c_texture_tile_repeat = 8.0f;
 // vertex-dedup map - required since they share an edge (the square's
 // diagonal); the singular, single-triangle overload would duplicate every
 // vertex along that seam if called once per triangle.
-Math::TessellatedTriangleData<float, std::uint32_t> const&
+const Math::TessellatedTriangleData<float, std::uint32_t>&
 getTerrainTessellation() {
-    static Math::TessellatedTriangleData<float,
-                                         std::uint32_t> const data = [] {
-        using Math::Vec3;
-        Vec3<float> const corner_00(
-                -c_terrain_half_size, 0.0f, -c_terrain_half_size);
-        Vec3<float> const corner_10(
-                c_terrain_half_size, 0.0f, -c_terrain_half_size);
-        Vec3<float> const corner_11(
-                c_terrain_half_size, 0.0f, c_terrain_half_size);
-        Vec3<float> const corner_01(
-                -c_terrain_half_size, 0.0f, c_terrain_half_size);
+    static const Math::TessellatedTriangleData<float, std::uint32_t> data =
+            [] {
+                using Math::Vec3;
+                const Vec3<float> corner_00(
+                        -c_terrain_half_size, 0.0f, -c_terrain_half_size);
+                const Vec3<float> corner_10(
+                        c_terrain_half_size, 0.0f, -c_terrain_half_size);
+                const Vec3<float> corner_11(
+                        c_terrain_half_size, 0.0f, c_terrain_half_size);
+                const Vec3<float> corner_01(
+                        -c_terrain_half_size, 0.0f, c_terrain_half_size);
 
-        std::vector<Math::Triangle<float>> const tris = {
-                Math::Triangle<float>(corner_00, corner_10, corner_11),
-                Math::Triangle<float>(corner_00, corner_11, corner_01)};
+                const std::vector<Math::Triangle<float>> tris = {
+                        Math::Triangle<float>(corner_00, corner_10, corner_11),
+                        Math::Triangle<float>(
+                                corner_00, corner_11, corner_01)};
 
-        Math::TessellatedTriangleData<float, std::uint32_t> result;
-        std::uint32_t index = 0;
-        Math::tessellateTrianglesByMidpointSubdivision<float, std::uint32_t>(
-                tris, c_terrain_subdivision_count, index, result);
-        return result;
-    }();
+                Math::TessellatedTriangleData<float, std::uint32_t> result;
+                std::uint32_t index = 0;
+                Math::tessellateTrianglesByMidpointSubdivision<float,
+                                                               std::uint32_t>(
+                        tris, c_terrain_subdivision_count, index, result);
+                return result;
+            }();
     return data;
 }
 }  // namespace
@@ -294,7 +296,7 @@ bool Tutorial09::createCommandBuffers() {
 }
 
 bool Tutorial09::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -327,7 +329,7 @@ bool Tutorial09::createSemaphores() {
 }
 
 bool Tutorial09::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -588,9 +590,9 @@ Tutorial09UniformBufferData Tutorial09::getUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
@@ -603,7 +605,7 @@ Tutorial09UniformBufferData Tutorial09::getUniformBufferData() const {
 }
 
 bool Tutorial09::updateUniformBufferData() {
-    Tutorial09UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial09UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial09_parameters.getUniformBufferParameters();
 
@@ -1063,16 +1065,16 @@ bool Tutorial09::createPipeline() {
 
 const std::vector<Tutorial09VertexData>& Tutorial09::getVertexData() const {
     static const std::vector<Tutorial09VertexData> vertex_data = [] {
-        Math::TessellatedTriangleData<float, std::uint32_t> const& tess =
+        const Math::TessellatedTriangleData<float, std::uint32_t>& tess =
                 getTerrainTessellation();
 
         std::vector<Tutorial09VertexData> data;
         data.reserve(tess.points().size());
-        for (Math::Vec3<float> const& point : tess.points()) {
-            float const texcoord_u = (point.x + c_terrain_half_size) /
+        for (const Math::Vec3<float>& point : tess.points()) {
+            const float texcoord_u = (point.x + c_terrain_half_size) /
                                      (2.0f * c_terrain_half_size) *
                                      c_texture_tile_repeat;
-            float const texcoord_v = (point.z + c_terrain_half_size) /
+            const float texcoord_v = (point.z + c_terrain_half_size) /
                                      (2.0f * c_terrain_half_size) *
                                      c_texture_tile_repeat;
             data.push_back({Math::Vec4<float>(point, 1.0f),

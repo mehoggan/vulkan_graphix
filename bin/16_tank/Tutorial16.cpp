@@ -505,9 +505,9 @@ Tutorial16UniformBufferData Tutorial16::getUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     // Near/far clip planes sized for this tutorial's much larger world
     // (hundreds of units, see the constructor's own comment) rather than
@@ -519,7 +519,7 @@ Tutorial16UniformBufferData Tutorial16::getUniformBufferData() const {
 }
 
 bool Tutorial16::updateUniformBufferData() {
-    Tutorial16UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial16UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial16_parameters.getUniformBufferParameters();
 
@@ -959,11 +959,11 @@ std::vector<Tutorial16VertexData> Tutorial16::loadPartVertexData(
     // file's real layout) but dropped here, same as
     // VBOShaderLibrary::drawClientData()'s real fragment shader
     // effectively does (see Tutorial13.h for the same reasoning).
-    std::vector<Tools::OglVertexData> const mesh_data =
+    const std::vector<Tools::OglVertexData> mesh_data =
             Tools::loadOglMeshData(mesh_filename);
     std::vector<Tutorial16VertexData> vertex_data;
     vertex_data.reserve(mesh_data.size());
-    for (Tools::OglVertexData const& vertex : mesh_data) {
+    for (const Tools::OglVertexData& vertex : mesh_data) {
         vertex_data.push_back(
                 {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
     }
@@ -999,7 +999,7 @@ bool Tutorial16::copyBufferData(BufferParameters& destination,
 bool Tutorial16::createPartVertexBuffer(const char* mesh_filename,
                                         BufferParameters& vertex_buffer,
                                         std::uint32_t& vertex_count) {
-    std::vector<Tutorial16VertexData> const vertex_data =
+    const std::vector<Tutorial16VertexData> vertex_data =
             loadPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
         Logging::error(LOG_TAG,

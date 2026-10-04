@@ -646,9 +646,9 @@ void ReadyMenu::draw(render::RenderContext& context) {
         panel_mesh.clear();
         vulkan_earth::appendMenuPanel(
                 panel_mesh, width, height, percent_border);
-        float const x = tank_prv_scr_pos[0];
-        float const y = tank_prv_scr_pos[1];
-        float const z = tank_prv_scr_pos[2];
+        const float x = tank_prv_scr_pos[0];
+        const float y = tank_prv_scr_pos[1];
+        const float z = tank_prv_scr_pos[2];
         panel_mesh.addQuad({Vec3(x, y, z),
                             Vec3(x - 6, y + 6, z),
                             Vec3(x + tank_prv_scr_width + 6, y + 6, z),
@@ -826,7 +826,7 @@ void ReadyMenu::draw(render::RenderContext& context) {
 
     // The live tank preview, in its own viewport (glViewport()'s float ->
     // int truncation kept), cleared to the flashing preview color.
-    render::Rect const preview = vulkan_earth::glRect(
+    const render::Rect preview = vulkan_earth::glRect(
             static_cast<std::int32_t>(tank_prv_scr_pos[0] + getWidth() / 2),
             static_cast<std::int32_t>(tank_prv_scr_height + 1),
             static_cast<std::int32_t>(tank_prv_scr_width),

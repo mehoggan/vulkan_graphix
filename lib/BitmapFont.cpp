@@ -40,8 +40,8 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
     std::vector<std::uint8_t> bitmap(c_atlas_width * c_atlas_height, 0);
     std::array<stbtt_bakedchar, c_glyph_count> baked_chars{};
 
-    std::int32_t const bake_result = stbtt_BakeFontBitmap(
-            reinterpret_cast<std::uint8_t const*>(font_data.data()),
+    const std::int32_t bake_result = stbtt_BakeFontBitmap(
+            reinterpret_cast<const std::uint8_t*>(font_data.data()),
             0,
             pixel_height,
             bitmap.data(),
@@ -71,11 +71,11 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
         m_atlas_pixels[i * 4 + 3] = static_cast<char>(bitmap[i]);
     }
 
-    std::uint32_t const block_x = m_atlas_width - c_solid_block_size;
-    std::uint32_t const block_y = m_atlas_height - c_solid_block_size;
+    const std::uint32_t block_x = m_atlas_width - c_solid_block_size;
+    const std::uint32_t block_y = m_atlas_height - c_solid_block_size;
     for (std::uint32_t y = block_y; y < m_atlas_height; ++y) {
         for (std::uint32_t x = block_x; x < m_atlas_width; ++x) {
-            std::size_t const pixel_index = (y * m_atlas_width + x) * 4;
+            const std::size_t pixel_index = (y * m_atlas_width + x) * 4;
             m_atlas_pixels[pixel_index + 0] = static_cast<char>(0xFF);
             m_atlas_pixels[pixel_index + 1] = static_cast<char>(0xFF);
             m_atlas_pixels[pixel_index + 2] = static_cast<char>(0xFF);
@@ -132,7 +132,7 @@ std::vector<BitmapFontGlyphQuad> BitmapFont::layoutText(
             character >= c_first_char + c_glyph_count) {
             continue;
         }
-        Glyph const& glyph = m_glyphs[character - c_first_char];
+        const Glyph& glyph = m_glyphs[character - c_first_char];
         if (glyph.size.x > 0.0f && glyph.size.y > 0.0f) {
             BitmapFontGlyphQuad quad;
             quad.top_left = Math::Vec2<float>(pen_x + glyph.offset.x,
@@ -168,13 +168,13 @@ std::vector<std::string> BitmapFont::wrapText(const std::string& text,
         if (i < text.size() && text[i] != ' ') {
             continue;
         }
-        std::string const word = text.substr(word_start, i - word_start);
+        const std::string word = text.substr(word_start, i - word_start);
         word_start = i + 1;
         if (word.empty()) {
             continue;
         }
 
-        std::string const candidate =
+        const std::string candidate =
                 current_line.empty() ? word : current_line + " " + word;
         if (!current_line.empty() && textWidth(candidate) > max_width) {
             lines.push_back(current_line);

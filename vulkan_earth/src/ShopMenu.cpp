@@ -895,7 +895,7 @@ void ShopMenu::draw(render::RenderContext& context) {
         panel_mesh.clear();
         vulkan_earth::appendMenuPanel(
                 panel_mesh, width, height, percent_border);
-        Vec4 const black(0, 0, 0, 1);
+        const Vec4 black(0, 0, 0, 1);
         for (float offset : {-1.0f, 0.0f, 1.0f}) {
             panel_mesh.addLine(Vec3(pos[0] + width * 0.04 + offset,
                                     pos[1] + height * 0.45,

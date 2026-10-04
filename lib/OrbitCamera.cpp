@@ -52,8 +52,8 @@ void OrbitCamera::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     // y=0 terrain plane to see its underside.
     constexpr float c_max_pitch = 1.553343f;
 
-    std::int32_t const delta_x = pos_x - m_last_x;
-    std::int32_t const delta_y = pos_y - m_last_y;
+    const std::int32_t delta_x = pos_x - m_last_x;
+    const std::int32_t delta_y = pos_y - m_last_y;
     m_last_x = pos_x;
     m_last_y = pos_y;
 
@@ -69,6 +69,6 @@ Math::Vec3<float> OrbitCamera::eye() const {
                                           std::cos(m_pitch) * std::cos(m_yaw));
 }
 
-Math::Vec3<float> const& OrbitCamera::target() const { return m_target; }
+const Math::Vec3<float>& OrbitCamera::target() const { return m_target; }
 
 }  // namespace vulkan_graphix

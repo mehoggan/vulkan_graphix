@@ -359,11 +359,11 @@ private:
     // a tank placed at world_position exactly as Tank::setTankPos() does
     // (see HellfireTank::getPartTranslations()).
     Math::Mat4<float> getBodyModelMatrix(
-            Math::Vec3<float> const& world_position) const;
+            const Math::Vec3<float>& world_position) const;
     Math::Mat4<float> getHeadModelMatrix(
-            Math::Vec3<float> const& world_position) const;
+            const Math::Vec3<float>& world_position) const;
     Math::Mat4<float> getTurretModelMatrix(
-            Math::Vec3<float> const& world_position) const;
+            const Math::Vec3<float>& world_position) const;
 
     Math::Vec2<float> getPanelTopLeft(std::size_t player_index) const;
     Math::Vec2<float> getPanelSize() const;

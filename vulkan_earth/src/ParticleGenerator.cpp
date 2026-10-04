@@ -24,14 +24,14 @@ void ParticleGenerator::update(float new_x, float new_y, float new_z) {
 }
 
 void ParticleGenerator::draw(render::RenderContext& context,
-                             math::Mat4<float> const& model) {
+                             const math::Mat4<float>& model) {
     // Each particle: glutSolidSphere(1, 10, 10) at its position, scaled by
     // its size.
-    for (auto const& slot : emitter.slots()) {
+    for (const auto& slot : emitter.slots()) {
         if (!slot) {
             continue;
         }
-        effects::Particle const& particle = *slot;
+        const effects::Particle& particle = *slot;
         context.drawMesh(
                 render::Renderer::instance().sphere(10, 10),
                 vulkan_earth::pipelines().flat_color,

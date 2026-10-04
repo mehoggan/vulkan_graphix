@@ -51,19 +51,19 @@ public:
     explicit CubicCurve(Type impl = Type::Hermite)
             : m_cubic(T(1)), m_impl(impl) {}
 
-    CubicCurve(Vec3<T> const& point0,
-               Vec3<T> const& point1,
-               Vec3<T> const& tangent0,
-               Vec3<T> const& tangent1)
+    CubicCurve(const Vec3<T>& point0,
+               const Vec3<T>& point1,
+               const Vec3<T>& tangent0,
+               const Vec3<T>& tangent1)
             : m_cubic(T(1)), m_impl(Type::Hermite) {
         setHermite(point0, point1, tangent0, tangent1);
     }
 
     CubicCurve(Type impl,
-               Vec3<T> const& point0,
-               Vec3<T> const& point1,
-               Vec3<T> const& point2,
-               Vec3<T> const& point3)
+               const Vec3<T>& point0,
+               const Vec3<T>& point1,
+               const Vec3<T>& point2,
+               const Vec3<T>& point3)
             : m_cubic(T(1)), m_impl(impl) {
         switch (impl) {
             case Type::Bezier:
@@ -80,10 +80,10 @@ public:
 
     Type type() const { return m_impl; }
 
-    void setHermite(Vec3<T> const& point0,
-                    Vec3<T> const& point1,
-                    Vec3<T> const& tangent0,
-                    Vec3<T> const& tangent1) {
+    void setHermite(const Vec3<T>& point0,
+                    const Vec3<T>& point1,
+                    const Vec3<T>& tangent0,
+                    const Vec3<T>& tangent1) {
         m_impl = Type::Hermite;
         Mat4<T> geom(controlColumn(point0),
                      controlColumn(point1),
@@ -92,10 +92,10 @@ public:
         m_cubic = geom * detail::hermiteBasis<T>();
     }
 
-    void setBezier(Vec3<T> const& point0,
-                   Vec3<T> const& point1,
-                   Vec3<T> const& point2,
-                   Vec3<T> const& point3) {
+    void setBezier(const Vec3<T>& point0,
+                   const Vec3<T>& point1,
+                   const Vec3<T>& point2,
+                   const Vec3<T>& point3) {
         m_impl = Type::Bezier;
         Mat4<T> geom(controlColumn(point0),
                      controlColumn(point1),
@@ -104,10 +104,10 @@ public:
         m_cubic = geom * detail::bezierBasis<T>();
     }
 
-    void setCatmullRom(Vec3<T> const& point0,
-                       Vec3<T> const& point1,
-                       Vec3<T> const& point2,
-                       Vec3<T> const& point3) {
+    void setCatmullRom(const Vec3<T>& point0,
+                       const Vec3<T>& point1,
+                       const Vec3<T>& point2,
+                       const Vec3<T>& point3) {
         m_impl = Type::CatmullRom;
         Mat4<T> geom(controlColumn(point0),
                      controlColumn(point1),
@@ -178,14 +178,14 @@ public:
     }
 
 private:
-    static Vec4<T> controlColumn(Vec3<T> const& point) {
+    static Vec4<T> controlColumn(const Vec3<T>& point) {
         return Vec4<T>(point.x, point.y, point.z, T(0));
     }
 
     static constexpr std::uint16_t max_subdivide_depth = 10;
 
-    T chordalDistanceSquaredFromSecant(CurveSample3D<T> const& point0,
-                                       CurveSample3D<T> const& point1,
+    T chordalDistanceSquaredFromSecant(const CurveSample3D<T>& point0,
+                                       const CurveSample3D<T>& point1,
                                        T percent) const {
         Vec3<T> secant_position =
                 glm::mix(point0.position, point1.position, percent);
@@ -196,9 +196,9 @@ private:
         return glm::dot(delta, delta);
     }
 
-    bool isOfGoodQuality(CurveSample3D<T> const& point0,
+    bool isOfGoodQuality(const CurveSample3D<T>& point0,
                          T mid_t,
-                         CurveSample3D<T> const& point1,
+                         const CurveSample3D<T>& point1,
                          T chordal_tolerance,
                          std::uint16_t depth) const {
         T current_chordal_tolerance =
@@ -229,8 +229,8 @@ private:
     }
 
     void subdivide(std::vector<CurveSample3D<T>>& out_samples,
-                   CurveSample3D<T> const& point0,
-                   CurveSample3D<T> const& point1,
+                   const CurveSample3D<T>& point0,
+                   const CurveSample3D<T>& point1,
                    T chordal_tolerance,
                    std::uint16_t depth = 0) const {
         T mid_param = glm::mix(point0.parameter, point1.parameter, T(0.5));

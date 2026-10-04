@@ -7,9 +7,9 @@ namespace vulkan_graphix::TankPlacement {
 namespace {
 // parent + offset.x * col0 + offset.y * col1 + offset.z * col2, summed
 // left to right exactly as Tank::setTankPos() wrote it out per component.
-Math::Vec3<float> offsetThroughBasis(Math::Vec3<float> const& parent,
-                                     Math::Mat4<float> const& basis,
-                                     Math::Vec3<float> const& offset) {
+Math::Vec3<float> offsetThroughBasis(const Math::Vec3<float>& parent,
+                                     const Math::Mat4<float>& basis,
+                                     const Math::Vec3<float>& offset) {
     Math::Vec3<float> result;
     for (std::int32_t i = 0; i < 3; ++i) {
         result[i] = parent[i] + offset.x * basis[0][i] +
@@ -19,8 +19,8 @@ Math::Vec3<float> offsetThroughBasis(Math::Vec3<float> const& parent,
 }
 }  // namespace
 
-Math::Mat4<float> const& uprightPartBasis() {
-    static Math::Mat4<float> const basis(
+const Math::Mat4<float>& uprightPartBasis() {
+    static const Math::Mat4<float> basis(
             Math::Vec4<float>(0.0f, 0.0f, 1.0f, 0.0f),
             Math::Vec4<float>(0.0f, 1.0f, 0.0f, 0.0f),
             Math::Vec4<float>(1.0f, 0.0f, 0.0f, 0.0f),
@@ -29,10 +29,10 @@ Math::Mat4<float> const& uprightPartBasis() {
 }
 
 PartTranslations composePartTranslations(
-        Math::Vec3<float> const& world_position,
-        Math::Mat4<float> const& body_matrix,
-        Math::Mat4<float> const& head_matrix,
-        PartOffsets const& offsets) {
+        const Math::Vec3<float>& world_position,
+        const Math::Mat4<float>& body_matrix,
+        const Math::Mat4<float>& head_matrix,
+        const PartOffsets& offsets) {
     PartTranslations translations;
     translations.body = world_position + offsets.body;
     translations.head =

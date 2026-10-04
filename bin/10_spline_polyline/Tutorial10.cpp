@@ -33,8 +33,8 @@ constexpr float c_initial_camera_distance = 8.0f;
 // monotonic (the road's length) so the curve never doubles back on itself.
 // Earlier versions of this curve swept a full spiral turn, then a full
 // sine wave, and both read as too tangled/dramatic once projected to 2D.
-std::vector<Math::Vec3<float>> const& getControlPoints() {
-    static std::vector<Math::Vec3<float>> const points = [] {
+const std::vector<Math::Vec3<float>>& getControlPoints() {
+    static const std::vector<Math::Vec3<float>> points = [] {
         constexpr std::size_t point_count = 6;
         constexpr float x_start = -3.0f;
         constexpr float x_end = 3.0f;
@@ -45,7 +45,7 @@ std::vector<Math::Vec3<float>> const& getControlPoints() {
         std::vector<Math::Vec3<float>> result;
         result.reserve(point_count);
         for (std::size_t i = 0; i < point_count; ++i) {
-            float const fraction = static_cast<float>(i) /
+            const float fraction = static_cast<float>(i) /
                                    static_cast<float>(point_count - 1);
             result.emplace_back(
                     x_start + fraction * (x_end - x_start),
@@ -64,9 +64,9 @@ std::vector<Math::Vec3<float>> const& getControlPoints() {
 // and last - true Catmull-Rom otherwise only interpolates the interior
 // points, using the endpoints purely to shape the tangents at the ends of
 // that interior span.
-std::vector<Math::CurveSample3D<float>> const& getCurveSamples() {
-    static std::vector<Math::CurveSample3D<float>> const samples = [] {
-        std::vector<Math::Vec3<float>> const& control_points =
+const std::vector<Math::CurveSample3D<float>>& getCurveSamples() {
+    static const std::vector<Math::CurveSample3D<float>> samples = [] {
+        const std::vector<Math::Vec3<float>>& control_points =
                 getControlPoints();
 
         std::vector<Math::Vec3<float>> working_points;
@@ -78,21 +78,21 @@ std::vector<Math::CurveSample3D<float>> const& getCurveSamples() {
         working_points.push_back(control_points.back());
 
         std::vector<Math::CurveSample3D<float>> result;
-        std::size_t const segment_count = working_points.size() - 3;
+        const std::size_t segment_count = working_points.size() - 3;
         for (std::size_t segment = 0; segment < segment_count; ++segment) {
-            Math::CubicCurve<float> const curve(
+            const Math::CubicCurve<float> curve(
                     Math::CubicCurve<float>::Type::CatmullRom,
                     working_points[segment],
                     working_points[segment + 1],
                     working_points[segment + 2],
                     working_points[segment + 3]);
-            std::vector<Math::CurveSample3D<float>> const segment_samples =
+            const std::vector<Math::CurveSample3D<float>> segment_samples =
                     curve.computeSamplesAdaptive(c_chordal_tolerance);
 
             // Segment i's last sample and segment i+1's first sample are
             // the same point (the shared control point between them) -
             // skip it to avoid a duplicate vertex in the polyline.
-            std::size_t const start_index = (segment == 0) ? 0 : 1;
+            const std::size_t start_index = (segment == 0) ? 0 : 1;
             for (std::size_t i = start_index; i < segment_samples.size();
                  ++i) {
                 result.push_back(segment_samples[i]);
@@ -342,7 +342,7 @@ bool Tutorial10::createCommandBuffers() {
 }
 
 bool Tutorial10::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -375,7 +375,7 @@ bool Tutorial10::createSemaphores() {
 }
 
 bool Tutorial10::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -528,9 +528,9 @@ Tutorial10UniformBufferData Tutorial10::getUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
@@ -539,7 +539,7 @@ Tutorial10UniformBufferData Tutorial10::getUniformBufferData() const {
 }
 
 bool Tutorial10::updateUniformBufferData() {
-    Tutorial10UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial10UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial10_parameters.getUniformBufferParameters();
 
@@ -977,11 +977,11 @@ bool Tutorial10::createLinePipeline() {
 
 const std::vector<LineVertexData>& Tutorial10::getCurveVertexData() const {
     static const std::vector<LineVertexData> curve_vertices = [] {
-        std::vector<Math::CurveSample3D<float>> const& samples =
+        const std::vector<Math::CurveSample3D<float>>& samples =
                 getCurveSamples();
         std::vector<LineVertexData> data;
         data.reserve(samples.size());
-        for (Math::CurveSample3D<float> const& sample : samples) {
+        for (const Math::CurveSample3D<float>& sample : samples) {
             data.push_back({Math::Vec4<float>(sample.position, 1.0f)});
         }
         return data;
@@ -992,11 +992,11 @@ const std::vector<LineVertexData>& Tutorial10::getCurveVertexData() const {
 const std::vector<LineVertexData>& Tutorial10::getControlPolygonVertexData()
         const {
     static const std::vector<LineVertexData> control_polygon_vertices = [] {
-        std::vector<Math::Vec3<float>> const& control_points =
+        const std::vector<Math::Vec3<float>>& control_points =
                 getControlPoints();
         std::vector<LineVertexData> data;
         data.reserve(control_points.size());
-        for (Math::Vec3<float> const& point : control_points) {
+        for (const Math::Vec3<float>& point : control_points) {
             data.push_back({Math::Vec4<float>(point, 1.0f)});
         }
         return data;
@@ -1242,7 +1242,7 @@ bool Tutorial10::prepareFrame(VkCommandBuffer command_buffer,
 
     // The curve itself: a real polyline through the adaptively-sampled
     // points, in a vibrant color.
-    LinePushConstants const curve_push_constants = {
+    const LinePushConstants curve_push_constants = {
             Math::Vec4<float>(0.1f, 0.85f, 0.8f, 1.0f)};
     vkCmdPushConstants(command_buffer,
                        m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
@@ -1266,7 +1266,7 @@ bool Tutorial10::prepareFrame(VkCommandBuffer command_buffer,
 
     // The control polygon: a muted gray reference line connecting the raw
     // control points in order.
-    LinePushConstants const control_polygon_push_constants = {
+    const LinePushConstants control_polygon_push_constants = {
             Math::Vec4<float>(0.55f, 0.58f, 0.62f, 1.0f)};
     vkCmdPushConstants(command_buffer,
                        m_vulkan_tutorial10_parameters.getVkPipelineLayout(),

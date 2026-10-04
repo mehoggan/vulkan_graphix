@@ -198,9 +198,9 @@ void SubMenuLandscape::draw(render::RenderContext& context) {
     if (border_mesh.triangles().empty()) {
         float border_x = x_pos + 0.03 * width;
         float border_y = y_pos - 0.07 * height;
-        float const z1 = z_pos + 1;
-        Vec4 const dark(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
-        Vec4 const light(
+        const float z1 = z_pos + 1;
+        const Vec4 dark(color[0] - .2, color[1] - .2, color[2] - .2, color[3]);
+        const Vec4 light(
                 color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
         // top-left
         border_mesh.addQuad(
@@ -240,10 +240,10 @@ void SubMenuLandscape::draw(render::RenderContext& context) {
     // The live terrain preview, in its own viewport (glViewport()'s float
     // -> int truncation kept), cleared to black, then the menu's own
     // viewport and camera restored.
-    render::Rect const saved_viewport = context.viewport();
-    math::Mat4<float> const saved_projection = context.projection();
-    math::Mat4<float> const saved_view = context.view();
-    render::Rect const preview = vulkan_earth::glRect(
+    const render::Rect saved_viewport = context.viewport();
+    const math::Mat4<float> saved_projection = context.projection();
+    const math::Mat4<float> saved_view = context.view();
+    const render::Rect preview = vulkan_earth::glRect(
             static_cast<std::int32_t>(x_pos + 0.8 * width),
             static_cast<std::int32_t>(y_pos),
             static_cast<std::int32_t>(0.9417 * width),

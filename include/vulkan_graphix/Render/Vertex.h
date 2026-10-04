@@ -126,13 +126,13 @@ struct MeshVertex {
 // stores them in, doesn't promise that layout itself).
 template <typename... Ts>
 std::vector<std::byte> packInterleaved(
-        VertexTypes::InterleavedData<Ts...> const& data) {
+        const VertexTypes::InterleavedData<Ts...>& data) {
     using Traits = VertexTypes::AttributeTraits<Ts...>;
     constexpr std::array<std::size_t, sizeof...(Ts)> offsets =
             Traits::byteOffsets();
     std::vector<std::byte> bytes(data.getByteCount());
     std::size_t record = 0;
-    for (auto const& datum : data.getData()) {
+    for (const auto& datum : data.getData()) {
         std::byte* const base = bytes.data() + record * Traits::stride;
         [&]<std::size_t... I>(std::index_sequence<I...>) {
             (std::memcpy(base + offsets[I],

@@ -22,7 +22,7 @@ constexpr float c_epsilon = 1e-4f;
 TEST(ToolsTest, ExecutableDirIsTheTestBinarysOwnDirectory) {
     // Run through libtool's wrapper, the real binary lives in .libs/;
     // executableDir() reports the directory above it either way.
-    std::filesystem::path const exe_dir =
+    const std::filesystem::path exe_dir =
             vulkan_graphix::Tools::executableDir();
     ASSERT_FALSE(exe_dir.empty());
     EXPECT_TRUE(std::filesystem::is_directory(exe_dir));
@@ -138,7 +138,7 @@ TEST(ToolsTest, GetOrthographicProjectionMatrixMatchesTheStandardFormula) {
 
 namespace {
 
-void fakeDeleter(VkDevice, VkBuffer, VkAllocationCallbacks const*) {}
+void fakeDeleter(VkDevice, VkBuffer, const VkAllocationCallbacks*) {}
 
 }  // namespace
 

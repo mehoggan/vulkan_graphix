@@ -27,8 +27,8 @@ enum class ItemKind : std::uint8_t {
 inline constexpr std::size_t c_item_count = 8;
 
 struct ItemSpec {
-    char const* image_file;
-    char const* description;
+    const char* image_file;
+    const char* description;
     std::int32_t price;
     std::int32_t package_num;
     std::int32_t max_stack;
@@ -38,9 +38,9 @@ struct ItemSpec {
     std::int32_t special_num;
 };
 
-ItemSpec const& item(ItemKind kind);
+const ItemSpec& item(ItemKind kind);
 // Every item, indexed by ItemKind.
-std::array<ItemSpec, c_item_count> const& items();
+const std::array<ItemSpec, c_item_count>& items();
 
 // In the shop's own order (ShopMenu's shop_wpns[0..9]), the value being
 // the weapon's id there, then Default (id 10): Projectile's fallback when
@@ -63,8 +63,8 @@ inline constexpr std::size_t c_weapon_count = 11;
 inline constexpr std::size_t c_shop_weapon_count = 10;
 
 struct WeaponSpec {
-    char const* image_file;
-    char const* description;
+    const char* image_file;
+    const char* description;
     std::int32_t price;
     std::int32_t package_num;
     std::int32_t max_stack;
@@ -81,9 +81,9 @@ struct WeaponSpec {
     std::array<std::array<double, 3>, 4> explosion_colors;
 };
 
-WeaponSpec const& weapon(WeaponKind kind);
+const WeaponSpec& weapon(WeaponKind kind);
 // Every weapon, indexed by WeaponKind.
-std::array<WeaponSpec, c_weapon_count> const& weapons();
+const std::array<WeaponSpec, c_weapon_count>& weapons();
 
 }  // namespace vulkan_graphix::GameCatalog
 

@@ -692,9 +692,9 @@ Tutorial21TerrainUniformBufferData Tutorial21::getTerrainUniformBufferData()
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     // Far plane needs headroom past the skybox's own farthest corner as
     // seen from the camera (c_skybox_half_extent*sqrt(3) + the camera's own
@@ -714,7 +714,7 @@ Tutorial21TerrainUniformBufferData Tutorial21::getTerrainUniformBufferData()
 }
 
 bool Tutorial21::updateTerrainUniformBufferData() {
-    Tutorial21TerrainUniformBufferData const uniform_data =
+    const Tutorial21TerrainUniformBufferData uniform_data =
             getTerrainUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial21_parameters.getTerrainUniformBufferParameters();
@@ -744,9 +744,9 @@ Tutorial21ObjectUniformBufferData Tutorial21::getObjectUniformBufferData()
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 1.0f, 8000.0f);
@@ -755,7 +755,7 @@ Tutorial21ObjectUniformBufferData Tutorial21::getObjectUniformBufferData()
 }
 
 bool Tutorial21::updateObjectUniformBufferData() {
-    Tutorial21ObjectUniformBufferData const uniform_data =
+    const Tutorial21ObjectUniformBufferData uniform_data =
             getObjectUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial21_parameters.getObjectUniformBufferParameters();
@@ -1613,9 +1613,9 @@ Tutorial21::getTerrainVertexData() {
     // along the grid's near edge (reproducible regardless of the actual
     // generated height values, confirming it was this normal bug and not
     // a height-generation or skybox depth issue).
-    std::int32_t const chunk_size = c_grid_size / 2;
-    float const chunk_span = static_cast<float>(chunk_size - 1);
-    float const half_extent =
+    const std::int32_t chunk_size = c_grid_size / 2;
+    const float chunk_span = static_cast<float>(chunk_size - 1);
+    const float half_extent =
             static_cast<float>(c_grid_size - 1) * c_grid_scale / 2.0f;
 
     m_terrain_vertex_data.reserve(static_cast<std::size_t>(c_grid_size - 1) *
@@ -1639,14 +1639,14 @@ Tutorial21::getTerrainVertexData() {
             Math::Vec2<float> t_i(
                     static_cast<float>(i % (chunk_size - 1)) / chunk_span,
                     static_cast<float>(j % (chunk_size - 1)) / chunk_span);
-            Math::Vec3<float> const n_i = m_terrain_generator.normalAt(j, i);
+            const Math::Vec3<float> n_i = m_terrain_generator.normalAt(j, i);
             m_terrain_vertex_data.push_back({make_position(j, i), n_i, t_i});
 
             Math::Vec2<float> t_j(
                     (static_cast<float>(i % (chunk_size - 1)) + 1) /
                             chunk_span,
                     static_cast<float>(j % (chunk_size - 1)) / chunk_span);
-            Math::Vec3<float> const n_j =
+            const Math::Vec3<float> n_j =
                     m_terrain_generator.normalAt(j, i + 1);
             m_terrain_vertex_data.push_back(
                     {make_position(j, i + 1), n_j, t_j});
@@ -1655,7 +1655,7 @@ Tutorial21::getTerrainVertexData() {
                     static_cast<float>(i % (chunk_size - 1)) / chunk_span,
                     (static_cast<float>(j % (chunk_size - 1)) + 1) /
                             chunk_span);
-            Math::Vec3<float> const n_k =
+            const Math::Vec3<float> n_k =
                     m_terrain_generator.normalAt(j + 1, i);
             m_terrain_vertex_data.push_back(
                     {make_position(j + 1, i), n_k, t_k});
@@ -1667,7 +1667,7 @@ Tutorial21::getTerrainVertexData() {
                                    1) / chunk_span,
                                   (static_cast<float>(j % (chunk_size - 1)) +
                                    1) / chunk_span);
-            Math::Vec3<float> const n_y =
+            const Math::Vec3<float> n_y =
                     m_terrain_generator.normalAt(j + 1, i + 1);
             m_terrain_vertex_data.push_back(
                     {make_position(j + 1, i + 1), n_y, t_y});
@@ -1687,7 +1687,7 @@ float Tutorial21::getTankGroundHeight() {
 }
 
 Math::Mat4<float> Tutorial21::getTankPartModelMatrix(
-        Math::Vec3<float> const& part_translation) const {
+        const Math::Vec3<float>& part_translation) const {
     return HellfireTank::buildPartMatrix(part_translation);
 }
 
@@ -1698,12 +1698,12 @@ Tutorial21::getSkyboxVertexData() const {
     // tutorial's own c_skybox_half_extent scale instead of Tutorial11's
     // small pilot scale.
     static const std::vector<Tutorial21ObjectVertexData> vertex_data = [] {
-        float const x_min = -c_skybox_half_extent;
-        float const x_max = c_skybox_half_extent;
-        float const y_min = -c_skybox_half_extent;
-        float const y_max = c_skybox_half_extent * 0.5f;
-        float const z_min = -c_skybox_half_extent;
-        float const z_max = c_skybox_half_extent;
+        const float x_min = -c_skybox_half_extent;
+        const float x_max = c_skybox_half_extent;
+        const float y_min = -c_skybox_half_extent;
+        const float y_max = c_skybox_half_extent * 0.5f;
+        const float z_min = -c_skybox_half_extent;
+        const float z_max = c_skybox_half_extent;
 
         return std::vector<Tutorial21ObjectVertexData>{
                 // front (z = z_min)
@@ -1831,11 +1831,11 @@ bool Tutorial21::createTerrainVertexBuffer() {
 
 std::vector<Tutorial21ObjectVertexData> Tutorial21::loadTankPartVertexData(
         const char* mesh_filename) const {
-    std::vector<Tools::OglVertexData> const mesh_data =
+    const std::vector<Tools::OglVertexData> mesh_data =
             Tools::loadOglMeshData(mesh_filename);
     std::vector<Tutorial21ObjectVertexData> vertex_data;
     vertex_data.reserve(mesh_data.size());
-    for (Tools::OglVertexData const& vertex : mesh_data) {
+    for (const Tools::OglVertexData& vertex : mesh_data) {
         vertex_data.push_back(
                 {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
     }
@@ -1845,7 +1845,7 @@ std::vector<Tutorial21ObjectVertexData> Tutorial21::loadTankPartVertexData(
 bool Tutorial21::createTankPartVertexBuffer(const char* mesh_filename,
                                             BufferParameters& vertex_buffer,
                                             std::uint32_t& vertex_count) {
-    std::vector<Tutorial21ObjectVertexData> const vertex_data =
+    const std::vector<Tutorial21ObjectVertexData> vertex_data =
             loadTankPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
         Logging::error(LOG_TAG,
@@ -1941,7 +1941,7 @@ bool Tutorial21::createFramebuffer(VkFramebuffer& framebuffer,
         framebuffer = VK_NULL_HANDLE;
     }
 
-    std::array<VkImageView, 2> const attachments = {
+    const std::array<VkImageView, 2> attachments = {
             image_view,
             m_vulkan_tutorial21_parameters.getDepthImageParameters()
                     .getVkImageView()};
@@ -2052,7 +2052,7 @@ bool Tutorial21::prepareFrame(VkCommandBuffer command_buffer,
     vkCmdSetViewport(command_buffer, 0, 1, &viewport);
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
-    VkDeviceSize const zero_offset = 0;
+    const VkDeviceSize zero_offset = 0;
 
     // --- Pass 1: skybox first, its own pipeline with depth testing off
     // entirely (see createPipelines() for why).
@@ -2147,11 +2147,11 @@ bool Tutorial21::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    Math::Vec3<float> const tank_world_position(
+    const Math::Vec3<float> tank_world_position(
             0.0f, getTankGroundHeight(), 0.0f);
-    HellfireTank::PartTranslations const tank_parts =
+    const HellfireTank::PartTranslations tank_parts =
             HellfireTank::getPartTranslations(tank_world_position);
-    std::array<Math::Vec3<float>, c_tank_part_count> const part_translations =
+    const std::array<Math::Vec3<float>, c_tank_part_count> part_translations =
             {{tank_parts.body, tank_parts.head, tank_parts.turret}};
 
     std::array<BufferParameters, c_tank_part_count>& tank_vertex_buffers =

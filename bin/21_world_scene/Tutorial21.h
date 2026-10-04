@@ -385,7 +385,7 @@ private:
     // itself makes to build the mesh - not a fabricated Y position.
     float getTankGroundHeight();
     Math::Mat4<float> getTankPartModelMatrix(
-            Math::Vec3<float> const& part_translation) const;
+            const Math::Vec3<float>& part_translation) const;
 
     const std::vector<Tutorial21ObjectVertexData>& getSkyboxVertexData() const;
     const std::vector<std::uint32_t>& getSkyboxIndexData() const;

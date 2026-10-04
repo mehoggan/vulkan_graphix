@@ -16,8 +16,8 @@ VBOShaderLibrary::VBOShaderLibrary() = default;
 VBOShaderLibrary::~VBOShaderLibrary() = default;
 
 void VBOShaderLibrary::draw(render::RenderContext& context,
-                            math::Mat4<float> const& model,
-                            math::Vec4<float> const& tint) {
+                            const math::Mat4<float>& model,
+                            const math::Vec4<float>& tint) {
     if (mesh) {
         context.drawMesh(*mesh,
                          vulkan_earth::pipelines().mesh,
@@ -28,7 +28,7 @@ void VBOShaderLibrary::draw(render::RenderContext& context,
 }
 
 bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
-    std::vector<vulkan_graphix::Tools::OglVertexData> const data =
+    const std::vector<vulkan_graphix::Tools::OglVertexData> data =
             vulkan_graphix::Tools::loadOglMeshData(model_file);
     if (data.empty()) {
         std::printf("ERROR: File %s not found\n", model_file.c_str());
@@ -36,7 +36,7 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
     }
     std::vector<render::MeshVertex> vertices;
     vertices.reserve(data.size());
-    for (auto const& vertex : data) {
+    for (const auto& vertex : data) {
         vertices.push_back(
                 {vertex.position,
                  vertex.normal,

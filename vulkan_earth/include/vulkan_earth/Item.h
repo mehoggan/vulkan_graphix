@@ -25,7 +25,7 @@ public:
 
 protected:
     // Every field but the id, from the game's catalog.
-    void loadSpec(vulkan_graphix::GameCatalog::ItemSpec const& spec);
+    void loadSpec(const vulkan_graphix::GameCatalog::ItemSpec& spec);
 
     std::int32_t uniqueidentifier;
     std::string image_file_name;

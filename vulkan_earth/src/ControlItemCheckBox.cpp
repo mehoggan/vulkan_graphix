@@ -68,10 +68,10 @@ void ControlItemCheckBox::draw(render::RenderContext& context) {
         mesh.clear();
         // draw main button box (sunken bevel: -0.2 top/left, +0.4
         // bottom/right)
-        Vec4 const dark(
+        const Vec4 dark(
                 color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-        Vec4 const face(color[0], color[1], color[2], color[3]);
-        Vec4 const light(
+        const Vec4 face(color[0], color[1], color[2], color[3]);
+        const Vec4 light(
                 color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
         mesh.addQuad({Vec3(x_pos, y_pos, z_pos),
                       Vec3(x_pos - 3, y_pos + 3, z_pos),
@@ -101,16 +101,16 @@ void ControlItemCheckBox::draw(render::RenderContext& context) {
 
         // draw the actual check box itself: 4 smaller squares (2 triangles
         // each) whose innermost vertex is colored darker when pressed.
-        Vec4 const raised(color[0] + .2, color[1] + .2, color[2] + .2, 1.0f);
-        Vec4 const center_color = button_state == 1 ? Vec4(color[0] - .2,
+        const Vec4 raised(color[0] + .2, color[1] + .2, color[2] + .2, 1.0f);
+        const Vec4 center_color = button_state == 1 ? Vec4(color[0] - .2,
                                                            color[1] - .2,
                                                            color[2] - .2,
                                                            1.0f)
                                                     : raised;
-        float const z1 = z_pos + 1;
-        Vec3 const center(
+        const float z1 = z_pos + 1;
+        const Vec3 center(
                 x_pos + (width - height / 2), (y_pos - height / 2), z1);
-        Vec3 const center4(x_pos + (width - height) + (height / 2),
+        const Vec3 center4(x_pos + (width - height) + (height / 2),
                            (y_pos - height / 2),
                            z1);
         // square 1
@@ -184,8 +184,8 @@ void ControlItemCheckBox::draw(render::RenderContext& context) {
 
         // draw check mark if it was toggled on, otherwise dont
         if (menu_state == 1) {
-            Vec4 const green(0.0f, 1.0f, 0.0f, 1.0f);
-            float const z2 = z_pos + 2;
+            const Vec4 green(0.0f, 1.0f, 0.0f, 1.0f);
+            const float z2 = z_pos + 2;
             mesh.addQuad({Vec3(x_pos + (width - height + (height * 0.2)),
                                (y_pos - height / 2) + (0.015 * width),
                                z2),

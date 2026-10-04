@@ -9,14 +9,14 @@ namespace vulkan_graphix::Math {
 template <typename T>
 class Triangle {
 public:
-    Triangle(Vec3<T> const& point0,
-             Vec3<T> const& point1,
-             Vec3<T> const& point2)
+    Triangle(const Vec3<T>& point0,
+             const Vec3<T>& point1,
+             const Vec3<T>& point2)
             : m_point0(point0), m_point1(point1), m_point2(point2) {}
 
-    Vec3<T> const& p0() const { return m_point0; }
-    Vec3<T> const& p1() const { return m_point1; }
-    Vec3<T> const& p2() const { return m_point2; }
+    const Vec3<T>& p0() const { return m_point0; }
+    const Vec3<T>& p1() const { return m_point1; }
+    const Vec3<T>& p2() const { return m_point2; }
 
     Vec3<T> centroid() const {
         return (m_point0 + m_point1 + m_point2) / T(3);

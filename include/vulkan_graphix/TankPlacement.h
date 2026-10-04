@@ -30,7 +30,7 @@ struct PartTranslations {
 // initWheel() give every part of an upright tank - not an identity
 // rotation, a fixed axis permutation (model-local +X ends up along world
 // +Z).
-Math::Mat4<float> const& uprightPartBasis();
+const Math::Mat4<float>& uprightPartBasis();
 
 // Tank::setTankPos()'s hierarchical composition: the body sits at
 // world_position + offsets.body, then a child part's offset is rotated
@@ -40,10 +40,10 @@ Math::Mat4<float> const& uprightPartBasis();
 // the head is turned. Only the matrices' basis columns are read. Sums in
 // the original's order (translation + x*col0 + y*col1 + z*col2).
 PartTranslations composePartTranslations(
-        Math::Vec3<float> const& world_position,
-        Math::Mat4<float> const& body_matrix,
-        Math::Mat4<float> const& head_matrix,
-        PartOffsets const& offsets);
+        const Math::Vec3<float>& world_position,
+        const Math::Mat4<float>& body_matrix,
+        const Math::Mat4<float>& head_matrix,
+        const PartOffsets& offsets);
 
 }  // namespace vulkan_graphix::TankPlacement
 

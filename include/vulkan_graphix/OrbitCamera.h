@@ -30,7 +30,7 @@ public:
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
 
     Math::Vec3<float> eye() const;
-    Math::Vec3<float> const& target() const;
+    const Math::Vec3<float>& target() const;
 
 private:
     float m_yaw;

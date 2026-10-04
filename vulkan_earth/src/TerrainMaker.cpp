@@ -42,7 +42,7 @@ std::int32_t TerrainMaker::getActualSize() { return (size) * (scale); }
 // one, which its only caller discarded - it worked only because GL happened
 // to reuse the freed texture name. This stores the new texture directly.
 void TerrainMaker::selectTexture(const std::string& tex) {
-    char const* filename = nullptr;
+    const char* filename = nullptr;
     if (tex == "Rock")
         filename = "Rocky.raw";
     else if (tex == "Snow")
@@ -72,12 +72,12 @@ void TerrainMaker::rebuildMesh() {
 
     // The wireframe view's debug normals: one 500-unit line per fourth grid
     // vertex.
-    std::int32_t const draw_scale = scale;
+    const std::int32_t draw_scale = scale;
     normal_lines.clear();
-    math::Vec4<float> const white(1, 1, 1, .75);
+    const math::Vec4<float> white(1, 1, 1, .75);
     for (std::int32_t i = 0; i < 255; i += 4) {
         for (std::int32_t j = 0; j < 255; j += 4) {
-            vulkan_graphix::Math::Vec3<float> const normal =
+            const vulkan_graphix::Math::Vec3<float> normal =
                     getNormalAt(i * draw_scale, j * draw_scale);
             normal_lines.addLine(
                     math::Vec3<float>(i * draw_scale,
@@ -325,10 +325,10 @@ float TerrainMaker::getHeightAt(float x, float z) {
 void TerrainMaker::makeCrater(float impact_x,
                               float impact_z,
                               float blast_size) {
-    std::vector<vulkan_graphix::TerrainGridCell> const cells =
+    const std::vector<vulkan_graphix::TerrainGridCell> cells =
             terrain.makeCrater(impact_x, impact_z, blast_size);
 
-    std::int32_t const cells_per_row = size - 1;
+    const std::int32_t cells_per_row = size - 1;
     auto slot = [&](std::int32_t row,
                     std::int32_t col,
                     std::int32_t corner) -> std::int32_t {
@@ -355,8 +355,8 @@ void TerrainMaker::makeCrater(float impact_x,
         return slots;
     };
 
-    for (vulkan_graphix::TerrainGridCell const& cell : cells) {
-        float const height =
+    for (const vulkan_graphix::TerrainGridCell& cell : cells) {
+        const float height =
                 static_cast<float>(terrain.heightAt(cell.x, cell.z));
         for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
@@ -365,8 +365,8 @@ void TerrainMaker::makeCrater(float impact_x,
         }
     }
 
-    for (vulkan_graphix::TerrainGridCell const& cell : cells) {
-        vulkan_graphix::Math::Vec3<float> const normal =
+    for (const vulkan_graphix::TerrainGridCell& cell : cells) {
+        const vulkan_graphix::Math::Vec3<float> normal =
                 terrain.normalAt(cell.x, cell.z);
         for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {

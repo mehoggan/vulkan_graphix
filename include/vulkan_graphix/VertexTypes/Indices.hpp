@@ -20,7 +20,7 @@ public:
 
     explicit Indices(collection_type data) : m_data(std::move(data)) {}
 
-    collection_type const& getData() const { return m_data; }
+    const collection_type& getData() const { return m_data; }
 
     std::size_t getByteCount() const { return sizeof(T) * m_data.size(); }
 
@@ -29,11 +29,11 @@ public:
 private:
     collection_type m_data;
 
-    friend bool operator==(Indices const& lhs, Indices const& rhs) {
+    friend bool operator==(const Indices& lhs, const Indices& rhs) {
         return lhs.m_data == rhs.m_data;
     }
 
-    friend bool operator!=(Indices const& lhs, Indices const& rhs) {
+    friend bool operator!=(const Indices& lhs, const Indices& rhs) {
         return !(lhs == rhs);
     }
 };

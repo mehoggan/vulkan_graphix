@@ -43,8 +43,8 @@ void TextObject::setZpos(float z) { pos_z = z; }
 // units, exactly as the original's glRasterPos3f()/glutBitmapCharacter()
 // loop did.
 void TextObject::draw(render::RenderContext& context) {
-    render::Font const& font = vulkan_earth::font(font_size);
-    math::Vec4<float> const text_color(color[0], color[1], color[2], 1.0f);
+    const render::Font& font = vulkan_earth::font(font_size);
+    const math::Vec4<float> text_color(color[0], color[1], color[2], 1.0f);
     float x_pos = pos_x;
     for (char ch : output) {
         context.drawText(font,

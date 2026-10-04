@@ -55,7 +55,7 @@ void Weapon::playExplosionSFX() {
         playSFX(EXPLOSION2);
 }
 
-void Weapon::loadSpec(vulkan_graphix::GameCatalog::WeaponSpec const& spec) {
+void Weapon::loadSpec(const vulkan_graphix::GameCatalog::WeaponSpec& spec) {
     max_stack = spec.max_stack;
     package_num = spec.package_num;
     remaining = spec.remaining;

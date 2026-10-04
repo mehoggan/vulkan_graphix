@@ -386,7 +386,7 @@ bool Tutorial03::createPipeline() {
 }
 
 bool Tutorial03::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     if (!frame_resource_factory.createSemaphore(

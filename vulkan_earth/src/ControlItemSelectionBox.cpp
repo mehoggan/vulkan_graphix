@@ -85,10 +85,10 @@ void ControlItemSelectionBox::draw(render::RenderContext& context) {
     // draw main button box (a sunken bevel: -0.2 top/left, +0.4
     // bottom/right)
     if (frame_mesh.triangles().empty()) {
-        Vec4 const dark(
+        const Vec4 dark(
                 color[0] - 0.2f, color[1] - 0.2f, color[2] - 0.2f, color[3]);
-        Vec4 const face(color[0], color[1], color[2], color[3]);
-        Vec4 const light(
+        const Vec4 face(color[0], color[1], color[2], color[3]);
+        const Vec4 light(
                 color[0] + 0.4f, color[1] + 0.4f, color[2] + 0.4f, color[3]);
         frame_mesh.addQuad({Vec3(x_pos, y_pos, z_pos),
                             Vec3(x_pos - 3, y_pos + 3, z_pos),
@@ -123,8 +123,8 @@ void ControlItemSelectionBox::draw(render::RenderContext& context) {
 
     if (arrows_built_for != button_state) {
         arrow_mesh.clear();
-        Vec4 const raised(color[0] + .2, color[1] + .2, color[2] + .2, 1.0f);
-        Vec4 const pressed(color[0] - .2, color[1] - .2, color[2] - .2, 1.0f);
+        const Vec4 raised(color[0] + .2, color[1] + .2, color[2] + .2, 1.0f);
+        const Vec4 pressed(color[0] - .2, color[1] - .2, color[2] - .2, 1.0f);
         // draw up arrow
         arrow_mesh.addTriangle(
                 {Vec3(x_pos + 0.02 * width,

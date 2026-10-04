@@ -59,21 +59,21 @@ VkCommandBuffer RenderContext::commandBuffer() const {
 
 VkExtent2D RenderContext::extent() const { return m_extent; }
 
-VkRect2D RenderContext::toVkRect(Rect const& rect) const {
+VkRect2D RenderContext::toVkRect(const Rect& rect) const {
     // A Vulkan scissor may not extend past the framebuffer.
-    std::int32_t const width = static_cast<std::int32_t>(m_extent.width);
-    std::int32_t const height = static_cast<std::int32_t>(m_extent.height);
-    std::int32_t const left = std::clamp(rect.x, 0, width);
-    std::int32_t const right = std::clamp(rect.x + rect.width, 0, width);
-    std::int32_t const top_edge = std::clamp(rect.y, 0, height);
-    std::int32_t const bottom = std::clamp(rect.y + rect.height, 0, height);
+    const std::int32_t width = static_cast<std::int32_t>(m_extent.width);
+    const std::int32_t height = static_cast<std::int32_t>(m_extent.height);
+    const std::int32_t left = std::clamp(rect.x, 0, width);
+    const std::int32_t right = std::clamp(rect.x + rect.width, 0, width);
+    const std::int32_t top_edge = std::clamp(rect.y, 0, height);
+    const std::int32_t bottom = std::clamp(rect.y + rect.height, 0, height);
     return VkRect2D{{left, top_edge},
                     {static_cast<std::uint32_t>(right - left),
                      static_cast<std::uint32_t>(bottom - top_edge)}};
 }
 
-void RenderContext::applyViewport(Rect const& rect) {
-    VkViewport const viewport = {static_cast<float>(rect.x),
+void RenderContext::applyViewport(const Rect& rect) {
+    const VkViewport viewport = {static_cast<float>(rect.x),
                                  static_cast<float>(rect.y),
                                  static_cast<float>(rect.width),
                                  static_cast<float>(rect.height),
@@ -82,47 +82,47 @@ void RenderContext::applyViewport(Rect const& rect) {
     vg::vkCmdSetViewport(m_command_buffer, 0, 1, &viewport);
 }
 
-void RenderContext::setViewport(Rect const& rect) {
+void RenderContext::setViewport(const Rect& rect) {
     m_viewport = rect;
     applyViewport(rect);
     setScissor(rect);
 }
 
-void RenderContext::setScissor(Rect const& rect) {
+void RenderContext::setScissor(const Rect& rect) {
     m_scissor = rect;
-    VkRect2D const scissor = toVkRect(rect);
+    const VkRect2D scissor = toVkRect(rect);
     vg::vkCmdSetScissor(m_command_buffer, 0, 1, &scissor);
 }
 
-Rect const& RenderContext::viewport() const { return m_viewport; }
+const Rect& RenderContext::viewport() const { return m_viewport; }
 
-void RenderContext::setCamera(Mat4 const& projection, Mat4 const& view) {
+void RenderContext::setCamera(const Mat4& projection, const Mat4& view) {
     m_projection = projection;
     m_view = view;
 }
 
-Mat4 const& RenderContext::projection() const { return m_projection; }
+const Mat4& RenderContext::projection() const { return m_projection; }
 
-Mat4 const& RenderContext::view() const { return m_view; }
+const Mat4& RenderContext::view() const { return m_view; }
 
 void RenderContext::clearDepth() {
-    VkClearAttachment const attachment = {
+    const VkClearAttachment attachment = {
             VK_IMAGE_ASPECT_DEPTH_BIT, 1, {.depthStencil = {1.0f, 0}}};
-    VkClearRect const rect = {toVkRect(m_scissor), 0, 1};
+    const VkClearRect rect = {toVkRect(m_scissor), 0, 1};
     if (rect.rect.extent.width == 0 || rect.rect.extent.height == 0) {
         return;
     }
     vg::vkCmdClearAttachments(m_command_buffer, 1, &attachment, 1, &rect);
 }
 
-void RenderContext::clearColorAndDepth(Vec4 const& color) {
+void RenderContext::clearColorAndDepth(const Vec4& color) {
     std::array<VkClearAttachment, 2> attachments{};
     attachments[0].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     attachments[0].colorAttachment = 0;
     attachments[0].clearValue.color = {{color.r, color.g, color.b, color.a}};
     attachments[1].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
     attachments[1].clearValue.depthStencil = {1.0f, 0};
-    VkClearRect const rect = {toVkRect(m_scissor), 0, 1};
+    const VkClearRect rect = {toVkRect(m_scissor), 0, 1};
     if (rect.rect.extent.width == 0 || rect.rect.extent.height == 0) {
         return;
     }
@@ -138,7 +138,7 @@ void RenderContext::setDepthTest(bool enabled) { m_depth_test = enabled; }
 bool RenderContext::depthTest() const { return m_depth_test; }
 
 void RenderContext::bindPipeline(PipelineHandle pipeline) {
-    VkPipeline const handle = m_renderer.pipeline(pipeline, m_depth_test);
+    const VkPipeline handle = m_renderer.pipeline(pipeline, m_depth_test);
     if (m_bound_pipeline == handle) {
         return;
     }
@@ -147,8 +147,8 @@ void RenderContext::bindPipeline(PipelineHandle pipeline) {
     m_bound_pipeline = handle;
 }
 
-void RenderContext::bindTexture(Texture const* texture) {
-    VkDescriptorSet const descriptor_set =
+void RenderContext::bindTexture(const Texture* texture) {
+    const VkDescriptorSet descriptor_set =
             (texture != nullptr ? texture : &m_renderer.whiteTexture())
                     ->descriptorSet();
     if (descriptor_set == m_bound_descriptor_set) {
@@ -165,8 +165,8 @@ void RenderContext::bindTexture(Texture const* texture) {
     m_bound_descriptor_set = descriptor_set;
 }
 
-void RenderContext::pushConstants(Mat4 const& model, Vec4 const& params) {
-    DrawConstants const constants = {m_projection * m_view * model, params};
+void RenderContext::pushConstants(const Mat4& model, const Vec4& params) {
+    const DrawConstants constants = {m_projection * m_view * model, params};
     vg::vkCmdPushConstants(
             m_command_buffer,
             m_renderer.pipelineLayout(),
@@ -176,7 +176,7 @@ void RenderContext::pushConstants(Mat4 const& model, Vec4 const& params) {
             &constants);
 }
 
-void RenderContext::draw(UiMesh& mesh, Mat4 const& model) {
+void RenderContext::draw(UiMesh& mesh, const Mat4& model) {
     if (!m_renderer.m_ui_triangle_pipeline || !m_renderer.m_ui_line_pipeline) {
         return;
     }
@@ -186,18 +186,18 @@ void RenderContext::draw(UiMesh& mesh, Mat4 const& model) {
          model);
 }
 
-void RenderContext::drawRetained(HostBuffer const& buffer,
-                                 RetainedMeshBase const& mesh,
+void RenderContext::drawRetained(const HostBuffer& buffer,
+                                 const RetainedMeshBase& mesh,
                                  std::uint32_t triangle_count,
                                  std::uint32_t line_count,
                                  PipelineHandle triangle_pipeline,
                                  PipelineHandle line_pipeline,
-                                 Mat4 const& model) {
-    VkBuffer const vk_buffer = buffer.buffer.getVkBuffer();
+                                 const Mat4& model) {
+    const VkBuffer vk_buffer = buffer.buffer.getVkBuffer();
     if (vk_buffer == VK_NULL_HANDLE) {
         return;
     }
-    VkDeviceSize const offset = 0;
+    const VkDeviceSize offset = 0;
     if (triangle_count != 0) {
         bindPipeline(triangle_pipeline);
         bindTexture(mesh.texture());
@@ -218,13 +218,13 @@ void RenderContext::drawRetained(HostBuffer const& buffer,
     }
 }
 
-void RenderContext::drawTransientBytes(void const* data,
+void RenderContext::drawTransientBytes(const void* data,
                                        std::size_t byte_count,
                                        std::uint32_t vertex_count,
                                        PipelineHandle pipeline,
-                                       Texture const* texture,
-                                       Mat4 const& model,
-                                       Vec4 const& params,
+                                       const Texture* texture,
+                                       const Mat4& model,
+                                       const Vec4& params,
                                        float line_width) {
     if (vertex_count == 0) {
         return;
@@ -244,40 +244,40 @@ void RenderContext::drawTransientBytes(void const* data,
     vg::vkCmdDraw(m_command_buffer, vertex_count, 1, 0, 0);
 }
 
-void RenderContext::drawMesh(Mesh const& mesh,
+void RenderContext::drawMesh(const Mesh& mesh,
                              PipelineHandle pipeline,
-                             Texture const* texture,
-                             Mat4 const& model,
-                             Vec4 const& params) {
+                             const Texture* texture,
+                             const Mat4& model,
+                             const Vec4& params) {
     if (mesh.vertexCount() == 0) {
         return;
     }
     bindPipeline(pipeline);
     bindTexture(texture);
     pushConstants(model, params);
-    VkBuffer const buffer = mesh.buffer();
-    VkDeviceSize const offset = 0;
+    const VkBuffer buffer = mesh.buffer();
+    const VkDeviceSize offset = 0;
     vg::vkCmdBindVertexBuffers(m_command_buffer, 0, 1, &buffer, &offset);
     vg::vkCmdDraw(m_command_buffer, mesh.vertexCount(), 1, 0, 0);
 }
 
-void RenderContext::drawText(Font const& font,
-                             Vec3 const& raster_position,
+void RenderContext::drawText(const Font& font,
+                             const Vec3& raster_position,
                              std::string_view text,
-                             Vec4 const& color,
-                             Mat4 const& model) {
+                             const Vec4& color,
+                             const Mat4& model) {
     if (!m_renderer.m_text_pipeline || text.empty()) {
         return;
     }
-    Vec4 const clip =
+    const Vec4 clip =
             m_projection * m_view * model * Vec4(raster_position, 1.0f);
     // A position outside the view volume draws nothing.
     if (clip.w <= 0.0f || std::abs(clip.x) > clip.w ||
         std::abs(clip.y) > clip.w || clip.z < 0.0f || clip.z > clip.w) {
         return;
     }
-    Vec3 const device_coords = Vec3(clip) / clip.w;
-    Vec2 const origin(static_cast<float>(m_viewport.x) +
+    const Vec3 device_coords = Vec3(clip) / clip.w;
+    const Vec2 origin(static_cast<float>(m_viewport.x) +
                               (device_coords.x + 1.0f) * 0.5f *
                                       static_cast<float>(m_viewport.width),
                       static_cast<float>(m_viewport.y) +
@@ -286,17 +286,17 @@ void RenderContext::drawText(Font const& font,
     // Glyph quads in framebuffer pixels from the projected baseline origin,
     // converted straight to normalized device coordinates, so they are
     // drawn across the whole framebuffer (still clipped by the scissor).
-    float const width = static_cast<float>(m_extent.width);
-    float const height = static_cast<float>(m_extent.height);
-    auto to_ndc = [&](Vec2 const& pixel) {
+    const float width = static_cast<float>(m_extent.width);
+    const float height = static_cast<float>(m_extent.height);
+    auto to_ndc = [&](const Vec2& pixel) {
         return Vec3(pixel.x / width * 2.0f - 1.0f,
                     pixel.y / height * 2.0f - 1.0f,
                     device_coords.z);
     };
     std::vector<UiVertex> vertices;
-    for (BitmapFontGlyphQuad const& glyph :
+    for (const BitmapFontGlyphQuad& glyph :
          font.bitmap().layoutText(std::string(text), origin)) {
-        std::array<UiVertex, 4> const corners = {
+        const std::array<UiVertex, 4> corners = {
                 UiVertex{to_ndc(glyph.top_left), color, glyph.uv_top_left},
                 UiVertex{to_ndc(Vec2(glyph.top_left.x, glyph.bottom_right.y)),
                          color,
@@ -314,8 +314,8 @@ void RenderContext::drawText(Font const& font,
     if (vertices.empty()) {
         return;
     }
-    Mat4 const saved_projection = m_projection;
-    Mat4 const saved_view = m_view;
+    const Mat4 saved_projection = m_projection;
+    const Mat4 saved_view = m_view;
     m_projection = Mat4(1.0f);
     m_view = Mat4(1.0f);
     applyViewport({0,
@@ -341,20 +341,20 @@ Renderer::Renderer() : m_context(*this) {}
 
 Renderer::~Renderer() { shutdown(); }
 
-Renderer::SwapchainInfo Renderer::swapchainInfo(TutorialBase const& base) {
-    SwapChainParameters const& swapchain = base.getSwapchainParameters();
+Renderer::SwapchainInfo Renderer::swapchainInfo(const TutorialBase& base) {
+    const SwapChainParameters& swapchain = base.getSwapchainParameters();
     SwapchainInfo info;
     info.swapchain = swapchain.getVkSwapchainKhr();
     info.format = swapchain.getVkFormat();
     info.extent = swapchain.getVkExtent2d();
-    for (ImageParameters const& image : swapchain.getImageParameters()) {
+    for (const ImageParameters& image : swapchain.getImageParameters()) {
         info.images.push_back(image.getVkImage());
         info.views.push_back(image.getVkImageView());
     }
     return info;
 }
 
-bool Renderer::initialize(TutorialBase const& base) {
+bool Renderer::initialize(const TutorialBase& base) {
     s_instance = this;
     m_device.device = base.getVkDevice();
     m_device.physical_device = base.getVkPhysicalDevice();
@@ -382,7 +382,7 @@ bool Renderer::initialize(TutorialBase const& base) {
         !createDescriptorResources() || !createFrameSlots()) {
         return false;
     }
-    std::vector<char> const white(4, static_cast<char>(0xFF));
+    const std::vector<char> white(4, static_cast<char>(0xFF));
     m_white_texture =
             createTexture(white, 1, 1, VK_SAMPLER_ADDRESS_MODE_REPEAT);
     return m_white_texture != nullptr;
@@ -408,9 +408,9 @@ bool Renderer::createRenderPass() {
     attachments[1].finalLayout =
             VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-    VkAttachmentReference const color_reference = {
+    const VkAttachmentReference color_reference = {
             0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
-    VkAttachmentReference const depth_reference = {
+    const VkAttachmentReference depth_reference = {
             1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
     VkSubpassDescription subpass = {};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -444,7 +444,7 @@ bool Renderer::createRenderPass() {
 }
 
 bool Renderer::createSwapchainResources() {
-    vc::ImageFactory const factory(m_device.device, m_device.physical_device);
+    const vc::ImageFactory factory(m_device.device, m_device.physical_device);
     VkImage depth_image = VK_NULL_HANDLE;
     if (!factory.createImage(m_swapchain.extent.width,
                              m_swapchain.extent.height,
@@ -473,9 +473,9 @@ bool Renderer::createSwapchainResources() {
 
     m_framebuffers.assign(m_swapchain.views.size(), VK_NULL_HANDLE);
     m_render_finished.assign(m_swapchain.views.size(), VK_NULL_HANDLE);
-    vc::FrameResourceFactory const frame_factory(m_device.device);
+    const vc::FrameResourceFactory frame_factory(m_device.device);
     for (std::size_t i = 0; i < m_swapchain.views.size(); ++i) {
-        std::array<VkImageView, 2> const views = {m_swapchain.views[i],
+        const std::array<VkImageView, 2> views = {m_swapchain.views[i],
                                                   depth_view};
         VkFramebufferCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -519,7 +519,7 @@ void Renderer::releaseSwapchainResources() {
     destroySwapchainResources();
 }
 
-bool Renderer::onSwapchainRecreated(TutorialBase const& base) {
+bool Renderer::onSwapchainRecreated(const TutorialBase& base) {
     vg::vkDeviceWaitIdle(m_device.device);
     destroySwapchainResources();
     m_swapchain = swapchainInfo(base);
@@ -527,7 +527,7 @@ bool Renderer::onSwapchainRecreated(TutorialBase const& base) {
 }
 
 bool Renderer::createDescriptorResources() {
-    VkDescriptorSetLayoutBinding const binding = {
+    const VkDescriptorSetLayoutBinding binding = {
             0,
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             1,
@@ -543,7 +543,7 @@ bool Renderer::createDescriptorResources() {
         return false;
     }
 
-    VkDescriptorPoolSize const pool_size = {
+    const VkDescriptorPoolSize pool_size = {
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, c_max_textures};
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -557,7 +557,7 @@ bool Renderer::createDescriptorResources() {
         return false;
     }
 
-    VkPushConstantRange const push_range = {
+    const VkPushConstantRange push_range = {
             VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             0,
             sizeof(DrawConstants)};
@@ -574,7 +574,7 @@ bool Renderer::createDescriptorResources() {
 }
 
 std::optional<PipelineHandle> Renderer::createPipeline(
-        PipelineDescription const& description) {
+        const PipelineDescription& description) {
     std::array<VkPipeline, 2> variants = {VK_NULL_HANDLE, VK_NULL_HANDLE};
     if (!createPipelineVariant(description, true, &variants[0]) ||
         !createPipelineVariant(description, false, &variants[1])) {
@@ -600,7 +600,7 @@ void Renderer::setUiPipelines(PipelineHandle triangles, PipelineHandle lines) {
 
 void Renderer::setTextPipeline(PipelineHandle text) { m_text_pipeline = text; }
 
-bool Renderer::createPipelineVariant(PipelineDescription const& description,
+bool Renderer::createPipelineVariant(const PipelineDescription& description,
                                      bool depth_test,
                                      VkPipeline* out) {
     auto vertex_module = vc::createShaderModule(
@@ -620,8 +620,8 @@ bool Renderer::createPipelineVariant(PipelineDescription const& description,
     stages[1].module = fragment_module.get();
     stages[1].pName = "main";
 
-    VertexLayout const& layout = description.vertex_layout;
-    VkVertexInputBindingDescription const binding = {
+    const VertexLayout& layout = description.vertex_layout;
+    const VkVertexInputBindingDescription binding = {
             0, layout.stride, VK_VERTEX_INPUT_RATE_VERTEX};
     VkPipelineVertexInputStateCreateInfo vertex_input = {};
     vertex_input.sType =
@@ -689,7 +689,7 @@ bool Renderer::createPipelineVariant(PipelineDescription const& description,
     color_blend.attachmentCount = 1;
     color_blend.pAttachments = &blend_attachment;
 
-    std::array<VkDynamicState, 3> const dynamic_states = {
+    const std::array<VkDynamicState, 3> dynamic_states = {
             VK_DYNAMIC_STATE_VIEWPORT,
             VK_DYNAMIC_STATE_SCISSOR,
             VK_DYNAMIC_STATE_LINE_WIDTH};
@@ -732,7 +732,7 @@ bool Renderer::createFrameSlots() {
         VK_SUCCESS) {
         return false;
     }
-    vc::FrameResourceFactory const factory(m_device.device);
+    const vc::FrameResourceFactory factory(m_device.device);
     for (FrameSlot& slot : m_frames) {
         if (!factory.allocateCommandBuffers(
                     m_command_pool, 1, &slot.command_buffer) ||
@@ -844,7 +844,7 @@ VkExtent2D Renderer::extent() const { return m_swapchain.extent; }
 
 std::uint64_t Renderer::frameNumber() const { return m_frame_number; }
 
-RenderContext* Renderer::beginFrame(Vec4 const& clear_color) {
+RenderContext* Renderer::beginFrame(const Vec4& clear_color) {
     FrameSlot& slot = m_frames[m_frame_slot];
     vg::vkWaitForFences(
             m_device.device, 1, &slot.in_flight, VK_TRUE, UINT64_MAX);
@@ -853,7 +853,7 @@ RenderContext* Renderer::beginFrame(Vec4 const& clear_color) {
     runReleases(slot);
     slot.transient_offset = 0;
 
-    VkResult const acquired = ::vkAcquireNextImageKHR(m_device.device,
+    const VkResult acquired = ::vkAcquireNextImageKHR(m_device.device,
                                                       m_swapchain.swapchain,
                                                       UINT64_MAX,
                                                       slot.image_available,
@@ -896,9 +896,9 @@ bool Renderer::endFrame() {
     FrameSlot& slot = m_frames[m_frame_slot];
     vg::vkCmdEndRenderPass(slot.command_buffer);
 
-    bool const capturing = !m_capture_path.empty();
+    const bool capturing = !m_capture_path.empty();
     if (capturing) {
-        VkDeviceSize const size =
+        const VkDeviceSize size =
                 static_cast<VkDeviceSize>(m_swapchain.extent.width) *
                 m_swapchain.extent.height * 4;
         if (m_capture_buffer.buffer.getSize() < size) {
@@ -908,7 +908,7 @@ bool Renderer::endFrame() {
             m_capture_buffer =
                     createHostBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT);
         }
-        VkImage const image = m_swapchain.images[m_image_index];
+        const VkImage image = m_swapchain.images[m_image_index];
         VkImageMemoryBarrier barrier = {};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
@@ -956,9 +956,9 @@ bool Renderer::endFrame() {
     }
     vg::vkEndCommandBuffer(slot.command_buffer);
 
-    VkPipelineStageFlags const wait_stage =
+    const VkPipelineStageFlags wait_stage =
             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSemaphore const render_finished = m_render_finished[m_image_index];
+    const VkSemaphore render_finished = m_render_finished[m_image_index];
     VkSubmitInfo submit_info = {};
     submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submit_info.waitSemaphoreCount = 1;
@@ -987,7 +987,7 @@ bool Renderer::endFrame() {
     present_info.swapchainCount = 1;
     present_info.pSwapchains = &m_swapchain.swapchain;
     present_info.pImageIndices = &m_image_index;
-    VkResult const presented =
+    const VkResult presented =
             ::vkQueuePresentKHR(m_device.present_queue, &present_info);
 
     m_frame_slot = (m_frame_slot + 1) % c_frames_in_flight;
@@ -1004,17 +1004,17 @@ bool Renderer::writeCapture() {
     if (file == nullptr) {
         return false;
     }
-    std::uint32_t const width = m_swapchain.extent.width;
-    std::uint32_t const height = m_swapchain.extent.height;
+    const std::uint32_t width = m_swapchain.extent.width;
+    const std::uint32_t height = m_swapchain.extent.height;
     std::fprintf(file, "P6\n%u %u\n255\n", width, height);
-    bool const bgra = m_swapchain.format == VK_FORMAT_B8G8R8A8_UNORM ||
+    const bool bgra = m_swapchain.format == VK_FORMAT_B8G8R8A8_UNORM ||
                       m_swapchain.format == VK_FORMAT_B8G8R8A8_SRGB;
-    auto const* pixels =
-            static_cast<std::uint8_t const*>(m_capture_buffer.mapped);
+    const auto* pixels =
+            static_cast<const std::uint8_t*>(m_capture_buffer.mapped);
     std::vector<std::uint8_t> row_pixels(static_cast<std::size_t>(width) * 3);
     for (std::uint32_t y = 0; y < height; ++y) {
         for (std::uint32_t x = 0; x < width; ++x) {
-            std::uint8_t const* pixel =
+            const std::uint8_t* pixel =
                     pixels + (static_cast<std::size_t>(y) * width + x) * 4;
             row_pixels[x * 3 + 0] = bgra ? pixel[2] : pixel[0];
             row_pixels[x * 3 + 1] = pixel[1];
@@ -1027,12 +1027,12 @@ bool Renderer::writeCapture() {
     return true;
 }
 
-bool Renderer::allocateTransient(void const* data,
+bool Renderer::allocateTransient(const void* data,
                                  VkDeviceSize size,
                                  VkBuffer* buffer,
                                  VkDeviceSize* offset) {
     FrameSlot& slot = m_frames[m_frame_slot];
-    VkDeviceSize const aligned =
+    const VkDeviceSize aligned =
             (slot.transient_offset + 15) & ~VkDeviceSize{15};
     if (aligned + size > slot.transient.buffer.getSize()) {
         return false;
@@ -1049,7 +1049,7 @@ HostBuffer Renderer::createHostBuffer(VkDeviceSize size,
                                       VkBufferUsageFlags usage) {
     HostBuffer host;
     host.buffer.setSize(static_cast<std::uint32_t>(size));
-    vc::BufferFactory const factory(m_device.device, m_device.physical_device);
+    const vc::BufferFactory factory(m_device.device, m_device.physical_device);
     if (!factory.create(usage,
                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                                 VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -1071,8 +1071,8 @@ void Renderer::deferRelease(BufferParameters buffer) {
     if (buffer.getVkBuffer() == VK_NULL_HANDLE) {
         return;
     }
-    VkDevice const device = m_device.device;
-    VkPhysicalDevice const physical_device = m_device.physical_device;
+    const VkDevice device = m_device.device;
+    const VkPhysicalDevice physical_device = m_device.physical_device;
     m_frames[m_frame_slot].releases.emplace_back([=]() mutable {
         // Unmapping is implicit in freeing the memory.
         vc::BufferFactory(device, physical_device).destroy(buffer);
@@ -1081,9 +1081,9 @@ void Renderer::deferRelease(BufferParameters buffer) {
 
 void Renderer::deferRelease(ImageParameters image,
                             VkDescriptorSet descriptor_set) {
-    VkDevice const device = m_device.device;
-    VkPhysicalDevice const physical_device = m_device.physical_device;
-    VkDescriptorPool const pool = m_descriptor_pool;
+    const VkDevice device = m_device.device;
+    const VkPhysicalDevice physical_device = m_device.physical_device;
+    const VkDescriptorPool pool = m_descriptor_pool;
     m_frames[m_frame_slot].releases.emplace_back([=]() mutable {
         if (descriptor_set != VK_NULL_HANDLE) {
             vg::vkFreeDescriptorSets(device, pool, 1, &descriptor_set);
@@ -1105,7 +1105,7 @@ VkDescriptorSet Renderer::allocateTextureDescriptor(VkImageView view,
                                      &descriptor_set) != VK_SUCCESS) {
         return VK_NULL_HANDLE;
     }
-    VkDescriptorImageInfo const image_info = {
+    const VkDescriptorImageInfo image_info = {
             sampler, view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
     VkWriteDescriptorSet write = {};
     write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -1119,14 +1119,14 @@ VkDescriptorSet Renderer::allocateTextureDescriptor(VkImageView view,
 }
 
 std::shared_ptr<Texture> Renderer::createTexture(
-        std::vector<char> const& pixels,
+        const std::vector<char>& pixels,
         std::uint32_t width,
         std::uint32_t height,
         VkSamplerAddressMode address_mode) {
     if (pixels.size() < static_cast<std::size_t>(width) * height * 4) {
         return nullptr;
     }
-    vc::BufferFactory const buffer_factory(m_device.device,
+    const vc::BufferFactory buffer_factory(m_device.device,
                                            m_device.physical_device);
     BufferParameters staging;
     staging.setSize(static_cast<std::uint32_t>(pixels.size()));
@@ -1139,12 +1139,12 @@ std::shared_ptr<Texture> Renderer::createTexture(
     VkCommandBuffer upload_commands = VK_NULL_HANDLE;
     vc::FrameResourceFactory(m_device.device)
             .allocateCommandBuffers(m_command_pool, 1, &upload_commands);
-    vc::ImageFactory const image_factory(m_device.device,
+    const vc::ImageFactory image_factory(m_device.device,
                                          m_device.physical_device);
-    vc::StagedUploader const uploader(
+    const vc::StagedUploader uploader(
             m_device.device, m_device.graphics_queue, upload_commands);
     ImageParameters image;
-    bool const created =
+    const bool created =
             vc::createTextureFromPixels(image_factory,
                                         uploader,
                                         staging,
@@ -1161,22 +1161,22 @@ std::shared_ptr<Texture> Renderer::createTexture(
         image_factory.destroy(image);
         return nullptr;
     }
-    VkDescriptorSet const descriptor_set = allocateTextureDescriptor(
+    const VkDescriptorSet descriptor_set = allocateTextureDescriptor(
             image.getVkImageView(), image.getVkSampler());
     return std::make_shared<Texture>(image, descriptor_set, width, height);
 }
 
 std::shared_ptr<Texture> Renderer::loadRawTexture(
-        std::string const& filename,
+        const std::string& filename,
         std::uint32_t width,
         std::uint32_t height,
         VkSamplerAddressMode address_mode) {
-    std::string const cache_key =
+    const std::string cache_key =
             filename + "#" + std::to_string(static_cast<int>(address_mode));
     if (auto cached = m_texture_cache[cache_key].lock()) {
         return cached;
     }
-    std::vector<char> const pixels =
+    const std::vector<char> pixels =
             vg::Tools::getRawImageData(filename, width, height);
     if (pixels.empty()) {
         std::fprintf(stderr,
@@ -1191,8 +1191,8 @@ std::shared_ptr<Texture> Renderer::loadRawTexture(
 }
 
 std::shared_ptr<Texture> Renderer::loadImageTexture(
-        std::string const& filename, VkSamplerAddressMode address_mode) {
-    std::string const cache_key =
+        const std::string& filename, VkSamplerAddressMode address_mode) {
+    const std::string cache_key =
             filename + "#" + std::to_string(static_cast<int>(address_mode));
     if (auto cached = m_texture_cache[cache_key].lock()) {
         return cached;
@@ -1201,7 +1201,7 @@ std::shared_ptr<Texture> Renderer::loadImageTexture(
     std::int32_t height = 0;
     std::int32_t components = 0;
     std::int32_t data_size = 0;
-    std::vector<char> const pixels = vg::Tools::getImageData(
+    const std::vector<char> pixels = vg::Tools::getImageData(
             filename, 4, &width, &height, &components, &data_size);
     if (pixels.empty()) {
         std::fprintf(stderr,
@@ -1218,9 +1218,9 @@ std::shared_ptr<Texture> Renderer::loadImageTexture(
     return texture;
 }
 
-Texture const& Renderer::whiteTexture() const { return *m_white_texture; }
+const Texture& Renderer::whiteTexture() const { return *m_white_texture; }
 
-std::unique_ptr<Font> Renderer::loadFont(std::string const& font_path,
+std::unique_ptr<Font> Renderer::loadFont(const std::string& font_path,
                                          float pixel_height) {
     BitmapFont bitmap;
     if (!bitmap.load(font_path, pixel_height)) {
@@ -1241,12 +1241,12 @@ std::unique_ptr<Font> Renderer::loadFont(std::string const& font_path,
 }
 
 std::unique_ptr<Mesh> Renderer::createMeshFromBytes(
-        void const* data, std::size_t byte_count, std::uint32_t vertex_count) {
+        const void* data, std::size_t byte_count, std::uint32_t vertex_count) {
     if (vertex_count == 0) {
         return std::make_unique<Mesh>(BufferParameters(), 0);
     }
-    VkDeviceSize const size = byte_count;
-    vc::BufferFactory const factory(m_device.device, m_device.physical_device);
+    const VkDeviceSize size = byte_count;
+    const vc::BufferFactory factory(m_device.device, m_device.physical_device);
     BufferParameters destination;
     destination.setSize(static_cast<std::uint32_t>(size));
     if (!factory.create(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
@@ -1267,7 +1267,7 @@ std::unique_ptr<Mesh> Renderer::createMeshFromBytes(
     VkCommandBuffer upload_commands = VK_NULL_HANDLE;
     vc::FrameResourceFactory(m_device.device)
             .allocateCommandBuffers(m_command_pool, 1, &upload_commands);
-    bool const uploaded =
+    const bool uploaded =
             vc::StagedUploader(
                     m_device.device, m_device.graphics_queue, upload_commands)
                     .uploadToBuffer(staging,
@@ -1286,33 +1286,33 @@ std::unique_ptr<Mesh> Renderer::createMeshFromBytes(
     return std::make_unique<Mesh>(destination, vertex_count);
 }
 
-Mesh const& Renderer::sphere(std::uint32_t slices, std::uint32_t stacks) {
+const Mesh& Renderer::sphere(std::uint32_t slices, std::uint32_t stacks) {
     auto& mesh = m_spheres[{slices, stacks}];
     if (mesh) {
         return *mesh;
     }
     // freeglut's fghGenerateSphere(): slice angles run clockwise
     // (-2*pi*j/slices), stack angles from the +z pole (pi*i/stacks).
-    float const pi = 3.14159265358979323846f;
+    const float pi = 3.14159265358979323846f;
     auto point = [&](std::uint32_t stack, std::uint32_t slice) {
-        float const polar_angle =
+        const float polar_angle =
                 pi * static_cast<float>(stack) / static_cast<float>(stacks);
-        float const theta = -2.0f * pi * static_cast<float>(slice % slices) /
+        const float theta = -2.0f * pi * static_cast<float>(slice % slices) /
                             static_cast<float>(slices);
         return Vec3(std::cos(theta) * std::sin(polar_angle),
                     std::sin(theta) * std::sin(polar_angle),
                     std::cos(polar_angle));
     };
     std::vector<MeshVertex> vertices;
-    auto emit = [&](Vec3 const& position) {
+    auto emit = [&](const Vec3& position) {
         vertices.push_back({position, position, Vec2(0.0f)});
     };
     for (std::uint32_t stack = 0; stack < stacks; ++stack) {
         for (std::uint32_t slice = 0; slice < slices; ++slice) {
-            Vec3 const top_left = point(stack, slice);
-            Vec3 const top_right = point(stack, slice + 1);
-            Vec3 const bottom_left = point(stack + 1, slice);
-            Vec3 const bottom_right = point(stack + 1, slice + 1);
+            const Vec3 top_left = point(stack, slice);
+            const Vec3 top_right = point(stack, slice + 1);
+            const Vec3 bottom_left = point(stack + 1, slice);
+            const Vec3 bottom_right = point(stack + 1, slice + 1);
             if (stack != 0) {
                 emit(top_left);
                 emit(bottom_left);

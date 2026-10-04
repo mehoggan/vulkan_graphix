@@ -4,13 +4,13 @@ namespace vulkan_graphix::UiGeometry {
 
 std::vector<ColoredQuad> buildBevelFrame(Math::Vec2<float> top_left,
                                          Math::Vec2<float> size,
-                                         BevelColors const& colors,
+                                         const BevelColors& colors,
                                          float bevel_size) {
-    float const x0 = top_left.x;
-    float const y0 = top_left.y;
-    float const x1 = top_left.x + size.x;
-    float const y1 = top_left.y + size.y;
-    float const b = bevel_size;
+    const float x0 = top_left.x;
+    const float y0 = top_left.y;
+    const float x1 = top_left.x + size.x;
+    const float y1 = top_left.y + size.y;
+    const float b = bevel_size;
 
     std::vector<ColoredQuad> quads;
     quads.reserve(5);
@@ -58,18 +58,18 @@ std::vector<ColoredQuad> buildButtonBevel(Math::Vec2<float> top_left,
                                           Math::Vec4<float> base_color,
                                           bool pressed,
                                           float bevel_size) {
-    Math::Vec4<float> const light(base_color.r + 0.2f,
+    const Math::Vec4<float> light(base_color.r + 0.2f,
                                   base_color.g + 0.2f,
                                   base_color.b + 0.2f,
                                   base_color.a);
-    Math::Vec4<float> const dark(base_color.r - 0.4f,
+    const Math::Vec4<float> dark(base_color.r - 0.4f,
                                  base_color.g - 0.4f,
                                  base_color.b - 0.4f,
                                  base_color.a);
     // Raised: light catches the top/left edges, shadow falls on
     // bottom/right. Pressed swaps the two, simulating the face sinking.
-    Math::Vec4<float> const top_left_color = pressed ? dark : light;
-    Math::Vec4<float> const bottom_right_color = pressed ? light : dark;
+    const Math::Vec4<float> top_left_color = pressed ? dark : light;
+    const Math::Vec4<float> bottom_right_color = pressed ? light : dark;
     return buildBevelFrame(top_left,
                            size,
                            {base_color,

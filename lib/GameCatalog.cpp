@@ -25,8 +25,8 @@ constexpr Color c_medium_blue = {0.196078, 0.196078, 0.8};
 constexpr Color c_medium_slate_blue = {0.498039, 1.0, 0.0};
 }  // namespace
 
-std::array<ItemSpec, c_item_count> const& items() {
-    static std::array<ItemSpec, c_item_count> const data = {{
+const std::array<ItemSpec, c_item_count>& items() {
+    static const std::array<ItemSpec, c_item_count> data = {{
             {"ItemSmallRepair.raw",
              "Small Repair:     Heals 200 damage.",
              50,
@@ -89,12 +89,12 @@ std::array<ItemSpec, c_item_count> const& items() {
     return data;
 }
 
-ItemSpec const& item(ItemKind kind) {
+const ItemSpec& item(ItemKind kind) {
     return items()[static_cast<std::size_t>(kind)];
 }
 
-std::array<WeaponSpec, c_weapon_count> const& weapons() {
-    static std::array<WeaponSpec, c_weapon_count> const data = {{
+const std::array<WeaponSpec, c_weapon_count>& weapons() {
+    static const std::array<WeaponSpec, c_weapon_count> data = {{
             {"WeaponMFB.raw",
              "MFB:     (Medium Force Bomb) Damage:300",
              60,
@@ -220,7 +220,7 @@ std::array<WeaponSpec, c_weapon_count> const& weapons() {
     return data;
 }
 
-WeaponSpec const& weapon(WeaponKind kind) {
+const WeaponSpec& weapon(WeaponKind kind) {
     return weapons()[static_cast<std::size_t>(kind)];
 }
 

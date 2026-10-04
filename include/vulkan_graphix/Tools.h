@@ -62,9 +62,9 @@ private:
 // and what the file readers below resolve relative filenames against.
 std::filesystem::path executableDir();
 
-std::vector<char> getBinaryFileContents(std::string const& filename);
+std::vector<char> getBinaryFileContents(const std::string& filename);
 
-std::vector<char> getImageData(std::string const& filename,
+std::vector<char> getImageData(const std::string& filename,
                                std::int32_t requested_components,
                                std::int32_t* width,
                                std::int32_t* height,
@@ -78,7 +78,7 @@ std::vector<char> getImageData(std::string const& filename,
 // every pixel) so the result is drop-in compatible with the same
 // VK_FORMAT_R8G8B8A8_UNORM upload path getImageData()'s callers use.
 // Returns an empty vector on any read failure.
-std::vector<char> getRawImageData(std::string const& filename,
+std::vector<char> getRawImageData(const std::string& filename,
                                   std::uint32_t width,
                                   std::uint32_t height);
 
@@ -97,21 +97,21 @@ struct OglVertexData {
 // Parses an entire ".ogl" file into a flat, unindexed vertex list (three
 // consecutive entries make one triangle). Returns an empty vector on any
 // read failure or if the file's token count isn't a multiple of 8.
-std::vector<OglVertexData> loadOglMeshData(std::string const& filename);
+std::vector<OglVertexData> loadOglMeshData(const std::string& filename);
 
 vulkan_graphix::Math::Mat4<float> getPerspectiveProjectionMatrix(
-        float const aspect_ratio,
-        float const field_of_view,
-        float const near_clip,
-        float const far_clip);
+        const float aspect_ratio,
+        const float field_of_view,
+        const float near_clip,
+        const float far_clip);
 
 vulkan_graphix::Math::Mat4<float> getOrthographicProjectionMatrix(
-        float const left_plane,
-        float const right_plane,
-        float const top_plane,
-        float const bottom_plane,
-        float const near_plane,
-        float const far_plane);
+        const float left_plane,
+        const float right_plane,
+        const float top_plane,
+        const float bottom_plane,
+        const float near_plane,
+        const float far_plane);
 
 }  // namespace vulkan_graphix::Tools
 

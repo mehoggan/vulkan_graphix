@@ -462,7 +462,7 @@ bool Tutorial04::createCommandBuffers() {
 }
 
 bool Tutorial04::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -499,7 +499,7 @@ bool Tutorial04::createSemaphores() {
 }
 
 bool Tutorial04::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
