@@ -223,7 +223,7 @@ bool Tutorial08::createCommandBuffers() {
 }
 
 bool Tutorial08::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -256,7 +256,7 @@ bool Tutorial08::createSemaphores() {
 }
 
 bool Tutorial08::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -328,7 +328,7 @@ bool Tutorial08::allocateImageMemory(VkImage image,
 bool Tutorial08::createDepthResources() {
     ImageParameters& depth_image =
             m_vulkan_tutorial08_parameters.getDepthImageParameters();
-    VulkanCommon::ImageFactory const image_factory(getVkDevice(),
+    const VulkanCommon::ImageFactory image_factory(getVkDevice(),
                                                    getVkPhysicalDevice());
 
     VkImage vk_image;
@@ -400,7 +400,7 @@ bool Tutorial08::createUniformBuffer() {
 
 Tutorial08UniformBufferData Tutorial08::getUniformBufferData() const {
     using namespace std::chrono;
-    float const elapsed_seconds =
+    const float elapsed_seconds =
             duration<float>(steady_clock::now() - m_start_time).count();
 
     Tutorial08UniformBufferData data{};
@@ -411,9 +411,9 @@ Tutorial08UniformBufferData Tutorial08::getUniformBufferData() const {
                             Math::Vec3<float>(0.0f, 0.0f, 0.0f),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 10.0f);
@@ -426,7 +426,7 @@ Tutorial08UniformBufferData Tutorial08::getUniformBufferData() const {
 }
 
 bool Tutorial08::updateUniformBufferData() {
-    Tutorial08UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial08UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial08_parameters.getUniformBufferParameters();
 
@@ -858,14 +858,14 @@ bool Tutorial08::createPipeline() {
 
 const std::vector<Tutorial08VertexData>& Tutorial08::getVertexData() const {
     static const std::vector<Tutorial08VertexData> vertex_data = [] {
-        Math::Sphere<float, std::uint32_t> const sphere(
+        const Math::Sphere<float, std::uint32_t> sphere(
                 1.0f, static_cast<std::uint8_t>(3));
 
         std::vector<Tutorial08VertexData> data;
         data.reserve(sphere.points().size());
         for (std::size_t i = 0; i < sphere.points().size(); ++i) {
-            Math::Vec3<float> const& point = sphere.points()[i];
-            Math::Vec3<float> const& normal = sphere.normals()[i];
+            const Math::Vec3<float>& point = sphere.points()[i];
+            const Math::Vec3<float>& normal = sphere.normals()[i];
             data.push_back({Math::Vec4<float>(point, 1.0f), normal});
         }
         return data;
@@ -876,7 +876,7 @@ const std::vector<Tutorial08VertexData>& Tutorial08::getVertexData() const {
 
 const std::vector<std::uint32_t>& Tutorial08::getIndexData() const {
     static const std::vector<std::uint32_t> index_data = [] {
-        Math::Sphere<float, std::uint32_t> const sphere(
+        const Math::Sphere<float, std::uint32_t> sphere(
                 1.0f, static_cast<std::uint8_t>(3));
         return sphere.indices();
     }();

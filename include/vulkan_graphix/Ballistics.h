@@ -25,18 +25,18 @@ struct Launch {
 
 // The point `distance` world units out along the barrel of turret_matrix:
 // translation - distance * (column 2).
-Math::Vec3<float> pointAlongBarrel(Math::Mat4<float> const& turret_matrix,
+Math::Vec3<float> pointAlongBarrel(const Math::Mat4<float>& turret_matrix,
                                    float distance);
 
 // A shell fired at `speed` from pointAlongBarrel(turret_matrix,
 // muzzle_distance), travelling down the barrel.
-Launch launchFromBarrel(Math::Mat4<float> const& turret_matrix,
+Launch launchFromBarrel(const Math::Mat4<float>& turret_matrix,
                         float speed,
                         float muzzle_distance);
 
 // Position `time` after launch under constant vertical gravity (negative
 // pulls down): x/z move linearly, y follows y0 + vy*t + g*t^2/2.
-Math::Vec3<float> positionAt(Launch const& launch, float gravity, float time);
+Math::Vec3<float> positionAt(const Launch& launch, float gravity, float time);
 
 }  // namespace vulkan_graphix::Ballistics
 

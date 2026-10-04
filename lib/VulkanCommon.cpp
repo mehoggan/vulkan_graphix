@@ -13,7 +13,7 @@ namespace {
 // in how the VkMemoryRequirements are obtained.
 bool findAndAllocateMemory(VkDevice device,
                            VkPhysicalDevice physical_device,
-                           VkMemoryRequirements const& requirements,
+                           const VkMemoryRequirements& requirements,
                            VkMemoryPropertyFlags property,
                            VkDeviceMemory* memory) {
     VkPhysicalDeviceMemoryProperties memory_properties;

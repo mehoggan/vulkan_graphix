@@ -233,7 +233,7 @@ public:
         // (Escape is 27, Enter 13, ...); its special callbacks get function
         // and arrow keys as GLUT_KEY_* codes.
         if (event.character != '\0') {
-            auto const character_key =
+            const auto character_key =
                     static_cast<std::uint8_t>(event.character);
             if (event.pressed) {
                 keyHandler(character_key, 0, 0);
@@ -364,7 +364,7 @@ int main() {
     readymenu = nullptr;
     shopmenu = nullptr;
 
-    bool const loop_ok = game_window.renderingLoop(earth_app);
+    const bool loop_ok = game_window.renderingLoop(earth_app);
     if (!quit_requested) {
         quitGame(true);
     }
@@ -435,8 +435,8 @@ bool draw() {
     if (context == nullptr) {
         return false;
     }
-    float const near_plane = screen_state != GAME_PLAY ? 1.0 : 100.0;
-    float const far_plane =
+    const float near_plane = screen_state != GAME_PLAY ? 1.0 : 100.0;
+    const float far_plane =
             screen_state != GAME_PLAY ? 1000000.0 : 100000000.0;
     context->setViewport({0, 0, win_width, win_height});
     context->setCamera(vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
@@ -464,8 +464,8 @@ bool draw() {
                 // glutSwapBuffers(): the loading screen goes up while the
                 // ready menu is built, and drawing carries on into the next
                 // frame with the same camera.
-                math::Mat4<float> const projection = context->projection();
-                math::Mat4<float> const view = context->view();
+                const math::Mat4<float> projection = context->projection();
+                const math::Mat4<float> view = context->view();
                 if (!renderer.endFrame()) {
                     return false;
                 }
@@ -526,7 +526,7 @@ bool draw() {
             game_state->draw(*context);
 
             // World axes at the origin (red x, green y, blue z).
-            std::vector<render::UiVertex> const axes = {
+            const std::vector<render::UiVertex> axes = {
                     {math::Vec3<float>(0, 0, 0),
                      math::Vec4<float>(1, 0, 0, 1),
                      math::Vec2<float>(0.0f)},

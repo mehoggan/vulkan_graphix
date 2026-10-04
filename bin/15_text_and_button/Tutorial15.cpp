@@ -444,9 +444,9 @@ bool Tutorial15::createUniformBuffer() {
 }
 
 Math::Mat4<float> Tutorial15::getUniformBufferData() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     // Top-left-origin, y-down screen convention (matches the mouse
     // coordinates onMouseButton() receives): world (0,0) is the window's
@@ -459,7 +459,7 @@ Math::Mat4<float> Tutorial15::getUniformBufferData() const {
 }
 
 bool Tutorial15::updateUniformBufferData() {
-    Math::Mat4<float> const uniform_data = getUniformBufferData();
+    const Math::Mat4<float> uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial15_parameters.getUniformBufferParameters();
 
@@ -891,11 +891,11 @@ Math::Vec2<float> Tutorial15::getButtonSize() const {
 }
 
 Math::Vec2<float> Tutorial15::getButtonTopLeft() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Vec2<float> const size = getButtonSize();
+    const Math::Vec2<float> size = getButtonSize();
     return Math::Vec2<float>(width * 0.5f - size.x * 0.5f,
                              height * 0.5f - size.y * 0.5f);
 }
@@ -933,31 +933,31 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
     std::vector<Tutorial15VertexData> vertex_data;
     vertex_data.reserve(c_max_vertex_count);
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    Math::Vec4<float> const text_color(0.05f, 0.05f, 0.05f, 1.0f);
+    const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
 
-    std::string const title = "Tutorial 15 - Text & UI";
-    float const title_width = m_font.textWidth(title);
-    Math::Vec2<float> const title_origin(width * 0.5f - title_width * 0.5f,
+    const std::string title = "Tutorial 15 - Text & UI";
+    const float title_width = m_font.textWidth(title);
+    const Math::Vec2<float> title_origin(width * 0.5f - title_width * 0.5f,
                                          140.0f);
     appendText(vertex_data, title, title_origin, text_color);
 
-    Math::Vec2<float> const button_top_left = getButtonTopLeft();
-    Math::Vec2<float> const button_size = getButtonSize();
-    Math::Vec4<float> const button_color(0.3f, 0.5f, 0.75f, 1.0f);
-    std::vector<UiGeometry::ColoredQuad> const bevel =
+    const Math::Vec2<float> button_top_left = getButtonTopLeft();
+    const Math::Vec2<float> button_size = getButtonSize();
+    const Math::Vec4<float> button_color(0.3f, 0.5f, 0.75f, 1.0f);
+    const std::vector<UiGeometry::ColoredQuad> bevel =
             UiGeometry::buildButtonBevel(button_top_left,
                                          button_size,
                                          button_color,
                                          m_button_pressed);
-    for (UiGeometry::ColoredQuad const& quad : bevel) {
+    for (const UiGeometry::ColoredQuad& quad : bevel) {
         appendColoredQuad(vertex_data, quad.corners, quad.color);
     }
 
-    std::string const label = getButtonLabel();
-    float const label_width = m_font.textWidth(label);
-    Math::Vec2<float> const label_origin(
+    const std::string label = getButtonLabel();
+    const float label_width = m_font.textWidth(label);
+    const Math::Vec2<float> label_origin(
             button_top_left.x + button_size.x * 0.5f - label_width * 0.5f,
             button_top_left.y + button_size.y * 0.5f +
                     c_font_pixel_height * 0.3f);
@@ -967,7 +967,7 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
 }
 
 bool Tutorial15::updateVertexBufferData() {
-    std::vector<Tutorial15VertexData> const vertex_data = buildUiVertexData();
+    const std::vector<Tutorial15VertexData> vertex_data = buildUiVertexData();
     if (vertex_data.size() > c_max_vertex_count) {
         Logging::error(LOG_TAG,
                        "UI vertex data (",
@@ -1331,10 +1331,10 @@ void Tutorial15::onMouseButton(std::int32_t button,
         return;
     }
 
-    Math::Vec2<float> const top_left = getButtonTopLeft();
-    Math::Vec2<float> const size = getButtonSize();
-    float const x = static_cast<float>(pos_x);
-    float const y = static_cast<float>(pos_y);
+    const Math::Vec2<float> top_left = getButtonTopLeft();
+    const Math::Vec2<float> size = getButtonSize();
+    const float x = static_cast<float>(pos_x);
+    const float y = static_cast<float>(pos_y);
     if (x >= top_left.x && x <= top_left.x + size.x && y >= top_left.y &&
         y <= top_left.y + size.y) {
         // Matches the original: the click registers on press, not on

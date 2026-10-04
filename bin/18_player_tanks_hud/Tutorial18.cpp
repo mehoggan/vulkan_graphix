@@ -650,9 +650,9 @@ Tutorial18UniformBufferData3D Tutorial18::get3DUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     // Near/far sized for this tutorial's wider two-tank world (see the
     // constructor's own comment), not copied from Tutorial16's range.
@@ -663,7 +663,7 @@ Tutorial18UniformBufferData3D Tutorial18::get3DUniformBufferData() const {
 }
 
 bool Tutorial18::update3DUniformBufferData() {
-    Tutorial18UniformBufferData3D const uniform_data =
+    const Tutorial18UniformBufferData3D uniform_data =
             get3DUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial18_parameters.getUniformBuffer3DParameters();
@@ -687,16 +687,16 @@ bool Tutorial18::update3DUniformBufferData() {
 }
 
 Math::Mat4<float> Tutorial18::getHudUniformBufferData() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     return Tools::getOrthographicProjectionMatrix(
             0.0f, width, 0.0f, height, -1.0f, 1.0f);
 }
 
 bool Tutorial18::updateHudUniformBufferData() {
-    Math::Mat4<float> const uniform_data = getHudUniformBufferData();
+    const Math::Mat4<float> uniform_data = getHudUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial18_parameters.getUniformBufferHudParameters();
 
@@ -1415,11 +1415,11 @@ bool Tutorial18::createPipelines() {
 
 std::vector<Tutorial18Vertex3DData> Tutorial18::loadPartVertexData(
         const char* mesh_filename) const {
-    std::vector<Tools::OglVertexData> const mesh_data =
+    const std::vector<Tools::OglVertexData> mesh_data =
             Tools::loadOglMeshData(mesh_filename);
     std::vector<Tutorial18Vertex3DData> vertex_data;
     vertex_data.reserve(mesh_data.size());
-    for (Tools::OglVertexData const& vertex : mesh_data) {
+    for (const Tools::OglVertexData& vertex : mesh_data) {
         vertex_data.push_back(
                 {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
     }
@@ -1429,7 +1429,7 @@ std::vector<Tutorial18Vertex3DData> Tutorial18::loadPartVertexData(
 bool Tutorial18::createPartVertexBuffer(const char* mesh_filename,
                                         BufferParameters& vertex_buffer,
                                         std::uint32_t& vertex_count) {
-    std::vector<Tutorial18Vertex3DData> const vertex_data =
+    const std::vector<Tutorial18Vertex3DData> vertex_data =
             loadPartVertexData(mesh_filename);
     if (vertex_data.empty()) {
         Logging::error(LOG_TAG,
@@ -1452,7 +1452,7 @@ bool Tutorial18::createPartVertexBuffer(const char* mesh_filename,
 
     BufferParameters& staging_buffer =
             m_vulkan_tutorial18_parameters.getStagingBufferParameters();
-    std::uint32_t const data_size = vertex_buffer.getSize();
+    const std::uint32_t data_size = vertex_buffer.getSize();
     if (data_size > staging_buffer.getSize()) {
         Logging::error(LOG_TAG,
                        "Vertex data (",
@@ -1584,7 +1584,7 @@ const std::array<Tutorial18PlayerInfo, 2>& Tutorial18::getPlayers() const {
     // which fields are real vs. illustrative). max_hp = armor*100 is
     // the real formula GameState::drawHUD() itself uses; TankB's real
     // armor is 5, so 500.
-    static std::array<Tutorial18PlayerInfo, 2> const players = {
+    static const std::array<Tutorial18PlayerInfo, 2> players = {
             {{Math::Vec3<float>(400.0f, 0.0f, 0.0f),
               Math::Vec4<float>(0.85f, 0.25f, 0.25f, 1.0f),
               "Player 1",
@@ -1601,39 +1601,39 @@ const std::array<Tutorial18PlayerInfo, 2>& Tutorial18::getPlayers() const {
 }
 
 Math::Mat4<float> Tutorial18::getBodyModelMatrix(
-        Math::Vec3<float> const& world_position) const {
+        const Math::Vec3<float>& world_position) const {
     return HellfireTank::buildPartMatrix(
             HellfireTank::getPartTranslations(world_position).body);
 }
 
 Math::Mat4<float> Tutorial18::getHeadModelMatrix(
-        Math::Vec3<float> const& world_position) const {
+        const Math::Vec3<float>& world_position) const {
     return HellfireTank::buildPartMatrix(
             HellfireTank::getPartTranslations(world_position).head);
 }
 
 Math::Mat4<float> Tutorial18::getTurretModelMatrix(
-        Math::Vec3<float> const& world_position) const {
+        const Math::Vec3<float>& world_position) const {
     return HellfireTank::buildPartMatrix(
             HellfireTank::getPartTranslations(world_position).turret);
 }
 
 Math::Vec2<float> Tutorial18::getPanelSize() const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     return Math::Vec2<float>(width * 0.42f, height * 0.27f);
 }
 
 Math::Vec2<float> Tutorial18::getPanelTopLeft(std::size_t player_index) const {
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Vec2<float> const size = getPanelSize();
-    float const margin = width * 0.03f;
-    float const panel_top = height * 0.03f;
+    const Math::Vec2<float> size = getPanelSize();
+    const float margin = width * 0.03f;
+    const float panel_top = height * 0.03f;
     if (player_index == 0) {
         return Math::Vec2<float>(margin, panel_top);
     }
@@ -1667,18 +1667,18 @@ void Tutorial18::appendBar(std::vector<Tutorial18VertexHudData>& vertex_data,
                            Math::Vec2<float> size,
                            float ratio,
                            Math::Vec4<float> (*get_bar_color)(float)) const {
-    Math::Vec4<float> const backing_color(0.25f, 0.25f, 0.25f, 1.0f);
-    std::array<Math::Vec2<float>, 4> const backing_corners = {
+    const Math::Vec4<float> backing_color(0.25f, 0.25f, 0.25f, 1.0f);
+    const std::array<Math::Vec2<float>, 4> backing_corners = {
             top_left,
             Math::Vec2<float>(top_left.x, top_left.y + size.y),
             Math::Vec2<float>(top_left.x + size.x, top_left.y + size.y),
             Math::Vec2<float>(top_left.x + size.x, top_left.y)};
     appendColoredQuad(vertex_data, backing_corners, backing_color);
 
-    float const fill_width = size.x * std::clamp(ratio, 0.0f, 1.0f);
+    const float fill_width = size.x * std::clamp(ratio, 0.0f, 1.0f);
     if (fill_width > 0.0f) {
-        Math::Vec4<float> const fill_color = get_bar_color(ratio);
-        std::array<Math::Vec2<float>, 4> const fill_corners = {
+        const Math::Vec4<float> fill_color = get_bar_color(ratio);
+        const std::array<Math::Vec2<float>, 4> fill_corners = {
                 top_left,
                 Math::Vec2<float>(top_left.x, top_left.y + size.y),
                 Math::Vec2<float>(top_left.x + fill_width,
@@ -1692,18 +1692,18 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
     std::vector<Tutorial18VertexHudData> vertex_data;
     vertex_data.reserve(c_max_hud_vertex_count);
 
-    Math::Vec4<float> const text_color(0.05f, 0.05f, 0.05f, 1.0f);
-    Math::Vec4<float> const panel_color(0.75f, 0.75f, 0.75f, 1.0f);
-    Math::Vec2<float> const panel_size = getPanelSize();
-    std::array<Tutorial18PlayerInfo, 2> const& players = getPlayers();
+    const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
+    const Math::Vec4<float> panel_color(0.75f, 0.75f, 0.75f, 1.0f);
+    const Math::Vec2<float> panel_size = getPanelSize();
+    const std::array<Tutorial18PlayerInfo, 2>& players = getPlayers();
 
     for (std::size_t i = 0; i < players.size(); ++i) {
-        Math::Vec2<float> const panel_top_left = getPanelTopLeft(i);
+        const Math::Vec2<float> panel_top_left = getPanelTopLeft(i);
 
-        std::vector<UiGeometry::ColoredQuad> const bevel =
+        const std::vector<UiGeometry::ColoredQuad> bevel =
                 UiGeometry::buildButtonBevel(
                         panel_top_left, panel_size, panel_color, false);
-        for (UiGeometry::ColoredQuad const& quad : bevel) {
+        for (const UiGeometry::ColoredQuad& quad : bevel) {
             appendColoredQuad(vertex_data, quad.corners, quad.color);
         }
 
@@ -1713,7 +1713,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
                                      panel_top_left.y + 26.0f),
                    players[i].team_color);
 
-        std::string const hp_text = "HP: " + std::to_string(players[i].hp) +
+        const std::string hp_text = "HP: " + std::to_string(players[i].hp) +
                                     " / " + std::to_string(players[i].max_hp);
         appendText(vertex_data,
                    hp_text,
@@ -1721,7 +1721,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
                                      panel_top_left.y + 52.0f),
                    text_color);
 
-        float const health_ratio = static_cast<float>(players[i].hp) /
+        const float health_ratio = static_cast<float>(players[i].hp) /
                                    static_cast<float>(players[i].max_hp);
         appendBar(vertex_data,
                   Math::Vec2<float>(panel_top_left.x + 16.0f,
@@ -1730,7 +1730,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
                   health_ratio,
                   &getHealthBarColor);
 
-        std::string const power_text =
+        const std::string power_text =
                 "Power: " + std::to_string(static_cast<std::int32_t>(
                                     players[i].power_ratio * 1000.0f));
         appendText(vertex_data,
@@ -1751,7 +1751,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
 }
 
 bool Tutorial18::updateHudVertexBufferData() {
-    std::vector<Tutorial18VertexHudData> const vertex_data =
+    const std::vector<Tutorial18VertexHudData> vertex_data =
             buildHudVertexData();
     if (vertex_data.size() > c_max_hud_vertex_count) {
         Logging::error(LOG_TAG,
@@ -1814,7 +1814,7 @@ bool Tutorial18::createFramebuffer(VkFramebuffer& framebuffer,
         framebuffer = VK_NULL_HANDLE;
     }
 
-    std::array<VkImageView, 2> const attachments = {
+    const std::array<VkImageView, 2> attachments = {
             image_view,
             m_vulkan_tutorial18_parameters.getDepthImageParameters()
                     .getVkImageView()};
@@ -1945,9 +1945,9 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    VkDeviceSize const zero_offset = 0;
-    std::array<Tutorial18PlayerInfo, 2> const& players = getPlayers();
-    for (Tutorial18PlayerInfo const& player : players) {
+    const VkDeviceSize zero_offset = 0;
+    const std::array<Tutorial18PlayerInfo, 2>& players = getPlayers();
+    for (const Tutorial18PlayerInfo& player : players) {
         Tutorial18PushConstants body_push_constants{
                 getBodyModelMatrix(player.world_position), player.team_color};
         vkCmdBindVertexBuffers(

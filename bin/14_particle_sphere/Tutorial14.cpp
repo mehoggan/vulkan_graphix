@@ -216,7 +216,7 @@ bool Tutorial14::createCommandBuffers() {
 }
 
 bool Tutorial14::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -246,7 +246,7 @@ bool Tutorial14::createSemaphores() {
 }
 
 bool Tutorial14::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -329,9 +329,9 @@ Tutorial14UniformBufferData Tutorial14::getUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
@@ -344,7 +344,7 @@ Tutorial14UniformBufferData Tutorial14::getUniformBufferData() const {
 }
 
 bool Tutorial14::updateUniformBufferData() {
-    Tutorial14UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial14UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial14_parameters.getUniformBufferParameters();
 
@@ -758,14 +758,14 @@ const std::vector<Tutorial14VertexData>& Tutorial14::getVertexData() const {
     // (radius 1.0, subdivision level 3), no texcoords since the original
     // glutSolidSphere() draw is untextured too.
     static const std::vector<Tutorial14VertexData> vertex_data = [] {
-        Math::Sphere<float, std::uint32_t> const sphere(
+        const Math::Sphere<float, std::uint32_t> sphere(
                 1.0f, static_cast<std::uint8_t>(3));
 
         std::vector<Tutorial14VertexData> data;
         data.reserve(sphere.points().size());
         for (std::size_t i = 0; i < sphere.points().size(); ++i) {
-            Math::Vec3<float> const& point = sphere.points()[i];
-            Math::Vec3<float> const& normal = sphere.normals()[i];
+            const Math::Vec3<float>& point = sphere.points()[i];
+            const Math::Vec3<float>& normal = sphere.normals()[i];
             data.push_back({Math::Vec4<float>(point, 1.0f), normal});
         }
         return data;
@@ -776,7 +776,7 @@ const std::vector<Tutorial14VertexData>& Tutorial14::getVertexData() const {
 
 const std::vector<std::uint32_t>& Tutorial14::getIndexData() const {
     static const std::vector<std::uint32_t> index_data = [] {
-        Math::Sphere<float, std::uint32_t> const sphere(
+        const Math::Sphere<float, std::uint32_t> sphere(
                 1.0f, static_cast<std::uint8_t>(3));
         return sphere.indices();
     }();

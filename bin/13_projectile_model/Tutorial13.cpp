@@ -440,24 +440,24 @@ Math::Mat4<float> Tutorial13::getUniformBufferData() const {
     // Reused Tutorial07 shaders name this uniform "u_ProjectionMatrix" but
     // just do gl_Position = u_ProjectionMatrix * i_Position - really a full
     // model-view-projection slot, exactly what's needed here.
-    Math::Mat4<float> const model(1.0f);
-    Math::Mat4<float> const view =
+    const Math::Mat4<float> model(1.0f);
+    const Math::Mat4<float> view =
             glm::lookAt(m_camera.eye(),
                         m_camera.target(),
                         Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Mat4<float> const projection = Tools::getPerspectiveProjectionMatrix(
+    const Math::Mat4<float> projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.01f, 10.0f);
 
     return projection * view * model;
 }
 
 bool Tutorial13::updateUniformBufferData() {
-    Math::Mat4<float> const uniform_data = getUniformBufferData();
+    const Math::Mat4<float> uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial13_parameters.getUniformBufferParameters();
 
@@ -895,10 +895,10 @@ const std::vector<Tutorial13VertexData>& Tutorial13::getVertexData() {
     // file's real layout) but dropped here, same as
     // VBOShaderLibrary::drawClientData()'s real fragment shader
     // effectively does (see Tutorial13.h).
-    std::vector<Tools::OglVertexData> const mesh_data =
+    const std::vector<Tools::OglVertexData> mesh_data =
             Tools::loadOglMeshData("projectileDefault.ogl");
     m_vertex_data.reserve(mesh_data.size());
-    for (Tools::OglVertexData const& vertex : mesh_data) {
+    for (const Tools::OglVertexData& vertex : mesh_data) {
         m_vertex_data.push_back(
                 {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
     }

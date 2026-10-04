@@ -27,15 +27,15 @@ std::uint32_t Mesh::vertexCount() const { return m_vertex_count; }
 
 RetainedMeshBase::~RetainedMeshBase() { releaseBuffer(); }
 
-void RetainedMeshBase::setTexture(Texture const* texture) {
+void RetainedMeshBase::setTexture(const Texture* texture) {
     m_texture = texture;
 }
 
-Texture const* RetainedMeshBase::texture() const { return m_texture; }
+const Texture* RetainedMeshBase::texture() const { return m_texture; }
 
-void RetainedMeshBase::setParams(Vec4 const& params) { m_params = params; }
+void RetainedMeshBase::setParams(const Vec4& params) { m_params = params; }
 
-Vec4 const& RetainedMeshBase::params() const { return m_params; }
+const Vec4& RetainedMeshBase::params() const { return m_params; }
 
 void RetainedMeshBase::setLineWidth(float width) { m_line_width = width; }
 
@@ -43,9 +43,9 @@ float RetainedMeshBase::lineWidth() const { return m_line_width; }
 
 void RetainedMeshBase::markDirty() { m_dirty = true; }
 
-HostBuffer const& RetainedMeshBase::upload(void const* triangles,
+const HostBuffer& RetainedMeshBase::upload(const void* triangles,
                                            std::size_t triangle_bytes,
-                                           void const* lines,
+                                           const void* lines,
                                            std::size_t line_bytes) {
     if (!m_dirty) {
         return m_buffer;
@@ -79,37 +79,37 @@ void RetainedMeshBase::releaseBuffer() {
     m_buffer = HostBuffer{};
 }
 
-void UiMesh::addQuad(std::array<Vec3, 4> const& corners, Vec4 const& color) {
+void UiMesh::addQuad(const std::array<Vec3, 4>& corners, const Vec4& color) {
     addQuad({corners[0], color, Vec2(0.0f)},
             {corners[1], color, Vec2(0.0f)},
             {corners[2], color, Vec2(0.0f)},
             {corners[3], color, Vec2(0.0f)});
 }
 
-void UiMesh::addTexturedQuad(std::array<Vec3, 4> const& corners,
-                             std::array<Vec2, 4> const& texcoords,
-                             Vec4 const& color) {
+void UiMesh::addTexturedQuad(const std::array<Vec3, 4>& corners,
+                             const std::array<Vec2, 4>& texcoords,
+                             const Vec4& color) {
     addQuad({corners[0], color, texcoords[0]},
             {corners[1], color, texcoords[1]},
             {corners[2], color, texcoords[2]},
             {corners[3], color, texcoords[3]});
 }
 
-void UiMesh::addTriangle(std::array<Vec3, 3> const& corners,
-                         Vec4 const& color) {
+void UiMesh::addTriangle(const std::array<Vec3, 3>& corners,
+                         const Vec4& color) {
     addTriangle({corners[0], color, Vec2(0.0f)},
                 {corners[1], color, Vec2(0.0f)},
                 {corners[2], color, Vec2(0.0f)});
 }
 
-void UiMesh::addTriangle(std::array<Vec3, 3> const& corners,
-                         std::array<Vec4, 3> const& colors) {
+void UiMesh::addTriangle(const std::array<Vec3, 3>& corners,
+                         const std::array<Vec4, 3>& colors) {
     addTriangle({corners[0], colors[0], Vec2(0.0f)},
                 {corners[1], colors[1], Vec2(0.0f)},
                 {corners[2], colors[2], Vec2(0.0f)});
 }
 
-void UiMesh::addLine(Vec3 const& start, Vec3 const& end, Vec4 const& color) {
+void UiMesh::addLine(const Vec3& start, const Vec3& end, const Vec4& color) {
     addLine({start, color, Vec2(0.0f)}, {end, color, Vec2(0.0f)});
 }
 

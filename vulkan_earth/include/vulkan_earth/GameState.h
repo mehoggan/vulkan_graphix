@@ -56,7 +56,7 @@ public:
     void draw(vulkan_graphix::Render::RenderContext& context);
     void drawHUD(vulkan_graphix::Render::RenderContext& context);
     void drawHUDText(vulkan_graphix::Render::RenderContext& context,
-                     vulkan_graphix::Math::Vec4<float> const& color,
+                     const vulkan_graphix::Math::Vec4<float>& color,
                      const std::string& input,
                      float x,
                      float y);

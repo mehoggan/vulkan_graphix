@@ -115,7 +115,7 @@ void ParticleEmitter::clear() {
     }
 }
 
-std::vector<std::optional<Particle>> const& ParticleEmitter::slots() const {
+const std::vector<std::optional<Particle>>& ParticleEmitter::slots() const {
     return m_slots;
 }
 
@@ -156,8 +156,8 @@ void ParticleEmitter::addParticles() {
 ExplosionFrame advanceExplosion(Explosion& explosion) {
     explosion.radius += .1;
     explosion.timer += .5;
-    float const timer = explosion.timer;
-    float const alpha = 1.0 - timer / 150.0;
+    const float timer = explosion.timer;
+    const float alpha = 1.0 - timer / 150.0;
     if (timer > 0 && timer < 25) {
         return {0, alpha};
     }
@@ -173,7 +173,7 @@ ExplosionFrame advanceExplosion(Explosion& explosion) {
     return {-1, alpha};
 }
 
-float explosionSphereRadius(Explosion const& explosion,
+float explosionSphereRadius(const Explosion& explosion,
                             std::int32_t weapon_radius) {
     // "ASSUMING SCALE ON TERRAIN IS 150 I NEED TO GET ACTUAL VALUE"
     return explosion.radius * (weapon_radius * 5.56 + 22.22);

@@ -27,18 +27,18 @@ using PartTranslations = TankPlacement::PartTranslations;
 inline constexpr float c_part_scale = 50.0f;
 
 // TankB's body/head/turret offsets.
-TankPlacement::PartOffsets const& getPartOffsets();
+const TankPlacement::PartOffsets& getPartOffsets();
 
 // TankPlacement::uprightPartBasis(), the basis every part of an untilted
 // tank has.
-Math::Mat4<float> const& getPartBasis();
+const Math::Mat4<float>& getPartBasis();
 
 // An untilted Hellfire at world_position:
 // TankPlacement::composePartTranslations() with every part's basis upright.
-PartTranslations getPartTranslations(Math::Vec3<float> const& world_position);
+PartTranslations getPartTranslations(const Math::Vec3<float>& world_position);
 
 // translate(translation) * getPartBasis() * scale(c_part_scale).
-Math::Mat4<float> buildPartMatrix(Math::Vec3<float> const& translation);
+Math::Mat4<float> buildPartMatrix(const Math::Vec3<float>& translation);
 
 }  // namespace vulkan_graphix::HellfireTank
 

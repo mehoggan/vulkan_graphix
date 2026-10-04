@@ -25,7 +25,7 @@ math::Mat4<float> ChaseCam::view() {
                  target_at[2] * target_at[2]);
     // (The target's y using target_at[0] rather than [1] is the
     // original's, kept as-is.)
-    math::Mat4<float> const view_matrix = glm::lookAt(
+    const math::Mat4<float> view_matrix = glm::lookAt(
             math::Vec3<float>(
                     target_pos[0] - 500 * target_at[0] / mag * (back_factor) +
                             shake_cam_pos[0],

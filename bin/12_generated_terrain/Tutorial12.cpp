@@ -383,8 +383,8 @@ bool Tutorial12::copyTextureData(char* texture_data,
 bool Tutorial12::createDepthResources() {
     ImageParameters& depth_image_parameters =
             m_vulkan_tutorial12_parameters.getDepthImageParameters();
-    std::uint32_t const width = getSwapchainParameters().getVkExtent2d().width;
-    std::uint32_t const height =
+    const std::uint32_t width = getSwapchainParameters().getVkExtent2d().width;
+    const std::uint32_t height =
             getSwapchainParameters().getVkExtent2d().height;
 
     VkImage vk_image;
@@ -528,9 +528,9 @@ Tutorial12UniformBufferData Tutorial12::getUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
@@ -543,7 +543,7 @@ Tutorial12UniformBufferData Tutorial12::getUniformBufferData() const {
 }
 
 bool Tutorial12::updateUniformBufferData() {
-    Tutorial12UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial12UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial12_parameters.getUniformBufferParameters();
 
@@ -1019,9 +1019,9 @@ const std::vector<Tutorial12VertexData>& Tutorial12::getVertexData() {
                        c_gen_random_jump,
                        c_smoothing_passes);
 
-    std::int32_t const chunk_size = c_grid_size / 2;
-    float const chunk_span = static_cast<float>(chunk_size - 1);
-    float const half_extent =
+    const std::int32_t chunk_size = c_grid_size / 2;
+    const float chunk_span = static_cast<float>(chunk_size - 1);
+    const float half_extent =
             static_cast<float>(c_grid_size - 1) * c_grid_scale / 2.0f;
 
     m_vertex_data.reserve(static_cast<std::size_t>(c_grid_size - 1) *

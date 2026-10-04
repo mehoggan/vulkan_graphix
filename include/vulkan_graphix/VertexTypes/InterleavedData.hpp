@@ -22,7 +22,7 @@ public:
 
     explicit InterleavedData(collection_type data) : m_data(std::move(data)) {}
 
-    collection_type const& getData() const { return m_data; }
+    const collection_type& getData() const { return m_data; }
 
     std::size_t getAttributeCount() const { return m_data.size(); }
 

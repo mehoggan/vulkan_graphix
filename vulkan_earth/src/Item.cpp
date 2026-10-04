@@ -23,7 +23,7 @@ void Item::setRemaining(std::int32_t r) { remaining = r; }
 
 void Item::playUseSFX() { playSFX(ITEM_USE1); }
 
-void Item::loadSpec(vulkan_graphix::GameCatalog::ItemSpec const& spec) {
+void Item::loadSpec(const vulkan_graphix::GameCatalog::ItemSpec& spec) {
     package_num = spec.package_num;
     max_stack = spec.max_stack;
     remaining = spec.remaining;

@@ -4,20 +4,20 @@
 
 namespace vulkan_graphix::Ballistics {
 
-Math::Vec3<float> pointAlongBarrel(Math::Mat4<float> const& turret_matrix,
+Math::Vec3<float> pointAlongBarrel(const Math::Mat4<float>& turret_matrix,
                                    float distance) {
     return Math::Vec3<float>(turret_matrix[3]) -
            distance * Math::Vec3<float>(turret_matrix[2]);
 }
 
-Launch launchFromBarrel(Math::Mat4<float> const& turret_matrix,
+Launch launchFromBarrel(const Math::Mat4<float>& turret_matrix,
                         float speed,
                         float muzzle_distance) {
     return Launch{pointAlongBarrel(turret_matrix, muzzle_distance),
                   -Math::Vec3<float>(turret_matrix[2]) * speed};
 }
 
-Math::Vec3<float> positionAt(Launch const& launch, float gravity, float time) {
+Math::Vec3<float> positionAt(const Launch& launch, float gravity, float time) {
     return Math::Vec3<float>(
             launch.velocity.x * time + launch.origin.x,
             static_cast<float>(

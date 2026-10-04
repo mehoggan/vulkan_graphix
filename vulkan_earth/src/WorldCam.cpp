@@ -38,7 +38,7 @@ WorldCam::WorldCam(float x, float y, float z) {
 }
 
 math::Mat4<float> WorldCam::view() {
-    math::Mat4<float> const view_matrix = glm::lookAt(
+    const math::Mat4<float> view_matrix = glm::lookAt(
             math::Vec3<float>(matrix[12] + shake_cam_pos[0],
                               matrix[13] + shake_cam_pos[1],
                               matrix[14] + shake_cam_pos[2]),

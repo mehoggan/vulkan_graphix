@@ -330,7 +330,7 @@ private:
                                     BufferParameters& vertex_buffer,
                                     std::uint32_t& vertex_count);
     Math::Mat4<float> getTankPartModelMatrix(
-            Math::Vec3<float> const& part_translation) const;
+            const Math::Vec3<float>& part_translation) const;
 
     Math::Vec2<float> getButtonTopLeft() const;
     Math::Vec2<float> getButtonSize() const;

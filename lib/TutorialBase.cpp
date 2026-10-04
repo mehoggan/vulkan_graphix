@@ -355,8 +355,8 @@ TutorialBase::~TutorialBase() {
     // USE_SWAPCHAIN_EXTENSIONS comment) and always resolve to the real
     // libvulkan.so symbol, so they don't need this.
     if (m_vulkan_common_parameters.getVkDevice() != VK_NULL_HANDLE) {
-        VkDevice const device = m_vulkan_common_parameters.getVkDevice();
-        auto resolve = [device](auto loaded, char const* name) {
+        const VkDevice device = m_vulkan_common_parameters.getVkDevice();
+        auto resolve = [device](auto loaded, const char* name) {
             using Function = decltype(loaded);
             if ((loaded == nullptr) && (vkGetDeviceProcAddr != nullptr)) {
                 loaded = reinterpret_cast<Function>(
@@ -364,11 +364,11 @@ TutorialBase::~TutorialBase() {
             }
             return loaded;
         };
-        PFN_vkDeviceWaitIdle const device_wait_idle =
+        const PFN_vkDeviceWaitIdle device_wait_idle =
                 resolve(vkDeviceWaitIdle, "vkDeviceWaitIdle");
-        PFN_vkDestroyImageView const destroy_image_view =
+        const PFN_vkDestroyImageView destroy_image_view =
                 resolve(vkDestroyImageView, "vkDestroyImageView");
-        PFN_vkDestroyDevice const destroy_device =
+        const PFN_vkDestroyDevice destroy_device =
                 resolve(vkDestroyDevice, "vkDestroyDevice");
 
         if (device_wait_idle != nullptr) {

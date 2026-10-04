@@ -20,8 +20,8 @@ public:
     std::vector<Vec3<T>>& points() { return m_points; }
     std::vector<I>& indices() { return m_indices; }
 
-    std::vector<Vec3<T>> const& points() const { return m_points; }
-    std::vector<I> const& indices() const { return m_indices; }
+    const std::vector<Vec3<T>>& points() const { return m_points; }
+    const std::vector<I>& indices() const { return m_indices; }
 
     GeneratorMode mode() const { return m_mode; }
 
@@ -33,13 +33,13 @@ private:
 
 template <typename T, typename I>
 inline std::ostream& operator<<(std::ostream& out,
-                                TessellatedTriangleData<T, I> const& data) {
+                                const TessellatedTriangleData<T, I>& data) {
     out << "points = ";
-    for (auto const& point : data.points()) {
+    for (const auto& point : data.points()) {
         out << "(" << point.x << ", " << point.y << ", " << point.z << ") ";
     }
     out << "\nindices = ";
-    for (auto const& index : data.indices()) {
+    for (const auto& index : data.indices()) {
         out << index << " ";
     }
     return out;

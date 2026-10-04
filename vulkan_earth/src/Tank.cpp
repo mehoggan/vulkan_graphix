@@ -89,7 +89,7 @@ void Tank::setTankPos(float x, float y, float z) {
     // rotated through its parent's basis) - libvulkan_graphix's
     // TankPlacement, shared with the tutorials that draw a tank.
     namespace vg = vulkan_graphix;
-    vg::TankPlacement::PartTranslations const parts =
+    const vg::TankPlacement::PartTranslations parts =
             vg::TankPlacement::composePartTranslations(
                     vg::Math::Vec3<float>(x, y, z),
                     glm::make_mat4(body_matrix),
@@ -131,7 +131,7 @@ void Tank::orientTank(vulkan_graphix::Math::Vec3<float>* n) {
     alignment_vector.y = n->y;
     alignment_vector.z = n->z;
 
-    std::optional<vulkan_graphix::TankOrientation::Alignment> const alignment =
+    const std::optional<vulkan_graphix::TankOrientation::Alignment> alignment =
             vulkan_graphix::TankOrientation::alignToGround(
                     glm::make_mat4(body_matrix),
                     vulkan_graphix::Math::Vec3<float>(n->x, n->y, n->z));
@@ -141,7 +141,7 @@ void Tank::orientTank(vulkan_graphix::Math::Vec3<float>* n) {
         rotate_about.z = alignment->axis.z;
         // Body/head/turret/wheel all take the same aligned matrix, as the
         // original's four glGetFloatv(GL_MODELVIEW_MATRIX, ...) calls did.
-        float const* aligned = glm::value_ptr(alignment->matrix);
+        const float* aligned = glm::value_ptr(alignment->matrix);
         std::copy(aligned, aligned + 16, body_matrix);
         std::copy(aligned, aligned + 16, head_matrix);
         std::copy(aligned, aligned + 16, turret_matrix);
@@ -485,7 +485,7 @@ void Tank::draw(render::RenderContext& context) {
             glm::scale(glm::make_mat4(head_matrix),
                        math::Vec3<float>(
                                head_scale[0], head_scale[1], head_scale[2])));
-    math::Mat4<float> const body = glm::make_mat4(body_matrix);
+    const math::Mat4<float> body = glm::make_mat4(body_matrix);
     // float effect must be same orientation as the tank
     if (float_gen) {
         float_gen->update(0, -body_offset[1], 0);

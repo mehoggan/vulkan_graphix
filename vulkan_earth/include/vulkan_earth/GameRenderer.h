@@ -42,8 +42,8 @@ struct Pipelines {
 bool initializeGameRendering(render::Renderer& renderer);
 void releaseGameRendering();
 
-Pipelines const& pipelines();
-render::Font const& font(FontId id);
+const Pipelines& pipelines();
+const render::Font& font(FontId id);
 // The pen advance of character in font id, in whole pixels.
 std::int32_t textAdvance(FontId id, char character);
 
@@ -65,7 +65,7 @@ void resetToFullWindow(render::RenderContext& context);
 // perspective of aspect width / (1.5 * height), from window height / 4 *
 // tan(60 degrees) away.
 void beginOverlayPanel(render::RenderContext& context,
-                       render::Rect const& viewport,
+                       const render::Rect& viewport,
                        std::int32_t width,
                        std::int32_t height);
 
@@ -79,7 +79,7 @@ void appendBevel(render::UiMesh& mesh,
                  float z,
                  float width,
                  float height,
-                 math::Vec4<float> const& color,
+                 const math::Vec4<float>& color,
                  bool pressed,
                  float bevel_size = 3.0f);
 // - the same frame with explicit colors (top and left wedges in top_left,
@@ -90,9 +90,9 @@ void appendFrame(render::UiMesh& mesh,
                  float z,
                  float width,
                  float height,
-                 math::Vec4<float> const& top_left,
-                 math::Vec4<float> const& face,
-                 math::Vec4<float> const& bottom_right,
+                 const math::Vec4<float>& top_left,
+                 const math::Vec4<float>& face,
+                 const math::Vec4<float>& bottom_right,
                  float border = 3.0f);
 // - the whole-window background panel MainMenu, ReadyMenu, and ShopMenu
 //   open with: centered on the origin at z = 0, a percent_border * height

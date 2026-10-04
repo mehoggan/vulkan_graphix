@@ -43,7 +43,7 @@ public:
     // level_of_detail times, each subdivision replacing every triangle with
     // three triangles fanned around its (radius-projected) centroid.
     Sphere(T radius, std::uint8_t level_of_detail) : m_radius(radius) {
-        Icosahedron<T, I> const icosahedron(m_radius);
+        const Icosahedron<T, I> icosahedron(m_radius);
 
         IndexedVertices_t data = subdivide(icosahedron.points(),
                                            icosahedron.indices(),
@@ -55,9 +55,9 @@ public:
         generateNormals();
     }
 
-    std::vector<Vec3<T>> const& points() const { return m_points; }
-    std::vector<Vec3<T>> const& normals() const { return m_normals; }
-    std::vector<I> const& indices() const { return m_indices; }
+    const std::vector<Vec3<T>>& points() const { return m_points; }
+    const std::vector<Vec3<T>>& normals() const { return m_normals; }
+    const std::vector<I>& indices() const { return m_indices; }
 
     T radius() const { return m_radius; }
 
@@ -76,7 +76,7 @@ private:
     void generateNormals() {
         m_normals.clear();
         m_normals.reserve(m_points.size());
-        for (Vec3<T> const& point : m_points) {
+        for (const Vec3<T>& point : m_points) {
             m_normals.push_back(glm::normalize(point));
         }
     }
@@ -84,7 +84,7 @@ private:
     // --- UV sphere ---
 
     void generateVertices(std::uint16_t theta_steps, std::uint16_t phi_steps) {
-        T const phi_step =
+        const T phi_step =
                 (c_max_elevation_degrees - c_min_elevation_degrees) /
                 static_cast<T>(phi_steps);
         T elevation_degrees = c_max_elevation_degrees;
@@ -109,7 +109,7 @@ private:
             return;
         }
 
-        T const theta_step = (c_max_theta_degrees - c_min_theta_degrees) /
+        const T theta_step = (c_max_theta_degrees - c_min_theta_degrees) /
                              static_cast<T>(theta_steps);
         T theta_degrees = c_min_theta_degrees;
         while (theta_degrees < c_max_theta_degrees) {
@@ -121,11 +121,11 @@ private:
     void generateIndices(std::uint16_t theta_steps, std::uint16_t phi_steps) {
         std::uint16_t phi_step = 0;
         while (phi_step < phi_steps) {
-            std::size_t const bottom_row_vertex_count = theta_steps + 1;
-            std::size_t const top_row_vertex_count = bottom_row_vertex_count;
-            std::size_t const vertex_per_row_count = theta_steps;
-            bool const at_bottom = phi_step == 0;
-            bool const at_top = phi_step == phi_steps - 1;
+            const std::size_t bottom_row_vertex_count = theta_steps + 1;
+            const std::size_t top_row_vertex_count = bottom_row_vertex_count;
+            const std::size_t vertex_per_row_count = theta_steps;
+            const bool at_bottom = phi_step == 0;
+            const bool at_top = phi_step == phi_steps - 1;
 
             if (at_bottom) {
                 for (I index = 1; index < bottom_row_vertex_count; ++index) {
@@ -139,9 +139,9 @@ private:
                     }
                 }
             } else if (at_top) {
-                I const curr_row = phi_step - 1;
-                I const start_index_for_row = curr_row * theta_steps + 1;
-                I const last_start_index =
+                const I curr_row = phi_step - 1;
+                const I start_index_for_row = curr_row * theta_steps + 1;
+                const I last_start_index =
                         start_index_for_row +
                         static_cast<I>(top_row_vertex_count) - 2;
                 I distance = static_cast<I>(vertex_per_row_count);
@@ -158,15 +158,15 @@ private:
                     --distance;
                 }
             } else {
-                I const curr_row = phi_step - 1;
-                I const start_index_for_row = curr_row * theta_steps + 1;
-                I const last_start_index =
+                const I curr_row = phi_step - 1;
+                const I start_index_for_row = curr_row * theta_steps + 1;
+                const I last_start_index =
                         start_index_for_row +
                         static_cast<I>(vertex_per_row_count) - 1;
                 for (I start_index = start_index_for_row;
                      start_index <= last_start_index;
                      ++start_index) {
-                    I const next_row_index =
+                    const I next_row_index =
                             start_index + static_cast<I>(vertex_per_row_count);
                     if (start_index != last_start_index) {
                         m_indices.push_back(next_row_index + 1);
@@ -177,7 +177,7 @@ private:
                         m_indices.push_back(start_index);
                         m_indices.push_back(start_index + 1);
                     } else {
-                        I const initial_index = start_index_for_row;
+                        const I initial_index = start_index_for_row;
                         m_indices.push_back(
                                 initial_index +
                                 static_cast<I>(vertex_per_row_count));
@@ -202,8 +202,8 @@ private:
     using IndexedVertices_t = std::pair<std::vector<Vec3<T>>, std::vector<I>>;
     using DuplicateCheck_t = std::unordered_map<Vec3<T>, I>;
 
-    IndexedVertices_t subdivide(std::vector<Vec3<T>> const& vertices,
-                                std::vector<I> const& indices,
+    IndexedVertices_t subdivide(const std::vector<Vec3<T>>& vertices,
+                                const std::vector<I>& indices,
                                 std::uint32_t curr_level,
                                 std::uint32_t desired_level) {
         if (curr_level == desired_level) {
@@ -222,25 +222,25 @@ private:
         // must not be reused across recursive calls.
         DuplicateCheck_t duplicate_check;
 
-        auto emit = [&](Vec3<T> const& vertex) -> I {
+        auto emit = [&](const Vec3<T>& vertex) -> I {
             auto find_it = duplicate_check.find(vertex);
             if (find_it != duplicate_check.end()) {
                 return find_it->second;
             }
             next_vertices.push_back(vertex);
-            I const index = curr_index++;
+            const I index = curr_index++;
             duplicate_check.emplace(vertex, index);
             return index;
         };
 
         for (std::size_t index = 0; index < indices.size(); index += 3) {
-            I const index_0 = indices[index + 0];
-            I const index_1 = indices[index + 1];
-            I const index_2 = indices[index + 2];
+            const I index_0 = indices[index + 0];
+            const I index_1 = indices[index + 1];
+            const I index_2 = indices[index + 2];
 
-            Vec3<T> const& point_0 = vertices[index_0];
-            Vec3<T> const& point_1 = vertices[index_1];
-            Vec3<T> const& point_2 = vertices[index_2];
+            const Vec3<T>& point_0 = vertices[index_0];
+            const Vec3<T>& point_1 = vertices[index_1];
+            const Vec3<T>& point_2 = vertices[index_2];
 
             // Edge midpoints, projected back onto the sphere. Unlike a
             // per-triangle centroid, these lie exactly on the shared edge
@@ -248,19 +248,19 @@ private:
             // same vertex from both sides - the original 12 icosahedron
             // vertices/30 edges get refined along with everything else,
             // instead of staying fixed as sharp corners forever.
-            Vec3<T> const mid_01 =
+            const Vec3<T> mid_01 =
                     glm::normalize((point_0 + point_1) * T(0.5)) * m_radius;
-            Vec3<T> const mid_12 =
+            const Vec3<T> mid_12 =
                     glm::normalize((point_1 + point_2) * T(0.5)) * m_radius;
-            Vec3<T> const mid_20 =
+            const Vec3<T> mid_20 =
                     glm::normalize((point_2 + point_0) * T(0.5)) * m_radius;
 
-            I const new_0 = emit(point_0);
-            I const new_1 = emit(point_1);
-            I const new_2 = emit(point_2);
-            I const new_01 = emit(mid_01);
-            I const new_12 = emit(mid_12);
-            I const new_20 = emit(mid_20);
+            const I new_0 = emit(point_0);
+            const I new_1 = emit(point_1);
+            const I new_2 = emit(point_2);
+            const I new_01 = emit(mid_01);
+            const I new_12 = emit(mid_12);
+            const I new_20 = emit(mid_20);
 
             next_indices.push_back(new_0);
             next_indices.push_back(new_01);

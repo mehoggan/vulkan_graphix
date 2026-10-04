@@ -36,7 +36,7 @@ namespace detail {
 
 template <typename T, typename I>
 void updateTessellatedTriangleData(
-        Vec3<T> const& point,
+        const Vec3<T>& point,
         I& current_index,
         std::unordered_map<Vec3<T>, I>& point_to_index_map,
         TessellatedTriangleData<T, I>& out) {
@@ -53,7 +53,7 @@ void updateTessellatedTriangleData(
 
 template <typename T, typename I>
 void updateTessellatedWireframeTriangleData(
-        Line<T> const& line,
+        const Line<T>& line,
         I& current_index,
         std::unordered_map<Vec3<T>, I>& point_to_index_map,
         TessellatedTriangleData<T, I>& out) {
@@ -64,7 +64,7 @@ void updateTessellatedWireframeTriangleData(
 }
 
 template <typename T, typename I>
-void handleBaseCase(Triangle<T> const& tri,
+void handleBaseCase(const Triangle<T>& tri,
                     I& current_index,
                     std::unordered_map<Vec3<T>, I>& point_to_index_map,
                     TessellatedTriangleData<T, I>& out) {
@@ -90,7 +90,7 @@ void handleBaseCase(Triangle<T> const& tri,
 
 template <typename T, typename I>
 void tessellateTriangleBySubdivision(
-        Triangle<T> const& tri,
+        const Triangle<T>& tri,
         std::size_t subdivision_count,
         I& current_index,
         std::unordered_map<Vec3<T>, I>& point_to_index_map,
@@ -127,7 +127,7 @@ void tessellateTriangleBySubdivision(
 
 template <typename T, typename I>
 void tessellateTriangleByMidpointSubdivision(
-        Triangle<T> const& tri,
+        const Triangle<T>& tri,
         std::size_t subdivision_count,
         I& current_index,
         std::unordered_map<Vec3<T>, I>& point_to_index_map,
@@ -178,7 +178,7 @@ void tessellateTriangleByMidpointSubdivision(
 }  // namespace detail
 
 template <typename T, typename I>
-void tessellateTriangleBySubdivision(Triangle<T> const& tri,
+void tessellateTriangleBySubdivision(const Triangle<T>& tri,
                                      std::size_t subdivision_count,
                                      I& current_index,
                                      TessellatedTriangleData<T, I>& out) {
@@ -188,12 +188,12 @@ void tessellateTriangleBySubdivision(Triangle<T> const& tri,
 }
 
 template <typename T, typename I>
-void tessellateTrianglesBySubdivision(std::vector<Triangle<T>> const& tris,
+void tessellateTrianglesBySubdivision(const std::vector<Triangle<T>>& tris,
                                       std::size_t subdivision_count,
                                       I& current_index,
                                       TessellatedTriangleData<T, I>& out) {
     std::unordered_map<Vec3<T>, I> point_to_index_map;
-    for (auto const& input_tri : tris) {
+    for (const auto& input_tri : tris) {
         detail::tessellateTriangleBySubdivision(input_tri,
                                                 subdivision_count,
                                                 current_index,
@@ -204,7 +204,7 @@ void tessellateTrianglesBySubdivision(std::vector<Triangle<T>> const& tris,
 
 template <typename T, typename I>
 void tessellateTriangleByMidpointSubdivision(
-        Triangle<T> const& tri,
+        const Triangle<T>& tri,
         std::size_t subdivision_count,
         I& current_index,
         TessellatedTriangleData<T, I>& out) {
@@ -215,12 +215,12 @@ void tessellateTriangleByMidpointSubdivision(
 
 template <typename T, typename I>
 void tessellateTrianglesByMidpointSubdivision(
-        std::vector<Triangle<T>> const& tris,
+        const std::vector<Triangle<T>>& tris,
         std::size_t subdivision_count,
         I& current_index,
         TessellatedTriangleData<T, I>& out) {
     std::unordered_map<Vec3<T>, I> point_to_index_map;
-    for (auto const& input_tri : tris) {
+    for (const auto& input_tri : tris) {
         detail::tessellateTriangleByMidpointSubdivision(input_tri,
                                                         subdivision_count,
                                                         current_index,

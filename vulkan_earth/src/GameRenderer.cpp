@@ -19,9 +19,9 @@ using Vec3 = math::Vec3<float>;
 using Vec4 = math::Vec4<float>;
 using Mat4 = math::Mat4<float>;
 
-constexpr char const* c_serif_font_path =
+constexpr const char* c_serif_font_path =
         "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf";
-constexpr char const* c_mono_font_path =
+constexpr const char* c_mono_font_path =
         "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 // Sized like GLUT's TIMES_ROMAN_24 and 9_BY_15 bitmap fonts were (the
 // mono face advances 9 pixels per glyph, as 9_BY_15 did).
@@ -34,8 +34,8 @@ std::unique_ptr<render::Font> g_mono_font;
 
 std::optional<render::PipelineHandle> createPipeline(
         render::Renderer& renderer,
-        char const* shader,
-        render::VertexLayout const& layout,
+        const char* shader,
+        const render::VertexLayout& layout,
         VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
         bool depth = true,
         VkPolygonMode polygon_mode = VK_POLYGON_MODE_FILL) {
@@ -55,9 +55,9 @@ std::optional<render::PipelineHandle> createPipeline(
 // depth z.
 void appendQuads(
         render::UiMesh& mesh,
-        std::vector<vulkan_graphix::UiGeometry::ColoredQuad> const& quads,
+        const std::vector<vulkan_graphix::UiGeometry::ColoredQuad>& quads,
         float z) {
-    for (auto const& quad : quads) {
+    for (const auto& quad : quads) {
         std::array<Vec3, 4> corners;
         for (std::size_t i = 0; i < corners.size(); ++i) {
             corners[i] = Vec3(quad.corners[i].x, -quad.corners[i].y, z);
@@ -68,9 +68,9 @@ void appendQuads(
 }  // namespace
 
 bool initializeGameRendering(render::Renderer& renderer) {
-    render::VertexLayout const ui_layout =
+    const render::VertexLayout ui_layout =
             render::vertexLayout<render::UiVertex>();
-    render::VertexLayout const mesh_layout =
+    const render::VertexLayout mesh_layout =
             render::vertexLayout<render::MeshVertex>();
     auto ui_triangles = createPipeline(renderer, "ui", ui_layout);
     auto ui_lines = createPipeline(
@@ -125,9 +125,9 @@ void releaseGameRendering() {
     g_mono_font.reset();
 }
 
-Pipelines const& pipelines() { return g_pipelines; }
+const Pipelines& pipelines() { return g_pipelines; }
 
-render::Font const& font(FontId id) {
+const render::Font& font(FontId id) {
     return id == FontId::Fixed9By15 ? *g_mono_font : *g_serif_font;
 }
 
@@ -167,7 +167,7 @@ void resetToFullWindow(render::RenderContext& context) {
 }
 
 void beginOverlayPanel(render::RenderContext& context,
-                       render::Rect const& viewport,
+                       const render::Rect& viewport,
                        std::int32_t width,
                        std::int32_t height) {
     context.setViewport(viewport);
@@ -191,7 +191,7 @@ void appendBevel(render::UiMesh& mesh,
                  float z,
                  float width,
                  float height,
-                 Vec4 const& color,
+                 const Vec4& color,
                  bool pressed,
                  float bevel_size) {
     appendQuads(
@@ -210,9 +210,9 @@ void appendFrame(render::UiMesh& mesh,
                  float z,
                  float width,
                  float height,
-                 Vec4 const& top_left,
-                 Vec4 const& face,
-                 Vec4 const& bottom_right,
+                 const Vec4& top_left,
+                 const Vec4& face,
+                 const Vec4& bottom_right,
                  float border) {
     appendQuads(mesh,
                 vulkan_graphix::UiGeometry::buildBevelFrame(
@@ -227,9 +227,9 @@ void appendMenuPanel(render::UiMesh& mesh,
                      float width,
                      float height,
                      float percent_border) {
-    float const b = percent_border * (height);
-    float const left = -1 * (width / 2.0);
-    float const top_edge = (height / 2.0);
+    const float b = percent_border * (height);
+    const float left = -1 * (width / 2.0);
+    const float top_edge = (height / 2.0);
     appendQuads(mesh,
                 vulkan_graphix::UiGeometry::buildBevelFrame(
                         Vec2(left + b, -(top_edge - b)),

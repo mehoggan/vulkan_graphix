@@ -23,7 +23,7 @@ public:
                       std::int32_t new_type);
     void update(float new_x, float new_y, float new_z);
     void draw(vulkan_graphix::Render::RenderContext& context,
-              vulkan_graphix::Math::Mat4<float> const& model =
+              const vulkan_graphix::Math::Mat4<float>& model =
                       vulkan_graphix::Math::Mat4<float>(1.0f));
     void killGenerator();
 

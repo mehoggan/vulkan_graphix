@@ -20,15 +20,15 @@ namespace {
 // Three fixed emitter origins, one per real ParticleGenerator type
 // (Tank's own smoke_gen/acid_gen/float_gen - see Tutorial20.h's top
 // comment), laid out side by side.
-Math::Vec3<float> const c_smoke_emitter(-2.5f, -1.0f, 0.0f);
-Math::Vec3<float> const c_acid_emitter(0.0f, -1.0f, 0.0f);
-Math::Vec3<float> const c_float_emitter(2.5f, -1.0f, 0.0f);
+const Math::Vec3<float> c_smoke_emitter(-2.5f, -1.0f, 0.0f);
+const Math::Vec3<float> c_acid_emitter(0.0f, -1.0f, 0.0f);
+const Math::Vec3<float> c_float_emitter(2.5f, -1.0f, 0.0f);
 
 // The real Tank::draw() shield sphere: glutSolidSphere(300, 20, 20) at
 // alpha 0.2, translucent blue.
-Math::Vec3<float> const c_shield_position(0.0f, 1.8f, 0.0f);
+const Math::Vec3<float> c_shield_position(0.0f, 1.8f, 0.0f);
 constexpr float c_shield_radius = 0.9f;
-Math::Vec4<float> const c_shield_color(0.1f, 0.25f, 0.95f, 0.2f);
+const Math::Vec4<float> c_shield_color(0.1f, 0.25f, 0.95f, 0.2f);
 
 // Particle positions and sizes, and the explosion's radius, are simulated
 // in vulkan_earth's own world units; these bring them down to this
@@ -36,23 +36,23 @@ Math::Vec4<float> const c_shield_color(0.1f, 0.25f, 0.95f, 0.2f);
 constexpr float c_particle_position_scale = 0.01f;
 constexpr float c_particle_size_scale = 0.03f;
 constexpr float c_explosion_scale = 0.0003f;
-Math::Vec3<float> const c_explosion_position(0.0f, -1.0f, 2.5f);
+const Math::Vec3<float> c_explosion_position(0.0f, -1.0f, 2.5f);
 
 // WeaponBFB - the weapon Tutorial19's "Big Force Bomb" projectile already
 // shows - supplies the explosion's real colors and blast radius.
-GameCatalog::WeaponSpec const& explosionWeapon() {
+const GameCatalog::WeaponSpec& explosionWeapon() {
     return GameCatalog::weapon(GameCatalog::WeaponKind::BFB);
 }
 
 Math::Vec4<float> explosionColor(std::int32_t index, float alpha) {
-    auto const& color = explosionWeapon().explosion_colors[index];
+    const auto& color = explosionWeapon().explosion_colors[index];
     return Math::Vec4<float>(static_cast<float>(color[0]),
                              static_cast<float>(color[1]),
                              static_cast<float>(color[2]),
                              alpha);
 }
 
-Math::Mat4<float> buildInstanceMatrix(Math::Vec3<float> const& position,
+Math::Mat4<float> buildInstanceMatrix(const Math::Vec3<float>& position,
                                       float radius) {
     return glm::translate(Math::Mat4<float>(1.0f), position) *
            glm::scale(Math::Mat4<float>(1.0f), Math::Vec3<float>(radius));
@@ -257,7 +257,7 @@ void Tutorial20::updateParticles() {
 }
 
 void Tutorial20::updateExplosion() {
-    EffectSimulation::ExplosionFrame const frame =
+    const EffectSimulation::ExplosionFrame frame =
             EffectSimulation::advanceExplosion(m_explosion);
     if (frame.color_index >= 0) {
         m_explosion_color = explosionColor(frame.color_index, frame.alpha);
@@ -310,7 +310,7 @@ bool Tutorial20::createCommandBuffers() {
 }
 
 bool Tutorial20::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -340,7 +340,7 @@ bool Tutorial20::createSemaphores() {
 }
 
 bool Tutorial20::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -399,9 +399,9 @@ Tutorial20UniformBufferData Tutorial20::getUniformBufferData() const {
                             m_camera.target(),
                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
     data.projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
@@ -410,7 +410,7 @@ Tutorial20UniformBufferData Tutorial20::getUniformBufferData() const {
 }
 
 bool Tutorial20::updateUniformBufferData() {
-    Tutorial20UniformBufferData const uniform_data = getUniformBufferData();
+    const Tutorial20UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial20_parameters.getUniformBufferParameters();
 
@@ -836,12 +836,12 @@ const std::vector<Tutorial20VertexData>& Tutorial20::getVertexData() const {
     // small and numerous on screen, and unlit, so a coarser mesh than
     // Tutorial08/14's is plenty.
     static const std::vector<Tutorial20VertexData> vertex_data = [] {
-        Math::Sphere<float, std::uint32_t> const sphere(
+        const Math::Sphere<float, std::uint32_t> sphere(
                 1.0f, static_cast<std::uint8_t>(2));
 
         std::vector<Tutorial20VertexData> data;
         data.reserve(sphere.points().size());
-        for (Math::Vec3<float> const& point : sphere.points()) {
+        for (const Math::Vec3<float>& point : sphere.points()) {
             data.push_back({Math::Vec4<float>(point, 1.0f)});
         }
         return data;
@@ -852,7 +852,7 @@ const std::vector<Tutorial20VertexData>& Tutorial20::getVertexData() const {
 
 const std::vector<std::uint32_t>& Tutorial20::getIndexData() const {
     static const std::vector<std::uint32_t> index_data = [] {
-        Math::Sphere<float, std::uint32_t> const sphere(
+        const Math::Sphere<float, std::uint32_t> sphere(
                 1.0f, static_cast<std::uint8_t>(2));
         return sphere.indices();
     }();
@@ -1077,7 +1077,7 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
             0,
             nullptr);
 
-    std::uint32_t const index_count =
+    const std::uint32_t index_count =
             m_vulkan_tutorial20_parameters.getIndexCount();
 
     // Shield: one static translucent sphere.
@@ -1094,14 +1094,14 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
     vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
 
     // Particles: every live particle of each generator, at its emitter.
-    std::array<Math::Vec3<float>, 3> const emitter_origins = {
+    const std::array<Math::Vec3<float>, 3> emitter_origins = {
             c_smoke_emitter, c_acid_emitter, c_float_emitter};
     for (std::size_t emitter = 0; emitter < m_emitters.size(); ++emitter) {
-        for (auto const& slot : m_emitters[emitter].slots()) {
+        for (const auto& slot : m_emitters[emitter].slots()) {
             if (!slot) {
                 continue;
             }
-            EffectSimulation::Particle const& particle = *slot;
+            const EffectSimulation::Particle& particle = *slot;
             Tutorial20PushConstants particle_push_constants{
                     buildInstanceMatrix(
                             emitter_origins[emitter] +

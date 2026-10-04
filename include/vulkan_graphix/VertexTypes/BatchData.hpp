@@ -20,7 +20,7 @@ public:
     explicit BatchData(std::vector<Ts>... data) : m_data(std::move(data)...) {}
 
     template <std::size_t Index>
-    std::vector<std::tuple_element_t<Index, std::tuple<Ts...>>> const& data()
+    const std::vector<std::tuple_element_t<Index, std::tuple<Ts...>>>& data()
             const {
         return std::get<Index>(m_data);
     }

@@ -138,8 +138,8 @@ void Window::setCursorVisible(bool visible) {
         XUndefineCursor(display_ptr, m_parameters.getWindowHandle());
     } else {
         if (m_blank_cursor == None) {
-            std::array<char, 1> const empty_bits = {0};
-            Pixmap const blank =
+            const std::array<char, 1> empty_bits = {0};
+            const Pixmap blank =
                     XCreateBitmapFromData(display_ptr,
                                           m_parameters.getWindowHandle(),
                                           empty_bits.data(),
@@ -200,8 +200,8 @@ bool Window::renderingLoop(ProjectBase& project) {
                 } break;
                 case KeyPress:
                 case KeyRelease: {
-                    bool const pressed = event.type == KeyPress;
-                    std::uint32_t const keycode = event.xkey.keycode;
+                    const bool pressed = event.type == KeyPress;
+                    const std::uint32_t keycode = event.xkey.keycode;
                     if (!m_key_repeat) {
                         if (pressed && held_keys.count(keycode) != 0) {
                             break;  // an auto-repeat of a held key
@@ -214,13 +214,13 @@ bool Window::renderingLoop(ProjectBase& project) {
                     }
                     std::array<char, 8> text = {};
                     KeySym keysym = NoSymbol;
-                    std::int32_t const length = XLookupString(
+                    const std::int32_t length = XLookupString(
                             &event.xkey,
                             text.data(),
                             static_cast<std::int32_t>(text.size()),
                             &keysym,
                             nullptr);
-                    KeyEvent const key_event{
+                    const KeyEvent key_event{
                             static_cast<std::uint64_t>(keysym),
                             length == 1 ? text[0] : '\0',
                             pressed};

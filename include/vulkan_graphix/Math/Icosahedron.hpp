@@ -26,9 +26,9 @@ public:
         generateIndices();
     }
 
-    std::vector<Vec3<T>> const& points() const { return m_points; }
-    std::vector<Vec3<T>> const& normals() const { return m_normals; }
-    std::vector<I> const& indices() const { return m_indices; }
+    const std::vector<Vec3<T>>& points() const { return m_points; }
+    const std::vector<Vec3<T>>& normals() const { return m_normals; }
+    const std::vector<I>& indices() const { return m_indices; }
 
     T radius() const { return m_radius; }
 
@@ -71,7 +71,7 @@ private:
 
     void generateNormals() {
         m_normals.reserve(m_points.size());
-        for (Vec3<T> const& point : m_points) {
+        for (const Vec3<T>& point : m_points) {
             m_normals.push_back(glm::normalize(point));
         }
     }
@@ -87,7 +87,7 @@ private:
         // Middle band: ten triangles alternating up/down between the rings.
         constexpr I upper_ring_size = 5;
         for (I index = 1; index <= 5; ++index) {
-            I const next = index != 5 ? index + 1 : 1;
+            const I next = index != 5 ? index + 1 : 1;
 
             m_indices.push_back(index);
             m_indices.push_back(index + upper_ring_size);

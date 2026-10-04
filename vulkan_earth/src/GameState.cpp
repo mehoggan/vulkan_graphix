@@ -478,8 +478,8 @@ void GameState::draw(render::RenderContext& context) {
             // No color of its own: the original drew this in whatever GL's
             // current color was, which each tank mesh's draw call had just
             // set to red.
-            math::Vec4<float> const color(1.0f, 0.0f, 0.0f, 1.0f);
-            std::vector<render::UiVertex> const line = {
+            const math::Vec4<float> color(1.0f, 0.0f, 0.0f, 1.0f);
+            const std::vector<render::UiVertex> line = {
                     {math::Vec3<float>(turret_matrix[12],
                                        turret_matrix[13],
                                        turret_matrix[14]),
@@ -520,9 +520,9 @@ void GameState::drawHUD(render::RenderContext& context) {
     // Drawn over the scene with blending and depth testing off (every color
     // here is opaque, so only the latter matters), modelview reset to a
     // translation 800 units into the screen.
-    math::Mat4<float> const saved_view = context.view();
+    const math::Mat4<float> saved_view = context.view();
     math::Mat4<float> projection = context.projection();
-    math::Mat4<float> const hud_view = glm::translate(
+    const math::Mat4<float> hud_view = glm::translate(
             math::Mat4<float>(1.0f), math::Vec3<float>(0.0f, 0.0f, -800.0f));
     context.setDepthTest(false);
     context.setCamera(projection, hud_view);
@@ -927,14 +927,14 @@ void GameState::drawHUD(render::RenderContext& context) {
 }
 
 void GameState::drawHUDText(render::RenderContext& context,
-                            math::Vec4<float> const& color,
+                            const math::Vec4<float>& color,
                             const std::string& input,
                             float x,
                             float y) {
     // One glRasterPos2f() per character, advanced by its pixel width in
     // world units (so, as in the original, the spacing shrinks with the
     // HUD's distance from the camera).
-    render::Font const& font =
+    const render::Font& font =
             vulkan_earth::font(vulkan_earth::FontId::TimesRoman24);
     float x_pos = x;
     for (char ch : input) {
@@ -1879,7 +1879,7 @@ void GameState::handleProjectileState() {
         } else {
             timer = timer + .02f;
             // Note: gravity is negative
-            vulkan_graphix::Math::Vec3<float> const position =
+            const vulkan_graphix::Math::Vec3<float> position =
                     vulkan_graphix::Ballistics::positionAt(
                             projectile->getLaunch(), gravity, timer);
             projectile->update(position.x, position.y, position.z);
@@ -1969,7 +1969,7 @@ void GameState::constructProjectile() {
             current_player->getCurrentTank()->getTurretMatrix();
     // Refuses to fire if a point just past the muzzle is already below the
     // terrain (e.g. the barrel is buried in a hillside).
-    vulkan_graphix::Math::Vec3<float> const barrel_probe =
+    const vulkan_graphix::Math::Vec3<float> barrel_probe =
             vulkan_graphix::Ballistics::pointAlongBarrel(
                     glm::make_mat4(turret_matrix), 700.0f);
     float land_pos[3] = {barrel_probe.x, barrel_probe.y, barrel_probe.z};

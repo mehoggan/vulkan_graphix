@@ -449,7 +449,7 @@ bool Tutorial05::copyVertexData() {
     BufferParameters& staging_buffer =
             m_vulkan_tutorial05_parameters.getStagingBufferParameters();
 
-    VulkanCommon::StagedUploader const uploader(
+    const VulkanCommon::StagedUploader uploader(
             getVkDevice(),
             getGraphicsQueueParameters().getVkQueue(),
             m_vulkan_tutorial05_parameters.getRenderingResources()[0]
@@ -512,7 +512,7 @@ bool Tutorial05::createCommandBuffers() {
 }
 
 bool Tutorial05::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -549,7 +549,7 @@ bool Tutorial05::createSemaphores() {
 }
 
 bool Tutorial05::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =

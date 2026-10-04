@@ -75,7 +75,7 @@ void ControlItemTextField::draw(render::RenderContext& context) {
     }
     context.draw(frame_mesh);
 
-    bool const cursor_visible = text_field_active && text_cursor_on == 1;
+    const bool cursor_visible = text_field_active && text_cursor_on == 1;
     if (cursor_visible != cursor_built_visible ||
         (cursor_visible && cursor_built_chars != current_chars)) {
         cursor_mesh.clear();

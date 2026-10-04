@@ -16,8 +16,8 @@ struct CurveSample3D {
             , tangent(T(0), T(0), T(0))
             , parameter(T(0)) {}
 
-    CurveSample3D(Vec3<T> const& position_in,
-                  Vec3<T> const& tangent_in,
+    CurveSample3D(const Vec3<T>& position_in,
+                  const Vec3<T>& tangent_in,
                   T parameter_in)
             : position(position_in)
             , tangent(tangent_in)
@@ -33,7 +33,7 @@ struct CurveSample3D {
     Vec3<T> tangent;
     T parameter;
 
-    friend bool operator<(CurveSample3D const& lhs, CurveSample3D const& rhs) {
+    friend bool operator<(const CurveSample3D& lhs, const CurveSample3D& rhs) {
         return lhs.parameter < rhs.parameter;
     }
 };

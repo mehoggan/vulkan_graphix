@@ -39,19 +39,19 @@ vg::TerrainGenerator makeGeneratedTerrain() {
 }  // namespace
 
 TEST(GameLogicTest, NewTerrainIsFlatUntilGenerated) {
-    vg::TerrainGenerator const terrain(c_grid_size, c_grid_scale);
+    const vg::TerrainGenerator terrain(c_grid_size, c_grid_scale);
     for (std::int32_t z = 0; z < c_grid_size; ++z) {
         for (std::int32_t x = 0; x < c_grid_size; ++x) {
             EXPECT_EQ(terrain.heightAt(x, z), 0);
         }
     }
-    vg::Math::Vec3<float> const normal = terrain.triangleNormalAt(3, 3);
+    const vg::Math::Vec3<float> normal = terrain.triangleNormalAt(3, 3);
     EXPECT_NEAR(normal.y, 1.0f, c_epsilon);
 }
 
 TEST(GameLogicTest, GenerationIsDeterministicForASeed) {
-    vg::TerrainGenerator const first = makeGeneratedTerrain();
-    vg::TerrainGenerator const second = makeGeneratedTerrain();
+    const vg::TerrainGenerator first = makeGeneratedTerrain();
+    const vg::TerrainGenerator second = makeGeneratedTerrain();
     std::int32_t nonzero = 0;
     for (std::int32_t z = 0; z < c_grid_size; ++z) {
         for (std::int32_t x = 0; x < c_grid_size; ++x) {
@@ -70,7 +70,7 @@ TEST(GameLogicTest, GenerationIsDeterministicForASeed) {
 }
 
 TEST(GameLogicTest, HeightAtWorldRoundsToTheNearestVertexInXThenZOrder) {
-    vg::TerrainGenerator const terrain = makeGeneratedTerrain();
+    const vg::TerrainGenerator terrain = makeGeneratedTerrain();
     // Just past a vertex rounds down; more than halfway rounds up.
     EXPECT_EQ(terrain.heightAtWorld(5 * c_grid_scale + 10.0f,
                                     9 * c_grid_scale + 10.0f),
@@ -84,36 +84,36 @@ TEST(GameLogicTest, HeightAtWorldRoundsToTheNearestVertexInXThenZOrder) {
 }
 
 TEST(GameLogicTest, NormalsAreUnitLengthAndFlatOutsideTheGrid) {
-    vg::TerrainGenerator const terrain = makeGeneratedTerrain();
+    const vg::TerrainGenerator terrain = makeGeneratedTerrain();
     for (std::int32_t z = 0; z < c_grid_size - 1; ++z) {
         for (std::int32_t x = 0; x < c_grid_size - 1; ++x) {
-            vg::Math::Vec3<float> const triangle =
+            const vg::Math::Vec3<float> triangle =
                     terrain.triangleNormalAt(x, z);
             EXPECT_NEAR(glm::length(triangle), 1.0f, c_epsilon);
             EXPECT_GE(triangle.y, 0.0f);  // always flipped to face up
         }
     }
-    vg::Math::Vec3<float> const outside =
+    const vg::Math::Vec3<float> outside =
             terrain.triangleNormalAt(c_grid_size - 1, 0);
     EXPECT_EQ(outside, vg::Math::Vec3<float>(0.0f, 1.0f, 0.0f));
-    vg::Math::Vec3<float> const world_outside =
+    const vg::Math::Vec3<float> world_outside =
             terrain.normalAtWorld(c_grid_size * c_grid_scale * 2.0f, 0.0f);
     EXPECT_EQ(world_outside, vg::Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 }
 
 TEST(GameLogicTest, CraterLowersTheImpactAndReportsTheBlastCells) {
     vg::TerrainGenerator terrain(c_grid_size, c_grid_scale);
-    float const blast_size = 3.0f;
-    std::int32_t const impact_x = 16;
-    std::int32_t const impact_z = 12;
+    const float blast_size = 3.0f;
+    const std::int32_t impact_x = 16;
+    const std::int32_t impact_z = 12;
 
-    std::vector<vg::TerrainGridCell> const cells = terrain.makeCrater(
+    const std::vector<vg::TerrainGridCell> cells = terrain.makeCrater(
             impact_x * c_grid_scale, impact_z * c_grid_scale, blast_size);
 
     std::set<std::pair<std::int32_t, std::int32_t>> reported;
-    for (vg::TerrainGridCell const& cell : cells) {
+    for (const vg::TerrainGridCell& cell : cells) {
         reported.insert({cell.x, cell.z});
-        float const distance = std::sqrt(
+        const float distance = std::sqrt(
                 static_cast<float>((cell.x - impact_x) * (cell.x - impact_x) +
                                    (cell.z - impact_z) * (cell.z - impact_z)));
         EXPECT_LE(distance, blast_size);
@@ -132,16 +132,16 @@ TEST(GameLogicTest, BallisticsLaunchesDownTheBarrelAndFallsUnderGravity) {
     vg::Math::Mat4<float> turret(1.0f);
     turret[3] = vg::Math::Vec4<float>(10.0f, 20.0f, 30.0f, 1.0f);
 
-    vg::Math::Vec3<float> const probe =
+    const vg::Math::Vec3<float> probe =
             vg::Ballistics::pointAlongBarrel(turret, 5.0f);
     EXPECT_EQ(probe, vg::Math::Vec3<float>(10.0f, 20.0f, 25.0f));
 
-    vg::Ballistics::Launch const launch =
+    const vg::Ballistics::Launch launch =
             vg::Ballistics::launchFromBarrel(turret, 4.0f, 5.0f);
     EXPECT_EQ(launch.origin, probe);
     EXPECT_EQ(launch.velocity, vg::Math::Vec3<float>(0.0f, 0.0f, -4.0f));
 
-    vg::Math::Vec3<float> const at_two =
+    const vg::Math::Vec3<float> at_two =
             vg::Ballistics::positionAt(launch, -10.0f, 2.0f);
     EXPECT_NEAR(at_two.x, 10.0f, c_epsilon);
     EXPECT_NEAR(at_two.y, 20.0f - 20.0f, c_epsilon);  // 0.5 * -10 * 2^2
@@ -177,12 +177,12 @@ TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
                          body, vg::Math::Vec3<float>(0, 1, 0))
                          .has_value());
 
-    vg::Math::Vec3<float> const ground =
+    const vg::Math::Vec3<float> ground =
             glm::normalize(vg::Math::Vec3<float>(0.3f, 1.0f, -0.2f));
-    std::optional<vg::TankOrientation::Alignment> const alignment =
+    const std::optional<vg::TankOrientation::Alignment> alignment =
             vg::TankOrientation::alignToGround(body, ground);
     ASSERT_TRUE(alignment.has_value());
-    vg::Math::Vec3<float> const new_up(alignment->matrix[1]);
+    const vg::Math::Vec3<float> new_up(alignment->matrix[1]);
     EXPECT_NEAR(new_up.x, ground.x, 1e-3f);
     EXPECT_NEAR(new_up.y, ground.y, 1e-3f);
     EXPECT_NEAR(new_up.z, ground.z, 1e-3f);
@@ -207,12 +207,12 @@ TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
                     catalog::weapon(catalog::WeaponKind::Default).image_file),
             "TestImage.raw");
     // Every entry is filled in.
-    for (catalog::ItemSpec const& item : catalog::items()) {
+    for (const catalog::ItemSpec& item : catalog::items()) {
         EXPECT_NE(item.image_file, nullptr);
         EXPECT_GT(item.price, 0);
         EXPECT_GE(item.max_stack, item.remaining);
     }
-    for (catalog::WeaponSpec const& weapon : catalog::weapons()) {
+    for (const catalog::WeaponSpec& weapon : catalog::weapons()) {
         EXPECT_NE(weapon.description, nullptr);
         EXPECT_GT(weapon.scale, 0.0f);
         EXPECT_GE(weapon.max_stack, weapon.remaining);
@@ -222,7 +222,7 @@ TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
 TEST(GameLogicTest, CatalogKeepsThorsTwoComponentMediumSlateBlue) {
     namespace catalog = vg::GameCatalog;
     // OpenGLColors.h's MediumSlateBlue has no blue component.
-    auto const& color =
+    const auto& color =
             catalog::weapon(catalog::WeaponKind::Thor).explosion_colors[1];
     EXPECT_DOUBLE_EQ(color[0], 0.498039);
     EXPECT_DOUBLE_EQ(color[1], 1.0);
@@ -271,7 +271,7 @@ TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
     effects::ParticleEmitter emitter(10, 5, 2, 3, effects::ParticleKind::Acid);
     auto live = [&emitter] {
         std::size_t count = 0;
-        for (auto const& slot : emitter.slots()) {
+        for (const auto& slot : emitter.slots()) {
             count += slot.has_value() ? 1 : 0;
         }
         return count;
@@ -279,10 +279,10 @@ TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
     srand(99);
     emitter.update(1.0f, 2.0f, 3.0f);
     EXPECT_EQ(live(), 10U);
-    for (auto const& slot : emitter.slots()) {
+    for (const auto& slot : emitter.slots()) {
         if (slot) {
             EXPECT_EQ(slot->x, 1.0f);
-            float const length = std::sqrt(slot->dir[0] * slot->dir[0] +
+            const float length = std::sqrt(slot->dir[0] * slot->dir[0] +
                                            slot->dir[1] * slot->dir[1] +
                                            slot->dir[2] * slot->dir[2]);
             EXPECT_NEAR(length, 1.0f, c_epsilon);

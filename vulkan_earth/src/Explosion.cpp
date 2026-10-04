@@ -51,16 +51,16 @@ Explosion::~Explosion() = default;
 void Explosion::draw(render::RenderContext& context) {
     // The growth and color timeline are libvulkan_graphix's
     // EffectSimulation (shared with Tutorial20).
-    vulkan_graphix::EffectSimulation::ExplosionFrame const frame =
+    const vulkan_graphix::EffectSimulation::ExplosionFrame frame =
             vulkan_graphix::EffectSimulation::advanceExplosion(simulation);
-    float const* const colors[4] = {colors1, colors2, colors3, colors4};
+    const float* const colors[4] = {colors1, colors2, colors3, colors4};
     if (frame.color_index >= 0) {
-        float const* color = colors[frame.color_index];
+        const float* color = colors[frame.color_index];
         current_color =
                 math::Vec4<float>(color[0], color[1], color[2], frame.alpha);
     }
 
-    float const sphere_radius =
+    const float sphere_radius =
             vulkan_graphix::EffectSimulation::explosionSphereRadius(
                     simulation, weapon_radius);
     context.drawMesh(

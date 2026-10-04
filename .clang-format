@@ -10,11 +10,7 @@
 # modified. These have been modified without being staged. You can review the
 # modifications using "git diff".
 #
-# Some clients are running on older versions of clang-format, so please limit
-# flag choices to options supported by clang-format version 10 and below.
-# - XcodeClangFormat: clang-format 10
-# - bin/clang-format: clang-format 11
-# - brew:             clang-format 14
+# Requires clang-format 14 or newer (QualifierAlignment).
 #
 # [1] https://source.chromium.org/chromium/chromium/src/+/HEAD:third_party/clang-format/script/git-clang-format
 #
@@ -102,6 +98,9 @@ PenaltyBreakString: 1000
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Left
+# const (and volatile) always come before the type: `const Type&`, never
+# `Type const&`.
+QualifierAlignment: Left
 ReflowComments:  true
 SortIncludes:    true
 SpaceAfterCStyleCast: false
@@ -199,6 +198,9 @@ PenaltyBreakString: 1000
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Left
+# const (and volatile) always come before the type: `const Type&`, never
+# `Type const&`.
+QualifierAlignment: Left
 ReflowComments:  true
 SortIncludes:    true
 SpaceAfterCStyleCast: false

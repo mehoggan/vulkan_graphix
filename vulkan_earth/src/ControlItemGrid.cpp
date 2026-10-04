@@ -105,11 +105,11 @@ void ControlItemGrid::draw(render::RenderContext& context) {
 
     // Draw cell lines if they are set to visible
     if (visible_lines) {
-        Vec4 const black(0, 0, 0, 1);
+        const Vec4 black(0, 0, 0, 1);
         for (std::int32_t r = 0; r < rows; r++)
             for (std::int32_t c = 0; c < cols; c++) {
                 // GL_LINE_LOOP: the four edges, closing back to the start.
-                std::array<Vec3, 4> const loop = {
+                const std::array<Vec3, 4> loop = {
                         Vec3(x_pos + cell_width * c,
                              y_pos - cell_height * r,
                              z_pos + 0.5),

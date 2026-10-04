@@ -229,7 +229,7 @@ bool Tutorial11::createCommandBuffers() {
 }
 
 bool Tutorial11::createSemaphores() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -259,7 +259,7 @@ bool Tutorial11::createSemaphores() {
 }
 
 bool Tutorial11::createFences() {
-    VulkanCommon::FrameResourceFactory const frame_resource_factory(
+    const VulkanCommon::FrameResourceFactory frame_resource_factory(
             getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
@@ -479,24 +479,24 @@ Math::Mat4<float> Tutorial11::getUniformBufferData() const {
     // Tutorial07's shaders name this uniform "u_ProjectionMatrix" but just
     // do gl_Position = u_ProjectionMatrix * i_Position - it's really a full
     // model-view-projection slot, which is exactly what's needed here.
-    Math::Mat4<float> const model(1.0f);
-    Math::Mat4<float> const view =
+    const Math::Mat4<float> model(1.0f);
+    const Math::Mat4<float> view =
             glm::lookAt(m_camera.eye(),
                         m_camera.target(),
                         Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    float const width =
+    const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    float const height = static_cast<float>(
+    const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    Math::Mat4<float> const projection = Tools::getPerspectiveProjectionMatrix(
+    const Math::Mat4<float> projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
     return projection * view * model;
 }
 
 bool Tutorial11::updateUniformBufferData() {
-    Math::Mat4<float> const uniform_data = getUniformBufferData();
+    const Math::Mat4<float> uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
             m_vulkan_tutorial11_parameters.getUniformBufferParameters();
 

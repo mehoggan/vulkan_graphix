@@ -63,7 +63,7 @@ MainMenuButton::MainMenuButton(std::int32_t id,
 MainMenuButton::~MainMenuButton() { delete label; }
 
 void MainMenuButton::draw(render::RenderContext& context) {
-    math::Vec4<float> const current_color(
+    const math::Vec4<float> current_color(
             color[0], color[1], color[2], color[3]);
     if (mesh.triangles().empty() || built_pressed != pressed ||
         built_color != current_color) {

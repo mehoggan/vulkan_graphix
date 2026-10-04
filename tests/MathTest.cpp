@@ -22,9 +22,9 @@ using namespace vulkan_graphix::Math;
 
 TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
     std::vector<std::int32_t> values = {0, 1, 2, 3, 4};
-    std::size_t const select_count = 3;
+    const std::size_t select_count = 3;
 
-    std::vector<std::vector<std::int32_t>> const expected = {
+    const std::vector<std::vector<std::int32_t>> expected = {
             {0, 1, 2},
             {0, 1, 3},
             {0, 1, 4},
@@ -40,7 +40,7 @@ TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
     std::size_t index = 0;
     do {
         ASSERT_LT(index, expected.size());
-        std::vector<std::int32_t> const combination(
+        const std::vector<std::int32_t> combination(
                 values.begin(), values.begin() + select_count);
         EXPECT_EQ(expected[index], combination);
         ++index;
@@ -160,18 +160,18 @@ TEST(IcosahedronTest, HasTwelvePointsAndTwentyTriangles) {
 }
 
 TEST(SphereTest, UvSphereProducesExpectedVertexAndIndexCounts) {
-    std::uint16_t const theta_steps = 8;
-    std::uint16_t const phi_steps = 4;
+    const std::uint16_t theta_steps = 8;
+    const std::uint16_t phi_steps = 4;
     Sphere<float, std::uint32_t> sphere(1.0f, theta_steps, phi_steps);
 
     EXPECT_FLOAT_EQ(1.0f, sphere.radius());
     // Two poles + (phi_steps - 1) rings of theta_steps points each.
-    std::size_t const expected_points = 2u + (phi_steps - 1u) * theta_steps;
+    const std::size_t expected_points = 2u + (phi_steps - 1u) * theta_steps;
     EXPECT_EQ(expected_points, sphere.points().size());
     EXPECT_EQ(sphere.points().size(), sphere.normals().size());
     // phi_steps rings of triangles, 2 triangles per quad except the pole
     // rings which are single-triangle fans.
-    std::size_t const expected_triangles =
+    const std::size_t expected_triangles =
             2u * theta_steps + (phi_steps - 2u) * 2u * theta_steps;
     EXPECT_EQ(expected_triangles * 3u, sphere.indices().size());
 }
@@ -196,7 +196,7 @@ TEST(SphereTest, IcosphereSubdivisionGrowsPointCountWithLevelOfDetail) {
     EXPECT_EQ(162u, subdivided_twice.points().size());
     EXPECT_EQ(960u, subdivided_twice.indices().size());  // 320 triangles * 3.
 
-    for (Vec3<float> const& normal : subdivided_twice.normals()) {
+    for (const Vec3<float>& normal : subdivided_twice.normals()) {
         EXPECT_NEAR(1.0f, glm::length(normal), 1e-4f);
     }
 }
@@ -371,12 +371,12 @@ TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
 
     std::vector<Vec3<float>> working_points;
     working_points.push_back(control_points.front());
-    for (Vec3<float> const& point : control_points) {
+    for (const Vec3<float>& point : control_points) {
         working_points.push_back(point);
     }
     working_points.push_back(control_points.back());
 
-    std::size_t const segment_count = working_points.size() - 3;
+    const std::size_t segment_count = working_points.size() - 3;
     std::vector<CubicCurve<float>> segments;
     segments.reserve(segment_count);
     for (std::size_t segment = 0; segment < segment_count; ++segment) {
@@ -450,8 +450,8 @@ TEST(CubicCurveTest, TighterChordalToleranceProducesMoreSamples) {
     CubicCurve<float> curve(
             CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
-    std::size_t const loose_count = curve.computeSamplesAdaptive(0.1f).size();
-    std::size_t const tight_count =
+    const std::size_t loose_count = curve.computeSamplesAdaptive(0.1f).size();
+    const std::size_t tight_count =
             curve.computeSamplesAdaptive(0.001f).size();
 
     EXPECT_GT(tight_count, loose_count);

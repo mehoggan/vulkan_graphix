@@ -83,7 +83,7 @@ public:
     void clear();
 
     // Every slot, live or free, in pool order (the original's draw order).
-    std::vector<std::optional<Particle>> const& slots() const;
+    const std::vector<std::optional<Particle>>& slots() const;
 
 private:
     void addParticles();
@@ -119,7 +119,7 @@ ExplosionFrame advanceExplosion(Explosion& explosion);
 
 // The sphere's radius for an explosion of a weapon with blast radius
 // weapon_radius (Weapon::getRadius()).
-float explosionSphereRadius(Explosion const& explosion,
+float explosionSphereRadius(const Explosion& explosion,
                             std::int32_t weapon_radius);
 
 }  // namespace vulkan_graphix::EffectSimulation

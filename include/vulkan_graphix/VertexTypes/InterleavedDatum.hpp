@@ -16,7 +16,7 @@ public:
 
     InterleavedDatum() = default;
 
-    explicit InterleavedDatum(Ts const&... values) : m_values(values...) {}
+    explicit InterleavedDatum(const Ts&... values) : m_values(values...) {}
 
     template <std::size_t Index>
     auto& get() {
@@ -24,20 +24,20 @@ public:
     }
 
     template <std::size_t Index>
-    auto const& get() const {
+    const auto& get() const {
         return std::get<Index>(m_values);
     }
 
 private:
     std::tuple<Ts...> m_values;
 
-    friend bool operator==(InterleavedDatum const& lhs,
-                           InterleavedDatum const& rhs) {
+    friend bool operator==(const InterleavedDatum& lhs,
+                           const InterleavedDatum& rhs) {
         return lhs.m_values == rhs.m_values;
     }
 
-    friend bool operator!=(InterleavedDatum const& lhs,
-                           InterleavedDatum const& rhs) {
+    friend bool operator!=(const InterleavedDatum& lhs,
+                           const InterleavedDatum& rhs) {
         return !(lhs == rhs);
     }
 
