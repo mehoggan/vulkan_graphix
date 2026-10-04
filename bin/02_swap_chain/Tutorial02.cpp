@@ -4,6 +4,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <algorithm>
+#include <cstring>
 #include <limits>
 
 #include "vulkan_graphix/VulkanFunctions.h"

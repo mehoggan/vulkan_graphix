@@ -1,13 +1,11 @@
 #include "vulkan_earth/MainMenu.h"
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
-#include "vulkan_earth/ControlItemCheckBox.h"
 #include "vulkan_earth/ControlItemSelectionBox.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/MainMenuButton.h"
@@ -25,11 +23,10 @@
 #include "vulkan_earth/SubMenuTest.h"
 #include "vulkan_earth/SubMenuWeapons.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playMusic(std::int32_t music);
 
@@ -348,7 +345,7 @@ void MainMenu::draw(render::RenderContext& context) {
     if (background_mesh.triangles().empty() || built_width != width ||
         built_height != height) {
         background_mesh.clear();
-        render::appendMenuPanel(
+        vulkan_earth::appendMenuPanel(
                 background_mesh, width, height, percent_border);
         built_width = width;
         built_height = height;

@@ -1,17 +1,13 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include <stdio.h>
 #include <cstdint>
 #include <fstream>
-#include <iostream>
 #include <string>
-#include "vulkan_earth/Normal.h"
-#include "vulkan_earth/Vector.h"
-#include "vulkan_earth/Vertex.h"
-#include "vulkan_earth/render/RenderTypes.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Renderer.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -31,15 +27,6 @@ class VBOShaderLibrary;
 class SpecialEffect;
 class Explosion;
 class Tank;
-
-const std::uint64_t raw1 = 0x7fc00000;  // NAN
-const float f1 = *(float*)&raw1;
-const std::uint64_t raw2 = 0xffc00000;  //-NAN
-const float f2 = *(float*)&raw2;
-const std::uint64_t raw3 = 0x7f800000;  // INF
-const float f3 = *(float*)&raw3;
-const std::uint64_t raw4 = 0xff800000;  //-INF
-const float f4 = *(float*)&raw4;
 
 const double pi = 3.141592653589793238462643383279502884;
 const std::int32_t max_projectile_models = 11;
@@ -66,10 +53,10 @@ public:
               std::int32_t* new_current_game_state);
     ~GameState();
     void update();
-    void draw(vulkan_earth::render::RenderContext& context);
-    void drawHUD(vulkan_earth::render::RenderContext& context);
-    void drawHUDText(vulkan_earth::render::RenderContext& context,
-                     vulkan_earth::render::Vec4 const& color,
+    void draw(vulkan_graphix::Render::RenderContext& context);
+    void drawHUD(vulkan_graphix::Render::RenderContext& context);
+    void drawHUDText(vulkan_graphix::Render::RenderContext& context,
+                     vulkan_graphix::Math::Vec4<float> const& color,
                      const std::string& input,
                      float x,
                      float y);
@@ -78,24 +65,27 @@ public:
     std::int32_t getWinner();
     void toggleCamera();
     void handleKeyboardInput(std::int32_t key, bool key_status);
-    void debugMode(vulkan_earth::render::RenderContext& context);
-    void drawMinimap(vulkan_earth::render::RenderContext& context);
+    void debugMode(vulkan_graphix::Render::RenderContext& context);
+    void drawMinimap(vulkan_graphix::Render::RenderContext& context);
     void currentPlayerFire();
     void timerEvent(float new_timer);
     bool getProjectileFired();
     void destroyProjectile();
-    float calcAngleBetweenVectors(Vector one, Vector two);
-    void calcNormalVector(Vertex* v0, Vertex* v1, Vertex* v2, Normal* n);
-    float calcDistanceBetweenVertices(Vertex* v0, Vertex* v1);
+    void calcNormalVector(vulkan_graphix::Math::Vec3<float>* v0,
+                          vulkan_graphix::Math::Vec3<float>* v1,
+                          vulkan_graphix::Math::Vec3<float>* v2,
+                          vulkan_graphix::Math::Vec3<float>* n);
+    float calcDistanceBetweenVertices(vulkan_graphix::Math::Vec3<float>* v0,
+                                      vulkan_graphix::Math::Vec3<float>* v1);
     void playBackgroundSounds();
-    void drawHelp(vulkan_earth::render::RenderContext& context);
+    void drawHelp(vulkan_graphix::Render::RenderContext& context);
     GlobalSettings* getGlobalSettings();
     PlayerFactory* getPlayerFactory();
     float getGravity();
     float getBalisticScalar();
     // Looks into table for given player
     void nearestEnemy();
-    Vertex getPositionOfLastProjectile();
+    vulkan_graphix::Math::Vec3<float> getPositionOfLastProjectile();
     void setPositionOfLastProjectile(float x, float y, float z);
 
 private:
@@ -174,7 +164,7 @@ private:
     bool** tank_reachable;
     float** distance_to_target;
     Tank*** tank_list;
-    Vertex position_of_last_projectile;
+    vulkan_graphix::Math::Vec3<float> position_of_last_projectile;
     ofstream myfile;
     /*	END OF AI */
 };

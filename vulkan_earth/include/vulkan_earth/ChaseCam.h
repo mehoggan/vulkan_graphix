@@ -2,9 +2,10 @@
 #define CHASECAM_H
 
 #include <cstdint>
-#include "vulkan_earth/render/RenderTypes.h"
 
-namespace vulkan_earth::render {
+#include "vulkan_graphix/Math/MathTypes.hpp"
+
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -12,9 +13,8 @@ class ChaseCam {
 public:
     ChaseCam();
     ChaseCam(float* new_target_pos, float* new_target_at);
-    ~ChaseCam();
-    // The camera's view matrix (what gluLookAt() applied).
-    vulkan_earth::render::Mat4 view();
+    ~ChaseCam() = default;
+    vulkan_graphix::Math::Mat4<float> view();
     void setShakeCam(std::int32_t magnitude);
     void updateShakeCam();
     void updateFactor();

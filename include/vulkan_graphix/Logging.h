@@ -2,7 +2,6 @@
 #define VULKAN_GRAPHIX_LOGGING_H
 
 #include <cstdint>
-#include "vulkan_graphix/LoggerHelpers.h"
 
 #include <gtest/gtest_prod.h>
 
@@ -15,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include "vulkan_graphix/LoggerHelpers.h"  // IWYU pragma: keep (operator<< overloads used by the templates below)
 
 namespace vulkan_graphix {
 /**

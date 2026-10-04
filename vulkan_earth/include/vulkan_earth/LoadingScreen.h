@@ -4,9 +4,10 @@
 #include <cstdint>
 
 #include "vulkan_earth/ImageObject.h"
-#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -23,14 +24,14 @@ public:
                   float blue,
                   float alpha);
     ~LoadingScreen();
-    void draw(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
 
 private:
     float pos[3];
     float color[4];
     std::int32_t width, height;
     ImageObject* image;
-    vulkan_earth::render::UiMesh frame_mesh;
+    vulkan_graphix::Render::UiMesh frame_mesh;
 };
 
 #endif

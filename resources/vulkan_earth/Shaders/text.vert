@@ -1,5 +1,5 @@
 #version 450
-// GLUT bitmap text: glyph quads already placed in normalized device
+// Bitmap text: glyph quads already placed in normalized device
 // coordinates (window pixels around the projected raster position) with
 // the raster position's own depth, so mvp is not applied.
 layout(location = 0) in vec3 in_position;

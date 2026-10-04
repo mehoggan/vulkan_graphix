@@ -1,7 +1,5 @@
 #include "vulkan_earth/PlayerFactory.h"
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/GlobalSettings.h"
@@ -9,7 +7,6 @@
 #include "vulkan_earth/PlayerCPU.h"
 #include "vulkan_earth/PlayerHuman.h"
 #include "vulkan_earth/Tank.h"
-#include "vulkan_earth/TankA.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 PlayerFactory::PlayerFactory() = default;

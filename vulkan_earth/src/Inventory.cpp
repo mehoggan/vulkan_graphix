@@ -3,16 +3,17 @@
 #include <cstdint>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemGrid.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/Item.h"
 #include "vulkan_earth/Player.h"
 #include "vulkan_earth/PlayerHuman.h"
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/Weapon.h"
-#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 Inventory::Inventory() = default;
 Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
@@ -40,7 +41,7 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
                            -width / 3.3,
                            height / 2.5,
                            1,
-                           render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0,
                            0,
                            0);
@@ -49,7 +50,7 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
             -width / 3.3,
             height / 3.0,
             1,
-            render::FontId::TimesRoman24,
+            vulkan_earth::FontId::TimesRoman24,
             0,
             0,
             0);
@@ -57,7 +58,7 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
                               -width / 3.6,
                               -height / 3.0,
                               1,
-                              render::FontId::TimesRoman24,
+                              vulkan_earth::FontId::TimesRoman24,
                               0,
                               0,
                               0);
@@ -105,7 +106,7 @@ void Inventory::setupInventory(Player* player) {
                                            0,
                                            0,
                                            0,
-                                           render::FontId::TimesRoman24,
+                                           vulkan_earth::FontId::TimesRoman24,
                                            0.6f,
                                            0.3f,
                                            0.4f);
@@ -136,7 +137,7 @@ void Inventory::setupInventory(Player* player) {
                                    0,
                                    0,
                                    0,
-                                   render::FontId::TimesRoman24,
+                                   vulkan_earth::FontId::TimesRoman24,
                                    0.6f,
                                    0.3f,
                                    0.4f);
@@ -169,7 +170,7 @@ void Inventory::setupInventory(Player* player) {
                                   -width / 3.6,
                                   -height / 3.0,
                                   1,
-                                  render::FontId::TimesRoman24,
+                                  vulkan_earth::FontId::TimesRoman24,
                                   0,
                                   0,
                                   0);
@@ -179,7 +180,7 @@ void Inventory::setupInventory(Player* player) {
                                   -width / 3.6,
                                   -height / 3.0,
                                   1,
-                                  render::FontId::TimesRoman24,
+                                  vulkan_earth::FontId::TimesRoman24,
                                   0,
                                   0,
                                   0);
@@ -269,7 +270,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                    -width / 3.6,
                                    -height / 3.0,
                                    1,
-                                   render::FontId::TimesRoman24,
+                                   vulkan_earth::FontId::TimesRoman24,
                                    0,
                                    0,
                                    0);
@@ -279,7 +280,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                       -width / 3.6,
                                       -height / 3.0,
                                       1,
-                                      render::FontId::TimesRoman24,
+                                      vulkan_earth::FontId::TimesRoman24,
                                       0,
                                       0,
                                       0);
@@ -293,7 +294,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                       -width / 3.6,
                                       -height / 3.0,
                                       1,
-                                      render::FontId::TimesRoman24,
+                                      vulkan_earth::FontId::TimesRoman24,
                                       0,
                                       0,
                                       0);
@@ -303,7 +304,7 @@ void Inventory::keyHandler(std::int32_t key) {
                                       -width / 3.6,
                                       -height / 3.0,
                                       1,
-                                      render::FontId::TimesRoman24,
+                                      vulkan_earth::FontId::TimesRoman24,
                                       0,
                                       0,
                                       0);
@@ -313,13 +314,14 @@ void Inventory::keyHandler(std::int32_t key) {
 
 void Inventory::draw(render::RenderContext& context) {
     // glViewport()'s float -> int truncation kept.
-    render::beginOverlayPanel(context,
-                              {static_cast<std::int32_t>(x_pos),
-                               static_cast<std::int32_t>(y_pos),
-                               width,
-                               height},
-                              width,
-                              height);
+    vulkan_earth::beginOverlayPanel(
+            context,
+            vulkan_earth::glRect(static_cast<std::int32_t>(x_pos),
+                                 static_cast<std::int32_t>(y_pos),
+                                 width,
+                                 height),
+            width,
+            height);
 
     inven_grid->draw(context);
     title->draw(context);
@@ -332,5 +334,5 @@ void Inventory::draw(render::RenderContext& context) {
         }
     }
 
-    render::resetToFullWindow(context);
+    vulkan_earth::resetToFullWindow(context);
 }

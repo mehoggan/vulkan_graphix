@@ -3,10 +3,11 @@
 
 #include <cstdint>
 #include <memory>
-#include "vulkan_earth/render/Mesh.h"
-#include "vulkan_earth/render/Texture.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
+#include "vulkan_graphix/Render/Texture.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -15,14 +16,14 @@ public:
     SkyboxFactory();
     SkyboxFactory(std::int32_t size_of_box);
     ~SkyboxFactory();
-    void draw(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
 
 private:
     void buildGeometry();
 
     float size;
-    std::shared_ptr<vulkan_earth::render::Texture> texture;
-    vulkan_earth::render::UiMesh mesh;
+    std::shared_ptr<vulkan_graphix::Render::Texture> texture;
+    vulkan_graphix::Render::UiMesh mesh;
 };
 
 #endif /* SKYBOX_FACTORY_H_ */

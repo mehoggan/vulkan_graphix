@@ -1,9 +1,11 @@
 #include "vulkan_earth/ParticleGenerator.h"
 #include <cstdint>
-#include "vulkan_earth/render/GlMatrix.h"
-#include "vulkan_earth/render/Renderer.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "vulkan_earth/GameRenderer.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 namespace effects = vulkan_graphix::EffectSimulation;
 
 ParticleGenerator::ParticleGenerator(std::int32_t spawn,
@@ -22,7 +24,7 @@ void ParticleGenerator::update(float new_x, float new_y, float new_z) {
 }
 
 void ParticleGenerator::draw(render::RenderContext& context,
-                             render::Mat4 const& model) {
+                             math::Mat4<float> const& model) {
     // Each particle: glutSolidSphere(1, 10, 10) at its position, scaled by
     // its size.
     for (auto const& slot : emitter.slots()) {
@@ -32,18 +34,19 @@ void ParticleGenerator::draw(render::RenderContext& context,
         effects::Particle const& particle = *slot;
         context.drawMesh(
                 render::Renderer::instance().sphere(10, 10),
-                render::PipelineId::FlatColor,
+                vulkan_earth::pipelines().flat_color,
                 nullptr,
-                render::glmatrix::scaled(
-                        render::glmatrix::translated(
-                                model, particle.x, particle.y, particle.z),
-                        particle.size,
-                        particle.size,
-                        particle.size),
-                render::Vec4(particle.red,
-                             particle.green,
-                             particle.blue,
-                             effects::c_particle_alpha));
+                glm::scale(
+                        glm::translate(
+                                model,
+                                math::Vec3<float>(
+                                        particle.x, particle.y, particle.z)),
+                        math::Vec3<float>(
+                                particle.size, particle.size, particle.size)),
+                math::Vec4<float>(particle.red,
+                                  particle.green,
+                                  particle.blue,
+                                  effects::c_particle_alpha));
     }
 }
 

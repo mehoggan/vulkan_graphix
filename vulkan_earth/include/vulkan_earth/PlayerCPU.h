@@ -1,9 +1,7 @@
 #ifndef PLAYER_CPU_H
 #define PLAYER_CPU_H
 
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
 #include <string>
 #include "vulkan_earth/Player.h"
 

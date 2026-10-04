@@ -11,7 +11,7 @@ const std::int32_t tank_e_armor = 3;
 const std::int32_t tank_e_speed = 80;
 
 TankE::TankE() = default;
-TankE::TankE(float x, float y, float z) {
+TankE::TankE(float /*x*/, float /*y*/, float /*z*/) {
     initBody();
     initHead();
     initTurret();

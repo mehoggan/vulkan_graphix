@@ -1,12 +1,12 @@
 #include "vulkan_earth/TextObject.h"
-#include <cstdint>
 #include <string>
-#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 TextObject::TextObject() = default;
 
@@ -14,7 +14,7 @@ TextObject::TextObject(const std::string& input,
                        float new_pos_x,
                        float new_pos_y,
                        float new_pos_z,
-                       render::FontId font,
+                       vulkan_earth::FontId font,
                        float red,
                        float green,
                        float blue) {
@@ -24,7 +24,7 @@ TextObject::TextObject(const std::string& input,
     pos_z = new_pos_z + 1;
     font_size = font;
     if (render::Renderer::instance().extent().width < 1300) {
-        font_size = render::FontId::Fixed9By15;
+        font_size = vulkan_earth::FontId::Fixed9By15;
     }
     color[0] = red;
     color[1] = green;
@@ -43,15 +43,14 @@ void TextObject::setZpos(float z) { pos_z = z; }
 // units, exactly as the original's glRasterPos3f()/glutBitmapCharacter()
 // loop did.
 void TextObject::draw(render::RenderContext& context) {
-    render::GlutFont const& font =
-            render::Renderer::instance().font(font_size);
-    render::Vec4 const text_color(color[0], color[1], color[2], 1.0f);
+    render::Font const& font = vulkan_earth::font(font_size);
+    math::Vec4<float> const text_color(color[0], color[1], color[2], 1.0f);
     float x_pos = pos_x;
     for (char ch : output) {
-        context.drawBitmapText(font,
-                               render::Vec3(x_pos, pos_y, pos_z),
-                               std::string_view(&ch, 1),
-                               text_color);
-        x_pos += static_cast<float>(font.advance(ch));
+        context.drawText(font,
+                         math::Vec3<float>(x_pos, pos_y, pos_z),
+                         std::string_view(&ch, 1),
+                         text_color);
+        x_pos += static_cast<float>(vulkan_earth::textAdvance(font_size, ch));
     }
 }

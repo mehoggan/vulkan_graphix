@@ -6,13 +6,16 @@
  */
 
 #include "vulkan_earth/Explosion.h"
+#include <algorithm>
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/OpenGLColors.h"
-#include "vulkan_earth/Vector.h"
-#include "vulkan_earth/render/GlMatrix.h"
-#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 /*
  * Constructors and De-constructors
@@ -22,7 +25,7 @@ Explosion::Explosion(float new_x,
                      float new_y,
                      float new_z,
                      std::int32_t new_weapon_radius) {
-    render::glmatrix::store(render::Mat4(1.0f), trans_matrix);
+    std::copy_n(glm::value_ptr(math::Mat4<float>(1.0f)), 16, trans_matrix);
     x = new_x;
     y = new_y;
     z = new_z;
@@ -54,7 +57,7 @@ void Explosion::draw(render::RenderContext& context) {
     if (frame.color_index >= 0) {
         float const* color = colors[frame.color_index];
         current_color =
-                render::Vec4(color[0], color[1], color[2], frame.alpha);
+                math::Vec4<float>(color[0], color[1], color[2], frame.alpha);
     }
 
     float const sphere_radius =
@@ -62,13 +65,12 @@ void Explosion::draw(render::RenderContext& context) {
                     simulation, weapon_radius);
     context.drawMesh(
             render::Renderer::instance().sphere(90, 180),
-            render::PipelineId::FlatColor,
+            vulkan_earth::pipelines().flat_color,
             nullptr,
-            render::glmatrix::scaled(
-                    render::glmatrix::translated(render::Mat4(1.0f), x, y, z),
-                    sphere_radius,
-                    sphere_radius,
-                    sphere_radius),
+            glm::scale(glm::translate(math::Mat4<float>(1.0f),
+                                      math::Vec3<float>(x, y, z)),
+                       math::Vec3<float>(
+                               sphere_radius, sphere_radius, sphere_radius)),
             current_color);
 }
 

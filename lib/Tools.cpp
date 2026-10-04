@@ -8,7 +8,12 @@
 #include <iostream>
 #include <sstream>
 #define STB_IMAGE_IMPLEMENTATION
+// The vendored single-header library's static helpers: clangd builds this
+// header on its own (its preamble), where they look unused.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
 #include "vulkan_graphix/STBImage.h"
+#pragma GCC diagnostic pop
 
 namespace vulkan_graphix::Tools {
 

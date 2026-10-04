@@ -1,14 +1,11 @@
 #include "vulkan_earth/SkyboxFactory.h"
 #include <cstdint>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
-#include <vector>
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 SkyboxFactory::SkyboxFactory() = default;
 
@@ -34,69 +31,82 @@ void SkyboxFactory::buildGeometry() {
     std::int32_t scale = 100;
     mesh.clear();
     mesh.setTexture(texture.get());
-    mesh.setReplaceTexEnv(true);
+    // GL_REPLACE: texels only (the UI shader's params.x).
+    mesh.setParams(math::Vec4<float>(1.0f, 0.0f, 0.0f, 0.0f));
     // front, right, back, left, top, bottom (the box's top is at half
     // height)
     mesh.addTexturedQuad(
-            {render::Vec3(start * scale, start * scale, start * scale),
-             render::Vec3(bound * scale, start * scale, start * scale),
-             render::Vec3(bound * scale, bound * scale / 2, start * scale),
-             render::Vec3(start * scale, bound * scale / 2, start * scale)},
-            {render::Vec2(0, 1),
-             render::Vec2(0, 0),
-             render::Vec2(1, 0),
-             render::Vec2(1, 1)},
-            render::Vec4(1.0f));
+            {math::Vec3<float>(start * scale, start * scale, start * scale),
+             math::Vec3<float>(bound * scale, start * scale, start * scale),
+             math::Vec3<float>(
+                     bound * scale, bound * scale / 2, start * scale),
+             math::Vec3<float>(
+                     start * scale, bound * scale / 2, start * scale)},
+            {math::Vec2<float>(0, 1),
+             math::Vec2<float>(0, 0),
+             math::Vec2<float>(1, 0),
+             math::Vec2<float>(1, 1)},
+            math::Vec4<float>(1.0f));
     mesh.addTexturedQuad(
-            {render::Vec3(bound * scale, start * scale, start * scale),
-             render::Vec3(bound * scale, start * scale, bound * scale),
-             render::Vec3(bound * scale, bound * scale / 2, bound * scale),
-             render::Vec3(bound * scale, bound * scale / 2, start * scale)},
-            {render::Vec2(0, 1),
-             render::Vec2(0, 0),
-             render::Vec2(1, 0),
-             render::Vec2(1, 1)},
-            render::Vec4(1.0f));
+            {math::Vec3<float>(bound * scale, start * scale, start * scale),
+             math::Vec3<float>(bound * scale, start * scale, bound * scale),
+             math::Vec3<float>(
+                     bound * scale, bound * scale / 2, bound * scale),
+             math::Vec3<float>(
+                     bound * scale, bound * scale / 2, start * scale)},
+            {math::Vec2<float>(0, 1),
+             math::Vec2<float>(0, 0),
+             math::Vec2<float>(1, 0),
+             math::Vec2<float>(1, 1)},
+            math::Vec4<float>(1.0f));
     mesh.addTexturedQuad(
-            {render::Vec3(bound * scale, start * scale, bound * scale),
-             render::Vec3(start * scale, start * scale, bound * scale),
-             render::Vec3(start * scale, bound * scale / 2, bound * scale),
-             render::Vec3(bound * scale, bound * scale / 2, bound * scale)},
-            {render::Vec2(0, 1),
-             render::Vec2(0, 0),
-             render::Vec2(1, 0),
-             render::Vec2(1, 1)},
-            render::Vec4(1.0f));
+            {math::Vec3<float>(bound * scale, start * scale, bound * scale),
+             math::Vec3<float>(start * scale, start * scale, bound * scale),
+             math::Vec3<float>(
+                     start * scale, bound * scale / 2, bound * scale),
+             math::Vec3<float>(
+                     bound * scale, bound * scale / 2, bound * scale)},
+            {math::Vec2<float>(0, 1),
+             math::Vec2<float>(0, 0),
+             math::Vec2<float>(1, 0),
+             math::Vec2<float>(1, 1)},
+            math::Vec4<float>(1.0f));
     mesh.addTexturedQuad(
-            {render::Vec3(start * scale, start * scale, bound * scale),
-             render::Vec3(start * scale, start * scale, start * scale),
-             render::Vec3(start * scale, bound * scale / 2, start * scale),
-             render::Vec3(start * scale, bound * scale / 2, bound * scale)},
-            {render::Vec2(0, 1),
-             render::Vec2(0, 0),
-             render::Vec2(1, 0),
-             render::Vec2(1, 1)},
-            render::Vec4(1.0f));
+            {math::Vec3<float>(start * scale, start * scale, bound * scale),
+             math::Vec3<float>(start * scale, start * scale, start * scale),
+             math::Vec3<float>(
+                     start * scale, bound * scale / 2, start * scale),
+             math::Vec3<float>(
+                     start * scale, bound * scale / 2, bound * scale)},
+            {math::Vec2<float>(0, 1),
+             math::Vec2<float>(0, 0),
+             math::Vec2<float>(1, 0),
+             math::Vec2<float>(1, 1)},
+            math::Vec4<float>(1.0f));
     mesh.addTexturedQuad(
-            {render::Vec3(start * scale, bound * scale / 2, start * scale),
-             render::Vec3(bound * scale, bound * scale / 2, start * scale),
-             render::Vec3(bound * scale, bound * scale / 2, bound * scale),
-             render::Vec3(start * scale, bound * scale / 2, bound * scale)},
-            {render::Vec2(0, 1),
-             render::Vec2(0, 0),
-             render::Vec2(1, 0),
-             render::Vec2(1, 1)},
-            render::Vec4(1.0f));
+            {math::Vec3<float>(
+                     start * scale, bound * scale / 2, start * scale),
+             math::Vec3<float>(
+                     bound * scale, bound * scale / 2, start * scale),
+             math::Vec3<float>(
+                     bound * scale, bound * scale / 2, bound * scale),
+             math::Vec3<float>(
+                     start * scale, bound * scale / 2, bound * scale)},
+            {math::Vec2<float>(0, 1),
+             math::Vec2<float>(0, 0),
+             math::Vec2<float>(1, 0),
+             math::Vec2<float>(1, 1)},
+            math::Vec4<float>(1.0f));
     mesh.addTexturedQuad(
-            {render::Vec3(start * scale, start * scale, start * scale),
-             render::Vec3(start * scale, start * scale, bound * scale),
-             render::Vec3(bound * scale, start * scale, bound * scale),
-             render::Vec3(bound * scale, start * scale, start * scale)},
-            {render::Vec2(0, 1),
-             render::Vec2(0, 0),
-             render::Vec2(1, 0),
-             render::Vec2(1, 1)},
-            render::Vec4(1.0f));
+            {math::Vec3<float>(start * scale, start * scale, start * scale),
+             math::Vec3<float>(start * scale, start * scale, bound * scale),
+             math::Vec3<float>(bound * scale, start * scale, bound * scale),
+             math::Vec3<float>(bound * scale, start * scale, start * scale)},
+            {math::Vec2<float>(0, 1),
+             math::Vec2<float>(0, 0),
+             math::Vec2<float>(1, 0),
+             math::Vec2<float>(1, 1)},
+            math::Vec4<float>(1.0f));
 }
 
 void SkyboxFactory::draw(render::RenderContext& context) {

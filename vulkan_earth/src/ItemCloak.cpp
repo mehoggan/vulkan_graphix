@@ -1,6 +1,5 @@
 #include "vulkan_earth/ItemCloak.h"
 #include <cstdint>
-#include "vulkan_earth/Item.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 ItemCloak::ItemCloak() = default;

@@ -1,14 +1,12 @@
 #ifndef READYMENU_H
 #define READYMENU_H
 
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
 #include <string>
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
-#include "vulkan_earth/render/Mesh.h"
-
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -52,7 +50,7 @@ public:
     void setColor(float r, float g, float b, float a);
     void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);
     void keyTest(std::uint8_t key);
-    void draw(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
     void showPreviousPlayerPage();
     void showNextPlayerPage();
     void setPlayerPageNum(std::int32_t i);
@@ -83,7 +81,7 @@ private:
     Tank* tanks[num_tank_types];
     float tank_angle;
     bool start_music_played;
-    vulkan_earth::render::UiMesh panel_mesh;
+    vulkan_graphix::Render::UiMesh panel_mesh;
     float built_width = -1.0f;
     float built_height = -1.0f;
 };

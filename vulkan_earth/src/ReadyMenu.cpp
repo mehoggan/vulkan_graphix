@@ -3,10 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemSelectionBox.h"
 #include "vulkan_earth/ControlItemSliderbar.h"
 #include "vulkan_earth/ControlItemTextField.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/MainMenu.h"
@@ -29,18 +32,16 @@
 #include "vulkan_earth/TankH.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/Vertex.h"
-#include "vulkan_earth/render/Camera.h"
-#include "vulkan_earth/render/GlMatrix.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Tools.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playMusic(std::int32_t music);
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 ReadyMenu::ReadyMenu() = default;
 ReadyMenu::ReadyMenu(float new_width,
@@ -181,7 +182,7 @@ ReadyMenu::ReadyMenu(float new_width,
                                      pos[0] - width * 0.25,
                                      pos[1] + height * 0.4,
                                      (pos[2] + 1),
-                                     render::FontId::TimesRoman24,
+                                     vulkan_earth::FontId::TimesRoman24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
@@ -198,14 +199,15 @@ ReadyMenu::ReadyMenu(float new_width,
             stat = "Meh...:";
         float stat_label_x_pos = pos[0] - width * 0.385;
         float stat_label_y_pos = pos[1] + height * 0.12 - height * (i * 0.07);
-        tank_stat_labels[i] = new TextObject(stat,
-                                             stat_label_x_pos,
-                                             stat_label_y_pos,
-                                             (pos[2] + 1),
-                                             render::FontId::TimesRoman24,
-                                             0.0f,
-                                             0.0f,
-                                             0.0f);
+        tank_stat_labels[i] =
+                new TextObject(stat,
+                               stat_label_x_pos,
+                               stat_label_y_pos,
+                               (pos[2] + 1),
+                               vulkan_earth::FontId::TimesRoman24,
+                               0.0f,
+                               0.0f,
+                               0.0f);
     }
 
     // TANKS
@@ -483,7 +485,7 @@ void ReadyMenu::setPlayerPageNum(std::int32_t i) {
                                      label_x_pos,
                                      label_y_pos,
                                      (pos[2] + 1),
-                                     render::FontId::TimesRoman24,
+                                     vulkan_earth::FontId::TimesRoman24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
@@ -634,47 +636,44 @@ void ReadyMenu::draw(render::RenderContext& context) {
         start_music_played = true;
     }
     playMusic(readymenu_loop);
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     // The whole-window background panel (see appendMenuPanel()), then the
     // tank preview screen's 6-pixel frame: top 0.45, left 0.4, bottom 0.8,
     // right 0.85 (its middle pane is the preview viewport drawn below).
     if (panel_mesh.triangles().empty() || built_width != width ||
         built_height != height) {
         panel_mesh.clear();
-        render::appendMenuPanel(panel_mesh, width, height, percent_border);
+        vulkan_earth::appendMenuPanel(
+                panel_mesh, width, height, percent_border);
         float const x = tank_prv_scr_pos[0];
         float const y = tank_prv_scr_pos[1];
         float const z = tank_prv_scr_pos[2];
-        render::appendQuad(panel_mesh,
-                           Vec3(x, y, z),
-                           Vec3(x - 6, y + 6, z),
-                           Vec3(x + tank_prv_scr_width + 6, y + 6, z),
-                           Vec3(x + tank_prv_scr_width, y, z),
+        panel_mesh.addQuad({Vec3(x, y, z),
+                            Vec3(x - 6, y + 6, z),
+                            Vec3(x + tank_prv_scr_width + 6, y + 6, z),
+                            Vec3(x + tank_prv_scr_width, y, z)},
                            Vec4(0.45, 0.45, 0.45, 1));
-        render::appendQuad(panel_mesh,
-                           Vec3(x - 6, y + 6, z),
-                           Vec3(x - 6, y - tank_prv_scr_height - 6, z),
-                           Vec3(x, y - tank_prv_scr_height, z),
-                           Vec3(x, y, z),
+        panel_mesh.addQuad({Vec3(x - 6, y + 6, z),
+                            Vec3(x - 6, y - tank_prv_scr_height - 6, z),
+                            Vec3(x, y - tank_prv_scr_height, z),
+                            Vec3(x, y, z)},
                            Vec4(0.4, 0.4, 0.4, 1));
-        render::appendQuad(
-                panel_mesh,
-                Vec3(x - 6, y - tank_prv_scr_height - 6, z),
-                Vec3(x + tank_prv_scr_width + 6,
-                     y - tank_prv_scr_height - 6,
-                     z),
-                Vec3(x + tank_prv_scr_width, y - tank_prv_scr_height, z),
-                Vec3(x, y - tank_prv_scr_height, z),
+        panel_mesh.addQuad(
+                {Vec3(x - 6, y - tank_prv_scr_height - 6, z),
+                 Vec3(x + tank_prv_scr_width + 6,
+                      y - tank_prv_scr_height - 6,
+                      z),
+                 Vec3(x + tank_prv_scr_width, y - tank_prv_scr_height, z),
+                 Vec3(x, y - tank_prv_scr_height, z)},
                 Vec4(0.8, 0.8, 0.8, 1));
-        render::appendQuad(
-                panel_mesh,
-                Vec3(x + tank_prv_scr_width, y, z),
-                Vec3(x + tank_prv_scr_width + 6, y + 6, z),
-                Vec3(x + tank_prv_scr_width + 6,
-                     y - tank_prv_scr_height - 6,
-                     z),
-                Vec3(x + tank_prv_scr_width, y + -tank_prv_scr_height, z),
+        panel_mesh.addQuad(
+                {Vec3(x + tank_prv_scr_width, y, z),
+                 Vec3(x + tank_prv_scr_width + 6, y + 6, z),
+                 Vec3(x + tank_prv_scr_width + 6,
+                      y - tank_prv_scr_height - 6,
+                      z),
+                 Vec3(x + tank_prv_scr_width, y + -tank_prv_scr_height, z)},
                 Vec4(0.85, 0.85, 0.85, 1));
         built_width = width;
         built_height = height;
@@ -827,11 +826,11 @@ void ReadyMenu::draw(render::RenderContext& context) {
 
     // The live tank preview, in its own viewport (glViewport()'s float ->
     // int truncation kept), cleared to the flashing preview color.
-    render::GlRect const preview = {
+    render::Rect const preview = vulkan_earth::glRect(
             static_cast<std::int32_t>(tank_prv_scr_pos[0] + getWidth() / 2),
             static_cast<std::int32_t>(tank_prv_scr_height + 1),
             static_cast<std::int32_t>(tank_prv_scr_width),
-            static_cast<std::int32_t>(tank_prv_scr_height)};
+            static_cast<std::int32_t>(tank_prv_scr_height));
     context.setViewport(preview);
     context.clearColorAndDepth(Vec4(tank_prv_scr_color[0],
                                     tank_prv_scr_color[1],
@@ -839,20 +838,24 @@ void ReadyMenu::draw(render::RenderContext& context) {
                                     1));
 
     // gluLookAt(	0,0,400,	0, 0, 0,		0.0f,1.0f,0.0f);
-    render::Mat4 view = render::camera::lookAt(
+    math::Mat4<float> view = glm::lookAt(
             Vec3(0, 200, 500), Vec3(0, 0, 0), Vec3(0.0f, 1.0f, 0.0f));
 
     // Draw Tanks
-    view = render::glmatrix::translated(
-            view, pos[0], pos[1] - tank_prv_scr_height * 0.2, pos[2]);
-    view = render::glmatrix::rotated(view, tank_angle, 0, 1, 0);
-    context.setCamera(
-            render::camera::perspective(60.0,
-                                        (static_cast<float>(width) /
-                                         (1.5 * static_cast<float>(height))),
-                                        1,
-                                        199999999),
-            view);
+    view = glm::translate(
+            view,
+            math::Vec3<float>(
+                    pos[0], pos[1] - tank_prv_scr_height * 0.2, pos[2]));
+    view = glm::rotate(view,
+                       glm::radians(static_cast<float>(tank_angle)),
+                       math::Vec3<float>(0, 1, 0));
+    context.setCamera(vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
+                              (static_cast<float>(width) /
+                               (1.5 * static_cast<float>(height))),
+                              60.0,
+                              1,
+                              2.0e8f),
+                      view);
     if (control_items[1]->collectData() == "Rhinoxx")
         tanks[0]->draw(context);
     else if (control_items[1]->collectData() == "Hellfire")
@@ -872,17 +875,17 @@ void ReadyMenu::draw(render::RenderContext& context) {
     else {
         printf("ERROR: Unkown tank type\n");
         // glutSolidSphere(100, 30, 30)
-        context.drawMesh(
-                render::Renderer::instance().sphere(30, 30),
-                render::PipelineId::FlatColor,
-                nullptr,
-                render::glmatrix::scaled(render::Mat4(1.0f), 100, 100, 100),
-                Vec4(1, 1, 1, 1));
+        context.drawMesh(render::Renderer::instance().sphere(30, 30),
+                         vulkan_earth::pipelines().flat_color,
+                         nullptr,
+                         glm::scale(math::Mat4<float>(1.0f),
+                                    math::Vec3<float>(100, 100, 100)),
+                         Vec4(1, 1, 1, 1));
     }
 
     tank_angle += 0.25f;
 
-    render::resetToFullWindow(context);
+    vulkan_earth::resetToFullWindow(context);
 }
 
 void ReadyMenu::keyTest(std::uint8_t key) {

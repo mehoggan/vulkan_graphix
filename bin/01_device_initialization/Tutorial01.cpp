@@ -1,8 +1,8 @@
 #include "Tutorial01.h"
 
 #include <algorithm>
-#include <climits>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 #include <vector>
 

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 
 #include "vulkan_graphix/VulkanFunctions.h"
 

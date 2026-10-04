@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "vulkan_earth/ControlItem.h"
-#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
 class TextObject;
 
@@ -25,7 +26,7 @@ public:
                          const std::string& menu_string,
                          std::int32_t slider_starting_index);
     ~ControlItemSliderbar() override;
-    void draw(vulkan_earth::render::RenderContext& context) override;
+    void draw(vulkan_graphix::Render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
@@ -71,8 +72,8 @@ private:
     std::int32_t number_of_options;
     std::vector<std::string> all_options;
     bool is_slider_clicked;
-    vulkan_earth::render::UiMesh frame_mesh;
-    vulkan_earth::render::UiMesh slider_mesh;
+    vulkan_graphix::Render::UiMesh frame_mesh;
+    vulkan_graphix::Render::UiMesh slider_mesh;
     float slider_built_x = -1.0e30f;
     float slider_built_y = -1.0e30f;
     std::int32_t slider_built_clicked = -1;

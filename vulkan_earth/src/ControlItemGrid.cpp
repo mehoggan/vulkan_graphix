@@ -4,14 +4,14 @@
 #include <vector>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemButton.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -79,8 +79,8 @@ ControlItemGrid::~ControlItemGrid() {
 }
 
 void ControlItemGrid::draw(render::RenderContext& context) {
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     std::vector<bool> toggled(rows * cols);
     for (std::int32_t i = 0; i < rows * cols; i++) {
         toggled[i] = buttons[i]->isToggled();
@@ -92,16 +92,16 @@ void ControlItemGrid::draw(render::RenderContext& context) {
     mesh.clear();
 
     // Draw main body (sunken bevel: -0.2 top/left, +0.4 bottom/right)
-    render::appendFrame(mesh,
-                        x_pos,
-                        y_pos,
-                        z_pos + 0.4,
-                        width,
-                        height,
-                        Vec4(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1),
-                        Vec4(0.45, 0.45, 0.45, 1),
-                        Vec4(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1),
-                        4);
+    vulkan_earth::appendFrame(mesh,
+                              x_pos,
+                              y_pos,
+                              z_pos + 0.4,
+                              width,
+                              height,
+                              Vec4(0.75 - 0.2f, 0.75 - 0.2f, 0.75 - 0.2f, 1),
+                              Vec4(0.45, 0.45, 0.45, 1),
+                              Vec4(0.75 + 0.4f, 0.75 + 0.4f, 0.75 + 0.4f, 1),
+                              4);
 
     // Draw cell lines if they are set to visible
     if (visible_lines) {
@@ -122,8 +122,10 @@ void ControlItemGrid::draw(render::RenderContext& context) {
                         Vec3(x_pos + cell_width * (c + 1),
                              y_pos - cell_height * r,
                              z_pos + 0.5)};
-                for (std::size_t v = 0; v < loop.size(); ++v) {
-                    mesh.addLine(loop[v], loop[(v + 1) % loop.size()], black);
+                for (std::size_t corner = 0; corner < loop.size(); ++corner) {
+                    mesh.addLine(loop[corner],
+                                 loop[(corner + 1) % loop.size()],
+                                 black);
                 }
             }
     }
@@ -137,20 +139,19 @@ void ControlItemGrid::draw(render::RenderContext& context) {
     // Change the color of active cells
     for (std::int32_t i = 0; i < rows * cols; i++) {
         if (toggled[i]) {
-            render::appendQuad(
-                    mesh,
-                    Vec3(buttons[i]->getXPos() + 3,
-                         buttons[i]->getYPos() - 3,
-                         z_pos + 0.6),
-                    Vec3(buttons[i]->getXPos() + 3,
-                         buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
-                         z_pos + 0.6),
-                    Vec3(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
-                         buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
-                         z_pos + 0.6),
-                    Vec3(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
-                         buttons[i]->getYPos() - 3,
-                         z_pos + 0.6),
+            mesh.addQuad(
+                    {Vec3(buttons[i]->getXPos() + 3,
+                          buttons[i]->getYPos() - 3,
+                          z_pos + 0.6),
+                     Vec3(buttons[i]->getXPos() + 3,
+                          buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
+                          z_pos + 0.6),
+                     Vec3(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
+                          buttons[i]->getYPos() - buttons[i]->getHeight() + 3,
+                          z_pos + 0.6),
+                     Vec3(buttons[i]->getXPos() + buttons[i]->getWidth() - 3,
+                          buttons[i]->getYPos() - 3,
+                          z_pos + 0.6)},
                     Vec4(active_cell_color[0],
                          active_cell_color[1],
                          active_cell_color[2],
@@ -165,7 +166,7 @@ void ControlItemGrid::draw(render::RenderContext& context) {
 void ControlItemGrid::mouseClickEvent(std::int32_t x,
                                       std::int32_t y,
                                       std::int32_t state,
-                                      bool still_over_arrow_button) {
+                                      bool /*still_over_arrow_button*/) {
     if (state == 1) {
         // If THE CLICK OCUURED INSIDE OF THE GRID
         if ((x_pos <= x && x <= x_pos + width) &&

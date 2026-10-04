@@ -1,6 +1,7 @@
 #include "vulkan_earth/SubMenuLandscape.h"
-#include <stdio.h>
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -10,21 +11,20 @@
 #include "vulkan_earth/ControlItemCheckBox.h"
 #include "vulkan_earth/ControlItemSelectionBox.h"
 #include "vulkan_earth/ControlItemSliderbar.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Camera.h"
-#include "vulkan_earth/render/Font.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
+#include "vulkan_graphix/Tools.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 #define PI 3.1415926535898
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 extern void playSFX(std::int32_t sfx);
 
 SubMenuLandscape::SubMenuLandscape() = default;
@@ -66,8 +66,8 @@ SubMenuLandscape::SubMenuLandscape(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos - height / 20;
@@ -77,7 +77,7 @@ SubMenuLandscape::SubMenuLandscape(std::int32_t id,
                            label_x_pos,
                            label_y_pos,
                            (z_pos + 1),
-                           vulkan_earth::render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -172,18 +172,18 @@ void SubMenuLandscape::setPercentBorder(float percent) {
 }
 
 void SubMenuLandscape::draw(render::RenderContext& context) {
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     // The same raised 3-pixel bevel every button draws.
     if (frame_mesh.triangles().empty()) {
-        render::appendBevel(
+        vulkan_earth::appendBevel(
                 frame_mesh,
                 x_pos,
                 y_pos,
                 z_pos,
                 width,
                 height,
-                render::Vec4(color[0], color[1], color[2], color[3]),
+                math::Vec4<float>(color[0], color[1], color[2], color[3]),
                 false);
     }
     context.draw(frame_mesh);
@@ -203,38 +203,36 @@ void SubMenuLandscape::draw(render::RenderContext& context) {
         Vec4 const light(
                 color[0] + .4, color[1] + .4, color[2] + .4, color[3]);
         // top-left
-        render::appendQuad(
-                border_mesh,
-                Vec3(border_x, border_y, z1),
-                Vec3(border_x - 3, border_y + 3, z1),
-                Vec3(border_x + 0.936 * width + 3, border_y + 3, z1),
-                Vec3(border_x + 0.936 * width, border_y, z1),
+        border_mesh.addQuad(
+                {Vec3(border_x, border_y, z1),
+                 Vec3(border_x - 3, border_y + 3, z1),
+                 Vec3(border_x + 0.936 * width + 3, border_y + 3, z1),
+                 Vec3(border_x + 0.936 * width, border_y, z1)},
                 dark);
-        render::appendQuad(
-                border_mesh,
-                Vec3(border_x - 3, border_y + 3, z1),
-                Vec3(border_x - 3, border_y - 0.597 * height - 3, z1),
-                Vec3(border_x, border_y - 0.597 * height, z1),
-                Vec3(border_x, border_y, z1),
+        border_mesh.addQuad(
+                {Vec3(border_x - 3, border_y + 3, z1),
+                 Vec3(border_x - 3, border_y - 0.597 * height - 3, z1),
+                 Vec3(border_x, border_y - 0.597 * height, z1),
+                 Vec3(border_x, border_y, z1)},
                 dark);
         // bottom-right
-        render::appendQuad(
-                border_mesh,
-                Vec3(border_x - 3, border_y - 0.597 * height - 3, z1),
-                Vec3(border_x + 0.936 * width + 3,
-                     border_y - 0.597 * height - 3,
-                     z1),
-                Vec3(border_x + 0.936 * width, border_y - 0.597 * height, z1),
-                Vec3(border_x, border_y - 0.597 * height, z1),
+        border_mesh.addQuad(
+                {Vec3(border_x - 3, border_y - 0.597 * height - 3, z1),
+                 Vec3(border_x + 0.936 * width + 3,
+                      border_y - 0.597 * height - 3,
+                      z1),
+                 Vec3(border_x + 0.936 * width, border_y - 0.597 * height, z1),
+                 Vec3(border_x, border_y - 0.597 * height, z1)},
                 light);
-        render::appendQuad(
-                border_mesh,
-                Vec3(border_x + 0.936 * width, border_y, z1),
-                Vec3(border_x + 0.936 * width + 3, border_y + 3, z1),
-                Vec3(border_x + 0.936 * width + 3,
-                     border_y - 0.597 * height - 3,
-                     z1),
-                Vec3(border_x + 0.936 * width, border_y + -0.597 * height, z1),
+        border_mesh.addQuad(
+                {Vec3(border_x + 0.936 * width, border_y, z1),
+                 Vec3(border_x + 0.936 * width + 3, border_y + 3, z1),
+                 Vec3(border_x + 0.936 * width + 3,
+                      border_y - 0.597 * height - 3,
+                      z1),
+                 Vec3(border_x + 0.936 * width,
+                      border_y + -0.597 * height,
+                      z1)},
                 light);
     }
     context.draw(border_mesh);
@@ -242,24 +240,24 @@ void SubMenuLandscape::draw(render::RenderContext& context) {
     // The live terrain preview, in its own viewport (glViewport()'s float
     // -> int truncation kept), cleared to black, then the menu's own
     // viewport and camera restored.
-    render::GlRect const saved_viewport = context.viewport();
-    render::Mat4 const saved_projection = context.projection();
-    render::Mat4 const saved_view = context.view();
-    render::GlRect const preview = {
+    render::Rect const saved_viewport = context.viewport();
+    math::Mat4<float> const saved_projection = context.projection();
+    math::Mat4<float> const saved_view = context.view();
+    render::Rect const preview = vulkan_earth::glRect(
             static_cast<std::int32_t>(x_pos + 0.8 * width),
             static_cast<std::int32_t>(y_pos),
             static_cast<std::int32_t>(0.9417 * width),
-            static_cast<std::int32_t>(0.6 * height)};
+            static_cast<std::int32_t>(0.6 * height));
     context.setViewport(preview);
     context.clearColorAndDepth(Vec4(0, 0, 0, 0));
     context.setCamera(
-            render::camera::perspective(
-                    45.0, ((0.9417 * width) / (0.6 * height)), 1, 199999999),
-            render::camera::lookAt(Vec3(cam_x, cam_y, cam_z),
-                                   Vec3((tm->getActualSize() / 2.0),
-                                        0.0f,
-                                        (tm->getActualSize() / 2.0)),
-                                   Vec3(0.0f, 1.0f, 0.0f)));
+            vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
+                    ((0.9417 * width) / (0.6 * height)), 45.0, 1, 2.0e8f),
+            glm::lookAt(Vec3(cam_x, cam_y, cam_z),
+                        Vec3((tm->getActualSize() / 2.0),
+                             0.0f,
+                             (tm->getActualSize() / 2.0)),
+                        Vec3(0.0f, 1.0f, 0.0f)));
     tm->draw(context);
     context.setViewport(saved_viewport);
     context.setCamera(saved_projection, saved_view);
@@ -399,8 +397,8 @@ void SubMenuLandscape::updateMouse(std::int32_t x, std::int32_t y) {
         old_mouse_x = x;
         old_mouse_y = y;
     }
-    std::int32_t win_width = vulkan_earth::render::windowWidth();
-    std::int32_t win_height = vulkan_earth::render::windowHeight();
+    std::int32_t win_width = vulkan_earth::windowWidth();
+    std::int32_t win_height = vulkan_earth::windowHeight();
     sub_menu_button[0]->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     sub_menu_button[1]->updateMouse(x - (win_width / 2), (win_height / 2) - y);
     sub_menu_button[2]->updateMouse(x - (win_width / 2), (win_height / 2) - y);

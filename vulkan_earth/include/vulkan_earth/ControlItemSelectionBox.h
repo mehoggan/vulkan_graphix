@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "vulkan_earth/ControlItem.h"
-#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
 class TextObject;
 
@@ -24,7 +25,7 @@ public:
                             const std::string& new_caption,
                             const std::string& menu_string);
     ~ControlItemSelectionBox() override;
-    void draw(vulkan_earth::render::RenderContext& context) override;
+    void draw(vulkan_graphix::Render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
@@ -55,8 +56,8 @@ private:
                                 // pressed, 2 = down button pressed
     std::int32_t number_of_options;
     std::vector<std::string> all_options;
-    vulkan_earth::render::UiMesh frame_mesh;
-    vulkan_earth::render::UiMesh arrow_mesh;
+    vulkan_graphix::Render::UiMesh frame_mesh;
+    vulkan_graphix::Render::UiMesh arrow_mesh;
     std::int32_t arrows_built_for = -1;
 };
 #endif  // Control_ITEM_SELECTION_BOX_H

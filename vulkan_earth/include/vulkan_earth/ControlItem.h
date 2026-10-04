@@ -1,12 +1,11 @@
 #ifndef Control_ITEM_H
 #define Control_ITEM_H
 
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
 #include <string>
+#include "vulkan_graphix/Render/Renderer.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -14,7 +13,7 @@ class ControlItem {
 public:
     ControlItem();
     virtual ~ControlItem();
-    virtual void draw(vulkan_earth::render::RenderContext& context) = 0;
+    virtual void draw(vulkan_graphix::Render::RenderContext& context) = 0;
     virtual void mouseClickEvent(std::int32_t x,
                                  std::int32_t y,
                                  std::int32_t state,

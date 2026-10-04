@@ -12,7 +12,7 @@ const std::int32_t tank_b_armor = 5;
 const std::int32_t tank_b_speed = 50;
 
 TankB::TankB() = default;
-TankB::TankB(float x, float y, float z) {
+TankB::TankB(float /*x*/, float /*y*/, float /*z*/) {
     initBody();
     initHead();
     initTurret();

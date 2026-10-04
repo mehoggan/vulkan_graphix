@@ -1,18 +1,16 @@
 #include "vulkan_earth/MainMenuButton.h"
-#include <stdio.h>
 #include <cstdint>
 #include <iostream>
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Font.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -45,8 +43,8 @@ MainMenuButton::MainMenuButton(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -55,7 +53,7 @@ MainMenuButton::MainMenuButton(std::int32_t id,
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           vulkan_earth::render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -65,18 +63,19 @@ MainMenuButton::MainMenuButton(std::int32_t id,
 MainMenuButton::~MainMenuButton() { delete label; }
 
 void MainMenuButton::draw(render::RenderContext& context) {
-    render::Vec4 const current_color(color[0], color[1], color[2], color[3]);
+    math::Vec4<float> const current_color(
+            color[0], color[1], color[2], color[3]);
     if (mesh.triangles().empty() || built_pressed != pressed ||
         built_color != current_color) {
         mesh.clear();
-        render::appendBevel(mesh,
-                            x_pos,
-                            y_pos,
-                            z_pos,
-                            width,
-                            height,
-                            current_color,
-                            pressed);
+        vulkan_earth::appendBevel(mesh,
+                                  x_pos,
+                                  y_pos,
+                                  z_pos,
+                                  width,
+                                  height,
+                                  current_color,
+                                  pressed);
         built_pressed = pressed;
         built_color = current_color;
     }
@@ -109,8 +108,8 @@ void MainMenuButton::setLabel(const std::string& c) {
 
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -119,7 +118,7 @@ void MainMenuButton::setLabel(const std::string& c) {
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           vulkan_earth::render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);

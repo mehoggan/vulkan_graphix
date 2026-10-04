@@ -1,7 +1,6 @@
 #include "vulkan_earth/Item.h"
 #include <cstdint>
 #include <string>
-#include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 

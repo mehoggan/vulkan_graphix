@@ -70,8 +70,8 @@ class ParticleEmitter {
 public:
     static constexpr std::size_t c_capacity = 1000;
 
-    // rate is carried over from the original's signature, which never
-    // read it either.
+    // The second argument (the original's emission rate) is accepted for
+    // its signature's sake but, as there, never read.
     ParticleEmitter(std::int32_t spawn,
                     std::int32_t rate,
                     std::int32_t speed,
@@ -92,7 +92,6 @@ private:
     float m_y = 0.0f;
     float m_z = 0.0f;
     std::int32_t m_particles_per_emission;
-    std::int32_t m_emission_rate;
     std::int32_t m_emission_speed;
     std::int32_t m_emission_life;
     ParticleKind m_kind;

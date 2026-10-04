@@ -6,15 +6,7 @@
 #include <dlfcn.h>
 #include <cstdint>
 
-#include <cstdlib>
-#include <cstring>
 #include <string>
-
-// TODO (mehoggan@gmail.com): This file needs class and function documentation.
-// It is not clear what the purpose of this file is and how it should be used.
-// It seems to be a wrapper around X11 and Vulkan for cheating a window and
-// rendering to it, but it is not clear how it should be used in the context of
-// the rest of the codebase.
 
 namespace vulkan_graphix::os {
 

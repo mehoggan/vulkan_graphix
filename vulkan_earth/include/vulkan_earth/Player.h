@@ -6,12 +6,9 @@
 const std::int32_t player_max_weapons = 5;
 const std::int32_t player_max_items = 5;
 
-#include <stdio.h>
-#include <iostream>
 #include <string>
-#include "vulkan_earth/OpenGLColors.h"
-#include "vulkan_earth/Vector.h"
-#include "vulkan_earth/Vertex.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Renderer.h"
 
 using namespace std;
 
@@ -36,7 +33,7 @@ enum AI_SUB_STATUS {
     ON_TARGET
 };
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -82,13 +79,14 @@ public:
     bool calculateProjectilePhysics(float xerr, float yerr, float zerr);
     void displayProjectilePhysiscs();
     float* getBalisticMatrix();
-    Vertex getEnemyPosition();
+    vulkan_graphix::Math::Vec3<float> getEnemyPosition();
     void setEnemyPosition();
     std::int32_t getAIState();
     /*	END OF ACCESS AI TO OUTSIDE WORLD	*/
 
     /*	TEST DRAW FUNCTIONS				*/
-    void drawTestLinesandPlanes(vulkan_earth::render::RenderContext& context);
+    void drawTestLinesandPlanes(
+            vulkan_graphix::Render::RenderContext& context);
     bool getDrawDebugLinesandPlanes();
     void setDrawDebugLinesandPlanes(bool flag);
     /*	DONE WITH TEST DRAW FUNCTIONS	*/
@@ -98,16 +96,25 @@ public:
 protected:
     GameState* game_state;
     Tank* target;
-    Vertex enemy_position;
-    Vector projectile_path;
-    Vector enemy_path;
-    Vector right_vector;
-    Vector left_vector;
-    Vector up_vector;
-    Vector down_vector;
-    Vector pitch_vector;
-    Vector ortho_right;
-    Vector ortho_left;
+    vulkan_graphix::Math::Vec3<float> enemy_position;
+    vulkan_graphix::Math::Vec3<float> projectile_path =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> enemy_path =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> right_vector =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> left_vector =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> up_vector =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> down_vector =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> pitch_vector =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> ortho_right =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> ortho_left =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
     float yaw_angle;
     float rangle;
     float langle;
@@ -127,7 +134,7 @@ protected:
     void pitchDown(float degrees);
     bool draw_debug_linesand_planes;
     char minimumYawAngle(float right_degrees, float left_degrees);
-    Vertex previous_projectile_landing_spot;
+    vulkan_graphix::Math::Vec3<float> previous_projectile_landing_spot;
     float distance_off_from_target;
     float previous_distance_off_from_target;
     float degrees_rotated;

@@ -1,16 +1,13 @@
 #include "vulkan_earth/ControlItemSliderbar.h"
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
 #include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Font.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -74,8 +71,8 @@ ControlItemSliderbar::ControlItemSliderbar(
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = bar_x_pos;
     float label_y_pos = y_pos - height * 0.45;
@@ -84,7 +81,7 @@ ControlItemSliderbar::ControlItemSliderbar(
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           vulkan_earth::render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -95,26 +92,26 @@ ControlItemSliderbar::~ControlItemSliderbar() {
 }
 
 void ControlItemSliderbar::draw(render::RenderContext& context) {
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     if (frame_mesh.triangles().empty()) {
         // draw main button box (sunken bevel: -0.2 top/left, +0.4
         // bottom/right)
-        render::appendFrame(frame_mesh,
-                            x_pos,
-                            y_pos,
-                            z_pos,
-                            width,
-                            height,
-                            Vec4(color[0] - 0.2f,
-                                 color[1] - 0.2f,
-                                 color[2] - 0.2f,
-                                 color[3]),
-                            Vec4(color[0], color[1], color[2], color[3]),
-                            Vec4(color[0] + 0.4f,
-                                 color[1] + 0.4f,
-                                 color[2] + 0.4f,
-                                 color[3]));
+        vulkan_earth::appendFrame(frame_mesh,
+                                  x_pos,
+                                  y_pos,
+                                  z_pos,
+                                  width,
+                                  height,
+                                  Vec4(color[0] - 0.2f,
+                                       color[1] - 0.2f,
+                                       color[2] - 0.2f,
+                                       color[3]),
+                                  Vec4(color[0], color[1], color[2], color[3]),
+                                  Vec4(color[0] + 0.4f,
+                                       color[1] + 0.4f,
+                                       color[2] + 0.4f,
+                                       color[3]));
         // draw bar lines
         Vec4 const black(0, 0, 0, 1);
         frame_mesh.addLine(
@@ -145,33 +142,34 @@ void ControlItemSliderbar::draw(render::RenderContext& context) {
         slider_built_clicked != static_cast<std::int32_t>(is_slider_clicked)) {
         slider_mesh.clear();
         if (!is_slider_clicked) {
-            render::appendBevel(slider_mesh,
-                                slider_x_pos,
-                                slider_y_pos,
-                                slider_z_pos,
-                                slider_width,
-                                slider_height,
-                                Vec4(color[0], color[1], color[2], color[3]),
-                                false);
+            vulkan_earth::appendBevel(
+                    slider_mesh,
+                    slider_x_pos,
+                    slider_y_pos,
+                    slider_z_pos,
+                    slider_width,
+                    slider_height,
+                    Vec4(color[0], color[1], color[2], color[3]),
+                    false);
         } else {
-            render::appendFrame(slider_mesh,
-                                slider_x_pos,
-                                slider_y_pos,
-                                slider_z_pos,
-                                slider_width,
-                                slider_height,
-                                Vec4(color[0] + 0.4f,
-                                     color[1] + 0.4f,
-                                     color[2] + 0.4f,
-                                     color[3]),
-                                Vec4(color[0] + 0.2f,
-                                     color[1] + 0.2f,
-                                     color[2] + 0.2f,
-                                     color[3]),
-                                Vec4(color[0] - 0.2f,
-                                     color[1] - 0.2f,
-                                     color[2] - 0.2f,
-                                     color[3]));
+            vulkan_earth::appendFrame(slider_mesh,
+                                      slider_x_pos,
+                                      slider_y_pos,
+                                      slider_z_pos,
+                                      slider_width,
+                                      slider_height,
+                                      Vec4(color[0] + 0.4f,
+                                           color[1] + 0.4f,
+                                           color[2] + 0.4f,
+                                           color[3]),
+                                      Vec4(color[0] + 0.2f,
+                                           color[1] + 0.2f,
+                                           color[2] + 0.2f,
+                                           color[3]),
+                                      Vec4(color[0] - 0.2f,
+                                           color[1] - 0.2f,
+                                           color[2] - 0.2f,
+                                           color[3]));
         }
         slider_built_x = slider_x_pos;
         slider_built_y = slider_y_pos;
@@ -199,8 +197,8 @@ void ControlItemSliderbar::setOptionText(std::int32_t index) {
     current_option = all_options[index];
     std::int32_t real_length = 0;
     for (char ch : current_option) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + (width / 2) - (real_length / 2);
     float label_y_pos = y_pos - height * 0.45;
@@ -209,7 +207,7 @@ void ControlItemSliderbar::setOptionText(std::int32_t index) {
                                  label_x_pos,
                                  label_y_pos,
                                  z_pos,
-                                 vulkan_earth::render::FontId::TimesRoman24,
+                                 vulkan_earth::FontId::TimesRoman24,
                                  0.0f,
                                  0.0f,
                                  0.0f);
@@ -221,7 +219,7 @@ void ControlItemSliderbar::mouseClickEvent(
         std::int32_t x,
         std::int32_t y,
         std::int32_t state,
-        bool still_over_control_item_sliderbar) {
+        bool /*still_over_control_item_sliderbar*/) {
     if (state == 1) {
         // check if the click is on the slider
         if ((slider_x_pos < x && x < slider_x_pos + slider_width) &&
@@ -254,7 +252,7 @@ void ControlItemSliderbar::mouseClickEvent(
     }
 }
 
-void ControlItemSliderbar::updateMouse(std::int32_t x, std::int32_t y) {
+void ControlItemSliderbar::updateMouse(std::int32_t x, std::int32_t /*y*/) {
     if (is_slider_clicked) {
         // check if the mouse pointer is either left or right side from the
         // slider

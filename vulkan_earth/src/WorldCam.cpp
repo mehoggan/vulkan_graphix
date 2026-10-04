@@ -1,10 +1,12 @@
 #include "vulkan_earth/WorldCam.h"
+#include <algorithm>
 #include <cstdint>
-#include "vulkan_earth/render/Camera.h"
-#include "vulkan_earth/render/GlMatrix.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 WorldCam::WorldCam() = default;
 WorldCam::WorldCam(float x, float y, float z) {
@@ -24,22 +26,26 @@ WorldCam::WorldCam(float x, float y, float z) {
     matrix[13] = y;
     matrix[14] = z;
     matrix[15] = 0;
-    render::glmatrix::rotate(matrix, -10, matrix[4], matrix[5], matrix[6]);
+    std::copy_n(glm::value_ptr(glm::rotate(
+                        glm::make_mat4(matrix),
+                        glm::radians(static_cast<float>(-10)),
+                        math::Vec3<float>(matrix[4], matrix[5], matrix[6]))),
+                16,
+                matrix);
     shake_cam_pos[0] = 0;
     shake_cam_pos[1] = 0;
     shake_cam_pos[2] = 0;
 }
-WorldCam::~WorldCam() = default;
 
-render::Mat4 WorldCam::view() {
-    render::Mat4 const view_matrix = render::camera::lookAt(
-            render::Vec3(matrix[12] + shake_cam_pos[0],
-                         matrix[13] + shake_cam_pos[1],
-                         matrix[14] + shake_cam_pos[2]),
-            render::Vec3(matrix[12] + matrix[8] + shake_cam_pos[0],
-                         matrix[13] + matrix[9] + shake_cam_pos[1],
-                         matrix[14] + matrix[10] + shake_cam_pos[2]),
-            render::Vec3(matrix[4], matrix[5], matrix[6]));
+math::Mat4<float> WorldCam::view() {
+    math::Mat4<float> const view_matrix = glm::lookAt(
+            math::Vec3<float>(matrix[12] + shake_cam_pos[0],
+                              matrix[13] + shake_cam_pos[1],
+                              matrix[14] + shake_cam_pos[2]),
+            math::Vec3<float>(matrix[12] + matrix[8] + shake_cam_pos[0],
+                              matrix[13] + matrix[9] + shake_cam_pos[1],
+                              matrix[14] + matrix[10] + shake_cam_pos[2]),
+            math::Vec3<float>(matrix[4], matrix[5], matrix[6]));
     updateShakeCam();
     return view_matrix;
 }

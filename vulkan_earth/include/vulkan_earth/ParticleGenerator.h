@@ -1,15 +1,13 @@
-#include <stdio.h>
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
 #include "vulkan_earth/SpecialEffect.h"
-#include "vulkan_earth/render/RenderTypes.h"
 #include "vulkan_graphix/EffectSimulation.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Renderer.h"
 
 #ifndef PARTICLEGENERATOR_H
 #define PARTICLEGENERATOR_H
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -24,9 +22,9 @@ public:
                       std::int32_t life,
                       std::int32_t new_type);
     void update(float new_x, float new_y, float new_z);
-    void draw(vulkan_earth::render::RenderContext& context,
-              vulkan_earth::render::Mat4 const& model =
-                      vulkan_earth::render::Mat4(1.0f));
+    void draw(vulkan_graphix::Render::RenderContext& context,
+              vulkan_graphix::Math::Mat4<float> const& model =
+                      vulkan_graphix::Math::Mat4<float>(1.0f));
     void killGenerator();
 
 private:

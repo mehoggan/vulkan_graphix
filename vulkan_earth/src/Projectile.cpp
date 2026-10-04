@@ -1,22 +1,19 @@
 #include "vulkan_earth/Projectile.h"
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-#include <sstream>
 #include "vulkan_earth/ChaseCam.h"
 #include "vulkan_earth/GameState.h"
-#include "vulkan_earth/Normal.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
-#include "vulkan_earth/Vector.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WeaponDefault.h"
-#include "vulkan_earth/render/GlMatrix.h"
-#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 Projectile::Projectile() = default;
 
@@ -68,26 +65,29 @@ void Projectile::update(float x, float y, float z) {
 }
 
 void Projectile::draw(render::RenderContext& context) {
-    render::Mat4 model = render::glmatrix::translated(
-            render::Mat4(1.0f), pos[0], pos[1], pos[2]);
-    model = render::glmatrix::rotated(model, rotate, -1, .3, -.4);
+    math::Mat4<float> model =
+            glm::translate(math::Mat4<float>(1.0f),
+                           math::Vec3<float>(pos[0], pos[1], pos[2]));
+    model = glm::rotate(model,
+                        glm::radians(static_cast<float>(rotate)),
+                        math::Vec3<float>(-1, .3, -.4));
     if (weapon == nullptr) {
-        projectile_default->draw(context,
-                                 render::glmatrix::scaled(model, 60, 60, 60));
+        projectile_default->draw(
+                context, glm::scale(model, math::Vec3<float>(60, 60, 60)));
     } else {
         projectile_models[weapon->getUNIQUEIDENTIFIER()]->draw(
                 context,
-                render::glmatrix::scaled(model,
-                                         weapon->getScale(),
-                                         weapon->getScale(),
-                                         weapon->getScale()));
+                glm::scale(model,
+                           math::Vec3<float>(weapon->getScale(),
+                                             weapon->getScale(),
+                                             weapon->getScale())));
     }
     rotate += 4;
 }
 
 float* Projectile::getPos() { return pos; }
 
-render::Mat4 Projectile::chaseView() { return chase_cam->view(); }
+math::Mat4<float> Projectile::chaseView() { return chase_cam->view(); }
 
 Weapon* Projectile::getWeapon() { return weapon; }
 void Projectile::setWeapon(Weapon* wpn) { weapon = wpn; }

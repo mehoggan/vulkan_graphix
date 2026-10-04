@@ -1,6 +1,5 @@
 #include "vulkan_earth/WeaponMFB.h"
 #include <cstdint>
-#include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponMFB::WeaponMFB() = default;

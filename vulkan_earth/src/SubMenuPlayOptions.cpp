@@ -1,20 +1,18 @@
 #include "vulkan_earth/SubMenuPlayOptions.h"
 #include <cstdint>
-#include <cstring>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemCheckBox.h"
 #include "vulkan_earth/ControlItemSelectionBox.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Font.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 SubMenuPlayOptions::SubMenuPlayOptions() = default;
 
@@ -45,8 +43,8 @@ SubMenuPlayOptions::SubMenuPlayOptions(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos - height / 20;
@@ -56,7 +54,7 @@ SubMenuPlayOptions::SubMenuPlayOptions(std::int32_t id,
                            label_x_pos,
                            label_y_pos,
                            (z_pos + 1),
-                           vulkan_earth::render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -171,14 +169,14 @@ void SubMenuPlayOptions::setPercentBorder(float percent) {
 void SubMenuPlayOptions::draw(render::RenderContext& context) {
     // The same raised 3-pixel bevel every button draws.
     if (frame_mesh.triangles().empty()) {
-        render::appendBevel(
+        vulkan_earth::appendBevel(
                 frame_mesh,
                 x_pos,
                 y_pos,
                 z_pos,
                 width,
                 height,
-                render::Vec4(color[0], color[1], color[2], color[3]),
+                math::Vec4<float>(color[0], color[1], color[2], color[3]),
                 false);
     }
     context.draw(frame_mesh);

@@ -5,7 +5,8 @@
 #include <string>
 
 #include "vulkan_earth/ControlItem.h"
-#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
 class TextObject;
 
@@ -21,7 +22,7 @@ public:
                          std::int32_t new_width,
                          std::int32_t new_height);
     ~ControlItemTextField() override;
-    void draw(vulkan_earth::render::RenderContext& context) override;
+    void draw(vulkan_graphix::Render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
@@ -54,8 +55,8 @@ private:
     std::int32_t current_length;
     std::int32_t number_of_frames;
     std::int32_t text_cursor_on;  // this is a toggle, -1 off, 1 on
-    vulkan_earth::render::UiMesh frame_mesh;
-    vulkan_earth::render::UiMesh cursor_mesh;
+    vulkan_graphix::Render::UiMesh frame_mesh;
+    vulkan_graphix::Render::UiMesh cursor_mesh;
     bool cursor_built_visible = false;
     std::string cursor_built_chars;
 };

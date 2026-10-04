@@ -5,7 +5,8 @@
 #define Control_ITEM_BUTTON_H
 
 #include "vulkan_earth/ControlItem.h"
-#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
 class TextObject;
 class SubMenu;
@@ -25,11 +26,11 @@ public:
                       std::int32_t new_height,
                       const std::string& new_caption);
     ~ControlItemButton() override;
-    void draw(vulkan_earth::render::RenderContext& context) override;
+    void draw(vulkan_graphix::Render::RenderContext& context) override;
     void mouseClickEvent(std::int32_t x,
                          std::int32_t y,
                          std::int32_t state,
-                         bool still_over_control_item_check_box) override;
+                         bool still_over_control_item_button) override;
     float getXPos() override;
     float getYPos() override;
     float getHeight() override;
@@ -56,7 +57,7 @@ private:
                                 // pressed, 2 = down button pressed
     SubMenuLandscape* parent;
     bool toggled;
-    vulkan_earth::render::UiMesh mesh;
+    vulkan_graphix::Render::UiMesh mesh;
     std::int32_t built_button_state = -1;
 };
 #endif  // Control_ITEM_BUTTON_H

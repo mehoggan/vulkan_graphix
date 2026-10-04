@@ -1,7 +1,6 @@
 #include "vulkan_earth/WeaponRevive.h"
 #include <cstdint>
 #include "vulkan_earth/Sound.h"
-#include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(std::int32_t sfx);
@@ -17,7 +16,7 @@ WeaponRevive::~WeaponRevive() = default;
 WeaponRevive* WeaponRevive::getWeaponInstance() {
     return new WeaponRevive(uniqueidentifier);
 }
-void WeaponRevive::causeEffectToTank(float distance, Tank* tank) {
+void WeaponRevive::causeEffectToTank(float /*distance*/, Tank* tank) {
     if (tank->getDurationShield() == 0) {
         tank->setHP(tank->getHP() + special_number);
         if (tank->getHP() > tank->getArmor() * 100) {

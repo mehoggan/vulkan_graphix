@@ -1,19 +1,17 @@
 #include "vulkan_earth/ControlItemTextField.h"
 #include <stdio.h>
 #include <cstdint>
-#include <iostream>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Font.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 const std::int32_t max_chars = 15;
 
@@ -50,8 +48,8 @@ ControlItemTextField::ControlItemTextField(float new_x_pos,
 ControlItemTextField::~ControlItemTextField() { delete current_text; }
 
 void ControlItemTextField::draw(render::RenderContext& context) {
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     if (number_of_frames == 50) {
         text_cursor_on *= -1;  // toggle
         number_of_frames = 0;
@@ -59,21 +57,21 @@ void ControlItemTextField::draw(render::RenderContext& context) {
     number_of_frames++;
 
     if (frame_mesh.triangles().empty()) {
-        render::appendFrame(frame_mesh,
-                            x_pos,
-                            y_pos,
-                            z_pos,
-                            width,
-                            height,
-                            Vec4(color[0] - 0.6f,
-                                 color[1] - 0.6f,
-                                 color[2] - 0.6f,
-                                 color[3]),
-                            Vec4(color[0], color[1], color[2], color[3]),
-                            Vec4(color[0] - 0.3f,
-                                 color[1] - 0.3f,
-                                 color[2] - 0.3f,
-                                 color[3]));
+        vulkan_earth::appendFrame(frame_mesh,
+                                  x_pos,
+                                  y_pos,
+                                  z_pos,
+                                  width,
+                                  height,
+                                  Vec4(color[0] - 0.6f,
+                                       color[1] - 0.6f,
+                                       color[2] - 0.6f,
+                                       color[3]),
+                                  Vec4(color[0], color[1], color[2], color[3]),
+                                  Vec4(color[0] - 0.3f,
+                                       color[1] - 0.3f,
+                                       color[2] - 0.3f,
+                                       color[3]));
     }
     context.draw(frame_mesh);
 
@@ -85,24 +83,23 @@ void ControlItemTextField::draw(render::RenderContext& context) {
             std::int32_t real_length = 0;
             for (char ch : current_chars) {
                 if (ch != ' ') {
-                    real_length += render::glutBitmapWidth(
-                            render::FontId::TimesRoman24, ch);
+                    real_length += vulkan_earth::textAdvance(
+                            vulkan_earth::FontId::TimesRoman24, ch);
                 }
             }
-            render::appendQuad(cursor_mesh,
-                               Vec3(x_pos + 0.02 * width + real_length,
-                                    y_pos - 0.15 * height,
-                                    z_pos + 0.1),
-                               Vec3(x_pos + 0.02 * width + real_length,
-                                    y_pos - height + 0.15 * height,
-                                    z_pos + 0.1),
-                               Vec3(x_pos + 0.02 * width + real_length + 2,
-                                    y_pos - height + 0.15 * height,
-                                    z_pos + 0.1),
-                               Vec3(x_pos + 0.02 * width + real_length + 2,
-                                    y_pos - 0.15 * height,
-                                    z_pos + 0.1),
-                               Vec4(0, 0, 0, 1));
+            cursor_mesh.addQuad({Vec3(x_pos + 0.02 * width + real_length,
+                                      y_pos - 0.15 * height,
+                                      z_pos + 0.1),
+                                 Vec3(x_pos + 0.02 * width + real_length,
+                                      y_pos - height + 0.15 * height,
+                                      z_pos + 0.1),
+                                 Vec3(x_pos + 0.02 * width + real_length + 2,
+                                      y_pos - height + 0.15 * height,
+                                      z_pos + 0.1),
+                                 Vec3(x_pos + 0.02 * width + real_length + 2,
+                                      y_pos - 0.15 * height,
+                                      z_pos + 0.1)},
+                                Vec4(0, 0, 0, 1));
         }
         cursor_built_visible = cursor_visible;
         cursor_built_chars = current_chars;
@@ -128,8 +125,8 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
 
     std::int32_t real_length = 0;
     for (char ch : new_text) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + 0.02 * width;
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -137,15 +134,15 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
                                   label_x_pos,
                                   label_y_pos,
                                   z_pos + 0.1,
-                                  vulkan_earth::render::FontId::TimesRoman24,
+                                  vulkan_earth::FontId::TimesRoman24,
                                   0.0f,
                                   0.0f,
                                   0.0f);
 }
 
 void ControlItemTextField::mouseClickEvent(
-        std::int32_t x,
-        std::int32_t y,
+        std::int32_t /*x*/,
+        std::int32_t /*y*/,
         std::int32_t state,
         bool still_over_control_item_text_field) {
     if (state == 0)

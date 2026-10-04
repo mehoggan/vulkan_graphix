@@ -3,10 +3,11 @@
 
 #include <cstdint>
 #include <string>
+#include "vulkan_graphix/Render/Renderer.h"
 
 class TextObject;
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -50,7 +51,7 @@ public:
     virtual void setPercentBorder(float percent) = 0;
     /*	END OF GETTERS AND SETTERS	*/
     /*	ACTUAL ACTIONS A SUBMENU CAN MAKE	*/
-    virtual void draw(vulkan_earth::render::RenderContext& context) = 0;
+    virtual void draw(vulkan_graphix::Render::RenderContext& context) = 0;
     virtual std::string collectData() = 0;
     virtual void subMenuMouseTest(std::int32_t x,
                                   std::int32_t y,

@@ -1,13 +1,11 @@
 #ifndef SHOP_MENU_H
 #define SHOP_MENU_H
 
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
-#include "vulkan_earth/render/Mesh.h"
-
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -38,7 +36,7 @@ public:
              PlayerFactory* new_player_factory,
              std::int32_t* game_state);
     ~ShopMenu();
-    void draw(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
     void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);
     void saveCurrentPlayerInfo();
     void displayCurrentPlayerInfo();
@@ -79,7 +77,7 @@ private:
     Item* inven_items[inven_grid_row];
     GlobalSettings* global_settings;
     PlayerFactory* player_factory;
-    vulkan_earth::render::UiMesh panel_mesh;
+    vulkan_graphix::Render::UiMesh panel_mesh;
     float built_width = -1.0f;
     float built_height = -1.0f;
 };
