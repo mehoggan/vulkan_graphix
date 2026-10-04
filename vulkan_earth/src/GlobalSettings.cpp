@@ -1,6 +1,5 @@
 #include "vulkan_earth/GlobalSettings.h"
 #include <stdio.h>
-#include <string.h>
 #include <cstdint>
 #include <iostream>
 #include <sstream>
@@ -60,7 +59,7 @@ void GlobalSettings::setVariables(const std::string& global_options,
                 cur_char++;
             }
             cur_char--;
-            if (data != "" && data != "Hardware" && data != "Economics" &&
+            if (!data.empty() && data != "Hardware" && data != "Economics" &&
                 data != "Physics" && data != "Landscape" &&
                 data != "Game Options" && data != "Weapons" &&
                 data != "Button") {
@@ -87,7 +86,7 @@ void GlobalSettings::setVariables(const std::string& global_options,
                 cur_char1++;
             }
             cur_char1--;
-            if (data != "" && data != "Player Count" &&
+            if (!data.empty() && data != "Player Count" &&
                 data != "Round Count") {
                 if (cur_token_count1 == 0) {
                     stringstream ss1(data);
@@ -136,7 +135,7 @@ void GlobalSettings::copyData() {
     trace_path = options[22];
 }
 
-void GlobalSettings::printSelf(std::int32_t index) {
+void GlobalSettings::printSelf(std::int32_t /*index*/) {
     printf("Number of Players == %d\n", player_count);
     printf("Number of Rounds == %d\n", round_count);
 

@@ -1,9 +1,9 @@
 #ifndef SPECIAL_EFFECT_H_
 #define SPECIAL_EFFECT_H_
 
-#include <stdio.h>
+#include "vulkan_graphix/Render/Renderer.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -11,7 +11,7 @@ class SpecialEffect {
 public:
     SpecialEffect();
     virtual ~SpecialEffect();
-    virtual void draw(vulkan_earth::render::RenderContext& context) = 0;
+    virtual void draw(vulkan_graphix::Render::RenderContext& context) = 0;
     virtual void setColors1(float* colors1) = 0;
     virtual void setColors2(float* colors2) = 0;
     virtual void setColors3(float* colors3) = 0;

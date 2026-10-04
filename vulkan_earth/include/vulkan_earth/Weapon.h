@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include <string>
-#include "vulkan_earth/OpenGLColors.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_graphix/GameCatalog.h"
 

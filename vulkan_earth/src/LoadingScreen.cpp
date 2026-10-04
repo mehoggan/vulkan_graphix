@@ -1,8 +1,7 @@
 #include "vulkan_earth/LoadingScreen.h"
 #include <cstdint>
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/ImageObject.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 LoadingScreen::LoadingScreen() = default;
@@ -36,17 +35,17 @@ LoadingScreen::LoadingScreen(float x,
 }
 LoadingScreen::~LoadingScreen() { delete image; }
 
-void LoadingScreen::draw(vulkan_earth::render::RenderContext& context) {
+void LoadingScreen::draw(vulkan_graphix::Render::RenderContext& context) {
     if (frame_mesh.triangles().empty()) {
         // The same raised 3-pixel bevel every button draws.
-        vulkan_earth::render::appendBevel(
+        vulkan_earth::appendBevel(
                 frame_mesh,
                 pos[0],
                 pos[1],
                 pos[2],
                 static_cast<float>(width),
                 static_cast<float>(height),
-                vulkan_earth::render::Vec4(
+                vulkan_graphix::Math::Vec4<float>(
                         color[0], color[1], color[2], color[3]),
                 false);
     }

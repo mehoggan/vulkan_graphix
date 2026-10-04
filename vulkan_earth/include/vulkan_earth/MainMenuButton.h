@@ -3,13 +3,14 @@
 
 #include <cstdint>
 #include <string>
-#include "vulkan_earth/Item.h"
-#include "vulkan_earth/render/Mesh.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
 class TextObject;
 class SubMenu;
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -28,7 +29,7 @@ public:
                    const std::string& new_caption,
                    SubMenu* new_submenu);
     ~MainMenuButton();
-    void draw(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
     void pressButton();
     void activateSubMenu();
     void deactivateSubMenu();
@@ -59,8 +60,9 @@ private:
     bool pressed;
     bool active;
     SubMenu* submenu;
-    vulkan_earth::render::UiMesh mesh;
+    vulkan_graphix::Render::UiMesh mesh;
     bool built_pressed = false;
-    vulkan_earth::render::Vec4 built_color = vulkan_earth::render::Vec4(-1.0f);
+    vulkan_graphix::Math::Vec4<float> built_color =
+            vulkan_graphix::Math::Vec4<float>(-1.0f);
 };
 #endif  // MAINMENUBUTTON_H

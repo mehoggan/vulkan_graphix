@@ -36,6 +36,24 @@ struct ColoredQuad {
     Math::Vec4<float> color;
 };
 
+// The five quads of a beveled frame, each in its own color.
+struct BevelColors {
+    Math::Vec4<float> face;
+    Math::Vec4<float> top;
+    Math::Vec4<float> left;
+    Math::Vec4<float> bottom;
+    Math::Vec4<float> right;
+};
+
+// top_left/size describe the flat face in a top-left-origin, y-down
+// convention; the four border wedges extend bevel_size outward from it.
+// Always returns 5 quads: [0] = flat center, [1..4] = top/left/bottom/right
+// border wedges.
+std::vector<ColoredQuad> buildBevelFrame(Math::Vec2<float> top_left,
+                                         Math::Vec2<float> size,
+                                         BevelColors const& colors,
+                                         float bevel_size);
+
 // top_left/size describe the button's flat face in a top-left-origin,
 // y-down screen convention (y grows downward). Colors are offset from
 // base_color by the same -0.4/+0.2 vulkan_earth's ControlItemButton::

@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/Item.h"
-#include "vulkan_earth/PlayerFactory.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TankA.h"
 #include "vulkan_earth/TankB.h"
@@ -130,7 +129,7 @@ char PlayerCPU::getTeamLabel() { return team_label; }
 void PlayerCPU::setTeamLabel(char t) { team_label = t; }
 Weapon* PlayerCPU::getLoadedWeapon() { return loaded_weapon; }
 void PlayerCPU::setLoadedWeapon(Weapon* wpn) { loaded_weapon = wpn; }
-void PlayerCPU::setPlayerName(const std::string& new_name) {
+void PlayerCPU::setPlayerName(const std::string& /*new_name*/) {
     printf("\nYou're trying to set a new_name for CPU. It won't happen, "
            "sorry.\n");
     name = "CPU";
@@ -147,7 +146,7 @@ void PlayerCPU::setItems(Item** item_set) {
 }
 void PlayerCPU::setTankType(const std::string& new_tank_type) {
     tank_type = new_tank_type;
-    if (current_tank != nullptr) delete current_tank;
+    delete current_tank;
     if (tank_type == "Rhinoxx")
         current_tank = new TankA(0, 0, 0);
     else if (tank_type == "Hellfire")

@@ -87,12 +87,11 @@ bool updateParticle(Particle& particle) {
 }
 
 ParticleEmitter::ParticleEmitter(std::int32_t spawn,
-                                 std::int32_t rate,
+                                 std::int32_t /*rate*/,
                                  std::int32_t speed,
                                  std::int32_t life,
                                  ParticleKind kind)
         : m_particles_per_emission(spawn)
-        , m_emission_rate(rate)
         , m_emission_speed(speed)
         , m_emission_life(life)
         , m_kind(kind)
@@ -128,9 +127,15 @@ void ParticleEmitter::addParticles() {
         if (m_slots[i]) {
             continue;
         }
-        float dir_x = static_cast<float>(std::rand()) * 2 / RAND_MAX - 1;
-        float dir_y = static_cast<float>(std::rand()) * 2 / RAND_MAX - 1;
-        float dir_z = static_cast<float>(std::rand()) * 2 / RAND_MAX - 1;
+        float dir_x = static_cast<float>(std::rand()) * 2 /
+                              static_cast<float>(RAND_MAX) -
+                      1;
+        float dir_y = static_cast<float>(std::rand()) * 2 /
+                              static_cast<float>(RAND_MAX) -
+                      1;
+        float dir_z = static_cast<float>(std::rand()) * 2 /
+                              static_cast<float>(RAND_MAX) -
+                      1;
         float mag = std::sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
         dir_x /= mag;
         dir_y /= mag;

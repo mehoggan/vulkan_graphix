@@ -11,7 +11,7 @@ const std::int32_t tank_a_armor = 7;
 const std::int32_t tank_a_speed = 40;
 
 TankA::TankA() = default;
-TankA::TankA(float x, float y, float z) {
+TankA::TankA(float /*x*/, float /*y*/, float /*z*/) {
     initBody();
     initHead();
     initTurret();
@@ -72,25 +72,25 @@ std::int32_t TankA::getBaseSpeed() { return tank_a_speed; }
 std::string TankA::getName() { return tank_a_name; }
 
 void TankA::updateHitBox() {
-    tank_pos.coord_x = head_matrix[12];
-    tank_pos.coord_y = head_matrix[13];
-    tank_pos.coord_z = head_matrix[14];
-    right.compo_x = -head_matrix[0];
-    right.compo_y = -head_matrix[1];
-    right.compo_z = -head_matrix[2];
-    left.compo_x = head_matrix[0];
-    left.compo_y = head_matrix[1];
-    left.compo_z = head_matrix[2];
-    up.compo_x = head_matrix[4];
-    up.compo_y = head_matrix[5];
-    up.compo_z = head_matrix[6];
-    down.compo_x = -head_matrix[4];
-    down.compo_y = -head_matrix[5];
-    down.compo_z = -head_matrix[6];
-    at.compo_x = -head_matrix[8];
-    at.compo_y = -head_matrix[9];
-    at.compo_z = -head_matrix[10];
-    back.compo_x = head_matrix[8];
-    back.compo_y = head_matrix[9];
-    back.compo_z = head_matrix[10];
+    tank_pos.x = head_matrix[12];
+    tank_pos.y = head_matrix[13];
+    tank_pos.z = head_matrix[14];
+    right.x = -head_matrix[0];
+    right.y = -head_matrix[1];
+    right.z = -head_matrix[2];
+    left.x = head_matrix[0];
+    left.y = head_matrix[1];
+    left.z = head_matrix[2];
+    up.x = head_matrix[4];
+    up.y = head_matrix[5];
+    up.z = head_matrix[6];
+    down.x = -head_matrix[4];
+    down.y = -head_matrix[5];
+    down.z = -head_matrix[6];
+    at.x = -head_matrix[8];
+    at.y = -head_matrix[9];
+    at.z = -head_matrix[10];
+    back.x = head_matrix[8];
+    back.y = head_matrix[9];
+    back.z = head_matrix[10];
 }

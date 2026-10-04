@@ -12,6 +12,10 @@ libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
 															./OrbitCamera.cpp \
+															./Render/Font.cpp \
+															./Render/Mesh.cpp \
+															./Render/Renderer.cpp \
+															./Render/Texture.cpp \
 															./TankOrientation.cpp \
 															./TankPlacement.cpp \
 															./TerrainGenerator.cpp \

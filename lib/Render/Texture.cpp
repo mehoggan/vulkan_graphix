@@ -1,12 +1,12 @@
-#include "vulkan_earth/render/Texture.h"
+#include "vulkan_graphix/Render/Texture.h"
 
 #include <utility>
 
-#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 
-Texture::Texture(vulkan_graphix::ImageParameters image,
+Texture::Texture(ImageParameters image,
                  VkDescriptorSet descriptor_set,
                  std::uint32_t width,
                  std::uint32_t height)
@@ -27,4 +27,4 @@ std::uint32_t Texture::width() const { return m_width; }
 
 std::uint32_t Texture::height() const { return m_height; }
 
-}  // namespace vulkan_earth::render
+}  // namespace vulkan_graphix::Render

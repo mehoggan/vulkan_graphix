@@ -1,11 +1,11 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
-#include <stdio.h>
 #include <cstdint>
 #include "vulkan_earth/Player.h"
+#include "vulkan_graphix/Render/Renderer.h"
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -22,7 +22,7 @@ public:
     Inventory();
     Inventory(float x, float y, std::int32_t width, std::int32_t height);
     ~Inventory();
-    void draw(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
     void setupInventory(Player* player);
     void handleInventory(Player* current_player, std::int32_t inven_index);
     void keyHandler(std::int32_t key);

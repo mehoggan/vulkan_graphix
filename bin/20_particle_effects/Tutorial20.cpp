@@ -3,7 +3,6 @@
 
 #include <vulkan/vulkan_core.h>
 
-#include <algorithm>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>

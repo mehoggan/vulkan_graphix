@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <new>
 #include <sstream>
@@ -18,6 +20,7 @@
 #include <thread>
 #include <vector>
 #include "math.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/LoadingScreen.h"
@@ -29,8 +32,6 @@
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/SubMenuLandscape.h"
 #include "vulkan_earth/TerrainMaker.h"
-#include "vulkan_earth/render/Camera.h"
-#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_graphix/OperatingSystem.h"
 #include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
@@ -42,14 +43,15 @@
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 namespace os = vulkan_graphix::os;
 
 // GLUT's mouse button and state values, which the handlers below were
 // written against.
-constexpr std::int32_t GLUT_LEFT_BUTTON = 0;
-constexpr std::int32_t GLUT_DOWN = 0;
-constexpr std::int32_t GLUT_UP = 1;
+constexpr std::int32_t c_glut_left_button = 0;
+constexpr std::int32_t c_glut_down = 0;
+constexpr std::int32_t c_glut_up = 1;
 
 void resize(std::int32_t, std::int32_t);
 bool draw();
@@ -146,9 +148,9 @@ void loadScript() {
     if (path == nullptr) {
         return;
     }
-    std::ifstream in(path);
+    std::ifstream script_file(path);
     std::string line;
-    while (std::getline(in, line)) {
+    while (std::getline(script_file, line)) {
         if (line.empty() || line[0] == '#') {
             continue;
         }
@@ -177,9 +179,9 @@ void runScriptFrame() {
     for (const ScriptEvent& event : script) {
         if (event.frame != script_frame) continue;
         if (event.op == "down")
-            mouseHandler(GLUT_LEFT_BUTTON, GLUT_DOWN, event.x, event.y);
+            mouseHandler(c_glut_left_button, c_glut_down, event.x, event.y);
         else if (event.op == "up")
-            mouseHandler(GLUT_LEFT_BUTTON, GLUT_UP, event.x, event.y);
+            mouseHandler(c_glut_left_button, c_glut_up, event.x, event.y);
         else if (event.op == "move")
             mouseMotionHandler(event.x, event.y);
         else if (event.op == "key")
@@ -202,19 +204,23 @@ void runScriptFrame() {
 // are forwarded to the game's original GLUT-style handlers.
 class VulkanEarthApp : public vulkan_graphix::TutorialBase {
 public:
-    ~VulkanEarthApp() override { m_renderer.shutdown(); }
+    ~VulkanEarthApp() override {
+        vulkan_earth::releaseGameRendering();
+        m_renderer.shutdown();
+    }
 
     bool initializeRenderer() {
-        return m_renderer.initialize(deviceInfo(), swapchainInfo());
+        return m_renderer.initialize(*this) &&
+               vulkan_earth::initializeGameRendering(m_renderer);
     }
 
     bool draw() override {
-        auto now = std::chrono::steady_clock::now();
-        if (now < m_next_frame) {
+        auto current_time = std::chrono::steady_clock::now();
+        if (current_time < m_next_frame) {
             std::this_thread::sleep_until(m_next_frame);
-            now = m_next_frame;
+            current_time = m_next_frame;
         }
-        m_next_frame = now + c_frame_interval;
+        m_next_frame = current_time + c_frame_interval;
         if (!::draw()) {
             // The swapchain no longer matches the window.
             return onWindowSizeChanged();
@@ -223,15 +229,16 @@ public:
     }
 
     bool onKey(const os::KeyEvent& event) override {
-        // GLUT's keyboard callbacks get the character a key types (Escape is
-        // 27, Enter 13, ...); its special callbacks get function and arrow
-        // keys as GLUT_KEY_* codes.
+        // GLUT's keyboard callbacks get the character a character_key types
+        // (Escape is 27, Enter 13, ...); its special callbacks get function
+        // and arrow keys as GLUT_KEY_* codes.
         if (event.character != '\0') {
-            auto const key = static_cast<std::uint8_t>(event.character);
+            auto const character_key =
+                    static_cast<std::uint8_t>(event.character);
             if (event.pressed) {
-                keyHandler(key, 0, 0);
+                keyHandler(character_key, 0, 0);
             } else {
-                keyHandlerUp(key, 0, 0);
+                keyHandlerUp(character_key, 0, 0);
             }
             return true;
         }
@@ -265,7 +272,8 @@ public:
         if (button >= 1 && button <= 3) {
             m_held_buttons += pressed ? 1 : -1;
         }
-        mouseHandler(button - 1, pressed ? GLUT_DOWN : GLUT_UP, pos_x, pos_y);
+        mouseHandler(
+                button - 1, pressed ? c_glut_down : c_glut_up, pos_x, pos_y);
     }
 
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override {
@@ -285,44 +293,20 @@ protected:
     }
 
     bool childOnWindowSizeChanged() override {
-        if (!m_renderer.onSwapchainRecreated(swapchainInfo())) {
+        if (!m_renderer.onSwapchainRecreated(*this)) {
             return false;
         }
-        resize(render::windowWidth(), render::windowHeight());
+        resize(vulkan_earth::windowWidth(), vulkan_earth::windowHeight());
         return true;
     }
 
 private:
-    render::DeviceInfo deviceInfo() const {
-        render::DeviceInfo info;
-        info.device = m_vulkan_common_parameters.getVkDevice();
-        info.physical_device =
-                m_vulkan_common_parameters.getVkPhysicalDevice();
-        info.graphics_queue = getGraphicsQueueParameters().getVkQueue();
-        info.graphics_family = getGraphicsQueueParameters().getFamilyIndex();
-        info.present_queue = getPresentQueueParameters().getVkQueue();
-        return info;
-    }
-
-    render::SwapchainInfo swapchainInfo() const {
-        auto const& swapchain = getSwapchainParameters();
-        render::SwapchainInfo info;
-        info.swapchain = swapchain.getVkSwapchainKhr();
-        info.format = swapchain.getVkFormat();
-        info.extent = swapchain.getVkExtent2d();
-        for (auto const& image : swapchain.getImageParameters()) {
-            info.images.push_back(image.getVkImage());
-            info.views.push_back(image.getVkImageView());
-        }
-        return info;
-    }
-
     render::Renderer m_renderer;
     std::chrono::steady_clock::time_point m_next_frame;
     std::int32_t m_held_buttons = 0;
 };
 
-int main(int argc, char* argv[]) {
+int main() {
     screen_state = MAIN_MENU;
     prev_screen_state = screen_state;
 
@@ -348,14 +332,14 @@ int main(int argc, char* argv[]) {
     }
     game_window.setKeyRepeat(false);
 
-    VulkanEarthApp app;
-    if (!app.prepareVulkan(game_window.getParameters()) ||
-        !app.initializeRenderer()) {
+    VulkanEarthApp earth_app;
+    if (!earth_app.prepareVulkan(game_window.getParameters()) ||
+        !earth_app.initializeRenderer()) {
         return EXIT_FAILURE;
     }
     // The window can come up at a different size than requested.
-    win_width = render::windowWidth();
-    win_height = render::windowHeight();
+    win_width = vulkan_earth::windowWidth();
+    win_height = vulkan_earth::windowHeight();
     screen_state = MAIN_MENU;
 
     global_settings = new GlobalSettings();
@@ -380,14 +364,14 @@ int main(int argc, char* argv[]) {
     readymenu = nullptr;
     shopmenu = nullptr;
 
-    bool const ok = game_window.renderingLoop(app);
+    bool const loop_ok = game_window.renderingLoop(earth_app);
     if (!quit_requested) {
         quitGame(true);
     }
     delete loading_screen;
     loading_screen = nullptr;
     window = nullptr;
-    return ok ? EXIT_SUCCESS : EXIT_FAILURE;
+    return loop_ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 // What every one of the original's exit(0) calls did first: free the
@@ -428,11 +412,11 @@ void resize(std::int32_t width, std::int32_t height) {
 // where one unit is one pixel.
 void menuLookAt(render::RenderContext& context) {
     std::int32_t distance = win_height / 2 * tan(1.04719755);
-    context.setCamera(context.projection(),
-                      context.view() * render::camera::lookAt(
-                                               render::Vec3(0, 0, distance),
-                                               render::Vec3(0, 0, 0),
-                                               render::Vec3(0, 1, 0)));
+    context.setCamera(
+            context.projection(),
+            context.view() * glm::lookAt(math::Vec3<float>(0, 0, distance),
+                                         math::Vec3<float>(0, 0, 0),
+                                         math::Vec3<float>(0, 1, 0)));
 }
 
 // Draws one frame; returns false when the swapchain has to be rebuilt
@@ -446,7 +430,8 @@ bool draw() {
     // glClearColor(0, 0, 0, 0), glClearDepth(1.0f), then a fresh full-window
     // projection - near/far 1/1000000 for the menus, 100/100000000 in game
     // - and an identity modelview.
-    render::RenderContext* context = renderer.beginFrame(render::Vec4(0.0f));
+    render::RenderContext* context =
+            renderer.beginFrame(math::Vec4<float>(0.0f));
     if (context == nullptr) {
         return false;
     }
@@ -454,13 +439,13 @@ bool draw() {
     float const far_plane =
             screen_state != GAME_PLAY ? 1000000.0 : 100000000.0;
     context->setViewport({0, 0, win_width, win_height});
-    context->setCamera(
-            render::camera::perspective(60.0,
-                                        static_cast<float>(win_width) /
-                                                static_cast<float>(win_height),
-                                        near_plane,
-                                        far_plane),
-            render::Mat4(1.0f));
+    context->setCamera(vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
+                               static_cast<float>(win_width) /
+                                       static_cast<float>(win_height),
+                               60.0,
+                               near_plane,
+                               far_plane),
+                       math::Mat4<float>(1.0f));
     switch (screen_state) {
         case MAIN_MENU: {
             if (prev_screen_state != MAIN_MENU) {
@@ -479,8 +464,8 @@ bool draw() {
                 // glutSwapBuffers(): the loading screen goes up while the
                 // ready menu is built, and drawing carries on into the next
                 // frame with the same camera.
-                render::Mat4 const projection = context->projection();
-                render::Mat4 const view = context->view();
+                math::Mat4<float> const projection = context->projection();
+                math::Mat4<float> const view = context->view();
                 if (!renderer.endFrame()) {
                     return false;
                 }
@@ -490,7 +475,7 @@ bool draw() {
                                           global_settings,
                                           player_factory,
                                           &screen_state);
-                context = renderer.beginFrame(render::Vec4(0.0f));
+                context = renderer.beginFrame(math::Vec4<float>(0.0f));
                 if (context == nullptr) {
                     return false;
                 }
@@ -542,25 +527,26 @@ bool draw() {
 
             // World axes at the origin (red x, green y, blue z).
             std::vector<render::UiVertex> const axes = {
-                    {render::Vec3(0, 0, 0),
-                     render::Vec4(1, 0, 0, 1),
-                     render::Vec2(0.0f)},
-                    {render::Vec3(1000, 0, 0),
-                     render::Vec4(1, 0, 0, 1),
-                     render::Vec2(0.0f)},
-                    {render::Vec3(0, 0, 0),
-                     render::Vec4(0, 1, 0, 1),
-                     render::Vec2(0.0f)},
-                    {render::Vec3(0, 1000, 0),
-                     render::Vec4(0, 1, 0, 1),
-                     render::Vec2(0.0f)},
-                    {render::Vec3(0, 0, 0),
-                     render::Vec4(0, 0, 1, 1),
-                     render::Vec2(0.0f)},
-                    {render::Vec3(0, 0, 1000),
-                     render::Vec4(0, 0, 1, 1),
-                     render::Vec2(0.0f)}};
-            context->drawTransient(axes, render::PipelineId::UiLines, nullptr);
+                    {math::Vec3<float>(0, 0, 0),
+                     math::Vec4<float>(1, 0, 0, 1),
+                     math::Vec2<float>(0.0f)},
+                    {math::Vec3<float>(1000, 0, 0),
+                     math::Vec4<float>(1, 0, 0, 1),
+                     math::Vec2<float>(0.0f)},
+                    {math::Vec3<float>(0, 0, 0),
+                     math::Vec4<float>(0, 1, 0, 1),
+                     math::Vec2<float>(0.0f)},
+                    {math::Vec3<float>(0, 1000, 0),
+                     math::Vec4<float>(0, 1, 0, 1),
+                     math::Vec2<float>(0.0f)},
+                    {math::Vec3<float>(0, 0, 0),
+                     math::Vec4<float>(0, 0, 1, 1),
+                     math::Vec2<float>(0.0f)},
+                    {math::Vec3<float>(0, 0, 1000),
+                     math::Vec4<float>(0, 0, 1, 1),
+                     math::Vec2<float>(0.0f)}};
+            context->drawTransient(
+                    axes, vulkan_earth::pipelines().ui_lines, nullptr);
 
             break;
         }
@@ -584,7 +570,7 @@ bool draw() {
     return renderer.endFrame();
 }
 
-void keyHandler(std::uint8_t key, std::int32_t x, std::int32_t y) {
+void keyHandler(std::uint8_t key, std::int32_t /*x*/, std::int32_t /*y*/) {
     if (screen_state == READY_MENU) {
         if (key == 27) {
             screen_state = QUIT_GAME;
@@ -619,7 +605,7 @@ void keyHandler(std::uint8_t key, std::int32_t x, std::int32_t y) {
     }
 }
 
-void keyHandlerUp(std::uint8_t key, std::int32_t x, std::int32_t y) {
+void keyHandlerUp(std::uint8_t key, std::int32_t /*x*/, std::int32_t /*y*/) {
     if (screen_state == GAME_PLAY) {
         if (key == static_cast<std::int32_t>('l')) {
             global_settings->getCurrentTerrain()->toggleWireframe();
@@ -629,7 +615,7 @@ void keyHandlerUp(std::uint8_t key, std::int32_t x, std::int32_t y) {
     }
 }
 
-void specKeyHandler(std::int32_t key, std::int32_t x, std::int32_t y) {
+void specKeyHandler(std::int32_t key, std::int32_t /*x*/, std::int32_t /*y*/) {
     if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, true);
@@ -656,7 +642,9 @@ void specKeyHandler(std::int32_t key, std::int32_t x, std::int32_t y) {
     }
 }
 
-void specKeyHandlerUp(std::int32_t key, std::int32_t x, std::int32_t y) {
+void specKeyHandlerUp(std::int32_t key,
+                      std::int32_t /*x*/,
+                      std::int32_t /*y*/) {
     if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, false);
@@ -685,8 +673,8 @@ void mouseHandler(std::int32_t button,
                   std::int32_t y) {
     switch (screen_state) {
         case MAIN_MENU: {
-            if (button == GLUT_LEFT_BUTTON) {
-                if (state == GLUT_UP) {
+            if (button == c_glut_left_button) {
+                if (state == c_glut_up) {
                     state = 0;
                     // printf("The caption values in
                     // GLUT_MOUSEHANDLER_CALLBACK_MOUSEUP are now [0]=%s --
@@ -705,8 +693,8 @@ void mouseHandler(std::int32_t button,
             break;
         }
         case READY_MENU: {
-            if (button == GLUT_LEFT_BUTTON) {
-                if (state == GLUT_UP) {
+            if (button == c_glut_left_button) {
+                if (state == c_glut_up) {
                     state = 0;
                 } else {
                     state = 1;
@@ -720,8 +708,8 @@ void mouseHandler(std::int32_t button,
             break;
         }
         case SHOP_MENU: {
-            if (button == GLUT_LEFT_BUTTON) {
-                if (state == GLUT_UP) {
+            if (button == c_glut_left_button) {
+                if (state == c_glut_up) {
                     state = 0;
                 } else {
                     state = 1;

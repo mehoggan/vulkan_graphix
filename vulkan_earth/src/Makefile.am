@@ -1,8 +1,9 @@
 bin_PROGRAMS = vulkan_earth_runner
 
 # Vendored legacy game, originally OpenGL/GLUT on MSVC/Win32, now running
-# on Vulkan through libvulkan_graphix's TutorialBase bring-up and its own
-# renderer (render/), rather than held to this project's own
+# on Vulkan through libvulkan_graphix's TutorialBase bring-up and Render
+# module (GameRenderer.cpp sets up the game's own pipelines and fonts),
+# rather than held to this project's own
 # -Werror/-Wall/-pedantic policy (see the top-level CLAUDE.md) - it
 # predates this codebase and isn't ours to bring up to that bar in one
 # pass.
@@ -16,6 +17,7 @@ vulkan_earth_runner_SOURCES = \
 	ControlItemSliderbar.cpp \
 	ControlItemTextField.cpp \
 	Explosion.cpp \
+	GameRenderer.cpp \
 	GameState.cpp \
 	GlobalSettings.cpp \
 	ImageObject.cpp \
@@ -33,7 +35,6 @@ vulkan_earth_runner_SOURCES = \
 	LoadingScreen.cpp \
 	MainMenu.cpp \
 	MainMenuButton.cpp \
-	Normal.cpp \
 	ParticleGenerator.cpp \
 	Player.cpp \
 	PlayerCPU.cpp \
@@ -66,11 +67,8 @@ vulkan_earth_runner_SOURCES = \
 	TankG.cpp \
 	TankH.cpp \
 	TerrainMaker.cpp \
-	TexCoord.cpp \
 	TextObject.cpp \
 	VBOShaderLibrary.cpp \
-	Vector.cpp \
-	Vertex.cpp \
 	Water.cpp \
 	Weapon.cpp \
 	WeaponAcid.cpp \
@@ -85,14 +83,7 @@ vulkan_earth_runner_SOURCES = \
 	WeaponTeleport.cpp \
 	WeaponTest.cpp \
 	WeaponThor.cpp \
-	WorldCam.cpp \
-	render/Camera.cpp \
-	render/Font.cpp \
-	render/GlMatrix.cpp \
-	render/Mesh.cpp \
-	render/Renderer.cpp \
-	render/Texture.cpp \
-	render/UiBuilders.cpp
+	WorldCam.cpp
 
 # The game calls into libvulkan_graphix for everything it shares with the
 # Vulkan tutorials (terrain height field/queries/craters, ballistics, tank

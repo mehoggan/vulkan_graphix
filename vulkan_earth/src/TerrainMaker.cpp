@@ -3,26 +3,16 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <fstream>
-#include <iostream>
 #include <vector>
 #include "math.h"
-#include "vulkan_earth/Normal.h"
-#include "vulkan_earth/TexCoord.h"
-#include "vulkan_earth/Vertex.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
+#include "vulkan_earth/GameRenderer.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
-
-namespace {
-Normal toNormal(vulkan_graphix::Math::Vec3<float> const& normal) {
-    return Normal(normal.x, normal.y, normal.z);
-}
-}  // namespace
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 TerrainMaker::TerrainMaker(std::int32_t i_scale, std::int32_t i_size)
         : terrain(i_size, i_scale) {
@@ -74,14 +64,9 @@ void TerrainMaker::selectTexture(const std::string& tex) {
 void TerrainMaker::rebuildMesh() {
     std::vector<render::MeshVertex> mesh_vertices(vertices.size());
     for (std::size_t i = 0; i < vertices.size(); ++i) {
-        mesh_vertices[i] = {render::Vec3(vertices[i].coord_x,
-                                         vertices[i].coord_y,
-                                         vertices[i].coord_z),
-                            render::Vec3(normals[i].compo_x,
-                                         normals[i].compo_y,
-                                         normals[i].compo_z),
-                            render::Vec2(tex_coord[i].texcoord_s,
-                                         tex_coord[i].texcoord_t)};
+        mesh_vertices[i] = {vertices[i],
+                            normals[i],
+                            math::Vec2<float>(tex_coord[i].s, tex_coord[i].t)};
     }
     mesh = render::Renderer::instance().createMesh(mesh_vertices);
 
@@ -89,17 +74,18 @@ void TerrainMaker::rebuildMesh() {
     // vertex.
     std::int32_t const draw_scale = scale;
     normal_lines.clear();
-    render::Vec4 const white(1, 1, 1, .75);
+    math::Vec4<float> const white(1, 1, 1, .75);
     for (std::int32_t i = 0; i < 255; i += 4) {
         for (std::int32_t j = 0; j < 255; j += 4) {
-            Normal const normal = getNormalAt(i * draw_scale, j * draw_scale);
+            vulkan_graphix::Math::Vec3<float> const normal =
+                    getNormalAt(i * draw_scale, j * draw_scale);
             normal_lines.addLine(
-                    render::Vec3(i * draw_scale,
-                                 terrain.heightAt(i, j),
-                                 j * draw_scale),
-                    render::Vec3(i * draw_scale + 500 * normal.compo_x,
-                                 terrain.heightAt(i, j) + 500 * normal.compo_y,
-                                 j * draw_scale + 500 * normal.compo_z),
+                    math::Vec3<float>(i * draw_scale,
+                                      terrain.heightAt(i, j),
+                                      j * draw_scale),
+                    math::Vec3<float>(i * draw_scale + 500 * normal.x,
+                                      terrain.heightAt(i, j) + 500 * normal.y,
+                                      j * draw_scale + 500 * normal.z),
                     white);
         }
     }
@@ -117,17 +103,17 @@ void TerrainMaker::draw(render::RenderContext& context) {
         // Untextured, unlit, line-mode triangles in translucent black, then
         // the debug normals.
         context.drawMesh(*mesh,
-                         render::PipelineId::FlatColorWireframe,
+                         vulkan_earth::pipelines().flat_color_wireframe,
                          nullptr,
-                         render::Mat4(1.0f),
-                         render::Vec4(0, 0, 0, .75));
+                         math::Mat4<float>(1.0f),
+                         math::Vec4<float>(0, 0, 0, .75));
         context.draw(normal_lines);
     } else {
         context.drawMesh(*mesh,
-                         render::PipelineId::Terrain,
+                         vulkan_earth::pipelines().terrain,
                          color_texture.get(),
-                         render::Mat4(1.0f),
-                         render::Vec4(1.0f));
+                         math::Mat4<float>(1.0f),
+                         math::Vec4<float>(1.0f));
     }
 }
 
@@ -171,126 +157,138 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_I -- N_I												*/
             /************************************************************/
-            Vertex v_i(j * prep_scale,
-                       terrain.heightAt(j, i) /*SCALE*/,
-                       i * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_i(
+                    j * prep_scale,
+                    terrain.heightAt(j, i) /*SCALE*/,
+                    i * prep_scale);
             vertices[index++] = v_i;
-            TexCoord t_i((static_cast<float>(i % (chunk_size - 1))) /
-                                 static_cast<float>(chunk_size - 1),
-                         (static_cast<float>(j % (chunk_size - 1))) /
-                                 static_cast<float>(chunk_size - 1));
+            vulkan_graphix::Math::Vec2<float> t_i(
+                    (static_cast<float>(i % (chunk_size - 1))) /
+                            static_cast<float>(chunk_size - 1),
+                    (static_cast<float>(j % (chunk_size - 1))) /
+                            static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_i;
-            Normal n_i(0, 0, 0);
+            vulkan_graphix::Math::Vec3<float> n_i(0, 0, 0);
             if (i == 0 && j == 0) {
             } else if (i == 0) {
             } else if (j == 0) {
             } else {
-                n_i = toNormal(terrain.normalAt(j, i));
+                n_i = terrain.normalAt(j, i);
             }
             normals[index_normals++] = n_i;
 
             /************************************************************/
             /*	V_J -- N_J												*/
             /************************************************************/
-            Vertex v_j(j * prep_scale,
-                       terrain.heightAt(j, i + 1) /*SCALE*/,
-                       (i + 1) * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_j(
+                    j * prep_scale,
+                    terrain.heightAt(j, i + 1) /*SCALE*/,
+                    (i + 1) * prep_scale);
             vertices[index++] = v_j;
-            TexCoord t_j((static_cast<float>(i % (chunk_size - 1)) + 1) /
-                                 static_cast<float>(chunk_size - 1),
-                         (static_cast<float>(j % (chunk_size - 1))) /
-                                 static_cast<float>(chunk_size - 1));
+            vulkan_graphix::Math::Vec2<float> t_j(
+                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
+                            static_cast<float>(chunk_size - 1),
+                    (static_cast<float>(j % (chunk_size - 1))) /
+                            static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_j;
-            Normal n_j(0, 0, 0);
+            vulkan_graphix::Math::Vec3<float> n_j(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
             } else if (j == 0) {
             } else if (i == prep_size - 2) {
             } else {
-                n_j = toNormal(terrain.normalAt(j, i + 1));
+                n_j = terrain.normalAt(j, i + 1);
             }
             normals[index_normals++] = n_j;
 
             /************************************************************/
             /*	V_K -- N_K												*/
             /************************************************************/
-            Vertex v_k((j + 1) * prep_scale,
-                       terrain.heightAt(j + 1, i) /*SCALE*/,
-                       (i)*prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_k(
+                    (j + 1) * prep_scale,
+                    terrain.heightAt(j + 1, i) /*SCALE*/,
+                    (i)*prep_scale);
             vertices[index++] = v_k;
-            TexCoord t_k((static_cast<float>(i % (chunk_size - 1))) /
-                                 static_cast<float>(chunk_size - 1),
-                         (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                                 static_cast<float>(chunk_size - 1));
+            vulkan_graphix::Math::Vec2<float> t_k(
+                    (static_cast<float>(i % (chunk_size - 1))) /
+                            static_cast<float>(chunk_size - 1),
+                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                            static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_k;
-            Normal n_k(0, 0, 0);
+            vulkan_graphix::Math::Vec3<float> n_k(0, 0, 0);
             if (i == 0 && j == prep_size - 2) {
             } else if (i == 0) {
             } else if (j == prep_size - 2) {
             } else {
-                n_k = toNormal(terrain.normalAt(j + 1, i));
+                n_k = terrain.normalAt(j + 1, i);
             }
             normals[index_normals++] = n_k;
 
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)							*/
             /************************************************************/
-            Vertex v_x(j * prep_scale,
-                       terrain.heightAt(j, i + 1) /*SCALE*/,
-                       (i + 1) * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_x(
+                    j * prep_scale,
+                    terrain.heightAt(j, i + 1) /*SCALE*/,
+                    (i + 1) * prep_scale);
             vertices[index++] = v_x;
-            TexCoord t_x((static_cast<float>(i % (chunk_size - 1)) + 1) /
-                                 static_cast<float>(chunk_size - 1),
-                         (static_cast<float>(j % (chunk_size - 1))) /
-                                 static_cast<float>(chunk_size - 1));
+            vulkan_graphix::Math::Vec2<float> t_x(
+                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
+                            static_cast<float>(chunk_size - 1),
+                    (static_cast<float>(j % (chunk_size - 1))) /
+                            static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_x;
-            Normal n_x(0, 0, 0);
+            vulkan_graphix::Math::Vec3<float> n_x(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
             } else if (j == 0) {
             } else if (i == prep_size - 2) {
             } else {
-                n_x = toNormal(terrain.normalAt(j, i + 1));
+                n_x = terrain.normalAt(j, i + 1);
             }
             normals[index_normals++] = n_x;
 
             /************************************************************/
             /*	V_Y -- N_Y												*/
             /************************************************************/
-            Vertex v_y((j + 1) * prep_scale,
-                       terrain.heightAt(j + 1, i + 1) /*SCALE*/,
-                       (i + 1) * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_y(
+                    (j + 1) * prep_scale,
+                    terrain.heightAt(j + 1, i + 1) /*SCALE*/,
+                    (i + 1) * prep_scale);
             vertices[index++] = v_y;
-            TexCoord t_y((static_cast<float>(i % (chunk_size - 1)) + 1) /
-                                 static_cast<float>(chunk_size - 1),
-                         (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                                 static_cast<float>(chunk_size - 1));
+            vulkan_graphix::Math::Vec2<float> t_y(
+                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
+                            static_cast<float>(chunk_size - 1),
+                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                            static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_y;
-            Normal n_y(0, 0, 0);
+            vulkan_graphix::Math::Vec3<float> n_y(0, 0, 0);
             if (i == prep_size - 2 && j == prep_size - 2) {
             } else if (i == prep_size - 2) {
             } else if (j == prep_size - 2) {
             } else {
-                n_y = toNormal(terrain.normalAt(j + 1, i + 1));
+                n_y = terrain.normalAt(j + 1, i + 1);
             }
             normals[index_normals++] = n_y;
 
             /************************************************************/
             /*	V_Z -- N_Z												*/
             /************************************************************/
-            Vertex v_z((j + 1) * prep_scale,
-                       terrain.heightAt(j + 1, i) /*SCALE*/,
-                       (i)*prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_z(
+                    (j + 1) * prep_scale,
+                    terrain.heightAt(j + 1, i) /*SCALE*/,
+                    (i)*prep_scale);
             vertices[index++] = v_z;
-            TexCoord t_z((static_cast<float>(i % (chunk_size - 1))) /
-                                 static_cast<float>(chunk_size - 1),
-                         (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                                 static_cast<float>(chunk_size - 1));
+            vulkan_graphix::Math::Vec2<float> t_z(
+                    (static_cast<float>(i % (chunk_size - 1))) /
+                            static_cast<float>(chunk_size - 1),
+                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                            static_cast<float>(chunk_size - 1));
             tex_coord[index_texture++] = t_z;
-            Normal n_z(0, 0, 0);
+            vulkan_graphix::Math::Vec3<float> n_z(0, 0, 0);
             if (i == 0 && j == prep_size - 2) {
             } else if (i == 0) {
             } else if (j == prep_size - 2) {
             } else {
-                n_z = toNormal(terrain.normalAt(j + 1, i));
+                n_z = terrain.normalAt(j + 1, i);
             }
             normals[index_normals++] = n_z;
         }
@@ -301,13 +299,14 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
 
 void TerrainMaker::toggleWireframe() { wireframe_active = !wireframe_active; }
 
-Normal TerrainMaker::getTriangleNormal(float x, float z) {
-    return toNormal(terrain.triangleNormalAt(static_cast<std::int32_t>(x),
-                                             static_cast<std::int32_t>(z)));
+vulkan_graphix::Math::Vec3<float> TerrainMaker::getTriangleNormal(float x,
+                                                                  float z) {
+    return terrain.triangleNormalAt(static_cast<std::int32_t>(x),
+                                    static_cast<std::int32_t>(z));
 }
 
-Normal TerrainMaker::getNormalAt(float x, float z) {
-    return toNormal(terrain.normalAtWorld(x, z));
+vulkan_graphix::Math::Vec3<float> TerrainMaker::getNormalAt(float x, float z) {
+    return terrain.normalAtWorld(x, z);
 }
 
 float TerrainMaker::getHeightAt(float x, float z) {
@@ -361,13 +360,14 @@ void TerrainMaker::makeCrater(float impact_x,
                 static_cast<float>(terrain.heightAt(cell.x, cell.z));
         for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
-                vertices[index].coord_y = height;
+                vertices[index].y = height;
             }
         }
     }
 
     for (vulkan_graphix::TerrainGridCell const& cell : cells) {
-        Normal const normal = toNormal(terrain.normalAt(cell.x, cell.z));
+        vulkan_graphix::Math::Vec3<float> const normal =
+                terrain.normalAt(cell.x, cell.z);
         for (std::int32_t index : slots_for(cell.x, cell.z)) {
             if (index >= 0) {
                 normals[index] = normal;

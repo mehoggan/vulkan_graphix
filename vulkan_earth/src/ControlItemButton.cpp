@@ -1,23 +1,18 @@
 #include "vulkan_earth/ControlItemButton.h"
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include "vulkan_earth/ControlItem.h"
-#include "vulkan_earth/Sound.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/SubMenu.h"
 #include "vulkan_earth/SubMenuLandscape.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/render/Font.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -53,8 +48,8 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : caption) {
-        real_length += vulkan_earth::render::glutBitmapWidth(
-                vulkan_earth::render::FontId::TimesRoman24, ch);
+        real_length += vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
     float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
@@ -63,7 +58,7 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
                            label_x_pos,
                            label_y_pos,
                            z_pos,
-                           vulkan_earth::render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -74,14 +69,14 @@ ControlItemButton::~ControlItemButton() { delete label; }
 void ControlItemButton::draw(render::RenderContext& context) {
     if (built_button_state != button_state) {
         mesh.clear();
-        render::appendBevel(
+        vulkan_earth::appendBevel(
                 mesh,
                 x_pos,
                 y_pos,
                 z_pos,
                 width,
                 height,
-                render::Vec4(color[0], color[1], color[2], color[3]),
+                math::Vec4<float>(color[0], color[1], color[2], color[3]),
                 button_state != 0);
         built_button_state = button_state;
     }
@@ -105,10 +100,11 @@ void ControlItemButton::setOptionText(std::int32_t index) {}
 void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
 
-void ControlItemButton::mouseClickEvent(std::int32_t x,
-                                        std::int32_t y,
-                                        std::int32_t state,
-                                        bool still_over_control_item_button) {
+void ControlItemButton::mouseClickEvent(
+        std::int32_t x,
+        std::int32_t y,
+        std::int32_t state,
+        bool /*still_over_control_item_button*/) {
     if (state) {
         if ((x >= (x_pos) && x <= ((x_pos) + (width))) &&
             (y <= (y_pos) &&

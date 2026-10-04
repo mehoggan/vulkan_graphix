@@ -1,26 +1,26 @@
 #include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_earth/GameRenderer.h"
 
 #include <cstdint>
 #include <cstdio>
 #include <string>
 #include <vector>
 
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_graphix/Tools.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 VBOShaderLibrary::VBOShaderLibrary() = default;
 
 VBOShaderLibrary::~VBOShaderLibrary() = default;
 
 void VBOShaderLibrary::draw(render::RenderContext& context,
-                            render::Mat4 const& model,
-                            render::Vec4 const& tint) {
+                            math::Mat4<float> const& model,
+                            math::Vec4<float> const& tint) {
     if (mesh) {
         context.drawMesh(*mesh,
-                         render::PipelineId::Mesh,
+                         vulkan_earth::pipelines().mesh,
                          color_texture.get(),
                          model,
                          tint);
@@ -40,7 +40,7 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
         vertices.push_back(
                 {vertex.position,
                  vertex.normal,
-                 render::Vec2(vertex.texcoord.x, vertex.texcoord.y)});
+                 math::Vec2<float>(vertex.texcoord.x, vertex.texcoord.y)});
     }
     mesh = render::Renderer::instance().createMesh(vertices);
     return mesh != nullptr;

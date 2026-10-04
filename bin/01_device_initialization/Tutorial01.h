@@ -5,6 +5,7 @@
 #include <cstdint>
 
 #include <vulkan/vulkan.h>
+#include <vector>
 
 #include "vulkan_graphix/LoggedClass.hpp"
 #include "vulkan_graphix/OperatingSystem.h"

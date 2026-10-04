@@ -1,6 +1,5 @@
 #include "vulkan_earth/WeaponPadlock.h"
 #include <cstdint>
-#include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponPadlock::WeaponPadlock() = default;

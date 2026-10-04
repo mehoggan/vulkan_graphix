@@ -1,22 +1,22 @@
 #include "vulkan_earth/Tank.h"
 #include <algorithm>
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <optional>
-#include "vulkan_earth/Normal.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/ParticleGenerator.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
-#include "vulkan_earth/Vector.h"
-#include "vulkan_earth/render/GlMatrix.h"
-#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_graphix/TankPlacement.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 Tank::Tank() {
     hit_box_height = 200;
@@ -92,8 +92,8 @@ void Tank::setTankPos(float x, float y, float z) {
     vg::TankPlacement::PartTranslations const parts =
             vg::TankPlacement::composePartTranslations(
                     vg::Math::Vec3<float>(x, y, z),
-                    render::glmatrix::toMat4(body_matrix),
-                    render::glmatrix::toMat4(head_matrix),
+                    glm::make_mat4(body_matrix),
+                    glm::make_mat4(head_matrix),
                     {vg::Math::Vec3<float>(
                              body_offset[0], body_offset[1], body_offset[2]),
                      vg::Math::Vec3<float>(
@@ -125,29 +125,20 @@ void Tank::resetTurret() {
                         turret_offset[2] * head_matrix[10];
 }
 
-float Tank::calcAngleBetweenVectors(Vector one, Vector two) {
-    return vulkan_graphix::TankOrientation::angleBetweenDegrees(
-            vulkan_graphix::Math::Vec3<float>(
-                    one.compo_x, one.compo_y, one.compo_z),
-            vulkan_graphix::Math::Vec3<float>(
-                    two.compo_x, two.compo_y, two.compo_z));
-}
-
-void Tank::orientTank(Normal* n) {
+void Tank::orientTank(vulkan_graphix::Math::Vec3<float>* n) {
     rotate_degrees = 0;
-    alignment_vector.compo_x = n->compo_x;
-    alignment_vector.compo_y = n->compo_y;
-    alignment_vector.compo_z = n->compo_z;
+    alignment_vector.x = n->x;
+    alignment_vector.y = n->y;
+    alignment_vector.z = n->z;
 
     std::optional<vulkan_graphix::TankOrientation::Alignment> const alignment =
             vulkan_graphix::TankOrientation::alignToGround(
                     glm::make_mat4(body_matrix),
-                    vulkan_graphix::Math::Vec3<float>(
-                            n->compo_x, n->compo_y, n->compo_z));
+                    vulkan_graphix::Math::Vec3<float>(n->x, n->y, n->z));
     if (alignment) {
-        rotate_about.compo_x = alignment->axis.x;
-        rotate_about.compo_y = alignment->axis.y;
-        rotate_about.compo_z = alignment->axis.z;
+        rotate_about.x = alignment->axis.x;
+        rotate_about.y = alignment->axis.y;
+        rotate_about.z = alignment->axis.z;
         // Body/head/turret/wheel all take the same aligned matrix, as the
         // original's four glGetFloatv(GL_MODELVIEW_MATRIX, ...) calls did.
         float const* aligned = glm::value_ptr(alignment->matrix);
@@ -158,9 +149,9 @@ void Tank::orientTank(Normal* n) {
         turret_degrees = 0;
     } else {
         // Already upright along the normal: no rotation axis.
-        rotate_about.compo_x = 0;
-        rotate_about.compo_y = 0;
-        rotate_about.compo_z = 0;
+        rotate_about.x = 0;
+        rotate_about.y = 0;
+        rotate_about.z = 0;
     }
 
     updateHitBox();
@@ -174,23 +165,51 @@ void Tank::rotateHead(float degrees) {
         rotate_degrees += 360;
     }
 
-    float angle = calcAngleBetweenVectors(
-            Vector(head_matrix[4], head_matrix[5], head_matrix[6]),
-            Vector(turret_matrix[4], turret_matrix[5], turret_matrix[6]));
+    float angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+            vulkan_graphix::Math::Vec3<float>(
+                    head_matrix[4], head_matrix[5], head_matrix[6]),
+            vulkan_graphix::Math::Vec3<float>(
+                    turret_matrix[4], turret_matrix[5], turret_matrix[6]));
 
-    render::glmatrix::rotate(head_matrix, degrees, 0, 1, 0);
+    std::copy_n(glm::value_ptr(
+                        glm::rotate(glm::make_mat4(head_matrix),
+                                    glm::radians(static_cast<float>(degrees)),
+                                    math::Vec3<float>(0, 1, 0))),
+                16,
+                head_matrix);
 
-    render::glmatrix::rotate(turret_matrix, -angle, 1, 0, 0);
-    render::glmatrix::translate(turret_matrix,
-                                -turret_offset[0],
-                                -turret_offset[1],
-                                -turret_offset[2]);
-    render::glmatrix::rotate(turret_matrix, degrees, 0, 1, 0);
-    render::glmatrix::translate(turret_matrix,
-                                turret_offset[0],
-                                turret_offset[1],
-                                turret_offset[2]);
-    render::glmatrix::rotate(turret_matrix, angle, 1, 0, 0);
+    std::copy_n(glm::value_ptr(
+                        glm::rotate(glm::make_mat4(turret_matrix),
+                                    glm::radians(static_cast<float>(-angle)),
+                                    math::Vec3<float>(1, 0, 0))),
+                16,
+                turret_matrix);
+    std::copy_n(glm::value_ptr(
+                        glm::translate(glm::make_mat4(turret_matrix),
+                                       math::Vec3<float>(-turret_offset[0],
+                                                         -turret_offset[1],
+                                                         -turret_offset[2]))),
+                16,
+                turret_matrix);
+    std::copy_n(glm::value_ptr(
+                        glm::rotate(glm::make_mat4(turret_matrix),
+                                    glm::radians(static_cast<float>(degrees)),
+                                    math::Vec3<float>(0, 1, 0))),
+                16,
+                turret_matrix);
+    std::copy_n(glm::value_ptr(
+                        glm::translate(glm::make_mat4(turret_matrix),
+                                       math::Vec3<float>(turret_offset[0],
+                                                         turret_offset[1],
+                                                         turret_offset[2]))),
+                16,
+                turret_matrix);
+    std::copy_n(
+            glm::value_ptr(glm::rotate(glm::make_mat4(turret_matrix),
+                                       glm::radians(static_cast<float>(angle)),
+                                       math::Vec3<float>(1, 0, 0))),
+            16,
+            turret_matrix);
     /*cout << "63. ";
     printTurretMatrix();
     printHeadMatrix();
@@ -205,7 +224,12 @@ void Tank::rotateHead(float degrees) {
 void Tank::rotateTurret(float degrees) {
     if ((turret_degrees + degrees <= 90) && (turret_degrees + degrees >= 0)) {
         turret_degrees += degrees;
-        render::glmatrix::rotate(turret_matrix, degrees, 1, 0, 0);
+        std::copy_n(glm::value_ptr(glm::rotate(
+                            glm::make_mat4(turret_matrix),
+                            glm::radians(static_cast<float>(degrees)),
+                            math::Vec3<float>(1, 0, 0))),
+                    16,
+                    turret_matrix);
         // cout << "65. ";
         // printTurretMatrix();
         // printHeadMatrix();
@@ -219,89 +243,69 @@ void Tank::rotateTurret(float degrees) {
 
 bool Tank::checkCollision(float x, float y, float z) {
     // First check distance from tank, then check each face of hit box
-    if (sqrt(pow((x - tank_pos.coord_x), 2) + pow((y - tank_pos.coord_y), 2) +
-             pow((z - tank_pos.coord_z), 2)) < 50000000) {
+    if (sqrt(pow((x - tank_pos.x), 2) + pow((y - tank_pos.y), 2) +
+             pow((z - tank_pos.z), 2)) < 50000000) {
         // top
-        float plane_x = tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                        hit_box_width / 2.0 * right.compo_x +
-                        hit_box_height / 2.0 * up.compo_x;
-        float plane_y = tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                        hit_box_width / 2.0 * right.compo_y +
-                        hit_box_height / 2.0 * up.compo_y;
-        float plane_z = tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                        hit_box_width / 2.0 * right.compo_z +
-                        hit_box_height / 2.0 * up.compo_z;
-        float d = up.compo_x * plane_x + up.compo_y * plane_y +
-                  up.compo_z * plane_z;
-        if (up.compo_x * x + up.compo_y * y + up.compo_z * z - d <= 0) {
+        float plane_x = tank_pos.x + hit_box_length / 2.0 * at.x +
+                        hit_box_width / 2.0 * right.x +
+                        hit_box_height / 2.0 * up.x;
+        float plane_y = tank_pos.y + hit_box_length / 2.0 * at.y +
+                        hit_box_width / 2.0 * right.y +
+                        hit_box_height / 2.0 * up.y;
+        float plane_z = tank_pos.z + hit_box_length / 2.0 * at.z +
+                        hit_box_width / 2.0 * right.z +
+                        hit_box_height / 2.0 * up.z;
+        float d = up.x * plane_x + up.y * plane_y + up.z * plane_z;
+        if (up.x * x + up.y * y + up.z * z - d <= 0) {
             // right
-            plane_x = tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                      hit_box_width / 2.0 * right.compo_x +
-                      hit_box_height / 2.0 * up.compo_x;
-            plane_y = tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                      hit_box_width / 2.0 * right.compo_y +
-                      hit_box_height / 2.0 * up.compo_y;
-            plane_z = tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                      hit_box_width / 2.0 * right.compo_z +
-                      hit_box_height / 2.0 * up.compo_z;
-            d = right.compo_x * plane_x + right.compo_y * plane_y +
-                right.compo_z * plane_z;
-            if (right.compo_x * x + right.compo_y * y + right.compo_z * z -
-                        d <=
-                0) {
+            plane_x = tank_pos.x + hit_box_length / 2.0 * at.x +
+                      hit_box_width / 2.0 * right.x +
+                      hit_box_height / 2.0 * up.x;
+            plane_y = tank_pos.y + hit_box_length / 2.0 * at.y +
+                      hit_box_width / 2.0 * right.y +
+                      hit_box_height / 2.0 * up.y;
+            plane_z = tank_pos.z + hit_box_length / 2.0 * at.z +
+                      hit_box_width / 2.0 * right.z +
+                      hit_box_height / 2.0 * up.z;
+            d = right.x * plane_x + right.y * plane_y + right.z * plane_z;
+            if (right.x * x + right.y * y + right.z * z - d <= 0) {
                 // left
-                plane_x = tank_pos.coord_x +
-                          hit_box_length / 2.0 * at.compo_x +
-                          hit_box_width / 2.0 * left.compo_x +
-                          hit_box_height / 2.0 * up.compo_x;
-                plane_y = tank_pos.coord_y +
-                          hit_box_length / 2.0 * at.compo_y +
-                          hit_box_width / 2.0 * left.compo_y +
-                          hit_box_height / 2.0 * up.compo_y;
-                plane_z = tank_pos.coord_z +
-                          hit_box_length / 2.0 * at.compo_z +
-                          hit_box_width / 2.0 * left.compo_z +
-                          hit_box_height / 2.0 * up.compo_z;
-                d = left.compo_x * plane_x + left.compo_y * plane_y +
-                    left.compo_z * plane_z;
-                if (left.compo_x * x + left.compo_y * y + left.compo_z * z -
-                            d <=
-                    0) {
+                plane_x = tank_pos.x + hit_box_length / 2.0 * at.x +
+                          hit_box_width / 2.0 * left.x +
+                          hit_box_height / 2.0 * up.x;
+                plane_y = tank_pos.y + hit_box_length / 2.0 * at.y +
+                          hit_box_width / 2.0 * left.y +
+                          hit_box_height / 2.0 * up.y;
+                plane_z = tank_pos.z + hit_box_length / 2.0 * at.z +
+                          hit_box_width / 2.0 * left.z +
+                          hit_box_height / 2.0 * up.z;
+                d = left.x * plane_x + left.y * plane_y + left.z * plane_z;
+                if (left.x * x + left.y * y + left.z * z - d <= 0) {
                     // front
-                    plane_x = tank_pos.coord_x +
-                              hit_box_length / 2.0 * at.compo_x +
-                              hit_box_width / 2.0 * left.compo_x +
-                              hit_box_height / 2.0 * up.compo_x;
-                    plane_y = tank_pos.coord_y +
-                              hit_box_length / 2.0 * at.compo_y +
-                              hit_box_width / 2.0 * left.compo_y +
-                              hit_box_height / 2.0 * up.compo_y;
-                    plane_z = tank_pos.coord_z +
-                              hit_box_length / 2.0 * at.compo_z +
-                              hit_box_width / 2.0 * left.compo_z +
-                              hit_box_height / 2.0 * up.compo_z;
-                    d = at.compo_x * plane_x + at.compo_y * plane_y +
-                        at.compo_z * plane_z;
-                    if (at.compo_x * x + at.compo_y * y + at.compo_z * z - d <=
-                        0) {
+                    plane_x = tank_pos.x + hit_box_length / 2.0 * at.x +
+                              hit_box_width / 2.0 * left.x +
+                              hit_box_height / 2.0 * up.x;
+                    plane_y = tank_pos.y + hit_box_length / 2.0 * at.y +
+                              hit_box_width / 2.0 * left.y +
+                              hit_box_height / 2.0 * up.y;
+                    plane_z = tank_pos.z + hit_box_length / 2.0 * at.z +
+                              hit_box_width / 2.0 * left.z +
+                              hit_box_height / 2.0 * up.z;
+                    d = at.x * plane_x + at.y * plane_y + at.z * plane_z;
+                    if (at.x * x + at.y * y + at.z * z - d <= 0) {
                         // back
-                        plane_x = tank_pos.coord_x +
-                                  hit_box_length / 2.0 * back.compo_x +
-                                  hit_box_width / 2.0 * left.compo_x +
-                                  hit_box_height / 2.0 * up.compo_x;
-                        plane_y = tank_pos.coord_y +
-                                  hit_box_length / 2.0 * back.compo_y +
-                                  hit_box_width / 2.0 * left.compo_y +
-                                  hit_box_height / 2.0 * up.compo_y;
-                        plane_z = tank_pos.coord_z +
-                                  hit_box_length / 2.0 * back.compo_z +
-                                  hit_box_width / 2.0 * left.compo_z +
-                                  hit_box_height / 2.0 * up.compo_z;
-                        d = back.compo_x * plane_x + back.compo_y * plane_y +
-                            back.compo_z * plane_z;
-                        if (back.compo_x * x + back.compo_y * y +
-                                    back.compo_z * z - d <=
-                            0) {
+                        plane_x = tank_pos.x + hit_box_length / 2.0 * back.x +
+                                  hit_box_width / 2.0 * left.x +
+                                  hit_box_height / 2.0 * up.x;
+                        plane_y = tank_pos.y + hit_box_length / 2.0 * back.y +
+                                  hit_box_width / 2.0 * left.y +
+                                  hit_box_height / 2.0 * up.y;
+                        plane_z = tank_pos.z + hit_box_length / 2.0 * back.z +
+                                  hit_box_width / 2.0 * left.z +
+                                  hit_box_height / 2.0 * up.z;
+                        d = back.x * plane_x + back.y * plane_y +
+                            back.z * plane_z;
+                        if (back.x * x + back.y * y + back.z * z - d <= 0) {
                             cout << "COLLISION WITH TANK DETECTED" << endl;
                             return true;
                         }
@@ -415,35 +419,42 @@ void Tank::setSpeed(std::int32_t d) { speed = d; }
 void Tank::fire() {}
 
 void Tank::updateHitBox() {
-    /*Vertex tankPos(bodyMatrix[12],bodyMatrix[13],bodyMatrix[14]);
-    Vector right(-bodyMatrix[0],-bodyMatrix[1],-bodyMatrix[2]);
-    Vector up(bodyMatrix[4],bodyMatrix[5],bodyMatrix[6]);
-    Vector at(-bodyMatrix[8],-bodyMatrix[9],-bodyMatrix[10]);
+    /*vulkan_graphix::Math::Vec3<float>
+    tankPos(bodyMatrix[12],bodyMatrix[13],bodyMatrix[14]);
+    vulkan_graphix::Math::Vec3<float>
+    right(-bodyMatrix[0],-bodyMatrix[1],-bodyMatrix[2]);
+    vulkan_graphix::Math::Vec3<float>
+    up(bodyMatrix[4],bodyMatrix[5],bodyMatrix[6]);
+    vulkan_graphix::Math::Vec3<float>
+    at(-bodyMatrix[8],-bodyMatrix[9],-bodyMatrix[10]);
 
-    Vector left(bodyMatrix[0],bodyMatrix[1],bodyMatrix[2]);
-    Vector down(-bodyMatrix[4],-bodyMatrix[5],-bodyMatrix[6]);
-    Vector back(bodyMatrix[8],bodyMatrix[9],bodyMatrix[10]);*/
-    tank_pos.coord_x = body_matrix[12];
-    tank_pos.coord_y = body_matrix[13];
-    tank_pos.coord_z = body_matrix[14];
-    right.compo_x = -body_matrix[0];
-    right.compo_y = -body_matrix[1];
-    right.compo_z = -body_matrix[2];
-    left.compo_x = body_matrix[0];
-    left.compo_y = body_matrix[1];
-    left.compo_z = body_matrix[2];
-    up.compo_x = body_matrix[4];
-    up.compo_y = body_matrix[5];
-    up.compo_z = body_matrix[6];
-    down.compo_x = -body_matrix[4];
-    down.compo_y = -body_matrix[5];
-    down.compo_z = -body_matrix[6];
-    at.compo_x = -body_matrix[8];
-    at.compo_y = -body_matrix[9];
-    at.compo_z = -body_matrix[10];
-    back.compo_x = body_matrix[8];
-    back.compo_y = body_matrix[9];
-    back.compo_z = body_matrix[10];
+    vulkan_graphix::Math::Vec3<float>
+    left(bodyMatrix[0],bodyMatrix[1],bodyMatrix[2]);
+    vulkan_graphix::Math::Vec3<float>
+    down(-bodyMatrix[4],-bodyMatrix[5],-bodyMatrix[6]);
+    vulkan_graphix::Math::Vec3<float>
+    back(bodyMatrix[8],bodyMatrix[9],bodyMatrix[10]);*/
+    tank_pos.x = body_matrix[12];
+    tank_pos.y = body_matrix[13];
+    tank_pos.z = body_matrix[14];
+    right.x = -body_matrix[0];
+    right.y = -body_matrix[1];
+    right.z = -body_matrix[2];
+    left.x = body_matrix[0];
+    left.y = body_matrix[1];
+    left.z = body_matrix[2];
+    up.x = body_matrix[4];
+    up.y = body_matrix[5];
+    up.z = body_matrix[6];
+    down.x = -body_matrix[4];
+    down.y = -body_matrix[5];
+    down.z = -body_matrix[6];
+    at.x = -body_matrix[8];
+    at.y = -body_matrix[9];
+    at.z = -body_matrix[10];
+    back.x = body_matrix[8];
+    back.y = body_matrix[9];
+    back.z = body_matrix[10];
 }
 
 void Tank::keyHandler() {}
@@ -454,24 +465,27 @@ std::int32_t Tank::getBasePower() { return 0; }
 std::int32_t Tank::getBaseArmor() { return 0; }
 std::int32_t Tank::getBaseSpeed() { return 0; }
 std::string Tank::getName() { return "Huh?"; }
-Normal Tank::getAlignmentVector() { return alignment_vector; }
-Normal Tank::getRotateAbout() { return rotate_about; }
+vulkan_graphix::Math::Vec3<float> Tank::getAlignmentVector() {
+    return alignment_vector;
+}
+vulkan_graphix::Math::Vec3<float> Tank::getRotateAbout() {
+    return rotate_about;
+}
 float Tank::getTurretDegrees() { return turret_degrees; }
 
 void Tank::draw(render::RenderContext& context) {
-    namespace glm_ = render::glmatrix;
     // Each part: its own matrix (glMultMatrixf) then its scale (glScalef).
     vbo_shader_turret->draw(context,
-                            glm_::scaled(glm_::toMat4(turret_matrix),
-                                         turret_scale[0],
-                                         turret_scale[1],
-                                         turret_scale[2]));
-    vbo_shader_head->draw(context,
-                          glm_::scaled(glm_::toMat4(head_matrix),
-                                       head_scale[0],
-                                       head_scale[1],
-                                       head_scale[2]));
-    render::Mat4 const body = glm_::toMat4(body_matrix);
+                            glm::scale(glm::make_mat4(turret_matrix),
+                                       math::Vec3<float>(turret_scale[0],
+                                                         turret_scale[1],
+                                                         turret_scale[2])));
+    vbo_shader_head->draw(
+            context,
+            glm::scale(glm::make_mat4(head_matrix),
+                       math::Vec3<float>(
+                               head_scale[0], head_scale[1], head_scale[2])));
+    math::Mat4<float> const body = glm::make_mat4(body_matrix);
     // float effect must be same orientation as the tank
     if (float_gen) {
         float_gen->update(0, -body_offset[1], 0);
@@ -480,14 +494,16 @@ void Tank::draw(render::RenderContext& context) {
     // Draw tank body
     vbo_shader_body->draw(
             context,
-            glm_::scaled(body, body_scale[0], body_scale[1], body_scale[2]));
+            glm::scale(body,
+                       math::Vec3<float>(
+                               body_scale[0], body_scale[1], body_scale[2])));
     // shield: glutSolidSphere(300, 20, 20) in translucent blue
     if (duration_shield > 0) {
         context.drawMesh(render::Renderer::instance().sphere(20, 20),
-                         render::PipelineId::FlatColor,
+                         vulkan_earth::pipelines().flat_color,
                          nullptr,
-                         glm_::scaled(body, 300, 300, 300),
-                         render::Vec4(0, 0, 1, 0.2));
+                         glm::scale(body, math::Vec3<float>(300, 300, 300)),
+                         math::Vec4<float>(0, 0, 1, 0.2));
     }
 
     // update and draw particles
@@ -508,383 +524,374 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
     std::vector<render::UiVertex> out_tris;
     std::vector<render::UiVertex> out_lines;
     std::vector<render::UiVertex> quad;
-    render::Vec4 color(1.0f);
+    math::Vec4<float> color(1.0f);
     // top
-    color = render::Vec4(1.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * right.compo_x +
-                                 hit_box_height / 2.0 * up.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * right.compo_y +
-                                 hit_box_height / 2.0 * up.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * right.compo_z +
-                                 hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 1.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * left.compo_x +
-                                 hit_box_height / 2.0 * up.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * left.compo_y +
-                                 hit_box_height / 2.0 * up.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * left.compo_z +
-                                 hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 1.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * left.compo_x +
-                            hit_box_height / 2.0 * up.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * left.compo_y +
-                            hit_box_height / 2.0 * up.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * left.compo_z +
-                            hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(1.0, 1.0, 1.0, .75);
+    color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * right.compo_x +
-                            hit_box_height / 2.0 * up.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * right.compo_y +
-                            hit_box_height / 2.0 * up.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * right.compo_z +
-                            hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     // right
-    color = render::Vec4(1.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * right.compo_x +
-                                 hit_box_height / 2.0 * up.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * right.compo_y +
-                                 hit_box_height / 2.0 * up.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * right.compo_z +
-                                 hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 1.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * right.compo_x +
-                                 hit_box_height / 2.0 * down.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * right.compo_y +
-                                 hit_box_height / 2.0 * down.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * right.compo_z +
-                                 hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 1.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * right.compo_x +
-                            hit_box_height / 2.0 * down.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * right.compo_y +
-                            hit_box_height / 2.0 * down.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * right.compo_z +
-                            hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(1.0, 1.0, 1.0, .75);
+    color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * right.compo_x +
-                            hit_box_height / 2.0 * up.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * right.compo_y +
-                            hit_box_height / 2.0 * up.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * right.compo_z +
-                            hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     // left
-    color = render::Vec4(1.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * left.compo_x +
-                                 hit_box_height / 2.0 * up.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * left.compo_y +
-                                 hit_box_height / 2.0 * up.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * left.compo_z +
-                                 hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 1.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * left.compo_x +
-                                 hit_box_height / 2.0 * down.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * left.compo_y +
-                                 hit_box_height / 2.0 * down.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * left.compo_z +
-                                 hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 1.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * left.compo_x +
-                            hit_box_height / 2.0 * down.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * left.compo_y +
-                            hit_box_height / 2.0 * down.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * left.compo_z +
-                            hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(1.0, 1.0, 1.0, .75);
+    color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * left.compo_x +
-                            hit_box_height / 2.0 * up.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * left.compo_y +
-                            hit_box_height / 2.0 * up.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * left.compo_z +
-                            hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     // front
-    color = render::Vec4(1.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * right.compo_x +
-                                 hit_box_height / 2.0 * up.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * right.compo_y +
-                                 hit_box_height / 2.0 * up.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * right.compo_z +
-                                 hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 1.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * left.compo_x +
-                                 hit_box_height / 2.0 * up.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * left.compo_y +
-                                 hit_box_height / 2.0 * up.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * left.compo_z +
-                                 hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 1.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * left.compo_x +
-                                 hit_box_height / 2.0 * down.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * left.compo_y +
-                                 hit_box_height / 2.0 * down.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * left.compo_z +
-                                 hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(tank_pos.coord_x + hit_box_length / 2.0 * at.compo_x +
-                                 hit_box_width / 2.0 * right.compo_x +
-                                 hit_box_height / 2.0 * down.compo_x,
-                         tank_pos.coord_y + hit_box_length / 2.0 * at.compo_y +
-                                 hit_box_width / 2.0 * right.compo_y +
-                                 hit_box_height / 2.0 * down.compo_y,
-                         tank_pos.coord_z + hit_box_length / 2.0 * at.compo_z +
-                                 hit_box_width / 2.0 * right.compo_z +
-                                 hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * at.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * at.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * at.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     // back
-    color = render::Vec4(1.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * right.compo_x +
-                            hit_box_height / 2.0 * up.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * right.compo_y +
-                            hit_box_height / 2.0 * up.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * right.compo_z +
-                            hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 1.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * left.compo_x +
-                            hit_box_height / 2.0 * up.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * left.compo_y +
-                            hit_box_height / 2.0 * up.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * left.compo_z +
-                            hit_box_height / 2.0 * up.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * up.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * up.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * up.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 1.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * left.compo_x +
-                            hit_box_height / 2.0 * down.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * left.compo_y +
-                            hit_box_height / 2.0 * down.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * left.compo_z +
-                            hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * left.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * left.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * left.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    color = render::Vec4(0.0, 0.0, 0.0, .75);
+    color = math::Vec4<float>(0.0, 0.0, 0.0, .75);
     quad.push_back(render::UiVertex{
-            render::Vec3(
-                    tank_pos.coord_x + hit_box_length / 2.0 * back.compo_x +
-                            hit_box_width / 2.0 * right.compo_x +
-                            hit_box_height / 2.0 * down.compo_x,
-                    tank_pos.coord_y + hit_box_length / 2.0 * back.compo_y +
-                            hit_box_width / 2.0 * right.compo_y +
-                            hit_box_height / 2.0 * down.compo_y,
-                    tank_pos.coord_z + hit_box_length / 2.0 * back.compo_z +
-                            hit_box_width / 2.0 * right.compo_z +
-                            hit_box_height / 2.0 * down.compo_z),
+            math::Vec3<float>(tank_pos.x + hit_box_length / 2.0 * back.x +
+                                      hit_box_width / 2.0 * right.x +
+                                      hit_box_height / 2.0 * down.x,
+                              tank_pos.y + hit_box_length / 2.0 * back.y +
+                                      hit_box_width / 2.0 * right.y +
+                                      hit_box_height / 2.0 * down.y,
+                              tank_pos.z + hit_box_length / 2.0 * back.z +
+                                      hit_box_width / 2.0 * right.z +
+                                      hit_box_height / 2.0 * down.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
-    context.drawTransient(out_tris, render::PipelineId::UiTriangles, nullptr);
+    context.drawTransient(
+            out_tris, vulkan_earth::pipelines().ui_triangles, nullptr);
 }
 
 float Tank::getCurrentPower() { return current_power; }
@@ -906,11 +913,14 @@ void Tank::setProjectileLandPos(float x, float y) {
 void Tank::rotateWheel(float degrees) {
     if (!(wheel_degrees + degrees > 90) || (wheel_degrees - degrees < 0)) {
         wheel_degrees += degrees;
-        render::glmatrix::rotate(wheel_matrix,
-                                 degrees,
-                                 wheel_matrix[4],
-                                 wheel_matrix[5],
-                                 wheel_matrix[6]);
+        std::copy_n(glm::value_ptr(glm::rotate(
+                            glm::make_mat4(wheel_matrix),
+                            glm::radians(static_cast<float>(degrees)),
+                            math::Vec3<float>(wheel_matrix[4],
+                                              wheel_matrix[5],
+                                              wheel_matrix[6]))),
+                    16,
+                    wheel_matrix);
     }
 }
 
@@ -1024,8 +1034,10 @@ void Tank::setDurationAllPassTurn() {
 void Tank::initBody() {
     // The upright right/up/at basis every tank part starts from
     // (libvulkan_graphix's TankPlacement, shared with the tutorials).
-    render::glmatrix::store(vulkan_graphix::TankPlacement::uprightPartBasis(),
-                            body_matrix);
+    std::copy_n(
+            glm::value_ptr(vulkan_graphix::TankPlacement::uprightPartBasis()),
+            16,
+            body_matrix);
     for (std::int32_t i = 0; i < 3; i++) {
         body_right[i] = body_matrix[i];
         body_up[i] = body_matrix[4 + i];
@@ -1044,8 +1056,10 @@ void Tank::initBody() {
 void Tank::initHead() {
     // The upright right/up/at basis every tank part starts from
     // (libvulkan_graphix's TankPlacement, shared with the tutorials).
-    render::glmatrix::store(vulkan_graphix::TankPlacement::uprightPartBasis(),
-                            head_matrix);
+    std::copy_n(
+            glm::value_ptr(vulkan_graphix::TankPlacement::uprightPartBasis()),
+            16,
+            head_matrix);
     for (std::int32_t i = 0; i < 3; i++) {
         head_right[i] = head_matrix[i];
         head_up[i] = head_matrix[4 + i];
@@ -1062,8 +1076,10 @@ void Tank::initHead() {
 void Tank::initTurret() {
     // The upright right/up/at basis every tank part starts from
     // (libvulkan_graphix's TankPlacement, shared with the tutorials).
-    render::glmatrix::store(vulkan_graphix::TankPlacement::uprightPartBasis(),
-                            turret_matrix);
+    std::copy_n(
+            glm::value_ptr(vulkan_graphix::TankPlacement::uprightPartBasis()),
+            16,
+            turret_matrix);
     for (std::int32_t i = 0; i < 3; i++) {
         turret_right[i] = turret_matrix[i];
         turret_up[i] = turret_matrix[4 + i];
@@ -1087,8 +1103,10 @@ void Tank::initTurret() {
 void Tank::initWheel() {
     // The upright right/up/at basis every tank part starts from
     // (libvulkan_graphix's TankPlacement, shared with the tutorials).
-    render::glmatrix::store(vulkan_graphix::TankPlacement::uprightPartBasis(),
-                            wheel_matrix);
+    std::copy_n(
+            glm::value_ptr(vulkan_graphix::TankPlacement::uprightPartBasis()),
+            16,
+            wheel_matrix);
     for (std::int32_t i = 0; i < 3; i++) {
         wheel_right[i] = wheel_matrix[i];
         wheel_up[i] = wheel_matrix[4 + i];

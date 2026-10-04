@@ -11,7 +11,7 @@ const std::int32_t tank_h_armor = 10;
 const std::int32_t tank_h_speed = 100;
 
 TankH::TankH() = default;
-TankH::TankH(float x, float y, float z) {
+TankH::TankH(float /*x*/, float /*y*/, float /*z*/) {
     initBody();
     initHead();
     initTurret();

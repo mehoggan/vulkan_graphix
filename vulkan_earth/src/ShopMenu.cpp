@@ -3,6 +3,7 @@
 #include "vulkan_earth/ControlItem.h"
 #include "vulkan_earth/ControlItemButton.h"
 #include "vulkan_earth/ControlItemGrid.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/Item.h"
@@ -30,11 +31,10 @@
 #include "vulkan_earth/WeaponRevive.h"
 #include "vulkan_earth/WeaponTeleport.h"
 #include "vulkan_earth/WeaponThor.h"
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playSFX(std::int32_t sfx);
 extern void playMusic(std::int32_t music);
@@ -151,7 +151,7 @@ ShopMenu::ShopMenu(float new_width,
                            grids[1]->getXPos() + grids[1]->getWidth() * 0.05,
                            grids[1]->getYPos() + 15,
                            (pos[2] + 1),
-                           render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -160,7 +160,7 @@ ShopMenu::ShopMenu(float new_width,
                            grids[1]->getXPos() + grids[1]->getWidth() / 1.6,
                            grids[1]->getYPos() + 15,
                            (pos[2] + 1),
-                           render::FontId::TimesRoman24,
+                           vulkan_earth::FontId::TimesRoman24,
                            0.0f,
                            0.0f,
                            0.0f);
@@ -168,7 +168,7 @@ ShopMenu::ShopMenu(float new_width,
                                       pos[0] - width * 0.35,
                                       pos[1] - height * 0.39,
                                       (pos[2] + 1),
-                                      render::FontId::TimesRoman24,
+                                      vulkan_earth::FontId::TimesRoman24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
@@ -176,7 +176,7 @@ ShopMenu::ShopMenu(float new_width,
                                        pos[0] - width * 0.4,
                                        pos[1] - height * 0.1,
                                        pos[2] + 1,
-                                       render::FontId::TimesRoman24,
+                                       vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
@@ -184,7 +184,7 @@ ShopMenu::ShopMenu(float new_width,
                                      pos[0] - width * 0.35,
                                      pos[1] - height * 0.2,
                                      pos[2] + 1,
-                                     render::FontId::TimesRoman24,
+                                     vulkan_earth::FontId::TimesRoman24,
                                      0.0f,
                                      0.0f,
                                      0.0f);
@@ -192,7 +192,7 @@ ShopMenu::ShopMenu(float new_width,
                                       pos[0] + width * 0.15,
                                       pos[1] - height * 0.2,
                                       pos[2] + 1,
-                                      render::FontId::TimesRoman24,
+                                      vulkan_earth::FontId::TimesRoman24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
@@ -201,7 +201,7 @@ ShopMenu::ShopMenu(float new_width,
                                           pos[0] - width * 0.2,
                                           pos[1] - height * 0.39,
                                           (pos[2] + 1),
-                                          render::FontId::TimesRoman24,
+                                          vulkan_earth::FontId::TimesRoman24,
                                           0.0f,
                                           0.0f,
                                           0.0f);
@@ -249,7 +249,7 @@ ShopMenu::ShopMenu(float new_width,
                                0,
                                0,
                                0,
-                               render::FontId::TimesRoman24,
+                               vulkan_earth::FontId::TimesRoman24,
                                0.6f,
                                0.3f,
                                0.4f);
@@ -273,7 +273,7 @@ ShopMenu::ShopMenu(float new_width,
                                0,
                                0,
                                0,
-                               render::FontId::TimesRoman24,
+                               vulkan_earth::FontId::TimesRoman24,
                                0.6f,
                                0.3f,
                                0.4f);
@@ -394,7 +394,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0,
                                        0,
                                        0,
-                                       render::FontId::TimesRoman24,
+                                       vulkan_earth::FontId::TimesRoman24,
                                        0.6f,
                                        0.3f,
                                        0.4f);
@@ -425,7 +425,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0,
                                        0,
                                        0,
-                                       render::FontId::TimesRoman24,
+                                       vulkan_earth::FontId::TimesRoman24,
                                        0.6f,
                                        0.3f,
                                        0.4f);
@@ -442,7 +442,7 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                           pos[0] - width * 0.35,
                                           pos[1] - height * 0.39,
                                           (pos[2] + 1),
-                                          render::FontId::TimesRoman24,
+                                          vulkan_earth::FontId::TimesRoman24,
                                           0.0f,
                                           0.0f,
                                           0.0f);
@@ -452,14 +452,15 @@ void ShopMenu::displayCurrentPlayerInfo() {
                 player_factory->getPlayer(current_player_index)->getCash();
         delete label_player_balance;
         std::string balance = "$ " + std::to_string(current_player_balance);
-        label_player_balance = new TextObject(balance,
-                                              pos[0] - width * 0.2,
-                                              pos[1] - height * 0.39,
-                                              (pos[2] + 1),
-                                              render::FontId::TimesRoman24,
-                                              0.0f,
-                                              0.0f,
-                                              0.0f);
+        label_player_balance =
+                new TextObject(balance,
+                               pos[0] - width * 0.2,
+                               pos[1] - height * 0.39,
+                               (pos[2] + 1),
+                               vulkan_earth::FontId::TimesRoman24,
+                               0.0f,
+                               0.0f,
+                               0.0f);
 
         // Set next player inventory
 
@@ -535,28 +536,43 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                        pos[0] - width * 0.4,
                                        pos[1] - height * 0.1,
                                        pos[2] + 1,
-                                       render::FontId::TimesRoman24,
+                                       vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 std::string price =
                         "$ " + std::to_string(shop_wpns[i]->getPrice());
-                label_buy_price = new TextObject(price,
-                                                 pos[0] - width * 0.35,
-                                                 pos[1] - height * 0.2,
-                                                 pos[2] + 1,
-                                                 render::FontId::TimesRoman24,
-                                                 0.0f,
-                                                 0.0f,
-                                                 0.0f);
+                label_buy_price =
+                        new TextObject(price,
+                                       pos[0] - width * 0.35,
+                                       pos[1] - height * 0.2,
+                                       pos[2] + 1,
+                                       vulkan_earth::FontId::TimesRoman24,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f);
                 break;
             } else {
                 delete label_discription;
                 delete label_buy_price;
-                label_discription = new TextObject(
-                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
-                label_buy_price = new TextObject(
-                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                label_discription =
+                        new TextObject("",
+                                       0,
+                                       0,
+                                       0,
+                                       vulkan_earth::FontId::TimesRoman24,
+                                       0,
+                                       0,
+                                       0);
+                label_buy_price =
+                        new TextObject("",
+                                       0,
+                                       0,
+                                       0,
+                                       vulkan_earth::FontId::TimesRoman24,
+                                       0,
+                                       0,
+                                       0);
             }
         }
     } else {
@@ -569,28 +585,43 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                        pos[0] - width * 0.4,
                                        pos[1] - height * 0.1,
                                        pos[2] + 1,
-                                       render::FontId::TimesRoman24,
+                                       vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 std::string price =
                         "$ " + std::to_string(shop_items[i]->getPrice());
-                label_buy_price = new TextObject(price,
-                                                 pos[0] - width * 0.35,
-                                                 pos[1] - height * 0.2,
-                                                 pos[2] + 1,
-                                                 render::FontId::TimesRoman24,
-                                                 0.0f,
-                                                 0.0f,
-                                                 0.0f);
+                label_buy_price =
+                        new TextObject(price,
+                                       pos[0] - width * 0.35,
+                                       pos[1] - height * 0.2,
+                                       pos[2] + 1,
+                                       vulkan_earth::FontId::TimesRoman24,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f);
                 break;
             } else {
                 delete label_discription;
                 delete label_buy_price;
-                label_discription = new TextObject(
-                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
-                label_buy_price = new TextObject(
-                        "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                label_discription =
+                        new TextObject("",
+                                       0,
+                                       0,
+                                       0,
+                                       vulkan_earth::FontId::TimesRoman24,
+                                       0,
+                                       0,
+                                       0);
+                label_buy_price =
+                        new TextObject("",
+                                       0,
+                                       0,
+                                       0,
+                                       vulkan_earth::FontId::TimesRoman24,
+                                       0,
+                                       0,
+                                       0);
             }
         }
     }
@@ -624,7 +655,7 @@ void ShopMenu::updateSellLabel() {
                                       pos[0] + width * 0.15,
                                       pos[1] - height * 0.2,
                                       pos[2] + 1,
-                                      render::FontId::TimesRoman24,
+                                      vulkan_earth::FontId::TimesRoman24,
                                       0.0f,
                                       0.0f,
                                       0.0f);
@@ -645,7 +676,7 @@ void ShopMenu::buyHandler() {
                 }
                 if ((current_player_balance >= shop_wpns[i]->getPrice()) &&
                     (inven_i < inven_grid_row)) {
-                    if ((inven_wpns[inven_i] == nullptr)) {
+                    if (inven_wpns[inven_i] == nullptr) {
                         playSFX(TRANSACTION);
                         img_inven_wpns[inven_i] = new ImageObject(
                                 0,
@@ -689,7 +720,7 @@ void ShopMenu::buyHandler() {
                                            pos[0] - width * 0.2,
                                            pos[1] - height * 0.39,
                                            (pos[2] + 1),
-                                           render::FontId::TimesRoman24,
+                                           vulkan_earth::FontId::TimesRoman24,
                                            0.0f,
                                            0.0f,
                                            0.0f);
@@ -704,7 +735,7 @@ void ShopMenu::buyHandler() {
                                            0,
                                            0,
                                            0,
-                                           render::FontId::TimesRoman24,
+                                           vulkan_earth::FontId::TimesRoman24,
                                            0.6f,
                                            0.3f,
                                            0.4f);
@@ -772,7 +803,7 @@ void ShopMenu::buyHandler() {
                                            pos[0] - width * 0.2,
                                            pos[1] - height * 0.39,
                                            (pos[2] + 1),
-                                           render::FontId::TimesRoman24,
+                                           vulkan_earth::FontId::TimesRoman24,
                                            0.0f,
                                            0.0f,
                                            0.0f);
@@ -787,7 +818,7 @@ void ShopMenu::buyHandler() {
                                            0,
                                            0,
                                            0,
-                                           render::FontId::TimesRoman24,
+                                           vulkan_earth::FontId::TimesRoman24,
                                            0.6f,
                                            0.3f,
                                            0.4f);
@@ -841,27 +872,29 @@ void ShopMenu::sellHandler() {
         current_player_balance += total_sell;
         delete label_player_balance;
         std::string balance = "$ " + std::to_string(current_player_balance);
-        label_player_balance = new TextObject(balance,
-                                              pos[0] - width * 0.2,
-                                              pos[1] - height * 0.39,
-                                              (pos[2] + 1),
-                                              render::FontId::TimesRoman24,
-                                              0.0f,
-                                              0.0f,
-                                              0.0f);
+        label_player_balance =
+                new TextObject(balance,
+                               pos[0] - width * 0.2,
+                               pos[1] - height * 0.39,
+                               (pos[2] + 1),
+                               vulkan_earth::FontId::TimesRoman24,
+                               0.0f,
+                               0.0f,
+                               0.0f);
     }
 }
 
 void ShopMenu::draw(render::RenderContext& context) {
     playMusic(shopmenu);
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     // The whole-window background panel (see appendMenuPanel()), then the
     // black separating lines (each three pixels thick, as three lines).
     if (panel_mesh.triangles().empty() || built_width != width ||
         built_height != height) {
         panel_mesh.clear();
-        render::appendMenuPanel(panel_mesh, width, height, percent_border);
+        vulkan_earth::appendMenuPanel(
+                panel_mesh, width, height, percent_border);
         Vec4 const black(0, 0, 0, 1);
         for (float offset : {-1.0f, 0.0f, 1.0f}) {
             panel_mesh.addLine(Vec3(pos[0] + width * 0.04 + offset,
@@ -950,9 +983,9 @@ void ShopMenu::buttonTest(std::int32_t x,
         delete label_discription;
         delete label_buy_price;
         label_discription = new TextObject(
-                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
         label_buy_price = new TextObject(
-                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
         buttons[0]->mouseClickEvent(x, y, button_down, true);
         if (buttons[0]->isToggled()) {
             buttons[1]->setToggled(false);
@@ -970,9 +1003,9 @@ void ShopMenu::buttonTest(std::int32_t x,
         delete label_discription;
         delete label_buy_price;
         label_discription = new TextObject(
-                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
         label_buy_price = new TextObject(
-                "", 0, 0, 0, render::FontId::TimesRoman24, 0, 0, 0);
+                "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
         buttons[1]->mouseClickEvent(x, y, button_down, true);
         if (buttons[1]->isToggled()) {
             buttons[0]->setToggled(false);

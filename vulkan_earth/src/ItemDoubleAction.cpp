@@ -1,6 +1,5 @@
 #include "vulkan_earth/ItemDoubleAction.h"
 #include <cstdint>
-#include "vulkan_earth/Item.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 ItemDoubleAction::ItemDoubleAction() = default;

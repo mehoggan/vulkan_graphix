@@ -1,10 +1,12 @@
 #include "vulkan_earth/ChaseCam.h"
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "math.h"
-#include "vulkan_earth/render/Camera.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 ChaseCam::ChaseCam() = default;
 ChaseCam::ChaseCam(float* new_target_pos, float* new_target_at) {
@@ -16,28 +18,27 @@ ChaseCam::ChaseCam(float* new_target_pos, float* new_target_at) {
     back_factor = 1;
     up_factor = 1;
 }
-ChaseCam::~ChaseCam() = default;
 
-render::Mat4 ChaseCam::view() {
+math::Mat4<float> ChaseCam::view() {
     float mag =
             sqrt(target_at[0] * target_at[0] + target_at[1] * target_at[1] +
                  target_at[2] * target_at[2]);
     // (The target's y using target_at[0] rather than [1] is the
     // original's, kept as-is.)
-    render::Mat4 const view_matrix = render::camera::lookAt(
-            render::Vec3(target_pos[0] -
-                                 500 * target_at[0] / mag * (back_factor) +
-                                 shake_cam_pos[0],
-                         target_pos[1] + up_factor + shake_cam_pos[1],
-                         target_pos[2] - 500 * target_at[2] / mag +
-                                 shake_cam_pos[2]),
-            render::Vec3(target_pos[0] + 200 * target_at[0] / mag +
-                                 shake_cam_pos[0],
-                         target_pos[1] + 200 * target_at[0] / mag +
-                                 shake_cam_pos[1],
-                         target_pos[2] + 200 * target_at[2] / mag +
-                                 shake_cam_pos[2]),
-            render::Vec3(0, 1, 0));
+    math::Mat4<float> const view_matrix = glm::lookAt(
+            math::Vec3<float>(
+                    target_pos[0] - 500 * target_at[0] / mag * (back_factor) +
+                            shake_cam_pos[0],
+                    target_pos[1] + up_factor + shake_cam_pos[1],
+                    target_pos[2] - 500 * target_at[2] / mag +
+                            shake_cam_pos[2]),
+            math::Vec3<float>(target_pos[0] + 200 * target_at[0] / mag +
+                                      shake_cam_pos[0],
+                              target_pos[1] + 200 * target_at[0] / mag +
+                                      shake_cam_pos[1],
+                              target_pos[2] + 200 * target_at[2] / mag +
+                                      shake_cam_pos[2]),
+            math::Vec3<float>(0, 1, 0));
     updateShakeCam();
     return view_matrix;
 }

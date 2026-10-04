@@ -1,7 +1,7 @@
 #include "vulkan_earth/GameState.h"
-#include <errno.h>
 #include <cstdint>
 #include <cstdio>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <string>
@@ -9,11 +9,11 @@
 #include "time.h"
 #include "vulkan_earth/ChaseCam.h"
 #include "vulkan_earth/Explosion.h"
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GlobalSettings.h"
 #include "vulkan_earth/ImageObject.h"
 #include "vulkan_earth/Inventory.h"
 #include "vulkan_earth/Item.h"
-#include "vulkan_earth/Normal.h"
 #include "vulkan_earth/Player.h"
 #include "vulkan_earth/PlayerFactory.h"
 #include "vulkan_earth/PossibleGameStates.h"
@@ -25,16 +25,12 @@
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
-#include "vulkan_earth/Vector.h"
-#include "vulkan_earth/Vertex.h"
 #include "vulkan_earth/Water.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WorldCam.h"
-#include "vulkan_earth/render/Camera.h"
-#include "vulkan_earth/render/GlMatrix.h"
-#include "vulkan_earth/render/Renderer.h"
 #include "vulkan_graphix/Ballistics.h"
-#include "vulkan_graphix/TankOrientation.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Tools.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must
@@ -46,7 +42,8 @@ extern void playMusic(std::int32_t music);
 
 using namespace std;
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 namespace {
 // The HUD sizes itself by GLUT_SCREEN_WIDTH and GLUT_SCREEN_HEIGHT - the
@@ -123,8 +120,9 @@ GameState::GameState(std::int32_t new_width,
         x = 5 + rand() % ((size / scale) - 10);
         z = 5 + rand() % ((size / scale) - 10);
 
-        Normal n = new_global_settings->getCurrentTerrain()->getTriangleNormal(
-                x, z);
+        vulkan_graphix::Math::Vec3<float> n =
+                new_global_settings->getCurrentTerrain()->getTriangleNormal(x,
+                                                                            z);
 
         if (new_player_factory->getPlayer(i)->getCurrentTank()) {
             new_player_factory->getPlayer(i)->getCurrentTank()->orientTank(&n);
@@ -308,50 +306,38 @@ GameState::~GameState() {
     delete[] distance_to_target;
 }
 
-float GameState::calcDistanceBetweenVertices(Vertex* v0, Vertex* v1) {
-    return static_cast<float>(sqrt(pow((static_cast<double>(v0->coord_x) -
-                                        static_cast<double>(v1->coord_x)),
-                                       2.0) +
-                                   pow((static_cast<double>(v0->coord_z) -
-                                        static_cast<double>(v1->coord_z)),
-                                       2.0)));
+float GameState::calcDistanceBetweenVertices(
+        vulkan_graphix::Math::Vec3<float>* v0,
+        vulkan_graphix::Math::Vec3<float>* v1) {
+    return static_cast<float>(
+            sqrt(pow((static_cast<double>(v0->x) - static_cast<double>(v1->x)),
+                     2.0) +
+                 pow((static_cast<double>(v0->z) - static_cast<double>(v1->z)),
+                     2.0)));
 }
 
 void GameState::timerEvent(float new_timer) {}
 
-//!!!!!//
-float GameState::calcAngleBetweenVectors(Vector one, Vector two) {
-    return vulkan_graphix::TankOrientation::angleBetweenDegrees(
-            vulkan_graphix::Math::Vec3<float>(
-                    one.compo_x, one.compo_y, one.compo_z),
-            vulkan_graphix::Math::Vec3<float>(
-                    two.compo_x, two.compo_y, two.compo_z));
-}
-//!!!!!//
+void GameState::calcNormalVector(vulkan_graphix::Math::Vec3<float>* v0,
+                                 vulkan_graphix::Math::Vec3<float>* v1,
+                                 vulkan_graphix::Math::Vec3<float>* v2,
+                                 vulkan_graphix::Math::Vec3<float>* n) {
+    float u[3] = {
+            (v1->x - v0->x), (v1->y / 100 - v0->y / 100), (v1->z - v0->z)};
+    float v[3] = {
+            (v2->x - v0->x), (v2->y / 100 - v0->y / 100), (v2->z - v0->z)};
 
-void GameState::calcNormalVector(Vertex* v0,
-                                 Vertex* v1,
-                                 Vertex* v2,
-                                 Normal* n) {
-    float u[3] = {(v1->coord_x - v0->coord_x),
-                  (v1->coord_y / 100 - v0->coord_y / 100),
-                  (v1->coord_z - v0->coord_z)};
-    float v[3] = {(v2->coord_x - v0->coord_x),
-                  (v2->coord_y / 100 - v0->coord_y / 100),
-                  (v2->coord_z - v0->coord_z)};
+    n->x = u[1] * v[2] - v[1] * u[2];
+    n->y = u[2] * v[0] - u[0] * v[2];
+    n->z = u[0] * v[1] - v[0] * u[1];
 
-    n->compo_x = u[1] * v[2] - v[1] * u[2];
-    n->compo_y = u[2] * v[0] - u[0] * v[2];
-    n->compo_z = u[0] * v[1] - v[0] * u[1];
-
-    float mag = static_cast<float>(
-            sqrt(pow(static_cast<double>(n->compo_x), 2.0) +
-                 pow(static_cast<double>(n->compo_y), 2.0) +
-                 pow(static_cast<double>(n->compo_z), 2.0)));
+    float mag = static_cast<float>(sqrt(pow(static_cast<double>(n->x), 2.0) +
+                                        pow(static_cast<double>(n->y), 2.0) +
+                                        pow(static_cast<double>(n->z), 2.0)));
     if (mag != 0) {
-        n->compo_x /= mag;
-        n->compo_y /= mag;
-        n->compo_z /= mag;
+        n->x /= mag;
+        n->y /= mag;
+        n->z /= mag;
     }
 }
 
@@ -399,7 +385,7 @@ void GameState::draw(render::RenderContext& context) {
 
     // This frame's camera: the gameplay projection the caller set, and
     // whichever view gluLookAt() used to multiply into the modelview.
-    render::Mat4 view = context.view();
+    math::Mat4<float> view = context.view();
     if (game_sub_state == PROJECTILE || game_sub_state == SPECIAL_EFFECT) {
         if (chase_cam_active) view = view * projectile->chaseView();
     }
@@ -412,16 +398,16 @@ void GameState::draw(render::RenderContext& context) {
             const float* head_matrix =
                     current_player->getCurrentTank()->getHeadMatrix();
             view = view *
-                   render::camera::lookAt(
-                           render::Vec3(
+                   glm::lookAt(
+                           math::Vec3<float>(
                                    head_matrix[12] + head_matrix[8] * 4000,
                                    head_matrix[13] + 2000,
                                    head_matrix[14] + head_matrix[10] * 4000),
-                           render::Vec3(
+                           math::Vec3<float>(
                                    head_matrix[12] - head_matrix[8] * 3000,
                                    head_matrix[13] + head_matrix[9] * 0,
                                    head_matrix[14] - head_matrix[10] * 3000),
-                           render::Vec3(0, 1, 0));
+                           math::Vec3<float>(0, 1, 0));
         }
     }
     context.setCamera(context.projection(), view);
@@ -442,10 +428,11 @@ void GameState::draw(render::RenderContext& context) {
     }
 
     // The ocean alone is translated (glPushMatrix()/glPopMatrix()).
-    context.setCamera(
-            context.projection(),
-            render::glmatrix::translated(
-                    view, -256.00f * 400, -5000.00f, -256.00f * 400));
+    context.setCamera(context.projection(),
+                      glm::translate(view,
+                                     math::Vec3<float>(-256.00f * 400,
+                                                       -5000.00f,
+                                                       -256.00f * 400)));
     ocean->draw(context);
     context.setCamera(context.projection(), view);
 
@@ -491,22 +478,23 @@ void GameState::draw(render::RenderContext& context) {
             // No color of its own: the original drew this in whatever GL's
             // current color was, which each tank mesh's draw call had just
             // set to red.
-            render::Vec4 const color(1.0f, 0.0f, 0.0f, 1.0f);
+            math::Vec4<float> const color(1.0f, 0.0f, 0.0f, 1.0f);
             std::vector<render::UiVertex> const line = {
-                    {render::Vec3(turret_matrix[12],
-                                  turret_matrix[13],
-                                  turret_matrix[14]),
+                    {math::Vec3<float>(turret_matrix[12],
+                                       turret_matrix[13],
+                                       turret_matrix[14]),
                      color,
-                     render::Vec2(0.0f)},
-                    {render::Vec3(body_matrix[12],
-                                  body_matrix[13],
-                                  body_matrix[14]),
+                     math::Vec2<float>(0.0f)},
+                    {math::Vec3<float>(body_matrix[12],
+                                       body_matrix[13],
+                                       body_matrix[14]),
                      color,
-                     render::Vec2(0.0f)}};
+                     math::Vec2<float>(0.0f)}};
             context.drawTransient(line,
-                                  render::PipelineId::UiLines,
+                                  vulkan_earth::pipelines().ui_lines,
                                   nullptr,
-                                  render::Mat4(1.0f),
+                                  math::Mat4<float>(1.0f),
+                                  math::Vec4<float>(0.0f),
                                   1000);
         }
     }
@@ -532,13 +520,13 @@ void GameState::drawHUD(render::RenderContext& context) {
     // Drawn over the scene with blending and depth testing off (every color
     // here is opaque, so only the latter matters), modelview reset to a
     // translation 800 units into the screen.
-    render::Mat4 const saved_view = context.view();
-    render::Mat4 projection = context.projection();
-    render::Mat4 const hud_view = render::glmatrix::translated(
-            render::Mat4(1.0f), 0.0f, 0.0f, -800.0f);
+    math::Mat4<float> const saved_view = context.view();
+    math::Mat4<float> projection = context.projection();
+    math::Mat4<float> const hud_view = glm::translate(
+            math::Mat4<float>(1.0f), math::Vec3<float>(0.0f, 0.0f, -800.0f));
     context.setDepthTest(false);
     context.setCamera(projection, hud_view);
-    render::Vec4 color(1.0f);
+    math::Vec4<float> color(1.0f);
 
     float new_x = c_glut_screen_width / 2 +
                   800 * tan(30 * pi / 180);  // this is wrong, change later
@@ -546,7 +534,7 @@ void GameState::drawHUD(render::RenderContext& context) {
 
     // Current Player Name
     if (game_sub_state == PLAYER_CONTROL) {
-        color = render::Vec4(
+        color = math::Vec4<float>(
                 player_factory->getPlayer(current_player_index)->getRed(),
                 player_factory->getPlayer(current_player_index)->getGreen(),
                 player_factory->getPlayer(current_player_index)->getBlue(),
@@ -560,23 +548,23 @@ void GameState::drawHUD(render::RenderContext& context) {
     }
 
     // List of Players and health/delay/team
-    color = render::Vec4(1, 1, 1, 1);
+    color = math::Vec4<float>(1, 1, 1, 1);
     drawHUDText(context, color, "Wait", -0.99 * new_x, 0.75 * new_y);
     drawHUDText(context, color, "HP", -0.87 * new_x, 0.75 * new_y);
     drawHUDText(context, color, "Player Name", -0.76 * new_x, 0.75 * new_y);
     drawHUDText(context, color, "Team", -0.525 * new_x, 0.75 * new_y);
     for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
-        color = render::Vec4(player_factory->getPlayer(i)->getRed(),
-                             player_factory->getPlayer(i)->getGreen(),
-                             player_factory->getPlayer(i)->getBlue(),
-                             1);
+        color = math::Vec4<float>(player_factory->getPlayer(i)->getRed(),
+                                  player_factory->getPlayer(i)->getGreen(),
+                                  player_factory->getPlayer(i)->getBlue(),
+                                  1);
         drawHUDText(context,
                     color,
                     player_factory->getPlayer(i)->getPlayerName(),
                     -0.76 * new_x,
                     0.70 * new_y - 0.05 * new_y * i);
         std::string team(1, player_factory->getPlayer(i)->getTeamLabel());
-        color = render::Vec4(1, 1, 1, 1);
+        color = math::Vec4<float>(1, 1, 1, 1);
         drawHUDText(context,
                     color,
                     team,
@@ -595,16 +583,16 @@ void GameState::drawHUD(render::RenderContext& context) {
                     -0.95 * new_x,
                     0.70 * new_y - 0.05 * new_y * i);
         if (!player_factory->getPlayer(i)->getCurrentTank()->isAlive()) {
-            color = render::Vec4(1, 0, 0, 1);
+            color = math::Vec4<float>(1, 0, 0, 1);
         }
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationShield() > 0) {
-            color = render::Vec4(0, 0, 1, 1);
+            color = math::Vec4<float>(0, 0, 1, 1);
         }
         if (player_factory->getPlayer(i)->getCurrentTank()->getDurationAcid() >
             0) {
-            color = render::Vec4(0, 1, 0, 1);
+            color = math::Vec4<float>(0, 1, 0, 1);
         }
         drawHUDText(context,
                     color,
@@ -627,7 +615,7 @@ void GameState::drawHUD(render::RenderContext& context) {
                             10.0;
         char buffer[128];
         memset(buffer, 0, 128);
-        color = render::Vec4(1, 1, 1, 1);
+        color = math::Vec4<float>(1, 1, 1, 1);
         drawHUDText(context, color, "Power:", 0.7 * new_x, -0.7 * new_y);
         drawHUDText(context,
                     color,
@@ -640,7 +628,7 @@ void GameState::drawHUD(render::RenderContext& context) {
         // show previous power
         char buffer1[128];
         memset(buffer1, 0, 128);
-        color = render::Vec4(0.55, 0.55, 0.55, 1);
+        color = math::Vec4<float>(0.55, 0.55, 0.55, 1);
         drawHUDText(context, color, "Power:", 0.7 * new_x, -0.65 * new_y);
         drawHUDText(context,
                     color,
@@ -656,7 +644,7 @@ void GameState::drawHUD(render::RenderContext& context) {
         // Angle
         char buffer2[128];
         memset(buffer2, 0, 128);
-        color = render::Vec4(1, 1, 1, 1);
+        color = math::Vec4<float>(1, 1, 1, 1);
         drawHUDText(context, color, "Angle:", 0.7 * new_x, -0.8 * new_y);
         drawHUDText(context,
                     color,
@@ -674,7 +662,7 @@ void GameState::drawHUD(render::RenderContext& context) {
         // show previous angle
         char buffer3[128];
         memset(buffer3, 0, 128);
-        color = render::Vec4(0.55, 0.55, 0.55, 1);
+        color = math::Vec4<float>(0.55, 0.55, 0.55, 1);
         drawHUDText(context, color, "Angle:", 0.7 * new_x, -0.75 * new_y);
         drawHUDText(context,
                     color,
@@ -705,7 +693,7 @@ void GameState::drawHUD(render::RenderContext& context) {
 
         // Display Need Help?
         if (need_help) {
-            color = render::Vec4(1, 1, 0, 1);
+            color = math::Vec4<float>(1, 1, 0, 1);
             drawHUDText(context,
                         color,
                         "Press F1 for help",
@@ -716,8 +704,8 @@ void GameState::drawHUD(render::RenderContext& context) {
         // Graphic meter: Power
         // glOrtho() over c_glut_screen_width x c_glut_screen_height; as in
         // the original, it stays in effect for the rest of the HUD.
-        projection = render::camera::ortho(
-                0, c_glut_screen_width, 0, c_glut_screen_height, 1, 2000000);
+        projection = vulkan_graphix::Tools::getOrthographicProjectionMatrix(
+                0, c_glut_screen_width, c_glut_screen_height, 0, 1, 2000000);
         context.setCamera(projection, hud_view);
         {
             std::vector<render::UiVertex> out_tris;
@@ -725,97 +713,97 @@ void GameState::drawHUD(render::RenderContext& context) {
             std::vector<render::UiVertex> quad;
             std::vector<render::UiVertex> loop;
             // glPolygonMode(GL_LINE): the quad's outline
-            color = render::Vec4(1, 0, 0, 1.0f);
+            color = math::Vec4<float>(1, 0, 0, 1.0f);
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.05 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.05 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.08 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.08 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) +
-                                         (0.1 * c_glut_screen_width),
-                                 0.08 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) +
+                                              (0.1 * c_glut_screen_width),
+                                      0.08 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) +
-                                         (0.1 * c_glut_screen_width),
-                                 0.05 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) +
+                                              (0.1 * c_glut_screen_width),
+                                      0.05 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
-            for (std::size_t v = 0; v < loop.size(); ++v) {
-                out_lines.push_back(loop[v]);
-                out_lines.push_back(loop[(v + 1) % loop.size()]);
+                    math::Vec2<float>(0.0f)});
+            for (std::size_t corner = 0; corner < loop.size(); ++corner) {
+                out_lines.push_back(loop[corner]);
+                out_lines.push_back(loop[(corner + 1) % loop.size()]);
             }
             loop.clear();
             context.drawTransient(
-                    out_lines, render::PipelineId::UiLines, nullptr);
-            color = render::Vec4(power_ratio, 1 - power_ratio, 0, 1.0f);
+                    out_lines, vulkan_earth::pipelines().ui_lines, nullptr);
+            color = math::Vec4<float>(power_ratio, 1 - power_ratio, 0, 1.0f);
             quad.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.05 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.05 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             quad.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.08 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.08 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             quad.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             (c_glut_screen_width / 2) -
                                     (0.1 * c_glut_screen_width) +
                                     (power_ratio * 0.2) * c_glut_screen_width,
                             0.08 * c_glut_screen_height,
                             2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             quad.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             (c_glut_screen_width / 2) -
                                     (0.1 * c_glut_screen_width) +
                                     (power_ratio * 0.2) * c_glut_screen_width,
                             0.05 * c_glut_screen_height,
                             2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             context.drawTransient(
-                    out_tris, render::PipelineId::UiTriangles, nullptr);
+                    out_tris, vulkan_earth::pipelines().ui_triangles, nullptr);
         }
 
         // Graphic meter: Health
@@ -831,8 +819,8 @@ void GameState::drawHUD(render::RenderContext& context) {
                         100);
         // glOrtho() over c_glut_screen_width x c_glut_screen_height; as in
         // the original, it stays in effect for the rest of the HUD.
-        projection = render::camera::ortho(
-                0, c_glut_screen_width, 0, c_glut_screen_height, 1, 2000000);
+        projection = vulkan_graphix::Tools::getOrthographicProjectionMatrix(
+                0, c_glut_screen_width, c_glut_screen_height, 0, 1, 2000000);
         context.setCamera(projection, hud_view);
         {
             std::vector<render::UiVertex> out_tris;
@@ -840,97 +828,97 @@ void GameState::drawHUD(render::RenderContext& context) {
             std::vector<render::UiVertex> quad;
             std::vector<render::UiVertex> loop;
             // glPolygonMode(GL_LINE): the quad's outline
-            color = render::Vec4(1, 0, 0, 1.0f);
+            color = math::Vec4<float>(1, 0, 0, 1.0f);
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.90 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.90 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.93 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.93 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) +
-                                         (0.1 * c_glut_screen_width),
-                                 0.93 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) +
+                                              (0.1 * c_glut_screen_width),
+                                      0.93 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             loop.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) +
-                                         (0.1 * c_glut_screen_width),
-                                 0.90 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) +
+                                              (0.1 * c_glut_screen_width),
+                                      0.90 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
-            for (std::size_t v = 0; v < loop.size(); ++v) {
-                out_lines.push_back(loop[v]);
-                out_lines.push_back(loop[(v + 1) % loop.size()]);
+                    math::Vec2<float>(0.0f)});
+            for (std::size_t corner = 0; corner < loop.size(); ++corner) {
+                out_lines.push_back(loop[corner]);
+                out_lines.push_back(loop[(corner + 1) % loop.size()]);
             }
             loop.clear();
             context.drawTransient(
-                    out_lines, render::PipelineId::UiLines, nullptr);
-            color = render::Vec4(1 - health_ratio, health_ratio, 0, 1.0f);
+                    out_lines, vulkan_earth::pipelines().ui_lines, nullptr);
+            color = math::Vec4<float>(1 - health_ratio, health_ratio, 0, 1.0f);
             quad.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.90 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.90 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             quad.push_back(render::UiVertex{
-                    render::Vec3((c_glut_screen_width / 2) -
-                                         (0.1 * c_glut_screen_width),
-                                 0.93 * c_glut_screen_height,
-                                 2),
+                    math::Vec3<float>((c_glut_screen_width / 2) -
+                                              (0.1 * c_glut_screen_width),
+                                      0.93 * c_glut_screen_height,
+                                      2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             quad.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             (c_glut_screen_width / 2) -
                                     (0.1 * c_glut_screen_width) +
                                     (health_ratio * 0.2) * c_glut_screen_width,
                             0.93 * c_glut_screen_height,
                             2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             quad.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             (c_glut_screen_width / 2) -
                                     (0.1 * c_glut_screen_width) +
                                     (health_ratio * 0.2) * c_glut_screen_width,
                             0.90 * c_glut_screen_height,
                             2),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             if (quad.size() == 4) {
                 for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                     out_tris.push_back(quad[corner]);
                 quad.clear();
             }
             context.drawTransient(
-                    out_tris, render::PipelineId::UiTriangles, nullptr);
+                    out_tris, vulkan_earth::pipelines().ui_triangles, nullptr);
         }
     }
 
@@ -939,22 +927,23 @@ void GameState::drawHUD(render::RenderContext& context) {
 }
 
 void GameState::drawHUDText(render::RenderContext& context,
-                            render::Vec4 const& color,
+                            math::Vec4<float> const& color,
                             const std::string& input,
                             float x,
                             float y) {
     // One glRasterPos2f() per character, advanced by its pixel width in
     // world units (so, as in the original, the spacing shrinks with the
     // HUD's distance from the camera).
-    render::GlutFont const& font =
-            render::Renderer::instance().font(render::FontId::TimesRoman24);
+    render::Font const& font =
+            vulkan_earth::font(vulkan_earth::FontId::TimesRoman24);
     float x_pos = x;
     for (char ch : input) {
-        std::int32_t step = font.advance(ch);
-        context.drawBitmapText(font,
-                               render::Vec3(x_pos, y, 0),
-                               std::string_view(&ch, 1),
-                               color);
+        std::int32_t step = vulkan_earth::textAdvance(
+                vulkan_earth::FontId::TimesRoman24, ch);
+        context.drawText(font,
+                         math::Vec3<float>(x_pos, y, 0),
+                         std::string_view(&ch, 1),
+                         color);
         x_pos += step;
     }
 }
@@ -1085,43 +1074,44 @@ void GameState::toggleCamera() {
 
 void GameState::debugMode(render::RenderContext& context) {
     std::vector<render::UiVertex> out_lines;
-    render::Vec4 color(1.0f);
+    math::Vec4<float> color(1.0f);
     /*THIS IS DEBUG TEXT REMOVE LATER THIS JUST HELPS TO SEE IF TANKS ARE
      * ORIENTED CORRECTLY*/
     //*
-    Normal n = current_player->getCurrentTank()->getAlignmentVector();
-    color = render::Vec4(0.00, 0.50, 0.50, 1.0f);
+    vulkan_graphix::Math::Vec3<float> n =
+            current_player->getCurrentTank()->getAlignmentVector();
+    color = math::Vec4<float>(0.00, 0.50, 0.50, 1.0f);
     out_lines.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12],
                     current_player->getCurrentTank()->getHeadMatrix()[13] +
                             100,
                     current_player->getCurrentTank()->getHeadMatrix()[14]),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     out_lines.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] +
-                            800 * n.compo_x,
+                            800 * n.x,
                     current_player->getCurrentTank()->getHeadMatrix()[13] +
-                            100 + 800 * n.compo_y,
+                            100 + 800 * n.y,
                     current_player->getCurrentTank()->getHeadMatrix()[14] +
-                            800 * n.compo_z),
+                            800 * n.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     //*/
     //*/
-    color = render::Vec4(0.00, 0.00, 1.00, 1.0f);
+    color = math::Vec4<float>(0.00, 0.00, 1.00, 1.0f);
     out_lines.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12],
                     current_player->getCurrentTank()->getHeadMatrix()[13] +
                             100,
                     current_player->getCurrentTank()->getHeadMatrix()[14]),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     out_lines.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] +
                             1000 * (current_player->getCurrentTank()
                                             ->getHeadMatrix()[4]),
@@ -1133,52 +1123,56 @@ void GameState::debugMode(render::RenderContext& context) {
                             1000 * (current_player->getCurrentTank()
                                             ->getHeadMatrix()[6])),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     //*/
     //*/
-    Normal m = current_player->getCurrentTank()->getRotateAbout();
-    color = render::Vec4(0.75, 0.50, 0.50, 1.0f);
+    vulkan_graphix::Math::Vec3<float> m =
+            current_player->getCurrentTank()->getRotateAbout();
+    color = math::Vec4<float>(0.75, 0.50, 0.50, 1.0f);
     out_lines.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12],
                     current_player->getCurrentTank()->getHeadMatrix()[13] +
                             100,
                     current_player->getCurrentTank()->getHeadMatrix()[14]),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     out_lines.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] +
-                            1000 * m.compo_x,
+                            1000 * m.x,
                     current_player->getCurrentTank()->getHeadMatrix()[13] +
-                            100 + 1000 * m.compo_y,
+                            100 + 1000 * m.y,
                     current_player->getCurrentTank()->getHeadMatrix()[14] +
-                            1000 * m.compo_z),
+                            1000 * m.z),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     //*/
     /*END OF TANK ORIENTATION DEBUGGING*/
-    context.drawTransient(out_lines, render::PipelineId::UiLines, nullptr);
+    context.drawTransient(
+            out_lines, vulkan_earth::pipelines().ui_lines, nullptr);
 }
 
 void GameState::drawMinimap(render::RenderContext& context) {
     // Its own viewport (glViewport()'s float -> int truncation kept),
     // cleared to the sea color.
-    context.setViewport({static_cast<std::int32_t>(width - width / 5.8),
-                         static_cast<std::int32_t>(height - height / 4.8),
-                         static_cast<std::int32_t>(width / 6.0),
-                         static_cast<std::int32_t>(height / 5.0)});
-    context.clearColorAndDepth(render::Vec4(.22, .65, .60, 1));
+    context.setViewport(vulkan_earth::glRect(
+            static_cast<std::int32_t>(width - width / 5.8),
+            static_cast<std::int32_t>(height - height / 4.8),
+            static_cast<std::int32_t>(width / 6.0),
+            static_cast<std::int32_t>(height / 5.0)));
+    context.clearColorAndDepth(math::Vec4<float>(.22, .65, .60, 1));
 
     std::int32_t size = static_cast<std::int32_t>(
             global_settings->getCurrentTerrain()->getActualSize());
 
     context.setCamera(
-            render::camera::ortho(-18000, 18000, -15000, 15000, 1, 20000000),
-            render::camera::lookAt(
-                    render::Vec3(size / 2, size + (size / width), size / 2),
-                    render::Vec3(size / 2, 0, size / 2),
-                    render::Vec3(1.0f, 0.0f, 0.0f)));
+            vulkan_graphix::Tools::getOrthographicProjectionMatrix(
+                    -18000, 18000, 15000, -15000, 1, 20000000),
+            glm::lookAt(math::Vec3<float>(
+                                size / 2, size + (size / width), size / 2),
+                        math::Vec3<float>(size / 2, 0, size / 2),
+                        math::Vec3<float>(1.0f, 0.0f, 0.0f)));
 
     global_settings->getCurrentTerrain()->draw(context);
 
@@ -1186,18 +1180,18 @@ void GameState::drawMinimap(render::RenderContext& context) {
     std::vector<render::UiVertex> out_lines;
     std::vector<render::UiVertex> quad;
     std::vector<render::UiVertex> loop;
-    render::Vec4 color(1.0f);
+    math::Vec4<float> color(1.0f);
     // Draw Tank Marks
     for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
         if (player_factory->getPlayer(i)
                     ->getCurrentTank()
                     ->getDurationCloak() == 0) {
-            color = render::Vec4(player_factory->collectPlayerColor(i)[0],
-                                 player_factory->collectPlayerColor(i)[1],
-                                 player_factory->collectPlayerColor(i)[2],
-                                 1.0f);
+            color = math::Vec4<float>(player_factory->collectPlayerColor(i)[0],
+                                      player_factory->collectPlayerColor(i)[1],
+                                      player_factory->collectPlayerColor(i)[2],
+                                      1.0f);
             out_tris.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             player_factory->getPlayer(i)
                                             ->getCurrentTank()
                                             ->getHeadMatrix()[12] -
@@ -1217,9 +1211,9 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                                     ->getHeadMatrix()[10] *
                                             900),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             out_tris.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             player_factory->getPlayer(i)
                                             ->getCurrentTank()
                                             ->getHeadMatrix()[12] +
@@ -1247,9 +1241,9 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                                     ->getHeadMatrix()[10] *
                                             900),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
             out_tris.push_back(render::UiVertex{
-                    render::Vec3(
+                    math::Vec3<float>(
                             player_factory->getPlayer(i)
                                             ->getCurrentTank()
                                             ->getHeadMatrix()[12] -
@@ -1277,17 +1271,17 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                                     ->getHeadMatrix()[10] *
                                             900),
                     color,
-                    render::Vec2(0.0f)});
+                    math::Vec2<float>(0.0f)});
         }
     }
     // Draw Current Player Tank's Aiming Line
-    color = render::Vec4(
+    color = math::Vec4<float>(
             player_factory->collectPlayerColor(current_player_index)[0],
             player_factory->collectPlayerColor(current_player_index)[1],
             player_factory->collectPlayerColor(current_player_index)[2],
             0.50);
     quad.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] +
                             current_player->getCurrentTank()
                                             ->getHeadMatrix()[0] *
@@ -1299,14 +1293,14 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                             ->getHeadMatrix()[2] *
                                     60),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     quad.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] +
                             current_player->getCurrentTank()
                                             ->getHeadMatrix()[0] *
@@ -1324,14 +1318,14 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                             ->getHeadMatrix()[10] *
                                     24000),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     quad.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] -
                             current_player->getCurrentTank()
                                             ->getHeadMatrix()[0] *
@@ -1349,14 +1343,14 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                             ->getHeadMatrix()[10] *
                                     24000),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
         quad.clear();
     }
     quad.push_back(render::UiVertex{
-            render::Vec3(
+            math::Vec3<float>(
                     current_player->getCurrentTank()->getHeadMatrix()[12] -
                             current_player->getCurrentTank()
                                             ->getHeadMatrix()[0] *
@@ -1368,7 +1362,7 @@ void GameState::drawMinimap(render::RenderContext& context) {
                                             ->getHeadMatrix()[2] *
                                     60),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
             out_tris.push_back(quad[corner]);
@@ -1377,46 +1371,46 @@ void GameState::drawMinimap(render::RenderContext& context) {
 
     // Draw Lines of Sight of World Camera
     if (!player_cam && !chase_cam_active) {
-        color = render::Vec4(1, 1, 1, 0.8);
+        color = math::Vec4<float>(1, 1, 1, 0.8);
         loop.push_back(render::UiVertex{
-                render::Vec3(world_cam->getMatrix()[12] -
-                                     world_cam->getMatrix()[13] * 0.38,
-                             10000,
-                             world_cam->getMatrix()[14] +
-                                     world_cam->getMatrix()[13] -
-                                     15000 / width),
+                math::Vec3<float>(world_cam->getMatrix()[12] -
+                                          world_cam->getMatrix()[13] * 0.38,
+                                  10000,
+                                  world_cam->getMatrix()[14] +
+                                          world_cam->getMatrix()[13] -
+                                          15000 / width),
                 color,
-                render::Vec2(0.0f)});
+                math::Vec2<float>(0.0f)});
         loop.push_back(render::UiVertex{
-                render::Vec3(world_cam->getMatrix()[12] -
-                                     world_cam->getMatrix()[13] * 0.38,
-                             10000,
-                             world_cam->getMatrix()[14] -
-                                     world_cam->getMatrix()[13] +
-                                     15000 / width),
+                math::Vec3<float>(world_cam->getMatrix()[12] -
+                                          world_cam->getMatrix()[13] * 0.38,
+                                  10000,
+                                  world_cam->getMatrix()[14] -
+                                          world_cam->getMatrix()[13] +
+                                          15000 / width),
                 color,
-                render::Vec2(0.0f)});
+                math::Vec2<float>(0.0f)});
         loop.push_back(render::UiVertex{
-                render::Vec3(world_cam->getMatrix()[12] +
-                                     world_cam->getMatrix()[13] * 0.82,
-                             10000,
-                             world_cam->getMatrix()[14] -
-                                     world_cam->getMatrix()[13] +
-                                     15000 / width - 1350),
+                math::Vec3<float>(world_cam->getMatrix()[12] +
+                                          world_cam->getMatrix()[13] * 0.82,
+                                  10000,
+                                  world_cam->getMatrix()[14] -
+                                          world_cam->getMatrix()[13] +
+                                          15000 / width - 1350),
                 color,
-                render::Vec2(0.0f)});
+                math::Vec2<float>(0.0f)});
         loop.push_back(render::UiVertex{
-                render::Vec3(world_cam->getMatrix()[12] +
-                                     world_cam->getMatrix()[13] * 0.82,
-                             10000,
-                             world_cam->getMatrix()[14] +
-                                     world_cam->getMatrix()[13] -
-                                     15000 / width + 1350),
+                math::Vec3<float>(world_cam->getMatrix()[12] +
+                                          world_cam->getMatrix()[13] * 0.82,
+                                  10000,
+                                  world_cam->getMatrix()[14] +
+                                          world_cam->getMatrix()[13] -
+                                          15000 / width + 1350),
                 color,
-                render::Vec2(0.0f)});
-        for (std::size_t v = 0; v < loop.size(); ++v) {
-            out_lines.push_back(loop[v]);
-            out_lines.push_back(loop[(v + 1) % loop.size()]);
+                math::Vec2<float>(0.0f)});
+        for (std::size_t corner = 0; corner < loop.size(); ++corner) {
+            out_lines.push_back(loop[corner]);
+            out_lines.push_back(loop[(corner + 1) % loop.size()]);
         }
         loop.clear();
     }
@@ -1424,53 +1418,55 @@ void GameState::drawMinimap(render::RenderContext& context) {
     // Flushed here to keep the original's draw order: the projectile's
     // quad below shares the line of sight's height, so whichever is drawn
     // first wins the depth test.
-    context.drawTransient(out_tris, render::PipelineId::UiTriangles, nullptr);
-    context.drawTransient(out_lines, render::PipelineId::UiLines, nullptr);
+    context.drawTransient(
+            out_tris, vulkan_earth::pipelines().ui_triangles, nullptr);
+    context.drawTransient(
+            out_lines, vulkan_earth::pipelines().ui_lines, nullptr);
     out_tris.clear();
     out_lines.clear();
 
     // Draw Projectile
     if (projectile) {
-        color = render::Vec4(1, 1, 1, 1.0f);
-        quad.push_back(
-                render::UiVertex{render::Vec3(projectile->getPos()[0] - 200,
-                                              10000,
-                                              projectile->getPos()[2] - 200),
-                                 color,
-                                 render::Vec2(0.0f)});
+        color = math::Vec4<float>(1, 1, 1, 1.0f);
+        quad.push_back(render::UiVertex{
+                math::Vec3<float>(projectile->getPos()[0] - 200,
+                                  10000,
+                                  projectile->getPos()[2] - 200),
+                color,
+                math::Vec2<float>(0.0f)});
         if (quad.size() == 4) {
             for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                 out_tris.push_back(quad[corner]);
             quad.clear();
         }
-        quad.push_back(
-                render::UiVertex{render::Vec3(projectile->getPos()[0] - 200,
-                                              10000,
-                                              projectile->getPos()[2] + 200),
-                                 color,
-                                 render::Vec2(0.0f)});
+        quad.push_back(render::UiVertex{
+                math::Vec3<float>(projectile->getPos()[0] - 200,
+                                  10000,
+                                  projectile->getPos()[2] + 200),
+                color,
+                math::Vec2<float>(0.0f)});
         if (quad.size() == 4) {
             for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                 out_tris.push_back(quad[corner]);
             quad.clear();
         }
-        quad.push_back(
-                render::UiVertex{render::Vec3(projectile->getPos()[0] + 200,
-                                              10000,
-                                              projectile->getPos()[2] + 200),
-                                 color,
-                                 render::Vec2(0.0f)});
+        quad.push_back(render::UiVertex{
+                math::Vec3<float>(projectile->getPos()[0] + 200,
+                                  10000,
+                                  projectile->getPos()[2] + 200),
+                color,
+                math::Vec2<float>(0.0f)});
         if (quad.size() == 4) {
             for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                 out_tris.push_back(quad[corner]);
             quad.clear();
         }
-        quad.push_back(
-                render::UiVertex{render::Vec3(projectile->getPos()[0] + 200,
-                                              10000,
-                                              projectile->getPos()[2] - 200),
-                                 color,
-                                 render::Vec2(0.0f)});
+        quad.push_back(render::UiVertex{
+                math::Vec3<float>(projectile->getPos()[0] + 200,
+                                  10000,
+                                  projectile->getPos()[2] - 200),
+                color,
+                math::Vec2<float>(0.0f)});
         if (quad.size() == 4) {
             for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
                 out_tris.push_back(quad[corner]);
@@ -1479,61 +1475,63 @@ void GameState::drawMinimap(render::RenderContext& context) {
     }
 
     // Draw Projectile Land Mark
-    color = render::Vec4(
+    color = math::Vec4<float>(
             player_factory->collectPlayerColor(current_player_index)[0],
             player_factory->collectPlayerColor(current_player_index)[1],
             player_factory->collectPlayerColor(current_player_index)[2],
             1.0f);
     out_lines.push_back(render::UiVertex{
-            render::Vec3(current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[0] -
-                                 900,
-                         10000,
-                         current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[1] -
-                                 900),
+            math::Vec3<float>(current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[0] -
+                                      900,
+                              10000,
+                              current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[1] -
+                                      900),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     out_lines.push_back(render::UiVertex{
-            render::Vec3(current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[0] +
-                                 900,
-                         10000,
-                         current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[1] +
-                                 900),
+            math::Vec3<float>(current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[0] +
+                                      900,
+                              10000,
+                              current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[1] +
+                                      900),
             color,
-            render::Vec2(0.0f)});
-    color = render::Vec4(
+            math::Vec2<float>(0.0f)});
+    color = math::Vec4<float>(
             player_factory->collectPlayerColor(current_player_index)[0],
             player_factory->collectPlayerColor(current_player_index)[1],
             player_factory->collectPlayerColor(current_player_index)[2],
             1.0f);
     out_lines.push_back(render::UiVertex{
-            render::Vec3(current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[0] +
-                                 900,
-                         10000,
-                         current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[1] -
-                                 900),
+            math::Vec3<float>(current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[0] +
+                                      900,
+                              10000,
+                              current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[1] -
+                                      900),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
     out_lines.push_back(render::UiVertex{
-            render::Vec3(current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[0] -
-                                 900,
-                         10000,
-                         current_player->getCurrentTank()
-                                         ->getProjectileLandPos()[1] +
-                                 900),
+            math::Vec3<float>(current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[0] -
+                                      900,
+                              10000,
+                              current_player->getCurrentTank()
+                                              ->getProjectileLandPos()[1] +
+                                      900),
             color,
-            render::Vec2(0.0f)});
+            math::Vec2<float>(0.0f)});
 
-    context.drawTransient(out_tris, render::PipelineId::UiTriangles, nullptr);
-    context.drawTransient(out_lines, render::PipelineId::UiLines, nullptr);
+    context.drawTransient(
+            out_tris, vulkan_earth::pipelines().ui_triangles, nullptr);
+    context.drawTransient(
+            out_lines, vulkan_earth::pipelines().ui_lines, nullptr);
 
-    render::resetToFullWindow(context);
+    vulkan_earth::resetToFullWindow(context);
 }
 
 void GameState::playBackgroundSounds() {
@@ -1647,17 +1645,18 @@ void GameState::playBackgroundSounds() {
 
 void GameState::drawHelp(render::RenderContext& context) {
     // glViewport()'s float -> int truncation kept.
-    render::beginOverlayPanel(context,
-                              {static_cast<std::int32_t>(width * 0.25),
-                               static_cast<std::int32_t>(height * 0.1),
-                               static_cast<std::int32_t>(width * 0.5),
-                               static_cast<std::int32_t>(height * 0.8)},
-                              width,
-                              height);
+    vulkan_earth::beginOverlayPanel(
+            context,
+            vulkan_earth::glRect(static_cast<std::int32_t>(width * 0.25),
+                                 static_cast<std::int32_t>(height * 0.1),
+                                 static_cast<std::int32_t>(width * 0.5),
+                                 static_cast<std::int32_t>(height * 0.8)),
+            width,
+            height);
 
     manual->draw(context);
 
-    render::resetToFullWindow(context);
+    vulkan_earth::resetToFullWindow(context);
 }
 
 void GameState::handlePlayerControlUpdates() {
@@ -1813,8 +1812,9 @@ void GameState::createSpecialEffect() {
                             body_matrix[12], body_matrix[14]);
             std::int32_t scale = static_cast<std::int32_t>(
                     global_settings->getCurrentTerrain()->getScale());
-            Normal n = global_settings->getCurrentTerrain()->getTriangleNormal(
-                    body_matrix[12] / scale, body_matrix[14] / scale);
+            vulkan_graphix::Math::Vec3<float> n =
+                    global_settings->getCurrentTerrain()->getTriangleNormal(
+                            body_matrix[12] / scale, body_matrix[14] / scale);
             current_player->getCurrentTank()->orientTank(&n);
             current_player->getCurrentTank()->setTankPos(
                     body_matrix[12], new_height, body_matrix[14]);
@@ -2006,11 +2006,12 @@ void GameState::handleSpecialEffectState() {
                     const float* body_matrix = player_factory->getPlayer(p)
                                                        ->getCurrentTank()
                                                        ->getBodyMatrix();
-                    Vertex v0(
+                    vulkan_graphix::Math::Vec3<float> v0(
                             body_matrix[12], body_matrix[13], body_matrix[14]);
-                    Vertex v1(projectile->getPos()[0],
-                              projectile->getPos()[1],
-                              projectile->getPos()[2]);
+                    vulkan_graphix::Math::Vec3<float> v1(
+                            projectile->getPos()[0],
+                            projectile->getPos()[1],
+                            projectile->getPos()[2]);
                     float distance = calcDistanceBetweenVertices(&v0, &v1);
                     float scale =
                             global_settings->getCurrentTerrain()->getScale();
@@ -2024,7 +2025,9 @@ void GameState::handleSpecialEffectState() {
                         if (player_factory->getPlayer(p)
                                     ->getCurrentTank()
                                     ->getDurationFloat() > 0) {
-                            Normal* n = new Normal(0, 1, 0);
+                            vulkan_graphix::Math::Vec3<float>* n =
+                                    new vulkan_graphix::Math::Vec3<float>(
+                                            0, 1, 0);
 
                             player_factory->getPlayer(p)
                                     ->getCurrentTank()
@@ -2054,12 +2057,13 @@ void GameState::handleSpecialEffectState() {
                                             ->getHeightAt(body_matrix[12],
                                                           body_matrix[14]);
 
-                            Normal n = global_settings->getCurrentTerrain()
-                                               ->getTriangleNormal(
-                                                       body_matrix[12] /
-                                                               scale_int,
-                                                       body_matrix[14] /
-                                                               scale_int);
+                            vulkan_graphix::Math::Vec3<float> n =
+                                    global_settings->getCurrentTerrain()
+                                            ->getTriangleNormal(
+                                                    body_matrix[12] /
+                                                            scale_int,
+                                                    body_matrix[14] /
+                                                            scale_int);
 
                             player_factory->getPlayer(p)
                                     ->getCurrentTank()
@@ -2173,7 +2177,7 @@ void GameState::handleInventoryKeyboard(std::int32_t key, bool key_status) {
                                            0,
                                            0,
                                            3,
-                                           render::FontId::TimesRoman24,
+                                           vulkan_earth::FontId::TimesRoman24,
                                            0.6,
                                            0.2,
                                            0.4);
@@ -2341,7 +2345,7 @@ void GameState::handlePassTime() {
                                        weapon_slot->getXpos() * 1.1,
                                        weapon_slot->getYpos() * 1.3,
                                        3,
-                                       render::FontId::TimesRoman24,
+                                       vulkan_earth::FontId::TimesRoman24,
                                        0.6,
                                        0.2,
                                        0.4);
@@ -2451,11 +2455,11 @@ GlobalSettings* GameState::getGlobalSettings() { return global_settings; }
 float GameState::getGravity() { return gravity; }
 PlayerFactory* GameState::getPlayerFactory() { return player_factory; }
 float GameState::getBalisticScalar() { return balistic_scalar; }
-Vertex GameState::getPositionOfLastProjectile() {
+vulkan_graphix::Math::Vec3<float> GameState::getPositionOfLastProjectile() {
     return position_of_last_projectile;
 }
 void GameState::setPositionOfLastProjectile(float x, float y, float z) {
-    position_of_last_projectile.coord_x = x;
-    position_of_last_projectile.coord_y = y;
-    position_of_last_projectile.coord_z = z;
+    position_of_last_projectile.x = x;
+    position_of_last_projectile.y = y;
+    position_of_last_projectile.z = z;
 }

@@ -1,7 +1,6 @@
 #ifndef PLAYER_FACTORY_H
 #define PLAYER_FACTORY_H
 
-#include <stdio.h>
 #include <cstdint>
 #include <string>
 

@@ -1,18 +1,23 @@
 #include "vulkan_earth/Player.h"
 #include <array>
 #include <cstdint>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/GlobalSettings.h"
+#include "vulkan_earth/OpenGLColors.h"
 #include "vulkan_earth/PlayerFactory.h"
 #include "vulkan_earth/Projectile.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TerrainMaker.h"
-#include "vulkan_earth/render/Renderer.h"
+#include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 extern void playSFX(std::int32_t sfx);
 
@@ -39,7 +44,9 @@ void Player::setGameState(GameState* new_game_state) {
     game_state = new_game_state;
 }
 Tank* Player::getTarget() { return target; }
-Vertex Player::getEnemyPosition() { return enemy_position; }
+vulkan_graphix::Math::Vec3<float> Player::getEnemyPosition() {
+    return enemy_position;
+}
 float* Player::getBalisticMatrix() { return balistic_matrix; }
 
 /*	SAVE FOR LATER NEED IN CALCULATING PHYSICS	*/
@@ -52,16 +59,13 @@ void Player::aiMainLogisticFunction() {
         previous_projectile_landing_spot =
                 game_state->getPositionOfLastProjectile();
         previous_distance_off_from_target = distance_off_from_target;
-        distance_off_from_target =
-                sqrt(pow((previous_projectile_landing_spot.coord_x -
-                          enemy_position.coord_x),
-                         2) +
-                     pow((previous_projectile_landing_spot.coord_y -
-                          enemy_position.coord_y),
-                         2) +
-                     pow((previous_projectile_landing_spot.coord_z -
-                          enemy_position.coord_z),
-                         2));
+        distance_off_from_target = sqrt(
+                pow((previous_projectile_landing_spot.x - enemy_position.x),
+                    2) +
+                pow((previous_projectile_landing_spot.y - enemy_position.y),
+                    2) +
+                pow((previous_projectile_landing_spot.z - enemy_position.z),
+                    2));
     }
 
     if (state_of_ai == NEED_NEW_TARGET || target == nullptr) {
@@ -81,10 +85,12 @@ void Player::aiMainLogisticFunction() {
         playSFX(TANK_CONTROL2);
         updateBalsticMatrix();
         setUpYawVectors();
-        yaw_angle = game_state->calcAngleBetweenVectors(enemy_path,
-                                                        projectile_path);
-        rangle = game_state->calcAngleBetweenVectors(enemy_path, ortho_left);
-        langle = game_state->calcAngleBetweenVectors(enemy_path, ortho_right);
+        yaw_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                enemy_path, projectile_path);
+        rangle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                enemy_path, ortho_left);
+        langle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                enemy_path, ortho_right);
         if (degrees_rotated > 540) {
             state_of_ai = NEED_NEW_TARGET;
             degrees_rotated = 0;
@@ -121,8 +127,8 @@ void Player::aiMainLogisticFunction() {
         updateBalsticMatrix();
         setUpYawVectors();
         bool physics = false;
-        pitch_angle =
-                game_state->calcAngleBetweenVectors(enemy_path, pitch_vector);
+        pitch_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                enemy_path, pitch_vector);
         if (pitch_angle < max_pitch_angle && !physics) {
             if (getCurrentTank()->getCurrentPower() >= .4 && !physics) {
                 physics = calculateProjectilePhysics(600, 100, 600);
@@ -138,8 +144,8 @@ void Player::aiMainLogisticFunction() {
             Mix_HaltChannel(3);
         }
         if (!physics) {
-            yaw_angle = game_state->calcAngleBetweenVectors(enemy_path,
-                                                            projectile_path);
+            yaw_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                    enemy_path, projectile_path);
             if (yaw_angle > .01) {
                 state_of_ai = FIND_TARGET;
                 Mix_HaltChannel(2);
@@ -198,9 +204,9 @@ void Player::updateBalsticMatrix() {
 
 void Player::setEnemyPosition() {
     updateBalsticMatrix();
-    enemy_position.coord_x = target->getBodyMatrix()[12];
-    enemy_position.coord_y = target->getBodyMatrix()[13];
-    enemy_position.coord_z = target->getBodyMatrix()[14];
+    enemy_position.x = target->getBodyMatrix()[12];
+    enemy_position.y = target->getBodyMatrix()[13];
+    enemy_position.z = target->getBodyMatrix()[14];
 }
 
 void Player::setUpYawVectors() {
@@ -208,9 +214,9 @@ void Player::setUpYawVectors() {
      * PATH */
     updateBalsticMatrix();
     const float* matrix = getBalisticMatrix();
-    Vertex v = getEnemyPosition();
+    vulkan_graphix::Math::Vec3<float> v = getEnemyPosition();
 
-    // Forumlate Perpendicular Vector
+    // Forumlate Perpendicular vulkan_graphix::Math::Vec3<float>
     /********************************************************************************************************************/
     /*	Gram-Schmidt Orthogonalization
      */
@@ -223,35 +229,30 @@ void Player::setUpYawVectors() {
     /*	w2 is orthogonal to w1
      */
     /********************************************************************************************************************/
-    Vector v1(matrix[8], 0, matrix[10]);
-    Vector w1(v1.compo_x, v1.compo_y, v1.compo_z);
+    vulkan_graphix::Math::Vec3<float> v1(matrix[8], 0, matrix[10]);
+    vulkan_graphix::Math::Vec3<float> w1(v1.x, v1.y, v1.z);
     // Test for linear independence
-    Vector v2(0, 0, 0);
-    if (v1.compo_y == 0 && v1.compo_z == 0) {
-        v2.compo_x = 0;
-        v2.compo_y = 0;
-        v2.compo_z = 1;
+    vulkan_graphix::Math::Vec3<float> v2(0, 0, 0);
+    if (v1.y == 0 && v1.z == 0) {
+        v2.x = 0;
+        v2.y = 0;
+        v2.z = 1;
     } else {
-        v2.compo_x = -v1.compo_x;
-        v2.compo_y = v1.compo_y;
-        v2.compo_z = v1.compo_z;
+        v2.x = -v1.x;
+        v2.y = v1.y;
+        v2.z = v1.z;
     }
-    float magnitude_w1 =
-            sqrt((w1.compo_x * w1.compo_x) + (w1.compo_y * w1.compo_y) +
-                 (w1.compo_z * w1.compo_z));
-    float scalar = (w1.compo_x * v2.compo_x + w1.compo_y * v2.compo_y +
-                    w1.compo_z * v2.compo_z) /
+    float magnitude_w1 = sqrt((w1.x * w1.x) + (w1.y * w1.y) + (w1.z * w1.z));
+    float scalar = (w1.x * v2.x + w1.y * v2.y + w1.z * v2.z) /
                    (pow(static_cast<double>(magnitude_w1), 2.0));
-    w1.compo_x *= scalar;
-    w1.compo_y *= scalar;
-    w1.compo_z *= scalar;
-    Vector w2((v2.compo_x - w1.compo_x),
-              (v2.compo_y - w1.compo_y),
-              (v2.compo_z - w1.compo_z));
-    if ((w1.compo_x <= 0 && w1.compo_z <= 0) ||
-        (w1.compo_x >= 0 && w1.compo_z >= 0)) {
-        w2.compo_x *= -1;
-        w2.compo_z *= -1;
+    w1.x *= scalar;
+    w1.y *= scalar;
+    w1.z *= scalar;
+    vulkan_graphix::Math::Vec3<float> w2(
+            (v2.x - w1.x), (v2.y - w1.y), (v2.z - w1.z));
+    if ((w1.x <= 0 && w1.z <= 0) || (w1.x >= 0 && w1.z >= 0)) {
+        w2.x *= -1;
+        w2.z *= -1;
     }
     /********************************************************************************************************************/
     /*	End Gram-Schmidt Orthogonalization
@@ -267,71 +268,74 @@ void Player::setUpYawVectors() {
     /********************************************************************************************************************/
 
     // Get Vertices
-    Vertex my_position(matrix[12], matrix[13], matrix[14]);
-    Vertex enemy_vertex(v.coord_x, v.coord_y, v.coord_z);
-    Vertex projectile_endmark((matrix[12] - 10000 * matrix[8]),
-                              (matrix[13]),
-                              (matrix[14] - 10000 * matrix[10]));
-    Vertex left_mark((matrix[12] + 1000 * matrix[0]),
-                     (matrix[13]),
-                     (matrix[14] + 1000 * matrix[2]));
-    Vertex right_mark((matrix[12] - 1000 * matrix[0]),
-                      (matrix[13]),
-                      (matrix[14] - 1000 * matrix[2]));
-    Vertex left_ortho((matrix[12] + 1000 * w2.compo_x),
-                      (matrix[13]),
-                      (matrix[14] + 1000 * w2.compo_z));
-    Vertex right_ortho((matrix[12] - 1000 * w2.compo_x),
-                       (matrix[13]),
-                       (matrix[14] - 1000 * w2.compo_z));
+    vulkan_graphix::Math::Vec3<float> my_position(
+            matrix[12], matrix[13], matrix[14]);
+    vulkan_graphix::Math::Vec3<float> enemy_vertex(v.x, v.y, v.z);
+    vulkan_graphix::Math::Vec3<float> projectile_endmark(
+            (matrix[12] - 10000 * matrix[8]),
+            (matrix[13]),
+            (matrix[14] - 10000 * matrix[10]));
+    vulkan_graphix::Math::Vec3<float> left_mark(
+            (matrix[12] + 1000 * matrix[0]),
+            (matrix[13]),
+            (matrix[14] + 1000 * matrix[2]));
+    vulkan_graphix::Math::Vec3<float> right_mark(
+            (matrix[12] - 1000 * matrix[0]),
+            (matrix[13]),
+            (matrix[14] - 1000 * matrix[2]));
+    vulkan_graphix::Math::Vec3<float> left_ortho((matrix[12] + 1000 * w2.x),
+                                                 (matrix[13]),
+                                                 (matrix[14] + 1000 * w2.z));
+    vulkan_graphix::Math::Vec3<float> right_ortho((matrix[12] - 1000 * w2.x),
+                                                  (matrix[13]),
+                                                  (matrix[14] - 1000 * w2.z));
 
     // Produce Member Vectors
-    ortho_left.compo_x = (left_ortho.coord_x - my_position.coord_x);
-    ortho_left.compo_y = (left_ortho.coord_y - my_position.coord_y);
-    ortho_left.compo_z = (left_ortho.coord_z - my_position.coord_z);
+    ortho_left.x = (left_ortho.x - my_position.x);
+    ortho_left.y = (left_ortho.y - my_position.y);
+    ortho_left.z = (left_ortho.z - my_position.z);
 
-    ortho_right.compo_x = (right_ortho.coord_x - my_position.coord_x);
-    ortho_right.compo_y = (right_ortho.coord_y - my_position.coord_y);
-    ortho_right.compo_z = (right_ortho.coord_z - my_position.coord_z);
+    ortho_right.x = (right_ortho.x - my_position.x);
+    ortho_right.y = (right_ortho.y - my_position.y);
+    ortho_right.z = (right_ortho.z - my_position.z);
 
-    enemy_path.compo_x = (enemy_vertex.coord_x - my_position.coord_x);
-    enemy_path.compo_y = (enemy_vertex.coord_y - my_position.coord_y);
-    enemy_path.compo_z = (enemy_vertex.coord_z - my_position.coord_z);
+    enemy_path.x = (enemy_vertex.x - my_position.x);
+    enemy_path.y = (enemy_vertex.y - my_position.y);
+    enemy_path.z = (enemy_vertex.z - my_position.z);
 
-    projectile_path.compo_x =
-            (projectile_endmark.coord_x - my_position.coord_x);
-    projectile_path.compo_y =
-            (projectile_endmark.coord_y - my_position.coord_y);
-    projectile_path.compo_z =
-            (projectile_endmark.coord_z - my_position.coord_z);
+    projectile_path.x = (projectile_endmark.x - my_position.x);
+    projectile_path.y = (projectile_endmark.y - my_position.y);
+    projectile_path.z = (projectile_endmark.z - my_position.z);
 
-    left_vector.compo_x = (left_mark.coord_x - my_position.coord_x);
-    left_vector.compo_y = (left_mark.coord_y - my_position.coord_y);
-    left_vector.compo_z = (left_mark.coord_z - my_position.coord_z);
+    left_vector.x = (left_mark.x - my_position.x);
+    left_vector.y = (left_mark.y - my_position.y);
+    left_vector.z = (left_mark.z - my_position.z);
 
-    right_vector.compo_x = (right_mark.coord_x - my_position.coord_x);
-    right_vector.compo_y = (right_mark.coord_y - my_position.coord_y);
-    right_vector.compo_z = (right_mark.coord_z - my_position.coord_z);
+    right_vector.x = (right_mark.x - my_position.x);
+    right_vector.y = (right_mark.y - my_position.y);
+    right_vector.z = (right_mark.z - my_position.z);
 }
 
 void Player::setUpPitchVectors() {
     const float* matrix = getBalisticMatrix();
     float* turret_matrix = getCurrentTank()->getTurretMatrix();
-    pitch_vector.compo_x = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
-                            turret_matrix[12]);
-    pitch_vector.compo_y = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
-                            turret_matrix[13]);
-    pitch_vector.compo_z = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
-                            turret_matrix[14]);
-    up_vector.compo_x = ((matrix[12] + 1000 * matrix[4]) - matrix[12]);
-    up_vector.compo_y = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
-    up_vector.compo_z = ((matrix[14] + 1000 * matrix[6]) - matrix[14]);
-    down_vector.compo_x = ((matrix[12] - 1000 * matrix[4]) - matrix[12]);
-    down_vector.compo_y = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
-    down_vector.compo_z = ((matrix[14] - 1000 * matrix[6]) - matrix[14]);
+    pitch_vector.x = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
+                      turret_matrix[12]);
+    pitch_vector.y = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
+                      turret_matrix[13]);
+    pitch_vector.z = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
+                      turret_matrix[14]);
+    up_vector.x = ((matrix[12] + 1000 * matrix[4]) - matrix[12]);
+    up_vector.y = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
+    up_vector.z = ((matrix[14] + 1000 * matrix[6]) - matrix[14]);
+    down_vector.x = ((matrix[12] - 1000 * matrix[4]) - matrix[12]);
+    down_vector.y = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
+    down_vector.z = ((matrix[14] - 1000 * matrix[6]) - matrix[14]);
 }
 
-bool Player::calculateProjectilePhysics(float xerr, float yerr, float zerr) {
+bool Player::calculateProjectilePhysics(float xerr,
+                                        float yerr,
+                                        float /*zerr*/) {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
     float percent_errory = yerr;
     float percent_errorxz = xerr;
@@ -367,9 +371,9 @@ bool Player::calculateProjectilePhysics(float xerr, float yerr, float zerr) {
     float xf = launch.origin.x;
     float yf = launch.origin.y;
     float zf = launch.origin.z;
-    float xe = getEnemyPosition().coord_x;
-    float ye = getEnemyPosition().coord_y;
-    float ze = getEnemyPosition().coord_z;
+    float xe = getEnemyPosition().x;
+    float ye = getEnemyPosition().y;
+    float ze = getEnemyPosition().z;
     float t = 0;
     bool on_target = false;
     while (yf > 0) {
@@ -418,9 +422,9 @@ void Player::displayProjectilePhysiscs() {
     float xf = launch.origin.x;
     float yf = launch.origin.y;
     float zf = launch.origin.z;
-    float xe = getEnemyPosition().coord_x;
-    float ye = getEnemyPosition().coord_y;
-    float ze = getEnemyPosition().coord_z;
+    float xe = getEnemyPosition().x;
+    float ye = getEnemyPosition().y;
+    float ze = getEnemyPosition().z;
 
     float t = 0;
     while (yf > 0) {
@@ -470,70 +474,63 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
     float scalar = 1000;
     std::vector<render::UiVertex> lines;
     std::vector<render::UiVertex> quads;
-    auto line = [&](render::Vec4 const& color,
-                    Vertex const& from,
-                    Vertex const& to) {
-        lines.push_back(
-                {render::Vec3(from.coord_x, from.coord_y, from.coord_z),
-                 color,
-                 render::Vec2(0.0f)});
-        lines.push_back({render::Vec3(to.coord_x, to.coord_y, to.coord_z),
-                         color,
-                         render::Vec2(0.0f)});
+    auto line = [&](math::Vec4<float> const& color,
+                    vulkan_graphix::Math::Vec3<float> const& from,
+                    vulkan_graphix::Math::Vec3<float> const& end) {
+        lines.push_back({from, color, math::Vec2<float>(0.0f)});
+        lines.push_back({end, color, math::Vec2<float>(0.0f)});
     };
-    auto quad = [&](render::Vec4 const& color,
-                    std::array<render::Vec3, 4> const& corners) {
+    auto quad = [&](math::Vec4<float> const& color,
+                    std::array<math::Vec3<float>, 4> const& corners) {
         for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U}) {
-            quads.push_back({corners[corner], color, render::Vec2(0.0f)});
+            quads.push_back({corners[corner], color, math::Vec2<float>(0.0f)});
         }
     };
     /*	START BALISTIC AXES	*/
-    Vertex xyzri(
+    vulkan_graphix::Math::Vec3<float> xyzri(
             balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-    Vertex xyzrf(scalar * balistic_matrix[0],
-                 scalar * balistic_matrix[1],
-                 scalar * balistic_matrix[2]);
-    line(render::Vec4(Red, 1.0f),
+    vulkan_graphix::Math::Vec3<float> xyzrf(scalar * balistic_matrix[0],
+                                            scalar * balistic_matrix[1],
+                                            scalar * balistic_matrix[2]);
+    line(math::Vec4<float>(Red, 1.0f),
          xyzri,
-         Vertex(xyzri.coord_x + xyzrf.coord_x,
-                xyzri.coord_y + xyzrf.coord_y,
-                xyzri.coord_z + xyzrf.coord_z));
-    Vertex xyzui(
+         vulkan_graphix::Math::Vec3<float>(
+                 xyzri.x + xyzrf.x, xyzri.y + xyzrf.y, xyzri.z + xyzrf.z));
+    vulkan_graphix::Math::Vec3<float> xyzui(
             balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-    Vertex xyzuf(scalar * balistic_matrix[4],
-                 scalar * balistic_matrix[5],
-                 scalar * balistic_matrix[6]);
-    line(render::Vec4(Green, 1.0f),
+    vulkan_graphix::Math::Vec3<float> xyzuf(scalar * balistic_matrix[4],
+                                            scalar * balistic_matrix[5],
+                                            scalar * balistic_matrix[6]);
+    line(math::Vec4<float>(Green, 1.0f),
          xyzui,
-         Vertex(xyzui.coord_x + xyzuf.coord_x,
-                xyzui.coord_y + xyzuf.coord_y,
-                xyzui.coord_z + xyzuf.coord_z));
-    Vertex xyzai(
+         vulkan_graphix::Math::Vec3<float>(
+                 xyzui.x + xyzuf.x, xyzui.y + xyzuf.y, xyzui.z + xyzuf.z));
+    vulkan_graphix::Math::Vec3<float> xyzai(
             balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-    Vertex xyzaf(scalar * balistic_matrix[8],
-                 scalar * balistic_matrix[9],
-                 scalar * balistic_matrix[10]);
-    line(render::Vec4(Blue, 1.0f),
+    vulkan_graphix::Math::Vec3<float> xyzaf(scalar * balistic_matrix[8],
+                                            scalar * balistic_matrix[9],
+                                            scalar * balistic_matrix[10]);
+    line(math::Vec4<float>(Blue, 1.0f),
          xyzai,
-         Vertex(xyzai.coord_x + xyzaf.coord_x,
-                xyzai.coord_y + xyzaf.coord_y,
-                xyzai.coord_z + xyzaf.coord_z));
+         vulkan_graphix::Math::Vec3<float>(
+                 xyzai.x + xyzaf.x, xyzai.y + xyzaf.y, xyzai.z + xyzaf.z));
     /*	END BALISTIC AXES	*/
 
     if (target) {
         /*	START ENEMY VECTOR AXES	*/
-        Vertex mypos(
+        vulkan_graphix::Math::Vec3<float> mypos(
                 balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-        Vertex enemypos(
-                enemy_position.coord_x, mypos.coord_y, enemy_position.coord_z);
-        line(render::Vec4(LightSteelBlue, 1.0f), mypos, enemypos);
+        vulkan_graphix::Math::Vec3<float> enemypos(
+                enemy_position.x, mypos.y, enemy_position.z);
+        line(math::Vec4<float>(LightSteelBlue, 1.0f), mypos, enemypos);
         /*	END ENEMY VECTOR AXES	*/
         ///*	START PERP VECTORS	*/
         // glBegin(GL_LINES);
         //	glColor3f(MediumSeaGreen);
-        //	Vertex
+        //	vulkan_graphix::Math::Vec3<float>
         // o1(balisticMatrix[12],balisticMatrix[13],balisticMatrix[14]);
-        //	Vertex f1(	o1.coordX+scalar*ortho_left.compoX,
+        //	vulkan_graphix::Math::Vec3<float> f1(
+        // o1.coordX+scalar*ortho_left.compoX,
         //				o1.coordY+scalar*ortho_left.compoY,
         //				o1.coordZ+scalar*ortho_left.compoZ);
         //	glVertex3f(o1.coordX,o1.coordY,o1.coordZ);
@@ -541,9 +538,10 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
         // glEnd();
         // glBegin(GL_LINES);
         //	glColor3f(PaleGreen);
-        //	Vertex
+        //	vulkan_graphix::Math::Vec3<float>
         // o2(balisticMatrix[12],balisticMatrix[13],balisticMatrix[14]);
-        //	Vertex f2(	o2.coordX+scalar*ortho_right.compoX,
+        //	vulkan_graphix::Math::Vec3<float> f2(
+        // o2.coordX+scalar*ortho_right.compoX,
         //				o2.coordY+scalar*ortho_right.compoY,
         //				o2.coordZ+scalar*ortho_right.compoZ);
         //	glVertex3f(o2.coordX,o2.coordY,o2.coordZ);
@@ -551,50 +549,54 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
         // glEnd();
         ///*	END PERP VECTORS	*/
         /*	START PROJECTILE PATH	*/
-        Vertex o3(
+        vulkan_graphix::Math::Vec3<float> o3(
                 balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-        Vertex path_end(o3.coord_x - 100000 * balistic_matrix[8],
-                        o3.coord_y,
-                        o3.coord_z - 100000 * balistic_matrix[10]);
-        line(render::Vec4(MediumGoldenrod, 1.0f), o3, path_end);
+        vulkan_graphix::Math::Vec3<float> path_end(
+                o3.x - 100000 * balistic_matrix[8],
+                o3.y,
+                o3.z - 100000 * balistic_matrix[10]);
+        line(math::Vec4<float>(MediumGoldenrod, 1.0f), o3, path_end);
         /*	END	PROJECTILE PATH		*/
 
         const float* matrix = getBalisticMatrix();
-        quad(render::Vec4(Pink, 0.75f),
-             {render::Vec3(matrix[12] - 1000 * matrix[0],
-                           matrix[13],
-                           matrix[14] - 1000 * matrix[2]),
-              render::Vec3(matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
-                           matrix[13],
-                           matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]),
-              render::Vec3(matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
-                           matrix[13],
-                           matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]),
-              render::Vec3(matrix[12] + 1000 * matrix[0],
-                           matrix[13],
-                           matrix[14] + 1000 * matrix[2])});
+        quad(math::Vec4<float>(Pink, 0.75f),
+             {math::Vec3<float>(matrix[12] - 1000 * matrix[0],
+                                matrix[13],
+                                matrix[14] - 1000 * matrix[2]),
+              math::Vec3<float>(
+                      matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
+                      matrix[13],
+                      matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]),
+              math::Vec3<float>(
+                      matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
+                      matrix[13],
+                      matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]),
+              math::Vec3<float>(matrix[12] + 1000 * matrix[0],
+                                matrix[13],
+                                matrix[14] + 1000 * matrix[2])});
 
         const float* t_matrix = getCurrentTank()->getTurretMatrix();
-        quad(render::Vec4(Red, 0.75f),
-             {render::Vec3(t_matrix[12] - 1000 * t_matrix[0],
-                           t_matrix[13] - 1000 * t_matrix[1],
-                           t_matrix[14] - 1000 * t_matrix[2]),
-              render::Vec3(
+        quad(math::Vec4<float>(Red, 0.75f),
+             {math::Vec3<float>(t_matrix[12] - 1000 * t_matrix[0],
+                                t_matrix[13] - 1000 * t_matrix[1],
+                                t_matrix[14] - 1000 * t_matrix[2]),
+              math::Vec3<float>(
                       t_matrix[12] - 1000 * t_matrix[0] - 10000 * t_matrix[8],
                       t_matrix[13] - 1000 * t_matrix[1] - 10000 * t_matrix[9],
                       t_matrix[14] - 1000 * t_matrix[2] -
                               10000 * t_matrix[10]),
-              render::Vec3(
+              math::Vec3<float>(
                       t_matrix[12] + 1000 * t_matrix[0] - 10000 * t_matrix[8],
                       t_matrix[13] + 1000 * t_matrix[1] - 10000 * t_matrix[9],
                       t_matrix[14] + 1000 * t_matrix[2] -
                               10000 * t_matrix[10]),
-              render::Vec3(t_matrix[12] + 1000 * t_matrix[0],
-                           t_matrix[13] + 1000 * t_matrix[1],
-                           t_matrix[14] + 1000 * t_matrix[2])});
+              math::Vec3<float>(t_matrix[12] + 1000 * t_matrix[0],
+                                t_matrix[13] + 1000 * t_matrix[1],
+                                t_matrix[14] + 1000 * t_matrix[2])});
     }
-    context.drawTransient(lines, render::PipelineId::UiLines, nullptr);
-    context.drawTransient(quads, render::PipelineId::UiTriangles, nullptr);
+    context.drawTransient(lines, vulkan_earth::pipelines().ui_lines, nullptr);
+    context.drawTransient(
+            quads, vulkan_earth::pipelines().ui_triangles, nullptr);
 }
 
 bool Player::getDrawDebugLinesandPlanes() {

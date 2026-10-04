@@ -1,19 +1,17 @@
 #ifndef TANK_H
 #define TANK_H
 
-#include <stdio.h>
 #include <cstdint>
 #include <string>
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Renderer.h"
 
-// class Normal;
-#include "vulkan_earth/Normal.h"  //THIS IS FOR DEBUGGING PURPOSES ONLY BAD STYLE
-#include "vulkan_earth/Vector.h"
-#include "vulkan_earth/Vertex.h"
+// class vulkan_graphix::Math::Vec3<float>;
 
 class ParticleGenerator;
 class VBOShaderLibrary;
 
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -21,11 +19,10 @@ class Tank {
 public:
     Tank();
     virtual ~Tank();
-    float calcAngleBetweenVectors(Vector one, Vector two);
 
     // GETTERS
-    Normal getAlignmentVector();
-    Normal getRotateAbout();
+    vulkan_graphix::Math::Vec3<float> getAlignmentVector();
+    vulkan_graphix::Math::Vec3<float> getRotateAbout();
     void resetTurret();
     void rotateHead(float degrees);
     void rotateTurret(float degrees);
@@ -64,7 +61,7 @@ public:
 
     // SETTERS
     void setTankPos(float x, float y, float z);
-    void orientTank(Normal* n);
+    void orientTank(vulkan_graphix::Math::Vec3<float>* n);
 
     void setBodyColor(float r, float g, float b, float a);
     void setBodyScale(float x, float y, float z);
@@ -92,8 +89,9 @@ public:
     bool checkCollision(float x, float y, float z);
     void fire();
     void keyHandler();
-    void draw(vulkan_earth::render::RenderContext& context);
-    virtual void drawTankHitBox(vulkan_earth::render::RenderContext& context);
+    void draw(vulkan_graphix::Render::RenderContext& context);
+    virtual void drawTankHitBox(
+            vulkan_graphix::Render::RenderContext& context);
     virtual void updateHitBox();
     void changeHeadTexture(std::int32_t current_player_index);
     void dealDamage(std::int32_t damage);
@@ -164,8 +162,8 @@ protected:
     float rotate_degrees;
     float turret_degrees;
     float wheel_degrees;
-    Normal alignment_vector;
-    Normal rotate_about;
+    vulkan_graphix::Math::Vec3<float> alignment_vector;
+    vulkan_graphix::Math::Vec3<float> rotate_about;
 
     float turret_offset[3];
     float head_offset[3];
@@ -207,13 +205,19 @@ protected:
     std::int32_t duration_cloak;
     std::int32_t duration_paralyze;
 
-    Vertex tank_pos;
-    Vector right;
-    Vector up;
-    Vector at;
-    Vector left;
-    Vector down;
-    Vector back;
+    vulkan_graphix::Math::Vec3<float> tank_pos;
+    vulkan_graphix::Math::Vec3<float> right =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> up =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> at =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> left =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> down =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
+    vulkan_graphix::Math::Vec3<float> back =
+            vulkan_graphix::Math::Vec3<float>(0.0f);
 };
 
 #endif

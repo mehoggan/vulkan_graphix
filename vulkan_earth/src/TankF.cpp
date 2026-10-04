@@ -11,7 +11,7 @@ const std::int32_t tank_f_armor = 8;
 const std::int32_t tank_f_speed = 20;
 
 TankF::TankF() = default;
-TankF::TankF(float x, float y, float z) {
+TankF::TankF(float /*x*/, float /*y*/, float /*z*/) {
     initBody();
     initHead();
     initTurret();

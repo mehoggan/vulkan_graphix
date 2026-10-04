@@ -1,11 +1,10 @@
 #ifndef PLAYER_HUMAN_H
 #define PLAYER_HUMAN_H
 
-#include <stdio.h>
 #include <cstdint>
-#include <iostream>
 #include <string>
 #include "vulkan_earth/Player.h"
+#include "vulkan_graphix/Math/MathTypes.hpp"
 
 class Tank;
 class Item;
@@ -55,7 +54,7 @@ public:
     void setLoadedWeapon(Weapon* wpn) override;
     void selectTarget(PlayerFactory* player_factory_ref);
     Tank* getCurrentTarget(std::int32_t i);
-    Vector getEnemyPosition();
+    vulkan_graphix::Math::Vec3<float> getEnemyPosition();
     float* getBalisticMatrix();
     void updateBalsticMatrix();
 

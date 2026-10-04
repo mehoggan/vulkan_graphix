@@ -11,7 +11,7 @@ const std::int32_t tank_d_armor = 5;
 const std::int32_t tank_d_speed = 30;
 
 TankD::TankD() = default;
-TankD::TankD(float x, float y, float z) {
+TankD::TankD(float /*x*/, float /*y*/, float /*z*/) {
     initBody();
     initHead();
     initTurret();

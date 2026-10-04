@@ -9,7 +9,12 @@
 // no bounds-checking on untrusted font files. Not a practical risk here -
 // BitmapFont::load() only ever reads a fixed, trusted system font path,
 // never attacker-supplied data.
+// The vendored single-header library's static helpers: clangd builds this
+// header on its own (its preamble), where they look unused.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
 #include "vulkan_graphix/STBTrueType.h"
+#pragma GCC diagnostic pop
 
 #include "vulkan_graphix/Tools.h"
 

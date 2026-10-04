@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/Item.h"
-#include "vulkan_earth/PlayerFactory.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TankA.h"
 #include "vulkan_earth/TankB.h"

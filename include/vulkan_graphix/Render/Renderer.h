@@ -1,0 +1,400 @@
+#ifndef VULKAN_GRAPHIX_RENDER_RENDERER_H
+#define VULKAN_GRAPHIX_RENDER_RENDERER_H
+
+// A general-purpose renderer on top of TutorialBase's device/swapchain
+// bring-up, for any program here that would otherwise hand-roll its own
+// render pass, frame loop, buffers, and textures (vulkan_earth uses it).
+//
+// Design:
+// - Renderer owns one render pass (color + D32 depth), its framebuffers,
+//   two frames in flight, a descriptor pool for textures, and the
+//   pipelines its client describes (PipelineDescription) - each created
+//   twice, with and without depth testing, so a draw can switch depth
+//   testing off (RenderContext::setDepthTest()) without the client
+//   describing both.
+// - Every pipeline shares one layout: set 0 binding 0 is a combined image
+//   sampler (the draw's texture, or a 1x1 white one), and the push
+//   constant block is DrawConstants - the full model-view-projection,
+//   computed on the CPU, plus four draw-specific parameters.
+// - Resources are owned by whoever creates them: Textures and Meshes are
+//   uploaded once; a RetainedMesh is rebuilt only when it changes. The one
+//   per-frame stream is a transient ring buffer per frame in flight, for
+//   geometry that genuinely changes every frame.
+// - Destroying a Texture/Mesh/RetainedMesh hands its Vulkan objects to
+//   deferRelease(), which frees them once every in-flight frame that might
+//   still read them has completed.
+// - beginFrame() hands out a RenderContext, the per-frame recording API:
+//   viewports, cameras, clears, depth testing on/off, and draws.
+// - requestCapture() copies a finished frame back to a PPM file, for
+//   comparing renders across runs.
+
+#include <vulkan/vulkan.h>
+
+#include <array>
+#include <cstdint>
+#include <functional>
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Font.h"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Texture.h"
+#include "vulkan_graphix/Render/Vertex.h"
+
+namespace vulkan_graphix {
+class TutorialBase;
+}
+
+namespace vulkan_graphix::Render {
+
+class Renderer;
+
+// Every Render pipeline's push-constant block.
+struct DrawConstants {
+    Math::Mat4<float> mvp;
+    Math::Vec4<float> params;
+};
+
+// Index of a pipeline created by Renderer::createPipeline().
+using PipelineHandle = std::uint32_t;
+
+struct PipelineDescription {
+    // SPIR-V files, relative to the executable's directory.
+    std::string vertex_shader;
+    std::string fragment_shader;
+    VertexLayout vertex_layout;
+    VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    bool depth_test = true;
+    bool depth_write = true;
+    // SRC_ALPHA / ONE_MINUS_SRC_ALPHA.
+    bool blend = true;
+    // VK_POLYGON_MODE_LINE falls back to FILL where the device lacks
+    // fillModeNonSolid.
+    VkPolygonMode polygon_mode = VK_POLYGON_MODE_FILL;
+};
+
+// A framebuffer rectangle, origin at the top-left.
+struct Rect {
+    std::int32_t x;
+    std::int32_t y;
+    std::int32_t width;
+    std::int32_t height;
+
+    // The same rectangle given with its origin at the bottom-left (OpenGL's
+    // window convention), in a framebuffer framebuffer_height tall.
+    static Rect fromBottomLeft(std::int32_t x,
+                               std::int32_t y,
+                               std::int32_t width,
+                               std::int32_t height,
+                               std::int32_t framebuffer_height);
+};
+
+class RenderContext {
+public:
+    explicit RenderContext(Renderer& renderer);
+
+    VkCommandBuffer commandBuffer() const;
+    VkExtent2D extent() const;
+
+    // Viewport and the matching scissor.
+    void setViewport(Rect const& rect);
+    // The scissor alone (the viewport is unchanged).
+    void setScissor(Rect const& rect);
+    Rect const& viewport() const;
+
+    // Every subsequent draw's mvp is projection * view * model.
+    void setCamera(Math::Mat4<float> const& projection,
+                   Math::Mat4<float> const& view);
+    Math::Mat4<float> const& projection() const;
+    Math::Mat4<float> const& view() const;
+
+    // When off, later draws neither test nor write depth (overlays).
+    void setDepthTest(bool enabled);
+    bool depthTest() const;
+
+    // Clears depth, or color and depth, within the current scissor.
+    void clearDepth();
+    void clearColorAndDepth(Math::Vec4<float> const& color);
+
+    // A UiMesh, through the Renderer's UI pipelines (setUiPipelines()).
+    void draw(UiMesh& mesh,
+              Math::Mat4<float> const& model = Math::Mat4<float>(1.0f));
+    // Any RetainedMesh, its triangles and lines through the pipelines given.
+    template <typename V>
+    void draw(RetainedMesh<V>& mesh,
+              PipelineHandle triangle_pipeline,
+              PipelineHandle line_pipeline,
+              Math::Mat4<float> const& model = Math::Mat4<float>(1.0f)) {
+        drawRetained(mesh.upload(),
+                     mesh,
+                     static_cast<std::uint32_t>(mesh.triangles().size()),
+                     static_cast<std::uint32_t>(mesh.lines().size()),
+                     triangle_pipeline,
+                     line_pipeline,
+                     model);
+    }
+    // One frame's geometry, through the transient ring.
+    template <typename V>
+    void drawTransient(
+            std::vector<V> const& vertices,
+            PipelineHandle pipeline,
+            Texture const* texture,
+            Math::Mat4<float> const& model = Math::Mat4<float>(1.0f),
+            Math::Vec4<float> const& params = Math::Vec4<float>(0.0f),
+            float line_width = 1.0f) {
+        drawTransientBytes(vertices.data(),
+                           vertices.size() * sizeof(V),
+                           static_cast<std::uint32_t>(vertices.size()),
+                           pipeline,
+                           texture,
+                           model,
+                           params,
+                           line_width);
+    }
+    void drawMesh(Mesh const& mesh,
+                  PipelineHandle pipeline,
+                  Texture const* texture,
+                  Math::Mat4<float> const& model,
+                  Math::Vec4<float> const& params);
+    // Text at a raster position, the way OpenGL's glRasterPos() +
+    // glutBitmapCharacter() placed it: raster_position (under model) is
+    // projected to the window; the text's baseline starts at that pixel,
+    // advancing in window pixels, drawn at its depth - and nothing is drawn
+    // if the position falls outside the view volume. Uses the Renderer's
+    // text pipeline (setTextPipeline()).
+    void drawText(Font const& font,
+                  Math::Vec3<float> const& raster_position,
+                  std::string_view text,
+                  Math::Vec4<float> const& color,
+                  Math::Mat4<float> const& model = Math::Mat4<float>(1.0f));
+
+private:
+    friend class Renderer;
+    void begin(VkCommandBuffer command_buffer, VkExtent2D extent);
+    void bindPipeline(PipelineHandle pipeline);
+    void bindTexture(Texture const* texture);
+    void pushConstants(Math::Mat4<float> const& model,
+                       Math::Vec4<float> const& params);
+    void applyViewport(Rect const& rect);
+    VkRect2D toVkRect(Rect const& rect) const;
+    void drawRetained(HostBuffer const& buffer,
+                      RetainedMeshBase const& mesh,
+                      std::uint32_t triangle_count,
+                      std::uint32_t line_count,
+                      PipelineHandle triangle_pipeline,
+                      PipelineHandle line_pipeline,
+                      Math::Mat4<float> const& model);
+    void drawTransientBytes(void const* data,
+                            std::size_t byte_count,
+                            std::uint32_t vertex_count,
+                            PipelineHandle pipeline,
+                            Texture const* texture,
+                            Math::Mat4<float> const& model,
+                            Math::Vec4<float> const& params,
+                            float line_width);
+
+    Renderer& m_renderer;
+    VkCommandBuffer m_command_buffer = VK_NULL_HANDLE;
+    VkExtent2D m_extent = {0, 0};
+    Rect m_viewport = {0, 0, 0, 0};
+    Rect m_scissor = {0, 0, 0, 0};
+    Math::Mat4<float> m_projection = Math::Mat4<float>(1.0f);
+    Math::Mat4<float> m_view = Math::Mat4<float>(1.0f);
+    VkPipeline m_bound_pipeline = VK_NULL_HANDLE;
+    bool m_depth_test = true;
+    VkDescriptorSet m_bound_descriptor_set = VK_NULL_HANDLE;
+};
+
+class Renderer {
+public:
+    static constexpr std::uint32_t c_frames_in_flight = 2;
+
+    // The process-wide renderer, set while one is initialized.
+    static Renderer& instance();
+    static bool hasInstance();
+
+    Renderer();
+    ~Renderer();
+
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
+
+    // Renders into base's device and swapchain (base must have finished
+    // prepareVulkan()).
+    bool initialize(TutorialBase const& base);
+    // Frees everything tied to the old swapchain's images (framebuffers,
+    // depth buffer) - call before the swapchain is rebuilt (TutorialBase::
+    // childClear()).
+    void releaseSwapchainResources();
+    // After base rebuilt its swapchain (TutorialBase::
+    // childOnWindowSizeChanged()).
+    bool onSwapchainRecreated(TutorialBase const& base);
+    void shutdown();
+
+    // Both depth variants of description; nullopt if either fails.
+    std::optional<PipelineHandle> createPipeline(
+            PipelineDescription const& description);
+    // The pipelines draw(UiMesh&) uses.
+    void setUiPipelines(PipelineHandle triangles, PipelineHandle lines);
+    // The pipeline drawText() uses: UiVertex, sampling the glyph atlas's
+    // alpha.
+    void setTextPipeline(PipelineHandle text);
+
+    // Waits for this frame slot, acquires a swapchain image, and begins
+    // the render pass with color cleared to clear_color and depth to 1.
+    // Returns nullptr if the swapchain must be recreated first.
+    RenderContext* beginFrame(Math::Vec4<float> const& clear_color);
+    // Ends and submits the frame and presents it. Returns false if the
+    // swapchain must be recreated.
+    bool endFrame();
+
+    // The next completed frame is written to path as a binary PPM.
+    void requestCapture(std::string path);
+
+    VkExtent2D extent() const;
+    std::uint64_t frameNumber() const;
+
+    // RGBA8 pixels, width * height * 4 bytes. CLAMP_TO_BORDER samples an
+    // opaque black border (OpenGL's GL_CLAMP on an RGB texture).
+    std::shared_ptr<Texture> createTexture(std::vector<char> const& pixels,
+                                           std::uint32_t width,
+                                           std::uint32_t height,
+                                           VkSamplerAddressMode address_mode);
+    // Headerless RGB .raw images (Tools::getRawImageData()), loaded once
+    // per (filename, address mode) and shared.
+    std::shared_ptr<Texture> loadRawTexture(std::string const& filename,
+                                            std::uint32_t width,
+                                            std::uint32_t height,
+                                            VkSamplerAddressMode address_mode);
+    // .jpg/.png images (Tools::getImageData()), shared the same way.
+    std::shared_ptr<Texture> loadImageTexture(
+            std::string const& filename, VkSamplerAddressMode address_mode);
+    Texture const& whiteTexture() const;
+    // A TrueType font baked at pixel_height, its atlas uploaded.
+    std::unique_ptr<Font> loadFont(std::string const& font_path,
+                                   float pixel_height);
+
+    template <typename V>
+    std::unique_ptr<Mesh> createMesh(std::vector<V> const& vertices) {
+        return createMeshFromBytes(
+                vertices.data(),
+                vertices.size() * sizeof(V),
+                static_cast<std::uint32_t>(vertices.size()));
+    }
+    template <typename... Ts>
+    std::unique_ptr<Mesh> createMesh(
+            VertexTypes::InterleavedData<Ts...> const& data) {
+        std::vector<std::byte> const bytes = packInterleaved(data);
+        return createMeshFromBytes(
+                bytes.data(),
+                bytes.size(),
+                static_cast<std::uint32_t>(data.getAttributeCount()));
+    }
+    // A unit sphere of MeshVertex in GLUT's glutSolidSphere(1, slices,
+    // stacks) tessellation and triangle order (top fan, stacks top to
+    // bottom, bottom fan), created once per (slices, stacks). Draw it
+    // scaled by the radius.
+    Mesh const& sphere(std::uint32_t slices, std::uint32_t stacks);
+
+    // Host-visible, coherent, persistently mapped.
+    HostBuffer createHostBuffer(VkDeviceSize size, VkBufferUsageFlags usage);
+    // Frees buffer / image (+ its descriptor set) once no in-flight frame
+    // can still be using it.
+    void deferRelease(BufferParameters buffer);
+    void deferRelease(ImageParameters image, VkDescriptorSet descriptor_set);
+
+private:
+    friend class RenderContext;
+
+    struct FrameSlot {
+        VkCommandBuffer command_buffer = VK_NULL_HANDLE;
+        VkSemaphore image_available = VK_NULL_HANDLE;
+        VkFence in_flight = VK_NULL_HANDLE;
+        HostBuffer transient;
+        VkDeviceSize transient_offset = 0;
+        std::vector<std::function<void()>> releases;
+    };
+
+    struct DeviceInfo {
+        VkDevice device = VK_NULL_HANDLE;
+        VkPhysicalDevice physical_device = VK_NULL_HANDLE;
+        VkQueue graphics_queue = VK_NULL_HANDLE;
+        std::uint32_t graphics_family = 0;
+        VkQueue present_queue = VK_NULL_HANDLE;
+    };
+
+    struct SwapchainInfo {
+        VkSwapchainKHR swapchain = VK_NULL_HANDLE;
+        VkFormat format = VK_FORMAT_UNDEFINED;
+        VkExtent2D extent = {0, 0};
+        std::vector<VkImage> images;
+        std::vector<VkImageView> views;
+    };
+
+    static SwapchainInfo swapchainInfo(TutorialBase const& base);
+
+    bool createRenderPass();
+    bool createSwapchainResources();
+    void destroySwapchainResources();
+    bool createPipelineVariant(PipelineDescription const& description,
+                               bool depth_test,
+                               VkPipeline* out);
+    bool createDescriptorResources();
+    bool createFrameSlots();
+    void runReleases(FrameSlot& slot);
+    VkPipeline pipeline(PipelineHandle handle, bool depth_test) const;
+    VkPipelineLayout pipelineLayout() const;
+    float clampLineWidth(float width) const;
+    // Copies size bytes into the current frame's transient ring; false when
+    // the ring is full.
+    bool allocateTransient(void const* data,
+                           VkDeviceSize size,
+                           VkBuffer* buffer,
+                           VkDeviceSize* offset);
+    bool writeCapture();
+    VkDescriptorSet allocateTextureDescriptor(VkImageView view,
+                                              VkSampler sampler);
+    std::unique_ptr<Mesh> createMeshFromBytes(void const* data,
+                                              std::size_t byte_count,
+                                              std::uint32_t vertex_count);
+
+    static Renderer* s_instance;
+
+    DeviceInfo m_device;
+    SwapchainInfo m_swapchain;
+    VkRenderPass m_render_pass = VK_NULL_HANDLE;
+    ImageParameters m_depth_image;
+    std::vector<VkFramebuffer> m_framebuffers;
+    std::vector<VkSemaphore> m_render_finished;
+    VkCommandPool m_command_pool = VK_NULL_HANDLE;
+    std::array<FrameSlot, c_frames_in_flight> m_frames;
+    std::uint32_t m_frame_slot = 0;
+    std::uint32_t m_image_index = 0;
+    std::uint64_t m_frame_number = 0;
+    VkDescriptorSetLayout m_texture_layout = VK_NULL_HANDLE;
+    VkDescriptorPool m_descriptor_pool = VK_NULL_HANDLE;
+    VkPipelineLayout m_pipeline_layout = VK_NULL_HANDLE;
+    // [handle] = {depth-tested variant, depth-off variant}.
+    std::vector<std::array<VkPipeline, 2>> m_pipelines;
+    std::optional<PipelineHandle> m_ui_triangle_pipeline;
+    std::optional<PipelineHandle> m_ui_line_pipeline;
+    std::optional<PipelineHandle> m_text_pipeline;
+    bool m_wireframe_supported = false;
+    std::array<float, 2> m_line_width_range = {1.0f, 1.0f};
+    std::shared_ptr<Texture> m_white_texture;
+    std::map<std::string, std::weak_ptr<Texture>> m_texture_cache;
+    std::map<std::pair<std::uint32_t, std::uint32_t>, std::unique_ptr<Mesh>>
+            m_spheres;
+    RenderContext m_context;
+    std::string m_capture_path;
+    HostBuffer m_capture_buffer;
+};
+
+}  // namespace vulkan_graphix::Render
+
+#endif  // VULKAN_GRAPHIX_RENDER_RENDERER_H

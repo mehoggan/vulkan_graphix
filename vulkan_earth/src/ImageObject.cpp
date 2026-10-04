@@ -1,11 +1,10 @@
 #include "vulkan_earth/ImageObject.h"
 #include <cstdint>
 #include <string>
-#include "vulkan_earth/render/Renderer.h"
-#include "vulkan_earth/render/UiBuilders.h"
 #include "vulkan_earth/MacroCrtdbg.h"
 
-namespace render = vulkan_earth::render;
+namespace render = vulkan_graphix::Render;
+namespace math = vulkan_graphix::Math;
 
 ImageObject::ImageObject() = default;
 
@@ -31,7 +30,8 @@ ImageObject::ImageObject(float new_x_pos,
             static_cast<std::uint32_t>(i_height),
             VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
     image_mesh.setTexture(texture.get());
-    image_mesh.setReplaceTexEnv(true);
+    // GL_REPLACE: texels only (the UI shader's params.x).
+    image_mesh.setParams(math::Vec4<float>(1.0f, 0.0f, 0.0f, 0.0f));
 }
 
 ImageObject::~ImageObject() = default;
@@ -64,8 +64,8 @@ void ImageObject::setHeight(std::int32_t h) {
 }
 
 void ImageObject::buildGeometry() {
-    using render::Vec3;
-    using render::Vec4;
+    using Vec3 = math::Vec3<float>;
+    using Vec4 = math::Vec4<float>;
     float const w = static_cast<float>(width);
     float const h = static_cast<float>(height);
     float const b = border_size;
@@ -76,42 +76,38 @@ void ImageObject::buildGeometry() {
                                 Vec3(x_pos, y_pos - h, z_pos),
                                 Vec3(x_pos + w, y_pos - h, z_pos),
                                 Vec3(x_pos + w, y_pos, z_pos)},
-                               {render::Vec2(0, 1),
-                                render::Vec2(0, 0),
-                                render::Vec2(1, 0),
-                                render::Vec2(1, 1)},
+                               {math::Vec2<float>(0, 1),
+                                math::Vec2<float>(0, 0),
+                                math::Vec2<float>(1, 0),
+                                math::Vec2<float>(1, 1)},
                                Vec4(1.0f));
 
     border_mesh.clear();
     if (border_size != 0) {
         // top and right borders
         Vec4 const dark(0.45f, 0.45f, 0.45f, 1.0f);
-        render::appendQuad(border_mesh,
-                           Vec3(x_pos, y_pos, z_pos),
-                           Vec3(x_pos - b, y_pos + b, z_pos),
-                           Vec3(x_pos + w + b, y_pos + b, z_pos),
-                           Vec3(x_pos + w, y_pos, z_pos),
-                           dark);
-        render::appendQuad(border_mesh,
-                           Vec3(x_pos - b, y_pos + b, z_pos),
-                           Vec3(x_pos - b, y_pos - h - b, z_pos),
-                           Vec3(x_pos, y_pos - h, z_pos),
-                           Vec3(x_pos, y_pos, z_pos),
-                           dark);
+        border_mesh.addQuad({Vec3(x_pos, y_pos, z_pos),
+                             Vec3(x_pos - b, y_pos + b, z_pos),
+                             Vec3(x_pos + w + b, y_pos + b, z_pos),
+                             Vec3(x_pos + w, y_pos, z_pos)},
+                            dark);
+        border_mesh.addQuad({Vec3(x_pos - b, y_pos + b, z_pos),
+                             Vec3(x_pos - b, y_pos - h - b, z_pos),
+                             Vec3(x_pos, y_pos - h, z_pos),
+                             Vec3(x_pos, y_pos, z_pos)},
+                            dark);
         // bottom and left borders
         Vec4 const light(0.85f, 0.85f, 0.85f, 1.0f);
-        render::appendQuad(border_mesh,
-                           Vec3(x_pos - b, y_pos - h - b, z_pos),
-                           Vec3(x_pos + w + b, y_pos - h - b, z_pos),
-                           Vec3(x_pos + w, y_pos - h, z_pos),
-                           Vec3(x_pos, y_pos - h, z_pos),
-                           light);
-        render::appendQuad(border_mesh,
-                           Vec3(x_pos + w, y_pos, z_pos),
-                           Vec3(x_pos + w + b, y_pos + b, z_pos),
-                           Vec3(x_pos + w + b, y_pos - h - b, z_pos),
-                           Vec3(x_pos + w, y_pos - h, z_pos),
-                           light);
+        border_mesh.addQuad({Vec3(x_pos - b, y_pos - h - b, z_pos),
+                             Vec3(x_pos + w + b, y_pos - h - b, z_pos),
+                             Vec3(x_pos + w, y_pos - h, z_pos),
+                             Vec3(x_pos, y_pos - h, z_pos)},
+                            light);
+        border_mesh.addQuad({Vec3(x_pos + w, y_pos, z_pos),
+                             Vec3(x_pos + w + b, y_pos + b, z_pos),
+                             Vec3(x_pos + w + b, y_pos - h - b, z_pos),
+                             Vec3(x_pos + w, y_pos - h, z_pos)},
+                            light);
     }
     geometry_dirty = false;
 }

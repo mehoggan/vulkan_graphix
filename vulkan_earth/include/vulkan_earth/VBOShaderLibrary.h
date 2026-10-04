@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/Mesh.h"
+#include "vulkan_graphix/Render/Renderer.h"
+#include "vulkan_graphix/Render/Texture.h"
 
-#include "vulkan_earth/render/Mesh.h"
-#include "vulkan_earth/render/RenderTypes.h"
-#include "vulkan_earth/render/Texture.h"
-
-namespace vulkan_earth::render {
+namespace vulkan_graphix::Render {
 class RenderContext;
 }
 
@@ -24,10 +24,10 @@ public:
     // model is the part's transform relative to the current camera (the
     // original's glMultMatrixf()/glScalef() before drawClientData()); tint
     // multiplies the texel (rgb) and sets the alpha.
-    void draw(vulkan_earth::render::RenderContext& context,
-              vulkan_earth::render::Mat4 const& model,
-              vulkan_earth::render::Vec4 const& tint =
-                      vulkan_earth::render::Vec4(1.0f));
+    void draw(vulkan_graphix::Render::RenderContext& context,
+              vulkan_graphix::Math::Mat4<float> const& model,
+              vulkan_graphix::Math::Vec4<float> const& tint =
+                      vulkan_graphix::Math::Vec4<float>(1.0f));
     // Loads a .ogl model (libvulkan_graphix's Tools::loadOglMeshData()).
     bool loadClientData(const std::string& model_file);
     // The model's color texture: a headerless RGB .raw image, repeated.
@@ -39,8 +39,8 @@ public:
                      std::int32_t height);
 
 private:
-    std::unique_ptr<vulkan_earth::render::StaticMesh> mesh;
-    std::shared_ptr<vulkan_earth::render::Texture> color_texture;
+    std::unique_ptr<vulkan_graphix::Render::Mesh> mesh;
+    std::shared_ptr<vulkan_graphix::Render::Texture> color_texture;
 };
 
 #endif

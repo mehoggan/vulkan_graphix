@@ -137,12 +137,13 @@ Files" section for the exact invocation.
   - `BitmapFont.cpp/.h` - Bakes a TrueType font into a glyph atlas via
     the vendored `STBTrueType.h` (kept fully behind std types - no
     `stbtt_*` symbol is reachable outside `BitmapFont.cpp`), plus
-    `wrapText()` word-wrapping, shared by Tutorial15/17/18/19/22 (the
-    game itself draws GLUT's own bitmap fonts instead, so its text looks
-    exactly as it did - see vulkan_earth/ below)
-  - `UiGeometry.cpp/.h` - Beveled 2D button-quad geometry, ported from
-    vulkan_earth's `ControlItemButton::draw()` (which the game's own
-    bevels are built from again), plus header-only
+    `wrapText()` word-wrapping, shared by Tutorial15/17/18/19/22 and the
+    game (through `Render::Font`)
+  - `UiGeometry.cpp/.h` - Beveled 2D frame geometry: `buildBevelFrame()`
+    (five quads, each in its own color) and the raised/pressed button
+    bevel on top of it, `buildButtonBevel()` (ported from vulkan_earth's
+    `ControlItemButton::draw()`) - every bevel, panel, and frame the game
+    draws comes from these - plus header-only
     `append{GlyphQuad,ColoredQuad,Text,ImageQuad}()` templates that turn
     glyph/bevel/icon quads into two-triangle vertex lists for any
     `{position, texcoord, color}` vertex struct
@@ -161,6 +162,21 @@ Files" section for the exact invocation.
     kind's update, `ParticleGenerator`'s 1000-slot pool and spawning)
     and `Explosion`'s growth/color timeline as plain simulations, run by
     the game and Tutorial20 alike
+  - `Render/` (`include/vulkan_graphix/Render/`, namespace
+    `vulkan_graphix::Render`) - a general-purpose renderer on top of
+    `TutorialBase`'s device/swapchain bring-up: one render pass (color +
+    depth), two frames in flight, deferred resource release, a per-frame
+    transient vertex ring, frame capture to PPM, and pipelines built from
+    client-supplied `PipelineDescription`s (each created with and without
+    depth testing, switched per draw via `RenderContext::setDepthTest()`).
+    Vertex layouts come straight from `VertexTypes::AttributeTraits`
+    (`vertexLayout<V>()`, plus `packInterleaved()` for
+    `VertexTypes::InterleavedData`), with two standard vertex structs
+    (`UiVertex`, `MeshVertex`); `Texture`, `Mesh` (device-local),
+    `RetainedMesh<V>`/`UiMesh` (rebuilt only when changed), and `Font`
+    (a `BitmapFont` plus its atlas texture, drawn at a projected raster
+    position by `RenderContext::drawText()`). vulkan_earth renders
+    entirely through it, and it is meant to serve the tutorials too
   - `Logging.cpp/.h` - std::-based (filesystem/ostream/chrono/thread)
     per-tag logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
@@ -206,8 +222,8 @@ Files" section for the exact invocation.
   game and a tutorial lives once, in `lib/`, and both call it - the game
   is never left with its own copy of ported logic (see `TerrainGenerator`/
   `Ballistics`/`TankOrientation`/`TankPlacement`/`GameCatalog`/
-  `EffectSimulation` above; the game keeps only its own rendering and
-  thin wrappers converting to its own `Normal`/`Vector` types)
+  `EffectSimulation`/`Render` above; its vectors and matrices are the
+  library's `Math` types, i.e. glm)
   - `src/VulkanEarth.cpp` - `VulkanEarthApp`, a `TutorialBase` that owns
     the device/swapchain and forwards X11 events to the game's original
     GLUT-style handlers and screen state machine, paced at GLUT's 20 ms
@@ -216,19 +232,16 @@ Files" section for the exact invocation.
     <GLUT special key>`, `capture <file.ppm>`, `quit`) and
     `VE_WINDOW=<w>x<h>` fixes the window size - for comparing frames
     across runs
-  - `src/render/`, `include/vulkan_earth/render/` - the game's renderer:
-    one render pass (color + depth), two frames in flight, deferred
-    resource release, a per-frame transient vertex ring, and one pipeline
-    per kind of draw (UI triangles/lines, bitmap text, meshes, terrain,
-    water, flat-colored spheres), each with a depth-test-off variant for
-    the HUD. It reproduces the GL game's look exactly - GL's projection
-    and viewport conventions, `glRasterPos`/`glutBitmapCharacter` text
-    (pixel-exact GLUT font atlases in `resources/vulkan_earth/Data/
-    fonts/`, `glBitmap`'s pixel snapping), `GL_CLAMP`'s border filtering -
-    so a menu frame matches a capture of the original to within 1/255.
-    GLSL sources are in `resources/vulkan_earth/Shaders/` (run its
-    `compile.sh` after editing one); the SPIR-V it loads is committed in
-    `resources/vulkan_earth/Data/shaders/`
+  - `src/GameRenderer.cpp`, `include/vulkan_earth/GameRenderer.h` - all
+    the game adds on top of the library's `Render` module: its pipelines
+    (its GLSL in `resources/vulkan_earth/Shaders/` - run that directory's
+    `compile.sh` after editing one; the SPIR-V is committed in
+    `resources/vulkan_earth/Data/shaders/`), its two fonts (DejaVu Serif
+    and Sans Mono, standing in for GLUT's TIMES_ROMAN_24 and 9_BY_15), and
+    the OpenGL conventions its drawing code was written against
+    (bottom-left-origin viewports via `glRect()`, its y-up menu plane's
+    bevel builders). Everything else renders exactly as the original GL
+    game did - menus match a capture of it to within 1/255 apart from text
   - `src/` - its `.cpp` files
   - `include/vulkan_earth/` - every header, included as
     `"vulkan_earth/Foo.h"` (`src/Makefile.am` adds
@@ -255,6 +268,8 @@ Files" section for the exact invocation.
 - **X11** - Display server protocol (X11 platform); vulkan_earth also
   uses XRandR (primary-monitor geometry for its window)
 - **SDL 1.2 + SDL_mixer** - vulkan_earth's music and sound effects only
+- **DejaVu fonts** (`fonts-dejavu-core`) - the TrueType faces BitmapFont
+  bakes, for the tutorials' and the game's text
 - **libm** - Math library (C standard)
 - **C++20** - Modern C++ standard (logging uses `<filesystem>`/`<chrono>`/
   `<thread>` directly - no Boost dependency anywhere in the project)
@@ -379,8 +394,8 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
   `SubMenu*`/`ReadyMenu`/`ShopMenu`) is built from, without porting that
   entire class hierarchy. Text comes from `BitmapFont` (a TrueType glyph
   atlas baked via the vendored `STBTrueType.h`, standing in for
-  vulkan_earth's `glutBitmapCharacter()` calls - the game itself later
-  got pixel-exact GLUT font atlases of its own instead); the
+  vulkan_earth's `glutBitmapCharacter()` calls - the game now draws its
+  text the same way); the
   button's raised/pressed bevel comes from `UiGeometry::buildButtonBevel()`
   (ported from `ControlItemButton::draw()`). First tutorial to use
   `Tools::getOrthographicProjectionMatrix()` for real UI layout (Tutorial07
