@@ -11,7 +11,8 @@
 
 namespace vulkan_graphix::os {
 
-ProjectBase::ProjectBase() : m_can_render(false) {}
+ProjectBase::ProjectBase() :
+        m_can_render(false) {}
 
 ProjectBase::~ProjectBase() = default;
 
@@ -29,11 +30,13 @@ void ProjectBase::onMouseButton(std::int32_t /*button*/,
 void ProjectBase::onMouseMove(std::int32_t /*pos_x*/, std::int32_t /*pos_y*/) {
 }
 
-bool ProjectBase::onKey(const KeyEvent& event) { return !event.pressed; }
+bool ProjectBase::onKey(const KeyEvent& event) { return !event.m_pressed; }
 
 bool ProjectBase::quitRequested() const { return false; }
 
-WindowParameters::WindowParameters() : m_display_ptr(nullptr), m_handle{} {}
+WindowParameters::WindowParameters() :
+        m_display_ptr(nullptr),
+        m_handle{} {}
 
 Display* WindowParameters::getDisplayPtr() const { return m_display_ptr; }
 

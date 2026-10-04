@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_CUBICCURVE_HPP
-#define VULKAN_GRAPHIX_CUBICCURVE_HPP
+#ifndef VULKAN_GRAPHIX_MATH_CUBICCURVE_HPP
+#define VULKAN_GRAPHIX_MATH_CUBICCURVE_HPP
 
 #include <algorithm>
 #include <cstddef>
@@ -48,14 +48,16 @@ class CubicCurve {
 public:
     enum class Type { Bezier, Hermite, CatmullRom };
 
-    explicit CubicCurve(Type impl = Type::Hermite)
-            : m_cubic(T(1)), m_impl(impl) {}
+    explicit CubicCurve(Type impl = Type::Hermite) :
+            m_cubic(T(1)),
+            m_impl(impl) {}
 
     CubicCurve(const Vec3<T>& point0,
                const Vec3<T>& point1,
                const Vec3<T>& tangent0,
-               const Vec3<T>& tangent1)
-            : m_cubic(T(1)), m_impl(Type::Hermite) {
+               const Vec3<T>& tangent1) :
+            m_cubic(T(1)),
+            m_impl(Type::Hermite) {
         setHermite(point0, point1, tangent0, tangent1);
     }
 
@@ -63,8 +65,9 @@ public:
                const Vec3<T>& point0,
                const Vec3<T>& point1,
                const Vec3<T>& point2,
-               const Vec3<T>& point3)
-            : m_cubic(T(1)), m_impl(impl) {
+               const Vec3<T>& point3) :
+            m_cubic(T(1)),
+            m_impl(impl) {
         switch (impl) {
             case Type::Bezier:
                 setBezier(point0, point1, point2, point3);
@@ -188,11 +191,11 @@ private:
                                        const CurveSample3D<T>& point1,
                                        T percent) const {
         Vec3<T> secant_position =
-                glm::mix(point0.position, point1.position, percent);
-        CurveSample3D<T> curve_position =
-                evaluate(point0.parameter +
-                         (percent * (point1.parameter - point0.parameter)));
-        Vec3<T> delta = curve_position.position - secant_position;
+                glm::mix(point0.m_position, point1.m_position, percent);
+        CurveSample3D<T> curve_position = evaluate(
+                point0.m_parameter +
+                (percent * (point1.m_parameter - point0.m_parameter)));
+        Vec3<T> delta = curve_position.m_position - secant_position;
         return glm::dot(delta, delta);
     }
 
@@ -209,14 +212,14 @@ private:
         if (depth > max_subdivide_depth) {
             is_good = true;
         } else if (is_good) {
-            Vec3<T> secant = point1.position - point0.position;
+            Vec3<T> secant = point1.m_position - point0.m_position;
             T epsilon = std::numeric_limits<T>::epsilon();
             if (glm::all(glm::epsilonEqual(secant, Vec3<T>(T(0)), epsilon)) ||
                 glm::all(glm::epsilonEqual(
-                        point0.tangent, Vec3<T>(T(0)), epsilon))) {
+                        point0.m_tangent, Vec3<T>(T(0)), epsilon))) {
                 is_good = true;
             } else {
-                Vec3<T> tangent = glm::normalize(point0.tangent);
+                Vec3<T> tangent = glm::normalize(point0.m_tangent);
                 secant = glm::normalize(secant);
                 T tangent_deviation = glm::length(secant - tangent);
                 if (tangent_deviation > T(0.10)) {
@@ -233,7 +236,7 @@ private:
                    const CurveSample3D<T>& point1,
                    T chordal_tolerance,
                    std::uint16_t depth = 0) const {
-        T mid_param = glm::mix(point0.parameter, point1.parameter, T(0.5));
+        T mid_param = glm::mix(point0.m_parameter, point1.m_parameter, T(0.5));
         CurveSample3D<T> break_point = evaluate(mid_param);
 
         if (isOfGoodQuality(

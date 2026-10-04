@@ -17,15 +17,15 @@ namespace vulkan_graphix {
 // ************************************************************ //
 // VulkanTutorial16Parameters                                   //
 // ************************************************************ //
-VulkanTutorial16Parameters::VulkanTutorial16Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_body_vertex_count(0)
-        , m_head_vertex_count(0)
-        , m_turret_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial16Parameters::VulkanTutorial16Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_body_vertex_count(0),
+        m_head_vertex_count(0),
+        m_turret_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial16Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -207,17 +207,17 @@ void VulkanTutorial16Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial16                                                   //
 // ************************************************************ //
-Tutorial16::Tutorial16()
-        // The assembled tank spans roughly [-210,210]x[-19,120]x[-150,150]
-        // in world units (TankB's own offsets/scale are hundreds of units,
-        // unlike every other OrbitCamera tutorial's single/double-digit
-        // world) - 700 frames the whole thing; OrbitCamera's own zoom-out
-        // clamp (40, see OrbitCamera.cpp) is far smaller than that, same
-        // mismatch Tutorial12's terrain already runs into (it sets its own
-        // initial distance to that same 40 clamp) - scrolling out from here
-        // will clamp closer than this initial framing, but scrolling in to
-        // inspect the mesh works over the its full range.
-        : m_camera(0.6f, -0.05f, 650.0f) {}
+// The assembled tank spans roughly [-210,210]x[-19,120]x[-150,150]
+// in world units (TankB's own offsets/scale are hundreds of units,
+// unlike every other OrbitCamera tutorial's single/double-digit
+// world) - 700 frames the whole thing; OrbitCamera's own zoom-out
+// clamp (40, see OrbitCamera.cpp) is far smaller than that, same
+// mismatch Tutorial12's terrain already runs into (it sets its own
+// initial distance to that same 40 clamp) - scrolling out from here
+// will clamp closer than this initial framing, but scrolling in to
+// inspect the mesh works over the its full range.
+Tutorial16::Tutorial16() :
+        m_camera(0.6f, -0.05f, 650.0f) {}
 
 Tutorial16::~Tutorial16() { childClear(); }
 
@@ -501,9 +501,9 @@ bool Tutorial16::createUniformBuffer() {
 
 Tutorial16UniformBufferData Tutorial16::getUniformBufferData() const {
     Tutorial16UniformBufferData data{};
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -512,7 +512,7 @@ Tutorial16UniformBufferData Tutorial16::getUniformBufferData() const {
     // Near/far clip planes sized for this tutorial's much larger world
     // (hundreds of units, see the constructor's own comment) rather than
     // copied from another tutorial's 0.01-10 or 0.1-100 range.
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 1.0f, 2000.0f);
 
     return data;
@@ -814,13 +814,13 @@ bool Tutorial16::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial16VertexData, position)},
+                     .offset = offsetof(struct Tutorial16VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial16VertexData, texcoord)}};
+                     .offset = offsetof(struct Tutorial16VertexData,
+                                        m_texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -964,8 +964,8 @@ std::vector<Tutorial16VertexData> Tutorial16::loadPartVertexData(
     std::vector<Tutorial16VertexData> vertex_data;
     vertex_data.reserve(mesh_data.size());
     for (const Tools::OglVertexData& vertex : mesh_data) {
-        vertex_data.push_back(
-                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
+        vertex_data.push_back({Math::Vec4<float>(vertex.m_position, 1.0f),
+                               vertex.m_texcoord});
     }
     return vertex_data;
 }
@@ -1064,17 +1064,18 @@ bool Tutorial16::createVertexBuffers() {
 
 Math::Mat4<float> Tutorial16::getBodyModelMatrix() const {
     return HellfireTank::buildPartMatrix(
-            HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f)).body);
+            HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f)).m_body);
 }
 
 Math::Mat4<float> Tutorial16::getHeadModelMatrix() const {
     return HellfireTank::buildPartMatrix(
-            HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f)).head);
+            HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f)).m_head);
 }
 
 Math::Mat4<float> Tutorial16::getTurretModelMatrix() const {
     return HellfireTank::buildPartMatrix(
-            HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f)).turret);
+            HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f))
+                    .m_turret);
 }
 
 bool Tutorial16::createFramebuffer(VkFramebuffer& framebuffer,

@@ -16,13 +16,13 @@ namespace vulkan_graphix {
 // ************************************************************ //
 // VulkanTutorial13Parameters                                   //
 // ************************************************************ //
-VulkanTutorial13Parameters::VulkanTutorial13Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial13Parameters::VulkanTutorial13Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial13Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -165,11 +165,11 @@ void VulkanTutorial13Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial13                                                   //
 // ************************************************************ //
-Tutorial13::Tutorial13()
-        // The mesh itself spans roughly [-0.2, 0.2] on every axis (a real
-        // tank-shell's own modeling-tool units) - 1.5 is OrbitCamera's own
-        // minimum distance, close enough to see it clearly.
-        : m_camera(0.6f, 0.3f, 1.5f) {}
+// The mesh itself spans roughly [-0.2, 0.2] on every axis (a real
+// tank-shell's own modeling-tool units) - 1.5 is OrbitCamera's own
+// minimum distance, close enough to see it clearly.
+Tutorial13::Tutorial13() :
+        m_camera(0.6f, 0.3f, 1.5f) {}
 
 Tutorial13::~Tutorial13() { childClear(); }
 
@@ -746,13 +746,13 @@ bool Tutorial13::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial13VertexData, position)},
+                     .offset = offsetof(struct Tutorial13VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial13VertexData, texcoord)}};
+                     .offset = offsetof(struct Tutorial13VertexData,
+                                        m_texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -899,8 +899,8 @@ const std::vector<Tutorial13VertexData>& Tutorial13::getVertexData() {
             Tools::loadOglMeshData("projectileDefault.ogl");
     m_vertex_data.reserve(mesh_data.size());
     for (const Tools::OglVertexData& vertex : mesh_data) {
-        m_vertex_data.push_back(
-                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
+        m_vertex_data.push_back({Math::Vec4<float>(vertex.m_position, 1.0f),
+                                 vertex.m_texcoord});
     }
 
     return m_vertex_data;

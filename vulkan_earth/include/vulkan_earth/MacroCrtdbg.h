@@ -1,3 +1,11 @@
+#ifndef VULKAN_EARTH_MACROCRTDBG_H
+#define VULKAN_EARTH_MACROCRTDBG_H
+
+// Included last by every game source for its side effect (MSVC's debug-heap
+// macros, active only under _DEBUG), never for a symbol - so it's always
+// kept:
+// IWYU pragma: always_keep
+
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
@@ -27,3 +35,5 @@
 #endif
 #define _msize(p) (_msize_dbg(p, _NORMAL_BLOCK))
 #endif
+
+#endif  // VULKAN_EARTH_MACROCRTDBG_H

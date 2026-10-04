@@ -33,21 +33,21 @@ const Math::Vec3<float> c_preview_eye =
 // ************************************************************ //
 // VulkanTutorial22Parameters                                   //
 // ************************************************************ //
-VulkanTutorial22Parameters::VulkanTutorial22Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_tank_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_panel_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_tank_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_panel_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_tank_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_panel_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_tank_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_panel_graphics_pipeline(VK_NULL_HANDLE)
-        , m_tank_vertex_counts{0, 0, 0}
-        , m_panel_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial22Parameters::VulkanTutorial22Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_tank_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_panel_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_descriptor_pool(VK_NULL_HANDLE),
+        m_vk_tank_descriptor_set(VK_NULL_HANDLE),
+        m_vk_panel_descriptor_set(VK_NULL_HANDLE),
+        m_vk_tank_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_panel_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_tank_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_panel_graphics_pipeline(VK_NULL_HANDLE),
+        m_tank_vertex_counts{0, 0, 0},
+        m_panel_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial22Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -321,8 +321,10 @@ void VulkanTutorial22Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial22                                                   //
 // ************************************************************ //
-Tutorial22::Tutorial22()
-        : m_button_pressed(false), m_click_count(0), m_tank_angle(0.0f) {}
+Tutorial22::Tutorial22() :
+        m_button_pressed(false),
+        m_click_count(0),
+        m_tank_angle(0.0f) {}
 
 Tutorial22::~Tutorial22() { childClear(); }
 
@@ -625,12 +627,12 @@ Math::Vec2<float> Tutorial22::getPreviewTopLeft() const {
 
 Tutorial22TankUniformBufferData Tutorial22::getTankUniformBufferData() const {
     Tutorial22TankUniformBufferData data{};
-    data.view = glm::lookAt(c_preview_eye,
-                            Math::Vec3<float>(0.0f, 0.0f, 0.0f),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(c_preview_eye,
+                              Math::Vec3<float>(0.0f, 0.0f, 0.0f),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const Math::Vec2<float> preview_size = getPreviewSize();
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             preview_size.x / preview_size.y, 45.0f, 1.0f, 5000.0f);
 
     return data;
@@ -1098,11 +1100,11 @@ bool Tutorial22::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial22TankVertexData, position)},
+             .offset = offsetof(struct Tutorial22TankVertexData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial22TankVertexData, texcoord)}};
+             .offset = offsetof(struct Tutorial22TankVertexData, m_texcoord)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_tank = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1272,15 +1274,15 @@ bool Tutorial22::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial22PanelVertexData, position)},
+             .offset = offsetof(struct Tutorial22PanelVertexData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial22PanelVertexData, texcoord)},
+             .offset = offsetof(struct Tutorial22PanelVertexData, m_texcoord)},
             {.location = 2,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial22PanelVertexData, color)}};
+             .offset = offsetof(struct Tutorial22PanelVertexData, m_color)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_panel = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1384,8 +1386,8 @@ std::vector<Tutorial22TankVertexData> Tutorial22::loadTankPartVertexData(
     std::vector<Tutorial22TankVertexData> vertex_data;
     vertex_data.reserve(mesh_data.size());
     for (const Tools::OglVertexData& vertex : mesh_data) {
-        vertex_data.push_back(
-                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
+        vertex_data.push_back({Math::Vec4<float>(vertex.m_position, 1.0f),
+                               vertex.m_texcoord});
     }
     return vertex_data;
 }
@@ -1540,7 +1542,7 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
     const Math::Vec4<float> panel_color(0.35f, 0.38f, 0.45f, 1.0f);
     for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
                  panel_top_left, panel_size, panel_color, false)) {
-        appendColoredQuad(vertex_data, quad.corners, quad.color);
+        appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
     }
 
     const std::string title = "Ready?";
@@ -1563,7 +1565,7 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
     const Math::Vec4<float> frame_color(0.15f, 0.16f, 0.2f, 1.0f);
     for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
                  frame_top_left, frame_size, frame_color, true)) {
-        appendColoredQuad(vertex_data, quad.corners, quad.color);
+        appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
     }
 
     const Math::Vec2<float> button_top_left = getButtonTopLeft();
@@ -1574,7 +1576,7 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
                                       button_size,
                                       button_color,
                                       m_button_pressed)) {
-        appendColoredQuad(vertex_data, quad.corners, quad.color);
+        appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
     }
 
     const std::string label = getButtonLabel();
@@ -1830,8 +1832,9 @@ bool Tutorial22::prepareFrame(VkCommandBuffer command_buffer,
     const HellfireTank::PartTranslations tank_parts =
             HellfireTank::getPartTranslations(Math::Vec3<float>(0.0f));
     const std::array<Math::Vec3<float>, c_tutorial22_tank_part_count>
-            part_translations = {
-                    {tank_parts.body, tank_parts.head, tank_parts.turret}};
+            part_translations = {{tank_parts.m_body,
+                                  tank_parts.m_head,
+                                  tank_parts.m_turret}};
     std::array<BufferParameters,
                c_tutorial22_tank_part_count>& tank_vertex_buffers =
             m_vulkan_tutorial22_parameters.getTankVertexBufferParameters();

@@ -24,195 +24,201 @@ ControlItemSliderbar::ControlItemSliderbar(
         const std::string& new_caption,
         const std::string& menu_string,
         std::int32_t slider_starting_index) {
-    x_pos = new_x_pos;
-    y_pos = new_y_pos;
-    z_pos = new_z_pos;
-    color[0] = red;
-    color[1] = green;
-    color[2] = blue;
-    color[3] = 1.0;
-    width = new_width;
-    height = new_height;
+    m_x_pos = new_x_pos;
+    m_y_pos = new_y_pos;
+    m_z_pos = new_z_pos;
+    m_color[0] = red;
+    m_color[1] = green;
+    m_color[2] = blue;
+    m_color[3] = 1.0;
+    m_width = new_width;
+    m_height = new_height;
 
-    bar_width = new_width - new_width * 0.1;
-    bar_x_pos = new_x_pos + (new_width - bar_width) / 2;
-    bar_y_pos = new_y_pos - new_height / 1.5;
-    bar_z_pos = new_z_pos + 0.5;
+    m_bar_width = new_width - new_width * 0.1;
+    m_bar_x_pos = new_x_pos + (new_width - m_bar_width) / 2;
+    m_bar_y_pos = new_y_pos - new_height / 1.5;
+    m_bar_z_pos = new_z_pos + 0.5;
 
-    slider_x_pos = bar_x_pos - bar_width * 0.012;
-    slider_y_pos = new_y_pos - new_height / 1.7;
-    slider_z_pos = bar_z_pos + 0.5;
-    slider_width = new_width / 5 * 0.1;
-    slider_height = new_height * 0.15;
+    m_slider_x_pos = m_bar_x_pos - m_bar_width * 0.012;
+    m_slider_y_pos = new_y_pos - new_height / 1.7;
+    m_slider_z_pos = m_bar_z_pos + 0.5;
+    m_slider_width = new_width / 5 * 0.1;
+    m_slider_height = new_height * 0.15;
 
-    caption = new_caption;
-    menu_info = menu_string;
-    is_slider_clicked = false;
+    m_caption = new_caption;
+    m_menu_info = menu_string;
+    m_is_slider_clicked = false;
 
     // split menuInfo on '/' into allOptions
     std::string current;
-    for (char ch : menu_info) {
+    for (char ch : m_menu_info) {
         if (ch == '/') {
-            all_options.push_back(current);
+            m_all_options.push_back(current);
             current.clear();
         } else {
             current += ch;
         }
     }
-    number_of_options = static_cast<std::int32_t>(all_options.size());
-    interval = bar_width / (number_of_options -
-                            1.0);  // if it's divided by an integer, the whole
-                                   // thing becomes an integer value???
+    m_number_of_options = static_cast<std::int32_t>(m_all_options.size());
+    m_interval =
+            m_bar_width / (m_number_of_options -
+                           1.0);  // if it's divided by an integer, the whole
+                                  // thing becomes an integer value???
 
-    menu_state = slider_starting_index;
-    button_state = 0;
-    option_text = nullptr;
-    setOptionText(menu_state);  // set option to first option
+    m_menu_state = slider_starting_index;
+    m_button_state = 0;
+    m_option_text = nullptr;
+    setOptionText(m_menu_state);  // set option to first option
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
-    for (char ch : caption) {
+    for (char ch : m_caption) {
         real_length += vulkan_earth::textAdvance(
                 vulkan_earth::FontId::TimesRoman24, ch);
     }
-    float label_x_pos = bar_x_pos;
-    float label_y_pos = y_pos - height * 0.45;
+    float label_x_pos = m_bar_x_pos;
+    float label_y_pos = m_y_pos - m_height * 0.45;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    label = new TextObject(caption,
-                           label_x_pos,
-                           label_y_pos,
-                           z_pos,
-                           vulkan_earth::FontId::TimesRoman24,
-                           0.0f,
-                           0.0f,
-                           0.0f);
+    m_label = new TextObject(m_caption,
+                             label_x_pos,
+                             label_y_pos,
+                             m_z_pos,
+                             vulkan_earth::FontId::TimesRoman24,
+                             0.0f,
+                             0.0f,
+                             0.0f);
 }
 ControlItemSliderbar::~ControlItemSliderbar() {
-    delete option_text;
-    delete label;
+    delete m_option_text;
+    delete m_label;
 }
 
 void ControlItemSliderbar::draw(render::RenderContext& context) {
     using Vec3 = math::Vec3<float>;
     using Vec4 = math::Vec4<float>;
-    if (frame_mesh.triangles().empty()) {
+    if (m_frame_mesh.triangles().empty()) {
         // draw main button box (sunken bevel: -0.2 top/left, +0.4
         // bottom/right)
-        vulkan_earth::appendFrame(frame_mesh,
-                                  x_pos,
-                                  y_pos,
-                                  z_pos,
-                                  width,
-                                  height,
-                                  Vec4(color[0] - 0.2f,
-                                       color[1] - 0.2f,
-                                       color[2] - 0.2f,
-                                       color[3]),
-                                  Vec4(color[0], color[1], color[2], color[3]),
-                                  Vec4(color[0] + 0.4f,
-                                       color[1] + 0.4f,
-                                       color[2] + 0.4f,
-                                       color[3]));
+        vulkan_earth::appendFrame(
+                m_frame_mesh,
+                m_x_pos,
+                m_y_pos,
+                m_z_pos,
+                m_width,
+                m_height,
+                Vec4(m_color[0] - 0.2f,
+                     m_color[1] - 0.2f,
+                     m_color[2] - 0.2f,
+                     m_color[3]),
+                Vec4(m_color[0], m_color[1], m_color[2], m_color[3]),
+                Vec4(m_color[0] + 0.4f,
+                     m_color[1] + 0.4f,
+                     m_color[2] + 0.4f,
+                     m_color[3]));
         // draw bar lines
         const Vec4 black(0, 0, 0, 1);
-        frame_mesh.addLine(
-                Vec3(bar_x_pos, bar_y_pos + 1, bar_z_pos),
-                Vec3(bar_x_pos + bar_width, bar_y_pos + 1, bar_z_pos),
+        m_frame_mesh.addLine(
+                Vec3(m_bar_x_pos, m_bar_y_pos + 1, m_bar_z_pos),
+                Vec3(m_bar_x_pos + m_bar_width, m_bar_y_pos + 1, m_bar_z_pos),
                 black);
-        frame_mesh.addLine(Vec3(bar_x_pos, bar_y_pos, bar_z_pos),
-                           Vec3(bar_x_pos + bar_width, bar_y_pos, bar_z_pos),
-                           black);
-        frame_mesh.addLine(
-                Vec3(bar_x_pos, bar_y_pos - 1, bar_z_pos),
-                Vec3(bar_x_pos + bar_width, bar_y_pos - 1, bar_z_pos),
+        m_frame_mesh.addLine(
+                Vec3(m_bar_x_pos, m_bar_y_pos, m_bar_z_pos),
+                Vec3(m_bar_x_pos + m_bar_width, m_bar_y_pos, m_bar_z_pos),
                 black);
-        for (std::int32_t i = 0; i < number_of_options; i++) {
-            frame_mesh.addLine(Vec3(bar_x_pos + (interval * i),
-                                    bar_y_pos + height * 0.07,
-                                    bar_z_pos),
-                               Vec3(bar_x_pos + (interval * i),
-                                    bar_y_pos - height * 0.07,
-                                    bar_z_pos),
-                               black);
+        m_frame_mesh.addLine(
+                Vec3(m_bar_x_pos, m_bar_y_pos - 1, m_bar_z_pos),
+                Vec3(m_bar_x_pos + m_bar_width, m_bar_y_pos - 1, m_bar_z_pos),
+                black);
+        for (std::int32_t i = 0; i < m_number_of_options; i++) {
+            m_frame_mesh.addLine(Vec3(m_bar_x_pos + (m_interval * i),
+                                      m_bar_y_pos + m_height * 0.07,
+                                      m_bar_z_pos),
+                                 Vec3(m_bar_x_pos + (m_interval * i),
+                                      m_bar_y_pos - m_height * 0.07,
+                                      m_bar_z_pos),
+                                 black);
         }
     }
-    context.draw(frame_mesh);
+    context.draw(m_frame_mesh);
 
     // draw slider: raised when idle, highlighted while being dragged
-    if (slider_built_x != slider_x_pos || slider_built_y != slider_y_pos ||
-        slider_built_clicked != static_cast<std::int32_t>(is_slider_clicked)) {
-        slider_mesh.clear();
-        if (!is_slider_clicked) {
+    if (m_slider_built_x != m_slider_x_pos ||
+        m_slider_built_y != m_slider_y_pos ||
+        m_slider_built_clicked !=
+                static_cast<std::int32_t>(m_is_slider_clicked)) {
+        m_slider_mesh.clear();
+        if (!m_is_slider_clicked) {
             vulkan_earth::appendBevel(
-                    slider_mesh,
-                    slider_x_pos,
-                    slider_y_pos,
-                    slider_z_pos,
-                    slider_width,
-                    slider_height,
-                    Vec4(color[0], color[1], color[2], color[3]),
+                    m_slider_mesh,
+                    m_slider_x_pos,
+                    m_slider_y_pos,
+                    m_slider_z_pos,
+                    m_slider_width,
+                    m_slider_height,
+                    Vec4(m_color[0], m_color[1], m_color[2], m_color[3]),
                     false);
         } else {
-            vulkan_earth::appendFrame(slider_mesh,
-                                      slider_x_pos,
-                                      slider_y_pos,
-                                      slider_z_pos,
-                                      slider_width,
-                                      slider_height,
-                                      Vec4(color[0] + 0.4f,
-                                           color[1] + 0.4f,
-                                           color[2] + 0.4f,
-                                           color[3]),
-                                      Vec4(color[0] + 0.2f,
-                                           color[1] + 0.2f,
-                                           color[2] + 0.2f,
-                                           color[3]),
-                                      Vec4(color[0] - 0.2f,
-                                           color[1] - 0.2f,
-                                           color[2] - 0.2f,
-                                           color[3]));
+            vulkan_earth::appendFrame(m_slider_mesh,
+                                      m_slider_x_pos,
+                                      m_slider_y_pos,
+                                      m_slider_z_pos,
+                                      m_slider_width,
+                                      m_slider_height,
+                                      Vec4(m_color[0] + 0.4f,
+                                           m_color[1] + 0.4f,
+                                           m_color[2] + 0.4f,
+                                           m_color[3]),
+                                      Vec4(m_color[0] + 0.2f,
+                                           m_color[1] + 0.2f,
+                                           m_color[2] + 0.2f,
+                                           m_color[3]),
+                                      Vec4(m_color[0] - 0.2f,
+                                           m_color[1] - 0.2f,
+                                           m_color[2] - 0.2f,
+                                           m_color[3]));
         }
-        slider_built_x = slider_x_pos;
-        slider_built_y = slider_y_pos;
-        slider_built_clicked = static_cast<std::int32_t>(is_slider_clicked);
+        m_slider_built_x = m_slider_x_pos;
+        m_slider_built_y = m_slider_y_pos;
+        m_slider_built_clicked =
+                static_cast<std::int32_t>(m_is_slider_clicked);
     }
-    context.draw(slider_mesh);
+    context.draw(m_slider_mesh);
 
-    label->draw(context);
-    option_text->draw(context);
+    m_label->draw(context);
+    m_option_text->draw(context);
 }
 
-float ControlItemSliderbar::getXPos() { return x_pos; }
-float ControlItemSliderbar::getYPos() { return y_pos; }
-float ControlItemSliderbar::getHeight() { return height; }
-float ControlItemSliderbar::getWidth() { return width; }
-float ControlItemSliderbar::getBarXPos() { return bar_x_pos; }
-float ControlItemSliderbar::getInterval() { return interval; }
-float ControlItemSliderbar::getSliderXPos() { return slider_x_pos; }
-void ControlItemSliderbar::setSliderXPos(float x) { slider_x_pos = x; }
-std::string ControlItemSliderbar::collectData() { return current_option; }
+float ControlItemSliderbar::getXPos() { return m_x_pos; }
+float ControlItemSliderbar::getYPos() { return m_y_pos; }
+float ControlItemSliderbar::getHeight() { return m_height; }
+float ControlItemSliderbar::getWidth() { return m_width; }
+float ControlItemSliderbar::getBarXPos() { return m_bar_x_pos; }
+float ControlItemSliderbar::getInterval() { return m_interval; }
+float ControlItemSliderbar::getSliderXPos() { return m_slider_x_pos; }
+void ControlItemSliderbar::setSliderXPos(float x) { m_slider_x_pos = x; }
+std::string ControlItemSliderbar::collectData() { return m_current_option; }
 
 void ControlItemSliderbar::setOptionText(const std::string& new_text) {}
 
 void ControlItemSliderbar::setOptionText(std::int32_t index) {
-    current_option = all_options[index];
+    m_current_option = m_all_options[index];
     std::int32_t real_length = 0;
-    for (char ch : current_option) {
+    for (char ch : m_current_option) {
         real_length += vulkan_earth::textAdvance(
                 vulkan_earth::FontId::TimesRoman24, ch);
     }
-    float label_x_pos = x_pos + (width / 2) - (real_length / 2);
-    float label_y_pos = y_pos - height * 0.45;
-    delete option_text;
-    option_text = new TextObject(current_option,
-                                 label_x_pos,
-                                 label_y_pos,
-                                 z_pos,
-                                 vulkan_earth::FontId::TimesRoman24,
-                                 0.0f,
-                                 0.0f,
-                                 0.0f);
-    menu_state = index;
-    slider_x_pos = bar_x_pos + interval * index;
+    float label_x_pos = m_x_pos + (m_width / 2) - (real_length / 2);
+    float label_y_pos = m_y_pos - m_height * 0.45;
+    delete m_option_text;
+    m_option_text = new TextObject(m_current_option,
+                                   label_x_pos,
+                                   label_y_pos,
+                                   m_z_pos,
+                                   vulkan_earth::FontId::TimesRoman24,
+                                   0.0f,
+                                   0.0f,
+                                   0.0f);
+    m_menu_state = index;
+    m_slider_x_pos = m_bar_x_pos + m_interval * index;
 }
 
 void ControlItemSliderbar::mouseClickEvent(
@@ -222,54 +228,54 @@ void ControlItemSliderbar::mouseClickEvent(
         bool /*still_over_control_item_sliderbar*/) {
     if (state == 1) {
         // check if the click is on the slider
-        if ((slider_x_pos < x && x < slider_x_pos + slider_width) &&
-            (slider_y_pos - slider_height < y && y < slider_y_pos)) {
-            is_slider_clicked = true;
+        if ((m_slider_x_pos < x && x < m_slider_x_pos + m_slider_width) &&
+            (m_slider_y_pos - m_slider_height < y && y < m_slider_y_pos)) {
+            m_is_slider_clicked = true;
         }
         // check if the click is either left or right side from the slider
-        else if ((bar_x_pos < x && x < slider_x_pos) &&
-                 (slider_y_pos - slider_height - 5.5 < y &&
-                  y < slider_y_pos + 5.5)) {
+        else if ((m_bar_x_pos < x && x < m_slider_x_pos) &&
+                 (m_slider_y_pos - m_slider_height - 5.5 < y &&
+                  y < m_slider_y_pos + 5.5)) {
             playSFX(SMALL_CLICK);
-            slider_x_pos -= interval;
-            menu_state--;
-            if (menu_state < 0)  // wrap around check
-                menu_state += number_of_options;
-            setOptionText(menu_state);
-        } else if ((slider_x_pos + slider_width < x &&
-                    x < bar_x_pos + bar_width) &&
-                   (slider_y_pos - slider_height - 5.5 < y &&
-                    y < slider_y_pos + 5.5)) {
+            m_slider_x_pos -= m_interval;
+            m_menu_state--;
+            if (m_menu_state < 0)  // wrap around check
+                m_menu_state += m_number_of_options;
+            setOptionText(m_menu_state);
+        } else if ((m_slider_x_pos + m_slider_width < x &&
+                    x < m_bar_x_pos + m_bar_width) &&
+                   (m_slider_y_pos - m_slider_height - 5.5 < y &&
+                    y < m_slider_y_pos + 5.5)) {
             playSFX(SMALL_CLICK);
-            slider_x_pos += interval;
-            menu_state++;
-            if (menu_state == number_of_options)  // wrap around check
-                menu_state -= number_of_options;
-            setOptionText(menu_state);
+            m_slider_x_pos += m_interval;
+            m_menu_state++;
+            if (m_menu_state == m_number_of_options)  // wrap around check
+                m_menu_state -= m_number_of_options;
+            setOptionText(m_menu_state);
         }
     } else {
-        is_slider_clicked = false;
+        m_is_slider_clicked = false;
     }
 }
 
 void ControlItemSliderbar::updateMouse(std::int32_t x, std::int32_t /*y*/) {
-    if (is_slider_clicked) {
+    if (m_is_slider_clicked) {
         // check if the mouse pointer is either left or right side from the
         // slider
-        if (bar_x_pos < x && x < slider_x_pos - interval / 2) {
-            slider_x_pos -= interval;
-            menu_state--;
-            if (menu_state < 0)  // wrap around check
-                menu_state += number_of_options;
-            setOptionText(menu_state);
+        if (m_bar_x_pos < x && x < m_slider_x_pos - m_interval / 2) {
+            m_slider_x_pos -= m_interval;
+            m_menu_state--;
+            if (m_menu_state < 0)  // wrap around check
+                m_menu_state += m_number_of_options;
+            setOptionText(m_menu_state);
             playSFX(SMALL_CLICK);
-        } else if (slider_x_pos + interval / 2 + slider_width < x &&
-                   x < bar_x_pos + bar_width) {
-            slider_x_pos += interval;
-            menu_state++;
-            if (menu_state == number_of_options)  // wrap around check
-                menu_state -= number_of_options;
-            setOptionText(menu_state);
+        } else if (m_slider_x_pos + m_interval / 2 + m_slider_width < x &&
+                   x < m_bar_x_pos + m_bar_width) {
+            m_slider_x_pos += m_interval;
+            m_menu_state++;
+            if (m_menu_state == m_number_of_options)  // wrap around check
+                m_menu_state -= m_number_of_options;
+            setOptionText(m_menu_state);
             playSFX(SMALL_CLICK);
         }
     }

@@ -1,5 +1,5 @@
-#ifndef CHASECAM_H
-#define CHASECAM_H
+#ifndef VULKAN_EARTH_CHASECAM_H
+#define VULKAN_EARTH_CHASECAM_H
 
 #include <cstdint>
 
@@ -21,11 +21,11 @@ public:
     void resetFactor();
 
 private:
-    float* target_pos;
-    float* target_at;
-    std::int32_t shake_cam_pos[3];
-    float back_factor;
-    float up_factor;
+    float* m_target_pos;
+    float* m_target_at;
+    std::int32_t m_shake_cam_pos[3];
+    float m_back_factor;
+    float m_up_factor;
 };
 
 #endif

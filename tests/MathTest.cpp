@@ -205,13 +205,13 @@ TEST(CurveSample3DTest, NormalizeTangentProducesUnitLength) {
     CurveSample3D<float> sample(
             Vec3<float>(0.0f), Vec3<float>(3.0f, 0.0f, 0.0f), 0.5f);
     sample.normalizeTangent();
-    EXPECT_FLOAT_EQ(1.0f, glm::length(sample.tangent));
+    EXPECT_FLOAT_EQ(1.0f, glm::length(sample.m_tangent));
 }
 
 TEST(CurveSample3DTest, NormalizeTangentLeavesZeroVectorAlone) {
     CurveSample3D<float> sample(Vec3<float>(0.0f), Vec3<float>(0.0f), 0.5f);
     sample.normalizeTangent();
-    EXPECT_EQ(Vec3<float>(0.0f), sample.tangent);
+    EXPECT_EQ(Vec3<float>(0.0f), sample.m_tangent);
 }
 
 TEST(CubicCurveTest, BezierEndpointsMatchControlPoints) {
@@ -265,7 +265,7 @@ TEST(CubicCurveTest, AdaptiveSamplingProducesSortedParameters) {
 
     ASSERT_GE(samples.size(), 2u);
     for (std::size_t index = 1; index < samples.size(); ++index) {
-        EXPECT_LT(samples[index - 1].parameter, samples[index].parameter);
+        EXPECT_LT(samples[index - 1].m_parameter, samples[index].m_parameter);
     }
 }
 
@@ -418,14 +418,15 @@ TEST(CubicCurveTest, ComputeSamplesUniformProducesRequestedCountAndEndpoints) {
     std::vector<CurveSample3D<float>> samples = curve.computeSamplesUniform(5);
 
     ASSERT_EQ(5u, samples.size());
-    EXPECT_NEAR(point0.x, samples.front().position.x, 1e-4f);
-    EXPECT_NEAR(point3.x, samples.back().position.x, 1e-4f);
-    EXPECT_FLOAT_EQ(0.0f, samples.front().parameter);
-    EXPECT_FLOAT_EQ(1.0f, samples.back().parameter);
+    EXPECT_NEAR(point0.x, samples.front().m_position.x, 1e-4f);
+    EXPECT_NEAR(point3.x, samples.back().m_position.x, 1e-4f);
+    EXPECT_FLOAT_EQ(0.0f, samples.front().m_parameter);
+    EXPECT_FLOAT_EQ(1.0f, samples.back().m_parameter);
     for (std::size_t index = 1; index < samples.size(); ++index) {
-        EXPECT_NEAR(0.25f,
-                    samples[index].parameter - samples[index - 1].parameter,
-                    1e-4f);
+        EXPECT_NEAR(
+                0.25f,
+                samples[index].m_parameter - samples[index - 1].m_parameter,
+                1e-4f);
     }
 }
 

@@ -1,5 +1,5 @@
-#ifndef INVENTORY_H
-#define INVENTORY_H
+#ifndef VULKAN_EARTH_INVENTORY_H
+#define VULKAN_EARTH_INVENTORY_H
 
 #include <cstdint>
 #include "vulkan_earth/Player.h"
@@ -29,16 +29,16 @@ public:
     std::int32_t getSelectedIndex();
 
 private:
-    float x_pos, y_pos;
-    std::int32_t width, height;
-    ControlItemGrid* inven_grid;
-    TextObject* title;
-    TextObject* descript;
-    TextObject* explain;
-    ImageObject* img_inven[player_max_weapons + player_max_items];
-    TextObject* remainings[player_max_weapons + player_max_items];
-    Weapon* weapons[player_max_weapons];
-    Item* items[player_max_items];
-    std::int32_t select_cell_row, select_cell_col;
+    float m_x_pos, m_y_pos;
+    std::int32_t m_width, m_height;
+    ControlItemGrid* m_inven_grid;
+    TextObject* m_title;
+    TextObject* m_descript;
+    TextObject* m_explain;
+    ImageObject* m_img_inven[player_max_weapons + player_max_items];
+    TextObject* m_remainings[player_max_weapons + player_max_items];
+    Weapon* m_weapons[player_max_weapons];
+    Item* m_items[player_max_items];
+    std::int32_t m_select_cell_row, m_select_cell_col;
 };
-#endif  // INVENTORY_H
+#endif  // VULKAN_EARTH_INVENTORY_H

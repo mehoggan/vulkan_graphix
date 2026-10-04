@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TESSELLATIONTYPES_HPP
-#define VULKAN_GRAPHIX_TESSELLATIONTYPES_HPP
+#ifndef VULKAN_GRAPHIX_MATH_TESSELLATIONTYPES_HPP
+#define VULKAN_GRAPHIX_MATH_TESSELLATIONTYPES_HPP
 
 #include <ostream>
 #include <vector>
@@ -14,8 +14,9 @@ enum class GeneratorMode { Fill, Wireframe };
 template <typename T, typename I>
 class TessellatedTriangleData {
 public:
-    explicit TessellatedTriangleData(GeneratorMode mode = GeneratorMode::Fill)
-            : m_mode(mode) {}
+    explicit TessellatedTriangleData(
+            GeneratorMode mode = GeneratorMode::Fill) :
+            m_mode(mode) {}
 
     std::vector<Vec3<T>>& points() { return m_points; }
     std::vector<I>& indices() { return m_indices; }

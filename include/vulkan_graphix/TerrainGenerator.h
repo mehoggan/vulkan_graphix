@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TERRAIN_GENERATOR_H
-#define VULKAN_GRAPHIX_TERRAIN_GENERATOR_H
+#ifndef VULKAN_GRAPHIX_TERRAINGENERATOR_H
+#define VULKAN_GRAPHIX_TERRAINGENERATOR_H
 
 // Shared height field, ported from vulkan_earth's own TerrainMaker (see
 // vulkan_earth/src/TerrainMaker.cpp): generation (terrainGen()/
@@ -25,8 +25,8 @@ namespace vulkan_graphix {
 
 // One grid vertex, by (x, z) grid index.
 struct TerrainGridCell {
-    std::int32_t x;
-    std::int32_t z;
+    std::int32_t m_x;
+    std::int32_t m_z;
 };
 
 class TerrainGenerator {
@@ -105,4 +105,4 @@ private:
 
 }  // namespace vulkan_graphix
 
-#endif  // VULKAN_GRAPHIX_TERRAIN_GENERATOR_H
+#endif  // VULKAN_GRAPHIX_TERRAINGENERATOR_H

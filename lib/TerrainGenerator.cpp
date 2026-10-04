@@ -8,10 +8,10 @@
 namespace vulkan_graphix {
 
 TerrainGenerator::TerrainGenerator(std::int32_t grid_size,
-                                   std::int32_t grid_scale)
-        : m_grid_size(grid_size)
-        , m_grid_scale(grid_scale)
-        , m_heights(grid_size, std::vector<std::int32_t>(grid_size, 0)) {}
+                                   std::int32_t grid_scale) :
+        m_grid_size(grid_size),
+        m_grid_scale(grid_scale),
+        m_heights(grid_size, std::vector<std::int32_t>(grid_size, 0)) {}
 
 std::int32_t TerrainGenerator::gridSize() const { return m_grid_size; }
 std::int32_t TerrainGenerator::gridScale() const { return m_grid_scale; }

@@ -62,22 +62,22 @@ namespace vulkan_graphix {
 
 // Position only - unlit, untextured, unlike Tutorial08/14's lit sphere.
 struct Tutorial20VertexData {
-    Math::Vec4<float> position;
+    Math::Vec4<float> m_position;
 };
 
 using Tutorial20VertexAttributeTraits =
         VertexTypes::AttributeTraits<Math::Vec4<float>>;
 
 struct Tutorial20UniformBufferData {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // The active sphere instance's model matrix and flat color, set per
 // draw call - same shape as Tutorial18's push constant.
 struct Tutorial20PushConstants {
-    Math::Mat4<float> model;
-    Math::Vec4<float> color;
+    Math::Mat4<float> m_model;
+    Math::Vec4<float> m_color;
 };
 
 // ************************************************************ //

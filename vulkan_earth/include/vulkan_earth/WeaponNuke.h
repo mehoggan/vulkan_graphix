@@ -1,5 +1,5 @@
-#ifndef WEAPON_NUKE_H
-#define WEAPON_NUKE_H
+#ifndef VULKAN_EARTH_WEAPONNUKE_H
+#define VULKAN_EARTH_WEAPONNUKE_H
 
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"

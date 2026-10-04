@@ -1,5 +1,5 @@
-#ifndef OPENGL_COLORS_
-#define OPENGL_COLORS_
+#ifndef VULKAN_EARTH_OPENGLCOLORS_H
+#define VULKAN_EARTH_OPENGLCOLORS_H
 
 // OTHER GRAYS
 #define Blue 0.0, 0.0, 1.0
@@ -104,4 +104,4 @@
 #define Light_Purple 0.87, 0.58, 0.98
 #define Very_Light_Purple 0.94, 0.81, 0.99
 #define White 1.00, 1.00, 1.00
-#endif /*OPENGLCOLOR*/
+#endif  // VULKAN_EARTH_OPENGLCOLORS_H

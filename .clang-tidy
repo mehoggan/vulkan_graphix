@@ -79,5 +79,9 @@ CheckOptions:
     value:           lower_case
   - key:             readability-identifier-naming.MemberCase
     value:           lower_case
+  # Every non-static data member - class or struct, public or private -
+  # is m_-prefixed.
+  - key:             readability-identifier-naming.MemberPrefix
+    value:           m_
   - key:             readability-identifier-naming.ParameterCase
     value:           lower_case

@@ -7,18 +7,18 @@ extern void playSFX(std::int32_t sfx);
 
 ItemShield::ItemShield() = default;
 ItemShield::ItemShield(std::int32_t id) {
-    uniqueidentifier = id;
+    m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
             vulkan_graphix::GameCatalog::ItemKind::Shield));
 }
 ItemShield::~ItemShield() = default;
 
 ItemShield* ItemShield::getItemInstance() {
-    return new ItemShield(uniqueidentifier);
+    return new ItemShield(m_uniqueidentifier);
 }
 
 bool ItemShield::causeEffectToTank(Tank* tank) {
-    tank->setDurationShield(special_num);
+    tank->setDurationShield(m_special_num);
     return true;
 }
 

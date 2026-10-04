@@ -1,5 +1,5 @@
-#ifndef SPECIAL_EFFECT_H_
-#define SPECIAL_EFFECT_H_
+#ifndef VULKAN_EARTH_SPECIALEFFECT_H
+#define VULKAN_EARTH_SPECIALEFFECT_H
 
 #include "vulkan_graphix/Render/Renderer.h"
 
@@ -19,4 +19,4 @@ public:
     virtual void setDefaultColors() = 0;
 };
 
-#endif  // SPECIAL_EFFECT_H_
+#endif  // VULKAN_EARTH_SPECIALEFFECT_H

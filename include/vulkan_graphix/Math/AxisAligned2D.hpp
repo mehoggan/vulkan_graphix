@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_AXISALIGNED2D_HPP
-#define VULKAN_GRAPHIX_AXISALIGNED2D_HPP
+#ifndef VULKAN_GRAPHIX_MATH_AXISALIGNED2D_HPP
+#define VULKAN_GRAPHIX_MATH_AXISALIGNED2D_HPP
 
 #include <limits>
 #include <utility>
@@ -12,20 +12,20 @@ namespace vulkan_graphix::Math {
 template <typename T>
 class AxisAligned2D {
 public:
-    AxisAligned2D()
-            : m_lower_left(std::numeric_limits<T>::max(),
-                           std::numeric_limits<T>::max())
-            , m_upper_right(-std::numeric_limits<T>::max(),
-                            -std::numeric_limits<T>::max()) {}
+    AxisAligned2D() :
+            m_lower_left(std::numeric_limits<T>::max(),
+                         std::numeric_limits<T>::max()),
+            m_upper_right(-std::numeric_limits<T>::max(),
+                          -std::numeric_limits<T>::max()) {}
 
-    AxisAligned2D(const Vec2<T>& point1, const Vec2<T>& point2)
-            : AxisAligned2D() {
+    AxisAligned2D(const Vec2<T>& point1, const Vec2<T>& point2) :
+            AxisAligned2D() {
         growToContain(point1);
         growToContain(point2);
     }
 
-    AxisAligned2D(const Vec2<T>& lower_left, const T& width, const T& height)
-            : AxisAligned2D() {
+    AxisAligned2D(const Vec2<T>& lower_left, const T& width, const T& height) :
+            AxisAligned2D() {
         growToContain(lower_left);
         growToContain(Vec2<T>(lower_left.x + width, lower_left.y + height));
     }

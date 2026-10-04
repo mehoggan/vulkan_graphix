@@ -16,13 +16,13 @@ namespace vulkan_graphix {
 // ************************************************************ //
 // VulkanTutorial11Parameters                                   //
 // ************************************************************ //
-VulkanTutorial11Parameters::VulkanTutorial11Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_index_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial11Parameters::VulkanTutorial11Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_index_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial11Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -177,13 +177,13 @@ void VulkanTutorial11Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial11                                                   //
 // ************************************************************ //
-Tutorial11::Tutorial11()
-        // Start outside the cube (half-extent 2.0, see getVertexData()) for
-        // a clear initial view; drag to orbit, including in past the faces
-        // to look around from inside - cullMode is NONE (see
-        // createPipeline()) specifically so that works without any
-        // winding-order fuss.
-        : m_camera(0.6f, 0.4f, 6.0f) {}
+// Start outside the cube (half-extent 2.0, see getVertexData()) for
+// a clear initial view; drag to orbit, including in past the faces
+// to look around from inside - cullMode is NONE (see
+// createPipeline()) specifically so that works without any
+// winding-order fuss.
+Tutorial11::Tutorial11() :
+        m_camera(0.6f, 0.4f, 6.0f) {}
 
 Tutorial11::~Tutorial11() { childClear(); }
 
@@ -788,13 +788,13 @@ bool Tutorial11::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial11VertexData, position)},
+                     .offset = offsetof(struct Tutorial11VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial11VertexData, texcoord)}};
+                     .offset = offsetof(struct Tutorial11VertexData,
+                                        m_texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

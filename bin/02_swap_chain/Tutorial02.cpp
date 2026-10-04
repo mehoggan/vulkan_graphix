@@ -11,22 +11,22 @@
 
 namespace vulkan_graphix {
 
-VulkanTutorial02Parameters::VulkanTutorial02Parameters()
-        : m_vk_instance(VK_NULL_HANDLE)
-        , m_vk_physical_device(VK_NULL_HANDLE)
-        , m_vk_device(VK_NULL_HANDLE)
-        , m_graphics_vk_queue(VK_NULL_HANDLE)
-        , m_present_vk_queue(VK_NULL_HANDLE)
-        , m_graphics_queue_family_index(0)
-        , m_present_queue_family_index(0)
-        , m_presentation_vk_surface_khr(VK_NULL_HANDLE)
-        , m_vk_swapchain_khr(VK_NULL_HANDLE)
-        , m_present_queue_vk_command_buffers(0)
-        , m_present_queue_vk_command_pool(VK_NULL_HANDLE)
-        , m_image_available_vk_semaphore(VK_NULL_HANDLE)
-        , m_rendering_finished_semaphores({})
-        , m_vk_fence(VK_NULL_HANDLE)
-        , m_vk_debug_utils_messenger(VK_NULL_HANDLE) {}
+VulkanTutorial02Parameters::VulkanTutorial02Parameters() :
+        m_vk_instance(VK_NULL_HANDLE),
+        m_vk_physical_device(VK_NULL_HANDLE),
+        m_vk_device(VK_NULL_HANDLE),
+        m_graphics_vk_queue(VK_NULL_HANDLE),
+        m_present_vk_queue(VK_NULL_HANDLE),
+        m_graphics_queue_family_index(0),
+        m_present_queue_family_index(0),
+        m_presentation_vk_surface_khr(VK_NULL_HANDLE),
+        m_vk_swapchain_khr(VK_NULL_HANDLE),
+        m_present_queue_vk_command_buffers(0),
+        m_present_queue_vk_command_pool(VK_NULL_HANDLE),
+        m_image_available_vk_semaphore(VK_NULL_HANDLE),
+        m_rendering_finished_semaphores({}),
+        m_vk_fence(VK_NULL_HANDLE),
+        m_vk_debug_utils_messenger(VK_NULL_HANDLE) {}
 
 const VkInstance& VulkanTutorial02Parameters::getVkInstance() const {
     return m_vk_instance;
@@ -189,8 +189,9 @@ void VulkanTutorial02Parameters::setVkDebugUtilsMessenger(
     m_vk_debug_utils_messenger = vk_debug_utils_messenger;
 }
 
-Tutorial02::Tutorial02()
-        : LoggedClass<Tutorial02>(*this), m_vulkan_library() {}
+Tutorial02::Tutorial02() :
+        LoggedClass<Tutorial02>(*this),
+        m_vulkan_library() {}
 
 Tutorial02::~Tutorial02() {
     clear();

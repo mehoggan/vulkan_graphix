@@ -27,15 +27,15 @@ enum class ItemKind : std::uint8_t {
 inline constexpr std::size_t c_item_count = 8;
 
 struct ItemSpec {
-    const char* image_file;
-    const char* description;
-    std::int32_t price;
-    std::int32_t package_num;
-    std::int32_t max_stack;
-    std::int32_t remaining;
+    const char* m_image_file;
+    const char* m_description;
+    std::int32_t m_price;
+    std::int32_t m_package_num;
+    std::int32_t m_max_stack;
+    std::int32_t m_remaining;
     // The strength of the item's effect (hit points healed, turns lasted,
     // ...), as each Item subclass's causeEffectToTank() reads it.
-    std::int32_t special_num;
+    std::int32_t m_special_num;
 };
 
 const ItemSpec& item(ItemKind kind);
@@ -63,22 +63,22 @@ inline constexpr std::size_t c_weapon_count = 11;
 inline constexpr std::size_t c_shop_weapon_count = 10;
 
 struct WeaponSpec {
-    const char* image_file;
-    const char* description;
-    std::int32_t price;
-    std::int32_t package_num;
-    std::int32_t max_stack;
-    std::int32_t remaining;
+    const char* m_image_file;
+    const char* m_description;
+    std::int32_t m_price;
+    std::int32_t m_package_num;
+    std::int32_t m_max_stack;
+    std::int32_t m_remaining;
     // The projectile model's scale in flight.
-    float scale;
-    float radius;
-    std::int32_t damage;
+    float m_scale;
+    float m_radius;
+    std::int32_t m_damage;
     // The strength of the weapon's side effect (turns, hit points, ...).
-    std::int32_t special_number;
+    std::int32_t m_special_number;
     // The four colors its explosion cycles through, as the double literals
     // the game's OpenGLColors.h color names expand to (the Weapon classes
     // stored them as floats).
-    std::array<std::array<double, 3>, 4> explosion_colors;
+    std::array<std::array<double, 3>, 4> m_explosion_colors;
 };
 
 const WeaponSpec& weapon(WeaponKind kind);

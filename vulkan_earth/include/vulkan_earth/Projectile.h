@@ -1,5 +1,5 @@
-#ifndef PROJECTILE_H_
-#define PROJECTILE_H_
+#ifndef VULKAN_EARTH_PROJECTILE_H
+#define VULKAN_EARTH_PROJECTILE_H
 
 #include <cstdint>
 #include "vulkan_graphix/Ballistics.h"
@@ -50,21 +50,21 @@ public:
     const vulkan_graphix::Ballistics::Launch& getLaunch();
 
 private:
-    ChaseCam* chase_cam;
-    float pos[3];
-    float v_vec[3];
-    float speed;
-    float wind;  // implement later
-    Weapon* weapon;
-    Weapon* default_weapon;
-    VBOShaderLibrary* projectile_default;
-    VBOShaderLibrary** projectile_models;
-    float rotate;
-    float y_not;
-    std::int32_t timer;
-    bool printed;
-    GameState* parent;
-    vulkan_graphix::Ballistics::Launch launch;
+    ChaseCam* m_chase_cam;
+    float m_pos[3];
+    float m_v_vec[3];
+    float m_speed;
+    float m_wind;  // implement later
+    Weapon* m_weapon;
+    Weapon* m_default_weapon;
+    VBOShaderLibrary* m_projectile_default;
+    VBOShaderLibrary** m_projectile_models;
+    float m_rotate;
+    float m_y_not;
+    std::int32_t m_timer;
+    bool m_printed;
+    GameState* m_parent;
+    vulkan_graphix::Ballistics::Launch m_launch;
 };
 
-#endif /*	PROJECTILE_H_	*/
+#endif  // VULKAN_EARTH_PROJECTILE_H

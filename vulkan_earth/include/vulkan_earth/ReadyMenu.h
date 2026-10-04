@@ -1,5 +1,5 @@
-#ifndef READYMENU_H
-#define READYMENU_H
+#ifndef VULKAN_EARTH_READYMENU_H
+#define VULKAN_EARTH_READYMENU_H
 
 #include <cstdint>
 #include <string>
@@ -60,30 +60,30 @@ public:
     void updateNumPlayers(std::int32_t n);
 
 private:
-    float pos[3], width, height, color[4], border;
-    float percent_border;
-    float tank_prv_scr_pos[3], tank_prv_scr_width, tank_prv_scr_height;
-    float tank_prv_scr_color[3];
-    MainMenuButton* buttons[num_buttons];
-    ImageObject* stat_images[num_stat_images];
-    ControlItem* control_items[num_control_items];
-    TextObject* player_page_num;
-    TextObject* tank_stat_labels[num_tank_stats];
-    MainMenuButton* button_pressed;
-    std::string caption;
-    std::int32_t current_player_index;
-    std::int32_t num_players;
-    std::int32_t* current_game_state;
-    std::int32_t prv_scr_color_control;
-    ControlItemTextField* text_field;
-    GlobalSettings* global_settings;
-    PlayerFactory* player_factory;
-    Tank* tanks[num_tank_types];
-    float tank_angle;
-    bool start_music_played;
-    vulkan_graphix::Render::UiMesh panel_mesh;
-    float built_width = -1.0f;
-    float built_height = -1.0f;
+    float m_pos[3], m_width, m_height, m_color[4], m_border;
+    float m_percent_border;
+    float m_tank_prv_scr_pos[3], m_tank_prv_scr_width, m_tank_prv_scr_height;
+    float m_tank_prv_scr_color[3];
+    MainMenuButton* m_buttons[num_buttons];
+    ImageObject* m_stat_images[num_stat_images];
+    ControlItem* m_control_items[num_control_items];
+    TextObject* m_player_page_num;
+    TextObject* m_tank_stat_labels[num_tank_stats];
+    MainMenuButton* m_button_pressed;
+    std::string m_caption;
+    std::int32_t m_current_player_index;
+    std::int32_t m_num_players;
+    std::int32_t* m_current_game_state;
+    std::int32_t m_prv_scr_color_control;
+    ControlItemTextField* m_text_field;
+    GlobalSettings* m_global_settings;
+    PlayerFactory* m_player_factory;
+    Tank* m_tanks[num_tank_types];
+    float m_tank_angle;
+    bool m_start_music_played;
+    vulkan_graphix::Render::UiMesh m_panel_mesh;
+    float m_built_width = -1.0f;
+    float m_built_height = -1.0f;
 };
 
 #endif

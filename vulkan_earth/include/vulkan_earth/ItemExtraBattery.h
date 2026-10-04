@@ -1,5 +1,5 @@
-#ifndef ITEM_EXTRA_BATTERY_H
-#define ITEM_EXTRA_BATTERY_H
+#ifndef VULKAN_EARTH_ITEMEXTRABATTERY_H
+#define VULKAN_EARTH_ITEMEXTRABATTERY_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

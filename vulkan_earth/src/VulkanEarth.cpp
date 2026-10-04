@@ -134,11 +134,11 @@ constexpr std::chrono::milliseconds c_frame_interval(20);
 // (that frame, as a binary PPM), and "quit". VE_WINDOW=<w>x<h> overrides
 // the window size, so captures line up across runs.
 struct ScriptEvent {
-    std::int64_t frame = 0;
-    std::string op;
-    std::string argument;
-    std::int32_t x = 0;
-    std::int32_t y = 0;
+    std::int64_t m_frame = 0;
+    std::string m_op;
+    std::string m_argument;
+    std::int32_t m_x = 0;
+    std::int32_t m_y = 0;
 };
 std::vector<ScriptEvent> script;
 std::int64_t script_frame = 0;
@@ -156,13 +156,13 @@ void loadScript() {
         }
         std::istringstream fields(line);
         ScriptEvent event;
-        fields >> event.frame >> event.op;
-        if (event.op == "capture" || event.op == "key" ||
-            event.op == "keyup" || event.op == "spec" ||
-            event.op == "specup") {
-            fields >> event.argument;
+        fields >> event.m_frame >> event.m_op;
+        if (event.m_op == "capture" || event.m_op == "key" ||
+            event.m_op == "keyup" || event.m_op == "spec" ||
+            event.m_op == "specup") {
+            fields >> event.m_argument;
         } else {
-            fields >> event.x >> event.y;
+            fields >> event.m_x >> event.m_y;
         }
         script.push_back(event);
     }
@@ -177,24 +177,25 @@ std::uint8_t scriptKey(const std::string& name) {
 void runScriptFrame() {
     ++script_frame;
     for (const ScriptEvent& event : script) {
-        if (event.frame != script_frame) continue;
-        if (event.op == "down")
-            mouseHandler(c_glut_left_button, c_glut_down, event.x, event.y);
-        else if (event.op == "up")
-            mouseHandler(c_glut_left_button, c_glut_up, event.x, event.y);
-        else if (event.op == "move")
-            mouseMotionHandler(event.x, event.y);
-        else if (event.op == "key")
-            keyHandler(scriptKey(event.argument), 0, 0);
-        else if (event.op == "keyup")
-            keyHandlerUp(scriptKey(event.argument), 0, 0);
-        else if (event.op == "spec")
-            specKeyHandler(std::atoi(event.argument.c_str()), 0, 0);
-        else if (event.op == "specup")
-            specKeyHandlerUp(std::atoi(event.argument.c_str()), 0, 0);
-        else if (event.op == "capture")
-            render::Renderer::instance().requestCapture(event.argument);
-        else if (event.op == "quit")
+        if (event.m_frame != script_frame) continue;
+        if (event.m_op == "down")
+            mouseHandler(
+                    c_glut_left_button, c_glut_down, event.m_x, event.m_y);
+        else if (event.m_op == "up")
+            mouseHandler(c_glut_left_button, c_glut_up, event.m_x, event.m_y);
+        else if (event.m_op == "move")
+            mouseMotionHandler(event.m_x, event.m_y);
+        else if (event.m_op == "key")
+            keyHandler(scriptKey(event.m_argument), 0, 0);
+        else if (event.m_op == "keyup")
+            keyHandlerUp(scriptKey(event.m_argument), 0, 0);
+        else if (event.m_op == "spec")
+            specKeyHandler(std::atoi(event.m_argument.c_str()), 0, 0);
+        else if (event.m_op == "specup")
+            specKeyHandlerUp(std::atoi(event.m_argument.c_str()), 0, 0);
+        else if (event.m_op == "capture")
+            render::Renderer::instance().requestCapture(event.m_argument);
+        else if (event.m_op == "quit")
             quitGame(true);
     }
 }
@@ -232,10 +233,10 @@ public:
         // GLUT's keyboard callbacks get the character a character_key types
         // (Escape is 27, Enter 13, ...); its special callbacks get function
         // and arrow keys as GLUT_KEY_* codes.
-        if (event.character != '\0') {
+        if (event.m_character != '\0') {
             const auto character_key =
-                    static_cast<std::uint8_t>(event.character);
-            if (event.pressed) {
+                    static_cast<std::uint8_t>(event.m_character);
+            if (event.m_pressed) {
                 keyHandler(character_key, 0, 0);
             } else {
                 keyHandlerUp(character_key, 0, 0);
@@ -243,19 +244,19 @@ public:
             return true;
         }
         std::int32_t special = -1;
-        if (event.keysym >= XK_F1 && event.keysym <= XK_F12) {
-            special = static_cast<std::int32_t>(event.keysym - XK_F1) + 1;
-        } else if (event.keysym == XK_Left) {
+        if (event.m_keysym >= XK_F1 && event.m_keysym <= XK_F12) {
+            special = static_cast<std::int32_t>(event.m_keysym - XK_F1) + 1;
+        } else if (event.m_keysym == XK_Left) {
             special = 100;
-        } else if (event.keysym == XK_Up) {
+        } else if (event.m_keysym == XK_Up) {
             special = 101;
-        } else if (event.keysym == XK_Right) {
+        } else if (event.m_keysym == XK_Right) {
             special = 102;
-        } else if (event.keysym == XK_Down) {
+        } else if (event.m_keysym == XK_Down) {
             special = 103;
         }
         if (special != -1) {
-            if (event.pressed) {
+            if (event.m_pressed) {
                 specKeyHandler(special, 0, 0);
             } else {
                 specKeyHandlerUp(special, 0, 0);
@@ -449,7 +450,7 @@ bool draw() {
     switch (screen_state) {
         case MAIN_MENU: {
             if (prev_screen_state != MAIN_MENU) {
-                mainmenu->getSubMenuLandscape()->tm->prepareData(
+                mainmenu->getSubMenuLandscape()->m_tm->prepareData(
                         0, 0, 0, 0, 0);
                 window->setCursorVisible(true);
             }
@@ -546,7 +547,7 @@ bool draw() {
                      math::Vec4<float>(0, 0, 1, 1),
                      math::Vec2<float>(0.0f)}};
             context->drawTransient(
-                    axes, vulkan_earth::pipelines().ui_lines, nullptr);
+                    axes, vulkan_earth::pipelines().m_ui_lines, nullptr);
 
             break;
         }

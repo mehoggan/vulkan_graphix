@@ -44,8 +44,10 @@ bool findAndAllocateMemory(VkDevice device,
 // ************************************************************ //
 // BufferFactory                                                //
 // ************************************************************ //
-BufferFactory::BufferFactory(VkDevice device, VkPhysicalDevice physical_device)
-        : m_device(device), m_physical_device(physical_device) {}
+BufferFactory::BufferFactory(VkDevice device,
+                             VkPhysicalDevice physical_device) :
+        m_device(device),
+        m_physical_device(physical_device) {}
 
 bool BufferFactory::allocateMemory(VkBuffer buffer,
                                    VkMemoryPropertyFlags property,
@@ -106,8 +108,9 @@ void BufferFactory::destroy(BufferParameters& buffer) const {
 // ************************************************************ //
 // ImageFactory                                                 //
 // ************************************************************ //
-ImageFactory::ImageFactory(VkDevice device, VkPhysicalDevice physical_device)
-        : m_device(device), m_physical_device(physical_device) {}
+ImageFactory::ImageFactory(VkDevice device, VkPhysicalDevice physical_device) :
+        m_device(device),
+        m_physical_device(physical_device) {}
 
 bool ImageFactory::allocateMemory(VkImage image,
                                   VkMemoryPropertyFlags property,
@@ -228,10 +231,10 @@ void ImageFactory::destroy(ImageParameters& image) const {
 // ************************************************************ //
 StagedUploader::StagedUploader(VkDevice device,
                                VkQueue graphics_queue,
-                               VkCommandBuffer upload_command_buffer)
-        : m_device(device)
-        , m_graphics_queue(graphics_queue)
-        , m_upload_command_buffer(upload_command_buffer) {}
+                               VkCommandBuffer upload_command_buffer) :
+        m_device(device),
+        m_graphics_queue(graphics_queue),
+        m_upload_command_buffer(upload_command_buffer) {}
 
 bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
                                    VkImage image,
@@ -454,8 +457,8 @@ bool StagedUploader::uploadToBuffer(
 // ************************************************************ //
 // FrameResourceFactory                                         //
 // ************************************************************ //
-FrameResourceFactory::FrameResourceFactory(VkDevice device)
-        : m_device(device) {}
+FrameResourceFactory::FrameResourceFactory(VkDevice device) :
+        m_device(device) {}
 
 bool FrameResourceFactory::createCommandPool(std::uint32_t queue_family_index,
                                              VkCommandPool* out) const {

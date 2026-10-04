@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef VULKAN_EARTH_PLAYER_H
+#define VULKAN_EARTH_PLAYER_H
 
 #include <cstdint>
 
@@ -94,53 +94,53 @@ public:
     /*	AI	FUNCTIONS/DAT			*/
     /*	NOTE: PLAYER_HUMAN.CPP		*/
 protected:
-    GameState* game_state;
-    Tank* target;
-    vulkan_graphix::Math::Vec3<float> enemy_position;
-    vulkan_graphix::Math::Vec3<float> projectile_path =
+    GameState* m_game_state;
+    Tank* m_target;
+    vulkan_graphix::Math::Vec3<float> m_enemy_position;
+    vulkan_graphix::Math::Vec3<float> m_projectile_path =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> enemy_path =
+    vulkan_graphix::Math::Vec3<float> m_enemy_path =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> right_vector =
+    vulkan_graphix::Math::Vec3<float> m_right_vector =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> left_vector =
+    vulkan_graphix::Math::Vec3<float> m_left_vector =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> up_vector =
+    vulkan_graphix::Math::Vec3<float> m_up_vector =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> down_vector =
+    vulkan_graphix::Math::Vec3<float> m_down_vector =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> pitch_vector =
+    vulkan_graphix::Math::Vec3<float> m_pitch_vector =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> ortho_right =
+    vulkan_graphix::Math::Vec3<float> m_ortho_right =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> ortho_left =
+    vulkan_graphix::Math::Vec3<float> m_ortho_left =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    float yaw_angle;
-    float rangle;
-    float langle;
-    float pitch_angle;
-    float uangle;
-    float dangle;
-    float balistic_matrix[16];
-    float max_pitch_angle;
-    std::int32_t state_of_ai;
-    std::int32_t prev_state_of_ai;
-    std::int32_t sub_state_of_ai;
+    float m_yaw_angle;
+    float m_rangle;
+    float m_langle;
+    float m_pitch_angle;
+    float m_uangle;
+    float m_dangle;
+    float m_balistic_matrix[16];
+    float m_max_pitch_angle;
+    std::int32_t m_state_of_ai;
+    std::int32_t m_prev_state_of_ai;
+    std::int32_t m_sub_state_of_ai;
     /*	AI ACTIONS	*/
     void restoreTurretTo0Degrees();
     void yawLeft(float degrees);
     void yawRight(float degrees);
     void pitchUp(float degrees);
     void pitchDown(float degrees);
-    bool draw_debug_linesand_planes;
+    bool m_draw_debug_linesand_planes;
     char minimumYawAngle(float right_degrees, float left_degrees);
-    vulkan_graphix::Math::Vec3<float> previous_projectile_landing_spot;
-    float distance_off_from_target;
-    float previous_distance_off_from_target;
-    float degrees_rotated;
-    float first_acquired_power;
-    float first_acquired_pitch;
+    vulkan_graphix::Math::Vec3<float> m_previous_projectile_landing_spot;
+    float m_distance_off_from_target;
+    float m_previous_distance_off_from_target;
+    float m_degrees_rotated;
+    float m_first_acquired_power;
+    float m_first_acquired_pitch;
     /*	END OF AI FUNCTIONS/DATA	*/
 };
 
-#endif /*	PLAYER_H	*/
+#endif  // VULKAN_EARTH_PLAYER_H

@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TRIANGLE_HPP
-#define VULKAN_GRAPHIX_TRIANGLE_HPP
+#ifndef VULKAN_GRAPHIX_MATH_TRIANGLE_HPP
+#define VULKAN_GRAPHIX_MATH_TRIANGLE_HPP
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
 
@@ -11,8 +11,10 @@ class Triangle {
 public:
     Triangle(const Vec3<T>& point0,
              const Vec3<T>& point1,
-             const Vec3<T>& point2)
-            : m_point0(point0), m_point1(point1), m_point2(point2) {}
+             const Vec3<T>& point2) :
+            m_point0(point0),
+            m_point1(point1),
+            m_point2(point2) {}
 
     const Vec3<T>& p0() const { return m_point0; }
     const Vec3<T>& p1() const { return m_point1; }

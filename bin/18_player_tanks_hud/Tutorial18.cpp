@@ -34,23 +34,23 @@ Math::Vec4<float> getPowerBarColor(float ratio) {
 // ************************************************************ //
 // VulkanTutorial18Parameters                                   //
 // ************************************************************ //
-VulkanTutorial18Parameters::VulkanTutorial18Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_3d_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_hud_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_3d_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_hud_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_3d_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_hud_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_3d_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_hud_graphics_pipeline(VK_NULL_HANDLE)
-        , m_body_vertex_count(0)
-        , m_head_vertex_count(0)
-        , m_turret_vertex_count(0)
-        , m_hud_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial18Parameters::VulkanTutorial18Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_3d_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_hud_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_descriptor_pool(VK_NULL_HANDLE),
+        m_vk_3d_descriptor_set(VK_NULL_HANDLE),
+        m_vk_hud_descriptor_set(VK_NULL_HANDLE),
+        m_vk_3d_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_hud_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_3d_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_hud_graphics_pipeline(VK_NULL_HANDLE),
+        m_body_vertex_count(0),
+        m_head_vertex_count(0),
+        m_turret_vertex_count(0),
+        m_hud_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial18Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -361,13 +361,13 @@ void VulkanTutorial18Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial18                                                   //
 // ************************************************************ //
-Tutorial18::Tutorial18()
-        // Two tanks 800 units apart (world X = +-400) span roughly
-        // [-610,610] in X once each tank's own ~210-unit body half-
-        // extent is added - a wider world than Tutorial16's single
-        // tank, so this needs a larger distance still; tuned via
-        // screenshot the same way.
-        : m_camera(0.5f, 0.08f, 1600.0f) {}
+// Two tanks 800 units apart (world X = +-400) span roughly
+// [-610,610] in X once each tank's own ~210-unit body half-
+// extent is added - a wider world than Tutorial16's single
+// tank, so this needs a larger distance still; tuned via
+// screenshot the same way.
+Tutorial18::Tutorial18() :
+        m_camera(0.5f, 0.08f, 1600.0f) {}
 
 Tutorial18::~Tutorial18() { childClear(); }
 
@@ -646,9 +646,9 @@ bool Tutorial18::createFontAtlas() {
 
 Tutorial18UniformBufferData3D Tutorial18::get3DUniformBufferData() const {
     Tutorial18UniformBufferData3D data{};
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -656,7 +656,7 @@ Tutorial18UniformBufferData3D Tutorial18::get3DUniformBufferData() const {
             getSwapchainParameters().getVkExtent2d().height);
     // Near/far sized for this tutorial's wider two-tank world (see the
     // constructor's own comment), not copied from Tutorial16's range.
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 1.0f, 4000.0f);
 
     return data;
@@ -1116,11 +1116,11 @@ bool Tutorial18::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial18Vertex3DData, position)},
+             .offset = offsetof(struct Tutorial18Vertex3DData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial18Vertex3DData, texcoord)}};
+             .offset = offsetof(struct Tutorial18Vertex3DData, m_texcoord)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_3d = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1294,15 +1294,15 @@ bool Tutorial18::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial18VertexHudData, position)},
+             .offset = offsetof(struct Tutorial18VertexHudData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial18VertexHudData, texcoord)},
+             .offset = offsetof(struct Tutorial18VertexHudData, m_texcoord)},
             {.location = 2,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial18VertexHudData, color)}};
+             .offset = offsetof(struct Tutorial18VertexHudData, m_color)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_hud = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1420,8 +1420,8 @@ std::vector<Tutorial18Vertex3DData> Tutorial18::loadPartVertexData(
     std::vector<Tutorial18Vertex3DData> vertex_data;
     vertex_data.reserve(mesh_data.size());
     for (const Tools::OglVertexData& vertex : mesh_data) {
-        vertex_data.push_back(
-                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
+        vertex_data.push_back({Math::Vec4<float>(vertex.m_position, 1.0f),
+                               vertex.m_texcoord});
     }
     return vertex_data;
 }
@@ -1603,19 +1603,19 @@ const std::array<Tutorial18PlayerInfo, 2>& Tutorial18::getPlayers() const {
 Math::Mat4<float> Tutorial18::getBodyModelMatrix(
         const Math::Vec3<float>& world_position) const {
     return HellfireTank::buildPartMatrix(
-            HellfireTank::getPartTranslations(world_position).body);
+            HellfireTank::getPartTranslations(world_position).m_body);
 }
 
 Math::Mat4<float> Tutorial18::getHeadModelMatrix(
         const Math::Vec3<float>& world_position) const {
     return HellfireTank::buildPartMatrix(
-            HellfireTank::getPartTranslations(world_position).head);
+            HellfireTank::getPartTranslations(world_position).m_head);
 }
 
 Math::Mat4<float> Tutorial18::getTurretModelMatrix(
         const Math::Vec3<float>& world_position) const {
     return HellfireTank::buildPartMatrix(
-            HellfireTank::getPartTranslations(world_position).turret);
+            HellfireTank::getPartTranslations(world_position).m_turret);
 }
 
 Math::Vec2<float> Tutorial18::getPanelSize() const {
@@ -1704,25 +1704,26 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
                 UiGeometry::buildButtonBevel(
                         panel_top_left, panel_size, panel_color, false);
         for (const UiGeometry::ColoredQuad& quad : bevel) {
-            appendColoredQuad(vertex_data, quad.corners, quad.color);
+            appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
         }
 
         appendText(vertex_data,
-                   players[i].name,
+                   players[i].m_name,
                    Math::Vec2<float>(panel_top_left.x + 16.0f,
                                      panel_top_left.y + 26.0f),
-                   players[i].team_color);
+                   players[i].m_team_color);
 
-        const std::string hp_text = "HP: " + std::to_string(players[i].hp) +
-                                    " / " + std::to_string(players[i].max_hp);
+        const std::string hp_text = "HP: " + std::to_string(players[i].m_hp) +
+                                    " / " +
+                                    std::to_string(players[i].m_max_hp);
         appendText(vertex_data,
                    hp_text,
                    Math::Vec2<float>(panel_top_left.x + 16.0f,
                                      panel_top_left.y + 52.0f),
                    text_color);
 
-        const float health_ratio = static_cast<float>(players[i].hp) /
-                                   static_cast<float>(players[i].max_hp);
+        const float health_ratio = static_cast<float>(players[i].m_hp) /
+                                   static_cast<float>(players[i].m_max_hp);
         appendBar(vertex_data,
                   Math::Vec2<float>(panel_top_left.x + 16.0f,
                                     panel_top_left.y + 60.0f),
@@ -1732,7 +1733,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
 
         const std::string power_text =
                 "Power: " + std::to_string(static_cast<std::int32_t>(
-                                    players[i].power_ratio * 1000.0f));
+                                    players[i].m_power_ratio * 1000.0f));
         appendText(vertex_data,
                    power_text,
                    Math::Vec2<float>(panel_top_left.x + 16.0f,
@@ -1743,7 +1744,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
                   Math::Vec2<float>(panel_top_left.x + 16.0f,
                                     panel_top_left.y + 108.0f),
                   Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
-                  players[i].power_ratio,
+                  players[i].m_power_ratio,
                   &getPowerBarColor);
     }
 
@@ -1949,7 +1950,8 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
     const std::array<Tutorial18PlayerInfo, 2>& players = getPlayers();
     for (const Tutorial18PlayerInfo& player : players) {
         Tutorial18PushConstants body_push_constants{
-                getBodyModelMatrix(player.world_position), player.team_color};
+                getBodyModelMatrix(player.m_world_position),
+                player.m_team_color};
         vkCmdBindVertexBuffers(
                 command_buffer,
                 0,
@@ -1971,7 +1973,8 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                   0);
 
         Tutorial18PushConstants head_push_constants{
-                getHeadModelMatrix(player.world_position), player.team_color};
+                getHeadModelMatrix(player.m_world_position),
+                player.m_team_color};
         vkCmdBindVertexBuffers(
                 command_buffer,
                 0,
@@ -1993,8 +1996,8 @@ bool Tutorial18::prepareFrame(VkCommandBuffer command_buffer,
                   0);
 
         Tutorial18PushConstants turret_push_constants{
-                getTurretModelMatrix(player.world_position),
-                player.team_color};
+                getTurretModelMatrix(player.m_world_position),
+                player.m_team_color};
         vkCmdBindVertexBuffers(command_buffer,
                                0,
                                1,

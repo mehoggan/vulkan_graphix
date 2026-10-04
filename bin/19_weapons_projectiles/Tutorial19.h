@@ -62,8 +62,8 @@ namespace vulkan_graphix {
 
 // Same shape as Tutorial16VertexData.
 struct Tutorial19Vertex3DData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial19Vertex3DAttributeTraits =
@@ -71,9 +71,9 @@ using Tutorial19Vertex3DAttributeTraits =
 
 // Same shape as Tutorial15/17/18-HUD VertexData.
 struct Tutorial19VertexGridData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
-    Math::Vec4<float> color;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
+    Math::Vec4<float> m_color;
 };
 
 using Tutorial19VertexGridAttributeTraits =
@@ -82,14 +82,14 @@ using Tutorial19VertexGridAttributeTraits =
                                      Math::Vec4<float>>;
 
 struct Tutorial19UniformBufferData3D {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // Same shape as Tutorial16's push constant - just a model matrix, no
 // color tint needed here.
 struct Tutorial19PushConstants {
-    Math::Mat4<float> model;
+    Math::Mat4<float> m_model;
 };
 
 static constexpr std::size_t c_weapon_grid_item_count = 10;

@@ -46,205 +46,206 @@ ShopMenu::ShopMenu(float new_width,
                    GlobalSettings* new_global_settings,
                    PlayerFactory* new_player_factory,
                    std::int32_t* game_state) {
-    global_settings = new_global_settings;
-    player_factory = new_player_factory;
-    current_game_state = game_state;
-    num_players = new_global_settings->getPlayerCount();
-    current_player_index = 0;
-    current_player_balance = 0;
+    m_global_settings = new_global_settings;
+    m_player_factory = new_player_factory;
+    m_current_game_state = game_state;
+    m_num_players = new_global_settings->getPlayerCount();
+    m_current_player_index = 0;
+    m_current_player_balance = 0;
 
     for (std::int32_t i = 0; i < inven_grid_row; i++) {
-        inven_wpns[i] = nullptr;
-        inven_items[i] = nullptr;
-        label_inven_wpn_remains[i] = nullptr;
-        label_inven_item_remains[i] = nullptr;
-        img_inven_wpns[i] = nullptr;
-        img_inven_items[i] = nullptr;
+        m_inven_wpns[i] = nullptr;
+        m_inven_items[i] = nullptr;
+        m_label_inven_wpn_remains[i] = nullptr;
+        m_label_inven_item_remains[i] = nullptr;
+        m_img_inven_wpns[i] = nullptr;
+        m_img_inven_items[i] = nullptr;
     }
 
-    width = new_width;
-    height = new_height;
-    percent_border = new_percent_border;
-    pos[0] = pos[1] = pos[2] = 0;
+    m_width = new_width;
+    m_height = new_height;
+    m_percent_border = new_percent_border;
+    m_pos[0] = m_pos[1] = m_pos[2] = 0;
 
-    grids[0] = new ControlItemGrid(pos[0] - width * 0.4,
-                                   pos[1] + height * 0.28,
-                                   pos[2],
-                                   width * 0.3,
-                                   height * 0.3,
-                                   shop_grid_row,
-                                   shop_grid_col,
-                                   0.72,
-                                   0.25,
-                                   0.41,
-                                   false,
-                                   false);
-    grids[1] = new ControlItemGrid(pos[0] + width * 0.175,
-                                   pos[1] + height * 0.30,
-                                   pos[2],
-                                   width * 0.12,
-                                   height * 0.4,
-                                   inven_grid_row,
-                                   inven_grid_col,
-                                   0.25,
-                                   0.7,
-                                   0.43,
-                                   true,
-                                   true);
-    buttons[0] = new ControlItemButton(nullptr,
-                                       pos[0] - width * 0.34,
-                                       pos[1] + height * 0.35,
-                                       pos[2] + 0.5,
-                                       0.75,
-                                       0.75,
-                                       0.75,
-                                       0.075 * (width),
-                                       0.04 * (height),
-                                       "Weapon");
-    buttons[0]->setToggled(true);
-    buttons[0]->updateButtonState();
+    m_grids[0] = new ControlItemGrid(m_pos[0] - m_width * 0.4,
+                                     m_pos[1] + m_height * 0.28,
+                                     m_pos[2],
+                                     m_width * 0.3,
+                                     m_height * 0.3,
+                                     shop_grid_row,
+                                     shop_grid_col,
+                                     0.72,
+                                     0.25,
+                                     0.41,
+                                     false,
+                                     false);
+    m_grids[1] = new ControlItemGrid(m_pos[0] + m_width * 0.175,
+                                     m_pos[1] + m_height * 0.30,
+                                     m_pos[2],
+                                     m_width * 0.12,
+                                     m_height * 0.4,
+                                     inven_grid_row,
+                                     inven_grid_col,
+                                     0.25,
+                                     0.7,
+                                     0.43,
+                                     true,
+                                     true);
+    m_buttons[0] = new ControlItemButton(nullptr,
+                                         m_pos[0] - m_width * 0.34,
+                                         m_pos[1] + m_height * 0.35,
+                                         m_pos[2] + 0.5,
+                                         0.75,
+                                         0.75,
+                                         0.75,
+                                         0.075 * (m_width),
+                                         0.04 * (m_height),
+                                         "Weapon");
+    m_buttons[0]->setToggled(true);
+    m_buttons[0]->updateButtonState();
 
-    buttons[1] = new ControlItemButton(nullptr,
-                                       pos[0] - width * 0.235,
-                                       pos[1] + height * 0.35,
-                                       pos[2] + 0.5,
-                                       0.75,
-                                       0.75,
-                                       0.75,
-                                       0.075 * (width),
-                                       0.04 * (height),
-                                       "Item");
-    buttons[2] = new ControlItemButton(nullptr,
-                                       pos[0] - width * 0.2,
-                                       pos[1] - height * 0.175,
-                                       pos[2] + 0.5,
-                                       0.75,
-                                       0.75,
-                                       0.75,
-                                       0.075 * (width),
-                                       0.04 * (height),
-                                       "Buy");
-    buttons[3] = new ControlItemButton(nullptr,
-                                       pos[0] + width * 0.275,
-                                       pos[1] - height * 0.175,
-                                       pos[2] + 0.5,
-                                       0.75,
-                                       0.75,
-                                       0.75,
-                                       0.075 * (width),
-                                       0.04 * (height),
-                                       "Sell");
-    buttons[4] = new ControlItemButton(nullptr,
-                                       pos[0] + width * 0.15,
-                                       pos[1] - height * 0.365,
-                                       pos[2] + 0.5,
-                                       0.65,
-                                       0.15,
-                                       0.15,
-                                       0.135 * (width),
-                                       0.04 * (height),
-                                       "Finish Shopping");
+    m_buttons[1] = new ControlItemButton(nullptr,
+                                         m_pos[0] - m_width * 0.235,
+                                         m_pos[1] + m_height * 0.35,
+                                         m_pos[2] + 0.5,
+                                         0.75,
+                                         0.75,
+                                         0.75,
+                                         0.075 * (m_width),
+                                         0.04 * (m_height),
+                                         "Item");
+    m_buttons[2] = new ControlItemButton(nullptr,
+                                         m_pos[0] - m_width * 0.2,
+                                         m_pos[1] - m_height * 0.175,
+                                         m_pos[2] + 0.5,
+                                         0.75,
+                                         0.75,
+                                         0.75,
+                                         0.075 * (m_width),
+                                         0.04 * (m_height),
+                                         "Buy");
+    m_buttons[3] = new ControlItemButton(nullptr,
+                                         m_pos[0] + m_width * 0.275,
+                                         m_pos[1] - m_height * 0.175,
+                                         m_pos[2] + 0.5,
+                                         0.75,
+                                         0.75,
+                                         0.75,
+                                         0.075 * (m_width),
+                                         0.04 * (m_height),
+                                         "Sell");
+    m_buttons[4] = new ControlItemButton(nullptr,
+                                         m_pos[0] + m_width * 0.15,
+                                         m_pos[1] - m_height * 0.365,
+                                         m_pos[2] + 0.5,
+                                         0.65,
+                                         0.15,
+                                         0.15,
+                                         0.135 * (m_width),
+                                         0.04 * (m_height),
+                                         "Finish Shopping");
 
     /*LABEL PLACEMENT*/
-    label_wpn =
-            new TextObject("Weapon",
-                           grids[1]->getXPos() + grids[1]->getWidth() * 0.05,
-                           grids[1]->getYPos() + 15,
-                           (pos[2] + 1),
-                           vulkan_earth::FontId::TimesRoman24,
-                           0.0f,
-                           0.0f,
-                           0.0f);
-    label_item =
-            new TextObject("Item",
-                           grids[1]->getXPos() + grids[1]->getWidth() / 1.6,
-                           grids[1]->getYPos() + 15,
-                           (pos[2] + 1),
-                           vulkan_earth::FontId::TimesRoman24,
-                           0.0f,
-                           0.0f,
-                           0.0f);
-    label_player_num = new TextObject("Player 1 Balance:",
-                                      pos[0] - width * 0.35,
-                                      pos[1] - height * 0.39,
-                                      (pos[2] + 1),
-                                      vulkan_earth::FontId::TimesRoman24,
-                                      0.0f,
-                                      0.0f,
-                                      0.0f);
-    label_discription = new TextObject("",
-                                       pos[0] - width * 0.4,
-                                       pos[1] - height * 0.1,
-                                       pos[2] + 1,
+    m_label_wpn = new TextObject(
+            "Weapon",
+            m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.05,
+            m_grids[1]->getYPos() + 15,
+            (m_pos[2] + 1),
+            vulkan_earth::FontId::TimesRoman24,
+            0.0f,
+            0.0f,
+            0.0f);
+    m_label_item = new TextObject(
+            "Item",
+            m_grids[1]->getXPos() + m_grids[1]->getWidth() / 1.6,
+            m_grids[1]->getYPos() + 15,
+            (m_pos[2] + 1),
+            vulkan_earth::FontId::TimesRoman24,
+            0.0f,
+            0.0f,
+            0.0f);
+    m_label_player_num = new TextObject("Player 1 Balance:",
+                                        m_pos[0] - m_width * 0.35,
+                                        m_pos[1] - m_height * 0.39,
+                                        (m_pos[2] + 1),
+                                        vulkan_earth::FontId::TimesRoman24,
+                                        0.0f,
+                                        0.0f,
+                                        0.0f);
+    m_label_discription = new TextObject("",
+                                         m_pos[0] - m_width * 0.4,
+                                         m_pos[1] - m_height * 0.1,
+                                         m_pos[2] + 1,
+                                         vulkan_earth::FontId::TimesRoman24,
+                                         0.0f,
+                                         0.0f,
+                                         0.0f);
+    m_label_buy_price = new TextObject("",
+                                       m_pos[0] - m_width * 0.35,
+                                       m_pos[1] - m_height * 0.2,
+                                       m_pos[2] + 1,
                                        vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
-    label_buy_price = new TextObject("",
-                                     pos[0] - width * 0.35,
-                                     pos[1] - height * 0.2,
-                                     pos[2] + 1,
-                                     vulkan_earth::FontId::TimesRoman24,
-                                     0.0f,
-                                     0.0f,
-                                     0.0f);
-    label_sell_price = new TextObject("$ 0",
-                                      pos[0] + width * 0.15,
-                                      pos[1] - height * 0.2,
-                                      pos[2] + 1,
-                                      vulkan_earth::FontId::TimesRoman24,
-                                      0.0f,
-                                      0.0f,
-                                      0.0f);
-    std::string balance = "$ " + std::to_string(current_player_balance);
-    label_player_balance = new TextObject(balance,
-                                          pos[0] - width * 0.2,
-                                          pos[1] - height * 0.39,
-                                          (pos[2] + 1),
-                                          vulkan_earth::FontId::TimesRoman24,
-                                          0.0f,
-                                          0.0f,
-                                          0.0f);
+    m_label_sell_price = new TextObject("$ 0",
+                                        m_pos[0] + m_width * 0.15,
+                                        m_pos[1] - m_height * 0.2,
+                                        m_pos[2] + 1,
+                                        vulkan_earth::FontId::TimesRoman24,
+                                        0.0f,
+                                        0.0f,
+                                        0.0f);
+    std::string balance = "$ " + std::to_string(m_current_player_balance);
+    m_label_player_balance = new TextObject(balance,
+                                            m_pos[0] - m_width * 0.2,
+                                            m_pos[1] - m_height * 0.39,
+                                            (m_pos[2] + 1),
+                                            vulkan_earth::FontId::TimesRoman24,
+                                            0.0f,
+                                            0.0f,
+                                            0.0f);
 
     /*Weapons and Items Creation*/
-    shop_wpns[0] = new WeaponMFB(0);
-    shop_wpns[1] = new WeaponBFB(1);
-    shop_wpns[2] = new WeaponAcid(2);
-    shop_wpns[3] = new WeaponThor(3);
-    shop_wpns[4] = new WeaponEMP(4);
-    shop_wpns[5] = new WeaponPadlock(5);
-    shop_wpns[6] = new WeaponRevive(6);
-    shop_wpns[7] = new WeaponTeleport(7);
-    shop_wpns[8] = new WeaponAtom(8);
-    shop_wpns[9] = new WeaponNuke(9);
+    m_shop_wpns[0] = new WeaponMFB(0);
+    m_shop_wpns[1] = new WeaponBFB(1);
+    m_shop_wpns[2] = new WeaponAcid(2);
+    m_shop_wpns[3] = new WeaponThor(3);
+    m_shop_wpns[4] = new WeaponEMP(4);
+    m_shop_wpns[5] = new WeaponPadlock(5);
+    m_shop_wpns[6] = new WeaponRevive(6);
+    m_shop_wpns[7] = new WeaponTeleport(7);
+    m_shop_wpns[8] = new WeaponAtom(8);
+    m_shop_wpns[9] = new WeaponNuke(9);
 
-    shop_items[0] = new ItemSmallRepair(0);
-    shop_items[1] = new ItemBigRepair(1);
-    shop_items[2] = new ItemAntiAcid(2);
-    shop_items[3] = new ItemDoubleAction(3);
-    shop_items[4] = new ItemShield(4);
-    shop_items[5] = new ItemExtraBattery(5);
-    shop_items[6] = new ItemCloak(6);
-    shop_items[7] = new ItemFloat(7);
+    m_shop_items[0] = new ItemSmallRepair(0);
+    m_shop_items[1] = new ItemBigRepair(1);
+    m_shop_items[2] = new ItemAntiAcid(2);
+    m_shop_items[3] = new ItemDoubleAction(3);
+    m_shop_items[4] = new ItemShield(4);
+    m_shop_items[5] = new ItemExtraBattery(5);
+    m_shop_items[6] = new ItemCloak(6);
+    m_shop_items[7] = new ItemFloat(7);
 
     displayCurrentPlayerInfo();
 
     /*Images and remainsLabels Creation*/
     for (std::int32_t i = 0; i < num_sales_weapon; i++) {
-        img_shop_wpns[i] = new ImageObject(0,
-                                           0,
-                                           2.0f,
-                                           100,
-                                           100,
-                                           .0006 * (width),
-                                           256,
-                                           256,
-                                           shop_wpns[i]->getImageFileName());
-        grids[0]->setImageSizeToCell(img_shop_wpns[i], 0.8);
+        m_img_shop_wpns[i] =
+                new ImageObject(0,
+                                0,
+                                2.0f,
+                                100,
+                                100,
+                                .0006 * (m_width),
+                                256,
+                                256,
+                                m_shop_wpns[i]->getImageFileName());
+        m_grids[0]->setImageSizeToCell(m_img_shop_wpns[i], 0.8);
 
         std::string remain =
-                "x " + std::to_string(shop_wpns[i]->getPackageNum());
-        label_shop_wpn_remains[i] =
+                "x " + std::to_string(m_shop_wpns[i]->getPackageNum());
+        m_label_shop_wpn_remains[i] =
                 new TextObject(remain,
                                0,
                                0,
@@ -255,20 +256,21 @@ ShopMenu::ShopMenu(float new_width,
                                0.4f);
     }
     for (std::int32_t i = 0; i < num_sales_item; i++) {
-        img_shop_items[i] = new ImageObject(0,
-                                            0,
-                                            2.0f,
-                                            100,
-                                            100,
-                                            .0006 * (width),
-                                            256,
-                                            256,
-                                            shop_items[i]->getImageFileName());
-        grids[0]->setImageSizeToCell(img_shop_items[i], 0.8);
+        m_img_shop_items[i] =
+                new ImageObject(0,
+                                0,
+                                2.0f,
+                                100,
+                                100,
+                                .0006 * (m_width),
+                                256,
+                                256,
+                                m_shop_items[i]->getImageFileName());
+        m_grids[0]->setImageSizeToCell(m_img_shop_items[i], 0.8);
 
         std::string remain =
-                "x " + std::to_string(shop_items[i]->getPackageNum());
-        label_shop_item_remains[i] =
+                "x " + std::to_string(m_shop_items[i]->getPackageNum());
+        m_label_shop_item_remains[i] =
                 new TextObject(remain,
                                0,
                                0,
@@ -284,13 +286,14 @@ ShopMenu::ShopMenu(float new_width,
     for (std::int32_t r = 0; r < shop_grid_row; r++) {
         for (std::int32_t c = 0; c < shop_grid_col; c++) {
             if (index < num_sales_weapon) {
-                grids[0]->placeImageToCell(img_shop_wpns[index], r, c);
-                grids[0]->placeTextToCell(label_shop_wpn_remains[index], r, c);
+                m_grids[0]->placeImageToCell(m_img_shop_wpns[index], r, c);
+                m_grids[0]->placeTextToCell(
+                        m_label_shop_wpn_remains[index], r, c);
             }
             if (index < num_sales_item) {
-                grids[0]->placeImageToCell(img_shop_items[index], r, c);
-                grids[0]->placeTextToCell(
-                        label_shop_item_remains[index], r, c);
+                m_grids[0]->placeImageToCell(m_img_shop_items[index], r, c);
+                m_grids[0]->placeTextToCell(
+                        m_label_shop_item_remains[index], r, c);
             }
             index++;
         }
@@ -298,82 +301,85 @@ ShopMenu::ShopMenu(float new_width,
 }
 
 ShopMenu::~ShopMenu() {
-    delete grids[0];
-    delete grids[1];
-    for (std::int32_t i = 0; i < 5; i++) delete buttons[i];
-    delete label_wpn;
-    delete label_item;
-    delete label_player_num;
-    delete label_player_balance;
-    delete label_discription;
-    delete label_buy_price;
-    delete label_sell_price;
+    delete m_grids[0];
+    delete m_grids[1];
+    for (std::int32_t i = 0; i < 5; i++) delete m_buttons[i];
+    delete m_label_wpn;
+    delete m_label_item;
+    delete m_label_player_num;
+    delete m_label_player_balance;
+    delete m_label_discription;
+    delete m_label_buy_price;
+    delete m_label_sell_price;
     for (std::int32_t i = 0; i < num_sales_weapon; i++) {
-        delete shop_wpns[i];
-        delete img_shop_wpns[i];
-        delete label_shop_wpn_remains[i];
+        delete m_shop_wpns[i];
+        delete m_img_shop_wpns[i];
+        delete m_label_shop_wpn_remains[i];
     }
     for (std::int32_t i = 0; i < num_sales_item; i++) {
-        delete shop_items[i];
-        delete img_shop_items[i];
-        delete label_shop_item_remains[i];
+        delete m_shop_items[i];
+        delete m_img_shop_items[i];
+        delete m_label_shop_item_remains[i];
     }
     for (std::int32_t i = 0; i < inven_grid_row; i++) {
-        delete img_inven_wpns[i];
-        delete label_inven_wpn_remains[i];
-        delete img_inven_items[i];
-        delete label_inven_item_remains[i];
+        delete m_img_inven_wpns[i];
+        delete m_label_inven_wpn_remains[i];
+        delete m_img_inven_items[i];
+        delete m_label_inven_item_remains[i];
     }
 }
 
 /*GETTERS & SETTERS*/
-void ShopMenu::updateNumPlayers(std::int32_t n) { num_players = n; }
+void ShopMenu::updateNumPlayers(std::int32_t n) { m_num_players = n; }
 
 void ShopMenu::saveCurrentPlayerInfo() {
     // save currentPlayerBalance and the inventory (Weapon, Item objects, and
     // remainings)
-    player_factory->getPlayer(current_player_index)
-            ->setCash(current_player_balance);
-    player_factory->getPlayer(current_player_index)->setWeapons(inven_wpns);
-    player_factory->getPlayer(current_player_index)->setItems(inven_items);
+    m_player_factory->getPlayer(m_current_player_index)
+            ->setCash(m_current_player_balance);
+    m_player_factory->getPlayer(m_current_player_index)
+            ->setWeapons(m_inven_wpns);
+    m_player_factory->getPlayer(m_current_player_index)
+            ->setItems(m_inven_items);
 
     // clear inventory slots for the next player
     for (std::int32_t i = 0; i < inven_grid_row; i++) {
-        if (img_inven_wpns[i] != nullptr) {
-            delete img_inven_wpns[i];
-            delete label_inven_wpn_remains[i];
-            img_inven_wpns[i] = nullptr;
-            label_inven_wpn_remains[i] = nullptr;
-            inven_wpns[i] = nullptr;
+        if (m_img_inven_wpns[i] != nullptr) {
+            delete m_img_inven_wpns[i];
+            delete m_label_inven_wpn_remains[i];
+            m_img_inven_wpns[i] = nullptr;
+            m_label_inven_wpn_remains[i] = nullptr;
+            m_inven_wpns[i] = nullptr;
         }
-        if (img_inven_items[i] != nullptr) {
-            delete img_inven_items[i];
-            delete label_inven_item_remains[i];
-            img_inven_items[i] = nullptr;
-            label_inven_item_remains[i] = nullptr;
-            inven_items[i] = nullptr;
+        if (m_img_inven_items[i] != nullptr) {
+            delete m_img_inven_items[i];
+            delete m_label_inven_item_remains[i];
+            m_img_inven_items[i] = nullptr;
+            m_label_inven_item_remains[i] = nullptr;
+            m_inven_items[i] = nullptr;
         }
     }
 
-    buttons[1]->setToggled(false);
-    buttons[1]->updateButtonState();
-    buttons[0]->setToggled(true);
-    buttons[0]->updateButtonState();
+    m_buttons[1]->setToggled(false);
+    m_buttons[1]->updateButtonState();
+    m_buttons[0]->setToggled(true);
+    m_buttons[0]->updateButtonState();
 }
 
 void ShopMenu::displayCurrentPlayerInfo() {
-    while ((current_player_index < num_players) &&
-           (player_factory->getPlayer(current_player_index)->getPlayerType() ==
-            "CPU")) {
-        current_player_index++;
+    while ((m_current_player_index < m_num_players) &&
+           (m_player_factory->getPlayer(m_current_player_index)
+                    ->getPlayerType() == "CPU")) {
+        m_current_player_index++;
     }
 
-    if (current_player_index < num_players) {
+    if (m_current_player_index < m_num_players) {
         for (std::int32_t i = 0; i < inven_grid_row; i++) {
-            inven_wpns[i] = player_factory->getPlayer(current_player_index)
-                                    ->getCurrentWeapons()[i];
-            if (inven_wpns[i]) {
-                img_inven_wpns[i] =
+            m_inven_wpns[i] =
+                    m_player_factory->getPlayer(m_current_player_index)
+                            ->getCurrentWeapons()[i];
+            if (m_inven_wpns[i]) {
+                m_img_inven_wpns[i] =
                         new ImageObject(0,
                                         0,
                                         0,
@@ -382,14 +388,14 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                         0,
                                         256,
                                         256,
-                                        inven_wpns[i]->getImageFileName());
-                grids[1]->setImageSizeToCell(img_inven_wpns[i], 0.8);
-                grids[1]->placeImageToCell(img_inven_wpns[i], i, 0);
+                                        m_inven_wpns[i]->getImageFileName());
+                m_grids[1]->setImageSizeToCell(m_img_inven_wpns[i], 0.8);
+                m_grids[1]->placeImageToCell(m_img_inven_wpns[i], i, 0);
 
                 std::string remain =
-                        "x " + std::to_string(inven_wpns[i]->getRemaining());
-                delete label_inven_wpn_remains[i];
-                label_inven_wpn_remains[i] =
+                        "x " + std::to_string(m_inven_wpns[i]->getRemaining());
+                delete m_label_inven_wpn_remains[i];
+                m_label_inven_wpn_remains[i] =
                         new TextObject(remain,
                                        0,
                                        0,
@@ -398,13 +404,15 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0.6f,
                                        0.3f,
                                        0.4f);
-                grids[1]->placeTextToCell(label_inven_wpn_remains[i], i, 0);
+                m_grids[1]->placeTextToCell(
+                        m_label_inven_wpn_remains[i], i, 0);
             }
 
-            inven_items[i] = player_factory->getPlayer(current_player_index)
-                                     ->getCurrentItems()[i];
-            if (inven_items[i]) {
-                img_inven_items[i] =
+            m_inven_items[i] =
+                    m_player_factory->getPlayer(m_current_player_index)
+                            ->getCurrentItems()[i];
+            if (m_inven_items[i]) {
+                m_img_inven_items[i] =
                         new ImageObject(0,
                                         0,
                                         0,
@@ -413,14 +421,15 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                         0,
                                         256,
                                         256,
-                                        inven_items[i]->getImageFileName());
-                grids[1]->setImageSizeToCell(img_inven_items[i], 0.8);
-                grids[1]->placeImageToCell(img_inven_items[i], i, 1);
+                                        m_inven_items[i]->getImageFileName());
+                m_grids[1]->setImageSizeToCell(m_img_inven_items[i], 0.8);
+                m_grids[1]->placeImageToCell(m_img_inven_items[i], i, 1);
 
                 std::string remain =
-                        "x " + std::to_string(inven_items[i]->getRemaining());
-                delete label_inven_item_remains[i];
-                label_inven_item_remains[i] =
+                        "x " +
+                        std::to_string(m_inven_items[i]->getRemaining());
+                delete m_label_inven_item_remains[i];
+                m_label_inven_item_remains[i] =
                         new TextObject(remain,
                                        0,
                                        0,
@@ -429,34 +438,35 @@ void ShopMenu::displayCurrentPlayerInfo() {
                                        0.6f,
                                        0.3f,
                                        0.4f);
-                grids[1]->placeTextToCell(label_inven_item_remains[i], i, 1);
+                m_grids[1]->placeTextToCell(
+                        m_label_inven_item_remains[i], i, 1);
             }
         }
 
         // Set next player number label
-        delete label_player_num;
+        delete m_label_player_num;
         std::string label_text = "Player " +
-                                 std::to_string(current_player_index + 1) +
+                                 std::to_string(m_current_player_index + 1) +
                                  " Balance:";
-        label_player_num = new TextObject(label_text,
-                                          pos[0] - width * 0.35,
-                                          pos[1] - height * 0.39,
-                                          (pos[2] + 1),
-                                          vulkan_earth::FontId::TimesRoman24,
-                                          0.0f,
-                                          0.0f,
-                                          0.0f);
+        m_label_player_num = new TextObject(label_text,
+                                            m_pos[0] - m_width * 0.35,
+                                            m_pos[1] - m_height * 0.39,
+                                            (m_pos[2] + 1),
+                                            vulkan_earth::FontId::TimesRoman24,
+                                            0.0f,
+                                            0.0f,
+                                            0.0f);
 
         // Set next player balance label
-        current_player_balance =
-                player_factory->getPlayer(current_player_index)->getCash();
-        delete label_player_balance;
-        std::string balance = "$ " + std::to_string(current_player_balance);
-        label_player_balance =
+        m_current_player_balance =
+                m_player_factory->getPlayer(m_current_player_index)->getCash();
+        delete m_label_player_balance;
+        std::string balance = "$ " + std::to_string(m_current_player_balance);
+        m_label_player_balance =
                 new TextObject(balance,
-                               pos[0] - width * 0.2,
-                               pos[1] - height * 0.39,
-                               (pos[2] + 1),
+                               m_pos[0] - m_width * 0.2,
+                               m_pos[1] - m_height * 0.39,
+                               (m_pos[2] + 1),
                                vulkan_earth::FontId::TimesRoman24,
                                0.0f,
                                0.0f,
@@ -466,9 +476,9 @@ void ShopMenu::displayCurrentPlayerInfo() {
 
     } else {
         // printDebugInfo();
-        current_player_index = 0;
+        m_current_player_index = 0;
         Mix_HaltMusic();
-        *current_game_state = GAME_PLAY;
+        *m_current_game_state = GAME_PLAY;
     }
 }
 
@@ -476,45 +486,46 @@ void ShopMenu::printDebugInfo() {
     // PLAYER INSPECTION DEBUG
     //***********************
     printf("\n*************************************");
-    for (std::int32_t i = 0; i < player_factory->getNumberofPlayers(); i++) {
+    for (std::int32_t i = 0; i < m_player_factory->getNumberofPlayers(); i++) {
         printf("\n\nPlayer%d", i + 1);
         printf("\nPlayer Type: %s",
-               player_factory->getPlayer(i)->getPlayerType().c_str());
+               m_player_factory->getPlayer(i)->getPlayerType().c_str());
         printf("\nAI Difficulty: %s",
-               player_factory->getPlayer(i)->getAiType().c_str());
+               m_player_factory->getPlayer(i)->getAiType().c_str());
         printf("\nPlayer Name: %s",
-               player_factory->getPlayer(i)->getPlayerName().c_str());
+               m_player_factory->getPlayer(i)->getPlayerName().c_str());
         printf("\nTeam Number: %c",
-               player_factory->getPlayer(i)->getTeamLabel());
+               m_player_factory->getPlayer(i)->getTeamLabel());
         printf("\nTank Type: %s",
-               player_factory->getPlayer(i)->getTankType().c_str());
-        printf("\nCurrent Money: %d", player_factory->getPlayer(i)->getCash());
+               m_player_factory->getPlayer(i)->getTankType().c_str());
+        printf("\nCurrent Money: %d",
+               m_player_factory->getPlayer(i)->getCash());
         for (std::int32_t j = 0; j < inven_grid_row; j++) {
-            if (player_factory->getPlayer(i)->getCurrentWeapons()[j]) {
+            if (m_player_factory->getPlayer(i)->getCurrentWeapons()[j]) {
                 printf("\nWeapon Slot %i: %s",
                        j,
-                       player_factory->getPlayer(i)
+                       m_player_factory->getPlayer(i)
                                ->getCurrentWeapons()[j]
                                ->getDescription()
                                .c_str());
                 printf("\nWeapon Slot %i amount: %i",
                        j,
-                       player_factory->getPlayer(i)
+                       m_player_factory->getPlayer(i)
                                ->getCurrentWeapons()[j]
                                ->getRemaining());
             }
         }
         for (std::int32_t j = 0; j < inven_grid_row; j++) {
-            if (player_factory->getPlayer(i)->getCurrentItems()[j]) {
+            if (m_player_factory->getPlayer(i)->getCurrentItems()[j]) {
                 printf("\nItem Slot %i: %s",
                        j,
-                       player_factory->getPlayer(i)
+                       m_player_factory->getPlayer(i)
                                ->getCurrentItems()[j]
                                ->getDescription()
                                .c_str());
                 printf("\nItem Slot %i amount: %i",
                        j,
-                       player_factory->getPlayer(i)
+                       m_player_factory->getPlayer(i)
                                ->getCurrentItems()[j]
                                ->getRemaining());
             }
@@ -525,37 +536,37 @@ void ShopMenu::printDebugInfo() {
 }
 
 void ShopMenu::updateBuyDiscriptLabel() {
-    bool* selected_cells = grids[0]->getSelectedCells();
-    if (buttons[0]->isToggled()) {
+    bool* selected_cells = m_grids[0]->getSelectedCells();
+    if (m_buttons[0]->isToggled()) {
         for (std::int32_t i = 0; i < num_sales_weapon; i++) {
             if (selected_cells[i]) {
-                delete label_discription;
-                delete label_buy_price;
-                label_discription =
-                        new TextObject(shop_wpns[i]->getDescription(),
-                                       pos[0] - width * 0.4,
-                                       pos[1] - height * 0.1,
-                                       pos[2] + 1,
+                delete m_label_discription;
+                delete m_label_buy_price;
+                m_label_discription =
+                        new TextObject(m_shop_wpns[i]->getDescription(),
+                                       m_pos[0] - m_width * 0.4,
+                                       m_pos[1] - m_height * 0.1,
+                                       m_pos[2] + 1,
                                        vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 std::string price =
-                        "$ " + std::to_string(shop_wpns[i]->getPrice());
-                label_buy_price =
+                        "$ " + std::to_string(m_shop_wpns[i]->getPrice());
+                m_label_buy_price =
                         new TextObject(price,
-                                       pos[0] - width * 0.35,
-                                       pos[1] - height * 0.2,
-                                       pos[2] + 1,
+                                       m_pos[0] - m_width * 0.35,
+                                       m_pos[1] - m_height * 0.2,
+                                       m_pos[2] + 1,
                                        vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 break;
             } else {
-                delete label_discription;
-                delete label_buy_price;
-                label_discription =
+                delete m_label_discription;
+                delete m_label_buy_price;
+                m_label_discription =
                         new TextObject("",
                                        0,
                                        0,
@@ -564,7 +575,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                        0,
                                        0,
                                        0);
-                label_buy_price =
+                m_label_buy_price =
                         new TextObject("",
                                        0,
                                        0,
@@ -578,33 +589,33 @@ void ShopMenu::updateBuyDiscriptLabel() {
     } else {
         for (std::int32_t i = 0; i < num_sales_item; i++) {
             if (selected_cells[i]) {
-                delete label_discription;
-                delete label_buy_price;
-                label_discription =
-                        new TextObject(shop_items[i]->getDescription(),
-                                       pos[0] - width * 0.4,
-                                       pos[1] - height * 0.1,
-                                       pos[2] + 1,
+                delete m_label_discription;
+                delete m_label_buy_price;
+                m_label_discription =
+                        new TextObject(m_shop_items[i]->getDescription(),
+                                       m_pos[0] - m_width * 0.4,
+                                       m_pos[1] - m_height * 0.1,
+                                       m_pos[2] + 1,
                                        vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 std::string price =
-                        "$ " + std::to_string(shop_items[i]->getPrice());
-                label_buy_price =
+                        "$ " + std::to_string(m_shop_items[i]->getPrice());
+                m_label_buy_price =
                         new TextObject(price,
-                                       pos[0] - width * 0.35,
-                                       pos[1] - height * 0.2,
-                                       pos[2] + 1,
+                                       m_pos[0] - m_width * 0.35,
+                                       m_pos[1] - m_height * 0.2,
+                                       m_pos[2] + 1,
                                        vulkan_earth::FontId::TimesRoman24,
                                        0.0f,
                                        0.0f,
                                        0.0f);
                 break;
             } else {
-                delete label_discription;
-                delete label_buy_price;
-                label_discription =
+                delete m_label_discription;
+                delete m_label_buy_price;
+                m_label_discription =
                         new TextObject("",
                                        0,
                                        0,
@@ -613,7 +624,7 @@ void ShopMenu::updateBuyDiscriptLabel() {
                                        0,
                                        0,
                                        0);
-                label_buy_price =
+                m_label_buy_price =
                         new TextObject("",
                                        0,
                                        0,
@@ -628,57 +639,58 @@ void ShopMenu::updateBuyDiscriptLabel() {
 }
 
 void ShopMenu::updateSellLabel() {
-    bool* selected_cells = grids[1]->getSelectedCells();
+    bool* selected_cells = m_grids[1]->getSelectedCells();
     std::int32_t total_sell = 0;
 
     for (std::int32_t i = 0; i < inven_grid_row * 2; i++) {
-        if (selected_cells[i] && inven_wpns[i / 2] != nullptr &&
+        if (selected_cells[i] && m_inven_wpns[i / 2] != nullptr &&
             i % 2 == 0) {  //	i%2 == 0 is weapon inventory
             total_sell += static_cast<std::int32_t>(
-                    ((inven_wpns[i / 2]->getPrice() /
-                      inven_wpns[i / 2]->getPackageNum()) /
+                    ((m_inven_wpns[i / 2]->getPrice() /
+                      m_inven_wpns[i / 2]->getPackageNum()) /
                      1.5) *
-                    inven_wpns[i / 2]->getRemaining());
+                    m_inven_wpns[i / 2]->getRemaining());
         }
-        if (selected_cells[i] && inven_items[i / 2] != nullptr && i % 2 == 1) {
+        if (selected_cells[i] && m_inven_items[i / 2] != nullptr &&
+            i % 2 == 1) {
             total_sell += static_cast<std::int32_t>(
-                    ((inven_items[i / 2]->getPrice() /
-                      inven_items[i / 2]->getPackageNum()) /
+                    ((m_inven_items[i / 2]->getPrice() /
+                      m_inven_items[i / 2]->getPackageNum()) /
                      1.5) *
-                    inven_items[i / 2]->getRemaining());
+                    m_inven_items[i / 2]->getRemaining());
         }
     }
 
-    delete label_sell_price;
+    delete m_label_sell_price;
     std::string price = "$ " + std::to_string(total_sell);
-    label_sell_price = new TextObject(price,
-                                      pos[0] + width * 0.15,
-                                      pos[1] - height * 0.2,
-                                      pos[2] + 1,
-                                      vulkan_earth::FontId::TimesRoman24,
-                                      0.0f,
-                                      0.0f,
-                                      0.0f);
+    m_label_sell_price = new TextObject(price,
+                                        m_pos[0] + m_width * 0.15,
+                                        m_pos[1] - m_height * 0.2,
+                                        m_pos[2] + 1,
+                                        vulkan_earth::FontId::TimesRoman24,
+                                        0.0f,
+                                        0.0f,
+                                        0.0f);
 }
 
 void ShopMenu::buyHandler() {
     std::int32_t inven_i;
-    bool* selected_cells = grids[0]->getSelectedCells();
+    bool* selected_cells = m_grids[0]->getSelectedCells();
 
-    if (buttons[0]->isToggled()) {
+    if (m_buttons[0]->isToggled()) {
         for (std::int32_t i = 0; i < num_sales_weapon; i++) {
             if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < inven_grid_row; inven_i++) {
-                    if ((inven_wpns[inven_i] == nullptr) ||
-                        (shop_wpns[i]->getUNIQUEIDENTIFIER() ==
-                         inven_wpns[inven_i]->getUNIQUEIDENTIFIER()))
+                    if ((m_inven_wpns[inven_i] == nullptr) ||
+                        (m_shop_wpns[i]->getUNIQUEIDENTIFIER() ==
+                         m_inven_wpns[inven_i]->getUNIQUEIDENTIFIER()))
                         break;
                 }
-                if ((current_player_balance >= shop_wpns[i]->getPrice()) &&
+                if ((m_current_player_balance >= m_shop_wpns[i]->getPrice()) &&
                     (inven_i < inven_grid_row)) {
-                    if (inven_wpns[inven_i] == nullptr) {
+                    if (m_inven_wpns[inven_i] == nullptr) {
                         playSFX(TRANSACTION);
-                        img_inven_wpns[inven_i] = new ImageObject(
+                        m_img_inven_wpns[inven_i] = new ImageObject(
                                 0,
                                 0,
                                 0,
@@ -687,39 +699,40 @@ void ShopMenu::buyHandler() {
                                 0,
                                 256,
                                 256,
-                                shop_wpns[i]->getImageFileName());
-                        grids[1]->setImageSizeToCell(img_inven_wpns[inven_i],
-                                                     0.8);
-                        grids[1]->placeImageToCell(
-                                img_inven_wpns[inven_i], inven_i, 0);
-                        inven_wpns[inven_i] =
-                                shop_wpns[i]->getWeaponInstance();
-                        current_player_balance -= shop_wpns[i]->getPrice();
+                                m_shop_wpns[i]->getImageFileName());
+                        m_grids[1]->setImageSizeToCell(
+                                m_img_inven_wpns[inven_i], 0.8);
+                        m_grids[1]->placeImageToCell(
+                                m_img_inven_wpns[inven_i], inven_i, 0);
+                        m_inven_wpns[inven_i] =
+                                m_shop_wpns[i]->getWeaponInstance();
+                        m_current_player_balance -= m_shop_wpns[i]->getPrice();
                     } else {
-                        if (inven_wpns[inven_i]->getRemaining() <
-                            inven_wpns[inven_i]->getMaxStack()) {
+                        if (m_inven_wpns[inven_i]->getRemaining() <
+                            m_inven_wpns[inven_i]->getMaxStack()) {
                             playSFX(TRANSACTION);
-                            current_player_balance -= shop_wpns[i]->getPrice();
-                            inven_wpns[inven_i]->setRemaining(
-                                    inven_wpns[inven_i]->getRemaining() +
-                                    shop_wpns[i]->getPackageNum());
-                            if (inven_wpns[inven_i]->getRemaining() >
-                                inven_wpns[inven_i]->getMaxStack())
-                                inven_wpns[inven_i]->setRemaining(
-                                        inven_wpns[inven_i]->getMaxStack());
+                            m_current_player_balance -=
+                                    m_shop_wpns[i]->getPrice();
+                            m_inven_wpns[inven_i]->setRemaining(
+                                    m_inven_wpns[inven_i]->getRemaining() +
+                                    m_shop_wpns[i]->getPackageNum());
+                            if (m_inven_wpns[inven_i]->getRemaining() >
+                                m_inven_wpns[inven_i]->getMaxStack())
+                                m_inven_wpns[inven_i]->setRemaining(
+                                        m_inven_wpns[inven_i]->getMaxStack());
                         } else {
                             playSFX(INVALID_CLICK);
                         }
                     }
 
-                    delete label_player_balance;
+                    delete m_label_player_balance;
                     std::string balance =
-                            "$ " + std::to_string(current_player_balance);
-                    label_player_balance =
+                            "$ " + std::to_string(m_current_player_balance);
+                    m_label_player_balance =
                             new TextObject(balance,
-                                           pos[0] - width * 0.2,
-                                           pos[1] - height * 0.39,
-                                           (pos[2] + 1),
+                                           m_pos[0] - m_width * 0.2,
+                                           m_pos[1] - m_height * 0.39,
+                                           (m_pos[2] + 1),
                                            vulkan_earth::FontId::TimesRoman24,
                                            0.0f,
                                            0.0f,
@@ -728,9 +741,9 @@ void ShopMenu::buyHandler() {
                     std::string remain =
                             "x " +
                             std::to_string(
-                                    inven_wpns[inven_i]->getRemaining());
-                    delete label_inven_wpn_remains[inven_i];
-                    label_inven_wpn_remains[inven_i] =
+                                    m_inven_wpns[inven_i]->getRemaining());
+                    delete m_label_inven_wpn_remains[inven_i];
+                    m_label_inven_wpn_remains[inven_i] =
                             new TextObject(remain,
                                            0,
                                            0,
@@ -739,8 +752,8 @@ void ShopMenu::buyHandler() {
                                            0.6f,
                                            0.3f,
                                            0.4f);
-                    grids[1]->placeTextToCell(
-                            label_inven_wpn_remains[inven_i], inven_i, 0);
+                    m_grids[1]->placeTextToCell(
+                            m_label_inven_wpn_remains[inven_i], inven_i, 0);
                 } else {
                     playSFX(INVALID_CLICK);
                 }
@@ -751,16 +764,16 @@ void ShopMenu::buyHandler() {
         for (std::int32_t i = 0; i < num_sales_item; i++) {
             if (selected_cells[i]) {
                 for (inven_i = 0; inven_i < inven_grid_row; inven_i++) {
-                    if ((inven_items[inven_i] == nullptr) ||
-                        (shop_items[i]->getUNIQUEIDENTIFIER() ==
-                         inven_items[inven_i]->getUNIQUEIDENTIFIER()))
+                    if ((m_inven_items[inven_i] == nullptr) ||
+                        (m_shop_items[i]->getUNIQUEIDENTIFIER() ==
+                         m_inven_items[inven_i]->getUNIQUEIDENTIFIER()))
                         break;
                 }
-                if (current_player_balance >= shop_items[i]->getPrice() &&
+                if (m_current_player_balance >= m_shop_items[i]->getPrice() &&
                     inven_i < inven_grid_row) {
-                    if (inven_items[inven_i] == nullptr) {
+                    if (m_inven_items[inven_i] == nullptr) {
                         playSFX(TRANSACTION);
-                        img_inven_items[inven_i] = new ImageObject(
+                        m_img_inven_items[inven_i] = new ImageObject(
                                 0,
                                 0,
                                 0,
@@ -769,40 +782,41 @@ void ShopMenu::buyHandler() {
                                 0,
                                 256,
                                 256,
-                                shop_items[i]->getImageFileName());
-                        grids[1]->setImageSizeToCell(img_inven_items[inven_i],
-                                                     0.8);
-                        grids[1]->placeImageToCell(
-                                img_inven_items[inven_i], inven_i, 1);
-                        inven_items[inven_i] =
-                                shop_items[i]->getItemInstance();
-                        current_player_balance -= shop_items[i]->getPrice();
+                                m_shop_items[i]->getImageFileName());
+                        m_grids[1]->setImageSizeToCell(
+                                m_img_inven_items[inven_i], 0.8);
+                        m_grids[1]->placeImageToCell(
+                                m_img_inven_items[inven_i], inven_i, 1);
+                        m_inven_items[inven_i] =
+                                m_shop_items[i]->getItemInstance();
+                        m_current_player_balance -=
+                                m_shop_items[i]->getPrice();
                     } else {
-                        if (inven_items[inven_i]->getRemaining() <
-                            inven_items[inven_i]->getMaxStack()) {
+                        if (m_inven_items[inven_i]->getRemaining() <
+                            m_inven_items[inven_i]->getMaxStack()) {
                             playSFX(TRANSACTION);
-                            current_player_balance -=
-                                    shop_items[i]->getPrice();
-                            inven_items[inven_i]->setRemaining(
-                                    inven_items[inven_i]->getRemaining() +
-                                    shop_items[i]->getPackageNum());
-                            if (inven_items[inven_i]->getRemaining() >
-                                inven_items[inven_i]->getMaxStack())
-                                inven_items[inven_i]->setRemaining(
-                                        inven_items[inven_i]->getMaxStack());
+                            m_current_player_balance -=
+                                    m_shop_items[i]->getPrice();
+                            m_inven_items[inven_i]->setRemaining(
+                                    m_inven_items[inven_i]->getRemaining() +
+                                    m_shop_items[i]->getPackageNum());
+                            if (m_inven_items[inven_i]->getRemaining() >
+                                m_inven_items[inven_i]->getMaxStack())
+                                m_inven_items[inven_i]->setRemaining(
+                                        m_inven_items[inven_i]->getMaxStack());
                         } else {
                             playSFX(INVALID_CLICK);
                         }
                     }
 
-                    delete label_player_balance;
+                    delete m_label_player_balance;
                     std::string balance =
-                            "$ " + std::to_string(current_player_balance);
-                    label_player_balance =
+                            "$ " + std::to_string(m_current_player_balance);
+                    m_label_player_balance =
                             new TextObject(balance,
-                                           pos[0] - width * 0.2,
-                                           pos[1] - height * 0.39,
-                                           (pos[2] + 1),
+                                           m_pos[0] - m_width * 0.2,
+                                           m_pos[1] - m_height * 0.39,
+                                           (m_pos[2] + 1),
                                            vulkan_earth::FontId::TimesRoman24,
                                            0.0f,
                                            0.0f,
@@ -811,9 +825,9 @@ void ShopMenu::buyHandler() {
                     std::string remain =
                             "x " +
                             std::to_string(
-                                    inven_items[inven_i]->getRemaining());
-                    delete label_inven_item_remains[inven_i];
-                    label_inven_item_remains[inven_i] =
+                                    m_inven_items[inven_i]->getRemaining());
+                    delete m_label_inven_item_remains[inven_i];
+                    m_label_inven_item_remains[inven_i] =
                             new TextObject(remain,
                                            0,
                                            0,
@@ -822,8 +836,8 @@ void ShopMenu::buyHandler() {
                                            0.6f,
                                            0.3f,
                                            0.4f);
-                    grids[1]->placeTextToCell(
-                            label_inven_item_remains[inven_i], inven_i, 1);
+                    m_grids[1]->placeTextToCell(
+                            m_label_inven_item_remains[inven_i], inven_i, 1);
                 } else {
                     playSFX(INVALID_CLICK);
                 }
@@ -834,49 +848,50 @@ void ShopMenu::buyHandler() {
 }
 
 void ShopMenu::sellHandler() {
-    bool* selected_cells = grids[1]->getSelectedCells();
+    bool* selected_cells = m_grids[1]->getSelectedCells();
     std::int32_t total_sell = 0;
 
     for (std::int32_t i = 0; i < inven_grid_row * 2; i++) {
-        if (selected_cells[i] && inven_wpns[i / 2] != nullptr &&
+        if (selected_cells[i] && m_inven_wpns[i / 2] != nullptr &&
             i % 2 == 0) {  // i%2 == 0 is weapon inventory
             total_sell += static_cast<std::int32_t>(
-                    ((inven_wpns[i / 2]->getPrice() /
-                      inven_wpns[i / 2]->getPackageNum()) /
+                    ((m_inven_wpns[i / 2]->getPrice() /
+                      m_inven_wpns[i / 2]->getPackageNum()) /
                      1.5) *
-                    inven_wpns[i / 2]->getRemaining());
-            delete img_inven_wpns[i / 2];
-            delete label_inven_wpn_remains[i / 2];
-            delete inven_wpns[i / 2];
-            img_inven_wpns[i / 2] = nullptr;
-            label_inven_wpn_remains[i / 2] = nullptr;
-            inven_wpns[i / 2] = nullptr;
+                    m_inven_wpns[i / 2]->getRemaining());
+            delete m_img_inven_wpns[i / 2];
+            delete m_label_inven_wpn_remains[i / 2];
+            delete m_inven_wpns[i / 2];
+            m_img_inven_wpns[i / 2] = nullptr;
+            m_label_inven_wpn_remains[i / 2] = nullptr;
+            m_inven_wpns[i / 2] = nullptr;
         }
-        if (selected_cells[i] && inven_items[i / 2] != nullptr && i % 2 == 1) {
+        if (selected_cells[i] && m_inven_items[i / 2] != nullptr &&
+            i % 2 == 1) {
             total_sell += static_cast<std::int32_t>(
-                    ((inven_items[i / 2]->getPrice() /
-                      inven_items[i / 2]->getPackageNum()) /
+                    ((m_inven_items[i / 2]->getPrice() /
+                      m_inven_items[i / 2]->getPackageNum()) /
                      1.5) *
-                    inven_items[i / 2]->getRemaining());
-            delete img_inven_items[i / 2];
-            delete label_inven_item_remains[i / 2];
-            delete inven_items[i / 2];
-            img_inven_items[i / 2] = nullptr;
-            label_inven_item_remains[i / 2] = nullptr;
-            inven_items[i / 2] = nullptr;
+                    m_inven_items[i / 2]->getRemaining());
+            delete m_img_inven_items[i / 2];
+            delete m_label_inven_item_remains[i / 2];
+            delete m_inven_items[i / 2];
+            m_img_inven_items[i / 2] = nullptr;
+            m_label_inven_item_remains[i / 2] = nullptr;
+            m_inven_items[i / 2] = nullptr;
         }
     }
 
     if (total_sell != 0) {
         playSFX(TRANSACTION);
-        current_player_balance += total_sell;
-        delete label_player_balance;
-        std::string balance = "$ " + std::to_string(current_player_balance);
-        label_player_balance =
+        m_current_player_balance += total_sell;
+        delete m_label_player_balance;
+        std::string balance = "$ " + std::to_string(m_current_player_balance);
+        m_label_player_balance =
                 new TextObject(balance,
-                               pos[0] - width * 0.2,
-                               pos[1] - height * 0.39,
-                               (pos[2] + 1),
+                               m_pos[0] - m_width * 0.2,
+                               m_pos[1] - m_height * 0.39,
+                               (m_pos[2] + 1),
                                vulkan_earth::FontId::TimesRoman24,
                                0.0f,
                                0.0f,
@@ -890,78 +905,78 @@ void ShopMenu::draw(render::RenderContext& context) {
     using Vec4 = math::Vec4<float>;
     // The whole-window background panel (see appendMenuPanel()), then the
     // black separating lines (each three pixels thick, as three lines).
-    if (panel_mesh.triangles().empty() || built_width != width ||
-        built_height != height) {
-        panel_mesh.clear();
+    if (m_panel_mesh.triangles().empty() || m_built_width != m_width ||
+        m_built_height != m_height) {
+        m_panel_mesh.clear();
         vulkan_earth::appendMenuPanel(
-                panel_mesh, width, height, percent_border);
+                m_panel_mesh, m_width, m_height, m_percent_border);
         const Vec4 black(0, 0, 0, 1);
         for (float offset : {-1.0f, 0.0f, 1.0f}) {
-            panel_mesh.addLine(Vec3(pos[0] + width * 0.04 + offset,
-                                    pos[1] + height * 0.45,
-                                    pos[2] + 1),
-                               Vec3(pos[0] + width * 0.04 + offset,
-                                    pos[1] - height * 0.277,
-                                    pos[2] + 1),
-                               black);
+            m_panel_mesh.addLine(Vec3(m_pos[0] + m_width * 0.04 + offset,
+                                      m_pos[1] + m_height * 0.45,
+                                      m_pos[2] + 1),
+                                 Vec3(m_pos[0] + m_width * 0.04 + offset,
+                                      m_pos[1] - m_height * 0.277,
+                                      m_pos[2] + 1),
+                                 black);
         }
         for (float offset : {1.0f, 0.0f, -1.0f}) {
-            panel_mesh.addLine(Vec3(pos[0] - width * 0.45,
-                                    pos[1] - height * 0.29 + offset,
-                                    pos[2] + 1),
-                               Vec3(pos[0] + width * 0.45,
-                                    pos[1] - height * 0.29 + offset,
-                                    pos[2] + 1),
-                               black);
+            m_panel_mesh.addLine(Vec3(m_pos[0] - m_width * 0.45,
+                                      m_pos[1] - m_height * 0.29 + offset,
+                                      m_pos[2] + 1),
+                                 Vec3(m_pos[0] + m_width * 0.45,
+                                      m_pos[1] - m_height * 0.29 + offset,
+                                      m_pos[2] + 1),
+                                 black);
         }
-        panel_mesh.addLine(
-                Vec3(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
-                     grids[1]->getYPos() + 35,
-                     pos[2] + 1),
-                Vec3(grids[1]->getXPos() + grids[1]->getWidth() * 0.5,
-                     grids[1]->getYPos() + 5,
-                     pos[2] + 1),
+        m_panel_mesh.addLine(
+                Vec3(m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.5,
+                     m_grids[1]->getYPos() + 35,
+                     m_pos[2] + 1),
+                Vec3(m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.5,
+                     m_grids[1]->getYPos() + 5,
+                     m_pos[2] + 1),
                 black);
-        built_width = width;
-        built_height = height;
+        m_built_width = m_width;
+        m_built_height = m_height;
     }
-    context.draw(panel_mesh);
+    context.draw(m_panel_mesh);
 
-    grids[0]->draw(context);
-    grids[1]->draw(context);
-    buttons[0]->draw(context);
-    buttons[1]->draw(context);
-    buttons[2]->draw(context);
-    buttons[3]->draw(context);
-    buttons[4]->draw(context);
-    label_wpn->draw(context);
-    label_item->draw(context);
-    label_player_num->draw(context);
-    label_player_balance->draw(context);
-    label_discription->draw(context);
-    label_buy_price->draw(context);
-    label_sell_price->draw(context);
+    m_grids[0]->draw(context);
+    m_grids[1]->draw(context);
+    m_buttons[0]->draw(context);
+    m_buttons[1]->draw(context);
+    m_buttons[2]->draw(context);
+    m_buttons[3]->draw(context);
+    m_buttons[4]->draw(context);
+    m_label_wpn->draw(context);
+    m_label_item->draw(context);
+    m_label_player_num->draw(context);
+    m_label_player_balance->draw(context);
+    m_label_discription->draw(context);
+    m_label_buy_price->draw(context);
+    m_label_sell_price->draw(context);
 
-    if (buttons[0]->isToggled()) {
+    if (m_buttons[0]->isToggled()) {
         for (std::int32_t i = 0; i < num_sales_weapon; i++) {
-            img_shop_wpns[i]->draw(context);
-            label_shop_wpn_remains[i]->draw(context);
+            m_img_shop_wpns[i]->draw(context);
+            m_label_shop_wpn_remains[i]->draw(context);
         }
     } else {
         for (std::int32_t i = 0; i < num_sales_item; i++) {
-            img_shop_items[i]->draw(context);
-            label_shop_item_remains[i]->draw(context);
+            m_img_shop_items[i]->draw(context);
+            m_label_shop_item_remains[i]->draw(context);
         }
     }
 
     for (std::int32_t i = 0; i < inven_grid_row; i++) {
-        if (img_inven_wpns[i] != nullptr) {
-            img_inven_wpns[i]->draw(context);
-            label_inven_wpn_remains[i]->draw(context);
+        if (m_img_inven_wpns[i] != nullptr) {
+            m_img_inven_wpns[i]->draw(context);
+            m_label_inven_wpn_remains[i]->draw(context);
         }
-        if (img_inven_items[i] != nullptr) {
-            img_inven_items[i]->draw(context);
-            label_inven_item_remains[i]->draw(context);
+        if (m_img_inven_items[i] != nullptr) {
+            m_img_inven_items[i]->draw(context);
+            m_label_inven_item_remains[i]->draw(context);
         }
     }
 }
@@ -969,72 +984,72 @@ void ShopMenu::draw(render::RenderContext& context) {
 void ShopMenu::buttonTest(std::int32_t x,
                           std::int32_t y,
                           std::int32_t button_down) {
-    grids[0]->mouseClickEvent(x, y, button_down, true);
+    m_grids[0]->mouseClickEvent(x, y, button_down, true);
     updateBuyDiscriptLabel();
-    grids[1]->mouseClickEvent(x, y, button_down, true);
+    m_grids[1]->mouseClickEvent(x, y, button_down, true);
     updateSellLabel();
 
-    if ((x >= (buttons[0]->getXPos()) &&
-         x <= ((buttons[0]->getXPos()) + (buttons[0]->getWidth()))) &&
-        (y <= (buttons[0]->getYPos()) &&
-         y >= ((buttons[0]->getYPos()) - (buttons[0]->getHeight())))) {
+    if ((x >= (m_buttons[0]->getXPos()) &&
+         x <= ((m_buttons[0]->getXPos()) + (m_buttons[0]->getWidth()))) &&
+        (y <= (m_buttons[0]->getYPos()) &&
+         y >= ((m_buttons[0]->getYPos()) - (m_buttons[0]->getHeight())))) {
         if (button_down) playSFX(SMALL_CLICK);
-        grids[0]->deselectAllCells();
-        delete label_discription;
-        delete label_buy_price;
-        label_discription = new TextObject(
+        m_grids[0]->deselectAllCells();
+        delete m_label_discription;
+        delete m_label_buy_price;
+        m_label_discription = new TextObject(
                 "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
-        label_buy_price = new TextObject(
+        m_label_buy_price = new TextObject(
                 "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
-        buttons[0]->mouseClickEvent(x, y, button_down, true);
-        if (buttons[0]->isToggled()) {
-            buttons[1]->setToggled(false);
-            buttons[0]->updateButtonState();
-            buttons[1]->updateButtonState();
+        m_buttons[0]->mouseClickEvent(x, y, button_down, true);
+        if (m_buttons[0]->isToggled()) {
+            m_buttons[1]->setToggled(false);
+            m_buttons[0]->updateButtonState();
+            m_buttons[1]->updateButtonState();
         }
     }
 
-    if ((x >= (buttons[1]->getXPos()) &&
-         x <= ((buttons[1]->getXPos()) + (buttons[1]->getWidth()))) &&
-        (y <= (buttons[1]->getYPos()) &&
-         y >= ((buttons[1]->getYPos()) - (buttons[1]->getHeight())))) {
+    if ((x >= (m_buttons[1]->getXPos()) &&
+         x <= ((m_buttons[1]->getXPos()) + (m_buttons[1]->getWidth()))) &&
+        (y <= (m_buttons[1]->getYPos()) &&
+         y >= ((m_buttons[1]->getYPos()) - (m_buttons[1]->getHeight())))) {
         if (button_down) playSFX(SMALL_CLICK);
-        grids[0]->deselectAllCells();
-        delete label_discription;
-        delete label_buy_price;
-        label_discription = new TextObject(
+        m_grids[0]->deselectAllCells();
+        delete m_label_discription;
+        delete m_label_buy_price;
+        m_label_discription = new TextObject(
                 "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
-        label_buy_price = new TextObject(
+        m_label_buy_price = new TextObject(
                 "", 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0, 0, 0);
-        buttons[1]->mouseClickEvent(x, y, button_down, true);
-        if (buttons[1]->isToggled()) {
-            buttons[0]->setToggled(false);
-            buttons[0]->updateButtonState();
-            buttons[1]->updateButtonState();
+        m_buttons[1]->mouseClickEvent(x, y, button_down, true);
+        if (m_buttons[1]->isToggled()) {
+            m_buttons[0]->setToggled(false);
+            m_buttons[0]->updateButtonState();
+            m_buttons[1]->updateButtonState();
         }
     }
 
-    buttons[2]->mouseClickEvent(x, y, button_down, true);
-    if (buttons[2]->isToggled()) {
+    m_buttons[2]->mouseClickEvent(x, y, button_down, true);
+    if (m_buttons[2]->isToggled()) {
         buyHandler();
-        buttons[2]->setToggled(false);
+        m_buttons[2]->setToggled(false);
     }
 
-    buttons[3]->mouseClickEvent(x, y, button_down, true);
-    if (buttons[3]->isToggled()) {
+    m_buttons[3]->mouseClickEvent(x, y, button_down, true);
+    if (m_buttons[3]->isToggled()) {
         sellHandler();
-        grids[1]->deselectAllCells();
-        buttons[3]->setToggled(false);
+        m_grids[1]->deselectAllCells();
+        m_buttons[3]->setToggled(false);
     }
 
-    buttons[4]->mouseClickEvent(x, y, button_down, true);
-    if (buttons[4]->isToggled()) {
+    m_buttons[4]->mouseClickEvent(x, y, button_down, true);
+    if (m_buttons[4]->isToggled()) {
         playSFX(BIG_CLICK);
-        grids[0]->deselectAllCells();
-        grids[1]->deselectAllCells();
-        buttons[4]->setToggled(false);
+        m_grids[0]->deselectAllCells();
+        m_grids[1]->deselectAllCells();
+        m_buttons[4]->setToggled(false);
         saveCurrentPlayerInfo();
-        current_player_index++;
+        m_current_player_index++;
         displayCurrentPlayerInfo();
     }
 }

@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_INTERLEAVEDDATA_HPP
-#define VULKAN_GRAPHIX_INTERLEAVEDDATA_HPP
+#ifndef VULKAN_GRAPHIX_VERTEXTYPES_INTERLEAVEDDATA_HPP
+#define VULKAN_GRAPHIX_VERTEXTYPES_INTERLEAVEDDATA_HPP
 
 #include <cstddef>
 #include <utility>
@@ -20,7 +20,8 @@ public:
 
     InterleavedData() = default;
 
-    explicit InterleavedData(collection_type data) : m_data(std::move(data)) {}
+    explicit InterleavedData(collection_type data) :
+            m_data(std::move(data)) {}
 
     const collection_type& getData() const { return m_data; }
 

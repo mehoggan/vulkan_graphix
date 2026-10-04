@@ -24,13 +24,13 @@ constexpr VkFormat c_texture_format = VK_FORMAT_R8G8B8A8_UNORM;
 // ************************************************************ //
 // VulkanTutorial12Parameters                                   //
 // ************************************************************ //
-VulkanTutorial12Parameters::VulkanTutorial12Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial12Parameters::VulkanTutorial12Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial12Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -186,10 +186,10 @@ void VulkanTutorial12Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial12                                                   //
 // ************************************************************ //
-Tutorial12::Tutorial12()
-        // Pulled back to OrbitCamera's max distance (40) and pitched down
-        // moderately, showing the grid's full silhouette with sky around it.
-        : m_camera(0.5f, 0.35f, 40.0f) {
+// Pulled back to OrbitCamera's max distance (40) and pitched down
+// moderately, showing the grid's full silhouette with sky around it.
+Tutorial12::Tutorial12() :
+        m_camera(0.5f, 0.35f, 40.0f) {
     std::srand(static_cast<std::uint32_t>(std::time(nullptr)));
 }
 
@@ -523,21 +523,21 @@ bool Tutorial12::createUniformBuffer() {
 
 Tutorial12UniformBufferData Tutorial12::getUniformBufferData() const {
     Tutorial12UniformBufferData data{};
-    data.model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
-    data.light_position = Math::Vec4<float>(15.0f, 25.0f, 15.0f, 1.0f);
-    data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
+    data.m_light_position = Math::Vec4<float>(15.0f, 25.0f, 15.0f, 1.0f);
+    data.m_light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
+    data.m_view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
 
     return data;
 }
@@ -847,17 +847,18 @@ bool Tutorial12::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial12VertexData, position)},
+                     .offset = offsetof(struct Tutorial12VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct Tutorial12VertexData, normal)},
+                     .offset =
+                             offsetof(struct Tutorial12VertexData, m_normal)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial12VertexData, texcoord)}};
+                     .offset = offsetof(struct Tutorial12VertexData,
+                                        m_texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

@@ -1,5 +1,5 @@
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef VULKAN_EARTH_SOUND_H
+#define VULKAN_EARTH_SOUND_H
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>

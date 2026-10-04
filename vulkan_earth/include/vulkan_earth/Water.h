@@ -1,5 +1,5 @@
-#ifndef WATER_H_
-#define WATER_H_
+#ifndef VULKAN_EARTH_WATER_H
+#define VULKAN_EARTH_WATER_H
 
 #include <cstdint>
 #include <memory>
@@ -56,17 +56,17 @@ public:
     void errorMessageBox(const std::string& output);
 
 private:
-    std::int32_t scale;
-    std::int32_t size;
-    std::int32_t total_vertices;
-    std::int32_t tri_strip_buffer_size;
-    std::int32_t** surfaceheight;
-    std::vector<vulkan_graphix::Math::Vec3<float>> vertices;
-    std::vector<vulkan_graphix::Math::Vec3<float>> normals;
-    std::vector<vulkan_graphix::Math::Vec2<float>> tex_coord;
-    std::shared_ptr<vulkan_graphix::Render::Texture> color_texture;
-    std::unique_ptr<vulkan_graphix::Render::Mesh> mesh;
-    float timer;
+    std::int32_t m_scale;
+    std::int32_t m_size;
+    std::int32_t m_total_vertices;
+    std::int32_t m_tri_strip_buffer_size;
+    std::int32_t** m_surfaceheight;
+    std::vector<vulkan_graphix::Math::Vec3<float>> m_vertices;
+    std::vector<vulkan_graphix::Math::Vec3<float>> m_normals;
+    std::vector<vulkan_graphix::Math::Vec2<float>> m_tex_coord;
+    std::shared_ptr<vulkan_graphix::Render::Texture> m_color_texture;
+    std::unique_ptr<vulkan_graphix::Render::Mesh> m_mesh;
+    float m_timer;
 };
 
-#endif /*	WATER_H_	*/
+#endif  // VULKAN_EARTH_WATER_H

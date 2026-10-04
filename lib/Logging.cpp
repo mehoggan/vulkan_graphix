@@ -54,7 +54,8 @@ std::filesystem::path substitutePercents(const std::filesystem::path& model) {
 }
 }  // namespace
 
-LogTag::LogTag(const ::std::string& tag) : tag_(tag) {}
+LogTag::LogTag(const ::std::string& tag) :
+        tag_(tag) {}
 
 const char* LogTag::tag() const { return tag_.c_str(); }
 
@@ -121,7 +122,8 @@ void Logging::writeSeverityLog(const LogTag& tag,
 
     std::lock_guard<std::mutex> lock(Logging::s_loggers_mutex);
     auto sink_it = Logging::s_loggers.find(tag);
-    if (sink_it == Logging::s_loggers.end() || level < sink_it->second.level) {
+    if (sink_it == Logging::s_loggers.end() ||
+        level < sink_it->second.m_level) {
         return;
     }
 
@@ -130,7 +132,7 @@ void Logging::writeSeverityLog(const LogTag& tag,
     std::tm local_tm{};
     localtime_r(&now_time, &local_tm);
 
-    std::ostream& out_stream = *sink_it->second.stream;
+    std::ostream& out_stream = *sink_it->second.m_stream;
     out_stream << std::put_time(&local_tm, "%Y-%m-%d %H:%M:%S") << " ["
                << std::this_thread::get_id() << "] " << tag.tag() << " "
                << severityName(level) << "(" << line_id << ")" << " - '"

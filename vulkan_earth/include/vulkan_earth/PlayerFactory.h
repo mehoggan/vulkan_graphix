@@ -1,5 +1,5 @@
-#ifndef PLAYER_FACTORY_H
-#define PLAYER_FACTORY_H
+#ifndef VULKAN_EARTH_PLAYERFACTORY_H
+#define VULKAN_EARTH_PLAYERFACTORY_H
 
 #include <cstdint>
 #include <string>
@@ -27,11 +27,11 @@ public:
     Player* getPlayer(std::int32_t i);
 
 private:
-    Player** player_set;
-    GlobalSettings* game_global_settings;
-    std::int32_t number_of_players;
-    std::int32_t prev_number_of_players;
-    float player_color[10][4];
+    Player** m_player_set;
+    GlobalSettings* m_game_global_settings;
+    std::int32_t m_number_of_players;
+    std::int32_t m_prev_number_of_players;
+    float m_player_color[10][4];
 };
 
-#endif /*	PLAYER_FACTORY_H	*/
+#endif  // VULKAN_EARTH_PLAYERFACTORY_H

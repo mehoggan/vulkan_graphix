@@ -1,5 +1,5 @@
-#ifndef SKYBOX_FACTORY_H_
-#define SKYBOX_FACTORY_H_
+#ifndef VULKAN_EARTH_SKYBOXFACTORY_H
+#define VULKAN_EARTH_SKYBOXFACTORY_H
 
 #include <cstdint>
 #include <memory>
@@ -21,9 +21,9 @@ public:
 private:
     void buildGeometry();
 
-    float size;
-    std::shared_ptr<vulkan_graphix::Render::Texture> texture;
-    vulkan_graphix::Render::UiMesh mesh;
+    float m_size;
+    std::shared_ptr<vulkan_graphix::Render::Texture> m_texture;
+    vulkan_graphix::Render::UiMesh m_mesh;
 };
 
-#endif /* SKYBOX_FACTORY_H_ */
+#endif  // VULKAN_EARTH_SKYBOXFACTORY_H

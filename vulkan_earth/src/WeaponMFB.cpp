@@ -4,12 +4,12 @@
 
 WeaponMFB::WeaponMFB() = default;
 WeaponMFB::WeaponMFB(std::int32_t id) {
-    uniqueidentifier = id;
+    m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::weapon(
             vulkan_graphix::GameCatalog::WeaponKind::MFB));
 }
 WeaponMFB::~WeaponMFB() = default;
 
 WeaponMFB* WeaponMFB::getWeaponInstance() {
-    return new WeaponMFB(uniqueidentifier);
+    return new WeaponMFB(m_uniqueidentifier);
 }

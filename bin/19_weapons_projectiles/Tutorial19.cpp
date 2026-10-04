@@ -19,10 +19,10 @@ namespace vulkan_graphix {
 
 namespace {
 struct ProjectileMeshInfo {
-    const char* mesh_file;
-    const char* texture_file;
-    float scale;
-    float world_x;
+    const char* m_mesh_file;
+    const char* m_texture_file;
+    float m_scale;
+    float m_world_x;
 };
 
 // Each scale is its weapon's real one (the shared GameCatalog); world_x
@@ -35,15 +35,15 @@ getProjectileMeshInfo() {
     static const std::array<ProjectileMeshInfo, c_projectile_mesh_count> info =
             {{{"projectileDefault.ogl",
                "projectileDefault.raw",
-               weapon(WeaponKind::Default).scale,
+               weapon(WeaponKind::Default).m_scale,
                -220.0f},
               {"projectileAcid.ogl",
                "projectileAcid.raw",
-               weapon(WeaponKind::Acid).scale,
+               weapon(WeaponKind::Acid).m_scale,
                0.0f},
               {"projectileBFB.ogl",
                "projectileBFB.raw",
-               weapon(WeaponKind::BFB).scale,
+               weapon(WeaponKind::BFB).m_scale,
                220.0f}}};
     return info;
 }
@@ -78,25 +78,24 @@ getWeaponDisplayData() {
 // ************************************************************ //
 // VulkanTutorial19Parameters                                   //
 // ************************************************************ //
-VulkanTutorial19Parameters::VulkanTutorial19Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_3d_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_grid_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_3d_descriptor_sets{VK_NULL_HANDLE,
-                                  VK_NULL_HANDLE,
-                                  VK_NULL_HANDLE}
-        , m_vk_font_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_icon_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_3d_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_grid_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_3d_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_grid_graphics_pipeline(VK_NULL_HANDLE)
-        , m_projectile_vertex_counts{0, 0, 0}
-        , m_text_vertex_count(0)
-        , m_icon_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial19Parameters::VulkanTutorial19Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_3d_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_grid_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_descriptor_pool(VK_NULL_HANDLE),
+        m_vk_3d_descriptor_sets{
+                VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE},
+        m_vk_font_descriptor_set(VK_NULL_HANDLE),
+        m_vk_icon_descriptor_set(VK_NULL_HANDLE),
+        m_vk_3d_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_grid_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_3d_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_grid_graphics_pipeline(VK_NULL_HANDLE),
+        m_projectile_vertex_counts{0, 0, 0},
+        m_text_vertex_count(0),
+        m_icon_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial19Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -380,13 +379,14 @@ void VulkanTutorial19Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial19                                                   //
 // ************************************************************ //
-Tutorial19::Tutorial19()
-        // Real weapon scales (60-100) applied to these meshes' own raw
-        // modeling units puts each projectile at dozens of world units
-        // across (BFB, the "Big Force Bomb", reads as noticeably larger
-        // than the other two, as its name suggests) - spacing/distance
-        // tuned via screenshot to keep all three clearly separated.
-        : m_camera(0.05f, 0.2f, 800.0f), m_selected_index(0) {}
+// Real weapon scales (60-100) applied to these meshes' own raw
+// modeling units puts each projectile at dozens of world units
+// across (BFB, the "Big Force Bomb", reads as noticeably larger
+// than the other two, as its name suggests) - spacing/distance
+// tuned via screenshot to keep all three clearly separated.
+Tutorial19::Tutorial19() :
+        m_camera(0.05f, 0.2f, 800.0f),
+        m_selected_index(0) {}
 
 Tutorial19::~Tutorial19() { childClear(); }
 
@@ -576,7 +576,7 @@ bool Tutorial19::createProjectileTextures() {
 
     for (std::size_t i = 0; i < mesh_info.size(); ++i) {
         std::vector<char> texture_data =
-                Tools::getRawImageData(mesh_info[i].texture_file, 512, 512);
+                Tools::getRawImageData(mesh_info[i].m_texture_file, 512, 512);
         if (texture_data.empty()) {
             return false;
         }
@@ -596,11 +596,11 @@ std::vector<char> Tutorial19::buildIconAtlasPixels() const {
             weapons = getWeaponDisplayData();
     for (std::size_t index = 0; index < weapons.size(); ++index) {
         const std::vector<char> icon_pixels = Tools::getRawImageData(
-                weapons[index].image_file, c_icon_size, c_icon_size);
+                weapons[index].m_image_file, c_icon_size, c_icon_size);
         if (icon_pixels.empty()) {
             Logging::error(LOG_TAG,
                            "Could not load icon \"",
-                           weapons[index].image_file,
+                           weapons[index].m_image_file,
                            "\"!");
             return {};
         }
@@ -661,15 +661,15 @@ bool Tutorial19::createFontAtlas() {
 
 Tutorial19UniformBufferData3D Tutorial19::get3DUniformBufferData() const {
     Tutorial19UniformBufferData3D data{};
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 1.0f, 2000.0f);
 
     return data;
@@ -1180,11 +1180,11 @@ bool Tutorial19::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial19Vertex3DData, position)},
+             .offset = offsetof(struct Tutorial19Vertex3DData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial19Vertex3DData, texcoord)}};
+             .offset = offsetof(struct Tutorial19Vertex3DData, m_texcoord)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_3d = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1341,15 +1341,15 @@ bool Tutorial19::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial19VertexGridData, position)},
+             .offset = offsetof(struct Tutorial19VertexGridData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial19VertexGridData, texcoord)},
+             .offset = offsetof(struct Tutorial19VertexGridData, m_texcoord)},
             {.location = 2,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial19VertexGridData, color)}};
+             .offset = offsetof(struct Tutorial19VertexGridData, m_color)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_grid = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1449,8 +1449,8 @@ std::vector<Tutorial19Vertex3DData> Tutorial19::loadMeshVertexData(
     std::vector<Tutorial19Vertex3DData> vertex_data;
     vertex_data.reserve(mesh_data.size());
     for (const Tools::OglVertexData& vertex : mesh_data) {
-        vertex_data.push_back(
-                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
+        vertex_data.push_back({Math::Vec4<float>(vertex.m_position, 1.0f),
+                               vertex.m_texcoord});
     }
     return vertex_data;
 }
@@ -1466,11 +1466,11 @@ bool Tutorial19::createProjectileVertexBuffers() {
 
     for (std::size_t i = 0; i < mesh_info.size(); ++i) {
         const std::vector<Tutorial19Vertex3DData> vertex_data =
-                loadMeshVertexData(mesh_info[i].mesh_file);
+                loadMeshVertexData(mesh_info[i].m_mesh_file);
         if (vertex_data.empty()) {
             Logging::error(LOG_TAG,
                            "Could not load mesh data from \"",
-                           mesh_info[i].mesh_file,
+                           mesh_info[i].m_mesh_file,
                            "\"!");
             return false;
         }
@@ -1657,7 +1657,7 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
             UiGeometry::buildButtonBevel(
                     panel_top_left, panel_size, panel_color, false);
     for (const UiGeometry::ColoredQuad& quad : panel_bevel) {
-        appendColoredQuad(vertex_data, quad.corners, quad.color);
+        appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
     }
 
     const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
@@ -1687,7 +1687,7 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
             appendColoredQuad(vertex_data, highlight_corners, highlight_color);
         }
 
-        const std::string label = "$" + std::to_string(weapons[index].price);
+        const std::string label = "$" + std::to_string(weapons[index].m_price);
         const float label_width = m_font.textWidth(label);
         appendText(vertex_data,
                    label,
@@ -1700,7 +1700,7 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
     const float description_top = getDescriptionTop();
     const float max_description_width = panel_size.x - 32.0f;
     const std::vector<std::string> description_lines = wrapText(
-            weapons[m_selected_index].description, max_description_width);
+            weapons[m_selected_index].m_description, max_description_width);
     for (std::size_t line = 0; line < description_lines.size(); ++line) {
         appendText(vertex_data,
                    description_lines[line],
@@ -1950,7 +1950,7 @@ bool Tutorial19::prepareFrame(VkCommandBuffer command_buffer,
                                &vertex_buffers[i].getVkBuffer(),
                                &zero_offset);
         Tutorial19PushConstants push_constants{buildProjectileMatrix(
-                mesh_info[i].world_x, mesh_info[i].scale)};
+                mesh_info[i].m_world_x, mesh_info[i].m_scale)};
         vkCmdPushConstants(
                 command_buffer,
                 m_vulkan_tutorial19_parameters.getVk3DPipelineLayout(),

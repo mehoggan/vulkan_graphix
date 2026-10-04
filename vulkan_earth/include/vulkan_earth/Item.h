@@ -1,5 +1,5 @@
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef VULKAN_EARTH_ITEM_H
+#define VULKAN_EARTH_ITEM_H
 
 #include <cstdint>
 #include <string>
@@ -27,14 +27,14 @@ protected:
     // Every field but the id, from the game's catalog.
     void loadSpec(const vulkan_graphix::GameCatalog::ItemSpec& spec);
 
-    std::int32_t uniqueidentifier;
-    std::string image_file_name;
-    std::string description;
-    std::int32_t price;
-    std::int32_t package_num;
-    std::int32_t max_stack;
-    std::int32_t remaining;
-    std::int32_t special_num;
+    std::int32_t m_uniqueidentifier;
+    std::string m_image_file_name;
+    std::string m_description;
+    std::int32_t m_price;
+    std::int32_t m_package_num;
+    std::int32_t m_max_stack;
+    std::int32_t m_remaining;
+    std::int32_t m_special_num;
 };
 
-#endif  //	ITEM_H
+#endif  // VULKAN_EARTH_ITEM_H

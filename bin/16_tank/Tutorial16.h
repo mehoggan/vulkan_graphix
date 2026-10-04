@@ -46,8 +46,8 @@ namespace vulkan_graphix {
 // Same shape as Tutorial13VertexData on purpose: an unlit textured
 // surface is exactly what these meshes need too.
 struct Tutorial16VertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial16VertexAttributeTraits =
@@ -56,13 +56,13 @@ using Tutorial16VertexAttributeTraits =
 // Shared by all three parts, updated once per frame as the orbit
 // camera moves - see Tutorial10UniformBufferData for the same split.
 struct Tutorial16UniformBufferData {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // The active part's model matrix, set per draw call.
 struct Tutorial16PushConstants {
-    Math::Mat4<float> model;
+    Math::Mat4<float> m_model;
 };
 
 // ************************************************************ //

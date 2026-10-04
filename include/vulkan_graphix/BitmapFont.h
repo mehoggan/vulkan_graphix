@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_BITMAP_FONT_H
-#define VULKAN_GRAPHIX_BITMAP_FONT_H
+#ifndef VULKAN_GRAPHIX_BITMAPFONT_H
+#define VULKAN_GRAPHIX_BITMAPFONT_H
 
 // Bakes a TrueType font's printable-ASCII glyphs into an RGBA texture
 // atlas, using the vendored STBTrueType.h (see that file's header comment)
@@ -24,10 +24,10 @@
 namespace vulkan_graphix {
 
 struct BitmapFontGlyphQuad {
-    Math::Vec2<float> top_left;
-    Math::Vec2<float> bottom_right;
-    Math::Vec2<float> uv_top_left;
-    Math::Vec2<float> uv_bottom_right;
+    Math::Vec2<float> m_top_left;
+    Math::Vec2<float> m_bottom_right;
+    Math::Vec2<float> m_uv_top_left;
+    Math::Vec2<float> m_uv_bottom_right;
 };
 
 class BitmapFont {
@@ -75,11 +75,11 @@ private:
             95;  // ASCII 32-126 inclusive
 
     struct Glyph {
-        Math::Vec2<float> size;
-        Math::Vec2<float> offset;
-        Math::Vec2<float> uv_min;
-        Math::Vec2<float> uv_max;
-        float advance = 0.0f;
+        Math::Vec2<float> m_size;
+        Math::Vec2<float> m_offset;
+        Math::Vec2<float> m_uv_min;
+        Math::Vec2<float> m_uv_max;
+        float m_advance = 0.0f;
     };
 
     std::vector<char> m_atlas_pixels;
@@ -92,4 +92,4 @@ private:
 
 }  // namespace vulkan_graphix
 
-#endif  // VULKAN_GRAPHIX_BITMAP_FONT_H
+#endif  // VULKAN_GRAPHIX_BITMAPFONT_H

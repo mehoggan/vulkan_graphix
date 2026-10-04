@@ -1,5 +1,5 @@
-#ifndef SUB_MENU_H
-#define SUB_MENU_H
+#ifndef VULKAN_EARTH_SUBMENU_H
+#define VULKAN_EARTH_SUBMENU_H
 
 #include <cstdint>
 #include <string>
@@ -60,4 +60,4 @@ public:
     /*	END OF ACTIONS A SUBMENU CAN MAKE	*/
 };
 
-#endif  //	SUB_MENU_H
+#endif  // VULKAN_EARTH_SUBMENU_H

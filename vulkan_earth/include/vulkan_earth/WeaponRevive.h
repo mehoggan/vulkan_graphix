@@ -1,5 +1,5 @@
-#ifndef WEAPON_REVIVE_H
-#define WEAPON_REVIVE_H
+#ifndef VULKAN_EARTH_WEAPONREVIVE_H
+#define VULKAN_EARTH_WEAPONREVIVE_H
 
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"

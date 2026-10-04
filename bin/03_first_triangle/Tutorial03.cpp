@@ -7,15 +7,15 @@
 
 namespace vulkan_graphix {
 
-VulkanTutorial03Parameters::VulkanTutorial03Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_framebuffers({})
-        , m_vk_pipeline(VK_NULL_HANDLE)
-        , m_image_available_vk_semaphore(VK_NULL_HANDLE)
-        , m_rendering_finished_semaphores({})
-        , m_vk_fence(VK_NULL_HANDLE)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_vk_command_buffers({}) {}
+VulkanTutorial03Parameters::VulkanTutorial03Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_framebuffers({}),
+        m_vk_pipeline(VK_NULL_HANDLE),
+        m_image_available_vk_semaphore(VK_NULL_HANDLE),
+        m_rendering_finished_semaphores({}),
+        m_vk_fence(VK_NULL_HANDLE),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_vk_command_buffers({}) {}
 
 const VkRenderPass& VulkanTutorial03Parameters::getVkRenderPass() const {
     return m_vk_render_pass;

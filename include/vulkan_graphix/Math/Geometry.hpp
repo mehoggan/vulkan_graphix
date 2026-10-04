@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_GEOMETRY_HPP
-#define VULKAN_GRAPHIX_GEOMETRY_HPP
+#ifndef VULKAN_GRAPHIX_MATH_GEOMETRY_HPP
+#define VULKAN_GRAPHIX_MATH_GEOMETRY_HPP
 
 #include <cmath>
 #include <limits>
@@ -37,8 +37,10 @@ Vec3<T> midpointOfLine(const Line<T>& line) {
 template <typename T, AngleMode AM>
 class SphericalCoordinates {
 public:
-    SphericalCoordinates(T theta, T phi, T radius)
-            : m_theta(theta), m_phi(phi), m_radius(radius) {}
+    SphericalCoordinates(T theta, T phi, T radius) :
+            m_theta(theta),
+            m_phi(phi),
+            m_radius(radius) {}
 
     T theta() const { return m_theta; }
     T phi() const { return m_phi; }

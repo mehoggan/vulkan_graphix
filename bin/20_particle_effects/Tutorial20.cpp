@@ -45,7 +45,7 @@ const GameCatalog::WeaponSpec& explosionWeapon() {
 }
 
 Math::Vec4<float> explosionColor(std::int32_t index, float alpha) {
-    const auto& color = explosionWeapon().explosion_colors[index];
+    const auto& color = explosionWeapon().m_explosion_colors[index];
     return Math::Vec4<float>(static_cast<float>(color[0]),
                              static_cast<float>(color[1]),
                              static_cast<float>(color[2]),
@@ -62,13 +62,13 @@ Math::Mat4<float> buildInstanceMatrix(const Math::Vec3<float>& position,
 // ************************************************************ //
 // VulkanTutorial20Parameters                                   //
 // ************************************************************ //
-VulkanTutorial20Parameters::VulkanTutorial20Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_index_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial20Parameters::VulkanTutorial20Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_index_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial20Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -212,28 +212,17 @@ void VulkanTutorial20Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial20                                                   //
 // ************************************************************ //
-Tutorial20::Tutorial20()
-        : m_camera(0.5f, 0.2f, 6.0f)
+Tutorial20::Tutorial20() :
+        m_camera(0.5f, 0.2f, 6.0f),
         // Tank.cpp's own smoke_gen/acid_gen/float_gen arguments.
-        , m_emitters{EffectSimulation::ParticleEmitter(
-                             10,
-                             5,
-                             1,
-                             100,
-                             EffectSimulation::ParticleKind::Smoke),
-                     EffectSimulation::ParticleEmitter(
-                             10,
-                             5,
-                             2,
-                             100,
-                             EffectSimulation::ParticleKind::Acid),
-                     EffectSimulation::ParticleEmitter(
-                             10,
-                             5,
-                             2,
-                             100,
-                             EffectSimulation::ParticleKind::Float)}
-        , m_explosion_color(explosionColor(0, 1.0f)) {}
+        m_emitters{
+                EffectSimulation::ParticleEmitter(
+                        10, 5, 1, 100, EffectSimulation::ParticleKind::Smoke),
+                EffectSimulation::ParticleEmitter(
+                        10, 5, 2, 100, EffectSimulation::ParticleKind::Acid),
+                EffectSimulation::ParticleEmitter(
+                        10, 5, 2, 100, EffectSimulation::ParticleKind::Float)},
+        m_explosion_color(explosionColor(0, 1.0f)) {}
 
 Tutorial20::~Tutorial20() { childClear(); }
 
@@ -259,11 +248,11 @@ void Tutorial20::updateParticles() {
 void Tutorial20::updateExplosion() {
     const EffectSimulation::ExplosionFrame frame =
             EffectSimulation::advanceExplosion(m_explosion);
-    if (frame.color_index >= 0) {
-        m_explosion_color = explosionColor(frame.color_index, frame.alpha);
+    if (frame.m_color_index >= 0) {
+        m_explosion_color = explosionColor(frame.m_color_index, frame.m_alpha);
     }
     // Faded out: start over.
-    if (m_explosion.timer >= 150.0f) {
+    if (m_explosion.m_timer >= 150.0f) {
         m_explosion = EffectSimulation::Explosion{};
     }
 }
@@ -395,15 +384,15 @@ bool Tutorial20::createStagingBuffer() {
 
 Tutorial20UniformBufferData Tutorial20::getUniformBufferData() const {
     Tutorial20UniformBufferData data{};
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
     return data;
@@ -695,8 +684,8 @@ bool Tutorial20::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial20VertexData, position)}};
+                     .offset = offsetof(struct Tutorial20VertexData,
+                                        m_position)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1105,14 +1094,14 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
             Tutorial20PushConstants particle_push_constants{
                     buildInstanceMatrix(
                             emitter_origins[emitter] +
-                                    Math::Vec3<float>(particle.x,
-                                                      particle.y,
-                                                      particle.z) *
+                                    Math::Vec3<float>(particle.m_x,
+                                                      particle.m_y,
+                                                      particle.m_z) *
                                             c_particle_position_scale,
-                            particle.size * c_particle_size_scale),
-                    Math::Vec4<float>(particle.red,
-                                      particle.green,
-                                      particle.blue,
+                            particle.m_size * c_particle_size_scale),
+                    Math::Vec4<float>(particle.m_red,
+                                      particle.m_green,
+                                      particle.m_blue,
                                       EffectSimulation::c_particle_alpha)};
             vkCmdPushConstants(
                     command_buffer,
@@ -1131,7 +1120,7 @@ bool Tutorial20::prepareFrame(VkCommandBuffer command_buffer,
                                 EffectSimulation::explosionSphereRadius(
                                         m_explosion,
                                         static_cast<std::int32_t>(
-                                                explosionWeapon().radius)) *
+                                                explosionWeapon().m_radius)) *
                                         c_explosion_scale),
             m_explosion_color};
     vkCmdPushConstants(

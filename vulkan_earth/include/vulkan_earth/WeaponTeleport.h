@@ -1,5 +1,5 @@
-#ifndef WEAPON_TELEPORT_H
-#define WEAPON_TELEPORT_H
+#ifndef VULKAN_EARTH_WEAPONTELEPORT_H
+#define VULKAN_EARTH_WEAPONTELEPORT_H
 
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"

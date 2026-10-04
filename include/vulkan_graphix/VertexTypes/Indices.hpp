@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_INDICES_HPP
-#define VULKAN_GRAPHIX_INDICES_HPP
+#ifndef VULKAN_GRAPHIX_VERTEXTYPES_INDICES_HPP
+#define VULKAN_GRAPHIX_VERTEXTYPES_INDICES_HPP
 
 #include <cstddef>
 #include <type_traits>
@@ -18,7 +18,8 @@ public:
 
     Indices() = default;
 
-    explicit Indices(collection_type data) : m_data(std::move(data)) {}
+    explicit Indices(collection_type data) :
+            m_data(std::move(data)) {}
 
     const collection_type& getData() const { return m_data; }
 

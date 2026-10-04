@@ -1,5 +1,5 @@
-#ifndef LOADING_SCREEN_H
-#define LOADING_SCREEN_H
+#ifndef VULKAN_EARTH_LOADINGSCREEN_H
+#define VULKAN_EARTH_LOADINGSCREEN_H
 
 #include <cstdint>
 
@@ -27,11 +27,11 @@ public:
     void draw(vulkan_graphix::Render::RenderContext& context);
 
 private:
-    float pos[3];
-    float color[4];
-    std::int32_t width, height;
-    ImageObject* image;
-    vulkan_graphix::Render::UiMesh frame_mesh;
+    float m_pos[3];
+    float m_color[4];
+    std::int32_t m_width, m_height;
+    ImageObject* m_image;
+    vulkan_graphix::Render::UiMesh m_frame_mesh;
 };
 
 #endif

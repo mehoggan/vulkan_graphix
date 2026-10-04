@@ -1,5 +1,5 @@
-#ifndef IMAGE_OBJECT_H
-#define IMAGE_OBJECT_H
+#ifndef VULKAN_EARTH_IMAGEOBJECT_H
+#define VULKAN_EARTH_IMAGEOBJECT_H
 
 #include <cstdint>
 #include <memory>
@@ -38,16 +38,16 @@ public:
 private:
     void buildGeometry();
 
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    std::int32_t width;
-    std::int32_t height;
-    float border_size;
-    std::shared_ptr<vulkan_graphix::Render::Texture> texture;
-    vulkan_graphix::Render::UiMesh image_mesh;
-    vulkan_graphix::Render::UiMesh border_mesh;
-    bool geometry_dirty = true;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    std::int32_t m_width;
+    std::int32_t m_height;
+    float m_border_size;
+    std::shared_ptr<vulkan_graphix::Render::Texture> m_texture;
+    vulkan_graphix::Render::UiMesh m_image_mesh;
+    vulkan_graphix::Render::UiMesh m_border_mesh;
+    bool m_geometry_dirty = true;
 };
 
 #endif

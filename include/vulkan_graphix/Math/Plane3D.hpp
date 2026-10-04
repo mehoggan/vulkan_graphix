@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_PLANE3D_HPP
-#define VULKAN_GRAPHIX_PLANE3D_HPP
+#ifndef VULKAN_GRAPHIX_MATH_PLANE3D_HPP
+#define VULKAN_GRAPHIX_MATH_PLANE3D_HPP
 
 #include <utility>
 
@@ -13,16 +13,18 @@ template <typename T>
 class Plane3D {
 public:
     // Default-constructs an invalid plane (all coefficients zero).
-    Plane3D() : m_coefficients(T(0), T(0), T(0), T(0)) {}
+    Plane3D() :
+            m_coefficients(T(0), T(0), T(0), T(0)) {}
 
     Plane3D(const T& coeff_a,
             const T& coeff_b,
             const T& coeff_c,
-            const T& coeff_d)
-            : m_coefficients(coeff_a, coeff_b, coeff_c, coeff_d) {}
+            const T& coeff_d) :
+            m_coefficients(coeff_a, coeff_b, coeff_c, coeff_d) {}
 
     // Not explicit so a coefficient vector can convert implicitly.
-    Plane3D(const Vec4<T>& coefficients) : m_coefficients(coefficients) {}
+    Plane3D(const Vec4<T>& coefficients) :
+            m_coefficients(coefficients) {}
 
     T a() const { return m_coefficients.x; }
     T b() const { return m_coefficients.y; }

@@ -29,8 +29,8 @@ namespace vulkan_graphix {
 // Same shape as Tutorial07VertexData on purpose: this tutorial reuses
 // Tutorial07's compiled shaders byte-for-byte (see createPipeline()).
 struct Tutorial13VertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial13VertexAttributeTraits =

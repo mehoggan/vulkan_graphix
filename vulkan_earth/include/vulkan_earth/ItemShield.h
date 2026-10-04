@@ -1,5 +1,5 @@
-#ifndef ITEM_SHIELD_H
-#define ITEM_SHIELD_H
+#ifndef VULKAN_EARTH_ITEMSHIELD_H
+#define VULKAN_EARTH_ITEMSHIELD_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

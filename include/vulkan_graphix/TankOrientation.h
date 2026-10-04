@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TANK_ORIENTATION_H
-#define VULKAN_GRAPHIX_TANK_ORIENTATION_H
+#ifndef VULKAN_GRAPHIX_TANKORIENTATION_H
+#define VULKAN_GRAPHIX_TANKORIENTATION_H
 
 // Tilting a tank to sit flush on the ground under it, ported from
 // vulkan_earth's Tank::orientTank() and its calcAngleBetweenVectors()
@@ -24,12 +24,12 @@ float angleBetweenDegrees(const Math::Vec3<float>& one,
 struct Alignment {
     // body_matrix rotated so its up axis (column 1) points along the
     // ground normal.
-    Math::Mat4<float> matrix;
+    Math::Mat4<float> m_matrix;
     // World-space unit axis the rotation turned about (up x normal), and
     // how far, in degrees - vulkan_earth keeps both for its own
     // orientation debug drawing.
-    Math::Vec3<float> axis;
-    float angle_degrees;
+    Math::Vec3<float> m_axis;
+    float m_angle_degrees;
 };
 
 // Rotates body_matrix so its up axis lines up with ground_normal, or
@@ -43,4 +43,4 @@ std::optional<Alignment> alignToGround(const Math::Mat4<float>& body_matrix,
 
 }  // namespace vulkan_graphix::TankOrientation
 
-#endif  // VULKAN_GRAPHIX_TANK_ORIENTATION_H
+#endif  // VULKAN_GRAPHIX_TANKORIENTATION_H

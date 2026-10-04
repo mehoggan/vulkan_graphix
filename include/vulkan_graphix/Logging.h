@@ -153,9 +153,9 @@ public:
     // *owned_file) plus the minimum severity that passes this sink's
     // filter, matching every addXLogger() overload's own `level` param.
     struct TextSink {
-        std::ostream* stream;
-        SeverityLevel level;
-        std::unique_ptr<std::ofstream> owned_file;
+        std::ostream* m_stream;
+        SeverityLevel m_level;
+        std::unique_ptr<std::ofstream> m_owned_file;
     };
     using Dict = std::unordered_map<LogTag, TextSink>;
 

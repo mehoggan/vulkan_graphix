@@ -1,5 +1,5 @@
-#ifndef TERRAINMAKER
-#define TERRAINMAKER
+#ifndef VULKAN_EARTH_TERRAINMAKER_H
+#define VULKAN_EARTH_TERRAINMAKER_H
 
 #include <cstdint>
 #include <memory>
@@ -51,25 +51,25 @@ public:
 private:
     void rebuildMesh();
 
-    std::int32_t scale;
-    std::int32_t size;
-    std::int32_t steps;
-    std::int32_t increase;
-    float radius;
-    std::int32_t random_jump;
-    std::int32_t total_vertices;
-    std::int32_t tri_strip_buffer_size;
-    vulkan_graphix::TerrainGenerator terrain;
-    std::vector<vulkan_graphix::Math::Vec3<float>> vertices;
-    std::vector<vulkan_graphix::Math::Vec3<float>> normals;
-    std::vector<vulkan_graphix::Math::Vec2<float>> tex_coord;
-    std::shared_ptr<vulkan_graphix::Render::Texture> color_texture;
-    std::unique_ptr<vulkan_graphix::Render::Mesh> mesh;
+    std::int32_t m_scale;
+    std::int32_t m_size;
+    std::int32_t m_steps;
+    std::int32_t m_increase;
+    float m_radius;
+    std::int32_t m_random_jump;
+    std::int32_t m_total_vertices;
+    std::int32_t m_tri_strip_buffer_size;
+    vulkan_graphix::TerrainGenerator m_terrain;
+    std::vector<vulkan_graphix::Math::Vec3<float>> m_vertices;
+    std::vector<vulkan_graphix::Math::Vec3<float>> m_normals;
+    std::vector<vulkan_graphix::Math::Vec2<float>> m_tex_coord;
+    std::shared_ptr<vulkan_graphix::Render::Texture> m_color_texture;
+    std::unique_ptr<vulkan_graphix::Render::Mesh> m_mesh;
     // The wireframe view's per-vertex debug normals.
-    vulkan_graphix::Render::UiMesh normal_lines;
-    bool mesh_dirty = true;
-    float rotation_angle;
-    bool wireframe_active;
+    vulkan_graphix::Render::UiMesh m_normal_lines;
+    bool m_mesh_dirty = true;
+    float m_rotation_angle;
+    bool m_wireframe_active;
 };
 
-#endif  //	TERRAINMAKER
+#endif  // VULKAN_EARTH_TERRAINMAKER_H

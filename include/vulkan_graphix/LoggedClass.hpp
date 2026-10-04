@@ -26,8 +26,8 @@ public:
      */
     explicit LoggedClass(const DerivedType& derived,
                          SeverityLevel cout_level = VULKAN_GRAPHIX_INFO,
-                         SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR)
-            : LOG_TAG(Logging::logTagForThis(derived)) {
+                         SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR) :
+            LOG_TAG(Logging::logTagForThis(derived)) {
         Logging::addStdCoutLogger(LOG_TAG, cout_level);
         Logging::addStdCerrLogger(LOG_TAG, cerr_level);
     }

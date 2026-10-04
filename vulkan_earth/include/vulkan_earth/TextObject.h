@@ -1,5 +1,5 @@
-#ifndef TEXT_OBJECT_H
-#define TEXT_OBJECT_H
+#ifndef VULKAN_EARTH_TEXTOBJECT_H
+#define VULKAN_EARTH_TEXTOBJECT_H
 
 #include <string>
 #include "vulkan_earth/GameRenderer.h"
@@ -30,12 +30,12 @@ public:
     void draw(vulkan_graphix::Render::RenderContext& context);
 
 private:
-    std::string output;
-    float pos_x;
-    float pos_y;
-    float pos_z;
-    float color[4];
-    vulkan_earth::FontId font_size;
+    std::string m_output;
+    float m_pos_x;
+    float m_pos_y;
+    float m_pos_z;
+    float m_color[4];
+    vulkan_earth::FontId m_font_size;
 };
 
 #endif

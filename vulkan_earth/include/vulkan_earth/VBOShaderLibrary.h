@@ -1,5 +1,5 @@
-#ifndef VBO_SHADER_LIBRARY_H
-#define VBO_SHADER_LIBRARY_H
+#ifndef VULKAN_EARTH_VBOSHADERLIBRARY_H
+#define VULKAN_EARTH_VBOSHADERLIBRARY_H
 
 #include <cstdint>
 #include <memory>
@@ -39,8 +39,8 @@ public:
                      std::int32_t height);
 
 private:
-    std::unique_ptr<vulkan_graphix::Render::Mesh> mesh;
-    std::shared_ptr<vulkan_graphix::Render::Texture> color_texture;
+    std::unique_ptr<vulkan_graphix::Render::Mesh> m_mesh;
+    std::shared_ptr<vulkan_graphix::Render::Texture> m_color_texture;
 };
 
 #endif

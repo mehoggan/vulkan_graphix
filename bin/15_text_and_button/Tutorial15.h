@@ -33,9 +33,9 @@
 namespace vulkan_graphix {
 
 struct Tutorial15VertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
-    Math::Vec4<float> color;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
+    Math::Vec4<float> m_color;
 };
 
 using Tutorial15VertexAttributeTraits =

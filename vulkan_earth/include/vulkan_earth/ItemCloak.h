@@ -1,5 +1,5 @@
-#ifndef ITEM_CLOAK_H
-#define ITEM_CLOAK_H
+#ifndef VULKAN_EARTH_ITEMCLOAK_H
+#define VULKAN_EARTH_ITEMCLOAK_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

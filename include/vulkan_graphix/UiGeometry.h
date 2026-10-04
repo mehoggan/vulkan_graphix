@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_UI_GEOMETRY_H
-#define VULKAN_GRAPHIX_UI_GEOMETRY_H
+#ifndef VULKAN_GRAPHIX_UIGEOMETRY_H
+#define VULKAN_GRAPHIX_UIGEOMETRY_H
 
 // Reusable 2D UI-quad geometry, ported from vulkan_earth's
 // ControlItemButton::draw() (see vulkan_earth/src/ControlItemButton.cpp)
@@ -32,17 +32,17 @@ namespace vulkan_graphix::UiGeometry {
 // necessarily an axis-aligned rectangle, since the bevel's four border
 // wedges are trapezoids, not rectangles.
 struct ColoredQuad {
-    std::array<Math::Vec2<float>, 4> corners;
-    Math::Vec4<float> color;
+    std::array<Math::Vec2<float>, 4> m_corners;
+    Math::Vec4<float> m_color;
 };
 
 // The five quads of a beveled frame, each in its own color.
 struct BevelColors {
-    Math::Vec4<float> face;
-    Math::Vec4<float> top;
-    Math::Vec4<float> left;
-    Math::Vec4<float> bottom;
-    Math::Vec4<float> right;
+    Math::Vec4<float> m_face;
+    Math::Vec4<float> m_top;
+    Math::Vec4<float> m_left;
+    Math::Vec4<float> m_bottom;
+    Math::Vec4<float> m_right;
 };
 
 // top_left/size describe the flat face in a top-left-origin, y-down
@@ -72,10 +72,10 @@ template <typename VertexData>
 void appendGlyphQuad(std::vector<VertexData>& vertex_data,
                      const BitmapFontGlyphQuad& glyph,
                      Math::Vec4<float> color) {
-    const Math::Vec2<float>& top_left = glyph.top_left;
-    const Math::Vec2<float>& bottom_right = glyph.bottom_right;
-    const Math::Vec2<float>& uv_top_left = glyph.uv_top_left;
-    const Math::Vec2<float>& uv_bottom_right = glyph.uv_bottom_right;
+    const Math::Vec2<float>& top_left = glyph.m_top_left;
+    const Math::Vec2<float>& bottom_right = glyph.m_bottom_right;
+    const Math::Vec2<float>& uv_top_left = glyph.m_uv_top_left;
+    const Math::Vec2<float>& uv_bottom_right = glyph.m_uv_bottom_right;
 
     const VertexData top_left_vertex{
             Math::Vec4<float>(top_left.x, top_left.y, 0.0f, 1.0f),
@@ -178,4 +178,4 @@ void appendImageQuad(std::vector<VertexData>& vertex_data,
 
 }  // namespace vulkan_graphix::UiGeometry
 
-#endif  // VULKAN_GRAPHIX_UI_GEOMETRY_H
+#endif  // VULKAN_GRAPHIX_UIGEOMETRY_H

@@ -1,5 +1,5 @@
-#ifndef WORLDCAM_H
-#define WORLDCAM_H
+#ifndef VULKAN_EARTH_WORLDCAM_H
+#define VULKAN_EARTH_WORLDCAM_H
 
 #include <cstdint>
 #include "vulkan_graphix/Math/MathTypes.hpp"
@@ -21,8 +21,8 @@ public:
     void updateShakeCam();
 
 private:
-    float matrix[16];
-    std::int32_t shake_cam_pos[3];
+    float m_matrix[16];
+    std::int32_t m_shake_cam_pos[3];
 };
 
 #endif

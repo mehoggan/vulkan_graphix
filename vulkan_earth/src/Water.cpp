@@ -17,48 +17,48 @@ Water::Water() = default;
 
 Water::Water(std::int32_t new_scale, std::int32_t new_size) {
     srand(time(nullptr));
-    timer = 0.0;
-    scale = new_scale;
-    size = new_size;
-    total_vertices = size * size;
-    tri_strip_buffer_size = (size - 1) * (size - 1) * 6;
+    m_timer = 0.0;
+    m_scale = new_scale;
+    m_size = new_size;
+    m_total_vertices = m_size * m_size;
+    m_tri_strip_buffer_size = (m_size - 1) * (m_size - 1) * 6;
     initData();
     prepTerrain();
     // GL_LINEAR filtering, GL_REPEAT wrapping. (The original also loaded
     // bumpMap.raw as a normal map; its water shader never used it.)
-    color_texture = render::Renderer::instance().loadRawTexture(
+    m_color_texture = render::Renderer::instance().loadRawTexture(
             "Water.raw", 1024, 1024, VK_SAMPLER_ADDRESS_MODE_REPEAT);
     prepareData();
 }
 
 Water::~Water() {
-    if (surfaceheight != nullptr) {
-        for (std::int32_t i = 0; i < size; i++) {
-            delete surfaceheight[i];
+    if (m_surfaceheight != nullptr) {
+        for (std::int32_t i = 0; i < m_size; i++) {
+            delete m_surfaceheight[i];
         }
-        delete surfaceheight;
+        delete m_surfaceheight;
     }
 }
 
-std::int32_t Water::getScale() { return scale; }
-std::int32_t Water::getActualSize() { return (size) * (scale); }
+std::int32_t Water::getScale() { return m_scale; }
+std::int32_t Water::getActualSize() { return (m_size) * (m_scale); }
 
 void Water::initData() {
-    vertices.resize(tri_strip_buffer_size);
-    normals.resize(tri_strip_buffer_size);
-    tex_coord.resize(tri_strip_buffer_size);
+    m_vertices.resize(m_tri_strip_buffer_size);
+    m_normals.resize(m_tri_strip_buffer_size);
+    m_tex_coord.resize(m_tri_strip_buffer_size);
 }
 
 void Water::draw(render::RenderContext& context) {
-    if (mesh) {
-        context.drawMesh(*mesh,
-                         vulkan_earth::pipelines().water,
-                         color_texture.get(),
+    if (m_mesh) {
+        context.drawMesh(*m_mesh,
+                         vulkan_earth::pipelines().m_water,
+                         m_color_texture.get(),
                          math::Mat4<float>(1.0f),
-                         math::Vec4<float>(timer, 0.0f, 0.0f, 0.0f));
+                         math::Vec4<float>(m_timer, 0.0f, 0.0f, 0.0f));
     }
-    timer += 0.002 * 3.14159265;
-    if (timer >= 2 * 3.14159265) timer = 0.0;
+    m_timer += 0.002 * 3.14159265;
+    if (m_timer >= 2 * 3.14159265) m_timer = 0.0;
 }
 
 void Water::calcAverageofSixNormals(vulkan_graphix::Math::Vec3<float>* v_0,
@@ -127,21 +127,21 @@ void Water::calcAverageofSixNormals(vulkan_graphix::Math::Vec3<float>* v_0,
 }
 
 void Water::prepTerrain() {
-    surfaceheight = new std::int32_t*[size];
-    for (std::int32_t i = 0; i < size; i++) {
-        surfaceheight[i] = new std::int32_t[size];
+    m_surfaceheight = new std::int32_t*[m_size];
+    for (std::int32_t i = 0; i < m_size; i++) {
+        m_surfaceheight[i] = new std::int32_t[m_size];
     }
-    for (std::int32_t y = 0; y < size; y++) {
-        for (std::int32_t x = 0; x < size; x++) {
-            surfaceheight[x][y] = -5 * 100;
+    for (std::int32_t y = 0; y < m_size; y++) {
+        for (std::int32_t x = 0; x < m_size; x++) {
+            m_surfaceheight[x][y] = -5 * 100;
         }
     }
 }
 
 void Water::prepareData() {
-    std::int32_t buffersize = tri_strip_buffer_size;
-    std::int32_t prep_size = size;
-    std::int32_t prep_scale = scale;
+    std::int32_t buffersize = m_tri_strip_buffer_size;
+    std::int32_t prep_size = m_size;
+    std::int32_t prep_scale = m_scale;
 
     //
     // 				v_k
@@ -163,13 +163,13 @@ void Water::prepareData() {
             /************************************************************/
             vulkan_graphix::Math::Vec3<float> v_i(
                     j * prep_scale,
-                    surfaceheight[i][j] /*SCALE*/,
+                    m_surfaceheight[i][j] /*SCALE*/,
                     i * prep_scale);
-            vertices[index++] = v_i;
+            m_vertices[index++] = v_i;
             vulkan_graphix::Math::Vec2<float> t_i(
                     i / (static_cast<float>(prep_size) - 1),
                     (j) / (static_cast<float>(prep_size) - 1));
-            tex_coord[index_texture++] = t_i;
+            m_tex_coord[index_texture++] = t_i;
             vulkan_graphix::Math::Vec3<float> n_i(0, 0, 0);
             if (i == 0 && j == 0) {
                 calcAverageofSixNormals(&v_i,
@@ -186,10 +186,10 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         &n_i);
             } else if (i == 0) {
@@ -201,25 +201,25 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i][j - 1],
+                                        m_surfaceheight[i][j - 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 1][j - 1],
+                                        m_surfaceheight[i + 1][j - 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         &n_i);
             } else if (j == 0) {
                 calcAverageofSixNormals(&v_i,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i - 1][j + 1],
+                                        m_surfaceheight[i - 1][j + 1],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i - 1][j],
+                                        m_surfaceheight[i - 1][j],
                                         static_cast<float>(i - 1),
                                         v_i.x,
                                         v_i.y,
@@ -228,55 +228,55 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         &n_i);
             } else {
                 calcAverageofSixNormals(&v_i,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i - 1][j + 1],
+                                        m_surfaceheight[i - 1][j + 1],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i - 1][j],
+                                        m_surfaceheight[i - 1][j],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i][j - 1],
+                                        m_surfaceheight[i][j - 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 1][j - 1],
+                                        m_surfaceheight[i + 1][j - 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         &n_i);
             }
-            normals[index_normals++] = n_i;
+            m_normals[index_normals++] = n_i;
             /************************************************************/
             /*	V_J -- N_J		                 	    */
             /************************************************************/
             vulkan_graphix::Math::Vec3<float> v_j(
                     j * prep_scale,
-                    surfaceheight[i + 1][j] /*SCALE*/,
+                    m_surfaceheight[i + 1][j] /*SCALE*/,
                     (i + 1) * prep_scale);
-            vertices[index++] = v_j;
+            m_vertices[index++] = v_j;
             vulkan_graphix::Math::Vec2<float> t_j(
                     (i + 1) / (static_cast<float>(prep_size) - 1),
                     (j) / (static_cast<float>(prep_size) - 1));
-            tex_coord[index_texture++] = t_j;
+            m_tex_coord[index_texture++] = t_j;
             vulkan_graphix::Math::Vec3<float> n_j(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
                 calcAverageofSixNormals(&v_j,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         v_j.x,
                                         v_j.y,
@@ -288,16 +288,16 @@ void Water::prepareData() {
                                         v_j.y,
                                         v_j.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_j);
             } else if (j == 0) {
                 calcAverageofSixNormals(&v_j,
                                         static_cast<float>(j) + 1,
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         v_j.x,
                                         v_j.y,
@@ -306,22 +306,22 @@ void Water::prepareData() {
                                         v_j.y,
                                         v_j.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i + 2][j],
+                                        m_surfaceheight[i + 2][j],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_j);
             } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_j,
                                         static_cast<float>(j) + 1,
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 1][j - 1],
+                                        m_surfaceheight[i + 1][j - 1],
                                         static_cast<float>(i + 1),
                                         v_j.x,
                                         v_j.y,
@@ -330,44 +330,44 @@ void Water::prepareData() {
                                         v_j.y,
                                         v_j.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_j);
             } else {
                 calcAverageofSixNormals(&v_j,
                                         static_cast<float>(j) + 1,
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 1][j - 1],
+                                        m_surfaceheight[i + 1][j - 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 2][j - 1],
+                                        m_surfaceheight[i + 2][j - 1],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 2][j],
+                                        m_surfaceheight[i + 2][j],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_j);
             }
-            normals[index_normals++] = n_j;
+            m_normals[index_normals++] = n_j;
             /************************************************************/
             /*	V_K -- N_K					    */
             /************************************************************/
             vulkan_graphix::Math::Vec3<float> v_k(
                     (j + 1) * prep_scale,
-                    surfaceheight[i][j + 1] /*SCALE*/,
+                    m_surfaceheight[i][j + 1] /*SCALE*/,
                     (i)*prep_scale);
-            vertices[index++] = v_k;
+            m_vertices[index++] = v_k;
             vulkan_graphix::Math::Vec2<float> t_k(
                     i / (static_cast<float>(prep_size) - 1),
                     (j + 1) / (static_cast<float>(prep_size) - 1));
-            tex_coord[index_texture++] = t_k;
+            m_tex_coord[index_texture++] = t_k;
             vulkan_graphix::Math::Vec3<float> n_k(0, 0, 0);
             if (i == 0 && j == prep_size - 2) {
                 calcAverageofSixNormals(&v_k,
@@ -378,13 +378,13 @@ void Water::prepareData() {
                                         v_k.y,
                                         v_k.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         v_k.x,
                                         v_k.y,
@@ -399,16 +399,16 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i][j + 2],
+                                        m_surfaceheight[i][j + 2],
                                         static_cast<float>(i),
                                         &n_k);
             } else if (j == prep_size - 2) {
@@ -417,16 +417,16 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i - 1][j + 1],
+                                        m_surfaceheight[i - 1][j + 1],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         v_i.x,
                                         v_i.y,
@@ -435,46 +435,46 @@ void Water::prepareData() {
             } else {
                 calcAverageofSixNormals(&v_k,
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i - 1][j + 2],
+                                        m_surfaceheight[i - 1][j + 2],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i - 1][j + 1],
+                                        m_surfaceheight[i - 1][j + 1],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i][j + 2],
+                                        m_surfaceheight[i][j + 2],
                                         static_cast<float>(i),
                                         &n_k);
             }
-            normals[index_normals++] = n_k;
+            m_normals[index_normals++] = n_k;
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)	            */
             /************************************************************/
             vulkan_graphix::Math::Vec3<float> v_x(
                     j * prep_scale,
-                    surfaceheight[i + 1][j] /*SCALE*/,
+                    m_surfaceheight[i + 1][j] /*SCALE*/,
                     (i + 1) * prep_scale);
-            vertices[index++] = v_x;
+            m_vertices[index++] = v_x;
             vulkan_graphix::Math::Vec2<float> t_x(
                     (i + 1) / (static_cast<float>(prep_size) - 1),
                     (j) / (static_cast<float>(prep_size) - 1));
-            tex_coord[index_texture++] = t_x;
+            m_tex_coord[index_texture++] = t_x;
             vulkan_graphix::Math::Vec3<float> n_x(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
                 calcAverageofSixNormals(&v_x,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         v_x.x,
                                         v_x.y,
@@ -486,16 +486,16 @@ void Water::prepareData() {
                                         v_x.y,
                                         v_x.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_x);
             } else if (j == 0) {
                 calcAverageofSixNormals(&v_x,
                                         static_cast<float>(j) + 1,
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         v_x.x,
                                         v_x.y,
@@ -504,22 +504,22 @@ void Water::prepareData() {
                                         v_x.y,
                                         v_x.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i + 2][j],
+                                        m_surfaceheight[i + 2][j],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_x);
             } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_x,
                                         static_cast<float>(j) + 1,
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 1][j - 1],
+                                        m_surfaceheight[i + 1][j - 1],
                                         static_cast<float>(i + 1),
                                         v_x.x,
                                         v_x.y,
@@ -528,45 +528,45 @@ void Water::prepareData() {
                                         v_x.y,
                                         v_x.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_x);
             } else {
                 calcAverageofSixNormals(&v_x,
                                         static_cast<float>(j) + 1,
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 1][j - 1],
+                                        m_surfaceheight[i + 1][j - 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j - 1),
-                                        surfaceheight[i + 2][j - 1],
+                                        m_surfaceheight[i + 2][j - 1],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 2][j],
+                                        m_surfaceheight[i + 2][j],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         &n_x);
             }
-            normals[index_normals++] = n_x;
+            m_normals[index_normals++] = n_x;
 
             /************************************************************/
             /*	V_Y -- N_Y					    */
             /************************************************************/
             vulkan_graphix::Math::Vec3<float> v_y(
                     (j + 1) * prep_scale,
-                    surfaceheight[i + 1][j + 1] /*SCALE*/,
+                    m_surfaceheight[i + 1][j + 1] /*SCALE*/,
                     (i + 1) * prep_scale);
-            vertices[index++] = v_y;
+            m_vertices[index++] = v_y;
             vulkan_graphix::Math::Vec2<float> t_y(
                     (i + 1) / (static_cast<float>(prep_size) - 1),
                     (j + 1) / (static_cast<float>(prep_size) - 1));
-            tex_coord[index_texture++] = t_y;
+            m_tex_coord[index_texture++] = t_y;
             vulkan_graphix::Math::Vec3<float> n_y(0, 0, 0);
             if (i == prep_size - 2 && j == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
@@ -574,10 +574,10 @@ void Water::prepareData() {
                                         v_y.y,
                                         v_y.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         v_y.x,
                                         v_y.y,
@@ -592,13 +592,13 @@ void Water::prepareData() {
             } else if (i == prep_size - 2) {
                 calcAverageofSixNormals(&v_y,
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i][j + 2],
+                                        m_surfaceheight[i][j + 2],
                                         static_cast<float>(i),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         v_y.x,
                                         v_y.y,
@@ -607,7 +607,7 @@ void Water::prepareData() {
                                         v_y.y,
                                         v_y.z,
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i + 1][j + 2],
+                                        m_surfaceheight[i + 1][j + 2],
                                         static_cast<float>(i + 1),
                                         &n_y);
             } else if (j == prep_size - 2) {
@@ -616,16 +616,16 @@ void Water::prepareData() {
                                         v_y.y,
                                         v_y.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 2][j],
+                                        m_surfaceheight[i + 2][j],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 2][j + 1],
+                                        m_surfaceheight[i + 2][j + 1],
                                         static_cast<float>(i + 2),
                                         v_y.x,
                                         v_y.y,
@@ -634,38 +634,38 @@ void Water::prepareData() {
             } else {
                 calcAverageofSixNormals(&v_y,
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i][j + 2],
+                                        m_surfaceheight[i][j + 2],
                                         static_cast<float>(i),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i][j + 1],
+                                        m_surfaceheight[i][j + 1],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 2][j],
+                                        m_surfaceheight[i + 2][j],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 2][j + 1],
+                                        m_surfaceheight[i + 2][j + 1],
                                         static_cast<float>(i + 2),
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i + 1][j + 2],
+                                        m_surfaceheight[i + 1][j + 2],
                                         static_cast<float>(i + 1),
                                         &n_y);
             }
-            normals[index_normals++] = n_y;
+            m_normals[index_normals++] = n_y;
             /************************************************************/
             /*	V_Z -- N_Z					    */
             /************************************************************/
             vulkan_graphix::Math::Vec3<float> v_z(
                     (j + 1) * prep_scale,
-                    surfaceheight[i][j + 1] /*SCALE*/,
+                    m_surfaceheight[i][j + 1] /*SCALE*/,
                     (i)*prep_scale);
-            vertices[index++] = v_z;
+            m_vertices[index++] = v_z;
             vulkan_graphix::Math::Vec2<float> t_z(
                     i / (static_cast<float>(prep_size) - 1),
                     (j + 1) / (static_cast<float>(prep_size) - 1));
-            tex_coord[index_texture++] = t_z;
+            m_tex_coord[index_texture++] = t_z;
             vulkan_graphix::Math::Vec3<float> n_z(0, 0, 0);
             if (i == 0 && j == prep_size - 2) {
                 calcAverageofSixNormals(&v_z,
@@ -676,13 +676,13 @@ void Water::prepareData() {
                                         v_z.y,
                                         v_z.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         v_z.x,
                                         v_z.y,
@@ -697,16 +697,16 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i][j + 2],
+                                        m_surfaceheight[i][j + 2],
                                         static_cast<float>(i),
                                         &n_z);
             } else if (j == prep_size - 2) {
@@ -715,16 +715,16 @@ void Water::prepareData() {
                                         v_i.y,
                                         v_i.z,
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i - 1][j + 1],
+                                        m_surfaceheight[i - 1][j + 1],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         v_i.x,
                                         v_i.y,
@@ -733,33 +733,34 @@ void Water::prepareData() {
             } else {
                 calcAverageofSixNormals(&v_z,
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i - 1][j + 2],
+                                        m_surfaceheight[i - 1][j + 2],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i - 1][j + 1],
+                                        m_surfaceheight[i - 1][j + 1],
                                         static_cast<float>(i - 1),
                                         static_cast<float>(j),
-                                        surfaceheight[i][j],
+                                        m_surfaceheight[i][j],
                                         static_cast<float>(i),
                                         static_cast<float>(j),
-                                        surfaceheight[i + 1][j],
+                                        m_surfaceheight[i + 1][j],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 1),
-                                        surfaceheight[i + 1][j + 1],
+                                        m_surfaceheight[i + 1][j + 1],
                                         static_cast<float>(i + 1),
                                         static_cast<float>(j + 2),
-                                        surfaceheight[i][j + 2],
+                                        m_surfaceheight[i][j + 2],
                                         static_cast<float>(i),
                                         &n_z);
             }
-            normals[index_normals++] = n_z;
+            m_normals[index_normals++] = n_z;
         }
     }
-    std::vector<render::MeshVertex> mesh_vertices(vertices.size());
-    for (std::size_t i = 0; i < vertices.size(); ++i) {
-        mesh_vertices[i] = {vertices[i],
-                            normals[i],
-                            math::Vec2<float>(tex_coord[i].s, tex_coord[i].t)};
+    std::vector<render::MeshVertex> mesh_vertices(m_vertices.size());
+    for (std::size_t i = 0; i < m_vertices.size(); ++i) {
+        mesh_vertices[i] = {
+                m_vertices[i],
+                m_normals[i],
+                math::Vec2<float>(m_tex_coord[i].s, m_tex_coord[i].t)};
     }
-    mesh = render::Renderer::instance().createMesh(mesh_vertices);
+    m_mesh = render::Renderer::instance().createMesh(mesh_vertices);
 }

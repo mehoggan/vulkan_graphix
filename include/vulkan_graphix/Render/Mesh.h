@@ -18,8 +18,8 @@ class Texture;
 
 // A host-visible, coherent buffer and where it is persistently mapped.
 struct HostBuffer {
-    BufferParameters buffer;
-    void* mapped = nullptr;
+    BufferParameters m_buffer;
+    void* m_mapped = nullptr;
 };
 
 // Geometry uploaded once into device-local memory (models, terrain,

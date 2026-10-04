@@ -107,14 +107,14 @@ const std::vector<Math::CurveSample3D<float>>& getCurveSamples() {
 // ************************************************************ //
 // VulkanTutorial10Parameters                                   //
 // ************************************************************ //
-VulkanTutorial10Parameters::VulkanTutorial10Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_line_pipeline(VK_NULL_HANDLE)
-        , m_curve_vertex_count(0)
-        , m_control_polygon_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial10Parameters::VulkanTutorial10Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_line_pipeline(VK_NULL_HANDLE),
+        m_curve_vertex_count(0),
+        m_control_polygon_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial10Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -282,10 +282,10 @@ void VulkanTutorial10Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial10                                                   //
 // ************************************************************ //
-Tutorial10::Tutorial10()
-        : m_camera(c_initial_camera_yaw,
-                   c_initial_camera_pitch,
-                   c_initial_camera_distance) {}
+Tutorial10::Tutorial10() :
+        m_camera(c_initial_camera_yaw,
+                 c_initial_camera_pitch,
+                 c_initial_camera_distance) {}
 
 Tutorial10::~Tutorial10() { childClear(); }
 
@@ -524,15 +524,15 @@ bool Tutorial10::createUniformBuffer() {
 
 Tutorial10UniformBufferData Tutorial10::getUniformBufferData() const {
     Tutorial10UniformBufferData data{};
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
     return data;
@@ -825,7 +825,7 @@ bool Tutorial10::createLinePipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct LineVertexData, position)}};
+                     .offset = offsetof(struct LineVertexData, m_position)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -982,7 +982,7 @@ const std::vector<LineVertexData>& Tutorial10::getCurveVertexData() const {
         std::vector<LineVertexData> data;
         data.reserve(samples.size());
         for (const Math::CurveSample3D<float>& sample : samples) {
-            data.push_back({Math::Vec4<float>(sample.position, 1.0f)});
+            data.push_back({Math::Vec4<float>(sample.m_position, 1.0f)});
         }
         return data;
     }();

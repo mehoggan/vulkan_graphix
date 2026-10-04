@@ -297,6 +297,15 @@ flag without a real bug being present.
 Key naming conventions:
 - Functions: `camelBack`
 - Variables, members, and parameters: `lower_case`
+- Every non-static data member - class or struct, public or private - is
+  `m_`-prefixed (`m_position`, `m_vk_device`); `offsetof()` arguments
+  count, and clang-tidy can't rename inside that macro, so they need it by
+  hand
+- Header guards are the header's path below `include/`
+  (`VULKAN_GRAPHIX_MATH_CURVESAMPLE3D_HPP`, `VULKAN_EARTH_TANK_H` -
+  `llvm-header-guard`); `bin/` and `tests/` headers are exempt (their own
+  `.clang-tidy`), since outside an `include/` directory the check wants a
+  guard built from the machine's absolute path
 - Minimum variable name length: 4 characters, with an
   `IgnoredVariableNames`/`IgnoredParameterNames` exemption list
   (`.clang-tidy`) covering the vocabulary that's genuinely
@@ -323,7 +332,12 @@ Configuration in `CPPLINT.cfg`:
 
 Standard formatting applied (`.clang-format` present; needs clang-format
 14 or newer). Qualifiers always go before the type - `const Type&`, never
-`Type const&` (`QualifierAlignment: Left`). clang-tidy has no check for
+`Type const&` (`QualifierAlignment: Left`). Constructor initializer
+lists end the constructor's own line with `:`, then put one initializer
+per line, two indents in, each followed by its `,`
+(`BreakConstructorInitializers: AfterColon`,
+`PackConstructorInitializers: Never`) - so a comment about the
+constructor goes above it, not between it and its `:`. clang-tidy has no check for
 qualifier placement, so this is enforced by clang-format itself: the
 pre-commit hook rejects staged C++ that doesn't match `.clang-format`, and
 clang-tidy's own fix-its are formatted with it (`FormatStyle: file`).

@@ -69,8 +69,8 @@ struct AttributeFormat<glm::uvec4> {
 // One interleaved vertex binding (binding 0): its stride and one attribute
 // per type, at locations 0, 1, 2, ... in declaration order.
 struct VertexLayout {
-    std::uint32_t stride = 0;
-    std::vector<VkVertexInputAttributeDescription> attributes;
+    std::uint32_t m_stride = 0;
+    std::vector<VkVertexInputAttributeDescription> m_attributes;
 };
 
 template <typename... Ts>
@@ -81,12 +81,13 @@ VertexLayout vertexLayout(VertexTypes::AttributeTraits<Ts...> /*traits*/) {
     constexpr std::array<VkFormat, sizeof...(Ts)> formats = {
             AttributeFormat<Ts>::value...};
     VertexLayout layout;
-    layout.stride = static_cast<std::uint32_t>(Traits::stride);
+    layout.m_stride = static_cast<std::uint32_t>(Traits::stride);
     for (std::size_t i = 0; i < sizeof...(Ts); ++i) {
-        layout.attributes.push_back({static_cast<std::uint32_t>(i),
-                                     0,
-                                     formats[i],
-                                     static_cast<std::uint32_t>(offsets[i])});
+        layout.m_attributes.push_back(
+                {static_cast<std::uint32_t>(i),
+                 0,
+                 formats[i],
+                 static_cast<std::uint32_t>(offsets[i])});
     }
     return layout;
 }
@@ -106,9 +107,9 @@ struct UiVertex {
     using Traits = VertexTypes::AttributeTraits<Math::Vec3<float>,
                                                 Math::Vec4<float>,
                                                 Math::Vec2<float>>;
-    Math::Vec3<float> position;
-    Math::Vec4<float> color;
-    Math::Vec2<float> texcoord;
+    Math::Vec3<float> m_position;
+    Math::Vec4<float> m_color;
+    Math::Vec2<float> m_texcoord;
 };
 
 // Lit, textured surfaces: models, terrain, water, spheres.
@@ -116,9 +117,9 @@ struct MeshVertex {
     using Traits = VertexTypes::AttributeTraits<Math::Vec3<float>,
                                                 Math::Vec3<float>,
                                                 Math::Vec2<float>>;
-    Math::Vec3<float> position;
-    Math::Vec3<float> normal;
-    Math::Vec2<float> texcoord;
+    Math::Vec3<float> m_position;
+    Math::Vec3<float> m_normal;
+    Math::Vec2<float> m_texcoord;
 };
 
 // InterleavedData's records as vertex-buffer bytes: each attribute copied

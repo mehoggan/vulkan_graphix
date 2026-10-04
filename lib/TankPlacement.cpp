@@ -34,11 +34,11 @@ PartTranslations composePartTranslations(
         const Math::Mat4<float>& head_matrix,
         const PartOffsets& offsets) {
     PartTranslations translations;
-    translations.body = world_position + offsets.body;
-    translations.head =
-            offsetThroughBasis(translations.body, body_matrix, offsets.head);
-    translations.turret =
-            offsetThroughBasis(translations.head, head_matrix, offsets.turret);
+    translations.m_body = world_position + offsets.m_body;
+    translations.m_head = offsetThroughBasis(
+            translations.m_body, body_matrix, offsets.m_head);
+    translations.m_turret = offsetThroughBasis(
+            translations.m_head, head_matrix, offsets.m_turret);
     return translations;
 }
 

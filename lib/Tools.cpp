@@ -168,11 +168,11 @@ std::vector<OglVertexData> loadOglMeshData(const std::string& filename) {
     for (std::size_t i = 0; i < vertex_count; ++i) {
         const std::size_t base = i * c_floats_per_vertex;
         OglVertexData vertex;
-        vertex.texcoord =
+        vertex.m_texcoord =
                 Math::Vec2<float>(values[base + 0], values[base + 1]);
-        vertex.normal = Math::Vec3<float>(
+        vertex.m_normal = Math::Vec3<float>(
                 values[base + 2], values[base + 3], values[base + 4]);
-        vertex.position = Math::Vec3<float>(
+        vertex.m_position = Math::Vec3<float>(
                 values[base + 5], values[base + 6], values[base + 7]);
         mesh_data.push_back(vertex);
     }

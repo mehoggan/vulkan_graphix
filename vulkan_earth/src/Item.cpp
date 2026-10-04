@@ -11,24 +11,24 @@ using namespace std;
 Item::Item() = default;
 Item::~Item() = default;
 /*GETTERS*/
-std::int32_t Item::getUNIQUEIDENTIFIER() { return uniqueidentifier; }
-std::int32_t Item::getRemaining() { return remaining; }
-std::string Item::getImageFileName() { return image_file_name; }
-std::string Item::getDescription() { return description; }
-std::int32_t Item::getPrice() { return price; }
-std::int32_t Item::getPackageNum() { return package_num; }
-std::int32_t Item::getMaxStack() { return max_stack; }
+std::int32_t Item::getUNIQUEIDENTIFIER() { return m_uniqueidentifier; }
+std::int32_t Item::getRemaining() { return m_remaining; }
+std::string Item::getImageFileName() { return m_image_file_name; }
+std::string Item::getDescription() { return m_description; }
+std::int32_t Item::getPrice() { return m_price; }
+std::int32_t Item::getPackageNum() { return m_package_num; }
+std::int32_t Item::getMaxStack() { return m_max_stack; }
 /*SETTERS*/
-void Item::setRemaining(std::int32_t r) { remaining = r; }
+void Item::setRemaining(std::int32_t r) { m_remaining = r; }
 
 void Item::playUseSFX() { playSFX(ITEM_USE1); }
 
 void Item::loadSpec(const vulkan_graphix::GameCatalog::ItemSpec& spec) {
-    package_num = spec.package_num;
-    max_stack = spec.max_stack;
-    remaining = spec.remaining;
-    image_file_name = spec.image_file;
-    description = spec.description;
-    price = spec.price;
-    special_num = spec.special_num;
+    m_package_num = spec.m_package_num;
+    m_max_stack = spec.m_max_stack;
+    m_remaining = spec.m_remaining;
+    m_image_file_name = spec.m_image_file;
+    m_description = spec.m_description;
+    m_price = spec.m_price;
+    m_special_num = spec.m_special_num;
 }
