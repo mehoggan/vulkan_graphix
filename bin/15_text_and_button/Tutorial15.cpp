@@ -20,13 +20,13 @@ constexpr VkFormat c_texture_format = VK_FORMAT_R8G8B8A8_UNORM;
 // ************************************************************ //
 // VulkanTutorial15Parameters                                   //
 // ************************************************************ //
-VulkanTutorial15Parameters::VulkanTutorial15Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial15Parameters::VulkanTutorial15Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial15Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -169,7 +169,9 @@ void VulkanTutorial15Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial15                                                   //
 // ************************************************************ //
-Tutorial15::Tutorial15() : m_button_pressed(false), m_click_count(0) {}
+Tutorial15::Tutorial15() :
+        m_button_pressed(false),
+        m_click_count(0) {}
 
 Tutorial15::~Tutorial15() { childClear(); }
 
@@ -743,17 +745,18 @@ bool Tutorial15::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial15VertexData, position)},
+                     .offset = offsetof(struct Tutorial15VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial15VertexData, texcoord)},
+                     .offset = offsetof(struct Tutorial15VertexData,
+                                        m_texcoord)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct Tutorial15VertexData, color)}};
+                     .offset =
+                             offsetof(struct Tutorial15VertexData, m_color)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -952,7 +955,7 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
                                          button_color,
                                          m_button_pressed);
     for (const UiGeometry::ColoredQuad& quad : bevel) {
-        appendColoredQuad(vertex_data, quad.corners, quad.color);
+        appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
     }
 
     const std::string label = getButtonLabel();

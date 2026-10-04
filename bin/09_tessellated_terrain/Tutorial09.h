@@ -22,9 +22,9 @@ namespace vulkan_graphix {
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
 struct Tutorial09VertexData {
-    Math::Vec4<float> position;
-    Math::Vec3<float> normal;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec3<float> m_normal;
+    Math::Vec2<float> m_texcoord;
 };
 
 using VertexAttributeTraits = VertexTypes::AttributeTraits<Math::Vec4<float>,
@@ -38,12 +38,12 @@ using VertexAttributeTraits = VertexTypes::AttributeTraits<Math::Vec4<float>,
 // promoted to Vec4 for std140 alignment.                       //
 // ************************************************************ //
 struct Tutorial09UniformBufferData {
-    Math::Mat4<float> model;
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
-    Math::Vec4<float> light_position;
-    Math::Vec4<float> light_color;
-    Math::Vec4<float> view_position;
+    Math::Mat4<float> m_model;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
+    Math::Vec4<float> m_light_position;
+    Math::Vec4<float> m_light_color;
+    Math::Vec4<float> m_view_position;
 };
 
 // ************************************************************ //

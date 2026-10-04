@@ -7,18 +7,18 @@ extern void playSFX(std::int32_t sfx);
 
 WeaponAcid::WeaponAcid() = default;
 WeaponAcid::WeaponAcid(std::int32_t id) {
-    uniqueidentifier = id;
+    m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::weapon(
             vulkan_graphix::GameCatalog::WeaponKind::Acid));
 }
 WeaponAcid::~WeaponAcid() = default;
 
 WeaponAcid* WeaponAcid::getWeaponInstance() {
-    return new WeaponAcid(uniqueidentifier);
+    return new WeaponAcid(m_uniqueidentifier);
 }
 void WeaponAcid::causeEffectToTank(float distance, Tank* tank) {
     if (tank->getDurationShield() == 0) {
-        tank->setDurationAcid(special_number);
+        tank->setDurationAcid(m_special_number);
         tank->dealDamage(getDamage() * (1 - (distance / (getRadius() * 100))));
     }
 }

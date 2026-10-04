@@ -1,5 +1,5 @@
-#ifndef ITEM_ANTI_ACID_H
-#define ITEM_ANTI_ACID_H
+#ifndef VULKAN_EARTH_ITEMANTIACID_H
+#define VULKAN_EARTH_ITEMANTIACID_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

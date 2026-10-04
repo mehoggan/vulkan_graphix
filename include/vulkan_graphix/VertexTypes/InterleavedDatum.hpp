@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_INTERLEAVEDDATUM_HPP
-#define VULKAN_GRAPHIX_INTERLEAVEDDATUM_HPP
+#ifndef VULKAN_GRAPHIX_VERTEXTYPES_INTERLEAVEDDATUM_HPP
+#define VULKAN_GRAPHIX_VERTEXTYPES_INTERLEAVEDDATUM_HPP
 
 #include <cstddef>
 #include <tuple>
@@ -16,7 +16,8 @@ public:
 
     InterleavedDatum() = default;
 
-    explicit InterleavedDatum(const Ts&... values) : m_values(values...) {}
+    explicit InterleavedDatum(const Ts&... values) :
+            m_values(values...) {}
 
     template <std::size_t Index>
     auto& get() {

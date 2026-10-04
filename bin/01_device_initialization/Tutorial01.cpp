@@ -11,12 +11,12 @@
 
 namespace vulkan_graphix {
 
-VulkanTutorial01Parameters::VulkanTutorial01Parameters()
-        : m_vk_instance(VK_NULL_HANDLE)
-        , m_vk_device(VK_NULL_HANDLE)
-        , m_queue_family_index(0)
-        , m_vk_queue(VK_NULL_HANDLE)
-        , m_vk_debug_utils_messenger(VK_NULL_HANDLE) {}
+VulkanTutorial01Parameters::VulkanTutorial01Parameters() :
+        m_vk_instance(VK_NULL_HANDLE),
+        m_vk_device(VK_NULL_HANDLE),
+        m_queue_family_index(0),
+        m_vk_queue(VK_NULL_HANDLE),
+        m_vk_debug_utils_messenger(VK_NULL_HANDLE) {}
 
 const VkInstance& VulkanTutorial01Parameters::getVkInstance() const {
     return m_vk_instance;
@@ -66,10 +66,10 @@ void VulkanTutorial01Parameters::setVkDebugUtilsMessenger(
     m_vk_debug_utils_messenger = vk_debug_utils_messenger;
 }
 
-Tutorial01::Tutorial01(bool enable_debug)
-        : LoggedClass<Tutorial01>(*this)
-        , m_vulkan_library_handle()
-        , m_enable_vulkan_debug(enable_debug) {}
+Tutorial01::Tutorial01(bool enable_debug) :
+        LoggedClass<Tutorial01>(*this),
+        m_vulkan_library_handle(),
+        m_enable_vulkan_debug(enable_debug) {}
 
 Tutorial01::~Tutorial01() {
     if (m_vulkan_tutorial01_parameters.getVkDevice() != VK_NULL_HANDLE) {

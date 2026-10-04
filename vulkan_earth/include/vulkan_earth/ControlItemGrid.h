@@ -1,5 +1,5 @@
-#ifndef CONTROL_ITEM_GRID_H
-#define CONTROL_ITEM_GRID_H
+#ifndef VULKAN_EARTH_CONTROLITEMGRID_H
+#define VULKAN_EARTH_CONTROLITEMGRID_H
 
 #include <cstdint>
 #include <string>
@@ -52,18 +52,18 @@ public:
     void selectCell(std::int32_t row, std::int32_t col);
 
 private:
-    float x_pos, y_pos, z_pos;
-    float active_cell_color[4];
-    std::int32_t width, height;
-    float cell_width, cell_height;
-    std::int32_t rows, cols;
-    bool visible_lines;
-    bool multi_selectable;
-    bool* selected_cells;
-    ControlItemButton** buttons;
-    vulkan_graphix::Render::UiMesh mesh;
-    std::vector<bool> built_toggled;
-    bool mesh_built = false;
+    float m_x_pos, m_y_pos, m_z_pos;
+    float m_active_cell_color[4];
+    std::int32_t m_width, m_height;
+    float m_cell_width, m_cell_height;
+    std::int32_t m_rows, m_cols;
+    bool m_visible_lines;
+    bool m_multi_selectable;
+    bool* m_selected_cells;
+    ControlItemButton** m_buttons;
+    vulkan_graphix::Render::UiMesh m_mesh;
+    std::vector<bool> m_built_toggled;
+    bool m_mesh_built = false;
 };
 
 #endif

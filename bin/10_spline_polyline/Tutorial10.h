@@ -24,7 +24,7 @@ namespace vulkan_graphix {
 // swept mesh) and its control polygon.                         //
 // ************************************************************ //
 struct LineVertexData {
-    Math::Vec4<float> position;
+    Math::Vec4<float> m_position;
 };
 
 using LineVertexAttributeTraits =
@@ -38,8 +38,8 @@ using LineVertexAttributeTraits =
 // have no surface to light.                                    //
 // ************************************************************ //
 struct Tutorial10UniformBufferData {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // ************************************************************ //
@@ -48,7 +48,7 @@ struct Tutorial10UniformBufferData {
 // The active line strip's flat color, set per draw call.       //
 // ************************************************************ //
 struct LinePushConstants {
-    Math::Vec4<float> color;
+    Math::Vec4<float> m_color;
 };
 
 // ************************************************************ //

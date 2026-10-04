@@ -1,5 +1,5 @@
-#ifndef MAINMENUBUTTON_H
-#define MAINMENUBUTTON_H
+#ifndef VULKAN_EARTH_MAINMENUBUTTON_H
+#define VULKAN_EARTH_MAINMENUBUTTON_H
 
 #include <cstdint>
 #include <string>
@@ -48,21 +48,21 @@ public:
     void printSelf(std::int32_t i);
 
 private:
-    std::int32_t uniqueidentifier;
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    float color[4];
-    std::int32_t width;
-    std::int32_t height;
-    std::string caption;
-    TextObject* label;
-    bool pressed;
-    bool active;
-    SubMenu* submenu;
-    vulkan_graphix::Render::UiMesh mesh;
-    bool built_pressed = false;
-    vulkan_graphix::Math::Vec4<float> built_color =
+    std::int32_t m_uniqueidentifier;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    float m_color[4];
+    std::int32_t m_width;
+    std::int32_t m_height;
+    std::string m_caption;
+    TextObject* m_label;
+    bool m_pressed;
+    bool m_active;
+    SubMenu* m_submenu;
+    vulkan_graphix::Render::UiMesh m_mesh;
+    bool m_built_pressed = false;
+    vulkan_graphix::Math::Vec4<float> m_built_color =
             vulkan_graphix::Math::Vec4<float>(-1.0f);
 };
-#endif  // MAINMENUBUTTON_H
+#endif  // VULKAN_EARTH_MAINMENUBUTTON_H

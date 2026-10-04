@@ -112,10 +112,10 @@ TEST(GameLogicTest, CraterLowersTheImpactAndReportsTheBlastCells) {
 
     std::set<std::pair<std::int32_t, std::int32_t>> reported;
     for (const vg::TerrainGridCell& cell : cells) {
-        reported.insert({cell.x, cell.z});
-        const float distance = std::sqrt(
-                static_cast<float>((cell.x - impact_x) * (cell.x - impact_x) +
-                                   (cell.z - impact_z) * (cell.z - impact_z)));
+        reported.insert({cell.m_x, cell.m_z});
+        const float distance = std::sqrt(static_cast<float>(
+                (cell.m_x - impact_x) * (cell.m_x - impact_x) +
+                (cell.m_z - impact_z) * (cell.m_z - impact_z)));
         EXPECT_LE(distance, blast_size);
     }
     EXPECT_EQ(reported.size(), cells.size());  // no duplicates
@@ -138,8 +138,8 @@ TEST(GameLogicTest, BallisticsLaunchesDownTheBarrelAndFallsUnderGravity) {
 
     const vg::Ballistics::Launch launch =
             vg::Ballistics::launchFromBarrel(turret, 4.0f, 5.0f);
-    EXPECT_EQ(launch.origin, probe);
-    EXPECT_EQ(launch.velocity, vg::Math::Vec3<float>(0.0f, 0.0f, -4.0f));
+    EXPECT_EQ(launch.m_origin, probe);
+    EXPECT_EQ(launch.m_velocity, vg::Math::Vec3<float>(0.0f, 0.0f, -4.0f));
 
     const vg::Math::Vec3<float> at_two =
             vg::Ballistics::positionAt(launch, -10.0f, 2.0f);
@@ -182,40 +182,39 @@ TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
     const std::optional<vg::TankOrientation::Alignment> alignment =
             vg::TankOrientation::alignToGround(body, ground);
     ASSERT_TRUE(alignment.has_value());
-    const vg::Math::Vec3<float> new_up(alignment->matrix[1]);
+    const vg::Math::Vec3<float> new_up(alignment->m_matrix[1]);
     EXPECT_NEAR(new_up.x, ground.x, 1e-3f);
     EXPECT_NEAR(new_up.y, ground.y, 1e-3f);
     EXPECT_NEAR(new_up.z, ground.z, 1e-3f);
     // Translation is untouched.
-    EXPECT_EQ(vg::Math::Vec3<float>(alignment->matrix[3]),
+    EXPECT_EQ(vg::Math::Vec3<float>(alignment->m_matrix[3]),
               vg::Math::Vec3<float>(5, 6, 7));
 }
 
 TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
     namespace catalog = vg::GameCatalog;
+    EXPECT_EQ(std::string(catalog::item(catalog::ItemKind::SmallRepair)
+                                  .m_image_file),
+              "ItemSmallRepair.raw");
+    EXPECT_EQ(catalog::item(catalog::ItemKind::BigRepair).m_special_num, 700);
     EXPECT_EQ(
-            std::string(
-                    catalog::item(catalog::ItemKind::SmallRepair).image_file),
-            "ItemSmallRepair.raw");
-    EXPECT_EQ(catalog::item(catalog::ItemKind::BigRepair).special_num, 700);
-    EXPECT_EQ(std::string(catalog::item(catalog::ItemKind::Float).image_file),
-              "ItemFloat.raw");
-    EXPECT_EQ(catalog::weapon(catalog::WeaponKind::MFB).damage, 300);
-    EXPECT_EQ(catalog::weapon(catalog::WeaponKind::Nuke).price, 500);
-    EXPECT_EQ(
-            std::string(
-                    catalog::weapon(catalog::WeaponKind::Default).image_file),
-            "TestImage.raw");
+            std::string(catalog::item(catalog::ItemKind::Float).m_image_file),
+            "ItemFloat.raw");
+    EXPECT_EQ(catalog::weapon(catalog::WeaponKind::MFB).m_damage, 300);
+    EXPECT_EQ(catalog::weapon(catalog::WeaponKind::Nuke).m_price, 500);
+    EXPECT_EQ(std::string(catalog::weapon(catalog::WeaponKind::Default)
+                                  .m_image_file),
+              "TestImage.raw");
     // Every entry is filled in.
     for (const catalog::ItemSpec& item : catalog::items()) {
-        EXPECT_NE(item.image_file, nullptr);
-        EXPECT_GT(item.price, 0);
-        EXPECT_GE(item.max_stack, item.remaining);
+        EXPECT_NE(item.m_image_file, nullptr);
+        EXPECT_GT(item.m_price, 0);
+        EXPECT_GE(item.m_max_stack, item.m_remaining);
     }
     for (const catalog::WeaponSpec& weapon : catalog::weapons()) {
-        EXPECT_NE(weapon.description, nullptr);
-        EXPECT_GT(weapon.scale, 0.0f);
-        EXPECT_GE(weapon.max_stack, weapon.remaining);
+        EXPECT_NE(weapon.m_description, nullptr);
+        EXPECT_GT(weapon.m_scale, 0.0f);
+        EXPECT_GE(weapon.m_max_stack, weapon.m_remaining);
     }
 }
 
@@ -223,7 +222,7 @@ TEST(GameLogicTest, CatalogKeepsThorsTwoComponentMediumSlateBlue) {
     namespace catalog = vg::GameCatalog;
     // OpenGLColors.h's MediumSlateBlue has no blue component.
     const auto& color =
-            catalog::weapon(catalog::WeaponKind::Thor).explosion_colors[1];
+            catalog::weapon(catalog::WeaponKind::Thor).m_explosion_colors[1];
     EXPECT_DOUBLE_EQ(color[0], 0.498039);
     EXPECT_DOUBLE_EQ(color[1], 1.0);
     EXPECT_DOUBLE_EQ(color[2], 0.0);
@@ -233,28 +232,28 @@ TEST(GameLogicTest, SmokeParticleRisesAndFadesThroughItsColorBands) {
     namespace effects = vg::EffectSimulation;
     effects::Particle particle = effects::makeParticle(
             effects::ParticleKind::Smoke, 0, 0, 0, 1, 0, 0, 1, 100);
-    EXPECT_EQ(particle.size, 2.0f);
-    float previous_y = particle.y;
+    EXPECT_EQ(particle.m_size, 2.0f);
+    float previous_y = particle.m_y;
     for (std::int32_t frame = 0; frame < 31; ++frame) {
         ASSERT_TRUE(effects::updateParticle(particle));
     }
-    EXPECT_GT(particle.y, previous_y);
-    EXPECT_NEAR(particle.x, 31.0f, c_epsilon);
-    EXPECT_NEAR(particle.blue, 0.0f, c_epsilon);
-    EXPECT_EQ(particle.green, 1.0f);
+    EXPECT_GT(particle.m_y, previous_y);
+    EXPECT_NEAR(particle.m_x, 31.0f, c_epsilon);
+    EXPECT_NEAR(particle.m_blue, 0.0f, c_epsilon);
+    EXPECT_EQ(particle.m_green, 1.0f);
     for (std::int32_t frame = 31; frame < 61; ++frame) {
         ASSERT_TRUE(effects::updateParticle(particle));
     }
-    EXPECT_NEAR(particle.green, 0.0f, c_epsilon);
+    EXPECT_NEAR(particle.m_green, 0.0f, c_epsilon);
     ASSERT_TRUE(effects::updateParticle(particle));
     // Frame 61: (61 - 30) / 40 - the game's own formula.
-    EXPECT_NEAR(particle.red, 1.0f - 31.0f / 40.0f, c_epsilon);
-    previous_y = particle.y;
+    EXPECT_NEAR(particle.m_red, 1.0f - 31.0f / 40.0f, c_epsilon);
+    previous_y = particle.m_y;
     for (std::int32_t frame = 62; frame < 99; ++frame) {
         ASSERT_TRUE(effects::updateParticle(particle));
     }
     EXPECT_FALSE(effects::updateParticle(particle));
-    EXPECT_GT(particle.y, previous_y);
+    EXPECT_GT(particle.m_y, previous_y);
 }
 
 TEST(GameLogicTest, FloatParticleDampsItsVerticalMotion) {
@@ -262,8 +261,8 @@ TEST(GameLogicTest, FloatParticleDampsItsVerticalMotion) {
     effects::Particle particle = effects::makeParticle(
             effects::ParticleKind::Float, 0, 0, 0, 0, 1, 0, 2, 10);
     EXPECT_TRUE(effects::updateParticle(particle));
-    EXPECT_NEAR(particle.y, 0.2f, c_epsilon);
-    EXPECT_EQ(particle.size, 4.0f);
+    EXPECT_NEAR(particle.m_y, 0.2f, c_epsilon);
+    EXPECT_EQ(particle.m_size, 4.0f);
 }
 
 TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
@@ -281,10 +280,10 @@ TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
     EXPECT_EQ(live(), 10U);
     for (const auto& slot : emitter.slots()) {
         if (slot) {
-            EXPECT_EQ(slot->x, 1.0f);
-            const float length = std::sqrt(slot->dir[0] * slot->dir[0] +
-                                           slot->dir[1] * slot->dir[1] +
-                                           slot->dir[2] * slot->dir[2]);
+            EXPECT_EQ(slot->m_x, 1.0f);
+            const float length = std::sqrt(slot->m_dir[0] * slot->m_dir[0] +
+                                           slot->m_dir[1] * slot->m_dir[1] +
+                                           slot->m_dir[2] * slot->m_dir[2]);
             EXPECT_NEAR(length, 1.0f, c_epsilon);
         }
     }
@@ -303,17 +302,17 @@ TEST(GameLogicTest, ExplosionStepsThroughItsColorsAndLeavesTheGap) {
     effects::Explosion explosion;
     // Starts at timer 50: the third color band.
     effects::ExplosionFrame frame = effects::advanceExplosion(explosion);
-    EXPECT_EQ(frame.color_index, 2);
-    EXPECT_NEAR(frame.alpha, 1.0f - 50.5f / 150.0f, c_epsilon);
-    while (explosion.timer < 75.0f) {
+    EXPECT_EQ(frame.m_color_index, 2);
+    EXPECT_NEAR(frame.m_alpha, 1.0f - 50.5f / 150.0f, c_epsilon);
+    while (explosion.m_timer < 75.0f) {
         frame = effects::advanceExplosion(explosion);
     }
-    EXPECT_EQ(frame.color_index, -1);
-    while (explosion.timer < 100.0f) {
+    EXPECT_EQ(frame.m_color_index, -1);
+    while (explosion.m_timer < 100.0f) {
         frame = effects::advanceExplosion(explosion);
     }
-    EXPECT_EQ(frame.color_index, 3);
+    EXPECT_EQ(frame.m_color_index, 3);
     EXPECT_NEAR(effects::explosionSphereRadius(explosion, 30),
-                explosion.radius * (30 * 5.56f + 22.22f),
+                explosion.m_radius * (30 * 5.56f + 22.22f),
                 1e-2f);
 }

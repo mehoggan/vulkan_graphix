@@ -13,12 +13,12 @@
 
 namespace vulkan_graphix {
 
-VulkanTutorial07Parameters::VulkanTutorial07Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial07Parameters::VulkanTutorial07Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial07Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -746,13 +746,13 @@ bool Tutorial07::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial07VertexData, position)},
+                     .offset = offsetof(struct Tutorial07VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial07VertexData, texcoord)}};
+                     .offset = offsetof(struct Tutorial07VertexData,
+                                        m_texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

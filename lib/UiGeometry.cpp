@@ -20,35 +20,35 @@ std::vector<ColoredQuad> buildBevelFrame(Math::Vec2<float> top_left,
                        Math::Vec2<float>(x0, y1),
                        Math::Vec2<float>(x1, y1),
                        Math::Vec2<float>(x1, y0)}},
-                     colors.face});
+                     colors.m_face});
 
     // Top border wedge.
     quads.push_back({{{Math::Vec2<float>(x0, y0),
                        Math::Vec2<float>(x0 - b, y0 - b),
                        Math::Vec2<float>(x1 + b, y0 - b),
                        Math::Vec2<float>(x1, y0)}},
-                     colors.top});
+                     colors.m_top});
 
     // Left border wedge.
     quads.push_back({{{Math::Vec2<float>(x0 - b, y0 - b),
                        Math::Vec2<float>(x0 - b, y1 + b),
                        Math::Vec2<float>(x0, y1),
                        Math::Vec2<float>(x0, y0)}},
-                     colors.left});
+                     colors.m_left});
 
     // Bottom border wedge.
     quads.push_back({{{Math::Vec2<float>(x0 - b, y1 + b),
                        Math::Vec2<float>(x1 + b, y1 + b),
                        Math::Vec2<float>(x1, y1),
                        Math::Vec2<float>(x0, y1)}},
-                     colors.bottom});
+                     colors.m_bottom});
 
     // Right border wedge.
     quads.push_back({{{Math::Vec2<float>(x1, y0),
                        Math::Vec2<float>(x1 + b, y0 - b),
                        Math::Vec2<float>(x1 + b, y1 + b),
                        Math::Vec2<float>(x1, y1)}},
-                     colors.right});
+                     colors.m_right});
 
     return quads;
 }

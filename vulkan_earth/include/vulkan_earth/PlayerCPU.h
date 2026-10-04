@@ -1,5 +1,5 @@
-#ifndef PLAYER_CPU_H
-#define PLAYER_CPU_H
+#ifndef VULKAN_EARTH_PLAYERCPU_H
+#define VULKAN_EARTH_PLAYERCPU_H
 
 #include <cstdint>
 #include <string>
@@ -53,18 +53,18 @@ public:
     void setLoadedWeapon(Weapon* wpn) override;
 
 private:
-    Tank* current_tank;
-    std::int32_t current_cash;
-    std::string tank_type;
-    Item* current_items[player_max_items];
-    Weapon* current_weapons[player_max_weapons];
-    std::string ai_type;
-    std::string name;
-    std::string player_type;
-    float color[4];
-    float current_wait;
-    char team_label;
-    Weapon* loaded_weapon;
+    Tank* m_current_tank;
+    std::int32_t m_current_cash;
+    std::string m_tank_type;
+    Item* m_current_items[player_max_items];
+    Weapon* m_current_weapons[player_max_weapons];
+    std::string m_ai_type;
+    std::string m_name;
+    std::string m_player_type;
+    float m_color[4];
+    float m_current_wait;
+    char m_team_label;
+    Weapon* m_loaded_weapon;
 };
 
-#endif /*	PLAYER_CPU_H	*/
+#endif  // VULKAN_EARTH_PLAYERCPU_H

@@ -1,5 +1,5 @@
-#ifndef SUB_MENU_TEST_H
-#define SUB_MENU_TEST_H
+#ifndef VULKAN_EARTH_SUBMENUTEST_H
+#define VULKAN_EARTH_SUBMENUTEST_H
 
 #include <cstdint>
 #include <string>
@@ -51,17 +51,17 @@ public:
     std::string collectData() override;
 
 private:
-    std::int32_t uniqueidentifier;
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    float color[4];
-    std::int32_t width;
-    std::int32_t height;
-    std::string caption;
-    float percent_border;
-    TextObject* label;
-    vulkan_graphix::Render::UiMesh frame_mesh;
+    std::int32_t m_uniqueidentifier;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    float m_color[4];
+    std::int32_t m_width;
+    std::int32_t m_height;
+    std::string m_caption;
+    float m_percent_border;
+    TextObject* m_label;
+    vulkan_graphix::Render::UiMesh m_frame_mesh;
 };
 
-#endif  //	SUB_MENU_TEST_H
+#endif  // VULKAN_EARTH_SUBMENUTEST_H

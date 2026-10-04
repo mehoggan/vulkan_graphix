@@ -10,11 +10,11 @@
 
 namespace vulkan_graphix {
 
-VulkanTutorial04Parameters::VulkanTutorial04Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial04Parameters::VulkanTutorial04Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial04Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -235,12 +235,13 @@ bool Tutorial04::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial04VertexData, position)},
+                     .offset = offsetof(struct Tutorial04VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct Tutorial04VertexData, color)}};
+                     .offset =
+                             offsetof(struct Tutorial04VertexData, m_color)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

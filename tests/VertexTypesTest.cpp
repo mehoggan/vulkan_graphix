@@ -21,7 +21,7 @@ struct CustomAttribute {
 };
 
 struct ZeroInitAttribute {
-    std::int32_t value = 0;
+    std::int32_t m_value = 0;
 };
 
 }  // namespace
@@ -62,8 +62,8 @@ TEST(AttributeTraitsTest, ByteOffsetsAreCumulative) {
 
 TEST(InterleavedDatumTest, DefaultConstructedValuesAreZeroInitialized) {
     InterleavedDatum<ZeroInitAttribute, ZeroInitAttribute> datum;
-    EXPECT_EQ(0, datum.get<0>().value);
-    EXPECT_EQ(0, datum.get<1>().value);
+    EXPECT_EQ(0, datum.get<0>().m_value);
+    EXPECT_EQ(0, datum.get<1>().m_value);
 }
 
 TEST(InterleavedDatumTest, ValueConstructorStoresEachAttribute) {

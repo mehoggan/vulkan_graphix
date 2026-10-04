@@ -17,13 +17,15 @@ namespace vulkan_graphix::Tools {
 template <class T, class F>
 class AutoDeleter {
 public:
-    AutoDeleter()
-            : object(VK_NULL_HANDLE)
-            , deleter(nullptr)
-            , device(VK_NULL_HANDLE) {}
+    AutoDeleter() :
+            m_object(VK_NULL_HANDLE),
+            m_deleter(nullptr),
+            m_device(VK_NULL_HANDLE) {}
 
-    AutoDeleter(T new_object, F new_deleter, VkDevice new_device)
-            : object(new_object), deleter(new_deleter), device(new_device) {}
+    AutoDeleter(T new_object, F new_deleter, VkDevice new_device) :
+            m_object(new_object),
+            m_deleter(new_deleter),
+            m_device(new_device) {}
 
     AutoDeleter(AutoDeleter&& other) noexcept { *this = std::move(other); }
 
@@ -31,30 +33,30 @@ public:
     AutoDeleter& operator=(const AutoDeleter&) = delete;
 
     ~AutoDeleter() {
-        if ((object != VK_NULL_HANDLE) && (deleter != nullptr) &&
-            (device != VK_NULL_HANDLE)) {
-            deleter(device, object, nullptr);
+        if ((m_object != VK_NULL_HANDLE) && (m_deleter != nullptr) &&
+            (m_device != VK_NULL_HANDLE)) {
+            m_deleter(m_device, m_object, nullptr);
         }
     }
 
     AutoDeleter& operator=(AutoDeleter&& other) noexcept {
         if (this != &other) {
-            object = other.object;
-            deleter = other.deleter;
-            device = other.device;
-            other.object = VK_NULL_HANDLE;
+            m_object = other.m_object;
+            m_deleter = other.m_deleter;
+            m_device = other.m_device;
+            other.m_object = VK_NULL_HANDLE;
         }
         return *this;
     }
 
-    T get() { return object; }
+    T get() { return m_object; }
 
-    bool operator!() const { return object == VK_NULL_HANDLE; }
+    bool operator!() const { return m_object == VK_NULL_HANDLE; }
 
 private:
-    T object;
-    F deleter;
-    VkDevice device;
+    T m_object;
+    F m_deleter;
+    VkDevice m_device;
 };
 
 // The directory of the running executable (/proc/self/exe's), skipping a
@@ -89,9 +91,9 @@ std::vector<char> getRawImageData(const std::string& filename,
 // (see VBOShaderLibrary::loadClientData(const std::string&) in
 // vulkan_earth/src/VBOShaderLibrary.cpp for the format this mirrors).
 struct OglVertexData {
-    Math::Vec2<float> texcoord;
-    Math::Vec3<float> normal;
-    Math::Vec3<float> position;
+    Math::Vec2<float> m_texcoord;
+    Math::Vec3<float> m_normal;
+    Math::Vec3<float> m_position;
 };
 
 // Parses an entire ".ogl" file into a flat, unindexed vertex list (three

@@ -69,8 +69,8 @@ namespace vulkan_graphix {
 // Same shape as Tutorial16VertexData - the two tanks reuse Tutorial16's
 // exact unlit-textured mesh pipeline shape.
 struct Tutorial18Vertex3DData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial18Vertex3DAttributeTraits =
@@ -79,9 +79,9 @@ using Tutorial18Vertex3DAttributeTraits =
 // Same shape as Tutorial15/17VertexData - the HUD reuses that exact 2D
 // alpha-blended pipeline shape.
 struct Tutorial18VertexHudData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
-    Math::Vec4<float> color;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
+    Math::Vec4<float> m_color;
 };
 
 using Tutorial18VertexHudAttributeTraits =
@@ -90,28 +90,28 @@ using Tutorial18VertexHudAttributeTraits =
                                      Math::Vec4<float>>;
 
 struct Tutorial18UniformBufferData3D {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // Per-tank-instance model matrix and team-color tint, set immediately
 // before each part's draw call - extends Tutorial16's own Mat4-only
 // push constant (Tutorial16PushConstants) with a Vec4 tint.
 struct Tutorial18PushConstants {
-    Math::Mat4<float> model;
-    Math::Vec4<float> color;
+    Math::Mat4<float> m_model;
+    Math::Vec4<float> m_color;
 };
 
 // One player's real+illustrative HUD data (see this header's own top
 // comment for which fields are real vs. this tutorial's own static
 // snapshot choice).
 struct Tutorial18PlayerInfo {
-    Math::Vec3<float> world_position;
-    Math::Vec4<float> team_color;
-    std::string name;
-    std::int32_t hp;
-    std::int32_t max_hp;
-    float power_ratio;
+    Math::Vec3<float> m_world_position;
+    Math::Vec4<float> m_team_color;
+    std::string m_name;
+    std::int32_t m_hp;
+    std::int32_t m_max_hp;
+    float m_power_ratio;
 };
 
 // ************************************************************ //

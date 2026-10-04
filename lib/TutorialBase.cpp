@@ -15,8 +15,9 @@ namespace vulkan_graphix {
 //                                                              //
 // Vulkan Queue's parameters container class                    //
 // ************************************************************ //
-QueueParameters::QueueParameters()
-        : m_vk_queue(VK_NULL_HANDLE), m_family_index(0) {}
+QueueParameters::QueueParameters() :
+        m_vk_queue(VK_NULL_HANDLE),
+        m_family_index(0) {}
 
 const VkQueue& QueueParameters::getVkQueue() const { return m_vk_queue; }
 
@@ -37,11 +38,11 @@ void QueueParameters::setFamilyIndex(const std::uint32_t family_index) {
 //                                                              //
 // Vulkan Image's parameters container class                    //
 // ************************************************************ //
-ImageParameters::ImageParameters()
-        : m_vk_image(VK_NULL_HANDLE)
-        , m_vk_image_view(VK_NULL_HANDLE)
-        , m_vk_sampler(VK_NULL_HANDLE)
-        , m_vk_device_memory(VK_NULL_HANDLE) {}
+ImageParameters::ImageParameters() :
+        m_vk_image(VK_NULL_HANDLE),
+        m_vk_image_view(VK_NULL_HANDLE),
+        m_vk_sampler(VK_NULL_HANDLE),
+        m_vk_device_memory(VK_NULL_HANDLE) {}
 
 const VkImage& ImageParameters::getVkImage() const { return m_vk_image; }
 void ImageParameters::setVkImage(const VkImage& other) { m_vk_image = other; }
@@ -72,10 +73,10 @@ void ImageParameters::setVkDeviceMemory(const VkDeviceMemory& other) {
 //                                                              //
 // Vulkan Buffer's parameters container class                   //
 // ************************************************************ //
-BufferParameters::BufferParameters()
-        : m_vk_buffer(VK_NULL_HANDLE)
-        , m_vk_device_memory(VK_NULL_HANDLE)
-        , m_size(0) {}
+BufferParameters::BufferParameters() :
+        m_vk_buffer(VK_NULL_HANDLE),
+        m_vk_device_memory(VK_NULL_HANDLE),
+        m_size(0) {}
 
 const VkBuffer& BufferParameters::getVkBuffer() const { return m_vk_buffer; }
 void BufferParameters::setVkBuffer(const VkBuffer& other) {
@@ -97,10 +98,10 @@ void BufferParameters::setSize(const std::uint32_t size) { m_size = size; }
 //                                                              //
 // Container class for descriptor related resources             //
 // ************************************************************ //
-DescriptorSetParameters::DescriptorSetParameters()
-        : m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_descriptor_set(VK_NULL_HANDLE) {}
+DescriptorSetParameters::DescriptorSetParameters() :
+        m_vk_descriptor_pool(VK_NULL_HANDLE),
+        m_vk_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_descriptor_set(VK_NULL_HANDLE) {}
 
 const VkDescriptorPool& DescriptorSetParameters::getVkDescriptorPool() const {
     return m_vk_descriptor_pool;
@@ -132,11 +133,11 @@ void DescriptorSetParameters::setVkDescriptorSet(
 //                                                              //
 // Container class for the resources used during a single frame //
 // ************************************************************ //
-RenderingResourceParameters::RenderingResourceParameters()
-        : m_vk_framebuffer(VK_NULL_HANDLE)
-        , m_vk_command_buffer(VK_NULL_HANDLE)
-        , m_image_available_vk_semaphore(VK_NULL_HANDLE)
-        , m_vk_fence(VK_NULL_HANDLE) {}
+RenderingResourceParameters::RenderingResourceParameters() :
+        m_vk_framebuffer(VK_NULL_HANDLE),
+        m_vk_command_buffer(VK_NULL_HANDLE),
+        m_image_available_vk_semaphore(VK_NULL_HANDLE),
+        m_vk_fence(VK_NULL_HANDLE) {}
 
 const VkFramebuffer& RenderingResourceParameters::getVkFramebuffer() const {
     return m_vk_framebuffer;
@@ -186,10 +187,10 @@ void RenderingResourceParameters::setVkFence(const VkFence& vk_fence) {
 //                                                              //
 // Vulkan SwapChain's parameters container class                //
 // ************************************************************ //
-SwapChainParameters::SwapChainParameters()
-        : m_vk_swapchain_khr(VK_NULL_HANDLE)
-        , m_vk_format(VK_FORMAT_UNDEFINED)
-        , m_vk_extent_2d() {}
+SwapChainParameters::SwapChainParameters() :
+        m_vk_swapchain_khr(VK_NULL_HANDLE),
+        m_vk_format(VK_FORMAT_UNDEFINED),
+        m_vk_extent_2d() {}
 
 const VkSwapchainKHR& SwapChainParameters::getVkSwapchainKhr() const {
     return m_vk_swapchain_khr;
@@ -232,11 +233,11 @@ void SwapChainParameters::setVkExtent2d(VkExtent2D& other) {
 //                                                              //
 // General Vulkan parameters' container class                   //
 // ************************************************************ //
-TutorialBaseParameters::TutorialBaseParameters()
-        : m_vk_instance(VK_NULL_HANDLE)
-        , m_vk_physical_device(VK_NULL_HANDLE)
-        , m_vk_device(VK_NULL_HANDLE)
-        , m_vk_surface_khr(VK_NULL_HANDLE) {}
+TutorialBaseParameters::TutorialBaseParameters() :
+        m_vk_instance(VK_NULL_HANDLE),
+        m_vk_physical_device(VK_NULL_HANDLE),
+        m_vk_device(VK_NULL_HANDLE),
+        m_vk_surface_khr(VK_NULL_HANDLE) {}
 
 const VkInstance& TutorialBaseParameters::getVkInstance() const {
     return m_vk_instance;
@@ -330,10 +331,10 @@ void TutorialBaseParameters::setVkDebugUtilsMessenger(
     m_vk_debug_utils_messenger = vk_debug_utils_messenger;
 }
 
-TutorialBase::TutorialBase()
-        : LoggedClass<TutorialBase>(*this)
-        , m_vulkan_library_handle()
-        , m_enable_vk_debug(true) {}
+TutorialBase::TutorialBase() :
+        LoggedClass<TutorialBase>(*this),
+        m_vulkan_library_handle(),
+        m_enable_vk_debug(true) {}
 
 TutorialBase::~TutorialBase() {
     // vkDeviceWaitIdle/vkDestroyImageView/vkDestroyDevice/vkDestroyInstance

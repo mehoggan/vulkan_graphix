@@ -1,5 +1,5 @@
-#ifndef WEAPON_ACID_H
-#define WEAPON_ACID_H
+#ifndef VULKAN_EARTH_WEAPONACID_H
+#define VULKAN_EARTH_WEAPONACID_H
 
 #include <cstdint>
 #include "vulkan_earth/Weapon.h"

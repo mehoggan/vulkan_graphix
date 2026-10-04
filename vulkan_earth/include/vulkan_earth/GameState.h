@@ -1,5 +1,5 @@
-#ifndef GAME_STATE_H
-#define GAME_STATE_H
+#ifndef VULKAN_EARTH_GAMESTATE_H
+#define VULKAN_EARTH_GAMESTATE_H
 
 #include <cstdint>
 #include <fstream>
@@ -100,72 +100,72 @@ private:
     void handleNonInventoryKeyboard(std::int32_t key, bool key_status);
     void handleInventoryKeyboard(std::int32_t key, bool key_status);
 
-    PlayerFactory* player_factory;
-    GlobalSettings* global_settings;
-    Player* current_player;
-    WorldCam* world_cam;
-    PossibleGameSubStates game_sub_state;
-    std::int32_t current_player_index;
-    std::int32_t width;
-    std::int32_t height;
-    float camera_x;
-    float camera_y;
-    float camera_z;
-    std::int32_t old_mouse_x;
-    std::int32_t old_mouse_y;
-    float camera_radius;
-    float plane_radius;
-    float current_world_theta;
-    float current_tank_phi;
-    float current_tank_theta;
-    float offset;
-    SkyboxFactory* skybox_factory;
-    Water* ocean;
-    std::int32_t sfx_random;
-    bool player_cam;
-    bool chase_cam_active;
-    std::int32_t key_monitor[256];
-    std::int32_t number_of_players;
+    PlayerFactory* m_player_factory;
+    GlobalSettings* m_global_settings;
+    Player* m_current_player;
+    WorldCam* m_world_cam;
+    PossibleGameSubStates m_game_sub_state;
+    std::int32_t m_current_player_index;
+    std::int32_t m_width;
+    std::int32_t m_height;
+    float m_camera_x;
+    float m_camera_y;
+    float m_camera_z;
+    std::int32_t m_old_mouse_x;
+    std::int32_t m_old_mouse_y;
+    float m_camera_radius;
+    float m_plane_radius;
+    float m_current_world_theta;
+    float m_current_tank_phi;
+    float m_current_tank_theta;
+    float m_offset;
+    SkyboxFactory* m_skybox_factory;
+    Water* m_ocean;
+    std::int32_t m_sfx_random;
+    bool m_player_cam;
+    bool m_chase_cam_active;
+    std::int32_t m_key_monitor[256];
+    std::int32_t m_number_of_players;
 
-    float gravity;
-    Projectile* projectile;
-    float scale_gravity;
-    float balistic_scalar;
-    bool projectile_fired;
-    Inventory* inventory;
-    ImageObject* weapon_slot;
-    ImageObject* selected_weapon_img;
-    TextObject* selected_weapon_remain;
-    VBOShaderLibrary* projectile_models[max_projectile_models];
+    float m_gravity;
+    Projectile* m_projectile;
+    float m_scale_gravity;
+    float m_balistic_scalar;
+    bool m_projectile_fired;
+    Inventory* m_inventory;
+    ImageObject* m_weapon_slot;
+    ImageObject* m_selected_weapon_img;
+    TextObject* m_selected_weapon_remain;
+    VBOShaderLibrary* m_projectile_models[max_projectile_models];
 
-    SpecialEffect** special_effects;
-    float radius_increase1;
-    std::int32_t special_effect_timer;
-    float special_effect_x;
-    float special_effect_y;
-    float special_effect_z;
-    float radius_of_current_explosion;
-    std::int32_t special_effect_type;
-    std::int32_t special_effects_count;
-    bool start_music_played;
-    std::int32_t prev_music_volume;
-    bool need_help;
-    ImageObject* manual;
-    std::int32_t* current_game_state;
+    SpecialEffect** m_special_effects;
+    float m_radius_increase1;
+    std::int32_t m_special_effect_timer;
+    float m_special_effect_x;
+    float m_special_effect_y;
+    float m_special_effect_z;
+    float m_radius_of_current_explosion;
+    std::int32_t m_special_effect_type;
+    std::int32_t m_special_effects_count;
+    bool m_start_music_played;
+    std::int32_t m_prev_music_volume;
+    bool m_need_help;
+    ImageObject* m_manual;
+    std::int32_t* m_current_game_state;
 
-    bool draw_hit_box;
+    bool m_draw_hit_box;
 
     /*	AI VARIABLES AND MEMBER FUNCTIONS	*/
-    float timer;  // Should match frames per second
+    float m_timer;  // Should match frames per second
     void controlAI();
     void resetTables(std::int32_t index);  // Tell it which player to reset or
                                            // -1 for all
     void printTables();
-    bool** tank_reachable;
-    float** distance_to_target;
-    Tank*** tank_list;
-    vulkan_graphix::Math::Vec3<float> position_of_last_projectile;
-    ofstream myfile;
+    bool** m_tank_reachable;
+    float** m_distance_to_target;
+    Tank*** m_tank_list;
+    vulkan_graphix::Math::Vec3<float> m_position_of_last_projectile;
+    ofstream m_myfile;
     /*	END OF AI */
 };
 

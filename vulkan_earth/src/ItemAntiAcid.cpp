@@ -7,18 +7,18 @@ extern void playSFX(std::int32_t sfx);
 
 ItemAntiAcid::ItemAntiAcid() = default;
 ItemAntiAcid::ItemAntiAcid(std::int32_t id) {
-    uniqueidentifier = id;
+    m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
             vulkan_graphix::GameCatalog::ItemKind::AntiAcid));
 }
 ItemAntiAcid::~ItemAntiAcid() = default;
 
 ItemAntiAcid* ItemAntiAcid::getItemInstance() {
-    return new ItemAntiAcid(uniqueidentifier);
+    return new ItemAntiAcid(m_uniqueidentifier);
 }
 
 bool ItemAntiAcid::causeEffectToTank(Tank* tank) {
-    tank->setDurationAcid(special_num);
+    tank->setDurationAcid(m_special_num);
     return false;
 }
 

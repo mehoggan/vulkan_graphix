@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_HELLFIRE_TANK_H
-#define VULKAN_GRAPHIX_HELLFIRE_TANK_H
+#ifndef VULKAN_GRAPHIX_HELLFIRETANK_H
+#define VULKAN_GRAPHIX_HELLFIRETANK_H
 
 // vulkan_earth's "Hellfire" tank (vulkan_earth/src/TankB.cpp): its own
 // part offsets and scale - which TankB itself reads from here - plus
@@ -42,4 +42,4 @@ Math::Mat4<float> buildPartMatrix(const Math::Vec3<float>& translation);
 
 }  // namespace vulkan_graphix::HellfireTank
 
-#endif  // VULKAN_GRAPHIX_HELLFIRE_TANK_H
+#endif  // VULKAN_GRAPHIX_HELLFIRETANK_H

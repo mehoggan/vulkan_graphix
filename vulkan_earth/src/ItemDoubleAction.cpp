@@ -4,17 +4,17 @@
 
 ItemDoubleAction::ItemDoubleAction() = default;
 ItemDoubleAction::ItemDoubleAction(std::int32_t id) {
-    uniqueidentifier = id;
+    m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
             vulkan_graphix::GameCatalog::ItemKind::DoubleAction));
 }
 ItemDoubleAction::~ItemDoubleAction() = default;
 
 ItemDoubleAction* ItemDoubleAction::getItemInstance() {
-    return new ItemDoubleAction(uniqueidentifier);
+    return new ItemDoubleAction(m_uniqueidentifier);
 }
 
 bool ItemDoubleAction::causeEffectToTank(Tank* tank) {
-    tank->setDurationDoubleAction(special_num);
+    tank->setDurationDoubleAction(m_special_num);
     return false;
 }

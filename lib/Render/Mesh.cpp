@@ -12,8 +12,9 @@ using Vec3 = Math::Vec3<float>;
 using Vec4 = Math::Vec4<float>;
 }  // namespace
 
-Mesh::Mesh(BufferParameters buffer, std::uint32_t vertex_count)
-        : m_buffer(buffer), m_vertex_count(vertex_count) {}
+Mesh::Mesh(BufferParameters buffer, std::uint32_t vertex_count) :
+        m_buffer(buffer),
+        m_vertex_count(vertex_count) {}
 
 Mesh::~Mesh() {
     if (Renderer::hasInstance()) {
@@ -57,8 +58,8 @@ const HostBuffer& RetainedMeshBase::upload(const void* triangles,
         m_buffer = Renderer::instance().createHostBuffer(
                 triangle_bytes + line_bytes,
                 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-        if (m_buffer.mapped != nullptr) {
-            auto* destination = static_cast<char*>(m_buffer.mapped);
+        if (m_buffer.m_mapped != nullptr) {
+            auto* destination = static_cast<char*>(m_buffer.m_mapped);
             if (triangle_bytes != 0) {
                 std::memcpy(destination, triangles, triangle_bytes);
             }
@@ -72,9 +73,9 @@ const HostBuffer& RetainedMeshBase::upload(const void* triangles,
 }
 
 void RetainedMeshBase::releaseBuffer() {
-    if (m_buffer.buffer.getVkBuffer() != VK_NULL_HANDLE &&
+    if (m_buffer.m_buffer.getVkBuffer() != VK_NULL_HANDLE &&
         Renderer::hasInstance()) {
-        Renderer::instance().deferRelease(m_buffer.buffer);
+        Renderer::instance().deferRelease(m_buffer.m_buffer);
     }
     m_buffer = HostBuffer{};
 }

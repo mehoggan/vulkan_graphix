@@ -1,11 +1,11 @@
+#ifndef VULKAN_EARTH_PARTICLEGENERATOR_H
+#define VULKAN_EARTH_PARTICLEGENERATOR_H
+
 #include <cstdint>
 #include "vulkan_earth/SpecialEffect.h"
 #include "vulkan_graphix/EffectSimulation.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Render/Renderer.h"
-
-#ifndef PARTICLEGENERATOR_H
-#define PARTICLEGENERATOR_H
 
 namespace vulkan_graphix::Render {
 class RenderContext;
@@ -28,7 +28,7 @@ public:
     void killGenerator();
 
 private:
-    vulkan_graphix::EffectSimulation::ParticleEmitter emitter;
+    vulkan_graphix::EffectSimulation::ParticleEmitter m_emitter;
 };
 
-#endif
+#endif  // VULKAN_EARTH_PARTICLEGENERATOR_H

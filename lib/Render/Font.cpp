@@ -6,8 +6,9 @@
 
 namespace vulkan_graphix::Render {
 
-Font::Font(BitmapFont bitmap, std::shared_ptr<Texture> atlas)
-        : m_bitmap(std::move(bitmap)), m_atlas(std::move(atlas)) {}
+Font::Font(BitmapFont bitmap, std::shared_ptr<Texture> atlas) :
+        m_bitmap(std::move(bitmap)),
+        m_atlas(std::move(atlas)) {}
 
 const BitmapFont& Font::bitmap() const { return m_bitmap; }
 

@@ -1,5 +1,5 @@
-#ifndef ITEM_DOUBLE_ACTION_H
-#define ITEM_DOUBLE_ACTION_H
+#ifndef VULKAN_EARTH_ITEMDOUBLEACTION_H
+#define VULKAN_EARTH_ITEMDOUBLEACTION_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

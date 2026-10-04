@@ -65,13 +65,13 @@ getTerrainTessellation() {
 // ************************************************************ //
 // VulkanTutorial09Parameters                                   //
 // ************************************************************ //
-VulkanTutorial09Parameters::VulkanTutorial09Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_index_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial09Parameters::VulkanTutorial09Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_index_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial09Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -585,21 +585,21 @@ bool Tutorial09::createUniformBuffer() {
 
 Tutorial09UniformBufferData Tutorial09::getUniformBufferData() const {
     Tutorial09UniformBufferData data{};
-    data.model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
-    data.light_position = Math::Vec4<float>(5.0f, 8.0f, 5.0f, 1.0f);
-    data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
+    data.m_light_position = Math::Vec4<float>(5.0f, 8.0f, 5.0f, 1.0f);
+    data.m_light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
+    data.m_view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
 
     return data;
 }
@@ -908,17 +908,18 @@ bool Tutorial09::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial09VertexData, position)},
+                     .offset = offsetof(struct Tutorial09VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct Tutorial09VertexData, normal)},
+                     .offset =
+                             offsetof(struct Tutorial09VertexData, m_normal)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial09VertexData, texcoord)}};
+                     .offset = offsetof(struct Tutorial09VertexData,
+                                        m_texcoord)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

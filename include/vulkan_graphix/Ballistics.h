@@ -19,8 +19,8 @@ namespace vulkan_graphix::Ballistics {
 
 // Where a shell starts and how fast it's moving when it leaves the barrel.
 struct Launch {
-    Math::Vec3<float> origin;
-    Math::Vec3<float> velocity;
+    Math::Vec3<float> m_origin;
+    Math::Vec3<float> m_velocity;
 };
 
 // The point `distance` world units out along the barrel of turret_matrix:

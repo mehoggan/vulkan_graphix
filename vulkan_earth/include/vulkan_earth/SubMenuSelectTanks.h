@@ -1,5 +1,5 @@
-#ifndef SUB_MENU_SELECT_TANKS_H
-#define SUB_MENU_SELECT_TANKS_H
+#ifndef VULKAN_EARTH_SUBMENUSELECTTANKS_H
+#define VULKAN_EARTH_SUBMENUSELECTTANKS_H
 
 #include <cstdint>
 #include <string>
@@ -62,19 +62,19 @@ public:
     void updateMouse(std::int32_t x, std::int32_t y) override;
 
 private:
-    std::int32_t uniqueidentifier;
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    float color[4];
-    std::int32_t width;
-    std::int32_t height;
-    std::string caption;
-    float percent_border;
-    TextObject* label;
-    ControlItem* sub_menu_button[num_control_items_st];
-    ControlItem* button_pressed;
-    vulkan_graphix::Render::UiMesh frame_mesh;
+    std::int32_t m_uniqueidentifier;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    float m_color[4];
+    std::int32_t m_width;
+    std::int32_t m_height;
+    std::string m_caption;
+    float m_percent_border;
+    TextObject* m_label;
+    ControlItem* m_sub_menu_button[num_control_items_st];
+    ControlItem* m_button_pressed;
+    vulkan_graphix::Render::UiMesh m_frame_mesh;
 };
 
-#endif  //	SUB_MENU_SELECT_TANKS_H
+#endif  // VULKAN_EARTH_SUBMENUSELECTTANKS_H

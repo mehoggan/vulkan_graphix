@@ -1,5 +1,5 @@
-#ifndef ITEM_BIG_REPAIR_H
-#define ITEM_BIG_REPAIR_H
+#ifndef VULKAN_EARTH_ITEMBIGREPAIR_H
+#define VULKAN_EARTH_ITEMBIGREPAIR_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

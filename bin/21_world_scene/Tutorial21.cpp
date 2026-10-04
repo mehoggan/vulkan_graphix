@@ -21,24 +21,24 @@ constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 // ************************************************************ //
 // VulkanTutorial21Parameters                                   //
 // ************************************************************ //
-VulkanTutorial21Parameters::VulkanTutorial21Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_terrain_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_object_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_terrain_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_tank_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_skybox_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_terrain_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_object_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_terrain_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_object_graphics_pipeline(VK_NULL_HANDLE)
-        , m_vk_skybox_graphics_pipeline(VK_NULL_HANDLE)
-        , m_terrain_vertex_count(0)
-        , m_tank_vertex_counts{0, 0, 0}
-        , m_skybox_index_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial21Parameters::VulkanTutorial21Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_terrain_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_object_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_descriptor_pool(VK_NULL_HANDLE),
+        m_vk_terrain_descriptor_set(VK_NULL_HANDLE),
+        m_vk_tank_descriptor_set(VK_NULL_HANDLE),
+        m_vk_skybox_descriptor_set(VK_NULL_HANDLE),
+        m_vk_terrain_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_object_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_terrain_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_object_graphics_pipeline(VK_NULL_HANDLE),
+        m_vk_skybox_graphics_pipeline(VK_NULL_HANDLE),
+        m_terrain_vertex_count(0),
+        m_tank_vertex_counts{0, 0, 0},
+        m_skybox_index_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial21Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -380,19 +380,19 @@ void VulkanTutorial21Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial21                                                   //
 // ************************************************************ //
-Tutorial21::Tutorial21()
-        // Terrain half-extent = (64-1)*16/2 = ~504 world units; the tank
-        // (hundreds of units tall/wide) plus the terrain together need a
-        // much larger view than any single previous tutorial's world -
-        // tuned via screenshot. A steep pitch (looking down onto the
-        // terrain rather than across it) is deliberate: TerrainGenerator::
-        // terrainSmoothe() zeroes the outermost ring of heights every pass
-        // (a real, faithfully-ported part of the original algorithm), which
-        // creates a real one-cell-wide cliff at the grid's edge - a shallow
-        // pitch grazes under that cliff and exposes its unlit backside.
-        : m_camera(0.5f, 0.85f, 1800.0f)
-        , m_terrain_generator(c_grid_size, c_grid_scale)
-        , m_terrain_generated(false) {}
+// Terrain half-extent = (64-1)*16/2 = ~504 world units; the tank
+// (hundreds of units tall/wide) plus the terrain together need a
+// much larger view than any single previous tutorial's world -
+// tuned via screenshot. A steep pitch (looking down onto the
+// terrain rather than across it) is deliberate: TerrainGenerator::
+// terrainSmoothe() zeroes the outermost ring of heights every pass
+// (a real, faithfully-ported part of the original algorithm), which
+// creates a real one-cell-wide cliff at the grid's edge - a shallow
+// pitch grazes under that cliff and exposes its unlit backside.
+Tutorial21::Tutorial21() :
+        m_camera(0.5f, 0.85f, 1800.0f),
+        m_terrain_generator(c_grid_size, c_grid_scale),
+        m_terrain_generated(false) {}
 
 Tutorial21::~Tutorial21() { childClear(); }
 
@@ -687,10 +687,10 @@ bool Tutorial21::createSkyboxTexture() {
 Tutorial21TerrainUniformBufferData Tutorial21::getTerrainUniformBufferData()
         const {
     Tutorial21TerrainUniformBufferData data{};
-    data.model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -701,14 +701,14 @@ Tutorial21TerrainUniformBufferData Tutorial21::getTerrainUniformBufferData()
     // distance from the origin, worst case ~6996 world units here) - too
     // tight a far plane clips a skybox corner, which produced a real,
     // screenshot-confirmed solid-black triangle on one face.
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 1.0f, 8000.0f);
 
     // Same real light Tutorial12 uses, just repositioned/rescaled for
     // this tutorial's much larger terrain.
-    data.light_position = Math::Vec4<float>(400.0f, 600.0f, 400.0f, 1.0f);
-    data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
+    data.m_light_position = Math::Vec4<float>(400.0f, 600.0f, 400.0f, 1.0f);
+    data.m_light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
+    data.m_view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
 
     return data;
 }
@@ -740,15 +740,15 @@ bool Tutorial21::updateTerrainUniformBufferData() {
 Tutorial21ObjectUniformBufferData Tutorial21::getObjectUniformBufferData()
         const {
     Tutorial21ObjectUniformBufferData data{};
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 1.0f, 8000.0f);
 
     return data;
@@ -1226,17 +1226,18 @@ bool Tutorial21::createPipelines() {
             {{.location = 0,
               .binding = 0,
               .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-              .offset =
-                      offsetof(struct Tutorial21TerrainVertexData, position)},
+              .offset = offsetof(struct Tutorial21TerrainVertexData,
+                                 m_position)},
              {.location = 1,
               .binding = 0,
               .format = VK_FORMAT_R32G32B32_SFLOAT,
-              .offset = offsetof(struct Tutorial21TerrainVertexData, normal)},
+              .offset =
+                      offsetof(struct Tutorial21TerrainVertexData, m_normal)},
              {.location = 2,
               .binding = 0,
               .format = VK_FORMAT_R32G32_SFLOAT,
-              .offset =
-                      offsetof(struct Tutorial21TerrainVertexData, texcoord)}};
+              .offset = offsetof(struct Tutorial21TerrainVertexData,
+                                 m_texcoord)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_terrain = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1408,11 +1409,13 @@ bool Tutorial21::createPipelines() {
             {.location = 0,
              .binding = 0,
              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-             .offset = offsetof(struct Tutorial21ObjectVertexData, position)},
+             .offset =
+                     offsetof(struct Tutorial21ObjectVertexData, m_position)},
             {.location = 1,
              .binding = 0,
              .format = VK_FORMAT_R32G32_SFLOAT,
-             .offset = offsetof(struct Tutorial21ObjectVertexData, texcoord)}};
+             .offset =
+                     offsetof(struct Tutorial21ObjectVertexData, m_texcoord)}};
     VkPipelineVertexInputStateCreateInfo vertex_input_state_object = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
             .pNext = nullptr,
@@ -1836,8 +1839,8 @@ std::vector<Tutorial21ObjectVertexData> Tutorial21::loadTankPartVertexData(
     std::vector<Tutorial21ObjectVertexData> vertex_data;
     vertex_data.reserve(mesh_data.size());
     for (const Tools::OglVertexData& vertex : mesh_data) {
-        vertex_data.push_back(
-                {Math::Vec4<float>(vertex.position, 1.0f), vertex.texcoord});
+        vertex_data.push_back({Math::Vec4<float>(vertex.m_position, 1.0f),
+                               vertex.m_texcoord});
     }
     return vertex_data;
 }
@@ -2152,7 +2155,7 @@ bool Tutorial21::prepareFrame(VkCommandBuffer command_buffer,
     const HellfireTank::PartTranslations tank_parts =
             HellfireTank::getPartTranslations(tank_world_position);
     const std::array<Math::Vec3<float>, c_tank_part_count> part_translations =
-            {{tank_parts.body, tank_parts.head, tank_parts.turret}};
+            {{tank_parts.m_body, tank_parts.m_head, tank_parts.m_turret}};
 
     std::array<BufferParameters, c_tank_part_count>& tank_vertex_buffers =
             m_vulkan_tutorial21_parameters.getTankVertexBufferParameters();

@@ -18,10 +18,10 @@ VBOShaderLibrary::~VBOShaderLibrary() = default;
 void VBOShaderLibrary::draw(render::RenderContext& context,
                             const math::Mat4<float>& model,
                             const math::Vec4<float>& tint) {
-    if (mesh) {
-        context.drawMesh(*mesh,
-                         vulkan_earth::pipelines().mesh,
-                         color_texture.get(),
+    if (m_mesh) {
+        context.drawMesh(*m_mesh,
+                         vulkan_earth::pipelines().m_mesh,
+                         m_color_texture.get(),
                          model,
                          tint);
     }
@@ -38,12 +38,12 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
     vertices.reserve(data.size());
     for (const auto& vertex : data) {
         vertices.push_back(
-                {vertex.position,
-                 vertex.normal,
-                 math::Vec2<float>(vertex.texcoord.x, vertex.texcoord.y)});
+                {vertex.m_position,
+                 vertex.m_normal,
+                 math::Vec2<float>(vertex.m_texcoord.x, vertex.m_texcoord.y)});
     }
-    mesh = render::Renderer::instance().createMesh(vertices);
-    return mesh != nullptr;
+    m_mesh = render::Renderer::instance().createMesh(vertices);
+    return m_mesh != nullptr;
 }
 
 void VBOShaderLibrary::swapTexture(const char* filename,
@@ -56,7 +56,7 @@ void VBOShaderLibrary::loadTexture(const char* filename,
                                    std::int32_t width,
                                    std::int32_t height) {
     // GL_LINEAR filtering, GL_REPEAT wrapping.
-    color_texture = render::Renderer::instance().loadRawTexture(
+    m_color_texture = render::Renderer::instance().loadRawTexture(
             filename,
             static_cast<std::uint32_t>(width),
             static_cast<std::uint32_t>(height),

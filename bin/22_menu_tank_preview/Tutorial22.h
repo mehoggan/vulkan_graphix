@@ -56,29 +56,29 @@ namespace vulkan_graphix {
 
 // Matches Tutorial16VertexData's shape byte-for-byte.
 struct Tutorial22TankVertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial22TankVertexAttributeTraits =
         VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 struct Tutorial22TankUniformBufferData {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // The active part's model matrix (translation/basis/scale plus the
 // preview's own continuous spin), set per draw call.
 struct Tutorial22TankPushConstants {
-    Math::Mat4<float> model;
+    Math::Mat4<float> m_model;
 };
 
 // Matches Tutorial15VertexData's shape byte-for-byte.
 struct Tutorial22PanelVertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
-    Math::Vec4<float> color;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
+    Math::Vec4<float> m_color;
 };
 
 using Tutorial22PanelVertexAttributeTraits =

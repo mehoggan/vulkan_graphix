@@ -17,9 +17,9 @@ using LibraryHandle = void*;
 // under the current modifiers (e.g. 'a', 'A', ' ', 27 for Escape), or 0 for
 // keys that type nothing (arrows, function keys, modifiers).
 struct KeyEvent {
-    std::uint64_t keysym;
-    char character;
-    bool pressed;
+    std::uint64_t m_keysym;
+    char m_character;
+    bool m_pressed;
 };
 
 class ProjectBase {

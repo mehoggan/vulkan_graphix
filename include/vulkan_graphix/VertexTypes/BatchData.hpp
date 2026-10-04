@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_BATCHDATA_HPP
-#define VULKAN_GRAPHIX_BATCHDATA_HPP
+#ifndef VULKAN_GRAPHIX_VERTEXTYPES_BATCHDATA_HPP
+#define VULKAN_GRAPHIX_VERTEXTYPES_BATCHDATA_HPP
 
 #include <cstddef>
 #include <tuple>
@@ -17,7 +17,8 @@ public:
 
     BatchData() = default;
 
-    explicit BatchData(std::vector<Ts>... data) : m_data(std::move(data)...) {}
+    explicit BatchData(std::vector<Ts>... data) :
+            m_data(std::move(data)...) {}
 
     template <std::size_t Index>
     const std::vector<std::tuple_element_t<Index, std::tuple<Ts...>>>& data()

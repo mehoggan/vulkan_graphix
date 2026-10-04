@@ -21,12 +21,12 @@ namespace {
 class FakeProject : public vulkan_graphix::os::ProjectBase {
 public:
     bool onWindowSizeChanged() override {
-        ++resize_count;
+        ++m_resize_count;
         return true;
     }
 
     bool draw() override {
-        ++draw_count;
+        ++m_draw_count;
         return true;
     }
 
@@ -37,31 +37,31 @@ public:
                        std::int32_t pos_x,
                        std::int32_t pos_y) override {
         if (pressed) {
-            ++button_press_count;
+            ++m_button_press_count;
         } else {
-            ++button_release_count;
+            ++m_button_release_count;
         }
-        last_button = button;
-        last_x = pos_x;
-        last_y = pos_y;
+        m_last_button = button;
+        m_last_x = pos_x;
+        m_last_y = pos_y;
     }
 
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override {
-        ++move_count;
-        last_move_x = pos_x;
-        last_move_y = pos_y;
+        ++m_move_count;
+        m_last_move_x = pos_x;
+        m_last_move_y = pos_y;
     }
 
-    std::int32_t resize_count = 0;
-    std::int32_t draw_count = 0;
-    std::int32_t button_press_count = 0;
-    std::int32_t button_release_count = 0;
-    std::int32_t move_count = 0;
-    std::int32_t last_button = 0;
-    std::int32_t last_x = 0;
-    std::int32_t last_y = 0;
-    std::int32_t last_move_x = 0;
-    std::int32_t last_move_y = 0;
+    std::int32_t m_resize_count = 0;
+    std::int32_t m_draw_count = 0;
+    std::int32_t m_button_press_count = 0;
+    std::int32_t m_button_release_count = 0;
+    std::int32_t m_move_count = 0;
+    std::int32_t m_last_button = 0;
+    std::int32_t m_last_x = 0;
+    std::int32_t m_last_y = 0;
+    std::int32_t m_last_move_x = 0;
+    std::int32_t m_last_move_y = 0;
 };
 
 void sendButtonEvent(Display* send_display,
@@ -187,12 +187,12 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
     XCloseDisplay(send_display);
 
     EXPECT_TRUE(loop_result);
-    EXPECT_GT(project.resize_count, 0);
-    EXPECT_GT(project.draw_count, 0);
-    EXPECT_EQ(project.button_press_count, 1);
-    EXPECT_EQ(project.button_release_count, 1);
-    EXPECT_GT(project.move_count, 0);
-    EXPECT_EQ(project.last_button, static_cast<std::int32_t>(Button1));
+    EXPECT_GT(project.m_resize_count, 0);
+    EXPECT_GT(project.m_draw_count, 0);
+    EXPECT_EQ(project.m_button_press_count, 1);
+    EXPECT_EQ(project.m_button_release_count, 1);
+    EXPECT_GT(project.m_move_count, 0);
+    EXPECT_EQ(project.m_last_button, static_cast<std::int32_t>(Button1));
 }
 
 namespace {
@@ -207,20 +207,20 @@ public:
     bool readyToDraw() const override { return true; }
 
     bool onKey(const vulkan_graphix::os::KeyEvent& event) override {
-        (event.pressed ? press_count : release_count) += 1;
-        last_character = event.character;
-        if (!event.pressed && event.character == 'q') {
-            quit = true;
+        (event.m_pressed ? m_press_count : m_release_count) += 1;
+        m_last_character = event.m_character;
+        if (!event.m_pressed && event.m_character == 'q') {
+            m_quit = true;
         }
         return true;
     }
 
-    bool quitRequested() const override { return quit; }
+    bool quitRequested() const override { return m_quit; }
 
-    std::int32_t press_count = 0;
-    std::int32_t release_count = 0;
-    char last_character = 0;
-    bool quit = false;
+    std::int32_t m_press_count = 0;
+    std::int32_t m_release_count = 0;
+    char m_last_character = 0;
+    bool m_quit = false;
 };
 
 void sendKeyEvent(Display* send_display,
@@ -268,7 +268,7 @@ TEST(OperatingSystemTest, KeyEventsReachOnKeyAndQuitRequestEndsTheLoop) {
     sendKeyEvent(send_display, handle, KeyRelease, KeyReleaseMask, XK_a);
     XFlush(send_display);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    EXPECT_EQ(project.last_character, 'a');
+    EXPECT_EQ(project.m_last_character, 'a');
 
     sendKeyEvent(send_display, handle, KeyPress, KeyPressMask, XK_q);
     sendKeyEvent(send_display, handle, KeyRelease, KeyReleaseMask, XK_q);
@@ -278,7 +278,7 @@ TEST(OperatingSystemTest, KeyEventsReachOnKeyAndQuitRequestEndsTheLoop) {
     XCloseDisplay(send_display);
 
     EXPECT_TRUE(loop_result);
-    EXPECT_EQ(project.press_count, 2);
-    EXPECT_EQ(project.release_count, 2);
-    EXPECT_TRUE(project.quit);
+    EXPECT_EQ(project.m_press_count, 2);
+    EXPECT_EQ(project.m_release_count, 2);
+    EXPECT_TRUE(project.m_quit);
 }

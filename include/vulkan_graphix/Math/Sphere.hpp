@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_SPHERE_HPP
-#define VULKAN_GRAPHIX_SPHERE_HPP
+#ifndef VULKAN_GRAPHIX_MATH_SPHERE_HPP
+#define VULKAN_GRAPHIX_MATH_SPHERE_HPP
 
 #include <cstdint>
 #include <unordered_map>
@@ -33,8 +33,8 @@ public:
 
     // Builds a UV sphere: theta_steps divisions around the equator,
     // phi_steps divisions from pole to pole.
-    Sphere(T radius, std::uint16_t theta_steps, std::uint16_t phi_steps)
-            : m_radius(radius) {
+    Sphere(T radius, std::uint16_t theta_steps, std::uint16_t phi_steps) :
+            m_radius(radius) {
         generateVertices(theta_steps, phi_steps);
         generateIndices(theta_steps, phi_steps);
     }
@@ -42,7 +42,8 @@ public:
     // Builds an icosphere: an Icosahedron<T, I> recursively subdivided
     // level_of_detail times, each subdivision replacing every triangle with
     // three triangles fanned around its (radius-projected) centroid.
-    Sphere(T radius, std::uint8_t level_of_detail) : m_radius(radius) {
+    Sphere(T radius, std::uint8_t level_of_detail) :
+            m_radius(radius) {
         const Icosahedron<T, I> icosahedron(m_radius);
 
         IndexedVertices_t data = subdivide(icosahedron.points(),

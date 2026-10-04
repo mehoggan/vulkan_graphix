@@ -39,18 +39,18 @@ getItemDisplayData() {
 // ************************************************************ //
 // VulkanTutorial17Parameters                                   //
 // ************************************************************ //
-VulkanTutorial17Parameters::VulkanTutorial17Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_descriptor_set_layout(VK_NULL_HANDLE)
-        , m_vk_descriptor_pool(VK_NULL_HANDLE)
-        , m_vk_font_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_icon_descriptor_set(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_text_vertex_count(0)
-        , m_icon_vertex_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial17Parameters::VulkanTutorial17Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_descriptor_set_layout(VK_NULL_HANDLE),
+        m_vk_descriptor_pool(VK_NULL_HANDLE),
+        m_vk_font_descriptor_set(VK_NULL_HANDLE),
+        m_vk_icon_descriptor_set(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_text_vertex_count(0),
+        m_icon_vertex_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial17Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -249,7 +249,8 @@ void VulkanTutorial17Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial17                                                   //
 // ************************************************************ //
-Tutorial17::Tutorial17() : m_selected_index(0) {}
+Tutorial17::Tutorial17() :
+        m_selected_index(0) {}
 
 Tutorial17::~Tutorial17() { childClear(); }
 
@@ -431,11 +432,11 @@ std::vector<char> Tutorial17::buildIconAtlasPixels() const {
             getItemDisplayData();
     for (std::size_t index = 0; index < items.size(); ++index) {
         const std::vector<char> icon_pixels = Tools::getRawImageData(
-                items[index].image_file, c_icon_size, c_icon_size);
+                items[index].m_image_file, c_icon_size, c_icon_size);
         if (icon_pixels.empty()) {
             Logging::error(LOG_TAG,
                            "Could not load icon \"",
-                           items[index].image_file,
+                           items[index].m_image_file,
                            "\"!");
             return {};
         }
@@ -828,17 +829,18 @@ bool Tutorial17::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial17VertexData, position)},
+                     .offset = offsetof(struct Tutorial17VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial17VertexData, texcoord)},
+                     .offset = offsetof(struct Tutorial17VertexData,
+                                        m_texcoord)},
                     {.location = 2,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct Tutorial17VertexData, color)}};
+                     .offset =
+                             offsetof(struct Tutorial17VertexData, m_color)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1102,7 +1104,7 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
             UiGeometry::buildButtonBevel(
                     panel_top_left, panel_size, panel_color, false);
     for (const UiGeometry::ColoredQuad& quad : panel_bevel) {
-        appendColoredQuad(vertex_data, quad.corners, quad.color);
+        appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
     }
 
     const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
@@ -1144,7 +1146,7 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
         }
 
         const std::string label =
-                "x " + std::to_string(items[index].remaining);
+                "x " + std::to_string(items[index].m_remaining);
         const float label_width = m_font.textWidth(label);
         appendText(vertex_data,
                    label,
@@ -1160,7 +1162,7 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
     const float max_description_width =
             panel_bottom_right.x - (panel_top_left.x + 20.0f) - 20.0f;
     const std::vector<std::string> description_lines = wrapText(
-            items[m_selected_index].description, max_description_width);
+            items[m_selected_index].m_description, max_description_width);
     for (std::size_t line = 0; line < description_lines.size(); ++line) {
         appendText(vertex_data,
                    description_lines[line],

@@ -1,5 +1,5 @@
-#ifndef TANK_H
-#define TANK_H
+#ifndef VULKAN_EARTH_TANK_H
+#define VULKAN_EARTH_TANK_H
 
 #include <cstdint>
 #include <string>
@@ -131,92 +131,92 @@ public:
     void printHeadMatrix();
 
 protected:
-    float body_pos[3];
-    float head_pos[3];
-    float turret_pos[3];
-    float wheel_pos[3];
-    float body_right[3];
-    float head_right[3];
-    float turret_right[3];
-    float wheel_right[3];
-    float body_up[3];
-    float head_up[3];
-    float turret_up[3];
-    float wheel_up[3];
-    float body_at[3];
-    float head_at[3];
-    float turret_at[3];
-    float wheel_at[3];
-    float body_color[4];
-    float head_color[4];
-    float turret_color[4];
-    float wheel_color[4];
-    float body_scale[3];
-    float head_scale[3];
-    float turret_scale[3];
-    float wheel_scale[3];
-    float body_matrix[16];
-    float head_matrix[16];
-    float turret_matrix[16];
-    float wheel_matrix[16];
-    float rotate_degrees;
-    float turret_degrees;
-    float wheel_degrees;
-    vulkan_graphix::Math::Vec3<float> alignment_vector;
-    vulkan_graphix::Math::Vec3<float> rotate_about;
+    float m_body_pos[3];
+    float m_head_pos[3];
+    float m_turret_pos[3];
+    float m_wheel_pos[3];
+    float m_body_right[3];
+    float m_head_right[3];
+    float m_turret_right[3];
+    float m_wheel_right[3];
+    float m_body_up[3];
+    float m_head_up[3];
+    float m_turret_up[3];
+    float m_wheel_up[3];
+    float m_body_at[3];
+    float m_head_at[3];
+    float m_turret_at[3];
+    float m_wheel_at[3];
+    float m_body_color[4];
+    float m_head_color[4];
+    float m_turret_color[4];
+    float m_wheel_color[4];
+    float m_body_scale[3];
+    float m_head_scale[3];
+    float m_turret_scale[3];
+    float m_wheel_scale[3];
+    float m_body_matrix[16];
+    float m_head_matrix[16];
+    float m_turret_matrix[16];
+    float m_wheel_matrix[16];
+    float m_rotate_degrees;
+    float m_turret_degrees;
+    float m_wheel_degrees;
+    vulkan_graphix::Math::Vec3<float> m_alignment_vector;
+    vulkan_graphix::Math::Vec3<float> m_rotate_about;
 
-    float turret_offset[3];
-    float head_offset[3];
-    float body_offset[3];
+    float m_turret_offset[3];
+    float m_head_offset[3];
+    float m_body_offset[3];
 
-    float hit_box_length;
-    float hit_box_height;
-    float hit_box_width;
+    float m_hit_box_length;
+    float m_hit_box_height;
+    float m_hit_box_width;
 
-    VBOShaderLibrary* vbo_shader_turret;
-    VBOShaderLibrary* vbo_shader_body;
-    VBOShaderLibrary* vbo_shader_head;
-    VBOShaderLibrary* vbo_shader_wheel;
+    VBOShaderLibrary* m_vbo_shader_turret;
+    VBOShaderLibrary* m_vbo_shader_body;
+    VBOShaderLibrary* m_vbo_shader_head;
+    VBOShaderLibrary* m_vbo_shader_wheel;
 
-    bool tank_alive;
-    ParticleGenerator* smoke_gen;
-    ParticleGenerator* acid_gen;
-    ParticleGenerator* float_gen;
+    bool m_tank_alive;
+    ParticleGenerator* m_smoke_gen;
+    ParticleGenerator* m_acid_gen;
+    ParticleGenerator* m_float_gen;
 
-    float current_power;
-    std::int32_t previous_power;
-    std::int32_t previous_angle;
-    std::int32_t previous_height;
-    std::int32_t current_height;
+    float m_current_power;
+    std::int32_t m_previous_power;
+    std::int32_t m_previous_angle;
+    std::int32_t m_previous_height;
+    std::int32_t m_current_height;
 
-    std::int32_t hp;
-    std::int32_t power;
-    std::int32_t armor;
-    std::int32_t speed;
+    std::int32_t m_hp;
+    std::int32_t m_power;
+    std::int32_t m_armor;
+    std::int32_t m_speed;
 
-    float projectile_land_pos[2];
+    float m_projectile_land_pos[2];
 
-    std::int32_t duration_acid;
-    std::int32_t duration_shield;
-    std::int32_t duration_emp;
-    std::int32_t duration_float;
-    std::int32_t duration_double_action;
-    std::int32_t duration_padlock;
-    std::int32_t duration_cloak;
-    std::int32_t duration_paralyze;
+    std::int32_t m_duration_acid;
+    std::int32_t m_duration_shield;
+    std::int32_t m_duration_emp;
+    std::int32_t m_duration_float;
+    std::int32_t m_duration_double_action;
+    std::int32_t m_duration_padlock;
+    std::int32_t m_duration_cloak;
+    std::int32_t m_duration_paralyze;
 
-    vulkan_graphix::Math::Vec3<float> tank_pos;
-    vulkan_graphix::Math::Vec3<float> right =
+    vulkan_graphix::Math::Vec3<float> m_tank_pos;
+    vulkan_graphix::Math::Vec3<float> m_right =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> up =
+    vulkan_graphix::Math::Vec3<float> m_up =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> at =
+    vulkan_graphix::Math::Vec3<float> m_at =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> left =
+    vulkan_graphix::Math::Vec3<float> m_left =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> down =
+    vulkan_graphix::Math::Vec3<float> m_down =
             vulkan_graphix::Math::Vec3<float>(0.0f);
-    vulkan_graphix::Math::Vec3<float> back =
+    vulkan_graphix::Math::Vec3<float> m_back =
             vulkan_graphix::Math::Vec3<float>(0.0f);
 };
 

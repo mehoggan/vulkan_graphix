@@ -1,5 +1,5 @@
-#ifndef ITEM_FLOAT_H
-#define ITEM_FLOAT_H
+#ifndef VULKAN_EARTH_ITEMFLOAT_H
+#define VULKAN_EARTH_ITEMFLOAT_H
 
 #include <cstdint>
 #include "vulkan_earth/Item.h"

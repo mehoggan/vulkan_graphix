@@ -1,5 +1,5 @@
-#ifndef TANK_C_H
-#define TANK_C_H
+#ifndef VULKAN_EARTH_TANKC_H
+#define VULKAN_EARTH_TANKC_H
 
 #include <cstdint>
 #include "vulkan_earth/Tank.h"

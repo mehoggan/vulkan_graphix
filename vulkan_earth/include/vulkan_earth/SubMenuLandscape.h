@@ -1,5 +1,5 @@
-#ifndef SUB_MENU_LANDSCAPE_H
-#define SUB_MENU_LANDSCAPE_H
+#ifndef VULKAN_EARTH_SUBMENULANDSCAPE_H
+#define VULKAN_EARTH_SUBMENULANDSCAPE_H
 
 #include <cstdint>
 #include <string>
@@ -61,30 +61,30 @@ public:
                           std::int32_t y,
                           std::int32_t button_down) override;
     void updateMouse(std::int32_t x, std::int32_t y) override;
-    TerrainMaker* tm;  // PUBLIC BECAUSE I AM TOO LAZY TO UPDATE ENTIRE
-                       // INTERFACE FOR ONE GET FUNCTION
+    TerrainMaker* m_tm;  // PUBLIC BECAUSE I AM TOO LAZY TO UPDATE ENTIRE
+                         // INTERFACE FOR ONE GET FUNCTION
     ControlItem*
-            sub_menu_button[num_control_items_lnd];  // BOTH THESE ITEMS NEED
-                                                     // GETTERS AND SETTERS
-                                                     // WHICH MEANS UPDATE TO
-                                                     // INTERFACE
+            m_sub_menu_button[num_control_items_lnd];  // BOTH THESE ITEMS NEED
+                                                       // GETTERS AND SETTERS
+                                                       // WHICH MEANS UPDATE TO
+                                                       // INTERFACE
 private:
-    std::int32_t uniqueidentifier;
-    std::int32_t old_mouse_x, old_mouse_y;
-    float cam_x, cam_y, cam_z;
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    float color[4];
-    std::int32_t width;
-    std::int32_t height;
-    std::string caption;
-    float percent_border;
-    TextObject* label;
-    ControlItem* button_pressed;
-    std::int32_t numberpressed;
-    vulkan_graphix::Render::UiMesh frame_mesh;
-    vulkan_graphix::Render::UiMesh border_mesh;
+    std::int32_t m_uniqueidentifier;
+    std::int32_t m_old_mouse_x, m_old_mouse_y;
+    float m_cam_x, m_cam_y, m_cam_z;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    float m_color[4];
+    std::int32_t m_width;
+    std::int32_t m_height;
+    std::string m_caption;
+    float m_percent_border;
+    TextObject* m_label;
+    ControlItem* m_button_pressed;
+    std::int32_t m_numberpressed;
+    vulkan_graphix::Render::UiMesh m_frame_mesh;
+    vulkan_graphix::Render::UiMesh m_border_mesh;
 };
 
-#endif  //	SUB_MENU_LANDSCAPE_H
+#endif  // VULKAN_EARTH_SUBMENULANDSCAPE_H

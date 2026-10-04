@@ -56,8 +56,8 @@ class Renderer;
 
 // Every Render pipeline's push-constant block.
 struct DrawConstants {
-    Math::Mat4<float> mvp;
-    Math::Vec4<float> params;
+    Math::Mat4<float> m_mvp;
+    Math::Vec4<float> m_params;
 };
 
 // Index of a pipeline created by Renderer::createPipeline().
@@ -65,25 +65,25 @@ using PipelineHandle = std::uint32_t;
 
 struct PipelineDescription {
     // SPIR-V files, relative to the executable's directory.
-    std::string vertex_shader;
-    std::string fragment_shader;
-    VertexLayout vertex_layout;
-    VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    bool depth_test = true;
-    bool depth_write = true;
+    std::string m_vertex_shader;
+    std::string m_fragment_shader;
+    VertexLayout m_vertex_layout;
+    VkPrimitiveTopology m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    bool m_depth_test = true;
+    bool m_depth_write = true;
     // SRC_ALPHA / ONE_MINUS_SRC_ALPHA.
-    bool blend = true;
+    bool m_blend = true;
     // VK_POLYGON_MODE_LINE falls back to FILL where the device lacks
     // fillModeNonSolid.
-    VkPolygonMode polygon_mode = VK_POLYGON_MODE_FILL;
+    VkPolygonMode m_polygon_mode = VK_POLYGON_MODE_FILL;
 };
 
 // A framebuffer rectangle, origin at the top-left.
 struct Rect {
-    std::int32_t x;
-    std::int32_t y;
-    std::int32_t width;
-    std::int32_t height;
+    std::int32_t m_x;
+    std::int32_t m_y;
+    std::int32_t m_width;
+    std::int32_t m_height;
 
     // The same rectangle given with its origin at the bottom-left (OpenGL's
     // window convention), in a framebuffer framebuffer_height tall.
@@ -312,28 +312,28 @@ private:
     friend class RenderContext;
 
     struct FrameSlot {
-        VkCommandBuffer command_buffer = VK_NULL_HANDLE;
-        VkSemaphore image_available = VK_NULL_HANDLE;
-        VkFence in_flight = VK_NULL_HANDLE;
-        HostBuffer transient;
-        VkDeviceSize transient_offset = 0;
-        std::vector<std::function<void()>> releases;
+        VkCommandBuffer m_command_buffer = VK_NULL_HANDLE;
+        VkSemaphore m_image_available = VK_NULL_HANDLE;
+        VkFence m_in_flight = VK_NULL_HANDLE;
+        HostBuffer m_transient;
+        VkDeviceSize m_transient_offset = 0;
+        std::vector<std::function<void()>> m_releases;
     };
 
     struct DeviceInfo {
-        VkDevice device = VK_NULL_HANDLE;
-        VkPhysicalDevice physical_device = VK_NULL_HANDLE;
-        VkQueue graphics_queue = VK_NULL_HANDLE;
-        std::uint32_t graphics_family = 0;
-        VkQueue present_queue = VK_NULL_HANDLE;
+        VkDevice m_device = VK_NULL_HANDLE;
+        VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
+        VkQueue m_graphics_queue = VK_NULL_HANDLE;
+        std::uint32_t m_graphics_family = 0;
+        VkQueue m_present_queue = VK_NULL_HANDLE;
     };
 
     struct SwapchainInfo {
-        VkSwapchainKHR swapchain = VK_NULL_HANDLE;
-        VkFormat format = VK_FORMAT_UNDEFINED;
-        VkExtent2D extent = {0, 0};
-        std::vector<VkImage> images;
-        std::vector<VkImageView> views;
+        VkSwapchainKHR m_swapchain = VK_NULL_HANDLE;
+        VkFormat m_format = VK_FORMAT_UNDEFINED;
+        VkExtent2D m_extent = {0, 0};
+        std::vector<VkImage> m_images;
+        std::vector<VkImageView> m_views;
     };
 
     static SwapchainInfo swapchainInfo(const TutorialBase& base);

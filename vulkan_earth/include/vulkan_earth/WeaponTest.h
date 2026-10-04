@@ -1,5 +1,5 @@
-#ifndef WEAPON_TEST_H
-#define WEAPON_TEST_H
+#ifndef VULKAN_EARTH_WEAPONTEST_H
+#define VULKAN_EARTH_WEAPONTEST_H
 
 #include <cstdint>
 #include <string>
@@ -39,4 +39,4 @@ public:
     /*	END OF ACTIONS A Weapon CAN MAKE	*/
 };
 
-#endif  //	WEAPON_TEST_H
+#endif  // VULKAN_EARTH_WEAPONTEST_H

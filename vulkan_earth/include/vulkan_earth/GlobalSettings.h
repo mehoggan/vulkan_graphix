@@ -1,5 +1,5 @@
-#ifndef GLOBAL_SETTINGS_H
-#define GLOBAL_SETTINGS_H
+#ifndef VULKAN_EARTH_GLOBALSETTINGS_H
+#define VULKAN_EARTH_GLOBALSETTINGS_H
 
 #include <cstdint>
 #include <string>
@@ -44,45 +44,45 @@ public:
     TerrainMaker* getCurrentTerrain();
 
 private:
-    std::string options[num_options];
+    std::string m_options[num_options];
 
     /*	HARDWARE SUBMENU	*/
-    std::string game_speed;
+    std::string m_game_speed;
     /*	ECONOMICS SUBMENU	*/
-    std::string interest_rate;
-    std::string cash_at_start;
-    std::string computers_buy;
-    std::string free_market;
-    std::string scoring_mode;
+    std::string m_interest_rate;
+    std::string m_cash_at_start;
+    std::string m_computers_buy;
+    std::string m_free_market;
+    std::string m_scoring_mode;
     /*	PHYSICS SUBMENU	*/
-    std::string air_viscosity;
-    std::string gravity;
-    std::string tanks_fall;
+    std::string m_air_viscosity;
+    std::string m_gravity;
+    std::string m_tanks_fall;
     /*	LANDSCAPE SUBMENU	*/
-    std::string hillyness;
-    std::string hill_height;
-    std::string hill_girth;
+    std::string m_hillyness;
+    std::string m_hill_height;
+    std::string m_hill_girth;
     /*	PLAY SETTINGS SUBMENU	*/
-    std::string teams;
-    std::string status_bar;
-    std::string play_order;
-    std::string fast_computers;
-    std::string talking_tanks;
-    std::string talk_probability;
+    std::string m_teams;
+    std::string m_status_bar;
+    std::string m_play_order;
+    std::string m_fast_computers;
+    std::string m_talking_tanks;
+    std::string m_talk_probability;
     /*	WEAPONS SUBMENU	*/
-    std::string arms_level;
-    std::string bomb_icon;
-    std::string tunneling;
-    std::string scale;
-    std::string trace_path;
+    std::string m_arms_level;
+    std::string m_bomb_icon;
+    std::string m_tunneling;
+    std::string m_scale;
+    std::string m_trace_path;
     /*	PLAYER AND ROUND DATA	*/
-    std::int32_t player_count;
-    std::int32_t round_count;
+    std::int32_t m_player_count;
+    std::int32_t m_round_count;
 
     void printSelf(std::int32_t index);
     void copyData();
 
-    TerrainMaker* current_terrain;
+    TerrainMaker* m_current_terrain;
 };
 
-#endif /*	GLOBAL_SETTINGS_H	*/
+#endif  // VULKAN_EARTH_GLOBALSETTINGS_H

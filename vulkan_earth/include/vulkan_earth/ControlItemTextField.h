@@ -1,5 +1,5 @@
-#ifndef CONTROL_ITEM_TEXT_FIELD_H
-#define CONTROL_ITEM_TEXT_FIELD_H
+#ifndef VULKAN_EARTH_CONTROLITEMTEXTFIELD_H
+#define VULKAN_EARTH_CONTROLITEMTEXTFIELD_H
 
 #include <cstdint>
 #include <string>
@@ -43,21 +43,21 @@ public:
 private:
     void setOptionText(std::int32_t index) override;
 
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    float color[4];
-    std::int32_t width;
-    std::int32_t height;
-    TextObject* current_text;
-    bool text_field_active;
-    std::string current_chars;
-    std::int32_t current_length;
-    std::int32_t number_of_frames;
-    std::int32_t text_cursor_on;  // this is a toggle, -1 off, 1 on
-    vulkan_graphix::Render::UiMesh frame_mesh;
-    vulkan_graphix::Render::UiMesh cursor_mesh;
-    bool cursor_built_visible = false;
-    std::string cursor_built_chars;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    float m_color[4];
+    std::int32_t m_width;
+    std::int32_t m_height;
+    TextObject* m_current_text;
+    bool m_text_field_active;
+    std::string m_current_chars;
+    std::int32_t m_current_length;
+    std::int32_t m_number_of_frames;
+    std::int32_t m_text_cursor_on;  // this is a toggle, -1 off, 1 on
+    vulkan_graphix::Render::UiMesh m_frame_mesh;
+    vulkan_graphix::Render::UiMesh m_cursor_mesh;
+    bool m_cursor_built_visible = false;
+    std::string m_cursor_built_chars;
 };
-#endif  // Control_ITEM_TEXT_FIELD_H
+#endif  // VULKAN_EARTH_CONTROLITEMTEXTFIELD_H

@@ -36,8 +36,8 @@ namespace vulkan_graphix {
 // Math::Sphere usage is otherwise identical to Tutorial08's own (see
 // getVertexData()/getIndexData()).
 struct Tutorial14VertexData {
-    Math::Vec4<float> position;
-    Math::Vec3<float> normal;
+    Math::Vec4<float> m_position;
+    Math::Vec3<float> m_normal;
 };
 
 using Tutorial14VertexAttributeTraits =
@@ -47,12 +47,12 @@ using Tutorial14VertexAttributeTraits =
 // fragment shader (resources/14/Data/shader.14.frag) reads the same
 // uniform block layout Tutorial08's own shader does.
 struct Tutorial14UniformBufferData {
-    Math::Mat4<float> model;
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
-    Math::Vec4<float> light_position;
-    Math::Vec4<float> light_color;
-    Math::Vec4<float> view_position;
+    Math::Mat4<float> m_model;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
+    Math::Vec4<float> m_light_position;
+    Math::Vec4<float> m_light_color;
+    Math::Vec4<float> m_view_position;
 };
 
 // ************************************************************ //

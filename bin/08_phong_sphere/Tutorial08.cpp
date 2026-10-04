@@ -18,13 +18,13 @@ namespace {
 constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 }  // namespace
 
-VulkanTutorial08Parameters::VulkanTutorial08Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_index_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial08Parameters::VulkanTutorial08Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_index_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial08Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -177,7 +177,8 @@ void VulkanTutorial08Parameters::setFinishedRenderingSemaphores(
     m_finished_rendering_semaphores = finished_rendering_semaphores;
 }
 
-Tutorial08::Tutorial08() : m_start_time(std::chrono::steady_clock::now()) {}
+Tutorial08::Tutorial08() :
+        m_start_time(std::chrono::steady_clock::now()) {}
 
 Tutorial08::~Tutorial08() { childClear(); }
 
@@ -404,23 +405,23 @@ Tutorial08UniformBufferData Tutorial08::getUniformBufferData() const {
             duration<float>(steady_clock::now() - m_start_time).count();
 
     Tutorial08UniformBufferData data{};
-    data.model = glm::rotate(Math::Mat4<float>(1.0f),
-                             elapsed_seconds,
-                             Math::Vec3<float>(0.0f, 1.0f, 0.0f));
-    data.view = glm::lookAt(Math::Vec3<float>(0.0f, 0.0f, 3.0f),
-                            Math::Vec3<float>(0.0f, 0.0f, 0.0f),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_model = glm::rotate(Math::Mat4<float>(1.0f),
+                               elapsed_seconds,
+                               Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(Math::Vec3<float>(0.0f, 0.0f, 3.0f),
+                              Math::Vec3<float>(0.0f, 0.0f, 0.0f),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 10.0f);
 
-    data.light_position = Math::Vec4<float>(2.0f, 2.0f, 2.0f, 1.0f);
-    data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(0.0f, 0.0f, 3.0f, 1.0f);
+    data.m_light_position = Math::Vec4<float>(2.0f, 2.0f, 2.0f, 1.0f);
+    data.m_light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
+    data.m_view_position = Math::Vec4<float>(0.0f, 0.0f, 3.0f, 1.0f);
 
     return data;
 }
@@ -705,12 +706,13 @@ bool Tutorial08::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial08VertexData, position)},
+                     .offset = offsetof(struct Tutorial08VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct Tutorial08VertexData, normal)}};
+                     .offset =
+                             offsetof(struct Tutorial08VertexData, m_normal)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

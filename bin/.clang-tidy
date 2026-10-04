@@ -1,0 +1,6 @@
+# Everything from the top-level .clang-tidy, except llvm-header-guard:
+# headers here sit outside any include/ directory, so the check derives the
+# guard it wants from each header's absolute path - different on every
+# machine (and even per translation unit) - instead of a stable name.
+InheritParentConfig: true
+Checks: '-llvm-header-guard'

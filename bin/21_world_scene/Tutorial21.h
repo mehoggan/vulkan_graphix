@@ -64,9 +64,9 @@ namespace vulkan_graphix {
 // Matches Tutorial12VertexData's shape byte-for-byte - the terrain
 // reuses Tutorial12's compiled shaders and vertex layout unchanged.
 struct Tutorial21TerrainVertexData {
-    Math::Vec4<float> position;
-    Math::Vec3<float> normal;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec3<float> m_normal;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial21TerrainVertexAttributeTraits =
@@ -76,32 +76,32 @@ using Tutorial21TerrainVertexAttributeTraits =
 
 // Matches Tutorial12UniformBufferData's shape byte-for-byte.
 struct Tutorial21TerrainUniformBufferData {
-    Math::Mat4<float> model;
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
-    Math::Vec4<float> light_position;
-    Math::Vec4<float> light_color;
-    Math::Vec4<float> view_position;
+    Math::Mat4<float> m_model;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
+    Math::Vec4<float> m_light_position;
+    Math::Vec4<float> m_light_color;
+    Math::Vec4<float> m_view_position;
 };
 
 // Matches Tutorial11/16VertexData's shape byte-for-byte - shared by the
 // skybox and the tank.
 struct Tutorial21ObjectVertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using Tutorial21ObjectVertexAttributeTraits =
         VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 struct Tutorial21ObjectUniformBufferData {
-    Math::Mat4<float> view;
-    Math::Mat4<float> projection;
+    Math::Mat4<float> m_view;
+    Math::Mat4<float> m_projection;
 };
 
 // Matches Tutorial16's push constant shape - just a model matrix.
 struct Tutorial21PushConstants {
-    Math::Mat4<float> model;
+    Math::Mat4<float> m_model;
 };
 
 static constexpr std::size_t c_tank_part_count = 3;

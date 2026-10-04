@@ -27,93 +27,94 @@ SubMenuSelectTanks::SubMenuSelectTanks(std::int32_t id,
                                        std::int32_t new_height,
                                        const std::string& new_caption,
                                        float new_percent_border) {
-    uniqueidentifier = id;
-    x_pos = new_x_pos;
-    y_pos = new_y_pos;
-    z_pos = new_z_pos;
-    percent_border = new_percent_border;
-    color[0] = red;
-    color[1] = green;
-    color[2] = blue;
-    color[3] = 1.0;
-    width = new_width;
-    height = new_height;
-    caption = new_caption;
+    m_uniqueidentifier = id;
+    m_x_pos = new_x_pos;
+    m_y_pos = new_y_pos;
+    m_z_pos = new_z_pos;
+    m_percent_border = new_percent_border;
+    m_color[0] = red;
+    m_color[1] = green;
+    m_color[2] = blue;
+    m_color[3] = 1.0;
+    m_width = new_width;
+    m_height = new_height;
+    m_caption = new_caption;
 
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
-    for (char ch : caption) {
+    for (char ch : m_caption) {
         real_length += vulkan_earth::textAdvance(
                 vulkan_earth::FontId::TimesRoman24, ch);
     }
-    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    float label_y_pos = y_pos - height / 20;
+    float label_x_pos = m_x_pos + ((m_width) / 2) - (real_length / 2);
+    float label_y_pos = m_y_pos - m_height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
-    label = new TextObject(caption,
-                           label_x_pos,
-                           label_y_pos,
-                           (z_pos + 1),
-                           vulkan_earth::FontId::TimesRoman24,
-                           0.0f,
-                           0.0f,
-                           0.0f);
+    m_label = new TextObject(m_caption,
+                             label_x_pos,
+                             label_y_pos,
+                             (m_z_pos + 1),
+                             vulkan_earth::FontId::TimesRoman24,
+                             0.0f,
+                             0.0f,
+                             0.0f);
 }
 
-SubMenuSelectTanks::~SubMenuSelectTanks() { delete label; }
+SubMenuSelectTanks::~SubMenuSelectTanks() { delete m_label; }
 
 std::int32_t SubMenuSelectTanks::getUNIQUEIDENTIFIER() {
-    return uniqueidentifier;
+    return m_uniqueidentifier;
 }
 void SubMenuSelectTanks::setUNIQUEIDENTIFIER(std::int32_t id) {
-    uniqueidentifier = id;
+    m_uniqueidentifier = id;
 }
-float SubMenuSelectTanks::getXPos() { return x_pos; }
-void SubMenuSelectTanks::setXPos(float new_xpos) { x_pos = new_xpos; }
-float SubMenuSelectTanks::getYPos() { return y_pos; }
-void SubMenuSelectTanks::setYPos(float new_ypos) { y_pos = new_ypos; }
-float SubMenuSelectTanks::getZPos() { return z_pos; }
-void SubMenuSelectTanks::setZPos(float new_zpos) { z_pos = new_zpos; }
-float SubMenuSelectTanks::getRed() { return color[0]; }
-void SubMenuSelectTanks::setRed(float red) { color[0] = red; }
-float SubMenuSelectTanks::getGreen() { return color[1]; }
-void SubMenuSelectTanks::setGreen(float green) { color[1] = green; }
-float SubMenuSelectTanks::getBlue() { return color[2]; }
-void SubMenuSelectTanks::setBlue(float blue) { color[2] = blue; }
-std::int32_t SubMenuSelectTanks::getWidth() { return width; }
+float SubMenuSelectTanks::getXPos() { return m_x_pos; }
+void SubMenuSelectTanks::setXPos(float new_xpos) { m_x_pos = new_xpos; }
+float SubMenuSelectTanks::getYPos() { return m_y_pos; }
+void SubMenuSelectTanks::setYPos(float new_ypos) { m_y_pos = new_ypos; }
+float SubMenuSelectTanks::getZPos() { return m_z_pos; }
+void SubMenuSelectTanks::setZPos(float new_zpos) { m_z_pos = new_zpos; }
+float SubMenuSelectTanks::getRed() { return m_color[0]; }
+void SubMenuSelectTanks::setRed(float red) { m_color[0] = red; }
+float SubMenuSelectTanks::getGreen() { return m_color[1]; }
+void SubMenuSelectTanks::setGreen(float green) { m_color[1] = green; }
+float SubMenuSelectTanks::getBlue() { return m_color[2]; }
+void SubMenuSelectTanks::setBlue(float blue) { m_color[2] = blue; }
+std::int32_t SubMenuSelectTanks::getWidth() { return m_width; }
 void SubMenuSelectTanks::setWdith(std::int32_t new_width) {
-    width = new_width;
+    m_width = new_width;
 }
-std::int32_t SubMenuSelectTanks::getHeight() { return height; }
+std::int32_t SubMenuSelectTanks::getHeight() { return m_height; }
 void SubMenuSelectTanks::setHeight(std::int32_t new_height) {
-    height = new_height;
+    m_height = new_height;
 }
-std::string SubMenuSelectTanks::getCaption() { return caption; }
+std::string SubMenuSelectTanks::getCaption() { return m_caption; }
 void SubMenuSelectTanks::setCaption(const std::string& new_caption) {
-    caption = new_caption;
+    m_caption = new_caption;
 }
-float SubMenuSelectTanks::getPerecentBorder() { return percent_border; }
+float SubMenuSelectTanks::getPerecentBorder() { return m_percent_border; }
 void SubMenuSelectTanks::setPercentBorder(float percent) {
-    percent_border = percent;
+    m_percent_border = percent;
 }
 
 void SubMenuSelectTanks::draw(render::RenderContext& context) {
     // The same raised 3-pixel bevel every button draws.
-    if (frame_mesh.triangles().empty()) {
+    if (m_frame_mesh.triangles().empty()) {
         vulkan_earth::appendBevel(
-                frame_mesh,
-                x_pos,
-                y_pos,
-                z_pos,
-                width,
-                height,
-                math::Vec4<float>(color[0], color[1], color[2], color[3]),
+                m_frame_mesh,
+                m_x_pos,
+                m_y_pos,
+                m_z_pos,
+                m_width,
+                m_height,
+                math::Vec4<float>(
+                        m_color[0], m_color[1], m_color[2], m_color[3]),
                 false);
     }
-    context.draw(frame_mesh);
-    label->draw(context);
+    context.draw(m_frame_mesh);
+    m_label->draw(context);
     for (std::int32_t i = 0; i < num_control_items_st; i++) {
-        if (sub_menu_button[i]) {
+        if (m_sub_menu_button[i]) {
             // subMenuButton[i]->draw(context);
         }
     }

@@ -19,11 +19,11 @@ Launch launchFromBarrel(const Math::Mat4<float>& turret_matrix,
 
 Math::Vec3<float> positionAt(const Launch& launch, float gravity, float time) {
     return Math::Vec3<float>(
-            launch.velocity.x * time + launch.origin.x,
+            launch.m_velocity.x * time + launch.m_origin.x,
             static_cast<float>(
                     0.5f * gravity * std::pow(static_cast<double>(time), 2.0) +
-                    launch.velocity.y * time + launch.origin.y),
-            launch.velocity.z * time + launch.origin.z);
+                    launch.m_velocity.y * time + launch.m_origin.y),
+            launch.m_velocity.z * time + launch.m_origin.z);
 }
 
 }  // namespace vulkan_graphix::Ballistics

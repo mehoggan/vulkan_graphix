@@ -50,9 +50,9 @@ namespace vulkan_graphix {
 // exact 2D alpha-blended pipeline shape (new resources/17/Data/shader.17.
 // {vert,frag}, textually identical to Tutorial15's).
 struct Tutorial17VertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
-    Math::Vec4<float> color;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
+    Math::Vec4<float> m_color;
 };
 
 using Tutorial17VertexAttributeTraits =

@@ -1,5 +1,5 @@
-#ifndef VULKAN_EARTH_GAME_RENDERER_H
-#define VULKAN_EARTH_GAME_RENDERER_H
+#ifndef VULKAN_EARTH_GAMERENDERER_H
+#define VULKAN_EARTH_GAMERENDERER_H
 
 // What the game sets up on top of libvulkan_graphix's Render module: its
 // own pipelines (its shaders in resources/vulkan_earth/Shaders/), its two
@@ -24,17 +24,17 @@ enum class FontId : std::uint8_t {
 };
 
 struct Pipelines {
-    render::PipelineHandle ui_triangles;
-    render::PipelineHandle ui_lines;
-    render::PipelineHandle text;
-    render::PipelineHandle mesh;
+    render::PipelineHandle m_ui_triangles;
+    render::PipelineHandle m_ui_lines;
+    render::PipelineHandle m_text;
+    render::PipelineHandle m_mesh;
     // mesh, without depth testing or writing (the skybox).
-    render::PipelineHandle mesh_background;
-    render::PipelineHandle terrain;
-    render::PipelineHandle water;
-    render::PipelineHandle flat_color;
+    render::PipelineHandle m_mesh_background;
+    render::PipelineHandle m_terrain;
+    render::PipelineHandle m_water;
+    render::PipelineHandle m_flat_color;
     // flat_color rasterized as lines (the terrain's wireframe view).
-    render::PipelineHandle flat_color_wireframe;
+    render::PipelineHandle m_flat_color_wireframe;
 };
 
 // Creates the game's pipelines and fonts on renderer (after it is
@@ -105,4 +105,4 @@ void appendMenuPanel(render::UiMesh& mesh,
 
 }  // namespace vulkan_earth
 
-#endif  // VULKAN_EARTH_GAME_RENDERER_H
+#endif  // VULKAN_EARTH_GAMERENDERER_H

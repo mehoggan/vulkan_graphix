@@ -1,5 +1,5 @@
-#ifndef MAINMENU_H
-#define MAINMENU_H
+#ifndef VULKAN_EARTH_MAINMENU_H
+#define VULKAN_EARTH_MAINMENU_H
 
 #include <cstdint>
 #include "vulkan_graphix/Render/Mesh.h"
@@ -61,22 +61,22 @@ public:
     SubMenuLandscape* getSubMenuLandscape();
 
 private:
-    float pos[3], width, height, color[4], border;
-    std::int32_t* current_game_state;
-    float percent_border;
-    MainMenuButton* buttons[num_button];
-    SubMenu* submenus[num_submenus];
-    ImageObject* images[num_images];
-    ControlItem* arrowsbutton[num_arrow_buttons];
-    TextObject* text;
-    MainMenuButton* button_pressed;
-    SubMenu* active_sub_menu;
-    ControlItem* arrow_button_pressed;
-    GlobalSettings* global_settings;
-    PlayerFactory* player_factory;
-    vulkan_graphix::Render::UiMesh background_mesh;
-    float built_width = -1.0f;
-    float built_height = -1.0f;
+    float m_pos[3], m_width, m_height, m_color[4], m_border;
+    std::int32_t* m_current_game_state;
+    float m_percent_border;
+    MainMenuButton* m_buttons[num_button];
+    SubMenu* m_submenus[num_submenus];
+    ImageObject* m_images[num_images];
+    ControlItem* m_arrowsbutton[num_arrow_buttons];
+    TextObject* m_text;
+    MainMenuButton* m_button_pressed;
+    SubMenu* m_active_sub_menu;
+    ControlItem* m_arrow_button_pressed;
+    GlobalSettings* m_global_settings;
+    PlayerFactory* m_player_factory;
+    vulkan_graphix::Render::UiMesh m_background_mesh;
+    float m_built_width = -1.0f;
+    float m_built_height = -1.0f;
 };
 
 #endif

@@ -22,32 +22,32 @@ namespace math = vulkan_graphix::Math;
 extern void playSFX(std::int32_t sfx);
 
 Player::Player() {
-    state_of_ai = NEED_NEW_TARGET;
-    prev_state_of_ai = NEED_NEW_TARGET;
-    sub_state_of_ai = NOTHING;
-    draw_debug_linesand_planes = false;
-    max_pitch_angle = 89.0f;
-    previous_distance_off_from_target = 0;
-    degrees_rotated = 0;
-    first_acquired_power = 0;
-    first_acquired_pitch = 0;
+    m_state_of_ai = NEED_NEW_TARGET;
+    m_prev_state_of_ai = NEED_NEW_TARGET;
+    m_sub_state_of_ai = NOTHING;
+    m_draw_debug_linesand_planes = false;
+    m_max_pitch_angle = 89.0f;
+    m_previous_distance_off_from_target = 0;
+    m_degrees_rotated = 0;
+    m_first_acquired_power = 0;
+    m_first_acquired_pitch = 0;
 }
 
 Player::~Player() = default;
 
 void Player::setTarget(Tank* new_target) {
-    target = new_target;
+    m_target = new_target;
     updateBalsticMatrix();
 }
 
 void Player::setGameState(GameState* new_game_state) {
-    game_state = new_game_state;
+    m_game_state = new_game_state;
 }
-Tank* Player::getTarget() { return target; }
+Tank* Player::getTarget() { return m_target; }
 vulkan_graphix::Math::Vec3<float> Player::getEnemyPosition() {
-    return enemy_position;
+    return m_enemy_position;
 }
-float* Player::getBalisticMatrix() { return balistic_matrix; }
+float* Player::getBalisticMatrix() { return m_balistic_matrix; }
 
 /*	SAVE FOR LATER NEED IN CALCULATING PHYSICS	*/
 /*	STATES = {	NEED_NEW_TARGET, FIND_TARGET,					*/
@@ -55,81 +55,84 @@ float* Player::getBalisticMatrix() { return balistic_matrix; }
 /*				ROTATING_LEFT, ROTATING_RIGHT };				*/
 void Player::aiMainLogisticFunction() {
     /*	THIS IS THE BRAINS	*/
-    if (prev_state_of_ai == SHOT_LAST_ROUND) {
-        previous_projectile_landing_spot =
-                game_state->getPositionOfLastProjectile();
-        previous_distance_off_from_target = distance_off_from_target;
-        distance_off_from_target = sqrt(
-                pow((previous_projectile_landing_spot.x - enemy_position.x),
-                    2) +
-                pow((previous_projectile_landing_spot.y - enemy_position.y),
-                    2) +
-                pow((previous_projectile_landing_spot.z - enemy_position.z),
-                    2));
+    if (m_prev_state_of_ai == SHOT_LAST_ROUND) {
+        m_previous_projectile_landing_spot =
+                m_game_state->getPositionOfLastProjectile();
+        m_previous_distance_off_from_target = m_distance_off_from_target;
+        m_distance_off_from_target =
+                sqrt(pow((m_previous_projectile_landing_spot.x -
+                          m_enemy_position.x),
+                         2) +
+                     pow((m_previous_projectile_landing_spot.y -
+                          m_enemy_position.y),
+                         2) +
+                     pow((m_previous_projectile_landing_spot.z -
+                          m_enemy_position.z),
+                         2));
     }
 
-    if (state_of_ai == NEED_NEW_TARGET || target == nullptr) {
+    if (m_state_of_ai == NEED_NEW_TARGET || m_target == nullptr) {
         /*	Game State Will Set Your Target For You	*/
         /*	You Need To Check Though That Your Tank	*/
         /*	Was Set									*/
         restoreTurretTo0Degrees();
         updateBalsticMatrix();
-        game_state->nearestEnemy();
-        if (target) {
+        m_game_state->nearestEnemy();
+        if (m_target) {
             setEnemyPosition();
             setUpYawVectors();
-            state_of_ai = FIND_TARGET;
+            m_state_of_ai = FIND_TARGET;
         }
     }
-    if (state_of_ai == FIND_TARGET) {
+    if (m_state_of_ai == FIND_TARGET) {
         playSFX(TANK_CONTROL2);
         updateBalsticMatrix();
         setUpYawVectors();
-        yaw_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
-                enemy_path, projectile_path);
-        rangle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
-                enemy_path, ortho_left);
-        langle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
-                enemy_path, ortho_right);
-        if (degrees_rotated > 540) {
-            state_of_ai = NEED_NEW_TARGET;
-            degrees_rotated = 0;
+        m_yaw_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                m_enemy_path, m_projectile_path);
+        m_rangle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                m_enemy_path, m_ortho_left);
+        m_langle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                m_enemy_path, m_ortho_right);
+        if (m_degrees_rotated > 540) {
+            m_state_of_ai = NEED_NEW_TARGET;
+            m_degrees_rotated = 0;
         }
-        if (yaw_angle > 5) {
-            if (minimumYawAngle(rangle, langle) == 'r') {
+        if (m_yaw_angle > 5) {
+            if (minimumYawAngle(m_rangle, m_langle) == 'r') {
                 yawRight(0.4f);
-            } else if (minimumYawAngle(rangle, langle) == 'l') {
+            } else if (minimumYawAngle(m_rangle, m_langle) == 'l') {
                 yawLeft(0.4f);
             }
-            degrees_rotated += 0.4;
-        } else if (yaw_angle <= 5 && yaw_angle > 1) {
-            if (minimumYawAngle(rangle, langle) == 'r') {
+            m_degrees_rotated += 0.4;
+        } else if (m_yaw_angle <= 5 && m_yaw_angle > 1) {
+            if (minimumYawAngle(m_rangle, m_langle) == 'r') {
                 yawRight(0.2f);
-            } else if (minimumYawAngle(rangle, langle) == 'l') {
+            } else if (minimumYawAngle(m_rangle, m_langle) == 'l') {
                 yawLeft(0.2f);
             }
-            degrees_rotated += 0.2;
-        } else if (yaw_angle <= 1 && yaw_angle > .1) {
-            if (minimumYawAngle(rangle, langle) == 'r') {
+            m_degrees_rotated += 0.2;
+        } else if (m_yaw_angle <= 1 && m_yaw_angle > .1) {
+            if (minimumYawAngle(m_rangle, m_langle) == 'r') {
                 yawRight(0.09f);
-            } else if (minimumYawAngle(rangle, langle) == 'l') {
+            } else if (minimumYawAngle(m_rangle, m_langle) == 'l') {
                 yawLeft(0.09f);
             }
-            degrees_rotated += 0.09;
+            m_degrees_rotated += 0.09;
         } else {
-            state_of_ai = HOMING_IN_ON_TARGET;
+            m_state_of_ai = HOMING_IN_ON_TARGET;
             Mix_HaltChannel(3);
         }
     }
-    if (state_of_ai == HOMING_IN_ON_TARGET) {
+    if (m_state_of_ai == HOMING_IN_ON_TARGET) {
         playSFX(TANK_CONTROL1);
         setUpPitchVectors();
         updateBalsticMatrix();
         setUpYawVectors();
         bool physics = false;
-        pitch_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
-                enemy_path, pitch_vector);
-        if (pitch_angle < max_pitch_angle && !physics) {
+        m_pitch_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                m_enemy_path, m_pitch_vector);
+        if (m_pitch_angle < m_max_pitch_angle && !physics) {
             if (getCurrentTank()->getCurrentPower() >= .4 && !physics) {
                 physics = calculateProjectilePhysics(600, 100, 600);
                 getCurrentTank()->adjustPower(-.09990238);
@@ -138,29 +141,29 @@ void Player::aiMainLogisticFunction() {
                 pitchUp(2.0f);
             }
         }
-        if (pitch_angle > max_pitch_angle) {
-            state_of_ai = TARGET_NOT_REACHABLE;
+        if (m_pitch_angle > m_max_pitch_angle) {
+            m_state_of_ai = TARGET_NOT_REACHABLE;
             Mix_HaltChannel(2);
             Mix_HaltChannel(3);
         }
         if (!physics) {
-            yaw_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
-                    enemy_path, projectile_path);
-            if (yaw_angle > .01) {
-                state_of_ai = FIND_TARGET;
+            m_yaw_angle = vulkan_graphix::TankOrientation::angleBetweenDegrees(
+                    m_enemy_path, m_projectile_path);
+            if (m_yaw_angle > .01) {
+                m_state_of_ai = FIND_TARGET;
                 Mix_HaltChannel(2);
             }
         }
         if (physics) {
-            game_state->currentPlayerFire();
-            degrees_rotated = 0;
-            prev_state_of_ai = SHOT_LAST_ROUND;
-            state_of_ai = WALKING_IN;
-            first_acquired_power = getCurrentTank()->getCurrentPower();
-            first_acquired_pitch = pitch_angle;
+            m_game_state->currentPlayerFire();
+            m_degrees_rotated = 0;
+            m_prev_state_of_ai = SHOT_LAST_ROUND;
+            m_state_of_ai = WALKING_IN;
+            m_first_acquired_power = getCurrentTank()->getCurrentPower();
+            m_first_acquired_pitch = m_pitch_angle;
         }
     }
-    if (state_of_ai == WALKING_IN) {
+    if (m_state_of_ai == WALKING_IN) {
         /*const float* velMatrix = getCurrentTank()->getTurretMatrix();
         float tankAttributePower = first_acquired_power;
         float powerBar = getCurrentTank()->getCurrentPower();
@@ -172,13 +175,13 @@ void Player::aiMainLogisticFunction() {
                                 pow((power*velMatrix[10]),2)
                             );
         float ang = first_acquired_pitch;*/
-        degrees_rotated = 0;
-        game_state->currentPlayerFire();
-        prev_state_of_ai = SHOT_LAST_ROUND;
-        state_of_ai = WALKING_IN;
+        m_degrees_rotated = 0;
+        m_game_state->currentPlayerFire();
+        m_prev_state_of_ai = SHOT_LAST_ROUND;
+        m_state_of_ai = WALKING_IN;
     }
-    if (state_of_ai == TARGET_NOT_REACHABLE) {
-        state_of_ai = NEED_NEW_TARGET;
+    if (m_state_of_ai == TARGET_NOT_REACHABLE) {
+        m_state_of_ai = NEED_NEW_TARGET;
     }
 }
 
@@ -194,19 +197,19 @@ char Player::minimumYawAngle(float right_degrees, float left_degrees) {
 
 void Player::updateBalsticMatrix() {
     for (std::int32_t x = 0; x < 16; x++) {
-        balistic_matrix[x] = getCurrentTank()->getTurretMatrix()[x];
+        m_balistic_matrix[x] = getCurrentTank()->getTurretMatrix()[x];
     }
-    balistic_matrix[1] = 0;
-    balistic_matrix[4] = 0;
-    balistic_matrix[6] = 0;
-    balistic_matrix[9] = 0;
+    m_balistic_matrix[1] = 0;
+    m_balistic_matrix[4] = 0;
+    m_balistic_matrix[6] = 0;
+    m_balistic_matrix[9] = 0;
 }
 
 void Player::setEnemyPosition() {
     updateBalsticMatrix();
-    enemy_position.x = target->getBodyMatrix()[12];
-    enemy_position.y = target->getBodyMatrix()[13];
-    enemy_position.z = target->getBodyMatrix()[14];
+    m_enemy_position.x = m_target->getBodyMatrix()[12];
+    m_enemy_position.y = m_target->getBodyMatrix()[13];
+    m_enemy_position.z = m_target->getBodyMatrix()[14];
 }
 
 void Player::setUpYawVectors() {
@@ -291,46 +294,46 @@ void Player::setUpYawVectors() {
                                                   (matrix[14] - 1000 * w2.z));
 
     // Produce Member Vectors
-    ortho_left.x = (left_ortho.x - my_position.x);
-    ortho_left.y = (left_ortho.y - my_position.y);
-    ortho_left.z = (left_ortho.z - my_position.z);
+    m_ortho_left.x = (left_ortho.x - my_position.x);
+    m_ortho_left.y = (left_ortho.y - my_position.y);
+    m_ortho_left.z = (left_ortho.z - my_position.z);
 
-    ortho_right.x = (right_ortho.x - my_position.x);
-    ortho_right.y = (right_ortho.y - my_position.y);
-    ortho_right.z = (right_ortho.z - my_position.z);
+    m_ortho_right.x = (right_ortho.x - my_position.x);
+    m_ortho_right.y = (right_ortho.y - my_position.y);
+    m_ortho_right.z = (right_ortho.z - my_position.z);
 
-    enemy_path.x = (enemy_vertex.x - my_position.x);
-    enemy_path.y = (enemy_vertex.y - my_position.y);
-    enemy_path.z = (enemy_vertex.z - my_position.z);
+    m_enemy_path.x = (enemy_vertex.x - my_position.x);
+    m_enemy_path.y = (enemy_vertex.y - my_position.y);
+    m_enemy_path.z = (enemy_vertex.z - my_position.z);
 
-    projectile_path.x = (projectile_endmark.x - my_position.x);
-    projectile_path.y = (projectile_endmark.y - my_position.y);
-    projectile_path.z = (projectile_endmark.z - my_position.z);
+    m_projectile_path.x = (projectile_endmark.x - my_position.x);
+    m_projectile_path.y = (projectile_endmark.y - my_position.y);
+    m_projectile_path.z = (projectile_endmark.z - my_position.z);
 
-    left_vector.x = (left_mark.x - my_position.x);
-    left_vector.y = (left_mark.y - my_position.y);
-    left_vector.z = (left_mark.z - my_position.z);
+    m_left_vector.x = (left_mark.x - my_position.x);
+    m_left_vector.y = (left_mark.y - my_position.y);
+    m_left_vector.z = (left_mark.z - my_position.z);
 
-    right_vector.x = (right_mark.x - my_position.x);
-    right_vector.y = (right_mark.y - my_position.y);
-    right_vector.z = (right_mark.z - my_position.z);
+    m_right_vector.x = (right_mark.x - my_position.x);
+    m_right_vector.y = (right_mark.y - my_position.y);
+    m_right_vector.z = (right_mark.z - my_position.z);
 }
 
 void Player::setUpPitchVectors() {
     const float* matrix = getBalisticMatrix();
     float* turret_matrix = getCurrentTank()->getTurretMatrix();
-    pitch_vector.x = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
-                      turret_matrix[12]);
-    pitch_vector.y = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
-                      turret_matrix[13]);
-    pitch_vector.z = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
-                      turret_matrix[14]);
-    up_vector.x = ((matrix[12] + 1000 * matrix[4]) - matrix[12]);
-    up_vector.y = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
-    up_vector.z = ((matrix[14] + 1000 * matrix[6]) - matrix[14]);
-    down_vector.x = ((matrix[12] - 1000 * matrix[4]) - matrix[12]);
-    down_vector.y = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
-    down_vector.z = ((matrix[14] - 1000 * matrix[6]) - matrix[14]);
+    m_pitch_vector.x = ((turret_matrix[12] - 10000 * turret_matrix[8]) -
+                        turret_matrix[12]);
+    m_pitch_vector.y = ((turret_matrix[13] - 10000 * turret_matrix[9]) -
+                        turret_matrix[13]);
+    m_pitch_vector.z = ((turret_matrix[14] - 10000 * turret_matrix[10]) -
+                        turret_matrix[14]);
+    m_up_vector.x = ((matrix[12] + 1000 * matrix[4]) - matrix[12]);
+    m_up_vector.y = ((matrix[13] + 1000 * matrix[5]) - matrix[13]);
+    m_up_vector.z = ((matrix[14] + 1000 * matrix[6]) - matrix[14]);
+    m_down_vector.x = ((matrix[12] - 1000 * matrix[4]) - matrix[12]);
+    m_down_vector.y = ((matrix[13] - 1000 * matrix[5]) - matrix[13]);
+    m_down_vector.z = ((matrix[14] - 1000 * matrix[6]) - matrix[14]);
 }
 
 bool Player::calculateProjectilePhysics(float xerr,
@@ -339,16 +342,16 @@ bool Player::calculateProjectilePhysics(float xerr,
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
     float percent_errory = yerr;
     float percent_errorxz = xerr;
-    float numerator = game_state->getGlobalSettings()
+    float numerator = m_game_state->getGlobalSettings()
                               ->getCurrentTerrain()
                               ->getActualSize();
     float denominator =
-            game_state->getGlobalSettings()->getCurrentTerrain()->getScale();
+            m_game_state->getGlobalSettings()->getCurrentTerrain()->getScale();
     float terrain_size = numerator / denominator;
-    float g = game_state->getGravity();  // Note: gravity is negative
+    float g = m_game_state->getGravity();  // Note: gravity is negative
     float tank_attribute_power = getCurrentTank()->getPower();
     float power_bar = getCurrentTank()->getCurrentPower();
-    float balistic_scalar = game_state->getBalisticScalar();
+    float balistic_scalar = m_game_state->getBalisticScalar();
     float speed = tank_attribute_power * power_bar * balistic_scalar;
 
     /****************************************************************************************/
@@ -368,9 +371,9 @@ bool Player::calculateProjectilePhysics(float xerr,
                     glm::make_mat4(getCurrentTank()->getTurretMatrix()),
                     speed,
                     Projectile::c_muzzle_distance);
-    float xf = launch.origin.x;
-    float yf = launch.origin.y;
-    float zf = launch.origin.z;
+    float xf = launch.m_origin.x;
+    float yf = launch.m_origin.y;
+    float zf = launch.m_origin.z;
     float xe = getEnemyPosition().x;
     float ye = getEnemyPosition().y;
     float ze = getEnemyPosition().z;
@@ -390,7 +393,7 @@ bool Player::calculateProjectilePhysics(float xerr,
             break;
         }
 
-        float terrain_height = game_state->getGlobalSettings()
+        float terrain_height = m_game_state->getGlobalSettings()
                                        ->getCurrentTerrain()
                                        ->getHeightAt(xf, zf);
         if (terrain_height >= yf) {
@@ -406,9 +409,9 @@ void Player::displayProjectilePhysiscs() {
     /*	VARIABLES NEEDED BY GAMESTATE.CPP	*/
     float tank_attribute_power = getCurrentTank()->getPower();
     float power_bar = getCurrentTank()->getCurrentPower();
-    float balistic_scalar = game_state->getBalisticScalar();
+    float balistic_scalar = m_game_state->getBalisticScalar();
     float speed = tank_attribute_power * power_bar * balistic_scalar;
-    float g = game_state->getGravity();  // Note: gravity is negative
+    float g = m_game_state->getGravity();  // Note: gravity is negative
 
     // Same launch a real shot gets (Projectile's constructor) - this used to
     // start the simulated shell 200 units out along the barrel while a real
@@ -419,9 +422,9 @@ void Player::displayProjectilePhysiscs() {
                     glm::make_mat4(getCurrentTank()->getTurretMatrix()),
                     speed,
                     Projectile::c_muzzle_distance);
-    float xf = launch.origin.x;
-    float yf = launch.origin.y;
-    float zf = launch.origin.z;
+    float xf = launch.m_origin.x;
+    float yf = launch.m_origin.y;
+    float zf = launch.m_origin.z;
     float xe = getEnemyPosition().x;
     float ye = getEnemyPosition().y;
     float ze = getEnemyPosition().z;
@@ -437,11 +440,12 @@ void Player::displayProjectilePhysiscs() {
     }
 
     cout << "Variables:" << endl;
-    cout << " Vox = " << launch.velocity.x << " Voy = " << launch.velocity.y
-         << " Voz = " << launch.velocity.z << endl
+    cout << " Vox = " << launch.m_velocity.x
+         << " Voy = " << launch.m_velocity.y
+         << " Voz = " << launch.m_velocity.z << endl
          << endl
-         << " Xo = " << launch.origin.x << " Yo = " << launch.origin.y
-         << " Zo = " << launch.origin.z << endl
+         << " Xo = " << launch.m_origin.x << " Yo = " << launch.m_origin.y
+         << " Zo = " << launch.m_origin.z << endl
          << endl
          << " Xf = " << xf << " Yf = " << yf << " Zf = " << zf << endl
          << endl
@@ -451,7 +455,7 @@ void Player::displayProjectilePhysiscs() {
          << endl;
 }
 
-std::int32_t Player::getAIState() { return state_of_ai; }
+std::int32_t Player::getAIState() { return m_state_of_ai; }
 
 void Player::restoreTurretTo0Degrees() {
     float restore_angle = getCurrentTank()->getTurretDegrees();
@@ -487,41 +491,45 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
         }
     };
     /*	START BALISTIC AXES	*/
-    vulkan_graphix::Math::Vec3<float> xyzri(
-            balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-    vulkan_graphix::Math::Vec3<float> xyzrf(scalar * balistic_matrix[0],
-                                            scalar * balistic_matrix[1],
-                                            scalar * balistic_matrix[2]);
+    vulkan_graphix::Math::Vec3<float> xyzri(m_balistic_matrix[12],
+                                            m_balistic_matrix[13],
+                                            m_balistic_matrix[14]);
+    vulkan_graphix::Math::Vec3<float> xyzrf(scalar * m_balistic_matrix[0],
+                                            scalar * m_balistic_matrix[1],
+                                            scalar * m_balistic_matrix[2]);
     line(math::Vec4<float>(Red, 1.0f),
          xyzri,
          vulkan_graphix::Math::Vec3<float>(
                  xyzri.x + xyzrf.x, xyzri.y + xyzrf.y, xyzri.z + xyzrf.z));
-    vulkan_graphix::Math::Vec3<float> xyzui(
-            balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-    vulkan_graphix::Math::Vec3<float> xyzuf(scalar * balistic_matrix[4],
-                                            scalar * balistic_matrix[5],
-                                            scalar * balistic_matrix[6]);
+    vulkan_graphix::Math::Vec3<float> xyzui(m_balistic_matrix[12],
+                                            m_balistic_matrix[13],
+                                            m_balistic_matrix[14]);
+    vulkan_graphix::Math::Vec3<float> xyzuf(scalar * m_balistic_matrix[4],
+                                            scalar * m_balistic_matrix[5],
+                                            scalar * m_balistic_matrix[6]);
     line(math::Vec4<float>(Green, 1.0f),
          xyzui,
          vulkan_graphix::Math::Vec3<float>(
                  xyzui.x + xyzuf.x, xyzui.y + xyzuf.y, xyzui.z + xyzuf.z));
-    vulkan_graphix::Math::Vec3<float> xyzai(
-            balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
-    vulkan_graphix::Math::Vec3<float> xyzaf(scalar * balistic_matrix[8],
-                                            scalar * balistic_matrix[9],
-                                            scalar * balistic_matrix[10]);
+    vulkan_graphix::Math::Vec3<float> xyzai(m_balistic_matrix[12],
+                                            m_balistic_matrix[13],
+                                            m_balistic_matrix[14]);
+    vulkan_graphix::Math::Vec3<float> xyzaf(scalar * m_balistic_matrix[8],
+                                            scalar * m_balistic_matrix[9],
+                                            scalar * m_balistic_matrix[10]);
     line(math::Vec4<float>(Blue, 1.0f),
          xyzai,
          vulkan_graphix::Math::Vec3<float>(
                  xyzai.x + xyzaf.x, xyzai.y + xyzaf.y, xyzai.z + xyzaf.z));
     /*	END BALISTIC AXES	*/
 
-    if (target) {
+    if (m_target) {
         /*	START ENEMY VECTOR AXES	*/
-        vulkan_graphix::Math::Vec3<float> mypos(
-                balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
+        vulkan_graphix::Math::Vec3<float> mypos(m_balistic_matrix[12],
+                                                m_balistic_matrix[13],
+                                                m_balistic_matrix[14]);
         vulkan_graphix::Math::Vec3<float> enemypos(
-                enemy_position.x, mypos.y, enemy_position.z);
+                m_enemy_position.x, mypos.y, m_enemy_position.z);
         line(math::Vec4<float>(LightSteelBlue, 1.0f), mypos, enemypos);
         /*	END ENEMY VECTOR AXES	*/
         ///*	START PERP VECTORS	*/
@@ -549,12 +557,13 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
         // glEnd();
         ///*	END PERP VECTORS	*/
         /*	START PROJECTILE PATH	*/
-        vulkan_graphix::Math::Vec3<float> o3(
-                balistic_matrix[12], balistic_matrix[13], balistic_matrix[14]);
+        vulkan_graphix::Math::Vec3<float> o3(m_balistic_matrix[12],
+                                             m_balistic_matrix[13],
+                                             m_balistic_matrix[14]);
         vulkan_graphix::Math::Vec3<float> path_end(
-                o3.x - 100000 * balistic_matrix[8],
+                o3.x - 100000 * m_balistic_matrix[8],
                 o3.y,
-                o3.z - 100000 * balistic_matrix[10]);
+                o3.z - 100000 * m_balistic_matrix[10]);
         line(math::Vec4<float>(MediumGoldenrod, 1.0f), o3, path_end);
         /*	END	PROJECTILE PATH		*/
 
@@ -594,14 +603,15 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
                                 t_matrix[13] + 1000 * t_matrix[1],
                                 t_matrix[14] + 1000 * t_matrix[2])});
     }
-    context.drawTransient(lines, vulkan_earth::pipelines().ui_lines, nullptr);
     context.drawTransient(
-            quads, vulkan_earth::pipelines().ui_triangles, nullptr);
+            lines, vulkan_earth::pipelines().m_ui_lines, nullptr);
+    context.drawTransient(
+            quads, vulkan_earth::pipelines().m_ui_triangles, nullptr);
 }
 
 bool Player::getDrawDebugLinesandPlanes() {
-    return draw_debug_linesand_planes;
+    return m_draw_debug_linesand_planes;
 }
 void Player::setDrawDebugLinesandPlanes(bool flag) {
-    draw_debug_linesand_planes = flag;
+    m_draw_debug_linesand_planes = flag;
 }

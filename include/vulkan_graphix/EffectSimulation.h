@@ -31,18 +31,18 @@ enum class ParticleKind : std::int32_t {
 // particle is drawn as a sphere of radius size at (x, y, z), in (red,
 // green, blue) at alpha 0.4.
 struct Particle {
-    ParticleKind kind = ParticleKind::Smoke;
-    float size = 0.0f;
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-    float speed = 0.0f;
-    std::array<float, 3> dir = {0.0f, 0.0f, 0.0f};
-    float red = 0.0f;
-    float green = 0.0f;
-    float blue = 0.0f;
-    std::int32_t active_frames = 0;
-    std::int32_t current_frame = 0;
+    ParticleKind m_kind = ParticleKind::Smoke;
+    float m_size = 0.0f;
+    float m_x = 0.0f;
+    float m_y = 0.0f;
+    float m_z = 0.0f;
+    float m_speed = 0.0f;
+    std::array<float, 3> m_dir = {0.0f, 0.0f, 0.0f};
+    float m_red = 0.0f;
+    float m_green = 0.0f;
+    float m_blue = 0.0f;
+    std::int32_t m_active_frames = 0;
+    std::int32_t m_current_frame = 0;
 };
 
 inline constexpr float c_particle_alpha = 0.4f;
@@ -101,17 +101,17 @@ private:
 // One explosion: a sphere growing from nothing while its color steps
 // through its weapon's four explosion colors and it fades out.
 struct Explosion {
-    float radius = 0.0f;
+    float m_radius = 0.0f;
     // The game starts each explosion halfway through the first color band.
-    float timer = 50.0f;
+    float m_timer = 50.0f;
 };
 
 struct ExplosionFrame {
     // Which of the four explosion colors this frame is drawn in (0-3), or
     // -1 where the original set no color at all (75 <= timer < 100): the
     // previous one stays in effect.
-    std::int32_t color_index;
-    float alpha;
+    std::int32_t m_color_index;
+    float m_alpha;
 };
 
 // Advances explosion by one frame (Explosion::draw()'s own step).

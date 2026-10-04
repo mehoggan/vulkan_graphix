@@ -1,5 +1,5 @@
-#ifndef Control_ITEM_H
-#define Control_ITEM_H
+#ifndef VULKAN_EARTH_CONTROLITEM_H
+#define VULKAN_EARTH_CONTROLITEM_H
 
 #include <cstdint>
 #include <string>
@@ -27,4 +27,4 @@ public:
     virtual void setOptionText(std::int32_t index) = 0;
     virtual void setOptionText(const std::string& new_text) = 0;
 };
-#endif  // CONTROL_ITEM_H
+#endif  // VULKAN_EARTH_CONTROLITEM_H

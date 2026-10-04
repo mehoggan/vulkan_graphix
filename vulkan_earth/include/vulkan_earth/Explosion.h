@@ -4,8 +4,8 @@
  *  Created on: Sep 10, 2010
  *      Author: Matthew Hoggan
  */
-#ifndef EXPLOSION_H_
-#define EXPLOSION_H_
+#ifndef VULKAN_EARTH_EXPLOSION_H
+#define VULKAN_EARTH_EXPLOSION_H
 
 #include <cstdint>
 #include "vulkan_earth/SpecialEffect.h"
@@ -38,21 +38,21 @@ public:
     void setDefaultColors() override;
 
 private:
-    float x;
-    float y;
-    float z;
-    float time;
-    float trans_matrix[16];
+    float m_x;
+    float m_y;
+    float m_z;
+    float m_time;
+    float m_trans_matrix[16];
     // The color the original left in effect where draw() sets none
     // (75 <= timer < 100): its own last one.
-    vulkan_graphix::Math::Vec4<float> current_color =
+    vulkan_graphix::Math::Vec4<float> m_current_color =
             vulkan_graphix::Math::Vec4<float>(1.0f);
-    vulkan_graphix::EffectSimulation::Explosion simulation;
-    float colors1[3];
-    float colors2[3];
-    float colors3[3];
-    float colors4[3];
-    std::int32_t weapon_radius;
+    vulkan_graphix::EffectSimulation::Explosion m_simulation;
+    float m_colors1[3];
+    float m_colors2[3];
+    float m_colors3[3];
+    float m_colors4[3];
+    std::int32_t m_weapon_radius;
 };
 
-#endif /* EXPLOSION_H_ */
+#endif  // VULKAN_EARTH_EXPLOSION_H

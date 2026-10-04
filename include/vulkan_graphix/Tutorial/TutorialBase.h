@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TUTORIALBASE_H
-#define VULKAN_GRAPHIX_TUTORIALBASE_H
+#ifndef VULKAN_GRAPHIX_TUTORIAL_TUTORIALBASE_H
+#define VULKAN_GRAPHIX_TUTORIAL_TUTORIALBASE_H
 
 #include <atomic>
 #include <cstdint>
@@ -303,4 +303,4 @@ protected:
 
 }  // namespace vulkan_graphix
 
-#endif  // VULKAN_GRAPHIX_TUTORIALBASE_H
+#endif  // VULKAN_GRAPHIX_TUTORIAL_TUTORIALBASE_H

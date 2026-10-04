@@ -1,5 +1,5 @@
-#ifndef SHOP_MENU_H
-#define SHOP_MENU_H
+#ifndef VULKAN_EARTH_SHOPMENU_H
+#define VULKAN_EARTH_SHOPMENU_H
 
 #include <cstdint>
 #include "vulkan_graphix/Render/Mesh.h"
@@ -48,38 +48,38 @@ public:
 
 private:
     void printDebugInfo();
-    float pos[3], width, height, color[4], border;
-    float percent_border;
-    std::int32_t* current_game_state;
-    std::int32_t num_players;
-    std::int32_t current_player_index;
-    std::int32_t current_player_balance;
-    ControlItemButton* buttons[5];
-    ControlItemGrid* grids[2];
-    TextObject* label_wpn;
-    TextObject* label_item;
-    TextObject* label_player_num;
-    TextObject* label_player_balance;
-    TextObject* label_discription;
-    TextObject* label_buy_price;
-    TextObject* label_sell_price;
-    TextObject* label_shop_wpn_remains[num_sales_weapon];
-    TextObject* label_shop_item_remains[num_sales_item];
-    TextObject* label_inven_wpn_remains[inven_grid_row];
-    TextObject* label_inven_item_remains[inven_grid_row];
-    ImageObject* img_shop_wpns[num_sales_weapon];
-    ImageObject* img_shop_items[num_sales_weapon];
-    ImageObject* img_inven_wpns[inven_grid_row];
-    ImageObject* img_inven_items[inven_grid_row];
-    Weapon* shop_wpns[num_sales_weapon];
-    Item* shop_items[num_sales_item];
-    Weapon* inven_wpns[inven_grid_row];
-    Item* inven_items[inven_grid_row];
-    GlobalSettings* global_settings;
-    PlayerFactory* player_factory;
-    vulkan_graphix::Render::UiMesh panel_mesh;
-    float built_width = -1.0f;
-    float built_height = -1.0f;
+    float m_pos[3], m_width, m_height, m_color[4], m_border;
+    float m_percent_border;
+    std::int32_t* m_current_game_state;
+    std::int32_t m_num_players;
+    std::int32_t m_current_player_index;
+    std::int32_t m_current_player_balance;
+    ControlItemButton* m_buttons[5];
+    ControlItemGrid* m_grids[2];
+    TextObject* m_label_wpn;
+    TextObject* m_label_item;
+    TextObject* m_label_player_num;
+    TextObject* m_label_player_balance;
+    TextObject* m_label_discription;
+    TextObject* m_label_buy_price;
+    TextObject* m_label_sell_price;
+    TextObject* m_label_shop_wpn_remains[num_sales_weapon];
+    TextObject* m_label_shop_item_remains[num_sales_item];
+    TextObject* m_label_inven_wpn_remains[inven_grid_row];
+    TextObject* m_label_inven_item_remains[inven_grid_row];
+    ImageObject* m_img_shop_wpns[num_sales_weapon];
+    ImageObject* m_img_shop_items[num_sales_weapon];
+    ImageObject* m_img_inven_wpns[inven_grid_row];
+    ImageObject* m_img_inven_items[inven_grid_row];
+    Weapon* m_shop_wpns[num_sales_weapon];
+    Item* m_shop_items[num_sales_item];
+    Weapon* m_inven_wpns[inven_grid_row];
+    Item* m_inven_items[inven_grid_row];
+    GlobalSettings* m_global_settings;
+    PlayerFactory* m_player_factory;
+    vulkan_graphix::Render::UiMesh m_panel_mesh;
+    float m_built_width = -1.0f;
+    float m_built_height = -1.0f;
 };
 
 #endif

@@ -40,14 +40,15 @@ std::optional<render::PipelineHandle> createPipeline(
         bool depth = true,
         VkPolygonMode polygon_mode = VK_POLYGON_MODE_FILL) {
     render::PipelineDescription description;
-    description.vertex_shader = std::string("shaders/") + shader + ".vert.spv";
-    description.fragment_shader =
+    description.m_vertex_shader =
+            std::string("shaders/") + shader + ".vert.spv";
+    description.m_fragment_shader =
             std::string("shaders/") + shader + ".frag.spv";
-    description.vertex_layout = layout;
-    description.topology = topology;
-    description.depth_test = depth;
-    description.depth_write = depth;
-    description.polygon_mode = polygon_mode;
+    description.m_vertex_layout = layout;
+    description.m_topology = topology;
+    description.m_depth_test = depth;
+    description.m_depth_write = depth;
+    description.m_polygon_mode = polygon_mode;
     return renderer.createPipeline(description);
 }
 
@@ -60,9 +61,9 @@ void appendQuads(
     for (const auto& quad : quads) {
         std::array<Vec3, 4> corners;
         for (std::size_t i = 0; i < corners.size(); ++i) {
-            corners[i] = Vec3(quad.corners[i].x, -quad.corners[i].y, z);
+            corners[i] = Vec3(quad.m_corners[i].x, -quad.m_corners[i].y, z);
         }
-        mesh.addQuad(corners, quad.color);
+        mesh.addQuad(corners, quad.m_color);
     }
 }
 }  // namespace
@@ -106,8 +107,9 @@ bool initializeGameRendering(render::Renderer& renderer) {
                    *water,
                    *flat_color,
                    *flat_color_wireframe};
-    renderer.setUiPipelines(g_pipelines.ui_triangles, g_pipelines.ui_lines);
-    renderer.setTextPipeline(g_pipelines.text);
+    renderer.setUiPipelines(g_pipelines.m_ui_triangles,
+                            g_pipelines.m_ui_lines);
+    renderer.setTextPipeline(g_pipelines.m_text);
 
     g_serif_font = renderer.loadFont(c_serif_font_path, c_serif_pixel_height);
     g_mono_font = renderer.loadFont(c_mono_font_path, c_mono_pixel_height);

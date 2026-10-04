@@ -102,11 +102,11 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
                            1);
 
         Glyph& glyph = m_glyphs[i];
-        glyph.offset = Math::Vec2<float>(quad.x0, quad.y0);
-        glyph.size = Math::Vec2<float>(quad.x1 - quad.x0, quad.y1 - quad.y0);
-        glyph.uv_min = Math::Vec2<float>(quad.s0, quad.t0);
-        glyph.uv_max = Math::Vec2<float>(quad.s1, quad.t1);
-        glyph.advance = baked_chars[i].xadvance;
+        glyph.m_offset = Math::Vec2<float>(quad.x0, quad.y0);
+        glyph.m_size = Math::Vec2<float>(quad.x1 - quad.x0, quad.y1 - quad.y0);
+        glyph.m_uv_min = Math::Vec2<float>(quad.s0, quad.t0);
+        glyph.m_uv_max = Math::Vec2<float>(quad.s1, quad.t1);
+        glyph.m_advance = baked_chars[i].xadvance;
     }
 
     m_line_height = pixel_height * 1.25f;
@@ -133,16 +133,16 @@ std::vector<BitmapFontGlyphQuad> BitmapFont::layoutText(
             continue;
         }
         const Glyph& glyph = m_glyphs[character - c_first_char];
-        if (glyph.size.x > 0.0f && glyph.size.y > 0.0f) {
+        if (glyph.m_size.x > 0.0f && glyph.m_size.y > 0.0f) {
             BitmapFontGlyphQuad quad;
-            quad.top_left = Math::Vec2<float>(pen_x + glyph.offset.x,
-                                              origin.y + glyph.offset.y);
-            quad.bottom_right = quad.top_left + glyph.size;
-            quad.uv_top_left = glyph.uv_min;
-            quad.uv_bottom_right = glyph.uv_max;
+            quad.m_top_left = Math::Vec2<float>(pen_x + glyph.m_offset.x,
+                                                origin.y + glyph.m_offset.y);
+            quad.m_bottom_right = quad.m_top_left + glyph.m_size;
+            quad.m_uv_top_left = glyph.m_uv_min;
+            quad.m_uv_bottom_right = glyph.m_uv_max;
             quads.push_back(quad);
         }
-        pen_x += glyph.advance;
+        pen_x += glyph.m_advance;
     }
     return quads;
 }
@@ -154,7 +154,7 @@ float BitmapFont::textWidth(const std::string& text) const {
             character >= c_first_char + c_glyph_count) {
             continue;
         }
-        width += m_glyphs[character - c_first_char].advance;
+        width += m_glyphs[character - c_first_char].m_advance;
     }
     return width;
 }

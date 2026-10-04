@@ -14,41 +14,41 @@ LoadingScreen::LoadingScreen(float x,
                              float green,
                              float blue,
                              float alpha) {
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
-    width = new_width;
-    height = new_height;
-    color[0] = red;
-    color[1] = green;
-    color[2] = blue;
-    color[3] = alpha;
-    image = new ImageObject(pos[0] + (new_width * 0.03),
-                            pos[1] - (new_height * 0.03),
-                            pos[2] + 2,
-                            new_width * 0.94,
-                            new_height * 0.94,
-                            .006 * new_width,
-                            1024,
-                            1024,
-                            "loading_screen.raw");
+    m_pos[0] = x;
+    m_pos[1] = y;
+    m_pos[2] = z;
+    m_width = new_width;
+    m_height = new_height;
+    m_color[0] = red;
+    m_color[1] = green;
+    m_color[2] = blue;
+    m_color[3] = alpha;
+    m_image = new ImageObject(m_pos[0] + (new_width * 0.03),
+                              m_pos[1] - (new_height * 0.03),
+                              m_pos[2] + 2,
+                              new_width * 0.94,
+                              new_height * 0.94,
+                              .006 * new_width,
+                              1024,
+                              1024,
+                              "loading_screen.raw");
 }
-LoadingScreen::~LoadingScreen() { delete image; }
+LoadingScreen::~LoadingScreen() { delete m_image; }
 
 void LoadingScreen::draw(vulkan_graphix::Render::RenderContext& context) {
-    if (frame_mesh.triangles().empty()) {
+    if (m_frame_mesh.triangles().empty()) {
         // The same raised 3-pixel bevel every button draws.
         vulkan_earth::appendBevel(
-                frame_mesh,
-                pos[0],
-                pos[1],
-                pos[2],
-                static_cast<float>(width),
-                static_cast<float>(height),
+                m_frame_mesh,
+                m_pos[0],
+                m_pos[1],
+                m_pos[2],
+                static_cast<float>(m_width),
+                static_cast<float>(m_height),
                 vulkan_graphix::Math::Vec4<float>(
-                        color[0], color[1], color[2], color[3]),
+                        m_color[0], m_color[1], m_color[2], m_color[3]),
                 false);
     }
-    context.draw(frame_mesh);
-    image->draw(context);
+    context.draw(m_frame_mesh);
+    m_image->draw(context);
 }

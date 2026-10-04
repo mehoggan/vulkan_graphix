@@ -1,5 +1,5 @@
-#ifndef Control_ITEM_SLIDERBAR_H
-#define Control_ITEM_SLIDERBAR_H
+#ifndef VULKAN_EARTH_CONTROLITEMSLIDERBAR_H
+#define VULKAN_EARTH_CONTROLITEMSLIDERBAR_H
 
 #include <cstdint>
 #include <string>
@@ -45,38 +45,38 @@ public:
 private:
     void setOptionText(std::int32_t index) override;
     void setOptionText(const std::string& new_text) override;
-    float x_pos;
-    float y_pos;
-    float z_pos;
-    float bar_x_pos;
-    float bar_y_pos;
-    float bar_z_pos;
-    std::int32_t bar_width;
-    float slider_x_pos;
-    float slider_y_pos;
-    float slider_z_pos;
-    std::int32_t slider_width;
-    std::int32_t slider_height;
-    float color[4];
-    std::int32_t width;
-    std::int32_t height;
-    float interval;
-    TextObject* option_text;
-    TextObject* label;
-    std::string caption;
-    std::string menu_info;
-    std::string current_option;
-    std::int32_t menu_state;
-    std::int32_t button_state;  // 0 = no button pressed, 1 = up button
-                                // pressed, 2 = down button pressed
-    std::int32_t number_of_options;
-    std::vector<std::string> all_options;
-    bool is_slider_clicked;
-    vulkan_graphix::Render::UiMesh frame_mesh;
-    vulkan_graphix::Render::UiMesh slider_mesh;
-    float slider_built_x = -1.0e30f;
-    float slider_built_y = -1.0e30f;
-    std::int32_t slider_built_clicked = -1;
+    float m_x_pos;
+    float m_y_pos;
+    float m_z_pos;
+    float m_bar_x_pos;
+    float m_bar_y_pos;
+    float m_bar_z_pos;
+    std::int32_t m_bar_width;
+    float m_slider_x_pos;
+    float m_slider_y_pos;
+    float m_slider_z_pos;
+    std::int32_t m_slider_width;
+    std::int32_t m_slider_height;
+    float m_color[4];
+    std::int32_t m_width;
+    std::int32_t m_height;
+    float m_interval;
+    TextObject* m_option_text;
+    TextObject* m_label;
+    std::string m_caption;
+    std::string m_menu_info;
+    std::string m_current_option;
+    std::int32_t m_menu_state;
+    std::int32_t m_button_state;  // 0 = no button pressed, 1 = up button
+                                  // pressed, 2 = down button pressed
+    std::int32_t m_number_of_options;
+    std::vector<std::string> m_all_options;
+    bool m_is_slider_clicked;
+    vulkan_graphix::Render::UiMesh m_frame_mesh;
+    vulkan_graphix::Render::UiMesh m_slider_mesh;
+    float m_slider_built_x = -1.0e30f;
+    float m_slider_built_y = -1.0e30f;
+    std::int32_t m_slider_built_clicked = -1;
 };
 
 #endif

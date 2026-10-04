@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_TANK_PLACEMENT_H
-#define VULKAN_GRAPHIX_TANK_PLACEMENT_H
+#ifndef VULKAN_GRAPHIX_TANKPLACEMENT_H
+#define VULKAN_GRAPHIX_TANKPLACEMENT_H
 
 // Placing a multi-part vulkan_earth tank in the world, ported from
 // vulkan_earth's Tank::setTankPos() and Tank::initBody()/initHead()/
@@ -14,16 +14,16 @@ namespace vulkan_graphix::TankPlacement {
 // Each part's offset from its parent: body from the tank's world
 // position, head from the body, turret from the head.
 struct PartOffsets {
-    Math::Vec3<float> body;
-    Math::Vec3<float> head;
-    Math::Vec3<float> turret;
+    Math::Vec3<float> m_body;
+    Math::Vec3<float> m_head;
+    Math::Vec3<float> m_turret;
 };
 
 // World-space translations of a tank's three parts.
 struct PartTranslations {
-    Math::Vec3<float> body;
-    Math::Vec3<float> head;
-    Math::Vec3<float> turret;
+    Math::Vec3<float> m_body;
+    Math::Vec3<float> m_head;
+    Math::Vec3<float> m_turret;
 };
 
 // The right/up/at basis Tank::initBody()/initHead()/initTurret()/
@@ -47,4 +47,4 @@ PartTranslations composePartTranslations(
 
 }  // namespace vulkan_graphix::TankPlacement
 
-#endif  // VULKAN_GRAPHIX_TANK_PLACEMENT_H
+#endif  // VULKAN_GRAPHIX_TANKPLACEMENT_H

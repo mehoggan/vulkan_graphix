@@ -1,5 +1,5 @@
-#ifndef VULKAN_GRAPHIX_ICOSAHEDRON_HPP
-#define VULKAN_GRAPHIX_ICOSAHEDRON_HPP
+#ifndef VULKAN_GRAPHIX_MATH_ICOSAHEDRON_HPP
+#define VULKAN_GRAPHIX_MATH_ICOSAHEDRON_HPP
 
 #include <cstdint>
 #include <vector>
@@ -21,7 +21,8 @@ namespace vulkan_graphix::Math {
 template <typename T = float, typename I = std::uint32_t>
 class Icosahedron {
 public:
-    explicit Icosahedron(T radius) : m_radius(radius) {
+    explicit Icosahedron(T radius) :
+            m_radius(radius) {
         generateVertices();
         generateIndices();
     }

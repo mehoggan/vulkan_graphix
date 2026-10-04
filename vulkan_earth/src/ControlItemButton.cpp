@@ -28,74 +28,76 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
                                      std::int32_t new_width,
                                      std::int32_t new_height,
                                      const std::string& new_caption) {
-    parent = new_parent;
+    m_parent = new_parent;
 
-    x_pos = new_x_pos;
-    y_pos = new_y_pos;
-    z_pos = new_z_pos;
-    color[0] = red;
-    color[1] = green;
-    color[2] = blue;
-    color[3] = 1.0;
-    width = new_width;
-    height = new_height;
-    caption = new_caption;
+    m_x_pos = new_x_pos;
+    m_y_pos = new_y_pos;
+    m_z_pos = new_z_pos;
+    m_color[0] = red;
+    m_color[1] = green;
+    m_color[2] = blue;
+    m_color[3] = 1.0;
+    m_width = new_width;
+    m_height = new_height;
+    m_caption = new_caption;
 
-    toggled = false;
-    button_state = 0;
-    menu_state = 0;
+    m_toggled = false;
+    m_button_state = 0;
+    m_menu_state = 0;
 
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
-    for (char ch : caption) {
+    for (char ch : m_caption) {
         real_length += vulkan_earth::textAdvance(
                 vulkan_earth::FontId::TimesRoman24, ch);
     }
-    float label_x_pos = x_pos + ((width) / 2) - (real_length / 2);
-    float label_y_pos = y_pos + ((y_pos - (y_pos + height)) / 2) - height / 4;
+    float label_x_pos = m_x_pos + ((m_width) / 2) - (real_length / 2);
+    float label_y_pos =
+            m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
-    label = new TextObject(caption,
-                           label_x_pos,
-                           label_y_pos,
-                           z_pos,
-                           vulkan_earth::FontId::TimesRoman24,
-                           0.0f,
-                           0.0f,
-                           0.0f);
+    m_label = new TextObject(m_caption,
+                             label_x_pos,
+                             label_y_pos,
+                             m_z_pos,
+                             vulkan_earth::FontId::TimesRoman24,
+                             0.0f,
+                             0.0f,
+                             0.0f);
 }
 
-ControlItemButton::~ControlItemButton() { delete label; }
+ControlItemButton::~ControlItemButton() { delete m_label; }
 
 void ControlItemButton::draw(render::RenderContext& context) {
-    if (built_button_state != button_state) {
-        mesh.clear();
+    if (m_built_button_state != m_button_state) {
+        m_mesh.clear();
         vulkan_earth::appendBevel(
-                mesh,
-                x_pos,
-                y_pos,
-                z_pos,
-                width,
-                height,
-                math::Vec4<float>(color[0], color[1], color[2], color[3]),
-                button_state != 0);
-        built_button_state = button_state;
+                m_mesh,
+                m_x_pos,
+                m_y_pos,
+                m_z_pos,
+                m_width,
+                m_height,
+                math::Vec4<float>(
+                        m_color[0], m_color[1], m_color[2], m_color[3]),
+                m_button_state != 0);
+        m_built_button_state = m_button_state;
     }
-    context.draw(mesh);
-    label->draw(context);
+    context.draw(m_mesh);
+    m_label->draw(context);
 }
 
-float ControlItemButton::getXPos() { return x_pos; }
-float ControlItemButton::getYPos() { return y_pos; }
-float ControlItemButton::getHeight() { return height; }
-float ControlItemButton::getWidth() { return width; }
-bool ControlItemButton::isToggled() { return toggled; }
+float ControlItemButton::getXPos() { return m_x_pos; }
+float ControlItemButton::getYPos() { return m_y_pos; }
+float ControlItemButton::getHeight() { return m_height; }
+float ControlItemButton::getWidth() { return m_width; }
+bool ControlItemButton::isToggled() { return m_toggled; }
 void ControlItemButton::updateButtonState() {
-    if (toggled)
-        button_state = 1;
+    if (m_toggled)
+        m_button_state = 1;
     else
-        button_state = 0;
+        m_button_state = 0;
 }
-void ControlItemButton::setToggled(bool t) { toggled = t; }
+void ControlItemButton::setToggled(bool t) { m_toggled = t; }
 void ControlItemButton::setOptionText(std::int32_t index) {}
 void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
@@ -106,17 +108,17 @@ void ControlItemButton::mouseClickEvent(
         std::int32_t state,
         bool /*still_over_control_item_button*/) {
     if (state) {
-        if ((x >= (x_pos) && x <= ((x_pos) + (width))) &&
-            (y <= (y_pos) &&
-             y >= ((y_pos) - (height)))) {  // This if statement -->
-                                            // stillOverControlItemButton
-            button_state = 1;
-            toggled = true;
+        if ((x >= (m_x_pos) && x <= ((m_x_pos) + (m_width))) &&
+            (y <= (m_y_pos) &&
+             y >= ((m_y_pos) - (m_height)))) {  // This if statement -->
+                                                // stillOverControlItemButton
+            m_button_state = 1;
+            m_toggled = true;
         } else {
-            button_state = 0;
+            m_button_state = 0;
         }
     } else {
-        button_state = 0;
+        m_button_state = 0;
     }
 }
 

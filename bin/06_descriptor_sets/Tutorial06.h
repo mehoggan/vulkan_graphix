@@ -21,8 +21,8 @@ namespace vulkan_graphix {
 // Struct describing data type and format of vertex attributes  //
 // ************************************************************ //
 struct Tutorial06VertexData {
-    Math::Vec4<float> position;
-    Math::Vec2<float> texcoord;
+    Math::Vec4<float> m_position;
+    Math::Vec2<float> m_texcoord;
 };
 
 using VertexAttributeTraits =

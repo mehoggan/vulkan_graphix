@@ -17,13 +17,13 @@ namespace vulkan_graphix {
 // ************************************************************ //
 // VulkanTutorial14Parameters                                   //
 // ************************************************************ //
-VulkanTutorial14Parameters::VulkanTutorial14Parameters()
-        : m_vk_render_pass(VK_NULL_HANDLE)
-        , m_vk_pipeline_layout(VK_NULL_HANDLE)
-        , m_vk_graphics_pipeline(VK_NULL_HANDLE)
-        , m_index_count(0)
-        , m_vk_command_pool(VK_NULL_HANDLE)
-        , m_rendering_resources(resources_count) {}
+VulkanTutorial14Parameters::VulkanTutorial14Parameters() :
+        m_vk_render_pass(VK_NULL_HANDLE),
+        m_vk_pipeline_layout(VK_NULL_HANDLE),
+        m_vk_graphics_pipeline(VK_NULL_HANDLE),
+        m_index_count(0),
+        m_vk_command_pool(VK_NULL_HANDLE),
+        m_rendering_resources(resources_count) {}
 
 const VkRenderPass& VulkanTutorial14Parameters::getVkRenderPass() const {
     return m_vk_render_pass;
@@ -167,10 +167,10 @@ void VulkanTutorial14Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 // Tutorial14                                                   //
 // ************************************************************ //
-Tutorial14::Tutorial14()
-        // The sphere itself has radius 1.0 (see getVertexData()); 3.5 gives
-        // a clear view of it and its translucency against the clear color.
-        : m_camera(0.6f, 0.3f, 3.5f) {}
+// The sphere itself has radius 1.0 (see getVertexData()); 3.5 gives
+// a clear view of it and its translucency against the clear color.
+Tutorial14::Tutorial14() :
+        m_camera(0.6f, 0.3f, 3.5f) {}
 
 Tutorial14::~Tutorial14() { childClear(); }
 
@@ -324,21 +324,21 @@ bool Tutorial14::createUniformBuffer() {
 
 Tutorial14UniformBufferData Tutorial14::getUniformBufferData() const {
     Tutorial14UniformBufferData data{};
-    data.model = Math::Mat4<float>(1.0f);  // static particle, no rotation
-    data.view = glm::lookAt(m_camera.eye(),
-                            m_camera.target(),
-                            Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_model = Math::Mat4<float>(1.0f);  // static particle, no rotation
+    data.m_view = glm::lookAt(m_camera.eye(),
+                              m_camera.target(),
+                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
             static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
     const float height = static_cast<float>(
             getSwapchainParameters().getVkExtent2d().height);
-    data.projection = Tools::getPerspectiveProjectionMatrix(
+    data.m_projection = Tools::getPerspectiveProjectionMatrix(
             width / height, 45.0f, 0.1f, 100.0f);
 
-    data.light_position = Math::Vec4<float>(5.0f, 8.0f, 5.0f, 1.0f);
-    data.light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
-    data.view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
+    data.m_light_position = Math::Vec4<float>(5.0f, 8.0f, 5.0f, 1.0f);
+    data.m_light_color = Math::Vec4<float>(1.0f, 1.0f, 1.0f, 1.0f);
+    data.m_view_position = Math::Vec4<float>(m_camera.eye(), 1.0f);
 
     return data;
 }
@@ -612,12 +612,13 @@ bool Tutorial14::createPipeline() {
                     {.location = 0,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset =
-                             offsetof(struct Tutorial14VertexData, position)},
+                     .offset = offsetof(struct Tutorial14VertexData,
+                                        m_position)},
                     {.location = 1,
                      .binding = vertex_binding_descriptions[0].binding,
                      .format = VK_FORMAT_R32G32B32_SFLOAT,
-                     .offset = offsetof(struct Tutorial14VertexData, normal)}};
+                     .offset =
+                             offsetof(struct Tutorial14VertexData, m_normal)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
