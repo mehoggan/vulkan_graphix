@@ -24,11 +24,11 @@ void Item::setRemaining(std::int32_t r) { m_remaining = r; }
 void Item::playUseSFX() { playSFX(ITEM_USE1); }
 
 void Item::loadSpec(const vulkan_graphix::GameCatalog::ItemSpec& spec) {
-    m_package_num = spec.m_package_num;
-    m_max_stack = spec.m_max_stack;
-    m_remaining = spec.m_remaining;
-    m_image_file_name = spec.m_image_file;
-    m_description = spec.m_description;
-    m_price = spec.m_price;
-    m_special_num = spec.m_special_num;
+  m_package_num = spec.m_package_num;
+  m_max_stack = spec.m_max_stack;
+  m_remaining = spec.m_remaining;
+  m_image_file_name = spec.m_image_file;
+  m_description = spec.m_description;
+  m_price = spec.m_price;
+  m_special_num = spec.m_special_num;
 }

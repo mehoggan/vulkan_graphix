@@ -6,11 +6,11 @@
 
 class ItemDoubleAction : public Item {
 public:
-    ItemDoubleAction();
-    ItemDoubleAction(std::int32_t id);
-    ~ItemDoubleAction() override;
-    ItemDoubleAction* getItemInstance() override;
-    bool causeEffectToTank(Tank* tank) override;
+  ItemDoubleAction();
+  ItemDoubleAction(std::int32_t id);
+  ~ItemDoubleAction() override;
+  ItemDoubleAction* getItemInstance() override;
+  bool causeEffectToTank(Tank* tank) override;
 };
 
 #endif

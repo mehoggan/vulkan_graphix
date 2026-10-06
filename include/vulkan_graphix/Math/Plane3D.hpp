@@ -12,56 +12,56 @@ namespace vulkan_graphix::Math {
 template <typename T>
 class Plane3D {
 public:
-    // Default-constructs an invalid plane (all coefficients zero).
-    Plane3D() :
-            m_coefficients(T(0), T(0), T(0), T(0)) {}
+  // Default-constructs an invalid plane (all coefficients zero).
+  Plane3D() :
+      m_coefficients(T(0), T(0), T(0), T(0)) {}
 
-    Plane3D(
+  Plane3D(
       const T& coeff_a, const T& coeff_b, const T& coeff_c, const T& coeff_d) :
-            m_coefficients(coeff_a, coeff_b, coeff_c, coeff_d) {}
+      m_coefficients(coeff_a, coeff_b, coeff_c, coeff_d) {}
 
-    // Not explicit so a coefficient vector can convert implicitly.
-    Plane3D(const Vec4<T>& coefficients) :
-            m_coefficients(coefficients) {}
+  // Not explicit so a coefficient vector can convert implicitly.
+  Plane3D(const Vec4<T>& coefficients) :
+      m_coefficients(coefficients) {}
 
-    T a() const { return m_coefficients.x; }
-    T b() const { return m_coefficients.y; }
-    T c() const { return m_coefficients.z; }
-    T d() const { return m_coefficients.w; }
+  T a() const { return m_coefficients.x; }
+  T b() const { return m_coefficients.y; }
+  T c() const { return m_coefficients.z; }
+  T d() const { return m_coefficients.w; }
 
-    void a(const T& value) { m_coefficients.x = value; }
-    void b(const T& value) { m_coefficients.y = value; }
-    void c(const T& value) { m_coefficients.z = value; }
-    void d(const T& value) { m_coefficients.w = value; }
+  void a(const T& value) { m_coefficients.x = value; }
+  void b(const T& value) { m_coefficients.y = value; }
+  void c(const T& value) { m_coefficients.z = value; }
+  void d(const T& value) { m_coefficients.w = value; }
 
-    Vec3<T> normal(bool normalize = true) const {
-        Vec3<T> result(a(), b(), c());
-        return normalize ? glm::normalize(result) : result;
-    }
+  Vec3<T> normal(bool normalize = true) const {
+    Vec3<T> result(a(), b(), c());
+    return normalize ? glm::normalize(result) : result;
+  }
 
-    // See: http://mathworld.wolfram.com/Point-PlaneDistance.html
-    T distanceFromPoint(const Vec3<T>& point) const {
-        return glm::dot(normal(true), point) + d();
-    }
+  // See: http://mathworld.wolfram.com/Point-PlaneDistance.html
+  T distanceFromPoint(const Vec3<T>& point) const {
+    return glm::dot(normal(true), point) + d();
+  }
 
-    bool isValid() const {
-        return !((a() == T(0)) && (b() == T(0)) && (c() == T(0)));
-    }
+  bool isValid() const {
+    return !((a() == T(0)) && (b() == T(0)) && (c() == T(0)));
+  }
 
 private:
-    Vec4<T> m_coefficients;
+  Vec4<T> m_coefficients;
 
-    friend bool operator==(const Plane3D& lhs, const Plane3D& rhs) {
-        return lhs.m_coefficients == rhs.m_coefficients;
-    }
+  friend bool operator==(const Plane3D& lhs, const Plane3D& rhs) {
+    return lhs.m_coefficients == rhs.m_coefficients;
+  }
 
-    friend bool operator!=(const Plane3D& lhs, const Plane3D& rhs) {
-        return !(lhs == rhs);
-    }
+  friend bool operator!=(const Plane3D& lhs, const Plane3D& rhs) {
+    return !(lhs == rhs);
+  }
 
-    friend void swap(Plane3D& lhs, Plane3D& rhs) {
-        std::swap(lhs.m_coefficients, rhs.m_coefficients);
-    }
+  friend void swap(Plane3D& lhs, Plane3D& rhs) {
+    std::swap(lhs.m_coefficients, rhs.m_coefficients);
+  }
 };
 
 }  // namespace vulkan_graphix::Math

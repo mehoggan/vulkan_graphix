@@ -19,26 +19,26 @@ class RenderContext;
 // lighting.
 class VBOShaderLibrary {
 public:
-    VBOShaderLibrary();
-    ~VBOShaderLibrary();
-    // model is the part's transform relative to the current camera (the
-    // original's glMultMatrixf()/glScalef() before drawClientData()); tint
-    // multiplies the texel (rgb) and sets the alpha.
-    void draw(vulkan_graphix::Render::RenderContext& context,
+  VBOShaderLibrary();
+  ~VBOShaderLibrary();
+  // model is the part's transform relative to the current camera (the
+  // original's glMultMatrixf()/glScalef() before drawClientData()); tint
+  // multiplies the texel (rgb) and sets the alpha.
+  void draw(vulkan_graphix::Render::RenderContext& context,
       const vulkan_graphix::Math::Mat4<float>& model,
       const vulkan_graphix::Math::Vec4<float>& tint =
-        vulkan_graphix::Math::Vec4<float>(1.0f));
-    // Loads a .ogl model (libvulkan_graphix's Tools::loadOglMeshData()).
-    bool loadClientData(const std::string& model_file);
-    // The model's color texture: a headerless RGB .raw image, repeated.
-    void loadTexture(
+          vulkan_graphix::Math::Vec4<float>(1.0f));
+  // Loads a .ogl model (libvulkan_graphix's Tools::loadOglMeshData()).
+  bool loadClientData(const std::string& model_file);
+  // The model's color texture: a headerless RGB .raw image, repeated.
+  void loadTexture(
       const char* filename, std::int32_t width, std::int32_t height);
-    void swapTexture(
+  void swapTexture(
       const char* filename, std::int32_t width, std::int32_t height);
 
 private:
-    std::unique_ptr<vulkan_graphix::Render::Mesh> m_mesh;
-    std::shared_ptr<vulkan_graphix::Render::Texture> m_color_texture;
+  std::unique_ptr<vulkan_graphix::Render::Mesh> m_mesh;
+  std::shared_ptr<vulkan_graphix::Render::Texture> m_color_texture;
 };
 
 #endif

@@ -331,17 +331,19 @@ Configuration in `CPPLINT.cfg`:
 ### Clang-Format
 
 Standard formatting applied (`.clang-format` present; needs clang-format
-14 or newer). Qualifiers always go before the type - `const Type&`, never
+14 or newer). Blocks are indented two spaces (`IndentWidth: 2`).
+Qualifiers always go before the type - `const Type&`, never
 `Type const&` (`QualifierAlignment: Left`). Constructor initializer
 lists end the constructor's own line with `:`, then put one initializer
-per line, two indents in, each followed by its `,`
+per line, two indents (four spaces) in, each followed by its `,`
 (`BreakConstructorInitializers: AfterColon`,
 `PackConstructorInitializers: Never`) - so a comment about the
 constructor goes above it, not between it and its `:`. Wrapped
 parameters, arguments, and operands never line up under the open bracket
-or first operand - each continuation line is just indented two spaces past
-the line it continues (`AlignAfterOpenBracket: DontAlign`, `AlignOperands:
-DontAlign`, `ContinuationIndentWidth: 2`).
+or first operand - each continuation line is just indented four spaces
+past the line it continues, twice the block indent so it stands apart
+from the body (`AlignAfterOpenBracket: DontAlign`, `AlignOperands:
+DontAlign`, `ContinuationIndentWidth: 4`).
 clang-tidy has no check for qualifier placement or alignment, so these
 are enforced by clang-format itself: the
 pre-commit hook rejects staged C++ that doesn't match `.clang-format`, and

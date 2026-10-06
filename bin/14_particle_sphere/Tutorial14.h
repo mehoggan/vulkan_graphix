@@ -36,23 +36,23 @@ namespace vulkan_graphix {
 // Math::Sphere usage is otherwise identical to Tutorial08's own (see
 // getVertexData()/getIndexData()).
 struct Tutorial14VertexData {
-    Math::Vec4<float> m_position;
-    Math::Vec3<float> m_normal;
+  Math::Vec4<float> m_position;
+  Math::Vec3<float> m_normal;
 };
 
 using Tutorial14VertexAttributeTraits =
-  VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec3<float>>;
+    VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec3<float>>;
 
 // Matches Tutorial08UniformBufferData's shape byte-for-byte - the new
 // fragment shader (resources/14/Data/shader.14.frag) reads the same
 // uniform block layout Tutorial08's own shader does.
 struct Tutorial14UniformBufferData {
-    Math::Mat4<float> m_model;
-    Math::Mat4<float> m_view;
-    Math::Mat4<float> m_projection;
-    Math::Vec4<float> m_light_position;
-    Math::Vec4<float> m_light_color;
-    Math::Vec4<float> m_view_position;
+  Math::Mat4<float> m_model;
+  Math::Mat4<float> m_view;
+  Math::Mat4<float> m_projection;
+  Math::Vec4<float> m_light_position;
+  Math::Vec4<float> m_light_color;
+  Math::Vec4<float> m_view_position;
 };
 
 // ************************************************************ //
@@ -62,77 +62,77 @@ struct Tutorial14UniformBufferData {
 // ************************************************************ //
 struct VulkanTutorial14Parameters {
 public:
-    static const std::size_t resources_count = 3;
+  static const std::size_t resources_count = 3;
 
-    VulkanTutorial14Parameters();
+  VulkanTutorial14Parameters();
 
-    const VkRenderPass& getVkRenderPass() const;
-    VkRenderPass& getVkRenderPass();
-    void setVkRenderPass(const VkRenderPass& vk_render_pass);
+  const VkRenderPass& getVkRenderPass() const;
+  VkRenderPass& getVkRenderPass();
+  void setVkRenderPass(const VkRenderPass& vk_render_pass);
 
-    const BufferParameters& getUniformBufferParameters() const;
-    BufferParameters& getUniformBufferParameters();
-    void setUniformBufferParameters(const BufferParameters& uniform_buffer);
+  const BufferParameters& getUniformBufferParameters() const;
+  BufferParameters& getUniformBufferParameters();
+  void setUniformBufferParameters(const BufferParameters& uniform_buffer);
 
-    const DescriptorSetParameters& getDescriptorSetParameters() const;
-    DescriptorSetParameters& getDescriptorSetParameters();
-    void setDescriptorSetParameters(
+  const DescriptorSetParameters& getDescriptorSetParameters() const;
+  DescriptorSetParameters& getDescriptorSetParameters();
+  void setDescriptorSetParameters(
       const DescriptorSetParameters& descriptor_set_parameters);
 
-    const VkPipelineLayout& getVkPipelineLayout() const;
-    VkPipelineLayout& getVkPipelineLayout();
-    void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
+  const VkPipelineLayout& getVkPipelineLayout() const;
+  VkPipelineLayout& getVkPipelineLayout();
+  void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
 
-    const VkPipeline& getVkGraphicsPipeline() const;
-    VkPipeline& getVkGraphicsPipeline();
-    void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
+  const VkPipeline& getVkGraphicsPipeline() const;
+  VkPipeline& getVkGraphicsPipeline();
+  void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
 
-    const BufferParameters& getVertexBufferParameters() const;
-    BufferParameters& getVertexBufferParameters();
-    void setVertexBufferParameters(const BufferParameters& vertex_buffer);
+  const BufferParameters& getVertexBufferParameters() const;
+  BufferParameters& getVertexBufferParameters();
+  void setVertexBufferParameters(const BufferParameters& vertex_buffer);
 
-    const BufferParameters& getIndexBufferParameters() const;
-    BufferParameters& getIndexBufferParameters();
-    void setIndexBufferParameters(const BufferParameters& index_buffer);
+  const BufferParameters& getIndexBufferParameters() const;
+  BufferParameters& getIndexBufferParameters();
+  void setIndexBufferParameters(const BufferParameters& index_buffer);
 
-    std::uint32_t getIndexCount() const;
-    void setIndexCount(std::uint32_t index_count);
+  std::uint32_t getIndexCount() const;
+  void setIndexCount(std::uint32_t index_count);
 
-    const BufferParameters& getStagingBufferParameters() const;
-    BufferParameters& getStagingBufferParameters();
-    void setStagingBufferParameters(const BufferParameters& staging_buffer);
+  const BufferParameters& getStagingBufferParameters() const;
+  BufferParameters& getStagingBufferParameters();
+  void setStagingBufferParameters(const BufferParameters& staging_buffer);
 
-    const VkCommandPool& getVkCommandPool() const;
-    VkCommandPool& getVkCommandPool();
-    void setVkCommandPool(const VkCommandPool& vk_command_pool);
+  const VkCommandPool& getVkCommandPool() const;
+  VkCommandPool& getVkCommandPool();
+  void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
-    const std::vector<RenderingResourceParameters>& getRenderingResources()
+  const std::vector<RenderingResourceParameters>& getRenderingResources()
       const;
-    std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(
+  std::vector<RenderingResourceParameters>& getRenderingResources();
+  void setRenderingResources(
       const std::vector<RenderingResourceParameters>& rendering_resources);
 
-    // One per swapchain image, indexed by acquired image index rather than
-    // by rendering-resource slot. See the comment in createSemaphores() for
-    // why this can't just live in RenderingResourceParameters.
-    const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
-    std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
-    void setFinishedRenderingSemaphores(
+  // One per swapchain image, indexed by acquired image index rather than
+  // by rendering-resource slot. See the comment in createSemaphores() for
+  // why this can't just live in RenderingResourceParameters.
+  const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
+  std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
+  void setFinishedRenderingSemaphores(
       const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
-    VkRenderPass m_vk_render_pass;
-    BufferParameters m_uniform_buffer;
-    DescriptorSetParameters m_descriptor_set_parameters;
-    VkPipelineLayout m_vk_pipeline_layout;
-    VkPipeline m_vk_graphics_pipeline;
-    BufferParameters m_vertex_buffer;
-    BufferParameters m_index_buffer;
-    std::uint32_t m_index_count;
-    BufferParameters m_staging_buffer;
-    VkCommandPool m_vk_command_pool;
-    std::vector<RenderingResourceParameters> m_rendering_resources;
-    std::vector<VkSemaphore> m_finished_rendering_semaphores;
+  VkRenderPass m_vk_render_pass;
+  BufferParameters m_uniform_buffer;
+  DescriptorSetParameters m_descriptor_set_parameters;
+  VkPipelineLayout m_vk_pipeline_layout;
+  VkPipeline m_vk_graphics_pipeline;
+  BufferParameters m_vertex_buffer;
+  BufferParameters m_index_buffer;
+  std::uint32_t m_index_count;
+  BufferParameters m_staging_buffer;
+  VkCommandPool m_vk_command_pool;
+  std::vector<RenderingResourceParameters> m_rendering_resources;
+  std::vector<VkSemaphore> m_finished_rendering_semaphores;
 };
 
 // ************************************************************ //
@@ -142,64 +142,64 @@ private:
 // ************************************************************ //
 class Tutorial14 : public TutorialBase {
 public:
-    Tutorial14();
-    ~Tutorial14() override;
+  Tutorial14();
+  ~Tutorial14() override;
 
-    bool createRenderingResources();
-    bool createStagingBuffer();
-    bool createUniformBuffer();
-    bool createDescriptorSetLayout();
-    bool createDescriptorPool();
-    bool allocateDescriptorSet();
-    bool updateDescriptorSet();
-    bool createRenderPass();
-    bool createPipelineLayout();
-    bool createPipeline();
-    bool createVertexBuffer();
-    bool createIndexBuffer();
+  bool createRenderingResources();
+  bool createStagingBuffer();
+  bool createUniformBuffer();
+  bool createDescriptorSetLayout();
+  bool createDescriptorPool();
+  bool allocateDescriptorSet();
+  bool updateDescriptorSet();
+  bool createRenderPass();
+  bool createPipelineLayout();
+  bool createPipeline();
+  bool createVertexBuffer();
+  bool createIndexBuffer();
 
-    bool draw() override;
+  bool draw() override;
 
-    void onMouseButton(std::int32_t button,
+  void onMouseButton(std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
-    void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
+  void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
-    bool createCommandBuffers();
-    bool createCommandPool(
+  bool createCommandBuffers();
+  bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* pool);
-    bool allocateCommandBuffers(VkCommandPool pool,
+  bool allocateCommandBuffers(VkCommandPool pool,
       std::uint32_t count,
       VkCommandBuffer* command_buffers);
-    bool createSemaphores();
-    bool createFences();
-    bool createBuffer(VkBufferUsageFlags usage,
+  bool createSemaphores();
+  bool createFences();
+  bool createBuffer(VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& buffer);
-    bool copyBufferData(BufferParameters& destination,
+  bool copyBufferData(BufferParameters& destination,
       const void* data,
       std::uint32_t data_size,
       VkAccessFlags dst_access_mask,
       VkPipelineStageFlags dst_stage_mask);
-    Tutorial14UniformBufferData getUniformBufferData() const;
-    bool updateUniformBufferData();
-    Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-    createShaderModule(const char* filename);
-    const std::vector<Tutorial14VertexData>& getVertexData() const;
-    const std::vector<std::uint32_t>& getIndexData() const;
-    bool prepareFrame(VkCommandBuffer command_buffer,
+  Tutorial14UniformBufferData getUniformBufferData() const;
+  bool updateUniformBufferData();
+  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
+  createShaderModule(const char* filename);
+  const std::vector<Tutorial14VertexData>& getVertexData() const;
+  const std::vector<std::uint32_t>& getIndexData() const;
+  bool prepareFrame(VkCommandBuffer command_buffer,
       const ImageParameters& image_parameters,
       VkFramebuffer& framebuffer);
-    bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
-    void destroyBuffer(BufferParameters& buffer);
+  bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
+  void destroyBuffer(BufferParameters& buffer);
 
-    bool childOnWindowSizeChanged() override;
-    void childClear() override;
+  bool childOnWindowSizeChanged() override;
+  void childClear() override;
 
-    VulkanTutorial14Parameters m_vulkan_tutorial14_parameters;
-    OrbitCamera m_camera;
+  VulkanTutorial14Parameters m_vulkan_tutorial14_parameters;
+  OrbitCamera m_camera;
 };
 
 }  // namespace vulkan_graphix

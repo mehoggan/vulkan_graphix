@@ -6,12 +6,12 @@
 
 class ItemAntiAcid : public Item {
 public:
-    ItemAntiAcid();
-    ItemAntiAcid(std::int32_t id);
-    ~ItemAntiAcid() override;
-    ItemAntiAcid* getItemInstance() override;
-    bool causeEffectToTank(Tank* tank) override;
-    void playUseSFX() override;
+  ItemAntiAcid();
+  ItemAntiAcid(std::int32_t id);
+  ~ItemAntiAcid() override;
+  ItemAntiAcid* getItemInstance() override;
+  bool causeEffectToTank(Tank* tank) override;
+  void playUseSFX() override;
 };
 
 #endif

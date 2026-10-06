@@ -6,11 +6,11 @@
 
 class WeaponPadlock : public Weapon {
 public:
-    WeaponPadlock();
-    WeaponPadlock(std::int32_t id);
-    ~WeaponPadlock() override;
-    WeaponPadlock* getWeaponInstance() override;
-    void causeEffectToTank(float distance, Tank* tank) override;
+  WeaponPadlock();
+  WeaponPadlock(std::int32_t id);
+  ~WeaponPadlock() override;
+  WeaponPadlock* getWeaponInstance() override;
+  void causeEffectToTank(float distance, Tank* tank) override;
 };
 
 #endif

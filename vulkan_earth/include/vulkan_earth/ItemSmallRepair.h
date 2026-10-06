@@ -6,12 +6,12 @@
 
 class ItemSmallRepair : public Item {
 public:
-    ItemSmallRepair();
-    ItemSmallRepair(std::int32_t id);
-    ~ItemSmallRepair() override;
-    ItemSmallRepair* getItemInstance() override;
-    bool causeEffectToTank(Tank* tank) override;
-    void playUseSFX() override;
+  ItemSmallRepair();
+  ItemSmallRepair(std::int32_t id);
+  ~ItemSmallRepair() override;
+  ItemSmallRepair* getItemInstance() override;
+  bool causeEffectToTank(Tank* tank) override;
+  void playUseSFX() override;
 };
 
 #endif

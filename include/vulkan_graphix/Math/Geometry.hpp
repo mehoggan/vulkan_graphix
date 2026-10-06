@@ -16,67 +16,67 @@ enum class AngleMode { Degrees, Radians };
 
 template <typename T>
 bool pointsOfTriangleAreCollinear(const Triangle<T>& tri,
-  float epsilon = std::numeric_limits<float>::epsilon()) {
-    Vec3<T> edge1 = tri.p1() - tri.p0();
-    Vec3<T> edge2 = tri.p2() - tri.p0();
-    T area = glm::length(glm::cross(edge1, edge2));
-    return !(area > epsilon);
+    float epsilon = std::numeric_limits<float>::epsilon()) {
+  Vec3<T> edge1 = tri.p1() - tri.p0();
+  Vec3<T> edge2 = tri.p2() - tri.p0();
+  T area = glm::length(glm::cross(edge1, edge2));
+  return !(area > epsilon);
 }
 
 template <typename T>
 Vec3<T> centroidOfTriangle(const Triangle<T>& tri) {
-    return (tri.p0() + tri.p1() + tri.p2()) / T(3);
+  return (tri.p0() + tri.p1() + tri.p2()) / T(3);
 }
 
 template <typename T>
 Vec3<T> midpointOfLine(const Line<T>& line) {
-    return (line.p0() + line.p1()) / T(2);
+  return (line.p0() + line.p1()) / T(2);
 }
 
 template <typename T, AngleMode AM>
 class SphericalCoordinates {
 public:
-    SphericalCoordinates(T theta, T phi, T radius) :
-            m_theta(theta),
-            m_phi(phi),
-            m_radius(radius) {}
+  SphericalCoordinates(T theta, T phi, T radius) :
+      m_theta(theta),
+      m_phi(phi),
+      m_radius(radius) {}
 
-    T theta() const { return m_theta; }
-    T phi() const { return m_phi; }
-    T radius() const { return m_radius; }
-    AngleMode angleMode() const { return AM; }
+  T theta() const { return m_theta; }
+  T phi() const { return m_phi; }
+  T radius() const { return m_radius; }
+  AngleMode angleMode() const { return AM; }
 
 private:
-    T m_theta;
-    T m_phi;
-    T m_radius;
+  T m_theta;
+  T m_phi;
+  T m_radius;
 };
 
 template <typename T, AngleMode AM>
 Vec3<T> sphericalToCartesian(const SphericalCoordinates<T, AM>& coords) {
-    T theta = coords.theta();
-    T azimuth = coords.phi();
-    if constexpr (AM == AngleMode::Degrees) {
-        theta = glm::radians(theta);
-        azimuth = glm::radians(azimuth);
-    }
-    return Vec3<T>(coords.radius() * std::cos(azimuth) * std::cos(theta),
+  T theta = coords.theta();
+  T azimuth = coords.phi();
+  if constexpr (AM == AngleMode::Degrees) {
+    theta = glm::radians(theta);
+    azimuth = glm::radians(azimuth);
+  }
+  return Vec3<T>(coords.radius() * std::cos(azimuth) * std::cos(theta),
       coords.radius() * std::sin(azimuth),
       coords.radius() * std::cos(azimuth) * std::sin(theta));
 }
 
 template <typename T, AngleMode AM>
 SphericalCoordinates<T, AM> cartesianToSpherical(const Vec3<T>& point) {
-    T radius = glm::length(point);
-    T azimuth = std::asin(point.y / radius);
-    T theta = std::acos(point.x / (radius * std::cos(azimuth)));
+  T radius = glm::length(point);
+  T azimuth = std::asin(point.y / radius);
+  T theta = std::acos(point.x / (radius * std::cos(azimuth)));
 
-    if constexpr (AM == AngleMode::Degrees) {
-        theta = glm::degrees(theta);
-        azimuth = glm::degrees(azimuth);
-    }
+  if constexpr (AM == AngleMode::Degrees) {
+    theta = glm::degrees(theta);
+    azimuth = glm::degrees(azimuth);
+  }
 
-    return SphericalCoordinates<T, AM>(theta, azimuth, radius);
+  return SphericalCoordinates<T, AM>(theta, azimuth, radius);
 }
 
 }  // namespace vulkan_graphix::Math

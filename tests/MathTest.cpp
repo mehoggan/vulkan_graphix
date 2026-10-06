@@ -21,10 +21,10 @@
 using namespace vulkan_graphix::Math;
 
 TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
-    std::vector<std::int32_t> values = {0, 1, 2, 3, 4};
-    const std::size_t select_count = 3;
+  std::vector<std::int32_t> values = {0, 1, 2, 3, 4};
+  const std::size_t select_count = 3;
 
-    const std::vector<std::vector<std::int32_t>> expected = {
+  const std::vector<std::vector<std::int32_t>> expected = {
       {0, 1, 2},
       {0, 1, 3},
       {0, 1, 4},
@@ -35,418 +35,415 @@ TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
       {1, 2, 4},
       {1, 3, 4},
       {2, 3, 4},
-    };
+  };
 
-    std::size_t index = 0;
-    do {
-        ASSERT_LT(index, expected.size());
-        const std::vector<std::int32_t> combination(
-          values.begin(), values.begin() + select_count);
-        EXPECT_EQ(expected[index], combination);
-        ++index;
-    } while (
+  std::size_t index = 0;
+  do {
+    ASSERT_LT(index, expected.size());
+    const std::vector<std::int32_t> combination(
+        values.begin(), values.begin() + select_count);
+    EXPECT_EQ(expected[index], combination);
+    ++index;
+  } while (
       nextCombination<std::vector<std::int32_t>, 5>(values, select_count));
 
-    EXPECT_EQ(expected.size(), index);
+  EXPECT_EQ(expected.size(), index);
 }
 
 TEST(AxisAligned2DTest, DefaultIsInvalidUntilGrown) {
-    AxisAligned2D<float> bounds;
-    EXPECT_FALSE(bounds.isValid());
+  AxisAligned2D<float> bounds;
+  EXPECT_FALSE(bounds.isValid());
 
-    bounds.growToContain(Vec2<float>(1.0f, 2.0f));
-    bounds.growToContain(Vec2<float>(-1.0f, 5.0f));
+  bounds.growToContain(Vec2<float>(1.0f, 2.0f));
+  bounds.growToContain(Vec2<float>(-1.0f, 5.0f));
 
-    EXPECT_TRUE(bounds.isValid());
-    EXPECT_FLOAT_EQ(2.0f, bounds.width());
-    EXPECT_FLOAT_EQ(3.0f, bounds.height());
-    EXPECT_TRUE(bounds.contains(Vec2<float>(0.0f, 3.0f)));
-    EXPECT_FALSE(bounds.contains(Vec2<float>(10.0f, 10.0f)));
+  EXPECT_TRUE(bounds.isValid());
+  EXPECT_FLOAT_EQ(2.0f, bounds.width());
+  EXPECT_FLOAT_EQ(3.0f, bounds.height());
+  EXPECT_TRUE(bounds.contains(Vec2<float>(0.0f, 3.0f)));
+  EXPECT_FALSE(bounds.contains(Vec2<float>(10.0f, 10.0f)));
 }
 
 TEST(AxisAligned2DTest, ConstructFromLowerLeftWidthHeight) {
-    AxisAligned2D<float> bounds(Vec2<float>(0.0f, 0.0f), 4.0f, 2.0f);
-    EXPECT_FLOAT_EQ(4.0f, bounds.width());
-    EXPECT_FLOAT_EQ(2.0f, bounds.height());
-    EXPECT_EQ(Vec2<float>(2.0f, 1.0f), bounds.center());
+  AxisAligned2D<float> bounds(Vec2<float>(0.0f, 0.0f), 4.0f, 2.0f);
+  EXPECT_FLOAT_EQ(4.0f, bounds.width());
+  EXPECT_FLOAT_EQ(2.0f, bounds.height());
+  EXPECT_EQ(Vec2<float>(2.0f, 1.0f), bounds.center());
 }
 
 TEST(Plane3DTest, NormalAndDistanceFromPoint) {
-    // The plane z = 0, i.e. 0x + 0y + 1z + 0 = 0.
-    Plane3D<float> plane(0.0f, 0.0f, 1.0f, 0.0f);
-    EXPECT_TRUE(plane.isValid());
-    EXPECT_EQ(Vec3<float>(0.0f, 0.0f, 1.0f), plane.normal());
-    EXPECT_FLOAT_EQ(
+  // The plane z = 0, i.e. 0x + 0y + 1z + 0 = 0.
+  Plane3D<float> plane(0.0f, 0.0f, 1.0f, 0.0f);
+  EXPECT_TRUE(plane.isValid());
+  EXPECT_EQ(Vec3<float>(0.0f, 0.0f, 1.0f), plane.normal());
+  EXPECT_FLOAT_EQ(
       5.0f, plane.distanceFromPoint(Vec3<float>(1.0f, 2.0f, 5.0f)));
 }
 
 TEST(Plane3DTest, DefaultConstructedIsInvalid) {
-    Plane3D<float> plane;
-    EXPECT_FALSE(plane.isValid());
+  Plane3D<float> plane;
+  EXPECT_FALSE(plane.isValid());
 }
 
 TEST(GeometryTest, CentroidAndMidpoint) {
-    Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(3.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 3.0f, 0.0f));
-    EXPECT_EQ(Vec3<float>(1.0f, 1.0f, 0.0f), centroidOfTriangle(flat_tri));
+  EXPECT_EQ(Vec3<float>(1.0f, 1.0f, 0.0f), centroidOfTriangle(flat_tri));
 
-    Line<float> line(
+  Line<float> line(
       Vec3<float>(0.0f, 0.0f, 0.0f), Vec3<float>(2.0f, 4.0f, 6.0f));
-    EXPECT_EQ(Vec3<float>(1.0f, 2.0f, 3.0f), midpointOfLine(line));
+  EXPECT_EQ(Vec3<float>(1.0f, 2.0f, 3.0f), midpointOfLine(line));
 }
 
 TEST(GeometryTest, CollinearPointsAreDetected) {
-    Triangle<float> collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(2.0f, 0.0f, 0.0f));
-    EXPECT_TRUE(pointsOfTriangleAreCollinear(collinear));
+  EXPECT_TRUE(pointsOfTriangleAreCollinear(collinear));
 
-    Triangle<float> non_collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> non_collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 1.0f, 0.0f));
-    EXPECT_FALSE(pointsOfTriangleAreCollinear(non_collinear));
+  EXPECT_FALSE(pointsOfTriangleAreCollinear(non_collinear));
 }
 
 TEST(GeometryTest, SphericalCartesianRoundTrip) {
-    SphericalCoordinates<float, AngleMode::Degrees> coords(
-      45.0f, 30.0f, 10.0f);
-    Vec3<float> cartesian = sphericalToCartesian(coords);
-    auto round_tripped =
+  SphericalCoordinates<float, AngleMode::Degrees> coords(45.0f, 30.0f, 10.0f);
+  Vec3<float> cartesian = sphericalToCartesian(coords);
+  auto round_tripped =
       cartesianToSpherical<float, AngleMode::Degrees>(cartesian);
 
-    EXPECT_NEAR(coords.theta(), round_tripped.theta(), 1e-3f);
-    EXPECT_NEAR(coords.phi(), round_tripped.phi(), 1e-3f);
-    EXPECT_NEAR(coords.radius(), round_tripped.radius(), 1e-3f);
+  EXPECT_NEAR(coords.theta(), round_tripped.theta(), 1e-3f);
+  EXPECT_NEAR(coords.phi(), round_tripped.phi(), 1e-3f);
+  EXPECT_NEAR(coords.radius(), round_tripped.radius(), 1e-3f);
 }
 
 TEST(TessellationOpsTest, SubdivisionProducesMoreTrianglesThanBaseCase) {
-    Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    TessellatedTriangleData<float, std::uint32_t> base;
-    std::uint32_t base_index = 0;
-    tessellateTriangleBySubdivision(flat_tri, 0, base_index, base);
-    EXPECT_EQ(3u, base.points().size());
-    EXPECT_EQ(3u, base.indices().size());
+  TessellatedTriangleData<float, std::uint32_t> base;
+  std::uint32_t base_index = 0;
+  tessellateTriangleBySubdivision(flat_tri, 0, base_index, base);
+  EXPECT_EQ(3u, base.points().size());
+  EXPECT_EQ(3u, base.indices().size());
 
-    TessellatedTriangleData<float, std::uint32_t> subdivided;
-    std::uint32_t sub_index = 0;
-    tessellateTriangleBySubdivision(flat_tri, 2, sub_index, subdivided);
-    EXPECT_GT(subdivided.indices().size(), base.indices().size());
+  TessellatedTriangleData<float, std::uint32_t> subdivided;
+  std::uint32_t sub_index = 0;
+  tessellateTriangleBySubdivision(flat_tri, 2, sub_index, subdivided);
+  EXPECT_GT(subdivided.indices().size(), base.indices().size());
 }
 
 TEST(TessellationOpsTest, MidpointSubdivisionSharesEdgeVertices) {
-    Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 1.0f, 0.0f));
 
-    TessellatedTriangleData<float, std::uint32_t> once;
-    std::uint32_t index = 0;
-    tessellateTriangleByMidpointSubdivision(flat_tri, 1, index, once);
-    // 4 sub-triangles (3 corners + 3 edge midpoints, deduplicated).
-    EXPECT_EQ(6u, once.points().size());
-    EXPECT_EQ(12u, once.indices().size());
+  TessellatedTriangleData<float, std::uint32_t> once;
+  std::uint32_t index = 0;
+  tessellateTriangleByMidpointSubdivision(flat_tri, 1, index, once);
+  // 4 sub-triangles (3 corners + 3 edge midpoints, deduplicated).
+  EXPECT_EQ(6u, once.points().size());
+  EXPECT_EQ(12u, once.indices().size());
 }
 
 TEST(IcosahedronTest, HasTwelvePointsAndTwentyTriangles) {
-    Icosahedron<float, std::uint32_t> icosahedron(1.0f);
+  Icosahedron<float, std::uint32_t> icosahedron(1.0f);
 
-    EXPECT_FLOAT_EQ(1.0f, icosahedron.radius());
-    EXPECT_EQ(12u, icosahedron.points().size());
-    EXPECT_EQ(12u, icosahedron.normals().size());
-    EXPECT_EQ(60u, icosahedron.indices().size());  // 20 triangles * 3.
+  EXPECT_FLOAT_EQ(1.0f, icosahedron.radius());
+  EXPECT_EQ(12u, icosahedron.points().size());
+  EXPECT_EQ(12u, icosahedron.normals().size());
+  EXPECT_EQ(60u, icosahedron.indices().size());  // 20 triangles * 3.
 }
 
 TEST(SphereTest, UvSphereProducesExpectedVertexAndIndexCounts) {
-    const std::uint16_t theta_steps = 8;
-    const std::uint16_t phi_steps = 4;
-    Sphere<float, std::uint32_t> sphere(1.0f, theta_steps, phi_steps);
+  const std::uint16_t theta_steps = 8;
+  const std::uint16_t phi_steps = 4;
+  Sphere<float, std::uint32_t> sphere(1.0f, theta_steps, phi_steps);
 
-    EXPECT_FLOAT_EQ(1.0f, sphere.radius());
-    // Two poles + (phi_steps - 1) rings of theta_steps points each.
-    const std::size_t expected_points = 2u + (phi_steps - 1u) * theta_steps;
-    EXPECT_EQ(expected_points, sphere.points().size());
-    EXPECT_EQ(sphere.points().size(), sphere.normals().size());
-    // phi_steps rings of triangles, 2 triangles per quad except the pole
-    // rings which are single-triangle fans.
-    const std::size_t expected_triangles =
+  EXPECT_FLOAT_EQ(1.0f, sphere.radius());
+  // Two poles + (phi_steps - 1) rings of theta_steps points each.
+  const std::size_t expected_points = 2u + (phi_steps - 1u) * theta_steps;
+  EXPECT_EQ(expected_points, sphere.points().size());
+  EXPECT_EQ(sphere.points().size(), sphere.normals().size());
+  // phi_steps rings of triangles, 2 triangles per quad except the pole
+  // rings which are single-triangle fans.
+  const std::size_t expected_triangles =
       2u * theta_steps + (phi_steps - 2u) * 2u * theta_steps;
-    EXPECT_EQ(expected_triangles * 3u, sphere.indices().size());
+  EXPECT_EQ(expected_triangles * 3u, sphere.indices().size());
 }
 
 TEST(SphereTest, IcosphereSubdivisionGrowsPointCountWithLevelOfDetail) {
-    Sphere<float, std::uint32_t> base(1.0f, static_cast<std::uint8_t>(0));
-    Sphere<float, std::uint32_t> subdivided_once(
+  Sphere<float, std::uint32_t> base(1.0f, static_cast<std::uint8_t>(0));
+  Sphere<float, std::uint32_t> subdivided_once(
       1.0f, static_cast<std::uint8_t>(1));
-    Sphere<float, std::uint32_t> subdivided_twice(
+  Sphere<float, std::uint32_t> subdivided_twice(
       1.0f, static_cast<std::uint8_t>(2));
 
-    EXPECT_EQ(12u, base.points().size());
-    EXPECT_EQ(60u, base.indices().size());
+  EXPECT_EQ(12u, base.points().size());
+  EXPECT_EQ(60u, base.indices().size());
 
-    // Each level replaces every triangle with four (via its three edge
-    // midpoints, shared with the adjacent triangle across each edge), the
-    // standard icosphere vertex/triangle progression: V(n) = 10*4^n + 2,
-    // T(n) = 20*4^n.
-    EXPECT_EQ(42u, subdivided_once.points().size());
-    EXPECT_EQ(240u, subdivided_once.indices().size());  // 80 triangles * 3.
+  // Each level replaces every triangle with four (via its three edge
+  // midpoints, shared with the adjacent triangle across each edge), the
+  // standard icosphere vertex/triangle progression: V(n) = 10*4^n + 2,
+  // T(n) = 20*4^n.
+  EXPECT_EQ(42u, subdivided_once.points().size());
+  EXPECT_EQ(240u, subdivided_once.indices().size());  // 80 triangles * 3.
 
-    EXPECT_EQ(162u, subdivided_twice.points().size());
-    EXPECT_EQ(960u, subdivided_twice.indices().size());  // 320 triangles * 3.
+  EXPECT_EQ(162u, subdivided_twice.points().size());
+  EXPECT_EQ(960u, subdivided_twice.indices().size());  // 320 triangles * 3.
 
-    for (const Vec3<float>& normal : subdivided_twice.normals()) {
-        EXPECT_NEAR(1.0f, glm::length(normal), 1e-4f);
-    }
+  for (const Vec3<float>& normal : subdivided_twice.normals()) {
+    EXPECT_NEAR(1.0f, glm::length(normal), 1e-4f);
+  }
 }
 
 TEST(CurveSample3DTest, NormalizeTangentProducesUnitLength) {
-    CurveSample3D<float> sample(
+  CurveSample3D<float> sample(
       Vec3<float>(0.0f), Vec3<float>(3.0f, 0.0f, 0.0f), 0.5f);
-    sample.normalizeTangent();
-    EXPECT_FLOAT_EQ(1.0f, glm::length(sample.m_tangent));
+  sample.normalizeTangent();
+  EXPECT_FLOAT_EQ(1.0f, glm::length(sample.m_tangent));
 }
 
 TEST(CurveSample3DTest, NormalizeTangentLeavesZeroVectorAlone) {
-    CurveSample3D<float> sample(Vec3<float>(0.0f), Vec3<float>(0.0f), 0.5f);
-    sample.normalizeTangent();
-    EXPECT_EQ(Vec3<float>(0.0f), sample.m_tangent);
+  CurveSample3D<float> sample(Vec3<float>(0.0f), Vec3<float>(0.0f), 0.5f);
+  sample.normalizeTangent();
+  EXPECT_EQ(Vec3<float>(0.0f), sample.m_tangent);
 }
 
 TEST(CubicCurveTest, BezierEndpointsMatchControlPoints) {
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 1.0f, 0.0f);
-    Vec3<float> point2(2.0f, -1.0f, 0.0f);
-    Vec3<float> point3(3.0f, 0.0f, 0.0f);
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 1.0f, 0.0f);
+  Vec3<float> point2(2.0f, -1.0f, 0.0f);
+  Vec3<float> point3(3.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
-    Vec3<float> start = curve.evaluatePosition(0.0f);
-    Vec3<float> end_point = curve.evaluatePosition(1.0f);
+  Vec3<float> start = curve.evaluatePosition(0.0f);
+  Vec3<float> end_point = curve.evaluatePosition(1.0f);
 
-    EXPECT_NEAR(point0.x, start.x, 1e-4f);
-    EXPECT_NEAR(point0.y, start.y, 1e-4f);
-    EXPECT_NEAR(point3.x, end_point.x, 1e-4f);
-    EXPECT_NEAR(point3.y, end_point.y, 1e-4f);
+  EXPECT_NEAR(point0.x, start.x, 1e-4f);
+  EXPECT_NEAR(point0.y, start.y, 1e-4f);
+  EXPECT_NEAR(point3.x, end_point.x, 1e-4f);
+  EXPECT_NEAR(point3.y, end_point.y, 1e-4f);
 }
 
 TEST(CubicCurveTest, HermiteInterpolatesBetweenEndpoints) {
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 0.0f, 0.0f);
-    Vec3<float> tangent0(1.0f, 0.0f, 0.0f);
-    Vec3<float> tangent1(1.0f, 0.0f, 0.0f);
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 0.0f, 0.0f);
+  Vec3<float> tangent0(1.0f, 0.0f, 0.0f);
+  Vec3<float> tangent1(1.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(point0, point1, tangent0, tangent1);
+  CubicCurve<float> curve(point0, point1, tangent0, tangent1);
 
-    EXPECT_NEAR(0.0f, curve.evaluatePosition(0.0f).x, 1e-4f);
-    EXPECT_NEAR(1.0f, curve.evaluatePosition(1.0f).x, 1e-4f);
+  EXPECT_NEAR(0.0f, curve.evaluatePosition(0.0f).x, 1e-4f);
+  EXPECT_NEAR(1.0f, curve.evaluatePosition(1.0f).x, 1e-4f);
 }
 
 TEST(CubicCurveTest, SampleValuesSpanZeroToOne) {
-    CubicCurve<float> curve;
-    std::vector<float> samples = curve.computeSampleValues(5);
-    ASSERT_EQ(5u, samples.size());
-    EXPECT_FLOAT_EQ(0.0f, samples.front());
-    EXPECT_FLOAT_EQ(1.0f, samples.back());
+  CubicCurve<float> curve;
+  std::vector<float> samples = curve.computeSampleValues(5);
+  ASSERT_EQ(5u, samples.size());
+  EXPECT_FLOAT_EQ(0.0f, samples.front());
+  EXPECT_FLOAT_EQ(1.0f, samples.back());
 }
 
 TEST(CubicCurveTest, AdaptiveSamplingProducesSortedParameters) {
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 2.0f, 0.0f);
-    Vec3<float> point2(2.0f, -2.0f, 0.0f);
-    Vec3<float> point3(3.0f, 0.0f, 0.0f);
-    CubicCurve<float> curve(
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 2.0f, 0.0f);
+  Vec3<float> point2(2.0f, -2.0f, 0.0f);
+  Vec3<float> point3(3.0f, 0.0f, 0.0f);
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
-    std::vector<CurveSample3D<float>> samples =
+  std::vector<CurveSample3D<float>> samples =
       curve.computeSamplesAdaptive(0.05f);
 
-    ASSERT_GE(samples.size(), 2u);
-    for (std::size_t index = 1; index < samples.size(); ++index) {
-        EXPECT_LT(samples[index - 1].m_parameter, samples[index].m_parameter);
-    }
+  ASSERT_GE(samples.size(), 2u);
+  for (std::size_t index = 1; index < samples.size(); ++index) {
+    EXPECT_LT(samples[index - 1].m_parameter, samples[index].m_parameter);
+  }
 }
 
 TEST(CubicCurveTest, CatmullRomEndpointsMatchInnerControlPoints) {
-    // A Catmull-Rom segment interpolates between its two inner control
-    // points (point1, point2); the outer points (point0, point3) only
-    // shape the tangents at those ends.
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 0.0f, 0.0f);
-    Vec3<float> point2(2.0f, 0.0f, 0.0f);
-    Vec3<float> point3(3.0f, 0.0f, 0.0f);
+  // A Catmull-Rom segment interpolates between its two inner control
+  // points (point1, point2); the outer points (point0, point3) only
+  // shape the tangents at those ends.
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 0.0f, 0.0f);
+  Vec3<float> point2(2.0f, 0.0f, 0.0f);
+  Vec3<float> point3(3.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::CatmullRom, point0, point1, point2, point3);
 
-    Vec3<float> start = curve.evaluatePosition(0.0f);
-    Vec3<float> end_point = curve.evaluatePosition(1.0f);
-    Vec3<float> midpoint = curve.evaluatePosition(0.5f);
+  Vec3<float> start = curve.evaluatePosition(0.0f);
+  Vec3<float> end_point = curve.evaluatePosition(1.0f);
+  Vec3<float> midpoint = curve.evaluatePosition(0.5f);
 
-    EXPECT_NEAR(point1.x, start.x, 1e-4f);
-    EXPECT_NEAR(point2.x, end_point.x, 1e-4f);
-    EXPECT_NEAR(1.5f, midpoint.x, 1e-4f);
+  EXPECT_NEAR(point1.x, start.x, 1e-4f);
+  EXPECT_NEAR(point2.x, end_point.x, 1e-4f);
+  EXPECT_NEAR(1.5f, midpoint.x, 1e-4f);
 }
 
 TEST(CubicCurveTest, BezierTangentAtEndpointsMatchesControlPointDelta) {
-    // B'(0) = 3*(P1-P0), B'(1) = 3*(P3-P2) - the standard Bezier
-    // derivative formula.
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 0.0f, 0.0f);
-    Vec3<float> point2(2.0f, 0.0f, 0.0f);
-    Vec3<float> point3(4.0f, 0.0f, 0.0f);
+  // B'(0) = 3*(P1-P0), B'(1) = 3*(P3-P2) - the standard Bezier
+  // derivative formula.
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 0.0f, 0.0f);
+  Vec3<float> point2(2.0f, 0.0f, 0.0f);
+  Vec3<float> point3(4.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
-    Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
-    Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
+  Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
+  Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
 
-    EXPECT_NEAR(3.0f, start_tangent.x, 1e-4f);
-    EXPECT_NEAR(6.0f, end_tangent.x, 1e-4f);
+  EXPECT_NEAR(3.0f, start_tangent.x, 1e-4f);
+  EXPECT_NEAR(6.0f, end_tangent.x, 1e-4f);
 }
 
 TEST(CubicCurveTest, HermiteTangentsMatchSpecifiedTangents) {
-    // Hermite curves interpolate the tangent at each endpoint exactly -
-    // that's the whole point of specifying them explicitly.
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(5.0f, 0.0f, 0.0f);
-    Vec3<float> tangent0(2.0f, 1.0f, 0.0f);
-    Vec3<float> tangent1(3.0f, -1.0f, 0.0f);
+  // Hermite curves interpolate the tangent at each endpoint exactly -
+  // that's the whole point of specifying them explicitly.
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(5.0f, 0.0f, 0.0f);
+  Vec3<float> tangent0(2.0f, 1.0f, 0.0f);
+  Vec3<float> tangent1(3.0f, -1.0f, 0.0f);
 
-    CubicCurve<float> curve(point0, point1, tangent0, tangent1);
+  CubicCurve<float> curve(point0, point1, tangent0, tangent1);
 
-    Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
-    Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
+  Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
+  Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
 
-    EXPECT_NEAR(tangent0.x, start_tangent.x, 1e-4f);
-    EXPECT_NEAR(tangent0.y, start_tangent.y, 1e-4f);
-    EXPECT_NEAR(tangent1.x, end_tangent.x, 1e-4f);
-    EXPECT_NEAR(tangent1.y, end_tangent.y, 1e-4f);
+  EXPECT_NEAR(tangent0.x, start_tangent.x, 1e-4f);
+  EXPECT_NEAR(tangent0.y, start_tangent.y, 1e-4f);
+  EXPECT_NEAR(tangent1.x, end_tangent.x, 1e-4f);
+  EXPECT_NEAR(tangent1.y, end_tangent.y, 1e-4f);
 }
 
 TEST(CubicCurveTest, CatmullRomTangentAtInnerPointsMatchesFiniteDifference) {
-    // Regression test for the basis-matrix bug fixed alongside Tutorial10:
-    // a Catmull-Rom segment's tangent at its inner points (point1, point2)
-    // must equal the classic finite-difference formula - tangent(0) =
-    // (point2-point0)/2, tangent(1) = (point3-point1)/2 - using the outer
-    // control points as neighbors. The old, incorrect basis matrix broke
-    // this along with the endpoint-position property covered above.
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(2.0f, 0.0f, 0.0f);
-    Vec3<float> point2(4.0f, 0.0f, 0.0f);
-    Vec3<float> point3(6.0f, 0.0f, 0.0f);
+  // Regression test for the basis-matrix bug fixed alongside Tutorial10:
+  // a Catmull-Rom segment's tangent at its inner points (point1, point2)
+  // must equal the classic finite-difference formula - tangent(0) =
+  // (point2-point0)/2, tangent(1) = (point3-point1)/2 - using the outer
+  // control points as neighbors. The old, incorrect basis matrix broke
+  // this along with the endpoint-position property covered above.
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(2.0f, 0.0f, 0.0f);
+  Vec3<float> point2(4.0f, 0.0f, 0.0f);
+  Vec3<float> point3(6.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::CatmullRom, point0, point1, point2, point3);
 
-    Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
-    Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
+  Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
+  Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
 
-    EXPECT_NEAR(2.0f, start_tangent.x, 1e-4f);
-    EXPECT_NEAR(2.0f, end_tangent.x, 1e-4f);
+  EXPECT_NEAR(2.0f, start_tangent.x, 1e-4f);
+  EXPECT_NEAR(2.0f, end_tangent.x, 1e-4f);
 }
 
 TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
-    // Mirrors Tutorial10's actual technique: duplicate the first/last
-    // control point so a chain of overlapping 4-point Catmull-Rom
-    // segments passes through every point, then verify each segment's
-    // end lands exactly on the next segment's start (C0 continuity).
-    // The original basis-matrix bug broke exactly this property - every
-    // segment boundary had a visible gap - which is why Tutorial10's
-    // polyline looked tangled independent of its control-point layout.
-    std::vector<Vec3<float>> control_points = {Vec3<float>(-3.0f, 0.0f, 0.0f),
+  // Mirrors Tutorial10's actual technique: duplicate the first/last
+  // control point so a chain of overlapping 4-point Catmull-Rom
+  // segments passes through every point, then verify each segment's
+  // end lands exactly on the next segment's start (C0 continuity).
+  // The original basis-matrix bug broke exactly this property - every
+  // segment boundary had a visible gap - which is why Tutorial10's
+  // polyline looked tangled independent of its control-point layout.
+  std::vector<Vec3<float>> control_points = {Vec3<float>(-3.0f, 0.0f, 0.0f),
       Vec3<float>(-1.5f, 1.0f, 0.5f),
       Vec3<float>(0.0f, 0.2f, 1.0f),
       Vec3<float>(1.5f, -0.6f, 0.3f),
       Vec3<float>(3.0f, 0.4f, 0.0f)};
 
-    std::vector<Vec3<float>> working_points;
-    working_points.push_back(control_points.front());
-    for (const Vec3<float>& point : control_points) {
-        working_points.push_back(point);
-    }
-    working_points.push_back(control_points.back());
+  std::vector<Vec3<float>> working_points;
+  working_points.push_back(control_points.front());
+  for (const Vec3<float>& point : control_points) {
+    working_points.push_back(point);
+  }
+  working_points.push_back(control_points.back());
 
-    const std::size_t segment_count = working_points.size() - 3;
-    std::vector<CubicCurve<float>> segments;
-    segments.reserve(segment_count);
-    for (std::size_t segment = 0; segment < segment_count; ++segment) {
-        segments.emplace_back(CubicCurve<float>::Type::CatmullRom,
-          working_points[segment],
-          working_points[segment + 1],
-          working_points[segment + 2],
-          working_points[segment + 3]);
-    }
+  const std::size_t segment_count = working_points.size() - 3;
+  std::vector<CubicCurve<float>> segments;
+  segments.reserve(segment_count);
+  for (std::size_t segment = 0; segment < segment_count; ++segment) {
+    segments.emplace_back(CubicCurve<float>::Type::CatmullRom,
+        working_points[segment],
+        working_points[segment + 1],
+        working_points[segment + 2],
+        working_points[segment + 3]);
+  }
 
-    for (std::size_t segment = 0; segment + 1 < segments.size(); ++segment) {
-        Vec3<float> end_of_this = segments[segment].evaluatePosition(1.0f);
-        Vec3<float> start_of_next =
-          segments[segment + 1].evaluatePosition(0.0f);
-        EXPECT_NEAR(end_of_this.x, start_of_next.x, 1e-4f);
-        EXPECT_NEAR(end_of_this.y, start_of_next.y, 1e-4f);
-        EXPECT_NEAR(end_of_this.z, start_of_next.z, 1e-4f);
-    }
+  for (std::size_t segment = 0; segment + 1 < segments.size(); ++segment) {
+    Vec3<float> end_of_this = segments[segment].evaluatePosition(1.0f);
+    Vec3<float> start_of_next = segments[segment + 1].evaluatePosition(0.0f);
+    EXPECT_NEAR(end_of_this.x, start_of_next.x, 1e-4f);
+    EXPECT_NEAR(end_of_this.y, start_of_next.y, 1e-4f);
+    EXPECT_NEAR(end_of_this.z, start_of_next.z, 1e-4f);
+  }
 
-    // Every segment should also pass through its actual control point.
-    for (std::size_t index = 0; index < control_points.size(); ++index) {
-        Vec3<float> sampled = (index == 0)
-          ? segments.front().evaluatePosition(0.0f)
-          : segments[index - 1].evaluatePosition(1.0f);
-        EXPECT_NEAR(control_points[index].x, sampled.x, 1e-4f);
-        EXPECT_NEAR(control_points[index].y, sampled.y, 1e-4f);
-        EXPECT_NEAR(control_points[index].z, sampled.z, 1e-4f);
-    }
+  // Every segment should also pass through its actual control point.
+  for (std::size_t index = 0; index < control_points.size(); ++index) {
+    Vec3<float> sampled = (index == 0)
+        ? segments.front().evaluatePosition(0.0f)
+        : segments[index - 1].evaluatePosition(1.0f);
+    EXPECT_NEAR(control_points[index].x, sampled.x, 1e-4f);
+    EXPECT_NEAR(control_points[index].y, sampled.y, 1e-4f);
+    EXPECT_NEAR(control_points[index].z, sampled.z, 1e-4f);
+  }
 }
 
 TEST(CubicCurveTest, ComputeSamplesUniformProducesRequestedCountAndEndpoints) {
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 1.0f, 0.0f);
-    Vec3<float> point2(2.0f, -1.0f, 0.0f);
-    Vec3<float> point3(3.0f, 0.0f, 0.0f);
-    CubicCurve<float> curve(
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 1.0f, 0.0f);
+  Vec3<float> point2(2.0f, -1.0f, 0.0f);
+  Vec3<float> point3(3.0f, 0.0f, 0.0f);
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
-    std::vector<CurveSample3D<float>> samples = curve.computeSamplesUniform(5);
+  std::vector<CurveSample3D<float>> samples = curve.computeSamplesUniform(5);
 
-    ASSERT_EQ(5u, samples.size());
-    EXPECT_NEAR(point0.x, samples.front().m_position.x, 1e-4f);
-    EXPECT_NEAR(point3.x, samples.back().m_position.x, 1e-4f);
-    EXPECT_FLOAT_EQ(0.0f, samples.front().m_parameter);
-    EXPECT_FLOAT_EQ(1.0f, samples.back().m_parameter);
-    for (std::size_t index = 1; index < samples.size(); ++index) {
-        EXPECT_NEAR(0.25f,
-          samples[index].m_parameter - samples[index - 1].m_parameter,
-          1e-4f);
-    }
+  ASSERT_EQ(5u, samples.size());
+  EXPECT_NEAR(point0.x, samples.front().m_position.x, 1e-4f);
+  EXPECT_NEAR(point3.x, samples.back().m_position.x, 1e-4f);
+  EXPECT_FLOAT_EQ(0.0f, samples.front().m_parameter);
+  EXPECT_FLOAT_EQ(1.0f, samples.back().m_parameter);
+  for (std::size_t index = 1; index < samples.size(); ++index) {
+    EXPECT_NEAR(0.25f,
+        samples[index].m_parameter - samples[index - 1].m_parameter,
+        1e-4f);
+  }
 }
 
 TEST(CubicCurveTest, ComputeSampleValuesClampsCountBelowTwo) {
-    CubicCurve<float> curve;
-    std::vector<float> samples = curve.computeSampleValues(1);
-    ASSERT_EQ(2u, samples.size());
-    EXPECT_FLOAT_EQ(0.0f, samples.front());
-    EXPECT_FLOAT_EQ(1.0f, samples.back());
+  CubicCurve<float> curve;
+  std::vector<float> samples = curve.computeSampleValues(1);
+  ASSERT_EQ(2u, samples.size());
+  EXPECT_FLOAT_EQ(0.0f, samples.front());
+  EXPECT_FLOAT_EQ(1.0f, samples.back());
 }
 
 TEST(CubicCurveTest, TighterChordalToleranceProducesMoreSamples) {
-    // A single gentle hump, not a sharp zigzag: isOfGoodQuality() also
-    // forces subdivision when a sample's tangent deviates too far from
-    // the secant, independent of chordal_tolerance, so a sharply-curving
-    // segment can hit the same subdivision depth regardless of tolerance.
-    // This shape keeps the chordal-distance check the limiting factor.
-    Vec3<float> point0(0.0f, 0.0f, 0.0f);
-    Vec3<float> point1(1.0f, 1.0f, 0.0f);
-    Vec3<float> point2(3.0f, 1.0f, 0.0f);
-    Vec3<float> point3(4.0f, 0.0f, 0.0f);
-    CubicCurve<float> curve(
+  // A single gentle hump, not a sharp zigzag: isOfGoodQuality() also
+  // forces subdivision when a sample's tangent deviates too far from
+  // the secant, independent of chordal_tolerance, so a sharply-curving
+  // segment can hit the same subdivision depth regardless of tolerance.
+  // This shape keeps the chordal-distance check the limiting factor.
+  Vec3<float> point0(0.0f, 0.0f, 0.0f);
+  Vec3<float> point1(1.0f, 1.0f, 0.0f);
+  Vec3<float> point2(3.0f, 1.0f, 0.0f);
+  Vec3<float> point3(4.0f, 0.0f, 0.0f);
+  CubicCurve<float> curve(
       CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
-    const std::size_t loose_count = curve.computeSamplesAdaptive(0.1f).size();
-    const std::size_t tight_count =
-      curve.computeSamplesAdaptive(0.001f).size();
+  const std::size_t loose_count = curve.computeSamplesAdaptive(0.1f).size();
+  const std::size_t tight_count = curve.computeSamplesAdaptive(0.001f).size();
 
-    EXPECT_GT(tight_count, loose_count);
+  EXPECT_GT(tight_count, loose_count);
 }

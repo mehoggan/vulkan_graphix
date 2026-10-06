@@ -19,19 +19,20 @@ namespace vulkan_graphix::Ballistics {
 
 // Where a shell starts and how fast it's moving when it leaves the barrel.
 struct Launch {
-    Math::Vec3<float> m_origin;
-    Math::Vec3<float> m_velocity;
+  Math::Vec3<float> m_origin;
+  Math::Vec3<float> m_velocity;
 };
 
 // The point `distance` world units out along the barrel of turret_matrix:
 // translation - distance * (column 2).
 Math::Vec3<float> pointAlongBarrel(
-  const Math::Mat4<float>& turret_matrix, float distance);
+    const Math::Mat4<float>& turret_matrix, float distance);
 
 // A shell fired at `speed` from pointAlongBarrel(turret_matrix,
 // muzzle_distance), travelling down the barrel.
-Launch launchFromBarrel(
-  const Math::Mat4<float>& turret_matrix, float speed, float muzzle_distance);
+Launch launchFromBarrel(const Math::Mat4<float>& turret_matrix,
+    float speed,
+    float muzzle_distance);
 
 // Position `time` after launch under constant vertical gravity (negative
 // pulls down): x/z move linearly, y follows y0 + vy*t + g*t^2/2.

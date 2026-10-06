@@ -15,16 +15,16 @@ class Texture;
 // Renderer::loadFont().
 class Font {
 public:
-    Font(BitmapFont bitmap, std::shared_ptr<Texture> atlas);
+  Font(BitmapFont bitmap, std::shared_ptr<Texture> atlas);
 
-    const BitmapFont& bitmap() const;
-    const Texture& atlas() const;
-    // BitmapFont::textWidth().
-    float textWidth(const std::string& text) const;
+  const BitmapFont& bitmap() const;
+  const Texture& atlas() const;
+  // BitmapFont::textWidth().
+  float textWidth(const std::string& text) const;
 
 private:
-    BitmapFont m_bitmap;
-    std::shared_ptr<Texture> m_atlas;
+  BitmapFont m_bitmap;
+  std::shared_ptr<Texture> m_atlas;
 };
 
 }  // namespace vulkan_graphix::Render

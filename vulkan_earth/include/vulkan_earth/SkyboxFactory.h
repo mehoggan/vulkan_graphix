@@ -13,17 +13,17 @@ class RenderContext;
 
 class SkyboxFactory {
 public:
-    SkyboxFactory();
-    SkyboxFactory(std::int32_t size_of_box);
-    ~SkyboxFactory();
-    void draw(vulkan_graphix::Render::RenderContext& context);
+  SkyboxFactory();
+  SkyboxFactory(std::int32_t size_of_box);
+  ~SkyboxFactory();
+  void draw(vulkan_graphix::Render::RenderContext& context);
 
 private:
-    void buildGeometry();
+  void buildGeometry();
 
-    float m_size;
-    std::shared_ptr<vulkan_graphix::Render::Texture> m_texture;
-    vulkan_graphix::Render::UiMesh m_mesh;
+  float m_size;
+  std::shared_ptr<vulkan_graphix::Render::Texture> m_texture;
+  vulkan_graphix::Render::UiMesh m_mesh;
 };
 
 #endif  // VULKAN_EARTH_SKYBOXFACTORY_H

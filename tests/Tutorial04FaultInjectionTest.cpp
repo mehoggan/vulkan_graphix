@@ -20,68 +20,67 @@
 #include "IntegrationTestCommon.h"
 
 TEST(Tutorial04FaultInjectionTest,
-  EachCreateMethodFailsWhenItsFirstVulkanCallFails) {
-    if (!vulkan_graphix::test::hasDisplay()) {
-        GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
-                        "and X11 window)";
-    }
-    vulkan_graphix::os::Window window;
-    ASSERT_TRUE(window.create("fault-injection-tutorial04"));
+    EachCreateMethodFailsWhenItsFirstVulkanCallFails) {
+  if (!vulkan_graphix::test::hasDisplay()) {
+    GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
+                    "and X11 window)";
+  }
+  vulkan_graphix::os::Window window;
+  ASSERT_TRUE(window.create("fault-injection-tutorial04"));
 
-    vulkan_graphix::Tutorial04 tutorial;
-    ASSERT_TRUE(tutorial.prepareVulkan(window.getParameters()));
+  vulkan_graphix::Tutorial04 tutorial;
+  ASSERT_TRUE(tutorial.prepareVulkan(window.getParameters()));
 
-    // createRenderPass() fails when vkCreateRenderPass fails.
-    {
-        auto real_fn = vulkan_graphix::vkCreateRenderPass;
-        vulkan_graphix::vkCreateRenderPass = [](VkDevice,
-                                               const VkRenderPassCreateInfo*,
+  // createRenderPass() fails when vkCreateRenderPass fails.
+  {
+    auto real_fn = vulkan_graphix::vkCreateRenderPass;
+    vulkan_graphix::vkCreateRenderPass = [](VkDevice,
+                                             const VkRenderPassCreateInfo*,
+                                             const VkAllocationCallbacks*,
+                                             VkRenderPass*) -> VkResult {
+      return VK_ERROR_INITIALIZATION_FAILED;
+    };
+    EXPECT_FALSE(tutorial.createRenderPass());
+    vulkan_graphix::vkCreateRenderPass = real_fn;
+  }
+  ASSERT_TRUE(tutorial.createRenderPass());
+
+  // createPipeline() fails when its first shader module fails to build.
+  {
+    auto real_fn = vulkan_graphix::vkCreateShaderModule;
+    vulkan_graphix::vkCreateShaderModule = [](VkDevice,
+                                               const VkShaderModuleCreateInfo*,
                                                const VkAllocationCallbacks*,
-                                               VkRenderPass*) -> VkResult {
-            return VK_ERROR_INITIALIZATION_FAILED;
-        };
-        EXPECT_FALSE(tutorial.createRenderPass());
-        vulkan_graphix::vkCreateRenderPass = real_fn;
-    }
-    ASSERT_TRUE(tutorial.createRenderPass());
+                                               VkShaderModule*) -> VkResult {
+      return VK_ERROR_INITIALIZATION_FAILED;
+    };
+    EXPECT_FALSE(tutorial.createPipeline());
+    vulkan_graphix::vkCreateShaderModule = real_fn;
+  }
 
-    // createPipeline() fails when its first shader module fails to build.
-    {
-        auto real_fn = vulkan_graphix::vkCreateShaderModule;
-        vulkan_graphix::vkCreateShaderModule =
-          [](VkDevice,
-            const VkShaderModuleCreateInfo*,
-            const VkAllocationCallbacks*,
-            VkShaderModule*) -> VkResult {
-            return VK_ERROR_INITIALIZATION_FAILED;
-        };
-        EXPECT_FALSE(tutorial.createPipeline());
-        vulkan_graphix::vkCreateShaderModule = real_fn;
-    }
+  // createVertexBuffer() fails when vkCreateBuffer fails.
+  {
+    auto real_fn = vulkan_graphix::vkCreateBuffer;
+    vulkan_graphix::vkCreateBuffer = [](VkDevice,
+                                         const VkBufferCreateInfo*,
+                                         const VkAllocationCallbacks*,
+                                         VkBuffer*) -> VkResult {
+      return VK_ERROR_INITIALIZATION_FAILED;
+    };
+    EXPECT_FALSE(tutorial.createVertexBuffer());
+    vulkan_graphix::vkCreateBuffer = real_fn;
+  }
 
-    // createVertexBuffer() fails when vkCreateBuffer fails.
-    {
-        auto real_fn = vulkan_graphix::vkCreateBuffer;
-        vulkan_graphix::vkCreateBuffer = [](VkDevice,
-                                           const VkBufferCreateInfo*,
-                                           const VkAllocationCallbacks*,
-                                           VkBuffer*) -> VkResult {
-            return VK_ERROR_INITIALIZATION_FAILED;
-        };
-        EXPECT_FALSE(tutorial.createVertexBuffer());
-        vulkan_graphix::vkCreateBuffer = real_fn;
-    }
-
-    // createRenderingResources() fails when its command pool fails.
-    {
-        auto real_fn = vulkan_graphix::vkCreateCommandPool;
-        vulkan_graphix::vkCreateCommandPool = [](VkDevice,
-                                                const VkCommandPoolCreateInfo*,
-                                                const VkAllocationCallbacks*,
-                                                VkCommandPool*) -> VkResult {
-            return VK_ERROR_INITIALIZATION_FAILED;
-        };
-        EXPECT_FALSE(tutorial.createRenderingResources());
-        vulkan_graphix::vkCreateCommandPool = real_fn;
-    }
+  // createRenderingResources() fails when its command pool fails.
+  {
+    auto real_fn = vulkan_graphix::vkCreateCommandPool;
+    vulkan_graphix::vkCreateCommandPool = [](VkDevice,
+                                              const VkCommandPoolCreateInfo*,
+                                              const VkAllocationCallbacks*,
+                                              VkCommandPool*) -> VkResult {
+      return VK_ERROR_INITIALIZATION_FAILED;
+    };
+    EXPECT_FALSE(tutorial.createRenderingResources());
+    vulkan_graphix::vkCreateCommandPool = real_fn;
+  }
 }

@@ -18,11 +18,11 @@
 #include "IntegrationTestCommon.h"
 
 TEST(Tutorial01IntegrationTest, PrepareVulkanSucceeds) {
-    if (!vulkan_graphix::test::hasDisplay()) {
-        GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver, "
-                        "no window required for Tutorial01)";
-    }
+  if (!vulkan_graphix::test::hasDisplay()) {
+    GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver, "
+                    "no window required for Tutorial01)";
+  }
 
-    vulkan_graphix::Tutorial01 tutorial(false);
-    EXPECT_TRUE(tutorial.prepareVulkan());
+  vulkan_graphix::Tutorial01 tutorial(false);
+  EXPECT_TRUE(tutorial.prepareVulkan());
 }

@@ -16,29 +16,29 @@ using vulkan_graphix::test::bringUpThroughDeviceQueue;
 using vulkan_graphix::test::TestableTutorialBase;
 
 TEST(TutorialBaseFaultInjectionSwapChainTest,
-  CreateSwapChainImageViewsFailsWhenCreateImageViewFails) {
-    if (!vulkan_graphix::test::hasDisplay()) {
-        GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
-                        "and X11 window)";
-    }
-    vulkan_graphix::os::Window window;
-    ASSERT_TRUE(window.create("fault-injection-image-views"));
+    CreateSwapChainImageViewsFailsWhenCreateImageViewFails) {
+  if (!vulkan_graphix::test::hasDisplay()) {
+    GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
+                    "and X11 window)";
+  }
+  vulkan_graphix::os::Window window;
+  ASSERT_TRUE(window.create("fault-injection-image-views"));
 
-    TestableTutorialBase tutorial;
-    ASSERT_TRUE(bringUpThroughDeviceQueue(tutorial, window.getParameters()));
-    // Runs createSwapChainImageViews() as its last step, populating
-    // m_vulkan_common_parameters's image list for real first.
-    ASSERT_TRUE(tutorial.createSwapChain());
+  TestableTutorialBase tutorial;
+  ASSERT_TRUE(bringUpThroughDeviceQueue(tutorial, window.getParameters()));
+  // Runs createSwapChainImageViews() as its last step, populating
+  // m_vulkan_common_parameters's image list for real first.
+  ASSERT_TRUE(tutorial.createSwapChain());
 
-    auto real_fn = vulkan_graphix::vkCreateImageView;
-    vulkan_graphix::vkCreateImageView = [](VkDevice,
+  auto real_fn = vulkan_graphix::vkCreateImageView;
+  vulkan_graphix::vkCreateImageView = [](VkDevice,
                                           const VkImageViewCreateInfo*,
                                           const VkAllocationCallbacks*,
                                           VkImageView*) -> VkResult {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    };
+    return VK_ERROR_INITIALIZATION_FAILED;
+  };
 
-    EXPECT_FALSE(tutorial.createSwapChainImageViews());
+  EXPECT_FALSE(tutorial.createSwapChainImageViews());
 
-    vulkan_graphix::vkCreateImageView = real_fn;
+  vulkan_graphix::vkCreateImageView = real_fn;
 }

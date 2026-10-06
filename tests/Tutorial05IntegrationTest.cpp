@@ -13,32 +13,30 @@
 #include "IntegrationTestCommon.h"
 
 TEST(Tutorial05IntegrationTest, FullLifecycle) {
-    if (!vulkan_graphix::test::hasDisplay()) {
-        GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
-                        "and X11 window)";
-    }
+  if (!vulkan_graphix::test::hasDisplay()) {
+    GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
+                    "and X11 window)";
+  }
 
-    vulkan_graphix::os::Window window;
-    ASSERT_TRUE(window.create("integration-05"));
+  vulkan_graphix::os::Window window;
+  ASSERT_TRUE(window.create("integration-05"));
 
-    auto tutorial = std::make_shared<vulkan_graphix::Tutorial05>();
-    ASSERT_TRUE(tutorial->prepareVulkan(window.getParameters()));
-    ASSERT_TRUE(tutorial->createRenderingResources());
-    ASSERT_TRUE(tutorial->createRenderPass());
-    ASSERT_TRUE(tutorial->createPipeline());
-    ASSERT_TRUE(tutorial->createVertexBuffer());
-    ASSERT_TRUE(tutorial->createStagingBuffer());
-    ASSERT_TRUE(tutorial->copyVertexData());
+  auto tutorial = std::make_shared<vulkan_graphix::Tutorial05>();
+  ASSERT_TRUE(tutorial->prepareVulkan(window.getParameters()));
+  ASSERT_TRUE(tutorial->createRenderingResources());
+  ASSERT_TRUE(tutorial->createRenderPass());
+  ASSERT_TRUE(tutorial->createPipeline());
+  ASSERT_TRUE(tutorial->createVertexBuffer());
+  ASSERT_TRUE(tutorial->createStagingBuffer());
+  ASSERT_TRUE(tutorial->copyVertexData());
 
-    for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-      ++i) {
-        EXPECT_TRUE(tutorial->draw());
-    }
+  for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations; ++i) {
+    EXPECT_TRUE(tutorial->draw());
+  }
 
-    EXPECT_TRUE(tutorial->onWindowSizeChanged());
+  EXPECT_TRUE(tutorial->onWindowSizeChanged());
 
-    for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-      ++i) {
-        EXPECT_TRUE(tutorial->draw());
-    }
+  for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations; ++i) {
+    EXPECT_TRUE(tutorial->draw());
+  }
 }

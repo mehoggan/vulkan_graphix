@@ -6,10 +6,10 @@
 
 class WeaponDefault : public Weapon {
 public:
-    WeaponDefault();
-    WeaponDefault(std::int32_t id);
-    ~WeaponDefault() override;
-    WeaponDefault* getWeaponInstance() override;
+  WeaponDefault();
+  WeaponDefault(std::int32_t id);
+  ~WeaponDefault() override;
+  WeaponDefault* getWeaponInstance() override;
 };
 
 #endif

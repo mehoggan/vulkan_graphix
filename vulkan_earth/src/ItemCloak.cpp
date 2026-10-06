@@ -4,17 +4,17 @@
 
 ItemCloak::ItemCloak() = default;
 ItemCloak::ItemCloak(std::int32_t id) {
-    m_uniqueidentifier = id;
-    loadSpec(vulkan_graphix::GameCatalog::item(
+  m_uniqueidentifier = id;
+  loadSpec(vulkan_graphix::GameCatalog::item(
       vulkan_graphix::GameCatalog::ItemKind::Cloak));
 }
 ItemCloak::~ItemCloak() = default;
 
 ItemCloak* ItemCloak::getItemInstance() {
-    return new ItemCloak(m_uniqueidentifier);
+  return new ItemCloak(m_uniqueidentifier);
 }
 
 bool ItemCloak::causeEffectToTank(Tank* tank) {
-    tank->setDurationCloak(m_special_num + 1);
-    return true;
+  tank->setDurationCloak(m_special_num + 1);
+  return true;
 }
