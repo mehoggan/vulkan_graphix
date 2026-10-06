@@ -6,11 +6,11 @@
 
 class WeaponNuke : public Weapon {
 public:
-    WeaponNuke();
-    WeaponNuke(std::int32_t id);
-    ~WeaponNuke() override;
-    WeaponNuke* getWeaponInstance() override;
-    void playExplosionSFX() override;
+  WeaponNuke();
+  WeaponNuke(std::int32_t id);
+  ~WeaponNuke() override;
+  WeaponNuke* getWeaponInstance() override;
+  void playExplosionSFX() override;
 };
 
 #endif

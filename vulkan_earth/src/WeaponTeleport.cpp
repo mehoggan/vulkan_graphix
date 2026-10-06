@@ -7,14 +7,14 @@ extern void playSFX(std::int32_t sfx);
 
 WeaponTeleport::WeaponTeleport() = default;
 WeaponTeleport::WeaponTeleport(std::int32_t id) {
-    m_uniqueidentifier = id;
-    loadSpec(vulkan_graphix::GameCatalog::weapon(
+  m_uniqueidentifier = id;
+  loadSpec(vulkan_graphix::GameCatalog::weapon(
       vulkan_graphix::GameCatalog::WeaponKind::Teleport));
 }
 WeaponTeleport::~WeaponTeleport() = default;
 
 WeaponTeleport* WeaponTeleport::getWeaponInstance() {
-    return new WeaponTeleport(m_uniqueidentifier);
+  return new WeaponTeleport(m_uniqueidentifier);
 }
 void WeaponTeleport::causeEffectToTank(float distance, Tank* tank) {}
 

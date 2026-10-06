@@ -6,10 +6,10 @@
 
 class WeaponAtom : public Weapon {
 public:
-    WeaponAtom();
-    WeaponAtom(std::int32_t id);
-    ~WeaponAtom() override;
-    WeaponAtom* getWeaponInstance() override;
+  WeaponAtom();
+  WeaponAtom(std::int32_t id);
+  ~WeaponAtom() override;
+  WeaponAtom* getWeaponInstance() override;
 };
 
 #endif

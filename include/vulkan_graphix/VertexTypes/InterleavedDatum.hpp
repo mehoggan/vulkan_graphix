@@ -12,39 +12,39 @@ namespace vulkan_graphix::VertexTypes {
 template <typename... Ts>
 struct InterleavedDatum {
 public:
-    static constexpr std::size_t attribute_count = sizeof...(Ts);
+  static constexpr std::size_t attribute_count = sizeof...(Ts);
 
-    InterleavedDatum() = default;
+  InterleavedDatum() = default;
 
-    explicit InterleavedDatum(const Ts&... values) :
-            m_values(values...) {}
+  explicit InterleavedDatum(const Ts&... values) :
+      m_values(values...) {}
 
-    template <std::size_t Index>
-    auto& get() {
-        return std::get<Index>(m_values);
-    }
+  template <std::size_t Index>
+  auto& get() {
+    return std::get<Index>(m_values);
+  }
 
-    template <std::size_t Index>
-    const auto& get() const {
-        return std::get<Index>(m_values);
-    }
+  template <std::size_t Index>
+  const auto& get() const {
+    return std::get<Index>(m_values);
+  }
 
 private:
-    std::tuple<Ts...> m_values;
+  std::tuple<Ts...> m_values;
 
-    friend bool operator==(
+  friend bool operator==(
       const InterleavedDatum& lhs, const InterleavedDatum& rhs) {
-        return lhs.m_values == rhs.m_values;
-    }
+    return lhs.m_values == rhs.m_values;
+  }
 
-    friend bool operator!=(
+  friend bool operator!=(
       const InterleavedDatum& lhs, const InterleavedDatum& rhs) {
-        return !(lhs == rhs);
-    }
+    return !(lhs == rhs);
+  }
 
-    friend void swap(InterleavedDatum& lhs, InterleavedDatum& rhs) {
-        std::swap(lhs.m_values, rhs.m_values);
-    }
+  friend void swap(InterleavedDatum& lhs, InterleavedDatum& rhs) {
+    std::swap(lhs.m_values, rhs.m_values);
+  }
 };
 
 }  // namespace vulkan_graphix::VertexTypes

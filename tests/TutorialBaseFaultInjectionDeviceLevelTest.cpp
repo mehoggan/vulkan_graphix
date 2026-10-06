@@ -23,34 +23,34 @@ PFN_vkGetDeviceProcAddr g_real_get_device_proc_addr = nullptr;
 const char* g_poisoned_device_function_name = nullptr;
 
 PFN_vkVoidFunction VKAPI_CALL fakeGetDeviceProcAddr(
-  VkDevice device, const char* name) {
-    if ((g_poisoned_device_function_name != nullptr) &&
+    VkDevice device, const char* name) {
+  if ((g_poisoned_device_function_name != nullptr) &&
       (std::strcmp(name, g_poisoned_device_function_name) == 0)) {
-        return nullptr;
-    }
-    return g_real_get_device_proc_addr(device, name);
+    return nullptr;
+  }
+  return g_real_get_device_proc_addr(device, name);
 }
 
 }  // namespace
 
 TEST(TutorialBaseFaultInjectionDeviceLevelTest,
-  LoadDeviceLevelEntryPointsFailsWhenAFunctionIsMissing) {
-    if (!vulkan_graphix::test::hasDisplay()) {
-        GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
-                        "and X11 window)";
-    }
-    vulkan_graphix::os::Window window;
-    ASSERT_TRUE(window.create("fault-injection-device-level-entry-points"));
+    LoadDeviceLevelEntryPointsFailsWhenAFunctionIsMissing) {
+  if (!vulkan_graphix::test::hasDisplay()) {
+    GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
+                    "and X11 window)";
+  }
+  vulkan_graphix::os::Window window;
+  ASSERT_TRUE(window.create("fault-injection-device-level-entry-points"));
 
-    TestableTutorialBase tutorial;
-    ASSERT_TRUE(bringUpThroughDevice(tutorial, window.getParameters()));
+  TestableTutorialBase tutorial;
+  ASSERT_TRUE(bringUpThroughDevice(tutorial, window.getParameters()));
 
-    g_real_get_device_proc_addr = vulkan_graphix::vkGetDeviceProcAddr;
-    g_poisoned_device_function_name = "vkGetDeviceQueue";
-    vulkan_graphix::vkGetDeviceProcAddr = &fakeGetDeviceProcAddr;
+  g_real_get_device_proc_addr = vulkan_graphix::vkGetDeviceProcAddr;
+  g_poisoned_device_function_name = "vkGetDeviceQueue";
+  vulkan_graphix::vkGetDeviceProcAddr = &fakeGetDeviceProcAddr;
 
-    EXPECT_FALSE(tutorial.loadDeviceLevelEntryPoints());
+  EXPECT_FALSE(tutorial.loadDeviceLevelEntryPoints());
 
-    vulkan_graphix::vkGetDeviceProcAddr = g_real_get_device_proc_addr;
-    g_poisoned_device_function_name = nullptr;
+  vulkan_graphix::vkGetDeviceProcAddr = g_real_get_device_proc_addr;
+  g_poisoned_device_function_name = nullptr;
 }

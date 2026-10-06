@@ -19,14 +19,15 @@
 
 Language:        Cpp
 # BasedOnStyle:  Google
-AccessModifierOffset: -4
+AccessModifierOffset: -2
 # Wrapped parameters/arguments don't line up under the open bracket; each
-# continuation line is just indented two spaces past the line it continues.
+# continuation line is just indented four spaces past the line it continues
+# (twice the two-space block indent, so it stands apart from the body).
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true
-# Wrapped binary/ternary operands get the same plain two-space continuation
+# Wrapped binary/ternary operands get the same plain four-space continuation
 # indent instead of lining up under the first operand.
 AlignOperands:   DontAlign
 AlignTrailingComments: true
@@ -65,8 +66,8 @@ CommentPragmas:  '^ IWYU pragma:'
 # one initializer per line, two indents in, each followed by its ','.
 BreakConstructorInitializers: AfterColon
 PackConstructorInitializers: Never
-ConstructorInitializerIndentWidth: 8
-ContinuationIndentWidth: 2
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat:   false
@@ -87,7 +88,7 @@ IncludeCategories:
     Priority:        3
 IncludeIsMainRegex: '([-_](test|unittest))?$'
 IndentCaseLabels: true
-IndentWidth:     4
+IndentWidth:     2
 IndentWrappedFunctionNames: false
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: true
@@ -125,14 +126,15 @@ TabWidth:        4
 UseTab:          Never
 ---
 Language:        ObjC
-AccessModifierOffset: -4
+AccessModifierOffset: -2
 # Wrapped parameters/arguments don't line up under the open bracket; each
-# continuation line is just indented two spaces past the line it continues.
+# continuation line is just indented four spaces past the line it continues
+# (twice the two-space block indent, so it stands apart from the body).
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true
-# Wrapped binary/ternary operands get the same plain two-space continuation
+# Wrapped binary/ternary operands get the same plain four-space continuation
 # indent instead of lining up under the first operand.
 AlignOperands:   DontAlign
 AlignTrailingComments: true
@@ -171,8 +173,8 @@ CommentPragmas:  '^ IWYU pragma:'
 # one initializer per line, two indents in, each followed by its ','.
 BreakConstructorInitializers: AfterColon
 PackConstructorInitializers: Never
-ConstructorInitializerIndentWidth: 8
-ContinuationIndentWidth: 2
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat:   false
@@ -193,7 +195,7 @@ IncludeCategories:
     Priority:        3
 IncludeIsMainRegex: '([-_](test|unittest))?$'
 IndentCaseLabels: true
-IndentWidth:     4
+IndentWidth:     2
 IndentWrappedFunctionNames: false
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: true

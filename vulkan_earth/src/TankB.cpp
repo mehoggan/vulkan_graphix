@@ -13,56 +13,56 @@ const std::int32_t tank_b_speed = 50;
 
 TankB::TankB() = default;
 TankB::TankB(float /*x*/, float /*y*/, float /*z*/) {
-    initBody();
-    initHead();
-    initTurret();
-    initWheel();
-    initDuration();
+  initBody();
+  initHead();
+  initTurret();
+  initWheel();
+  initDuration();
 
-    // The Hellfire's part offsets and scale live in libvulkan_graphix's
-    // HellfireTank, shared with the tutorials that draw it.
-    const vulkan_graphix::TankPlacement::PartOffsets& offsets =
+  // The Hellfire's part offsets and scale live in libvulkan_graphix's
+  // HellfireTank, shared with the tutorials that draw it.
+  const vulkan_graphix::TankPlacement::PartOffsets& offsets =
       vulkan_graphix::HellfireTank::getPartOffsets();
-    for (std::int32_t i = 0; i < 3; i++) {
-        m_turret_offset[i] = offsets.m_turret[i];
-        m_head_offset[i] = offsets.m_head[i];
-        m_body_offset[i] = offsets.m_body[i];
-    }
+  for (std::int32_t i = 0; i < 3; i++) {
+    m_turret_offset[i] = offsets.m_turret[i];
+    m_head_offset[i] = offsets.m_head[i];
+    m_body_offset[i] = offsets.m_body[i];
+  }
 
-    for (std::int32_t i = 0; i < 3; i++) {
-        m_body_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
-        m_head_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
-        m_turret_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
-        m_wheel_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
-    }
+  for (std::int32_t i = 0; i < 3; i++) {
+    m_body_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+    m_head_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+    m_turret_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+    m_wheel_scale[i] = vulkan_graphix::HellfireTank::c_part_scale;
+  }
 
-    m_power = tank_b_power;
-    m_armor = tank_b_armor;
-    m_speed = tank_b_speed;
-    m_current_power = 10;
-    m_previous_power = 1000;
-    m_previous_angle = 1;
-    m_hp = m_armor * 100;
+  m_power = tank_b_power;
+  m_armor = tank_b_armor;
+  m_speed = tank_b_speed;
+  m_current_power = 10;
+  m_previous_power = 1000;
+  m_previous_angle = 1;
+  m_hp = m_armor * 100;
 
-    m_vbo_shader_head = new VBOShaderLibrary();
-    m_vbo_shader_body = new VBOShaderLibrary();
-    m_vbo_shader_turret = new VBOShaderLibrary();
+  m_vbo_shader_head = new VBOShaderLibrary();
+  m_vbo_shader_body = new VBOShaderLibrary();
+  m_vbo_shader_turret = new VBOShaderLibrary();
 
-    m_vbo_shader_turret->loadClientData("./Hellfire/Hellfire_Turret.ogl");
-    m_vbo_shader_body->loadClientData("./Hellfire/Hellfire_Body.ogl");
-    m_vbo_shader_head->loadClientData("./Hellfire/Hellfire_Head.ogl");
+  m_vbo_shader_turret->loadClientData("./Hellfire/Hellfire_Turret.ogl");
+  m_vbo_shader_body->loadClientData("./Hellfire/Hellfire_Body.ogl");
+  m_vbo_shader_head->loadClientData("./Hellfire/Hellfire_Head.ogl");
 
-    m_vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
-    m_vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
-    m_vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
 
-    m_projectile_land_pos[0] = 9999999;
-    m_projectile_land_pos[1] = 9999999;
+  m_projectile_land_pos[0] = 9999999;
+  m_projectile_land_pos[1] = 9999999;
 }
 TankB::~TankB() {
-    delete m_vbo_shader_head;
-    delete m_vbo_shader_body;
-    delete m_vbo_shader_turret;
+  delete m_vbo_shader_head;
+  delete m_vbo_shader_body;
+  delete m_vbo_shader_turret;
 }
 
 // GETTERS

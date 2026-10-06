@@ -14,23 +14,23 @@ namespace vulkan_graphix::VertexTypes {
 template <typename... Ts>
 struct InterleavedData {
 public:
-    using datum_type = InterleavedDatum<Ts...>;
-    using collection_type = std::vector<datum_type>;
-    using traits = AttributeTraits<Ts...>;
+  using datum_type = InterleavedDatum<Ts...>;
+  using collection_type = std::vector<datum_type>;
+  using traits = AttributeTraits<Ts...>;
 
-    InterleavedData() = default;
+  InterleavedData() = default;
 
-    explicit InterleavedData(collection_type data) :
-            m_data(std::move(data)) {}
+  explicit InterleavedData(collection_type data) :
+      m_data(std::move(data)) {}
 
-    const collection_type& getData() const { return m_data; }
+  const collection_type& getData() const { return m_data; }
 
-    std::size_t getAttributeCount() const { return m_data.size(); }
+  std::size_t getAttributeCount() const { return m_data.size(); }
 
-    std::size_t getByteCount() const { return traits::stride * m_data.size(); }
+  std::size_t getByteCount() const { return traits::stride * m_data.size(); }
 
 private:
-    collection_type m_data;
+  collection_type m_data;
 };
 
 }  // namespace vulkan_graphix::VertexTypes

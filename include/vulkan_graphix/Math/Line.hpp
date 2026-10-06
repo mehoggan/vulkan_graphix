@@ -9,16 +9,16 @@ namespace vulkan_graphix::Math {
 template <typename T>
 class Line {
 public:
-    Line(const Vec3<T>& point0, const Vec3<T>& point1) :
-            m_point0(point0),
-            m_point1(point1) {}
+  Line(const Vec3<T>& point0, const Vec3<T>& point1) :
+      m_point0(point0),
+      m_point1(point1) {}
 
-    const Vec3<T>& p0() const { return m_point0; }
-    const Vec3<T>& p1() const { return m_point1; }
+  const Vec3<T>& p0() const { return m_point0; }
+  const Vec3<T>& p1() const { return m_point1; }
 
 private:
-    Vec3<T> m_point0;
-    Vec3<T> m_point1;
+  Vec3<T> m_point0;
+  Vec3<T> m_point1;
 };
 
 }  // namespace vulkan_graphix::Math

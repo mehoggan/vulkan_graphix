@@ -13,29 +13,29 @@ namespace vulkan_graphix::VertexTypes {
 template <typename... Ts>
 struct BatchData {
 public:
-    static constexpr std::size_t attribute_type_count = sizeof...(Ts);
+  static constexpr std::size_t attribute_type_count = sizeof...(Ts);
 
-    BatchData() = default;
+  BatchData() = default;
 
-    explicit BatchData(std::vector<Ts>... data) :
-            m_data(std::move(data)...) {}
+  explicit BatchData(std::vector<Ts>... data) :
+      m_data(std::move(data)...) {}
 
-    template <std::size_t Index>
-    const std::vector<std::tuple_element_t<Index, std::tuple<Ts...>>>& data()
+  template <std::size_t Index>
+  const std::vector<std::tuple_element_t<Index, std::tuple<Ts...>>>& data()
       const {
-        return std::get<Index>(m_data);
-    }
+    return std::get<Index>(m_data);
+  }
 
-    template <std::size_t Index>
-    std::size_t byteCount() const {
-        using attribute_type = std::tuple_element_t<Index, std::tuple<Ts...>>;
-        return sizeof(attribute_type) * std::get<Index>(m_data).size();
-    }
+  template <std::size_t Index>
+  std::size_t byteCount() const {
+    using attribute_type = std::tuple_element_t<Index, std::tuple<Ts...>>;
+    return sizeof(attribute_type) * std::get<Index>(m_data).size();
+  }
 
-    std::size_t attributeCount() const { return std::get<0>(m_data).size(); }
+  std::size_t attributeCount() const { return std::get<0>(m_data).size(); }
 
 private:
-    std::tuple<std::vector<Ts>...> m_data;
+  std::tuple<std::vector<Ts>...> m_data;
 };
 
 }  // namespace vulkan_graphix::VertexTypes

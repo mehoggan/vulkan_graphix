@@ -37,23 +37,23 @@ namespace vulkan_graphix::VulkanCommon {
 // VkBuffer + VkDeviceMemory creation/destruction.
 class BufferFactory {
 public:
-    BufferFactory(VkDevice device, VkPhysicalDevice physical_device);
+  BufferFactory(VkDevice device, VkPhysicalDevice physical_device);
 
-    // Reads the buffer's size from buffer.getSize(), which the caller must
-    // set before calling this (matches every existing tutorial's own
-    // createBuffer() convention).
-    bool create(VkBufferUsageFlags usage,
+  // Reads the buffer's size from buffer.getSize(), which the caller must
+  // set before calling this (matches every existing tutorial's own
+  // createBuffer() convention).
+  bool create(VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& out) const;
-    void destroy(BufferParameters& buffer) const;
+  void destroy(BufferParameters& buffer) const;
 
 private:
-    bool allocateMemory(VkBuffer buffer,
+  bool allocateMemory(VkBuffer buffer,
       VkMemoryPropertyFlags property,
       VkDeviceMemory* memory) const;
 
-    VkDevice m_device;
-    VkPhysicalDevice m_physical_device;
+  VkDevice m_device;
+  VkPhysicalDevice m_physical_device;
 };
 
 // VkImage + VkImageView + VkSampler + VkDeviceMemory creation/destruction.
@@ -65,46 +65,46 @@ private:
 // here exactly as they were in every tutorial's own version.
 class ImageFactory {
 public:
-    ImageFactory(VkDevice device, VkPhysicalDevice physical_device);
+  ImageFactory(VkDevice device, VkPhysicalDevice physical_device);
 
-    bool createImage(std::uint32_t width,
+  bool createImage(std::uint32_t width,
       std::uint32_t height,
       VkFormat format,
       VkImageUsageFlags usage,
       VkImage* out) const;
-    bool createImageView(VkImage image,
+  bool createImageView(VkImage image,
       VkFormat format,
       VkImageAspectFlags aspect_mask,
       VkImageView* out) const;
-    // border_color only matters for VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER.
-    bool createSampler(VkSamplerAddressMode address_mode,
+  // border_color only matters for VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER.
+  bool createSampler(VkSamplerAddressMode address_mode,
       VkSampler* out,
       VkBorderColor border_color =
-        VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) const;
+          VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) const;
 
-    // Public (unlike BufferFactory's own allocateMemory, which stays
-    // private - createBuffer() always does create+allocate+bind as one
-    // atomic unit with nothing interleaved) because several tutorials
-    // need a view and/or sampler created *between* allocating an
-    // image's memory and binding it, so they can't go through a single
-    // combined call the way BufferFactory::create() does.
-    bool allocateMemory(VkImage image,
+  // Public (unlike BufferFactory's own allocateMemory, which stays
+  // private - createBuffer() always does create+allocate+bind as one
+  // atomic unit with nothing interleaved) because several tutorials
+  // need a view and/or sampler created *between* allocating an
+  // image's memory and binding it, so they can't go through a single
+  // combined call the way BufferFactory::create() does.
+  bool allocateMemory(VkImage image,
       VkMemoryPropertyFlags property,
       VkDeviceMemory* memory) const;
 
-    // Also public for the same reason as allocateMemory() above - the
-    // view/sampler created between allocating and binding need the image
-    // handle, but binding itself is always the same one call.
-    bool bindMemory(VkImage image, VkDeviceMemory memory) const;
+  // Also public for the same reason as allocateMemory() above - the
+  // view/sampler created between allocating and binding need the image
+  // handle, but binding itself is always the same one call.
+  bool bindMemory(VkImage image, VkDeviceMemory memory) const;
 
-    // No equivalent existed anywhere before this - every tutorial's own
-    // childClear() repeated the same 4-field (sampler->view->image->
-    // memory) defensive-destroy block inline, once per image member.
-    void destroy(ImageParameters& image) const;
+  // No equivalent existed anywhere before this - every tutorial's own
+  // childClear() repeated the same 4-field (sampler->view->image->
+  // memory) defensive-destroy block inline, once per image member.
+  void destroy(ImageParameters& image) const;
 
 private:
-    VkDevice m_device;
-    VkPhysicalDevice m_physical_device;
+  VkDevice m_device;
+  VkPhysicalDevice m_physical_device;
 };
 
 // Staged (staging-buffer + a caller-owned one-shot command buffer) upload
@@ -117,17 +117,17 @@ private:
 // staging buffer sequentially across many unrelated uploads.
 class StagedUploader {
 public:
-    StagedUploader(VkDevice device,
+  StagedUploader(VkDevice device,
       VkQueue graphics_queue,
       VkCommandBuffer upload_command_buffer);
 
-    bool uploadToImage(BufferParameters& staging_buffer,
+  bool uploadToImage(BufferParameters& staging_buffer,
       VkImage image,
       const char* data,
       std::uint32_t data_size,
       std::uint32_t width,
       std::uint32_t height) const;
-    bool uploadToBuffer(BufferParameters& staging_buffer,
+  bool uploadToBuffer(BufferParameters& staging_buffer,
       BufferParameters& destination,
       const void* data,
       std::uint32_t data_size,
@@ -135,9 +135,9 @@ public:
       VkPipelineStageFlags dst_stage_mask) const;
 
 private:
-    VkDevice m_device;
-    VkQueue m_graphics_queue;
-    VkCommandBuffer m_upload_command_buffer;
+  VkDevice m_device;
+  VkQueue m_graphics_queue;
+  VkCommandBuffer m_upload_command_buffer;
 };
 
 // Command pool/command buffer allocation and per-frame sync object
@@ -149,17 +149,17 @@ private:
 // duplicated boilerplate - only the single-object creation call here.
 class FrameResourceFactory {
 public:
-    explicit FrameResourceFactory(VkDevice device);
+  explicit FrameResourceFactory(VkDevice device);
 
-    bool createCommandPool(
+  bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* out) const;
-    bool allocateCommandBuffers(
+  bool allocateCommandBuffers(
       VkCommandPool pool, std::uint32_t count, VkCommandBuffer* out) const;
-    bool createSemaphore(VkSemaphore* out) const;
-    bool createFence(bool signaled, VkFence* out) const;
+  bool createSemaphore(VkSemaphore* out) const;
+  bool createFence(bool signaled, VkFence* out) const;
 
 private:
-    VkDevice m_device;
+  VkDevice m_device;
 };
 
 // Composes ImageFactory + StagedUploader for the create-image-view-
@@ -167,14 +167,14 @@ private:
 // each already have their own near-identical private
 // createTextureFromPixels() for.
 bool createTextureFromPixels(const ImageFactory& image_factory,
-  const StagedUploader& uploader,
-  BufferParameters& staging_buffer,
-  std::uint32_t width,
-  std::uint32_t height,
-  const std::vector<char>& pixels,
-  VkSamplerAddressMode address_mode,
-  ImageParameters& out,
-  VkBorderColor border_color = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK);
+    const StagedUploader& uploader,
+    BufferParameters& staging_buffer,
+    std::uint32_t width,
+    std::uint32_t height,
+    const std::vector<char>& pixels,
+    VkSamplerAddressMode address_mode,
+    ImageParameters& out,
+    VkBorderColor border_color = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK);
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
 createShaderModule(VkDevice device, const char* filename);

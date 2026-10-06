@@ -14,16 +14,16 @@ namespace vulkan_graphix::TankPlacement {
 // Each part's offset from its parent: body from the tank's world
 // position, head from the body, turret from the head.
 struct PartOffsets {
-    Math::Vec3<float> m_body;
-    Math::Vec3<float> m_head;
-    Math::Vec3<float> m_turret;
+  Math::Vec3<float> m_body;
+  Math::Vec3<float> m_head;
+  Math::Vec3<float> m_turret;
 };
 
 // World-space translations of a tank's three parts.
 struct PartTranslations {
-    Math::Vec3<float> m_body;
-    Math::Vec3<float> m_head;
-    Math::Vec3<float> m_turret;
+  Math::Vec3<float> m_body;
+  Math::Vec3<float> m_head;
+  Math::Vec3<float> m_turret;
 };
 
 // The right/up/at basis Tank::initBody()/initHead()/initTurret()/
@@ -40,10 +40,10 @@ const Math::Mat4<float>& uprightPartBasis();
 // the head is turned. Only the matrices' basis columns are read. Sums in
 // the original's order (translation + x*col0 + y*col1 + z*col2).
 PartTranslations composePartTranslations(
-  const Math::Vec3<float>& world_position,
-  const Math::Mat4<float>& body_matrix,
-  const Math::Mat4<float>& head_matrix,
-  const PartOffsets& offsets);
+    const Math::Vec3<float>& world_position,
+    const Math::Mat4<float>& body_matrix,
+    const Math::Mat4<float>& head_matrix,
+    const PartOffsets& offsets);
 
 }  // namespace vulkan_graphix::TankPlacement
 

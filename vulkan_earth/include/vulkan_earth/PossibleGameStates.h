@@ -2,12 +2,12 @@
 #define VULKAN_EARTH_POSSIBLEGAMESTATES_H
 
 enum PossibleGameStates {
-    MAIN_MENU,
-    READY_MENU,
-    SHOP_MENU,
-    GAME_PLAY,
-    PLAY_RESULT,
-    QUIT_GAME
+  MAIN_MENU,
+  READY_MENU,
+  SHOP_MENU,
+  GAME_PLAY,
+  PLAY_RESULT,
+  QUIT_GAME
 };
 
 #endif

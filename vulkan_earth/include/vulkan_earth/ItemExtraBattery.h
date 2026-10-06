@@ -6,12 +6,12 @@
 
 class ItemExtraBattery : public Item {
 public:
-    ItemExtraBattery();
-    ItemExtraBattery(std::int32_t id);
-    ~ItemExtraBattery() override;
-    ItemExtraBattery* getItemInstance() override;
-    bool causeEffectToTank(Tank* tank) override;
-    void playUseSFX() override;
+  ItemExtraBattery();
+  ItemExtraBattery(std::int32_t id);
+  ~ItemExtraBattery() override;
+  ItemExtraBattery* getItemInstance() override;
+  bool causeEffectToTank(Tank* tank) override;
+  void playUseSFX() override;
 };
 
 #endif
