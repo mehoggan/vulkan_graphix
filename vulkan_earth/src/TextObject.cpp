@@ -11,13 +11,13 @@ namespace math = vulkan_graphix::Math;
 TextObject::TextObject() = default;
 
 TextObject::TextObject(const std::string& input,
-                       float new_pos_x,
-                       float new_pos_y,
-                       float new_pos_z,
-                       vulkan_earth::FontId font,
-                       float red,
-                       float green,
-                       float blue) {
+  float new_pos_x,
+  float new_pos_y,
+  float new_pos_z,
+  vulkan_earth::FontId font,
+  float red,
+  float green,
+  float blue) {
     m_output = input;
     m_pos_x = new_pos_x;
     m_pos_y = new_pos_y;
@@ -45,14 +45,14 @@ void TextObject::setZpos(float z) { m_pos_z = z; }
 void TextObject::draw(render::RenderContext& context) {
     const render::Font& font = vulkan_earth::font(m_font_size);
     const math::Vec4<float> text_color(
-            m_color[0], m_color[1], m_color[2], 1.0f);
+      m_color[0], m_color[1], m_color[2], 1.0f);
     float x_pos = m_pos_x;
     for (char ch : m_output) {
         context.drawText(font,
-                         math::Vec3<float>(x_pos, m_pos_y, m_pos_z),
-                         std::string_view(&ch, 1),
-                         text_color);
+          math::Vec3<float>(x_pos, m_pos_y, m_pos_z),
+          std::string_view(&ch, 1),
+          text_color);
         x_pos +=
-                static_cast<float>(vulkan_earth::textAdvance(m_font_size, ch));
+          static_cast<float>(vulkan_earth::textAdvance(m_font_size, ch));
     }
 }

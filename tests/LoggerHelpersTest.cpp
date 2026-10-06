@@ -11,14 +11,14 @@
 #include "vulkan_graphix/LoggerHelpers.h"
 
 TEST(LoggerHelpersTest, StreamsAVectorOfCStringsCommaSeparatedInBrackets) {
-    std::vector<const char*> values = {"VK_LAYER_KHRONOS_validation",
-                                       "VK_LAYER_MESA_overlay"};
+    std::vector<const char*> values = {
+      "VK_LAYER_KHRONOS_validation", "VK_LAYER_MESA_overlay"};
     std::stringstream out_stream;
 
     out_stream << values;
 
     EXPECT_EQ(out_stream.str(),
-              "[VK_LAYER_KHRONOS_validation, VK_LAYER_MESA_overlay, ]");
+      "[VK_LAYER_KHRONOS_validation, VK_LAYER_MESA_overlay, ]");
 }
 
 TEST(LoggerHelpersTest, StreamsAnEmptyVectorOfCStringsAsEmptyBrackets) {
@@ -33,8 +33,8 @@ TEST(LoggerHelpersTest, StreamsAnEmptyVectorOfCStringsAsEmptyBrackets) {
 TEST(LoggerHelpersTest, StreamsAVkLayerPropertiesAsItsLayerName) {
     VkLayerProperties properties{};
     std::strncpy(properties.layerName,
-                 "VK_LAYER_KHRONOS_validation",
-                 sizeof(properties.layerName) - 1);
+      "VK_LAYER_KHRONOS_validation",
+      sizeof(properties.layerName) - 1);
     std::stringstream out_stream;
 
     out_stream << properties;
@@ -43,7 +43,7 @@ TEST(LoggerHelpersTest, StreamsAVkLayerPropertiesAsItsLayerName) {
 }
 
 TEST(LoggerHelpersTest,
-     StreamsAVectorOfVkLayerPropertiesTabIndentedBetweenEntries) {
+  StreamsAVectorOfVkLayerPropertiesTabIndentedBetweenEntries) {
     VkLayerProperties first{};
     std::strncpy(first.layerName, "layer-one", sizeof(first.layerName) - 1);
     VkLayerProperties second{};

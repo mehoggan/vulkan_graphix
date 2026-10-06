@@ -6,7 +6,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial10>();
+      std::make_shared<vulkan_graphix::Tutorial10>();
 
     // Window creation
     if (!window.create("10 - Sampled Bezier Curve Polyline")) {
@@ -19,7 +19,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial10> tutorial10 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial10>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial10>(tutorial);
 
     // Tutorial 10
     if (!tutorial10->createRenderingResources()) {

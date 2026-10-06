@@ -25,27 +25,27 @@ TEST(CombinatoricsTest, NextCombinationEnumeratesInLexicographicOrder) {
     const std::size_t select_count = 3;
 
     const std::vector<std::vector<std::int32_t>> expected = {
-            {0, 1, 2},
-            {0, 1, 3},
-            {0, 1, 4},
-            {0, 2, 3},
-            {0, 2, 4},
-            {0, 3, 4},
-            {1, 2, 3},
-            {1, 2, 4},
-            {1, 3, 4},
-            {2, 3, 4},
+      {0, 1, 2},
+      {0, 1, 3},
+      {0, 1, 4},
+      {0, 2, 3},
+      {0, 2, 4},
+      {0, 3, 4},
+      {1, 2, 3},
+      {1, 2, 4},
+      {1, 3, 4},
+      {2, 3, 4},
     };
 
     std::size_t index = 0;
     do {
         ASSERT_LT(index, expected.size());
         const std::vector<std::int32_t> combination(
-                values.begin(), values.begin() + select_count);
+          values.begin(), values.begin() + select_count);
         EXPECT_EQ(expected[index], combination);
         ++index;
-    } while (nextCombination<std::vector<std::int32_t>, 5>(values,
-                                                           select_count));
+    } while (
+      nextCombination<std::vector<std::int32_t>, 5>(values, select_count));
 
     EXPECT_EQ(expected.size(), index);
 }
@@ -76,8 +76,8 @@ TEST(Plane3DTest, NormalAndDistanceFromPoint) {
     Plane3D<float> plane(0.0f, 0.0f, 1.0f, 0.0f);
     EXPECT_TRUE(plane.isValid());
     EXPECT_EQ(Vec3<float>(0.0f, 0.0f, 1.0f), plane.normal());
-    EXPECT_FLOAT_EQ(5.0f,
-                    plane.distanceFromPoint(Vec3<float>(1.0f, 2.0f, 5.0f)));
+    EXPECT_FLOAT_EQ(
+      5.0f, plane.distanceFromPoint(Vec3<float>(1.0f, 2.0f, 5.0f)));
 }
 
 TEST(Plane3DTest, DefaultConstructedIsInvalid) {
@@ -87,33 +87,33 @@ TEST(Plane3DTest, DefaultConstructedIsInvalid) {
 
 TEST(GeometryTest, CentroidAndMidpoint) {
     Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
-                             Vec3<float>(3.0f, 0.0f, 0.0f),
-                             Vec3<float>(0.0f, 3.0f, 0.0f));
+      Vec3<float>(3.0f, 0.0f, 0.0f),
+      Vec3<float>(0.0f, 3.0f, 0.0f));
     EXPECT_EQ(Vec3<float>(1.0f, 1.0f, 0.0f), centroidOfTriangle(flat_tri));
 
-    Line<float> line(Vec3<float>(0.0f, 0.0f, 0.0f),
-                     Vec3<float>(2.0f, 4.0f, 6.0f));
+    Line<float> line(
+      Vec3<float>(0.0f, 0.0f, 0.0f), Vec3<float>(2.0f, 4.0f, 6.0f));
     EXPECT_EQ(Vec3<float>(1.0f, 2.0f, 3.0f), midpointOfLine(line));
 }
 
 TEST(GeometryTest, CollinearPointsAreDetected) {
     Triangle<float> collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
-                              Vec3<float>(1.0f, 0.0f, 0.0f),
-                              Vec3<float>(2.0f, 0.0f, 0.0f));
+      Vec3<float>(1.0f, 0.0f, 0.0f),
+      Vec3<float>(2.0f, 0.0f, 0.0f));
     EXPECT_TRUE(pointsOfTriangleAreCollinear(collinear));
 
     Triangle<float> non_collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
-                                  Vec3<float>(1.0f, 0.0f, 0.0f),
-                                  Vec3<float>(0.0f, 1.0f, 0.0f));
+      Vec3<float>(1.0f, 0.0f, 0.0f),
+      Vec3<float>(0.0f, 1.0f, 0.0f));
     EXPECT_FALSE(pointsOfTriangleAreCollinear(non_collinear));
 }
 
 TEST(GeometryTest, SphericalCartesianRoundTrip) {
     SphericalCoordinates<float, AngleMode::Degrees> coords(
-            45.0f, 30.0f, 10.0f);
+      45.0f, 30.0f, 10.0f);
     Vec3<float> cartesian = sphericalToCartesian(coords);
     auto round_tripped =
-            cartesianToSpherical<float, AngleMode::Degrees>(cartesian);
+      cartesianToSpherical<float, AngleMode::Degrees>(cartesian);
 
     EXPECT_NEAR(coords.theta(), round_tripped.theta(), 1e-3f);
     EXPECT_NEAR(coords.phi(), round_tripped.phi(), 1e-3f);
@@ -122,8 +122,8 @@ TEST(GeometryTest, SphericalCartesianRoundTrip) {
 
 TEST(TessellationOpsTest, SubdivisionProducesMoreTrianglesThanBaseCase) {
     Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
-                             Vec3<float>(1.0f, 0.0f, 0.0f),
-                             Vec3<float>(0.0f, 1.0f, 0.0f));
+      Vec3<float>(1.0f, 0.0f, 0.0f),
+      Vec3<float>(0.0f, 1.0f, 0.0f));
 
     TessellatedTriangleData<float, std::uint32_t> base;
     std::uint32_t base_index = 0;
@@ -139,8 +139,8 @@ TEST(TessellationOpsTest, SubdivisionProducesMoreTrianglesThanBaseCase) {
 
 TEST(TessellationOpsTest, MidpointSubdivisionSharesEdgeVertices) {
     Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
-                             Vec3<float>(1.0f, 0.0f, 0.0f),
-                             Vec3<float>(0.0f, 1.0f, 0.0f));
+      Vec3<float>(1.0f, 0.0f, 0.0f),
+      Vec3<float>(0.0f, 1.0f, 0.0f));
 
     TessellatedTriangleData<float, std::uint32_t> once;
     std::uint32_t index = 0;
@@ -172,16 +172,16 @@ TEST(SphereTest, UvSphereProducesExpectedVertexAndIndexCounts) {
     // phi_steps rings of triangles, 2 triangles per quad except the pole
     // rings which are single-triangle fans.
     const std::size_t expected_triangles =
-            2u * theta_steps + (phi_steps - 2u) * 2u * theta_steps;
+      2u * theta_steps + (phi_steps - 2u) * 2u * theta_steps;
     EXPECT_EQ(expected_triangles * 3u, sphere.indices().size());
 }
 
 TEST(SphereTest, IcosphereSubdivisionGrowsPointCountWithLevelOfDetail) {
     Sphere<float, std::uint32_t> base(1.0f, static_cast<std::uint8_t>(0));
-    Sphere<float, std::uint32_t> subdivided_once(1.0f,
-                                                 static_cast<std::uint8_t>(1));
+    Sphere<float, std::uint32_t> subdivided_once(
+      1.0f, static_cast<std::uint8_t>(1));
     Sphere<float, std::uint32_t> subdivided_twice(
-            1.0f, static_cast<std::uint8_t>(2));
+      1.0f, static_cast<std::uint8_t>(2));
 
     EXPECT_EQ(12u, base.points().size());
     EXPECT_EQ(60u, base.indices().size());
@@ -203,7 +203,7 @@ TEST(SphereTest, IcosphereSubdivisionGrowsPointCountWithLevelOfDetail) {
 
 TEST(CurveSample3DTest, NormalizeTangentProducesUnitLength) {
     CurveSample3D<float> sample(
-            Vec3<float>(0.0f), Vec3<float>(3.0f, 0.0f, 0.0f), 0.5f);
+      Vec3<float>(0.0f), Vec3<float>(3.0f, 0.0f, 0.0f), 0.5f);
     sample.normalizeTangent();
     EXPECT_FLOAT_EQ(1.0f, glm::length(sample.m_tangent));
 }
@@ -221,7 +221,7 @@ TEST(CubicCurveTest, BezierEndpointsMatchControlPoints) {
     Vec3<float> point3(3.0f, 0.0f, 0.0f);
 
     CubicCurve<float> curve(
-            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+      CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
     Vec3<float> start = curve.evaluatePosition(0.0f);
     Vec3<float> end_point = curve.evaluatePosition(1.0f);
@@ -258,10 +258,10 @@ TEST(CubicCurveTest, AdaptiveSamplingProducesSortedParameters) {
     Vec3<float> point2(2.0f, -2.0f, 0.0f);
     Vec3<float> point3(3.0f, 0.0f, 0.0f);
     CubicCurve<float> curve(
-            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+      CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
     std::vector<CurveSample3D<float>> samples =
-            curve.computeSamplesAdaptive(0.05f);
+      curve.computeSamplesAdaptive(0.05f);
 
     ASSERT_GE(samples.size(), 2u);
     for (std::size_t index = 1; index < samples.size(); ++index) {
@@ -278,11 +278,8 @@ TEST(CubicCurveTest, CatmullRomEndpointsMatchInnerControlPoints) {
     Vec3<float> point2(2.0f, 0.0f, 0.0f);
     Vec3<float> point3(3.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(CubicCurve<float>::Type::CatmullRom,
-                            point0,
-                            point1,
-                            point2,
-                            point3);
+    CubicCurve<float> curve(
+      CubicCurve<float>::Type::CatmullRom, point0, point1, point2, point3);
 
     Vec3<float> start = curve.evaluatePosition(0.0f);
     Vec3<float> end_point = curve.evaluatePosition(1.0f);
@@ -302,7 +299,7 @@ TEST(CubicCurveTest, BezierTangentAtEndpointsMatchesControlPointDelta) {
     Vec3<float> point3(4.0f, 0.0f, 0.0f);
 
     CubicCurve<float> curve(
-            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+      CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
     Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
     Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
@@ -342,11 +339,8 @@ TEST(CubicCurveTest, CatmullRomTangentAtInnerPointsMatchesFiniteDifference) {
     Vec3<float> point2(4.0f, 0.0f, 0.0f);
     Vec3<float> point3(6.0f, 0.0f, 0.0f);
 
-    CubicCurve<float> curve(CubicCurve<float>::Type::CatmullRom,
-                            point0,
-                            point1,
-                            point2,
-                            point3);
+    CubicCurve<float> curve(
+      CubicCurve<float>::Type::CatmullRom, point0, point1, point2, point3);
 
     Vec3<float> start_tangent = curve.evaluateTangent(0.0f);
     Vec3<float> end_tangent = curve.evaluateTangent(1.0f);
@@ -364,10 +358,10 @@ TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
     // segment boundary had a visible gap - which is why Tutorial10's
     // polyline looked tangled independent of its control-point layout.
     std::vector<Vec3<float>> control_points = {Vec3<float>(-3.0f, 0.0f, 0.0f),
-                                               Vec3<float>(-1.5f, 1.0f, 0.5f),
-                                               Vec3<float>(0.0f, 0.2f, 1.0f),
-                                               Vec3<float>(1.5f, -0.6f, 0.3f),
-                                               Vec3<float>(3.0f, 0.4f, 0.0f)};
+      Vec3<float>(-1.5f, 1.0f, 0.5f),
+      Vec3<float>(0.0f, 0.2f, 1.0f),
+      Vec3<float>(1.5f, -0.6f, 0.3f),
+      Vec3<float>(3.0f, 0.4f, 0.0f)};
 
     std::vector<Vec3<float>> working_points;
     working_points.push_back(control_points.front());
@@ -381,16 +375,16 @@ TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
     segments.reserve(segment_count);
     for (std::size_t segment = 0; segment < segment_count; ++segment) {
         segments.emplace_back(CubicCurve<float>::Type::CatmullRom,
-                              working_points[segment],
-                              working_points[segment + 1],
-                              working_points[segment + 2],
-                              working_points[segment + 3]);
+          working_points[segment],
+          working_points[segment + 1],
+          working_points[segment + 2],
+          working_points[segment + 3]);
     }
 
     for (std::size_t segment = 0; segment + 1 < segments.size(); ++segment) {
         Vec3<float> end_of_this = segments[segment].evaluatePosition(1.0f);
         Vec3<float> start_of_next =
-                segments[segment + 1].evaluatePosition(0.0f);
+          segments[segment + 1].evaluatePosition(0.0f);
         EXPECT_NEAR(end_of_this.x, start_of_next.x, 1e-4f);
         EXPECT_NEAR(end_of_this.y, start_of_next.y, 1e-4f);
         EXPECT_NEAR(end_of_this.z, start_of_next.z, 1e-4f);
@@ -398,9 +392,9 @@ TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
 
     // Every segment should also pass through its actual control point.
     for (std::size_t index = 0; index < control_points.size(); ++index) {
-        Vec3<float> sampled =
-                (index == 0) ? segments.front().evaluatePosition(0.0f)
-                             : segments[index - 1].evaluatePosition(1.0f);
+        Vec3<float> sampled = (index == 0)
+          ? segments.front().evaluatePosition(0.0f)
+          : segments[index - 1].evaluatePosition(1.0f);
         EXPECT_NEAR(control_points[index].x, sampled.x, 1e-4f);
         EXPECT_NEAR(control_points[index].y, sampled.y, 1e-4f);
         EXPECT_NEAR(control_points[index].z, sampled.z, 1e-4f);
@@ -413,7 +407,7 @@ TEST(CubicCurveTest, ComputeSamplesUniformProducesRequestedCountAndEndpoints) {
     Vec3<float> point2(2.0f, -1.0f, 0.0f);
     Vec3<float> point3(3.0f, 0.0f, 0.0f);
     CubicCurve<float> curve(
-            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+      CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
     std::vector<CurveSample3D<float>> samples = curve.computeSamplesUniform(5);
 
@@ -423,10 +417,9 @@ TEST(CubicCurveTest, ComputeSamplesUniformProducesRequestedCountAndEndpoints) {
     EXPECT_FLOAT_EQ(0.0f, samples.front().m_parameter);
     EXPECT_FLOAT_EQ(1.0f, samples.back().m_parameter);
     for (std::size_t index = 1; index < samples.size(); ++index) {
-        EXPECT_NEAR(
-                0.25f,
-                samples[index].m_parameter - samples[index - 1].m_parameter,
-                1e-4f);
+        EXPECT_NEAR(0.25f,
+          samples[index].m_parameter - samples[index - 1].m_parameter,
+          1e-4f);
     }
 }
 
@@ -449,11 +442,11 @@ TEST(CubicCurveTest, TighterChordalToleranceProducesMoreSamples) {
     Vec3<float> point2(3.0f, 1.0f, 0.0f);
     Vec3<float> point3(4.0f, 0.0f, 0.0f);
     CubicCurve<float> curve(
-            CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
+      CubicCurve<float>::Type::Bezier, point0, point1, point2, point3);
 
     const std::size_t loose_count = curve.computeSamplesAdaptive(0.1f).size();
     const std::size_t tight_count =
-            curve.computeSamplesAdaptive(0.001f).size();
+      curve.computeSamplesAdaptive(0.001f).size();
 
     EXPECT_GT(tight_count, loose_count);
 }

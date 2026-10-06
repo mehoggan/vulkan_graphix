@@ -16,9 +16,8 @@ struct CurveSample3D {
             m_tangent(T(0), T(0), T(0)),
             m_parameter(T(0)) {}
 
-    CurveSample3D(const Vec3<T>& position_in,
-                  const Vec3<T>& tangent_in,
-                  T parameter_in) :
+    CurveSample3D(
+      const Vec3<T>& position_in, const Vec3<T>& tangent_in, T parameter_in) :
             m_position(position_in),
             m_tangent(tangent_in),
             m_parameter(parameter_in) {}

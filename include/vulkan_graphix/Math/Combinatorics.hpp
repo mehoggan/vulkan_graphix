@@ -36,16 +36,14 @@ bool nextCombination(CI& values, T select_count) {
             // undefined behavior, silently tolerated at -O2 but caught by
             // libstdc++'s hardened assertions at -O0 (the -O0 coverage
             // build correctly caught this real bug).
-            std::rotate(&values[index],
-                        (&values[0] + search_index),
-                        (&values[0] + N));
+            std::rotate(
+              &values[index], (&values[0] + search_index), (&values[0] + N));
             while (search_index != N) {
                 ++search_index;
                 ++swap_index;
             }
-            std::rotate(&values[select_count],
-                        &values[swap_index],
-                        (&values[0] + N));
+            std::rotate(
+              &values[select_count], &values[swap_index], (&values[0] + N));
             return true;
         }
     }

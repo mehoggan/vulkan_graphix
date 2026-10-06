@@ -13,10 +13,10 @@ template <typename T>
 class AxisAligned2D {
 public:
     AxisAligned2D() :
-            m_lower_left(std::numeric_limits<T>::max(),
-                         std::numeric_limits<T>::max()),
+            m_lower_left(
+              std::numeric_limits<T>::max(), std::numeric_limits<T>::max()),
             m_upper_right(-std::numeric_limits<T>::max(),
-                          -std::numeric_limits<T>::max()) {}
+              -std::numeric_limits<T>::max()) {}
 
     AxisAligned2D(const Vec2<T>& point1, const Vec2<T>& point2) :
             AxisAligned2D() {
@@ -32,7 +32,7 @@ public:
 
     bool isValid() const {
         return (m_lower_left.x < m_upper_right.x) &&
-               (m_lower_left.y < m_upper_right.y);
+          (m_lower_left.y < m_upper_right.y);
     }
 
     void growToContain(const Vec2<T>& point) {
@@ -42,7 +42,7 @@ public:
 
     bool contains(const Vec2<T>& point) const {
         return (point.x >= m_lower_left.x && point.y >= m_lower_left.y) &&
-               (point.x <= m_upper_right.x && point.y <= m_upper_right.y);
+          (point.x <= m_upper_right.x && point.y <= m_upper_right.y);
     }
 
     Vec2<T>& lowerLeft() { return m_lower_left; }
@@ -57,10 +57,10 @@ private:
     Vec2<T> m_lower_left;
     Vec2<T> m_upper_right;
 
-    friend bool operator==(const AxisAligned2D& lhs,
-                           const AxisAligned2D& rhs) {
+    friend bool operator==(
+      const AxisAligned2D& lhs, const AxisAligned2D& rhs) {
         return (lhs.m_lower_left == rhs.m_lower_left) &&
-               (lhs.m_upper_right == rhs.m_upper_right);
+          (lhs.m_upper_right == rhs.m_upper_right);
     }
 
     friend void swap(AxisAligned2D& lhs, AxisAligned2D& rhs) {

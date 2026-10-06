@@ -14,16 +14,16 @@ class SubMenuTest : public SubMenu {
 public:
     SubMenuTest();
     SubMenuTest(std::int32_t id,
-                float new_x_pos,
-                float new_y_pos,
-                float new_z_pos,
-                float red,
-                float green,
-                float blue,
-                std::int32_t new_width,
-                std::int32_t new_height,
-                const std::string& new_caption,
-                float new_percent_border);
+      float new_x_pos,
+      float new_y_pos,
+      float new_z_pos,
+      float red,
+      float green,
+      float blue,
+      std::int32_t new_width,
+      std::int32_t new_height,
+      const std::string& new_caption,
+      float new_percent_border);
     ~SubMenuTest() override;
     std::int32_t getUNIQUEIDENTIFIER() override;
     void setUNIQUEIDENTIFIER(std::int32_t id) override;

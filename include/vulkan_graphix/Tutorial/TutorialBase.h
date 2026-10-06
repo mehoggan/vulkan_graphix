@@ -219,7 +219,7 @@ public:
     const VkDebugUtilsMessengerEXT& getVkDebugUtilsMessenger() const;
     VkDebugUtilsMessengerEXT& getVkDebugUtilsMessenger();
     void setVkDebugUtilsMessenger(
-            const VkDebugUtilsMessengerEXT& vk_debug_utils_messenger);
+      const VkDebugUtilsMessengerEXT& vk_debug_utils_messenger);
 
 private:
     VkInstance m_vk_instance;
@@ -263,30 +263,28 @@ protected:
     bool loadInstanceLevelEntryPoints();
     bool createPresentationSurface();
     bool createDevice();
-    bool checkPhysicalDeviceProperties(
-            VkPhysicalDevice physical_device,
-            std::uint32_t& graphics_queue_family_index,
-            std::uint32_t& present_queue_family_index);
+    bool checkPhysicalDeviceProperties(VkPhysicalDevice physical_device,
+      std::uint32_t& graphics_queue_family_index,
+      std::uint32_t& present_queue_family_index);
     bool loadDeviceLevelEntryPoints();
     bool getDeviceQueue();
     bool createSwapChain();
     bool createSwapChainImageViews();
 
-    bool checkExtensionAvailability(
-            const char* extension_name,
-            const std::vector<VkExtensionProperties>& available_extensions);
+    bool checkExtensionAvailability(const char* extension_name,
+      const std::vector<VkExtensionProperties>& available_extensions);
     std::uint32_t getSwapChainNumImages(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkSurfaceFormatKHR getSwapChainFormat(
-            std::vector<VkSurfaceFormatKHR>& surface_formats);
+      std::vector<VkSurfaceFormatKHR>& surface_formats);
     VkExtent2D getSwapChainExtent(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkImageUsageFlags getSwapChainUsageFlags(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkSurfaceTransformFlagBitsKHR getSwapChainTransform(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkPresentModeKHR getSwapChainPresentMode(
-            std::vector<VkPresentModeKHR>& present_modes);
+      std::vector<VkPresentModeKHR>& present_modes);
 
     bool checkValidationLayerSupport() const;
     bool setupDebugMessenger();

@@ -18,8 +18,8 @@ namespace vulkan_graphix::TankOrientation {
 // normalized vectors' dot product falls outside acos()'s [-1, 1] domain
 // (e.g. float rounding on parallel vectors, or a zero-length input) - the
 // value calcAngleBetweenVectors() returned on its own errno check.
-float angleBetweenDegrees(const Math::Vec3<float>& one,
-                          const Math::Vec3<float>& two);
+float angleBetweenDegrees(
+  const Math::Vec3<float>& one, const Math::Vec3<float>& two);
 
 struct Alignment {
     // body_matrix rotated so its up axis (column 1) points along the
@@ -39,7 +39,7 @@ struct Alignment {
 // which converts the world-space axis into the frame of vulkan_earth's
 // tank basis (an x<->z axis swap, see HellfireTank::getPartBasis()).
 std::optional<Alignment> alignToGround(const Math::Mat4<float>& body_matrix,
-                                       const Math::Vec3<float>& ground_normal);
+  const Math::Vec3<float>& ground_normal);
 
 }  // namespace vulkan_graphix::TankOrientation
 

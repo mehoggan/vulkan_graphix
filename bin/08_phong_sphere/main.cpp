@@ -6,7 +6,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial08>();
+      std::make_shared<vulkan_graphix::Tutorial08>();
 
     // Window creation
     if (!window.create("08 - Phong Sphere")) {
@@ -19,7 +19,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial08> tutorial08 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial08>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial08>(tutorial);
 
     // Tutorial 08
     if (!tutorial08->createRenderingResources()) {

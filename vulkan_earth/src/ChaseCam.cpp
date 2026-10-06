@@ -21,25 +21,19 @@ ChaseCam::ChaseCam(float* new_target_pos, float* new_target_at) {
 
 math::Mat4<float> ChaseCam::view() {
     float mag = sqrt(m_target_at[0] * m_target_at[0] +
-                     m_target_at[1] * m_target_at[1] +
-                     m_target_at[2] * m_target_at[2]);
+      m_target_at[1] * m_target_at[1] + m_target_at[2] * m_target_at[2]);
     // (The target's y using target_at[0] rather than [1] is the
     // original's, kept as-is.)
     const math::Mat4<float> view_matrix = glm::lookAt(
-            math::Vec3<float>(
-                    m_target_pos[0] -
-                            500 * m_target_at[0] / mag * (m_back_factor) +
-                            m_shake_cam_pos[0],
-                    m_target_pos[1] + m_up_factor + m_shake_cam_pos[1],
-                    m_target_pos[2] - 500 * m_target_at[2] / mag +
-                            m_shake_cam_pos[2]),
-            math::Vec3<float>(m_target_pos[0] + 200 * m_target_at[0] / mag +
-                                      m_shake_cam_pos[0],
-                              m_target_pos[1] + 200 * m_target_at[0] / mag +
-                                      m_shake_cam_pos[1],
-                              m_target_pos[2] + 200 * m_target_at[2] / mag +
-                                      m_shake_cam_pos[2]),
-            math::Vec3<float>(0, 1, 0));
+      math::Vec3<float>(m_target_pos[0] -
+          500 * m_target_at[0] / mag * (m_back_factor) + m_shake_cam_pos[0],
+        m_target_pos[1] + m_up_factor + m_shake_cam_pos[1],
+        m_target_pos[2] - 500 * m_target_at[2] / mag + m_shake_cam_pos[2]),
+      math::Vec3<float>(
+        m_target_pos[0] + 200 * m_target_at[0] / mag + m_shake_cam_pos[0],
+        m_target_pos[1] + 200 * m_target_at[0] / mag + m_shake_cam_pos[1],
+        m_target_pos[2] + 200 * m_target_at[2] / mag + m_shake_cam_pos[2]),
+      math::Vec3<float>(0, 1, 0));
     updateShakeCam();
     return view_matrix;
 }

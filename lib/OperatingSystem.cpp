@@ -23,9 +23,9 @@ ProjectBase& ProjectBase::operator=(const ProjectBase& other) = default;
 bool ProjectBase::readyToDraw() const { return m_can_render; }
 
 void ProjectBase::onMouseButton(std::int32_t /*button*/,
-                                bool /*pressed*/,
-                                std::int32_t /*pos_x*/,
-                                std::int32_t /*pos_y*/) {}
+  bool /*pressed*/,
+  std::int32_t /*pos_x*/,
+  std::int32_t /*pos_y*/) {}
 
 void ProjectBase::onMouseMove(std::int32_t /*pos_x*/, std::int32_t /*pos_y*/) {
 }
@@ -60,8 +60,8 @@ Window::~Window() {
         if (m_blank_cursor != None) {
             XFreeCursor(m_parameters.getDisplayPtr(), m_blank_cursor);
         }
-        XDestroyWindow(m_parameters.getDisplayPtr(),
-                       m_parameters.getWindowHandle());
+        XDestroyWindow(
+          m_parameters.getDisplayPtr(), m_parameters.getWindowHandle());
         XCloseDisplay(m_parameters.getDisplayPtr());
     }
 }
@@ -73,10 +73,10 @@ bool Window::create(const std::string& title) {
 }
 
 bool Window::create(const std::string& title,
-                    std::int32_t pos_x,
-                    std::int32_t pos_y,
-                    std::int32_t width,
-                    std::int32_t height) {
+  std::int32_t pos_x,
+  std::int32_t pos_y,
+  std::int32_t width,
+  std::int32_t height) {
     Display* display_ptr = XOpenDisplay(nullptr);
     m_parameters.setDisplayPtr(display_ptr);
     if (m_parameters.getDisplayPtr() == nullptr) {
@@ -85,16 +85,15 @@ bool Window::create(const std::string& title,
 
     std::int32_t default_screen = DefaultScreen(m_parameters.getDisplayPtr());
 
-    ::Window handle = XCreateSimpleWindow(
-            m_parameters.getDisplayPtr(),
-            DefaultRootWindow(m_parameters.getDisplayPtr()),
-            pos_x,
-            pos_y,
-            static_cast<std::uint32_t>(width),
-            static_cast<std::uint32_t>(height),
-            1,
-            BlackPixel(m_parameters.getDisplayPtr(), default_screen),
-            WhitePixel(m_parameters.getDisplayPtr(), default_screen));
+    ::Window handle = XCreateSimpleWindow(m_parameters.getDisplayPtr(),
+      DefaultRootWindow(m_parameters.getDisplayPtr()),
+      pos_x,
+      pos_y,
+      static_cast<std::uint32_t>(width),
+      static_cast<std::uint32_t>(height),
+      1,
+      BlackPixel(m_parameters.getDisplayPtr(), default_screen),
+      WhitePixel(m_parameters.getDisplayPtr(), default_screen));
     m_parameters.setWindowHandle(handle);
 
     // Ask the window manager to honor the requested position, not just the
@@ -106,18 +105,17 @@ bool Window::create(const std::string& title,
     size_hints.width = width;
     size_hints.height = height;
     XSetStandardProperties(m_parameters.getDisplayPtr(),
-                           m_parameters.getWindowHandle(),
-                           title.c_str(),
-                           title.c_str(),
-                           None,
-                           nullptr,
-                           0,
-                           &size_hints);
+      m_parameters.getWindowHandle(),
+      title.c_str(),
+      title.c_str(),
+      None,
+      nullptr,
+      0,
+      &size_hints);
     XSelectInput(m_parameters.getDisplayPtr(),
-                 m_parameters.getWindowHandle(),
-                 ExposureMask | KeyPressMask | KeyReleaseMask |
-                         StructureNotifyMask | ButtonPressMask |
-                         ButtonReleaseMask | PointerMotionMask);
+      m_parameters.getWindowHandle(),
+      ExposureMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
+        ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
     return true;
 }
@@ -128,7 +126,7 @@ void Window::setKeyRepeat(bool enabled) {
         // Auto-repeat then reports repeated KeyPresses with no fake
         // KeyRelease in between; renderingLoop() drops those repeats.
         XkbSetDetectableAutoRepeat(
-                m_parameters.getDisplayPtr(), True, nullptr);
+          m_parameters.getDisplayPtr(), True, nullptr);
     }
 }
 
@@ -142,19 +140,18 @@ void Window::setCursorVisible(bool visible) {
     } else {
         if (m_blank_cursor == None) {
             const std::array<char, 1> empty_bits = {0};
-            const Pixmap blank =
-                    XCreateBitmapFromData(display_ptr,
-                                          m_parameters.getWindowHandle(),
-                                          empty_bits.data(),
-                                          1,
-                                          1);
+            const Pixmap blank = XCreateBitmapFromData(display_ptr,
+              m_parameters.getWindowHandle(),
+              empty_bits.data(),
+              1,
+              1);
             XColor black{};
             m_blank_cursor = XCreatePixmapCursor(
-                    display_ptr, blank, blank, &black, &black, 0, 0);
+              display_ptr, blank, blank, &black, &black, 0, 0);
             XFreePixmap(display_ptr, blank);
         }
         XDefineCursor(
-                display_ptr, m_parameters.getWindowHandle(), m_blank_cursor);
+          display_ptr, m_parameters.getWindowHandle(), m_blank_cursor);
     }
     XFlush(display_ptr);
 }
@@ -162,8 +159,8 @@ void Window::setCursorVisible(bool visible) {
 bool Window::renderingLoop(ProjectBase& project) {
     // Prepare notification for window destruction
     Atom delete_window_atom;
-    delete_window_atom = XInternAtom(
-            m_parameters.getDisplayPtr(), "WM_DELETE_WINDOW", false);
+    delete_window_atom =
+      XInternAtom(m_parameters.getDisplayPtr(), "WM_DELETE_WINDOW", false);
     Display* display_ptr = m_parameters.getDisplayPtr();
     ::Window& handle = m_parameters.getWindowHandle();
 
@@ -193,9 +190,9 @@ bool Window::renderingLoop(ProjectBase& project) {
                     static std::int32_t height = event.xconfigure.height;
 
                     if (((event.xconfigure.width > 0) &&
-                         (event.xconfigure.width != width)) ||
-                        ((event.xconfigure.height > 0) &&
-                         (event.xconfigure.height != height))) {
+                          (event.xconfigure.width != width)) ||
+                      ((event.xconfigure.height > 0) &&
+                        (event.xconfigure.height != height))) {
                         width = event.xconfigure.width;
                         height = event.xconfigure.height;
                         resize = true;
@@ -217,16 +214,15 @@ bool Window::renderingLoop(ProjectBase& project) {
                     }
                     std::array<char, 8> text = {};
                     KeySym keysym = NoSymbol;
-                    const std::int32_t length = XLookupString(
-                            &event.xkey,
-                            text.data(),
-                            static_cast<std::int32_t>(text.size()),
-                            &keysym,
-                            nullptr);
+                    const std::int32_t length = XLookupString(&event.xkey,
+                      text.data(),
+                      static_cast<std::int32_t>(text.size()),
+                      &keysym,
+                      nullptr);
                     const KeyEvent key_event{
-                            static_cast<std::uint64_t>(keysym),
-                            length == 1 ? text[0] : '\0',
-                            pressed};
+                      static_cast<std::uint64_t>(keysym),
+                      length == 1 ? text[0] : '\0',
+                      pressed};
                     if (!project.onKey(key_event)) {
                         loop = false;
                     }
@@ -236,23 +232,23 @@ bool Window::renderingLoop(ProjectBase& project) {
                     break;
                 case ClientMessage:
                     if (static_cast<std::uint32_t>(event.xclient.data.l[0]) ==
-                        delete_window_atom) {
+                      delete_window_atom) {
                         loop = false;
                     }
                     break;
                 case ButtonPress:
                     project.onMouseButton(
-                            static_cast<std::int32_t>(event.xbutton.button),
-                            true,
-                            event.xbutton.x,
-                            event.xbutton.y);
+                      static_cast<std::int32_t>(event.xbutton.button),
+                      true,
+                      event.xbutton.x,
+                      event.xbutton.y);
                     break;
                 case ButtonRelease:
                     project.onMouseButton(
-                            static_cast<std::int32_t>(event.xbutton.button),
-                            false,
-                            event.xbutton.x,
-                            event.xbutton.y);
+                      static_cast<std::int32_t>(event.xbutton.button),
+                      false,
+                      event.xbutton.x,
+                      event.xbutton.y);
                     break;
                 case MotionNotify:
                     project.onMouseMove(event.xmotion.x, event.xmotion.y);

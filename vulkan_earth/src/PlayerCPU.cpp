@@ -41,14 +41,14 @@ PlayerCPU::PlayerCPU(float red, float green, float blue) {
 }
 
 PlayerCPU::PlayerCPU(float red,
-                     float green,
-                     float blue,
-                     const std::string& new_tank_type,
-                     const std::string& new_ai_type,
-                     const std::string& new_name,
-                     char new_team_label,
-                     const std::string& new_player_type,
-                     std::int32_t starting_cash) {
+  float green,
+  float blue,
+  const std::string& new_tank_type,
+  const std::string& new_ai_type,
+  const std::string& new_name,
+  char new_team_label,
+  const std::string& new_player_type,
+  std::int32_t starting_cash) {
     m_color[0] = red;
     m_color[1] = green;
     m_color[2] = blue;
@@ -104,7 +104,7 @@ PlayerCPU::~PlayerCPU() {
 }
 
 void PlayerCPU::updateTank(
-        /* Pass in all paramaters that are associated with a tank */) {}
+  /* Pass in all paramaters that are associated with a tank */) {}
 Tank* PlayerCPU::getCurrentTank() { return m_current_tank; }
 std::string PlayerCPU::getTankType() { return m_tank_type; }
 Item** PlayerCPU::getCurrentItems() { return m_current_items; }
@@ -130,8 +130,9 @@ void PlayerCPU::setTeamLabel(char t) { m_team_label = t; }
 Weapon* PlayerCPU::getLoadedWeapon() { return m_loaded_weapon; }
 void PlayerCPU::setLoadedWeapon(Weapon* wpn) { m_loaded_weapon = wpn; }
 void PlayerCPU::setPlayerName(const std::string& /*new_name*/) {
-    printf("\nYou're trying to set a new_name for CPU. It won't happen, "
-           "sorry.\n");
+    printf(
+      "\nYou're trying to set a new_name for CPU. It won't happen, "
+      "sorry.\n");
     m_name = "CPU";
 }
 void PlayerCPU::setWeapons(Weapon** weapon_set) {

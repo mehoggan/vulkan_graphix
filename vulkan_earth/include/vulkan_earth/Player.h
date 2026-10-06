@@ -42,7 +42,7 @@ public:
     Player();
     virtual ~Player();
     virtual void updateTank(
-            /* Pass in all paramaters that are associated with a tank */) = 0;
+      /* Pass in all paramaters that are associated with a tank */) = 0;
     virtual std::string getTankType() = 0;
     virtual void setTankType(const std::string& tank_type) = 0;
     virtual Tank* getCurrentTank() = 0;
@@ -86,7 +86,7 @@ public:
 
     /*	TEST DRAW FUNCTIONS				*/
     void drawTestLinesandPlanes(
-            vulkan_graphix::Render::RenderContext& context);
+      vulkan_graphix::Render::RenderContext& context);
     bool getDrawDebugLinesandPlanes();
     void setDrawDebugLinesandPlanes(bool flag);
     /*	DONE WITH TEST DRAW FUNCTIONS	*/
@@ -98,23 +98,23 @@ protected:
     Tank* m_target;
     vulkan_graphix::Math::Vec3<float> m_enemy_position;
     vulkan_graphix::Math::Vec3<float> m_projectile_path =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_enemy_path =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_right_vector =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_left_vector =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_up_vector =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_down_vector =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_pitch_vector =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_ortho_right =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_ortho_left =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     float m_yaw_angle;
     float m_rangle;
     float m_langle;

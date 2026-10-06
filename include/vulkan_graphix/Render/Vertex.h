@@ -77,17 +77,16 @@ template <typename... Ts>
 VertexLayout vertexLayout(VertexTypes::AttributeTraits<Ts...> /*traits*/) {
     using Traits = VertexTypes::AttributeTraits<Ts...>;
     constexpr std::array<std::size_t, sizeof...(Ts)> offsets =
-            Traits::byteOffsets();
+      Traits::byteOffsets();
     constexpr std::array<VkFormat, sizeof...(Ts)> formats = {
-            AttributeFormat<Ts>::value...};
+      AttributeFormat<Ts>::value...};
     VertexLayout layout;
     layout.m_stride = static_cast<std::uint32_t>(Traits::stride);
     for (std::size_t i = 0; i < sizeof...(Ts); ++i) {
-        layout.m_attributes.push_back(
-                {static_cast<std::uint32_t>(i),
-                 0,
-                 formats[i],
-                 static_cast<std::uint32_t>(offsets[i])});
+        layout.m_attributes.push_back({static_cast<std::uint32_t>(i),
+          0,
+          formats[i],
+          static_cast<std::uint32_t>(offsets[i])});
     }
     return layout;
 }
@@ -98,15 +97,14 @@ VertexLayout vertexLayout(VertexTypes::AttributeTraits<Ts...> /*traits*/) {
 template <typename V>
 VertexLayout vertexLayout() {
     static_assert(sizeof(V) == V::Traits::stride,
-                  "vertex struct and its AttributeTraits disagree");
+      "vertex struct and its AttributeTraits disagree");
     return vertexLayout(typename V::Traits{});
 }
 
 // Flat-colored or textured geometry: UI, text, lines, debug shapes.
 struct UiVertex {
-    using Traits = VertexTypes::AttributeTraits<Math::Vec3<float>,
-                                                Math::Vec4<float>,
-                                                Math::Vec2<float>>;
+    using Traits = VertexTypes::
+      AttributeTraits<Math::Vec3<float>, Math::Vec4<float>, Math::Vec2<float>>;
     Math::Vec3<float> m_position;
     Math::Vec4<float> m_color;
     Math::Vec2<float> m_texcoord;
@@ -114,9 +112,8 @@ struct UiVertex {
 
 // Lit, textured surfaces: models, terrain, water, spheres.
 struct MeshVertex {
-    using Traits = VertexTypes::AttributeTraits<Math::Vec3<float>,
-                                                Math::Vec3<float>,
-                                                Math::Vec2<float>>;
+    using Traits = VertexTypes::
+      AttributeTraits<Math::Vec3<float>, Math::Vec3<float>, Math::Vec2<float>>;
     Math::Vec3<float> m_position;
     Math::Vec3<float> m_normal;
     Math::Vec2<float> m_texcoord;
@@ -127,19 +124,19 @@ struct MeshVertex {
 // stores them in, doesn't promise that layout itself).
 template <typename... Ts>
 std::vector<std::byte> packInterleaved(
-        const VertexTypes::InterleavedData<Ts...>& data) {
+  const VertexTypes::InterleavedData<Ts...>& data) {
     using Traits = VertexTypes::AttributeTraits<Ts...>;
     constexpr std::array<std::size_t, sizeof...(Ts)> offsets =
-            Traits::byteOffsets();
+      Traits::byteOffsets();
     std::vector<std::byte> bytes(data.getByteCount());
     std::size_t record = 0;
     for (const auto& datum : data.getData()) {
         std::byte* const base = bytes.data() + record * Traits::stride;
         [&]<std::size_t... I>(std::index_sequence<I...>) {
             (std::memcpy(base + offsets[I],
-                         &datum.template get<I>(),
-                         sizeof(datum.template get<I>())),
-             ...);
+               &datum.template get<I>(),
+               sizeof(datum.template get<I>())),
+              ...);
         }(std::index_sequence_for<Ts...>{});
         ++record;
     }

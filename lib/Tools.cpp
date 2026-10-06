@@ -20,13 +20,13 @@ namespace vulkan_graphix::Tools {
 std::filesystem::path executableDir() {
     char exec_buf[4096];
     ssize_t nread =
-            ::readlink("/proc/self/exe", exec_buf, sizeof(exec_buf) - 1);
+      ::readlink("/proc/self/exe", exec_buf, sizeof(exec_buf) - 1);
     if (nread == -1) {
         return {};
     }
     exec_buf[nread] = '\0';
     std::filesystem::path exec_dir =
-            std::filesystem::path(exec_buf).parent_path();
+      std::filesystem::path(exec_buf).parent_path();
     if (exec_dir.filename() == ".libs") {
         exec_dir = exec_dir.parent_path();
     }
@@ -64,33 +64,32 @@ std::vector<char> getBinaryFileContents(const std::string& filename) {
 // Function loading image (texture) data from a specified file  //
 // ************************************************************ //
 std::vector<char> getImageData(const std::string& filename,
-                               std::int32_t requested_components,
-                               std::int32_t* width,
-                               std::int32_t* height,
-                               std::int32_t* components,
-                               std::int32_t* data_size) {
+  std::int32_t requested_components,
+  std::int32_t* width,
+  std::int32_t* height,
+  std::int32_t* components,
+  std::int32_t* data_size) {
     std::vector<char> file_data = Tools::getBinaryFileContents(filename);
     if (file_data.empty()) {
         return std::vector<char>();
     }
 
     std::int32_t tmp_width = 0, tmp_height = 0, tmp_components = 0;
-    std::uint8_t* image_data = stbi_load_from_memory(
-            reinterpret_cast<std::uint8_t*>(&file_data[0]),
-            static_cast<std::int32_t>(file_data.size()),
-            &tmp_width,
-            &tmp_height,
-            &tmp_components,
-            requested_components);
+    std::uint8_t* image_data =
+      stbi_load_from_memory(reinterpret_cast<std::uint8_t*>(&file_data[0]),
+        static_cast<std::int32_t>(file_data.size()),
+        &tmp_width,
+        &tmp_height,
+        &tmp_components,
+        requested_components);
     if ((image_data == nullptr) || (tmp_width <= 0) || (tmp_height <= 0) ||
-        (tmp_components <= 0)) {
+      (tmp_components <= 0)) {
         std::cout << "Could not read image data!" << std::endl;
         return std::vector<char>();
     }
 
     std::int32_t size = (tmp_width) * (tmp_height) *
-                        (requested_components <= 0 ? tmp_components
-                                                   : requested_components);
+      (requested_components <= 0 ? tmp_components : requested_components);
     if (data_size) {
         *data_size = size;
     }
@@ -111,9 +110,8 @@ std::vector<char> getImageData(const std::string& filename,
     return output;
 }
 
-std::vector<char> getRawImageData(const std::string& filename,
-                                  std::uint32_t width,
-                                  std::uint32_t height) {
+std::vector<char> getRawImageData(
+  const std::string& filename, std::uint32_t width, std::uint32_t height) {
     std::filesystem::path path(filename);
     if (!std::filesystem::exists(path)) {
         path = executableDir() / filename;
@@ -125,8 +123,8 @@ std::vector<char> getRawImageData(const std::string& filename,
         return std::vector<char>();
     }
 
-    const std::size_t rgb_size = static_cast<std::size_t>(width) *
-                                 static_cast<std::size_t>(height) * 3;
+    const std::size_t rgb_size =
+      static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 3;
     std::vector<char> rgb_data(rgb_size);
     file.read(rgb_data.data(), static_cast<std::streamsize>(rgb_size));
     if (static_cast<std::size_t>(file.gcount()) != rgb_size) {
@@ -169,11 +167,11 @@ std::vector<OglVertexData> loadOglMeshData(const std::string& filename) {
         const std::size_t base = i * c_floats_per_vertex;
         OglVertexData vertex;
         vertex.m_texcoord =
-                Math::Vec2<float>(values[base + 0], values[base + 1]);
+          Math::Vec2<float>(values[base + 0], values[base + 1]);
         vertex.m_normal = Math::Vec3<float>(
-                values[base + 2], values[base + 3], values[base + 4]);
+          values[base + 2], values[base + 3], values[base + 4]);
         vertex.m_position = Math::Vec3<float>(
-                values[base + 5], values[base + 6], values[base + 7]);
+          values[base + 5], values[base + 6], values[base + 7]);
         mesh_data.push_back(vertex);
     }
     return mesh_data;
@@ -185,43 +183,40 @@ std::vector<OglVertexData> loadOglMeshData(const std::string& filename) {
 // Function calculating perspective projection matrix           //
 // ************************************************************ //
 vulkan_graphix::Math::Mat4<float> getPerspectiveProjectionMatrix(
-        const float aspect_ratio,
-        const float field_of_view,
-        const float near_clip,
-        const float far_clip) {
+  const float aspect_ratio,
+  const float field_of_view,
+  const float near_clip,
+  const float far_clip) {
     using vulkan_graphix::Math::Vec4;
 
-    float fov_value = 1.0f / std::tan(field_of_view * 0.5f *
-                                      0.01745329251994329576923690768489f);
+    float fov_value = 1.0f /
+      std::tan(field_of_view * 0.5f * 0.01745329251994329576923690768489f);
 
     return vulkan_graphix::Math::Mat4<float>(
-            Vec4<float>(fov_value / aspect_ratio, 0.0f, 0.0f, 0.0f),
-            Vec4<float>(0.0f, -fov_value, 0.0f, 0.0f),
-            Vec4<float>(0.0f, 0.0f, far_clip / (near_clip - far_clip), -1.0f),
-            Vec4<float>(0.0f,
-                        0.0f,
-                        (near_clip * far_clip) / (near_clip - far_clip),
-                        0.0f));
+      Vec4<float>(fov_value / aspect_ratio, 0.0f, 0.0f, 0.0f),
+      Vec4<float>(0.0f, -fov_value, 0.0f, 0.0f),
+      Vec4<float>(0.0f, 0.0f, far_clip / (near_clip - far_clip), -1.0f),
+      Vec4<float>(
+        0.0f, 0.0f, (near_clip * far_clip) / (near_clip - far_clip), 0.0f));
 }
 
 vulkan_graphix::Math::Mat4<float> getOrthographicProjectionMatrix(
-        const float left_plane,
-        const float right_plane,
-        const float top_plane,
-        const float bottom_plane,
-        const float near_plane,
-        const float far_plane) {
+  const float left_plane,
+  const float right_plane,
+  const float top_plane,
+  const float bottom_plane,
+  const float near_plane,
+  const float far_plane) {
     using vulkan_graphix::Math::Vec4;
 
     return vulkan_graphix::Math::Mat4<float>(
-            Vec4<float>(2.0f / (right_plane - left_plane), 0.0f, 0.0f, 0.0f),
-            Vec4<float>(0.0f, 2.0f / (bottom_plane - top_plane), 0.0f, 0.0f),
-            Vec4<float>(0.0f, 0.0f, 1.0f / (near_plane - far_plane), 0.0f),
-            Vec4<float>(
-                    -(right_plane + left_plane) / (right_plane - left_plane),
-                    -(bottom_plane + top_plane) / (bottom_plane - top_plane),
-                    near_plane / (near_plane - far_plane),
-                    1.0f));
+      Vec4<float>(2.0f / (right_plane - left_plane), 0.0f, 0.0f, 0.0f),
+      Vec4<float>(0.0f, 2.0f / (bottom_plane - top_plane), 0.0f, 0.0f),
+      Vec4<float>(0.0f, 0.0f, 1.0f / (near_plane - far_plane), 0.0f),
+      Vec4<float>(-(right_plane + left_plane) / (right_plane - left_plane),
+        -(bottom_plane + top_plane) / (bottom_plane - top_plane),
+        near_plane / (near_plane - far_plane),
+        1.0f));
 }
 
 }  // namespace vulkan_graphix::Tools

@@ -41,11 +41,11 @@ class MainMenu {
 public:
     MainMenu();
     MainMenu(float new_width,
-             float new_height,
-             float new_percent_border,
-             GlobalSettings* new_global_settings,
-             PlayerFactory* new_player_factory,
-             std::int32_t* game_state);
+      float new_height,
+      float new_percent_border,
+      GlobalSettings* new_global_settings,
+      PlayerFactory* new_player_factory,
+      std::int32_t* game_state);
     ~MainMenu();
     float* getPos();
     float getHeight();

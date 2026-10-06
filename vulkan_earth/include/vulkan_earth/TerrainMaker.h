@@ -29,10 +29,10 @@ public:
     void draw(vulkan_graphix::Render::RenderContext& context);
     void initData();
     void prepareData(std::int32_t new_steps,
-                     std::int32_t new_increase,
-                     float new_radius,
-                     std::int32_t new_random_jump,
-                     std::int32_t smoothness);
+      std::int32_t new_increase,
+      float new_radius,
+      std::int32_t new_random_jump,
+      std::int32_t smoothness);
     void stdMessageBox(const std::string& output);
     void errorMessageBox(const std::string& output);
     void toggleWireframe();

@@ -20,13 +20,13 @@ public:
     // instead of the default front-on one, without changing the default
     // constructor's behavior for tutorials that don't care.
     OrbitCamera(float initial_yaw_radians,
-                float initial_pitch_radians,
-                float initial_distance);
+      float initial_pitch_radians,
+      float initial_distance);
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y);
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y);
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
 
     Math::Vec3<float> eye() const;

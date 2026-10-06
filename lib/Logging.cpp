@@ -100,8 +100,8 @@ bool Logging::addStdLogLogger(const LogTag& tag, SeverityLevel level) {
 }
 
 bool Logging::addFileLogger(const LogTag& tag,
-                            const std::filesystem::path& log_path,
-                            SeverityLevel level) {
+  const std::filesystem::path& log_path,
+  SeverityLevel level) {
     std::lock_guard<std::mutex> lock(Logging::s_loggers_mutex);
     if (Logging::s_loggers.find(tag) != Logging::s_loggers.end()) {
         return false;
@@ -109,13 +109,12 @@ bool Logging::addFileLogger(const LogTag& tag,
     auto file_stream = std::make_unique<std::ofstream>(log_path);
     std::ostream* stream = file_stream.get();
     Logging::s_loggers.emplace(
-            tag, TextSink{stream, level, std::move(file_stream)});
+      tag, TextSink{stream, level, std::move(file_stream)});
     return true;
 }
 
-void Logging::writeSeverityLog(const LogTag& tag,
-                               SeverityLevel level,
-                               const std::string& message) {
+void Logging::writeSeverityLog(
+  const LogTag& tag, SeverityLevel level, const std::string& message) {
     Logging::init();
 
     std::uint32_t line_id = ++Logging::s_line_id;
@@ -123,12 +122,12 @@ void Logging::writeSeverityLog(const LogTag& tag,
     std::lock_guard<std::mutex> lock(Logging::s_loggers_mutex);
     auto sink_it = Logging::s_loggers.find(tag);
     if (sink_it == Logging::s_loggers.end() ||
-        level < sink_it->second.m_level) {
+      level < sink_it->second.m_level) {
         return;
     }
 
-    std::time_t now_time = std::chrono::system_clock::to_time_t(
-            std::chrono::system_clock::now());
+    std::time_t now_time =
+      std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::tm local_tm{};
     localtime_r(&now_time, &local_tm);
 

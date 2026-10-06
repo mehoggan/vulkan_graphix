@@ -43,9 +43,9 @@ public:
     // right, 4/5 = scroll wheel up/down (reported as a press with no
     // matching release).
     virtual void onMouseButton(std::int32_t button,
-                               bool pressed,
-                               std::int32_t pos_x,
-                               std::int32_t pos_y);
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y);
     virtual void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
 
     // Keyboard hook. Returns whether the rendering loop should keep
@@ -90,10 +90,10 @@ public:
     // 500x500 at (20, 20) - every tutorial's window.
     bool create(const std::string& title);
     bool create(const std::string& title,
-                std::int32_t pos_x,
-                std::int32_t pos_y,
-                std::int32_t width,
-                std::int32_t height);
+      std::int32_t pos_x,
+      std::int32_t pos_y,
+      std::int32_t width,
+      std::int32_t height);
     bool renderingLoop(ProjectBase& project);
 
     // With key repeat off, holding a key reports one press and one release

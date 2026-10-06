@@ -50,14 +50,14 @@ inline constexpr float c_particle_alpha = 0.4f;
 // A new particle of kind at (x, y, z), heading along the unit vector
 // (dir_x, dir_y, dir_z) at speed, living frames updates.
 Particle makeParticle(ParticleKind kind,
-                      float x,
-                      float y,
-                      float z,
-                      float dir_x,
-                      float dir_y,
-                      float dir_z,
-                      float speed,
-                      std::int32_t frames);
+  float x,
+  float y,
+  float z,
+  float dir_x,
+  float dir_y,
+  float dir_z,
+  float speed,
+  std::int32_t frames);
 
 // Advances particle by one frame; false once it has lived all its frames.
 bool updateParticle(Particle& particle);
@@ -73,10 +73,10 @@ public:
     // The second argument (the original's emission rate) is accepted for
     // its signature's sake but, as there, never read.
     ParticleEmitter(std::int32_t spawn,
-                    std::int32_t rate,
-                    std::int32_t speed,
-                    std::int32_t life,
-                    ParticleKind kind);
+      std::int32_t rate,
+      std::int32_t speed,
+      std::int32_t life,
+      ParticleKind kind);
 
     void update(float x, float y, float z);
     // Frees every particle.
@@ -119,8 +119,8 @@ ExplosionFrame advanceExplosion(Explosion& explosion);
 
 // The sphere's radius for an explosion of a weapon with blast radius
 // weapon_radius (Weapon::getRadius()).
-float explosionSphereRadius(const Explosion& explosion,
-                            std::int32_t weapon_radius);
+float explosionSphereRadius(
+  const Explosion& explosion, std::int32_t weapon_radius);
 
 }  // namespace vulkan_graphix::EffectSimulation
 

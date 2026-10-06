@@ -23,7 +23,7 @@ TEST(ToolsTest, ExecutableDirIsTheTestBinarysOwnDirectory) {
     // Run through libtool's wrapper, the real binary lives in .libs/;
     // executableDir() reports the directory above it either way.
     const std::filesystem::path exe_dir =
-            vulkan_graphix::Tools::executableDir();
+      vulkan_graphix::Tools::executableDir();
     ASSERT_FALSE(exe_dir.empty());
     EXPECT_TRUE(std::filesystem::is_directory(exe_dir));
     EXPECT_NE(exe_dir.filename(), ".libs");
@@ -37,7 +37,7 @@ TEST(ToolsTest, GetBinaryFileContentsReadsAnExistingFile) {
     }
 
     std::vector<char> contents =
-            vulkan_graphix::Tools::getBinaryFileContents(path);
+      vulkan_graphix::Tools::getBinaryFileContents(path);
 
     ASSERT_EQ(contents.size(), 5u);
     EXPECT_EQ(contents[0], 0x01);
@@ -48,7 +48,7 @@ TEST(ToolsTest, GetBinaryFileContentsReadsAnExistingFile) {
 
 TEST(ToolsTest, GetBinaryFileContentsReturnsEmptyForAMissingFile) {
     std::vector<char> contents = vulkan_graphix::Tools::getBinaryFileContents(
-            "this_file_does_not_exist_anywhere.bin");
+      "this_file_does_not_exist_anywhere.bin");
 
     EXPECT_TRUE(contents.empty());
 }
@@ -56,7 +56,7 @@ TEST(ToolsTest, GetBinaryFileContentsReturnsEmptyForAMissingFile) {
 TEST(ToolsTest, GetImageDataLoadsARealPngAndReportsItsDimensions) {
     std::int32_t width = 0, height = 0, components = 0, data_size = 0;
     std::vector<char> data = vulkan_graphix::Tools::getImageData(
-            "texture.06.png", 4, &width, &height, &components, &data_size);
+      "texture.06.png", 4, &width, &height, &components, &data_size);
 
     ASSERT_FALSE(data.empty());
     EXPECT_GT(width, 0);
@@ -69,12 +69,7 @@ TEST(ToolsTest, GetImageDataLoadsARealPngAndReportsItsDimensions) {
 TEST(ToolsTest, GetImageDataReturnsEmptyForAMissingFile) {
     std::int32_t width = 0, height = 0;
     std::vector<char> data = vulkan_graphix::Tools::getImageData(
-            "this_texture_does_not_exist.png",
-            4,
-            &width,
-            &height,
-            nullptr,
-            nullptr);
+      "this_texture_does_not_exist.png", 4, &width, &height, nullptr, nullptr);
 
     EXPECT_TRUE(data.empty());
 }
@@ -87,7 +82,7 @@ TEST(ToolsTest, GetImageDataReturnsEmptyForCorruptImageData) {
     }
 
     std::vector<char> data = vulkan_graphix::Tools::getImageData(
-            path, 4, nullptr, nullptr, nullptr, nullptr);
+      path, 4, nullptr, nullptr, nullptr, nullptr);
 
     EXPECT_TRUE(data.empty());
 
@@ -101,19 +96,18 @@ TEST(ToolsTest, GetPerspectiveProjectionMatrixMatchesTheStandardFormula) {
     const float far_clip = 100.0f;
 
     auto result = vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
-            aspect_ratio, field_of_view, near_clip, far_clip);
+      aspect_ratio, field_of_view, near_clip, far_clip);
 
-    const float expected_fov_value =
-            1.0f / std::tan(field_of_view * 0.5f *
-                            0.01745329251994329576923690768489f);
+    const float expected_fov_value = 1.0f /
+      std::tan(field_of_view * 0.5f * 0.01745329251994329576923690768489f);
 
     EXPECT_NEAR(result[0][0], expected_fov_value / aspect_ratio, c_epsilon);
     EXPECT_NEAR(result[1][1], -expected_fov_value, c_epsilon);
     EXPECT_NEAR(result[2][2], far_clip / (near_clip - far_clip), c_epsilon);
     EXPECT_NEAR(result[2][3], -1.0f, c_epsilon);
     EXPECT_NEAR(result[3][2],
-                (near_clip * far_clip) / (near_clip - far_clip),
-                c_epsilon);
+      (near_clip * far_clip) / (near_clip - far_clip),
+      c_epsilon);
 }
 
 TEST(ToolsTest, GetOrthographicProjectionMatrixMatchesTheStandardFormula) {
@@ -122,17 +116,16 @@ TEST(ToolsTest, GetOrthographicProjectionMatrixMatchesTheStandardFormula) {
     const float near_plane = 0.1f, far_plane = 100.0f;
 
     auto result = vulkan_graphix::Tools::getOrthographicProjectionMatrix(
-            left, right, top_plane, bottom, near_plane, far_plane);
+      left, right, top_plane, bottom, near_plane, far_plane);
 
     EXPECT_NEAR(result[0][0], 2.0f / (right - left), c_epsilon);
     EXPECT_NEAR(result[1][1], 2.0f / (bottom - top_plane), c_epsilon);
     EXPECT_NEAR(result[2][2], 1.0f / (near_plane - far_plane), c_epsilon);
     EXPECT_NEAR(result[3][0], -(right + left) / (right - left), c_epsilon);
-    EXPECT_NEAR(result[3][1],
-                -(bottom + top_plane) / (bottom - top_plane),
-                c_epsilon);
     EXPECT_NEAR(
-            result[3][2], near_plane / (near_plane - far_plane), c_epsilon);
+      result[3][1], -(bottom + top_plane) / (bottom - top_plane), c_epsilon);
+    EXPECT_NEAR(
+      result[3][2], near_plane / (near_plane - far_plane), c_epsilon);
     EXPECT_NEAR(result[3][3], 1.0f, c_epsilon);
 }
 
@@ -144,7 +137,7 @@ void fakeDeleter(VkDevice, VkBuffer, const VkAllocationCallbacks*) {}
 
 TEST(ToolsTest, AutoDeleterDefaultConstructionIsInert) {
     vulkan_graphix::Tools::AutoDeleter<VkBuffer, decltype(&fakeDeleter)>
-            deleter;
+      deleter;
     EXPECT_TRUE(!deleter);
     EXPECT_EQ(deleter.get(), static_cast<VkBuffer>(VK_NULL_HANDLE));
 }
@@ -153,11 +146,11 @@ TEST(ToolsTest, AutoDeleterMoveTransfersOwnership) {
     VkBuffer fake_buffer = reinterpret_cast<VkBuffer>(0x1);
     VkDevice fake_device = reinterpret_cast<VkDevice>(0x2);
     vulkan_graphix::Tools::AutoDeleter<VkBuffer, decltype(&fakeDeleter)>
-            original(fake_buffer, &fakeDeleter, fake_device);
+      original(fake_buffer, &fakeDeleter, fake_device);
     EXPECT_FALSE(!original);
 
     vulkan_graphix::Tools::AutoDeleter<VkBuffer, decltype(&fakeDeleter)> moved(
-            std::move(original));
+      std::move(original));
 
     EXPECT_FALSE(!moved);
     EXPECT_EQ(moved.get(), fake_buffer);

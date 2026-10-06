@@ -40,10 +40,10 @@ const Math::Mat4<float>& uprightPartBasis();
 // the head is turned. Only the matrices' basis columns are read. Sums in
 // the original's order (translation + x*col0 + y*col1 + z*col2).
 PartTranslations composePartTranslations(
-        const Math::Vec3<float>& world_position,
-        const Math::Mat4<float>& body_matrix,
-        const Math::Mat4<float>& head_matrix,
-        const PartOffsets& offsets);
+  const Math::Vec3<float>& world_position,
+  const Math::Mat4<float>& body_matrix,
+  const Math::Mat4<float>& head_matrix,
+  const PartOffsets& offsets);
 
 }  // namespace vulkan_graphix::TankPlacement
 

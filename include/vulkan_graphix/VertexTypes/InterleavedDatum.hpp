@@ -32,13 +32,13 @@ public:
 private:
     std::tuple<Ts...> m_values;
 
-    friend bool operator==(const InterleavedDatum& lhs,
-                           const InterleavedDatum& rhs) {
+    friend bool operator==(
+      const InterleavedDatum& lhs, const InterleavedDatum& rhs) {
         return lhs.m_values == rhs.m_values;
     }
 
-    friend bool operator!=(const InterleavedDatum& lhs,
-                           const InterleavedDatum& rhs) {
+    friend bool operator!=(
+      const InterleavedDatum& lhs, const InterleavedDatum& rhs) {
         return !(lhs == rhs);
     }
 

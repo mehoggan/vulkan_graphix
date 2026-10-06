@@ -55,10 +55,8 @@ struct Tutorial17VertexData {
     Math::Vec4<float> m_color;
 };
 
-using Tutorial17VertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec2<float>,
-                                     Math::Vec4<float>>;
+using Tutorial17VertexAttributeTraits = VertexTypes::
+  AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
 
 static constexpr std::size_t c_inventory_item_count = 8;
 
@@ -138,10 +136,10 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     // One per swapchain image, indexed by acquired image index rather than
     // by rendering-resource slot. See the comment in createSemaphores() for
@@ -149,7 +147,7 @@ public:
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -198,9 +196,9 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
 
 private:
     // A title/explain line, a (possibly multi-line, wrapped) description,
@@ -211,33 +209,33 @@ private:
     static constexpr std::size_t c_max_vertex_count = c_max_quads * 6;
     static constexpr float c_font_pixel_height = 20.0f;
     static constexpr const char* c_font_path =
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+      "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 
     static constexpr std::uint32_t c_icon_size = 256;
     static constexpr std::uint32_t c_icon_atlas_cols = 4;
     static constexpr std::uint32_t c_icon_atlas_rows = 2;
     static constexpr std::uint32_t c_icon_atlas_width =
-            c_icon_size * c_icon_atlas_cols;
+      c_icon_size * c_icon_atlas_cols;
     static constexpr std::uint32_t c_icon_atlas_height =
-            c_icon_size * c_icon_atlas_rows;
+      c_icon_size * c_icon_atlas_rows;
 
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
     // Shared by createFontAtlas()/createIconAtlas(): creates the image,
     // memory, view, sampler, and uploads pixels, all in one call.
     bool createTextureFromPixels(std::uint32_t width,
-                                 std::uint32_t height,
-                                 const std::vector<char>& pixels,
-                                 ImageParameters& out_image_parameters);
+      std::uint32_t height,
+      const std::vector<char>& pixels,
+      ImageParameters& out_image_parameters);
     std::vector<char> buildIconAtlasPixels() const;
 
     Math::Mat4<float> getUniformBufferData() const;
@@ -259,32 +257,32 @@ private:
     Math::Vec2<float> getIconUvMin(std::size_t index) const;
     Math::Vec2<float> getIconUvMax(std::size_t index) const;
 
-    std::vector<std::string> wrapText(const std::string& text,
-                                      float max_width) const;
+    std::vector<std::string> wrapText(
+      const std::string& text, float max_width) const;
 
     void appendGlyphQuad(std::vector<Tutorial17VertexData>& vertex_data,
-                         const BitmapFontGlyphQuad& glyph,
-                         Math::Vec4<float> color) const;
+      const BitmapFontGlyphQuad& glyph,
+      Math::Vec4<float> color) const;
     void appendColoredQuad(std::vector<Tutorial17VertexData>& vertex_data,
-                           const std::array<Math::Vec2<float>, 4>& corners,
-                           Math::Vec4<float> color) const;
+      const std::array<Math::Vec2<float>, 4>& corners,
+      Math::Vec4<float> color) const;
     void appendText(std::vector<Tutorial17VertexData>& vertex_data,
-                    const std::string& text,
-                    Math::Vec2<float> origin,
-                    Math::Vec4<float> color) const;
+      const std::string& text,
+      Math::Vec2<float> origin,
+      Math::Vec4<float> color) const;
     void appendImageQuad(std::vector<Tutorial17VertexData>& vertex_data,
-                         Math::Vec2<float> top_left,
-                         Math::Vec2<float> size,
-                         Math::Vec2<float> uv_min,
-                         Math::Vec2<float> uv_max) const;
+      Math::Vec2<float> top_left,
+      Math::Vec2<float> size,
+      Math::Vec2<float> uv_min,
+      Math::Vec2<float> uv_max) const;
 
     std::vector<Tutorial17VertexData> buildTextPassVertexData() const;
     std::vector<Tutorial17VertexData> buildIconPassVertexData() const;
     bool updateVertexBufferData();
 
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

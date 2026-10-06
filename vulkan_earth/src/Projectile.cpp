@@ -18,13 +18,13 @@ namespace math = vulkan_graphix::Math;
 Projectile::Projectile() = default;
 
 Projectile::Projectile(GameState* new_parent,
-                       float* turret_matrix,
-                       float new_speed,
-                       VBOShaderLibrary** new_projectile_models) {
+  float* turret_matrix,
+  float new_speed,
+  VBOShaderLibrary** new_projectile_models) {
     m_default_weapon = new WeaponDefault(10);
     m_parent = new_parent;
     m_launch = vulkan_graphix::Ballistics::launchFromBarrel(
-            glm::make_mat4(turret_matrix), new_speed, c_muzzle_distance);
+      glm::make_mat4(turret_matrix), new_speed, c_muzzle_distance);
     m_pos[0] = m_launch.m_origin.x;
     m_pos[1] = m_launch.m_origin.y;
     m_pos[2] = m_launch.m_origin.z;
@@ -39,7 +39,7 @@ Projectile::Projectile(GameState* new_parent,
     m_projectile_default = new VBOShaderLibrary();
     m_projectile_default->loadClientData("Projectiles/projectileDefault.ogl");
     m_projectile_default->loadTexture(
-            "Projectiles/projectileDefault.raw", 512, 512);
+      "Projectiles/projectileDefault.raw", 512, 512);
 
     m_rotate = 4;
     m_timer = 0;
@@ -65,22 +65,20 @@ void Projectile::update(float x, float y, float z) {
 }
 
 void Projectile::draw(render::RenderContext& context) {
-    math::Mat4<float> model =
-            glm::translate(math::Mat4<float>(1.0f),
-                           math::Vec3<float>(m_pos[0], m_pos[1], m_pos[2]));
+    math::Mat4<float> model = glm::translate(math::Mat4<float>(1.0f),
+      math::Vec3<float>(m_pos[0], m_pos[1], m_pos[2]));
     model = glm::rotate(model,
-                        glm::radians(static_cast<float>(m_rotate)),
-                        math::Vec3<float>(-1, .3, -.4));
+      glm::radians(static_cast<float>(m_rotate)),
+      math::Vec3<float>(-1, .3, -.4));
     if (m_weapon == nullptr) {
         m_projectile_default->draw(
-                context, glm::scale(model, math::Vec3<float>(60, 60, 60)));
+          context, glm::scale(model, math::Vec3<float>(60, 60, 60)));
     } else {
-        m_projectile_models[m_weapon->getUNIQUEIDENTIFIER()]->draw(
-                context,
-                glm::scale(model,
-                           math::Vec3<float>(m_weapon->getScale(),
-                                             m_weapon->getScale(),
-                                             m_weapon->getScale())));
+        m_projectile_models[m_weapon->getUNIQUEIDENTIFIER()]->draw(context,
+          glm::scale(model,
+            math::Vec3<float>(m_weapon->getScale(),
+              m_weapon->getScale(),
+              m_weapon->getScale())));
     }
     m_rotate += 4;
 }

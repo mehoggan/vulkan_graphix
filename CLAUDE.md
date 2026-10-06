@@ -337,8 +337,13 @@ lists end the constructor's own line with `:`, then put one initializer
 per line, two indents in, each followed by its `,`
 (`BreakConstructorInitializers: AfterColon`,
 `PackConstructorInitializers: Never`) - so a comment about the
-constructor goes above it, not between it and its `:`. clang-tidy has no check for
-qualifier placement, so this is enforced by clang-format itself: the
+constructor goes above it, not between it and its `:`. Wrapped
+parameters, arguments, and operands never line up under the open bracket
+or first operand - each continuation line is just indented two spaces past
+the line it continues (`AlignAfterOpenBracket: DontAlign`, `AlignOperands:
+DontAlign`, `ContinuationIndentWidth: 2`).
+clang-tidy has no check for qualifier placement or alignment, so these
+are enforced by clang-format itself: the
 pre-commit hook rejects staged C++ that doesn't match `.clang-format`, and
 clang-tidy's own fix-its are formatted with it (`FormatStyle: file`).
 

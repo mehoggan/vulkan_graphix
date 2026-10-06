@@ -42,10 +42,10 @@ public:
     // i < smoothness; i++) terrainSmoothe(10);` loop). Uses the C library's
     // rand(), exactly as TerrainMaker did - seed it with srand() first.
     void generate(std::int32_t steps,
-                  std::int32_t increase,
-                  float radius,
-                  std::int32_t random_jump,
-                  std::int32_t smoothing_passes);
+      std::int32_t increase,
+      float radius,
+      std::int32_t random_jump,
+      std::int32_t smoothing_passes);
 
     std::int32_t gridSize() const;
     std::int32_t gridScale() const;
@@ -81,20 +81,19 @@ public:
     // dropped), in the order they were visited, so a renderer knows which
     // vertices' heights and normals to re-upload; empty if the impact is
     // outside the grid.
-    std::vector<TerrainGridCell> makeCrater(float impact_x,
-                                            float impact_z,
-                                            float blast_size);
+    std::vector<TerrainGridCell> makeCrater(
+      float impact_x, float impact_z, float blast_size);
 
 private:
     void terrainGen(std::int32_t steps,
-                    std::int32_t increase,
-                    float radius,
-                    std::int32_t random_jump);
+      std::int32_t increase,
+      float radius,
+      std::int32_t random_jump);
     void terrainSmoothe(std::int32_t box_width);
     void calcNormal(std::int32_t x,
-                    std::int32_t z,
-                    std::int32_t flag,
-                    Math::Vec3<float>* normal) const;
+      std::int32_t z,
+      std::int32_t flag,
+      Math::Vec3<float>* normal) const;
     bool inGrid(std::int32_t x, std::int32_t z) const;
 
     std::int32_t m_grid_size;

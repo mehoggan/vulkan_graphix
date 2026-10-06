@@ -69,10 +69,8 @@ struct Tutorial21TerrainVertexData {
     Math::Vec2<float> m_texcoord;
 };
 
-using Tutorial21TerrainVertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec3<float>,
-                                     Math::Vec2<float>>;
+using Tutorial21TerrainVertexAttributeTraits = VertexTypes::
+  AttributeTraits<Math::Vec4<float>, Math::Vec3<float>, Math::Vec2<float>>;
 
 // Matches Tutorial12UniformBufferData's shape byte-for-byte.
 struct Tutorial21TerrainUniformBufferData {
@@ -92,7 +90,7 @@ struct Tutorial21ObjectVertexData {
 };
 
 using Tutorial21ObjectVertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
+  VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 struct Tutorial21ObjectUniformBufferData {
     Math::Mat4<float> m_view;
@@ -140,12 +138,12 @@ public:
     const BufferParameters& getTerrainUniformBufferParameters() const;
     BufferParameters& getTerrainUniformBufferParameters();
     void setTerrainUniformBufferParameters(
-            const BufferParameters& uniform_buffer);
+      const BufferParameters& uniform_buffer);
 
     const BufferParameters& getObjectUniformBufferParameters() const;
     BufferParameters& getObjectUniformBufferParameters();
     void setObjectUniformBufferParameters(
-            const BufferParameters& uniform_buffer);
+      const BufferParameters& uniform_buffer);
 
     const VkDescriptorSetLayout& getVkTerrainDescriptorSetLayout() const;
     VkDescriptorSetLayout& getVkTerrainDescriptorSetLayout();
@@ -194,7 +192,7 @@ public:
     const BufferParameters& getTerrainVertexBufferParameters() const;
     BufferParameters& getTerrainVertexBufferParameters();
     void setTerrainVertexBufferParameters(
-            const BufferParameters& vertex_buffer);
+      const BufferParameters& vertex_buffer);
     std::uint32_t getTerrainVertexCount() const;
     void setTerrainVertexCount(std::uint32_t vertex_count);
 
@@ -203,13 +201,13 @@ public:
     std::array<BufferParameters, c_tank_part_count>&
     getTankVertexBufferParameters();
     const std::array<std::uint32_t, c_tank_part_count>& getTankVertexCounts()
-            const;
+      const;
     std::array<std::uint32_t, c_tank_part_count>& getTankVertexCounts();
 
     const BufferParameters& getSkyboxVertexBufferParameters() const;
     BufferParameters& getSkyboxVertexBufferParameters();
     void setSkyboxVertexBufferParameters(
-            const BufferParameters& vertex_buffer);
+      const BufferParameters& vertex_buffer);
     const BufferParameters& getSkyboxIndexBufferParameters() const;
     BufferParameters& getSkyboxIndexBufferParameters();
     void setSkyboxIndexBufferParameters(const BufferParameters& index_buffer);
@@ -225,15 +223,15 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -298,9 +296,9 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
@@ -330,39 +328,38 @@ private:
     static constexpr float c_skybox_half_extent = 3000.0f;
 
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
     bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkFormat format,
-                     VkImageUsageFlags usage,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
+      std::uint32_t height,
+      VkFormat format,
+      VkImageUsageFlags usage,
+      VkImage* image);
+    bool allocateImageMemory(
+      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
     bool createImageView(VkImage image,
-                         VkFormat format,
-                         VkImageAspectFlags aspect_mask,
-                         VkImageView* image_view);
+      VkFormat format,
+      VkImageAspectFlags aspect_mask,
+      VkImageView* image_view);
     bool createTextureFromPixels(std::uint32_t width,
-                                 std::uint32_t height,
-                                 const std::vector<char>& pixels,
-                                 VkSamplerAddressMode address_mode,
-                                 ImageParameters& out_image_parameters);
+      std::uint32_t height,
+      const std::vector<char>& pixels,
+      VkSamplerAddressMode address_mode,
+      ImageParameters& out_image_parameters);
     bool destroyDepthResources();
     bool copyBufferData(BufferParameters& destination,
-                        const void* data,
-                        std::uint32_t data_size,
-                        VkAccessFlags dst_access_mask,
-                        VkPipelineStageFlags dst_stage_mask);
+      const void* data,
+      std::uint32_t data_size,
+      VkAccessFlags dst_access_mask,
+      VkPipelineStageFlags dst_stage_mask);
 
     Tutorial21TerrainUniformBufferData getTerrainUniformBufferData() const;
     bool updateTerrainUniformBufferData();
@@ -385,20 +382,20 @@ private:
     // itself makes to build the mesh - not a fabricated Y position.
     float getTankGroundHeight();
     Math::Mat4<float> getTankPartModelMatrix(
-            const Math::Vec3<float>& part_translation) const;
+      const Math::Vec3<float>& part_translation) const;
 
     const std::vector<Tutorial21ObjectVertexData>& getSkyboxVertexData() const;
     const std::vector<std::uint32_t>& getSkyboxIndexData() const;
 
     std::vector<Tutorial21ObjectVertexData> loadTankPartVertexData(
-            const char* mesh_filename) const;
+      const char* mesh_filename) const;
     bool createTankPartVertexBuffer(const char* mesh_filename,
-                                    BufferParameters& vertex_buffer,
-                                    std::uint32_t& vertex_count);
+      BufferParameters& vertex_buffer,
+      std::uint32_t& vertex_count);
 
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

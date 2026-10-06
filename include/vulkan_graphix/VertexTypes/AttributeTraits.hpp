@@ -68,7 +68,7 @@ struct AttributeTraits {
     static constexpr std::size_t attribute_count = sizeof...(Ts);
     static constexpr std::size_t stride = (sizeof(Ts) + ...);
     static constexpr std::size_t attribute_value_count =
-            (AttributeDimension<Ts>::value + ...);
+      (AttributeDimension<Ts>::value + ...);
 
     static constexpr std::array<std::size_t, sizeof...(Ts)> byteOffsets() {
         std::array<std::size_t, sizeof...(Ts)> sizes{sizeof(Ts)...};

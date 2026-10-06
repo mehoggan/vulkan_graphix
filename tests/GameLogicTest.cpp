@@ -72,12 +72,12 @@ TEST(GameLogicTest, GenerationIsDeterministicForASeed) {
 TEST(GameLogicTest, HeightAtWorldRoundsToTheNearestVertexInXThenZOrder) {
     const vg::TerrainGenerator terrain = makeGeneratedTerrain();
     // Just past a vertex rounds down; more than halfway rounds up.
-    EXPECT_EQ(terrain.heightAtWorld(5 * c_grid_scale + 10.0f,
-                                    9 * c_grid_scale + 10.0f),
-              static_cast<float>(terrain.heightAt(5, 9)));
-    EXPECT_EQ(terrain.heightAtWorld(5 * c_grid_scale + 60.0f,
-                                    9 * c_grid_scale + 60.0f),
-              static_cast<float>(terrain.heightAt(6, 10)));
+    EXPECT_EQ(terrain.heightAtWorld(
+                5 * c_grid_scale + 10.0f, 9 * c_grid_scale + 10.0f),
+      static_cast<float>(terrain.heightAt(5, 9)));
+    EXPECT_EQ(terrain.heightAtWorld(
+                5 * c_grid_scale + 60.0f, 9 * c_grid_scale + 60.0f),
+      static_cast<float>(terrain.heightAt(6, 10)));
     // Outside the grid reads as height 0.
     EXPECT_EQ(terrain.heightAtWorld(-1.0f, 50.0f), 0.0f);
     EXPECT_EQ(terrain.heightAtWorld(50.0f, c_grid_size * c_grid_scale), 0.0f);
@@ -88,16 +88,16 @@ TEST(GameLogicTest, NormalsAreUnitLengthAndFlatOutsideTheGrid) {
     for (std::int32_t z = 0; z < c_grid_size - 1; ++z) {
         for (std::int32_t x = 0; x < c_grid_size - 1; ++x) {
             const vg::Math::Vec3<float> triangle =
-                    terrain.triangleNormalAt(x, z);
+              terrain.triangleNormalAt(x, z);
             EXPECT_NEAR(glm::length(triangle), 1.0f, c_epsilon);
             EXPECT_GE(triangle.y, 0.0f);  // always flipped to face up
         }
     }
     const vg::Math::Vec3<float> outside =
-            terrain.triangleNormalAt(c_grid_size - 1, 0);
+      terrain.triangleNormalAt(c_grid_size - 1, 0);
     EXPECT_EQ(outside, vg::Math::Vec3<float>(0.0f, 1.0f, 0.0f));
     const vg::Math::Vec3<float> world_outside =
-            terrain.normalAtWorld(c_grid_size * c_grid_scale * 2.0f, 0.0f);
+      terrain.normalAtWorld(c_grid_size * c_grid_scale * 2.0f, 0.0f);
     EXPECT_EQ(world_outside, vg::Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 }
 
@@ -108,14 +108,14 @@ TEST(GameLogicTest, CraterLowersTheImpactAndReportsTheBlastCells) {
     const std::int32_t impact_z = 12;
 
     const std::vector<vg::TerrainGridCell> cells = terrain.makeCrater(
-            impact_x * c_grid_scale, impact_z * c_grid_scale, blast_size);
+      impact_x * c_grid_scale, impact_z * c_grid_scale, blast_size);
 
     std::set<std::pair<std::int32_t, std::int32_t>> reported;
     for (const vg::TerrainGridCell& cell : cells) {
         reported.insert({cell.m_x, cell.m_z});
-        const float distance = std::sqrt(static_cast<float>(
-                (cell.m_x - impact_x) * (cell.m_x - impact_x) +
-                (cell.m_z - impact_z) * (cell.m_z - impact_z)));
+        const float distance = std::sqrt(
+          static_cast<float>((cell.m_x - impact_x) * (cell.m_x - impact_x) +
+            (cell.m_z - impact_z) * (cell.m_z - impact_z)));
         EXPECT_LE(distance, blast_size);
     }
     EXPECT_EQ(reported.size(), cells.size());  // no duplicates
@@ -133,16 +133,16 @@ TEST(GameLogicTest, BallisticsLaunchesDownTheBarrelAndFallsUnderGravity) {
     turret[3] = vg::Math::Vec4<float>(10.0f, 20.0f, 30.0f, 1.0f);
 
     const vg::Math::Vec3<float> probe =
-            vg::Ballistics::pointAlongBarrel(turret, 5.0f);
+      vg::Ballistics::pointAlongBarrel(turret, 5.0f);
     EXPECT_EQ(probe, vg::Math::Vec3<float>(10.0f, 20.0f, 25.0f));
 
     const vg::Ballistics::Launch launch =
-            vg::Ballistics::launchFromBarrel(turret, 4.0f, 5.0f);
+      vg::Ballistics::launchFromBarrel(turret, 4.0f, 5.0f);
     EXPECT_EQ(launch.m_origin, probe);
     EXPECT_EQ(launch.m_velocity, vg::Math::Vec3<float>(0.0f, 0.0f, -4.0f));
 
     const vg::Math::Vec3<float> at_two =
-            vg::Ballistics::positionAt(launch, -10.0f, 2.0f);
+      vg::Ballistics::positionAt(launch, -10.0f, 2.0f);
     EXPECT_NEAR(at_two.x, 10.0f, c_epsilon);
     EXPECT_NEAR(at_two.y, 20.0f - 20.0f, c_epsilon);  // 0.5 * -10 * 2^2
     EXPECT_NEAR(at_two.z, 25.0f - 8.0f, c_epsilon);
@@ -150,37 +150,37 @@ TEST(GameLogicTest, BallisticsLaunchesDownTheBarrelAndFallsUnderGravity) {
 
 TEST(GameLogicTest, AngleBetweenDegrees) {
     using vg::Math::Vec3;
-    EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(Vec3<float>(1, 0, 0),
-                                                         Vec3<float>(0, 1, 0)),
-                90.0f,
-                1e-3f);
     EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(
-                        Vec3<float>(2, 0, 0), Vec3<float>(-3, 0, 0)),
-                180.0f,
-                1e-3f);
+                  Vec3<float>(1, 0, 0), Vec3<float>(0, 1, 0)),
+      90.0f,
+      1e-3f);
+    EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(
+                  Vec3<float>(2, 0, 0), Vec3<float>(-3, 0, 0)),
+      180.0f,
+      1e-3f);
     // A zero-length input stays unnormalized (dot = 0 -> 90 degrees), as
     // vulkan_earth's own normalizeVector() left it.
-    EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(Vec3<float>(0, 0, 0),
-                                                         Vec3<float>(0, 1, 0)),
-                90.0f,
-                1e-3f);
+    EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(
+                  Vec3<float>(0, 0, 0), Vec3<float>(0, 1, 0)),
+      90.0f,
+      1e-3f);
 }
 
 TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
     // vulkan_earth's tank basis: an x<->z axis swap.
     vg::Math::Mat4<float> body(vg::Math::Vec4<float>(0, 0, 1, 0),
-                               vg::Math::Vec4<float>(0, 1, 0, 0),
-                               vg::Math::Vec4<float>(1, 0, 0, 0),
-                               vg::Math::Vec4<float>(5, 6, 7, 1));
+      vg::Math::Vec4<float>(0, 1, 0, 0),
+      vg::Math::Vec4<float>(1, 0, 0, 0),
+      vg::Math::Vec4<float>(5, 6, 7, 1));
 
-    EXPECT_FALSE(vg::TankOrientation::alignToGround(
-                         body, vg::Math::Vec3<float>(0, 1, 0))
-                         .has_value());
+    EXPECT_FALSE(
+      vg::TankOrientation::alignToGround(body, vg::Math::Vec3<float>(0, 1, 0))
+        .has_value());
 
     const vg::Math::Vec3<float> ground =
-            glm::normalize(vg::Math::Vec3<float>(0.3f, 1.0f, -0.2f));
+      glm::normalize(vg::Math::Vec3<float>(0.3f, 1.0f, -0.2f));
     const std::optional<vg::TankOrientation::Alignment> alignment =
-            vg::TankOrientation::alignToGround(body, ground);
+      vg::TankOrientation::alignToGround(body, ground);
     ASSERT_TRUE(alignment.has_value());
     const vg::Math::Vec3<float> new_up(alignment->m_matrix[1]);
     EXPECT_NEAR(new_up.x, ground.x, 1e-3f);
@@ -188,23 +188,23 @@ TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
     EXPECT_NEAR(new_up.z, ground.z, 1e-3f);
     // Translation is untouched.
     EXPECT_EQ(vg::Math::Vec3<float>(alignment->m_matrix[3]),
-              vg::Math::Vec3<float>(5, 6, 7));
+      vg::Math::Vec3<float>(5, 6, 7));
 }
 
 TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
     namespace catalog = vg::GameCatalog;
-    EXPECT_EQ(std::string(catalog::item(catalog::ItemKind::SmallRepair)
-                                  .m_image_file),
-              "ItemSmallRepair.raw");
+    EXPECT_EQ(
+      std::string(catalog::item(catalog::ItemKind::SmallRepair).m_image_file),
+      "ItemSmallRepair.raw");
     EXPECT_EQ(catalog::item(catalog::ItemKind::BigRepair).m_special_num, 700);
     EXPECT_EQ(
-            std::string(catalog::item(catalog::ItemKind::Float).m_image_file),
-            "ItemFloat.raw");
+      std::string(catalog::item(catalog::ItemKind::Float).m_image_file),
+      "ItemFloat.raw");
     EXPECT_EQ(catalog::weapon(catalog::WeaponKind::MFB).m_damage, 300);
     EXPECT_EQ(catalog::weapon(catalog::WeaponKind::Nuke).m_price, 500);
-    EXPECT_EQ(std::string(catalog::weapon(catalog::WeaponKind::Default)
-                                  .m_image_file),
-              "TestImage.raw");
+    EXPECT_EQ(
+      std::string(catalog::weapon(catalog::WeaponKind::Default).m_image_file),
+      "TestImage.raw");
     // Every entry is filled in.
     for (const catalog::ItemSpec& item : catalog::items()) {
         EXPECT_NE(item.m_image_file, nullptr);
@@ -222,7 +222,7 @@ TEST(GameLogicTest, CatalogKeepsThorsTwoComponentMediumSlateBlue) {
     namespace catalog = vg::GameCatalog;
     // OpenGLColors.h's MediumSlateBlue has no blue component.
     const auto& color =
-            catalog::weapon(catalog::WeaponKind::Thor).m_explosion_colors[1];
+      catalog::weapon(catalog::WeaponKind::Thor).m_explosion_colors[1];
     EXPECT_DOUBLE_EQ(color[0], 0.498039);
     EXPECT_DOUBLE_EQ(color[1], 1.0);
     EXPECT_DOUBLE_EQ(color[2], 0.0);
@@ -231,7 +231,7 @@ TEST(GameLogicTest, CatalogKeepsThorsTwoComponentMediumSlateBlue) {
 TEST(GameLogicTest, SmokeParticleRisesAndFadesThroughItsColorBands) {
     namespace effects = vg::EffectSimulation;
     effects::Particle particle = effects::makeParticle(
-            effects::ParticleKind::Smoke, 0, 0, 0, 1, 0, 0, 1, 100);
+      effects::ParticleKind::Smoke, 0, 0, 0, 1, 0, 0, 1, 100);
     EXPECT_EQ(particle.m_size, 2.0f);
     float previous_y = particle.m_y;
     for (std::int32_t frame = 0; frame < 31; ++frame) {
@@ -259,7 +259,7 @@ TEST(GameLogicTest, SmokeParticleRisesAndFadesThroughItsColorBands) {
 TEST(GameLogicTest, FloatParticleDampsItsVerticalMotion) {
     namespace effects = vg::EffectSimulation;
     effects::Particle particle = effects::makeParticle(
-            effects::ParticleKind::Float, 0, 0, 0, 0, 1, 0, 2, 10);
+      effects::ParticleKind::Float, 0, 0, 0, 0, 1, 0, 2, 10);
     EXPECT_TRUE(effects::updateParticle(particle));
     EXPECT_NEAR(particle.m_y, 0.2f, c_epsilon);
     EXPECT_EQ(particle.m_size, 4.0f);
@@ -282,8 +282,8 @@ TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
         if (slot) {
             EXPECT_EQ(slot->m_x, 1.0f);
             const float length = std::sqrt(slot->m_dir[0] * slot->m_dir[0] +
-                                           slot->m_dir[1] * slot->m_dir[1] +
-                                           slot->m_dir[2] * slot->m_dir[2]);
+              slot->m_dir[1] * slot->m_dir[1] +
+              slot->m_dir[2] * slot->m_dir[2]);
             EXPECT_NEAR(length, 1.0f, c_epsilon);
         }
     }
@@ -313,6 +313,6 @@ TEST(GameLogicTest, ExplosionStepsThroughItsColorsAndLeavesTheGap) {
     }
     EXPECT_EQ(frame.m_color_index, 3);
     EXPECT_NEAR(effects::explosionSphereRadius(explosion, 30),
-                explosion.m_radius * (30 * 5.56f + 22.22f),
-                1e-2f);
+      explosion.m_radius * (30 * 5.56f + 22.22f),
+      1e-2f);
 }

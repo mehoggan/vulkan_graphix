@@ -35,11 +35,10 @@ namespace vulkan_graphix::Math {
 namespace detail {
 
 template <typename T, typename I>
-void updateTessellatedTriangleData(
-        const Vec3<T>& point,
-        I& current_index,
-        std::unordered_map<Vec3<T>, I>& point_to_index_map,
-        TessellatedTriangleData<T, I>& out) {
+void updateTessellatedTriangleData(const Vec3<T>& point,
+  I& current_index,
+  std::unordered_map<Vec3<T>, I>& point_to_index_map,
+  TessellatedTriangleData<T, I>& out) {
     auto point_it = point_to_index_map.find(point);
     if (point_it == point_to_index_map.end()) {
         point_to_index_map[point] = current_index;
@@ -52,49 +51,47 @@ void updateTessellatedTriangleData(
 }
 
 template <typename T, typename I>
-void updateTessellatedWireframeTriangleData(
-        const Line<T>& line,
-        I& current_index,
-        std::unordered_map<Vec3<T>, I>& point_to_index_map,
-        TessellatedTriangleData<T, I>& out) {
+void updateTessellatedWireframeTriangleData(const Line<T>& line,
+  I& current_index,
+  std::unordered_map<Vec3<T>, I>& point_to_index_map,
+  TessellatedTriangleData<T, I>& out) {
     updateTessellatedTriangleData(
-            line.p0(), current_index, point_to_index_map, out);
+      line.p0(), current_index, point_to_index_map, out);
     updateTessellatedTriangleData(
-            line.p1(), current_index, point_to_index_map, out);
+      line.p1(), current_index, point_to_index_map, out);
 }
 
 template <typename T, typename I>
 void handleBaseCase(const Triangle<T>& tri,
-                    I& current_index,
-                    std::unordered_map<Vec3<T>, I>& point_to_index_map,
-                    TessellatedTriangleData<T, I>& out) {
+  I& current_index,
+  std::unordered_map<Vec3<T>, I>& point_to_index_map,
+  TessellatedTriangleData<T, I>& out) {
     if (out.mode() == GeneratorMode::Fill) {
         updateTessellatedTriangleData(
-                tri.p0(), current_index, point_to_index_map, out);
+          tri.p0(), current_index, point_to_index_map, out);
         updateTessellatedTriangleData(
-                tri.p1(), current_index, point_to_index_map, out);
+          tri.p1(), current_index, point_to_index_map, out);
         updateTessellatedTriangleData(
-                tri.p2(), current_index, point_to_index_map, out);
+          tri.p2(), current_index, point_to_index_map, out);
     } else {
         Line<T> side0(tri.p0(), tri.p1());
         Line<T> side1(tri.p1(), tri.p2());
         Line<T> side2(tri.p2(), tri.p0());
         updateTessellatedWireframeTriangleData(
-                side0, current_index, point_to_index_map, out);
+          side0, current_index, point_to_index_map, out);
         updateTessellatedWireframeTriangleData(
-                side1, current_index, point_to_index_map, out);
+          side1, current_index, point_to_index_map, out);
         updateTessellatedWireframeTriangleData(
-                side2, current_index, point_to_index_map, out);
+          side2, current_index, point_to_index_map, out);
     }
 }
 
 template <typename T, typename I>
-void tessellateTriangleBySubdivision(
-        const Triangle<T>& tri,
-        std::size_t subdivision_count,
-        I& current_index,
-        std::unordered_map<Vec3<T>, I>& point_to_index_map,
-        TessellatedTriangleData<T, I>& out) {
+void tessellateTriangleBySubdivision(const Triangle<T>& tri,
+  std::size_t subdivision_count,
+  I& current_index,
+  std::unordered_map<Vec3<T>, I>& point_to_index_map,
+  TessellatedTriangleData<T, I>& out) {
     if (pointsOfTriangleAreCollinear(tri)) {
         return;
     }
@@ -108,30 +105,20 @@ void tessellateTriangleBySubdivision(
     Triangle<T> tri1(tri.p0(), tri.p1(), centroid);
     Triangle<T> tri2(tri.p1(), tri.p2(), centroid);
 
-    tessellateTriangleBySubdivision(tri0,
-                                    subdivision_count - 1,
-                                    current_index,
-                                    point_to_index_map,
-                                    out);
-    tessellateTriangleBySubdivision(tri1,
-                                    subdivision_count - 1,
-                                    current_index,
-                                    point_to_index_map,
-                                    out);
-    tessellateTriangleBySubdivision(tri2,
-                                    subdivision_count - 1,
-                                    current_index,
-                                    point_to_index_map,
-                                    out);
+    tessellateTriangleBySubdivision(
+      tri0, subdivision_count - 1, current_index, point_to_index_map, out);
+    tessellateTriangleBySubdivision(
+      tri1, subdivision_count - 1, current_index, point_to_index_map, out);
+    tessellateTriangleBySubdivision(
+      tri2, subdivision_count - 1, current_index, point_to_index_map, out);
 }
 
 template <typename T, typename I>
-void tessellateTriangleByMidpointSubdivision(
-        const Triangle<T>& tri,
-        std::size_t subdivision_count,
-        I& current_index,
-        std::unordered_map<Vec3<T>, I>& point_to_index_map,
-        TessellatedTriangleData<T, I>& out) {
+void tessellateTriangleByMidpointSubdivision(const Triangle<T>& tri,
+  std::size_t subdivision_count,
+  I& current_index,
+  std::unordered_map<Vec3<T>, I>& point_to_index_map,
+  TessellatedTriangleData<T, I>& out) {
     if (pointsOfTriangleAreCollinear(tri)) {
         return;
     }
@@ -153,79 +140,66 @@ void tessellateTriangleByMidpointSubdivision(
     Triangle<T> tri2(midpoint0, midpoint1, midpoint2);
     Triangle<T> tri3(midpoint2, midpoint1, tri.p2());
 
-    tessellateTriangleByMidpointSubdivision(tri0,
-                                            subdivision_count - 1,
-                                            current_index,
-                                            point_to_index_map,
-                                            out);
-    tessellateTriangleByMidpointSubdivision(tri1,
-                                            subdivision_count - 1,
-                                            current_index,
-                                            point_to_index_map,
-                                            out);
-    tessellateTriangleByMidpointSubdivision(tri2,
-                                            subdivision_count - 1,
-                                            current_index,
-                                            point_to_index_map,
-                                            out);
-    tessellateTriangleByMidpointSubdivision(tri3,
-                                            subdivision_count - 1,
-                                            current_index,
-                                            point_to_index_map,
-                                            out);
+    tessellateTriangleByMidpointSubdivision(
+      tri0, subdivision_count - 1, current_index, point_to_index_map, out);
+    tessellateTriangleByMidpointSubdivision(
+      tri1, subdivision_count - 1, current_index, point_to_index_map, out);
+    tessellateTriangleByMidpointSubdivision(
+      tri2, subdivision_count - 1, current_index, point_to_index_map, out);
+    tessellateTriangleByMidpointSubdivision(
+      tri3, subdivision_count - 1, current_index, point_to_index_map, out);
 }
 
 }  // namespace detail
 
 template <typename T, typename I>
 void tessellateTriangleBySubdivision(const Triangle<T>& tri,
-                                     std::size_t subdivision_count,
-                                     I& current_index,
-                                     TessellatedTriangleData<T, I>& out) {
+  std::size_t subdivision_count,
+  I& current_index,
+  TessellatedTriangleData<T, I>& out) {
     std::unordered_map<Vec3<T>, I> point_to_index_map;
     detail::tessellateTriangleBySubdivision(
-            tri, subdivision_count, current_index, point_to_index_map, out);
+      tri, subdivision_count, current_index, point_to_index_map, out);
 }
 
 template <typename T, typename I>
 void tessellateTrianglesBySubdivision(const std::vector<Triangle<T>>& tris,
-                                      std::size_t subdivision_count,
-                                      I& current_index,
-                                      TessellatedTriangleData<T, I>& out) {
+  std::size_t subdivision_count,
+  I& current_index,
+  TessellatedTriangleData<T, I>& out) {
     std::unordered_map<Vec3<T>, I> point_to_index_map;
     for (const auto& input_tri : tris) {
         detail::tessellateTriangleBySubdivision(input_tri,
-                                                subdivision_count,
-                                                current_index,
-                                                point_to_index_map,
-                                                out);
+          subdivision_count,
+          current_index,
+          point_to_index_map,
+          out);
     }
 }
 
 template <typename T, typename I>
-void tessellateTriangleByMidpointSubdivision(
-        const Triangle<T>& tri,
-        std::size_t subdivision_count,
-        I& current_index,
-        TessellatedTriangleData<T, I>& out) {
+void tessellateTriangleByMidpointSubdivision(const Triangle<T>& tri,
+  std::size_t subdivision_count,
+  I& current_index,
+  TessellatedTriangleData<T, I>& out) {
     std::unordered_map<Vec3<T>, I> point_to_index_map;
     detail::tessellateTriangleByMidpointSubdivision(
-            tri, subdivision_count, current_index, point_to_index_map, out);
+      tri, subdivision_count, current_index, point_to_index_map, out);
 }
 
 template <typename T, typename I>
 void tessellateTrianglesByMidpointSubdivision(
-        const std::vector<Triangle<T>>& tris,
-        std::size_t subdivision_count,
-        I& current_index,
-        TessellatedTriangleData<T, I>& out) {
+  const std::vector<Triangle<T>>& tris,
+  std::size_t subdivision_count,
+  I& current_index,
+  TessellatedTriangleData<T, I>& out) {
     std::unordered_map<Vec3<T>, I> point_to_index_map;
     for (const auto& input_tri : tris) {
         detail::tessellateTriangleByMidpointSubdivision(input_tri,
-                                                        subdivision_count,
-                                                        current_index,
-                                                        point_to_index_map,
-                                                        out);
+          subdivision_count,
+          current_index,
+          point_to_index_map,
+          out);
     }
 }
 

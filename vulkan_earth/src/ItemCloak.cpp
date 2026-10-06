@@ -6,7 +6,7 @@ ItemCloak::ItemCloak() = default;
 ItemCloak::ItemCloak(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
-            vulkan_graphix::GameCatalog::ItemKind::Cloak));
+      vulkan_graphix::GameCatalog::ItemKind::Cloak));
 }
 ItemCloak::~ItemCloak() = default;
 

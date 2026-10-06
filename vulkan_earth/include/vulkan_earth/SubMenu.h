@@ -15,16 +15,16 @@ class SubMenu {
 public:
     SubMenu();
     SubMenu(std::int32_t id,
-            float x_pos,
-            float y_pos,
-            float z_pos,
-            float red,
-            float green,
-            float blue,
-            std::int32_t width,
-            std::int32_t height,
-            const std::string& caption,
-            float percent_border);
+      float x_pos,
+      float y_pos,
+      float z_pos,
+      float red,
+      float green,
+      float blue,
+      std::int32_t width,
+      std::int32_t height,
+      const std::string& caption,
+      float percent_border);
     virtual ~SubMenu() = 0;
     /*	GETTERS AND SETTERS	*/
     virtual std::int32_t getUNIQUEIDENTIFIER() = 0;
@@ -53,9 +53,8 @@ public:
     /*	ACTUAL ACTIONS A SUBMENU CAN MAKE	*/
     virtual void draw(vulkan_graphix::Render::RenderContext& context) = 0;
     virtual std::string collectData() = 0;
-    virtual void subMenuMouseTest(std::int32_t x,
-                                  std::int32_t y,
-                                  std::int32_t button_down) = 0;
+    virtual void subMenuMouseTest(
+      std::int32_t x, std::int32_t y, std::int32_t button_down) = 0;
     virtual void updateMouse(std::int32_t x, std::int32_t y) = 0;
     /*	END OF ACTIONS A SUBMENU CAN MAKE	*/
 };

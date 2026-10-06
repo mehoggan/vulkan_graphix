@@ -9,7 +9,7 @@ ItemExtraBattery::ItemExtraBattery() = default;
 ItemExtraBattery::ItemExtraBattery(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
-            vulkan_graphix::GameCatalog::ItemKind::ExtraBattery));
+      vulkan_graphix::GameCatalog::ItemKind::ExtraBattery));
 }
 ItemExtraBattery::~ItemExtraBattery() = default;
 

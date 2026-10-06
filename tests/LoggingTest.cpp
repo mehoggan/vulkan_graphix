@@ -111,7 +111,7 @@ TEST(LoggingTest, AddFileLoggerWritesTheLoggedMessageToDisk) {
     ASSERT_TRUE(std::filesystem::exists(log_file));
     std::ifstream in_stream(log_file.string());
     std::string contents((std::istreambuf_iterator<char>(in_stream)),
-                         std::istreambuf_iterator<char>());
+      std::istreambuf_iterator<char>());
     EXPECT_NE(contents.find("hello file logger"), std::string::npos);
 
     Logging::clearAll();
@@ -135,7 +135,7 @@ TEST(LoggingTest, SeverityLevelLoggingCallsDoNotCrash) {
 TEST(LoggingTest, AddStdCoutStdErrLoggerForTypeInstanceRegistersBothSinks) {
     std::int32_t value = 0;
     LogTag log_tag =
-            vulkan_graphix::addStdCoutStdErrLoggerForTypeInstance(value);
+      vulkan_graphix::addStdCoutStdErrLoggerForTypeInstance(value);
 
     Logging::info(log_tag, "registered");
 

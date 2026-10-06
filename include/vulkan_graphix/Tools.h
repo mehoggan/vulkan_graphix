@@ -34,7 +34,7 @@ public:
 
     ~AutoDeleter() {
         if ((m_object != VK_NULL_HANDLE) && (m_deleter != nullptr) &&
-            (m_device != VK_NULL_HANDLE)) {
+          (m_device != VK_NULL_HANDLE)) {
             m_deleter(m_device, m_object, nullptr);
         }
     }
@@ -67,11 +67,11 @@ std::filesystem::path executableDir();
 std::vector<char> getBinaryFileContents(const std::string& filename);
 
 std::vector<char> getImageData(const std::string& filename,
-                               std::int32_t requested_components,
-                               std::int32_t* width,
-                               std::int32_t* height,
-                               std::int32_t* components,
-                               std::int32_t* data_size);
+  std::int32_t requested_components,
+  std::int32_t* width,
+  std::int32_t* height,
+  std::int32_t* components,
+  std::int32_t* data_size);
 
 // Loads a headerless raw RGB (3 bytes/pixel) file of exactly width*height*3
 // bytes - the format every .raw asset under vulkan_earth/src/ uses (no
@@ -80,9 +80,8 @@ std::vector<char> getImageData(const std::string& filename,
 // every pixel) so the result is drop-in compatible with the same
 // VK_FORMAT_R8G8B8A8_UNORM upload path getImageData()'s callers use.
 // Returns an empty vector on any read failure.
-std::vector<char> getRawImageData(const std::string& filename,
-                                  std::uint32_t width,
-                                  std::uint32_t height);
+std::vector<char> getRawImageData(
+  const std::string& filename, std::uint32_t width, std::uint32_t height);
 
 // One vertex from a vulkan_earth ".ogl" mesh file - a plain-ASCII,
 // whitespace-delimited, unindexed format with no header:
@@ -102,18 +101,18 @@ struct OglVertexData {
 std::vector<OglVertexData> loadOglMeshData(const std::string& filename);
 
 vulkan_graphix::Math::Mat4<float> getPerspectiveProjectionMatrix(
-        const float aspect_ratio,
-        const float field_of_view,
-        const float near_clip,
-        const float far_clip);
+  const float aspect_ratio,
+  const float field_of_view,
+  const float near_clip,
+  const float far_clip);
 
 vulkan_graphix::Math::Mat4<float> getOrthographicProjectionMatrix(
-        const float left_plane,
-        const float right_plane,
-        const float top_plane,
-        const float bottom_plane,
-        const float near_plane,
-        const float far_plane);
+  const float left_plane,
+  const float right_plane,
+  const float top_plane,
+  const float bottom_plane,
+  const float near_plane,
+  const float far_plane);
 
 }  // namespace vulkan_graphix::Tools
 

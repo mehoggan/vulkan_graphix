@@ -41,7 +41,7 @@ GlobalSettings::GlobalSettings() {
 GlobalSettings::~GlobalSettings() = default;
 
 void GlobalSettings::setVariables(const std::string& global_options,
-                                  const std::string& round_and_player_count) {
+  const std::string& round_and_player_count) {
     for (std::int32_t i = 0; i < num_options; i++) {
         m_options[i].clear();
     }
@@ -52,17 +52,17 @@ void GlobalSettings::setVariables(const std::string& global_options,
         if (global_options[cur_char] == '/') {
             cur_char++;
             std::string data;
-            while (cur_char <
-                           static_cast<std::int32_t>(global_options.size()) &&
-                   global_options[cur_char] != '/') {
+            while (
+              cur_char < static_cast<std::int32_t>(global_options.size()) &&
+              global_options[cur_char] != '/') {
                 data += global_options[cur_char];
                 cur_char++;
             }
             cur_char--;
             if (!data.empty() && data != "Hardware" && data != "Economics" &&
-                data != "Physics" && data != "Landscape" &&
-                data != "Game Options" && data != "Weapons" &&
-                data != "Button") {
+              data != "Physics" && data != "Landscape" &&
+              data != "Game Options" && data != "Weapons" &&
+              data != "Button") {
                 m_options[cur_token_count] = data;
                 cur_token_count++;
             }
@@ -74,20 +74,20 @@ void GlobalSettings::setVariables(const std::string& global_options,
     /*	GET NUMBER OF PLAYERS AND ROUNDS	*/
     std::int32_t cur_char1 = 0;
     std::int32_t cur_token_count1 = 0;
-    while (cur_char1 <
-           static_cast<std::int32_t>(round_and_player_count.size())) {
+    while (
+      cur_char1 < static_cast<std::int32_t>(round_and_player_count.size())) {
         if (round_and_player_count[cur_char1] == '/') {
             cur_char1++;
             std::string data;
-            while (cur_char1 < static_cast<std::int32_t>(
-                                       round_and_player_count.size()) &&
-                   round_and_player_count[cur_char1] != '/') {
+            while (cur_char1 <
+                static_cast<std::int32_t>(round_and_player_count.size()) &&
+              round_and_player_count[cur_char1] != '/') {
                 data += round_and_player_count[cur_char1];
                 cur_char1++;
             }
             cur_char1--;
             if (!data.empty() && data != "Player Count" &&
-                data != "Round Count") {
+              data != "Round Count") {
                 if (cur_token_count1 == 0) {
                     stringstream ss1(data);
                     if (!(ss1 >> m_player_count)) m_player_count = 0;

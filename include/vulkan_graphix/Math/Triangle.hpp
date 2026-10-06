@@ -9,9 +9,8 @@ namespace vulkan_graphix::Math {
 template <typename T>
 class Triangle {
 public:
-    Triangle(const Vec3<T>& point0,
-             const Vec3<T>& point1,
-             const Vec3<T>& point2) :
+    Triangle(
+      const Vec3<T>& point0, const Vec3<T>& point1, const Vec3<T>& point2) :
             m_point0(point0),
             m_point1(point1),
             m_point2(point2) {}

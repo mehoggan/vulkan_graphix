@@ -74,7 +74,7 @@ struct Tutorial18Vertex3DData {
 };
 
 using Tutorial18Vertex3DAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
+  VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 // Same shape as Tutorial15/17VertexData - the HUD reuses that exact 2D
 // alpha-blended pipeline shape.
@@ -84,10 +84,8 @@ struct Tutorial18VertexHudData {
     Math::Vec4<float> m_color;
 };
 
-using Tutorial18VertexHudAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec2<float>,
-                                     Math::Vec4<float>>;
+using Tutorial18VertexHudAttributeTraits = VertexTypes::
+  AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
 
 struct Tutorial18UniformBufferData3D {
     Math::Mat4<float> m_view;
@@ -200,7 +198,7 @@ public:
     const BufferParameters& getTurretVertexBufferParameters() const;
     BufferParameters& getTurretVertexBufferParameters();
     void setTurretVertexBufferParameters(
-            const BufferParameters& vertex_buffer);
+      const BufferParameters& vertex_buffer);
     std::uint32_t getTurretVertexCount() const;
     void setTurretVertexCount(std::uint32_t vertex_count);
 
@@ -223,10 +221,10 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     // One per swapchain image, indexed by acquired image index rather than
     // by rendering-resource slot. See the comment in createSemaphores() for
@@ -234,7 +232,7 @@ public:
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -295,9 +293,9 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
@@ -305,36 +303,35 @@ private:
     static constexpr std::size_t c_max_hud_vertex_count = c_max_hud_quads * 6;
     static constexpr float c_font_pixel_height = 18.0f;
     static constexpr const char* c_font_path =
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+      "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
     bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkFormat format,
-                     VkImageUsageFlags usage,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
+      std::uint32_t height,
+      VkFormat format,
+      VkImageUsageFlags usage,
+      VkImage* image);
+    bool allocateImageMemory(
+      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
     bool createImageView(VkImage image,
-                         VkFormat format,
-                         VkImageAspectFlags aspect_mask,
-                         VkImageView* image_view);
+      VkFormat format,
+      VkImageAspectFlags aspect_mask,
+      VkImageView* image_view);
     bool createSampler(VkSampler* sampler);
     bool createTextureFromPixels(std::uint32_t width,
-                                 std::uint32_t height,
-                                 const std::vector<char>& pixels,
-                                 ImageParameters& out_image_parameters);
+      std::uint32_t height,
+      const std::vector<char>& pixels,
+      ImageParameters& out_image_parameters);
     bool destroyDepthResources();
 
     Tutorial18UniformBufferData3D get3DUniformBufferData() const;
@@ -346,10 +343,10 @@ private:
     createShaderModule(const char* filename);
 
     std::vector<Tutorial18Vertex3DData> loadPartVertexData(
-            const char* mesh_filename) const;
+      const char* mesh_filename) const;
     bool createPartVertexBuffer(const char* mesh_filename,
-                                BufferParameters& vertex_buffer,
-                                std::uint32_t& vertex_count);
+      BufferParameters& vertex_buffer,
+      std::uint32_t& vertex_count);
 
     // The two players' real+illustrative HUD/position data - see
     // Tutorial18.h's top comment.
@@ -359,40 +356,40 @@ private:
     // a tank placed at world_position exactly as Tank::setTankPos() does
     // (see HellfireTank::getPartTranslations()).
     Math::Mat4<float> getBodyModelMatrix(
-            const Math::Vec3<float>& world_position) const;
+      const Math::Vec3<float>& world_position) const;
     Math::Mat4<float> getHeadModelMatrix(
-            const Math::Vec3<float>& world_position) const;
+      const Math::Vec3<float>& world_position) const;
     Math::Mat4<float> getTurretModelMatrix(
-            const Math::Vec3<float>& world_position) const;
+      const Math::Vec3<float>& world_position) const;
 
     Math::Vec2<float> getPanelTopLeft(std::size_t player_index) const;
     Math::Vec2<float> getPanelSize() const;
 
     void appendGlyphQuad(std::vector<Tutorial18VertexHudData>& vertex_data,
-                         const BitmapFontGlyphQuad& glyph,
-                         Math::Vec4<float> color) const;
+      const BitmapFontGlyphQuad& glyph,
+      Math::Vec4<float> color) const;
     void appendColoredQuad(std::vector<Tutorial18VertexHudData>& vertex_data,
-                           const std::array<Math::Vec2<float>, 4>& corners,
-                           Math::Vec4<float> color) const;
+      const std::array<Math::Vec2<float>, 4>& corners,
+      Math::Vec4<float> color) const;
     void appendText(std::vector<Tutorial18VertexHudData>& vertex_data,
-                    const std::string& text,
-                    Math::Vec2<float> origin,
-                    Math::Vec4<float> color) const;
+      const std::string& text,
+      Math::Vec2<float> origin,
+      Math::Vec4<float> color) const;
     // Outline + ratio-filled bar, colored via get_bar_color(ratio) - the
     // real GameState::drawHUD() color-ramp formula, passed in so health
     // and power bars (which invert the ramp) can share this one helper.
     void appendBar(std::vector<Tutorial18VertexHudData>& vertex_data,
-                   Math::Vec2<float> top_left,
-                   Math::Vec2<float> size,
-                   float ratio,
-                   Math::Vec4<float> (*get_bar_color)(float ratio)) const;
+      Math::Vec2<float> top_left,
+      Math::Vec2<float> size,
+      float ratio,
+      Math::Vec4<float> (*get_bar_color)(float ratio)) const;
 
     std::vector<Tutorial18VertexHudData> buildHudVertexData() const;
     bool updateHudVertexBufferData();
 
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

@@ -15,18 +15,17 @@ public:
     PlayerCPU();
     PlayerCPU(float red, float green, float blue);
     PlayerCPU(float red,
-              float green,
-              float blue,
-              const std::string& new_tank_type,
-              const std::string& new_ai_type,
-              const std::string& new_name,
-              char new_team_label,
-              const std::string& new_player_type,
-              std::int32_t starting_cash);
+      float green,
+      float blue,
+      const std::string& new_tank_type,
+      const std::string& new_ai_type,
+      const std::string& new_name,
+      char new_team_label,
+      const std::string& new_player_type,
+      std::int32_t starting_cash);
     ~PlayerCPU() override;
     void updateTank(
-            /* Pass in all paramaters that are associated with a tank */)
-            override;
+      /* Pass in all paramaters that are associated with a tank */) override;
     Tank* getCurrentTank() override;
     std::string getTankType() override;
     void setTankType(const std::string& new_tank_type) override;

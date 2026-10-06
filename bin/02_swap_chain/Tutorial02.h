@@ -41,37 +41,36 @@ public:
 
     std::uint32_t getGraphicsQueueFamilyIndex() const;
     void setGraphicsQueueFamilyIndex(
-            const std::uint32_t graphics_queue_family_index);
+      const std::uint32_t graphics_queue_family_index);
 
     std::uint32_t getPresentQueueFamilyIndex() const;
     void setPresentQueueFamilyIndex(
-            const std::uint32_t graphics_queue_family_index);
+      const std::uint32_t graphics_queue_family_index);
 
     const VkSurfaceKHR& getPresentVkSurfaceKHR() const;
     VkSurfaceKHR& getPresentVkSurfaceKHR();
     void setPresentVkSurfaceKHR(
-            const VkSurfaceKHR& presentation_vk_surface_khr);
+      const VkSurfaceKHR& presentation_vk_surface_khr);
 
     const VkSwapchainKHR& getVkSwapchainKHR() const;
     VkSwapchainKHR& getVkSwapchainKHR();
     void setVkSwapchainKHR(const VkSwapchainKHR& vk_swapchain_khr);
 
     const std::vector<VkCommandBuffer>& getPresentQueueVkCommandBuffers()
-            const;
+      const;
     std::vector<VkCommandBuffer>& getPresentQueueVkCommandBuffers();
     void setPresentQueueVkCommandBuffers(
-            const std::vector<VkCommandBuffer>&
-                    present_queue_vk_command_buffers);
+      const std::vector<VkCommandBuffer>& present_queue_vk_command_buffers);
 
     const VkCommandPool& getPresentQueueVkCommandPool() const;
     VkCommandPool& getPresentQueueVkCommandPool();
     void setPresentQueueVkCommandPool(
-            const VkCommandPool& present_queue_vk_command_pool);
+      const VkCommandPool& present_queue_vk_command_pool);
 
     const VkSemaphore& getImageAvailableVkSemaphore() const;
     VkSemaphore& getImageAvailableVkSemaphore();
     void setImageAvailableVkSemaphore(
-            const VkSemaphore& image_available_vk_semaphore);
+      const VkSemaphore& image_available_vk_semaphore);
 
     // One per swapchain image, indexed by acquired image index rather than
     // a single semaphore reused every frame. See the comment in
@@ -80,7 +79,7 @@ public:
     const std::vector<VkSemaphore>& getRenderingFinishedSemaphores() const;
     std::vector<VkSemaphore>& getRenderingFinishedSemaphores();
     void setRenderingFinishedSemaphores(
-            const std::vector<VkSemaphore>& rendering_finished_semaphores);
+      const std::vector<VkSemaphore>& rendering_finished_semaphores);
 
     const VkFence& getVkFence() const;
     VkFence& getVkFence();
@@ -89,7 +88,7 @@ public:
     const VkDebugUtilsMessengerEXT& getVkDebugUtilsMessenger() const;
     VkDebugUtilsMessengerEXT& getVkDebugUtilsMessenger();
     void setVkDebugUtilsMessenger(
-            const VkDebugUtilsMessengerEXT& vk_debug_utils_messenger);
+      const VkDebugUtilsMessengerEXT& vk_debug_utils_messenger);
 
 private:
     VkInstance m_vk_instance;
@@ -133,10 +132,9 @@ private:
     bool loadInstanceLevelEntryPoints();
     bool createPresentationSurface();
     bool createDevice();
-    bool checkPhysicalDeviceProperties(
-            VkPhysicalDevice physical_device,
-            std::uint32_t& graphics_queue_family_index,
-            std::uint32_t& present_queue_family_index);
+    bool checkPhysicalDeviceProperties(VkPhysicalDevice physical_device,
+      std::uint32_t& graphics_queue_family_index,
+      std::uint32_t& present_queue_family_index);
     bool loadDeviceLevelEntryPoints();
     bool getDeviceQueue();
     bool createSemaphores();
@@ -147,24 +145,23 @@ private:
     bool setupDebugMessenger();
     bool destroyDebugMessenger();
 
-    bool checkExtensionAvailability(
-            const char* extension_name,
-            const std::vector<VkExtensionProperties>& available_extensions);
+    bool checkExtensionAvailability(const char* extension_name,
+      const std::vector<VkExtensionProperties>& available_extensions);
     std::uint32_t getSwapChainNumImages(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkSurfaceFormatKHR getSwapChainFormat(
-            std::vector<VkSurfaceFormatKHR>& surface_formats);
+      std::vector<VkSurfaceFormatKHR>& surface_formats);
     VkExtent2D getSwapChainExtent(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkImageUsageFlags getSwapChainUsageFlags(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkSurfaceTransformFlagBitsKHR getSwapChainTransform(
-            VkSurfaceCapabilitiesKHR& surface_capabilities);
+      VkSurfaceCapabilitiesKHR& surface_capabilities);
     VkPresentModeKHR getSwapChainPresentMode(
-            std::vector<VkPresentModeKHR>& present_modes);
+      std::vector<VkPresentModeKHR>& present_modes);
 
     friend std::ostream& operator<<(
-            std::ostream& out, const std::vector<VkLayerProperties>& vect);
+      std::ostream& out, const std::vector<VkLayerProperties>& vect);
 
     os::LibraryHandle m_vulkan_library;
     os::WindowParameters m_window_parameters;

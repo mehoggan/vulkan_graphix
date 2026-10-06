@@ -16,17 +16,16 @@ extern void playSFX(std::int32_t sfx);
 
 ControlItemSelectionBox::ControlItemSelectionBox() = default;
 
-ControlItemSelectionBox::ControlItemSelectionBox(
-        float new_x_pos,
-        float new_y_pos,
-        float new_z_pos,
-        float red,
-        float green,
-        float blue,
-        std::int32_t new_width,
-        std::int32_t new_height,
-        const std::string& new_caption,
-        const std::string& menu_string) {
+ControlItemSelectionBox::ControlItemSelectionBox(float new_x_pos,
+  float new_y_pos,
+  float new_z_pos,
+  float red,
+  float green,
+  float blue,
+  std::int32_t new_width,
+  std::int32_t new_height,
+  const std::string& new_caption,
+  const std::string& menu_string) {
     m_x_pos = new_x_pos;
     m_y_pos = new_y_pos;
     m_z_pos = new_z_pos;
@@ -58,21 +57,21 @@ ControlItemSelectionBox::ControlItemSelectionBox(
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : m_caption) {
-        real_length += vulkan_earth::textAdvance(
-                vulkan_earth::FontId::TimesRoman24, ch);
+        real_length +=
+          vulkan_earth::textAdvance(vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = m_x_pos + (m_width / 2) - (real_length / 2);
     float label_y_pos =
-            m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
+      m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     m_label = new TextObject(m_caption,
-                             label_x_pos,
-                             label_y_pos,
-                             m_z_pos,
-                             vulkan_earth::FontId::TimesRoman24,
-                             0.0f,
-                             0.0f,
-                             0.0f);
+      label_x_pos,
+      label_y_pos,
+      m_z_pos,
+      vulkan_earth::FontId::TimesRoman24,
+      0.0f,
+      0.0f,
+      0.0f);
 }
 
 ControlItemSelectionBox::~ControlItemSelectionBox() {
@@ -86,45 +85,41 @@ void ControlItemSelectionBox::draw(render::RenderContext& context) {
     // draw main button box (a sunken bevel: -0.2 top/left, +0.4
     // bottom/right)
     if (m_frame_mesh.triangles().empty()) {
-        const Vec4 dark(m_color[0] - 0.2f,
-                        m_color[1] - 0.2f,
-                        m_color[2] - 0.2f,
-                        m_color[3]);
+        const Vec4 dark(
+          m_color[0] - 0.2f, m_color[1] - 0.2f, m_color[2] - 0.2f, m_color[3]);
         const Vec4 face(m_color[0], m_color[1], m_color[2], m_color[3]);
-        const Vec4 light(m_color[0] + 0.4f,
-                         m_color[1] + 0.4f,
-                         m_color[2] + 0.4f,
-                         m_color[3]);
+        const Vec4 light(
+          m_color[0] + 0.4f, m_color[1] + 0.4f, m_color[2] + 0.4f, m_color[3]);
         m_frame_mesh.addQuad(
-                {Vec3(m_x_pos, m_y_pos, m_z_pos),
-                 Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
-                 Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
-                 Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
-                dark);
+          {Vec3(m_x_pos, m_y_pos, m_z_pos),
+            Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
+            Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
+            Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
+          dark);
         m_frame_mesh.addQuad(
-                {Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
-                 Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
-                 Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
-                 Vec3(m_x_pos, m_y_pos, m_z_pos)},
-                dark);
+          {Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
+            Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
+            Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
+            Vec3(m_x_pos, m_y_pos, m_z_pos)},
+          dark);
         m_frame_mesh.addQuad(
-                {Vec3(m_x_pos, m_y_pos, m_z_pos),
-                 Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
-                 Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
-                 Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
-                face);
+          {Vec3(m_x_pos, m_y_pos, m_z_pos),
+            Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
+            Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
+            Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
+          face);
         m_frame_mesh.addQuad(
-                {Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
-                 Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
-                 Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
-                 Vec3(m_x_pos, m_y_pos - m_height, m_z_pos)},
-                light);
+          {Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
+            Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
+            Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
+            Vec3(m_x_pos, m_y_pos - m_height, m_z_pos)},
+          light);
         m_frame_mesh.addQuad(
-                {Vec3(m_x_pos + m_width, m_y_pos, m_z_pos),
-                 Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
-                 Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
-                 Vec3(m_x_pos + m_width, m_y_pos + -m_height, m_z_pos)},
-                light);
+          {Vec3(m_x_pos + m_width, m_y_pos, m_z_pos),
+            Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
+            Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
+            Vec3(m_x_pos + m_width, m_y_pos + -m_height, m_z_pos)},
+          light);
     }
     context.draw(m_frame_mesh);
 
@@ -134,33 +129,33 @@ void ControlItemSelectionBox::draw(render::RenderContext& context) {
     if (m_arrows_built_for != m_button_state) {
         m_arrow_mesh.clear();
         const Vec4 raised(
-                m_color[0] + .2, m_color[1] + .2, m_color[2] + .2, 1.0f);
+          m_color[0] + .2, m_color[1] + .2, m_color[2] + .2, 1.0f);
         const Vec4 pressed(
-                m_color[0] - .2, m_color[1] - .2, m_color[2] - .2, 1.0f);
+          m_color[0] - .2, m_color[1] - .2, m_color[2] - .2, 1.0f);
         // draw up arrow
         m_arrow_mesh.addTriangle(
-                {Vec3(m_x_pos + 0.02 * m_width,
-                      (m_y_pos - m_height / 2) + 0.05 * m_height,
-                      m_z_pos + 1),
-                 Vec3(m_x_pos + 0.02 * m_width + m_height * 0.7,
-                      (m_y_pos - m_height / 2) + 0.05 * m_height,
-                      m_z_pos + 1),
-                 Vec3(m_x_pos + 0.02 * (m_width) + m_height * 0.35,
-                      m_y_pos - 0.05 * m_height,
-                      m_z_pos + 1)},
-                {raised, raised, m_button_state == 1 ? pressed : raised});
+          {Vec3(m_x_pos + 0.02 * m_width,
+             (m_y_pos - m_height / 2) + 0.05 * m_height,
+             m_z_pos + 1),
+            Vec3(m_x_pos + 0.02 * m_width + m_height * 0.7,
+              (m_y_pos - m_height / 2) + 0.05 * m_height,
+              m_z_pos + 1),
+            Vec3(m_x_pos + 0.02 * (m_width) + m_height * 0.35,
+              m_y_pos - 0.05 * m_height,
+              m_z_pos + 1)},
+          {raised, raised, m_button_state == 1 ? pressed : raised});
         // draw down arrow
         m_arrow_mesh.addTriangle(
-                {Vec3(m_x_pos + 0.02 * m_width,
-                      (m_y_pos - m_height / 2) - 0.05 * m_height,
-                      m_z_pos + 1),
-                 Vec3(m_x_pos + 0.02 * m_width + m_height * 0.7,
-                      (m_y_pos - m_height / 2) - 0.05 * m_height,
-                      m_z_pos + 1),
-                 Vec3(m_x_pos + 0.02 * m_width + m_height * 0.35,
-                      m_y_pos - m_height + 0.05 * m_height,
-                      m_z_pos + 1)},
-                {raised, raised, m_button_state == 2 ? pressed : raised});
+          {Vec3(m_x_pos + 0.02 * m_width,
+             (m_y_pos - m_height / 2) - 0.05 * m_height,
+             m_z_pos + 1),
+            Vec3(m_x_pos + 0.02 * m_width + m_height * 0.7,
+              (m_y_pos - m_height / 2) - 0.05 * m_height,
+              m_z_pos + 1),
+            Vec3(m_x_pos + 0.02 * m_width + m_height * 0.35,
+              m_y_pos - m_height + 0.05 * m_height,
+              m_z_pos + 1)},
+          {raised, raised, m_button_state == 2 ? pressed : raised});
         m_arrows_built_for = m_button_state;
     }
     context.draw(m_arrow_mesh);
@@ -176,36 +171,35 @@ void ControlItemSelectionBox::setOptionText(std::int32_t index) {
     m_current_option = m_all_options[index];
     std::int32_t real_length = 0;
     for (char ch : m_current_option) {
-        real_length += vulkan_earth::textAdvance(
-                vulkan_earth::FontId::TimesRoman24, ch);
+        real_length +=
+          vulkan_earth::textAdvance(vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = m_x_pos + m_width - real_length - m_width / 50;
     float label_y_pos =
-            m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
+      m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
     delete m_option_text;
     m_option_text = new TextObject(m_current_option,
-                                   label_x_pos,
-                                   label_y_pos,
-                                   m_z_pos,
-                                   vulkan_earth::FontId::TimesRoman24,
-                                   0.0f,
-                                   0.0f,
-                                   0.0f);
+      label_x_pos,
+      label_y_pos,
+      m_z_pos,
+      vulkan_earth::FontId::TimesRoman24,
+      0.0f,
+      0.0f,
+      0.0f);
     m_menu_state = index;
 }
 void ControlItemSelectionBox::setOptionText(const std::string& new_text) {}
 
-void ControlItemSelectionBox::mouseClickEvent(
-        std::int32_t x,
-        std::int32_t y,
-        std::int32_t state,
-        bool still_over_control_item_selection_box) {
+void ControlItemSelectionBox::mouseClickEvent(std::int32_t x,
+  std::int32_t y,
+  std::int32_t state,
+  bool still_over_control_item_selection_box) {
     // up arrow test
     if ((x >= (m_x_pos + 0.02 * (m_width)) &&
-         (x <= m_x_pos + 0.02 * (m_width) + 0.1 * (m_width))) &&
-        ((y <= m_y_pos - 3) &&
-         (y >= (m_y_pos - m_height / 2) +
-                       3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
+          (x <= m_x_pos + 0.02 * (m_width) + 0.1 * (m_width))) &&
+      ((y <= m_y_pos - 3) &&
+        (y >= (m_y_pos - m_height / 2) +
+            3))) {         // YOU HAVE CLICKED INSIDE THE UP ARROW
         if (state == 1) {  // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
             m_button_state = 1;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {
@@ -222,10 +216,10 @@ void ControlItemSelectionBox::mouseClickEvent(
         }
     }
     if (((x >= m_x_pos + 0.02 * (m_width)) &&
-         (x <= m_x_pos + 0.02 * (m_width) + 0.1 * (m_width))) &&
-        ((y <= (m_y_pos - m_height / 2) - 3) &&
-         (y >= (m_y_pos - m_height) +
-                       3))) {  // YOU HAVE CLICKED INSIDE THE UP ARROW
+          (x <= m_x_pos + 0.02 * (m_width) + 0.1 * (m_width))) &&
+      ((y <= (m_y_pos - m_height / 2) - 3) &&
+        (y >= (m_y_pos - m_height) +
+            3))) {         // YOU HAVE CLICKED INSIDE THE UP ARROW
         if (state == 1) {  // IF MOUSE BUTTON DOWN (YOU ARE INSIDE UP ARROW)
             m_button_state = 2;  // THEN UP ARROW HAS BEEN PRESSED
         } else if (state == 0) {

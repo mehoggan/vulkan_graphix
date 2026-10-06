@@ -14,16 +14,16 @@ namespace math = vulkan_graphix::Math;
 SubMenuTest::SubMenuTest() = default;
 
 SubMenuTest::SubMenuTest(std::int32_t id,
-                         float new_x_pos,
-                         float new_y_pos,
-                         float new_z_pos,
-                         float red,
-                         float green,
-                         float blue,
-                         std::int32_t new_width,
-                         std::int32_t new_height,
-                         const std::string& new_caption,
-                         float new_percent_border) {
+  float new_x_pos,
+  float new_y_pos,
+  float new_z_pos,
+  float red,
+  float green,
+  float blue,
+  std::int32_t new_width,
+  std::int32_t new_height,
+  const std::string& new_caption,
+  float new_percent_border) {
     m_uniqueidentifier = id;
     m_x_pos = new_x_pos;
     m_y_pos = new_y_pos;
@@ -40,21 +40,21 @@ SubMenuTest::SubMenuTest(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : m_caption) {
-        real_length += vulkan_earth::textAdvance(
-                vulkan_earth::FontId::TimesRoman24, ch);
+        real_length +=
+          vulkan_earth::textAdvance(vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = m_x_pos + ((m_width) / 2) - (real_length / 2);
     float label_y_pos = m_y_pos - m_height / 20;
     /*	END OF BUTTON TEXT PLACEMENT	*/
 
     m_label = new TextObject(m_caption,
-                             label_x_pos,
-                             label_y_pos,
-                             (m_z_pos + 1),
-                             vulkan_earth::FontId::TimesRoman24,
-                             0.0f,
-                             0.0f,
-                             0.0f);
+      label_x_pos,
+      label_y_pos,
+      (m_z_pos + 1),
+      vulkan_earth::FontId::TimesRoman24,
+      0.0f,
+      0.0f,
+      0.0f);
 }
 
 SubMenuTest::~SubMenuTest() = default;
@@ -91,16 +91,14 @@ void SubMenuTest::setPercentBorder(float percent) {
 void SubMenuTest::draw(render::RenderContext& context) {
     // The same raised 3-pixel bevel every button draws.
     if (m_frame_mesh.triangles().empty()) {
-        vulkan_earth::appendBevel(
-                m_frame_mesh,
-                m_x_pos,
-                m_y_pos,
-                m_z_pos,
-                m_width,
-                m_height,
-                math::Vec4<float>(
-                        m_color[0], m_color[1], m_color[2], m_color[3]),
-                false);
+        vulkan_earth::appendBevel(m_frame_mesh,
+          m_x_pos,
+          m_y_pos,
+          m_z_pos,
+          m_width,
+          m_height,
+          math::Vec4<float>(m_color[0], m_color[1], m_color[2], m_color[3]),
+          false);
     }
     context.draw(m_frame_mesh);
     m_label->draw(context);

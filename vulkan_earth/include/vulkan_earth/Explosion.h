@@ -25,10 +25,8 @@ public:
      * Constructors and De-constructor
      */
     Explosion();
-    Explosion(float new_x,
-              float new_y,
-              float new_z,
-              std::int32_t new_weapon_radius);
+    Explosion(
+      float new_x, float new_y, float new_z, std::int32_t new_weapon_radius);
     ~Explosion() override;
     void draw(vulkan_graphix::Render::RenderContext& context) override;
     void setColors1(float* new_colors1) override;
@@ -46,7 +44,7 @@ private:
     // The color the original left in effect where draw() sets none
     // (75 <= timer < 100): its own last one.
     vulkan_graphix::Math::Vec4<float> m_current_color =
-            vulkan_graphix::Math::Vec4<float>(1.0f);
+      vulkan_graphix::Math::Vec4<float>(1.0f);
     vulkan_graphix::EffectSimulation::Explosion m_simulation;
     float m_colors1[3];
     float m_colors2[3];

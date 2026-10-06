@@ -6,7 +6,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial04>();
+      std::make_shared<vulkan_graphix::Tutorial04>();
 
     // Window creation
     if (!window.create("04 - Vertex Attributes")) {
@@ -19,7 +19,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial04> tutorial04 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial04>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial04>(tutorial);
 
     // Tutorial 04
     if (!tutorial04->createRenderPass()) {

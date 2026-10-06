@@ -9,7 +9,7 @@ WeaponThor::WeaponThor() = default;
 WeaponThor::WeaponThor(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::weapon(
-            vulkan_graphix::GameCatalog::WeaponKind::Thor));
+      vulkan_graphix::GameCatalog::WeaponKind::Thor));
 }
 WeaponThor::~WeaponThor() = default;
 

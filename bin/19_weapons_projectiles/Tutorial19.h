@@ -67,7 +67,7 @@ struct Tutorial19Vertex3DData {
 };
 
 using Tutorial19Vertex3DAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
+  VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 // Same shape as Tutorial15/17/18-HUD VertexData.
 struct Tutorial19VertexGridData {
@@ -76,10 +76,8 @@ struct Tutorial19VertexGridData {
     Math::Vec4<float> m_color;
 };
 
-using Tutorial19VertexGridAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec2<float>,
-                                     Math::Vec4<float>>;
+using Tutorial19VertexGridAttributeTraits = VertexTypes::
+  AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
 
 struct Tutorial19UniformBufferData3D {
     Math::Mat4<float> m_view;
@@ -132,7 +130,7 @@ public:
     const BufferParameters& getUniformBufferGridParameters() const;
     BufferParameters& getUniformBufferGridParameters();
     void setUniformBufferGridParameters(
-            const BufferParameters& uniform_buffer);
+      const BufferParameters& uniform_buffer);
 
     const VkDescriptorSetLayout& getVk3DDescriptorSetLayout() const;
     VkDescriptorSetLayout& getVk3DDescriptorSetLayout();
@@ -203,15 +201,15 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -224,7 +222,7 @@ private:
     VkDescriptorSetLayout m_vk_grid_descriptor_set_layout;
     VkDescriptorPool m_vk_descriptor_pool;
     std::array<VkDescriptorSet, c_projectile_mesh_count>
-            m_vk_3d_descriptor_sets;
+      m_vk_3d_descriptor_sets;
     VkDescriptorSet m_vk_font_descriptor_set;
     VkDescriptorSet m_vk_icon_descriptor_set;
     VkPipelineLayout m_vk_3d_pipeline_layout;
@@ -232,9 +230,9 @@ private:
     VkPipeline m_vk_3d_graphics_pipeline;
     VkPipeline m_vk_grid_graphics_pipeline;
     std::array<BufferParameters, c_projectile_mesh_count>
-            m_projectile_vertex_buffers;
+      m_projectile_vertex_buffers;
     std::array<std::uint32_t, c_projectile_mesh_count>
-            m_projectile_vertex_counts;
+      m_projectile_vertex_counts;
     BufferParameters m_grid_vertex_buffer;
     std::uint32_t m_text_vertex_count;
     std::uint32_t m_icon_vertex_count;
@@ -273,47 +271,47 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
     static constexpr std::size_t c_max_grid_quads = 512;
     static constexpr std::size_t c_max_grid_vertex_count =
-            c_max_grid_quads * 6;
+      c_max_grid_quads * 6;
     static constexpr float c_font_pixel_height = 18.0f;
     static constexpr const char* c_font_path =
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+      "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 
     static constexpr std::uint32_t c_icon_size = 256;
     static constexpr std::uint32_t c_icon_atlas_cols = 5;
     static constexpr std::uint32_t c_icon_atlas_rows = 2;
     static constexpr std::uint32_t c_icon_atlas_width =
-            c_icon_size * c_icon_atlas_cols;
+      c_icon_size * c_icon_atlas_cols;
     static constexpr std::uint32_t c_icon_atlas_height =
-            c_icon_size * c_icon_atlas_rows;
+      c_icon_size * c_icon_atlas_rows;
 
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
     bool createTextureFromPixels(std::uint32_t width,
-                                 std::uint32_t height,
-                                 const std::vector<char>& pixels,
-                                 ImageParameters& out_image_parameters);
+      std::uint32_t height,
+      const std::vector<char>& pixels,
+      ImageParameters& out_image_parameters);
     bool copyBufferData(BufferParameters& destination,
-                        const void* data,
-                        std::uint32_t data_size,
-                        VkAccessFlags dst_access_mask,
-                        VkPipelineStageFlags dst_stage_mask);
+      const void* data,
+      std::uint32_t data_size,
+      VkAccessFlags dst_access_mask,
+      VkPipelineStageFlags dst_stage_mask);
     std::vector<char> buildIconAtlasPixels() const;
 
     Tutorial19UniformBufferData3D get3DUniformBufferData() const;
@@ -325,7 +323,7 @@ private:
     createShaderModule(const char* filename);
 
     std::vector<Tutorial19Vertex3DData> loadMeshVertexData(
-            const char* mesh_filename) const;
+      const char* mesh_filename) const;
 
     Math::Vec2<float> getIconUvMin(std::size_t index) const;
     Math::Vec2<float> getIconUvMax(std::size_t index) const;
@@ -338,32 +336,32 @@ private:
     Math::Vec2<float> getCellTopLeft(std::size_t index) const;
     float getDescriptionTop() const;
 
-    std::vector<std::string> wrapText(const std::string& text,
-                                      float max_width) const;
+    std::vector<std::string> wrapText(
+      const std::string& text, float max_width) const;
 
     void appendGlyphQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-                         const BitmapFontGlyphQuad& glyph,
-                         Math::Vec4<float> color) const;
+      const BitmapFontGlyphQuad& glyph,
+      Math::Vec4<float> color) const;
     void appendColoredQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-                           const std::array<Math::Vec2<float>, 4>& corners,
-                           Math::Vec4<float> color) const;
+      const std::array<Math::Vec2<float>, 4>& corners,
+      Math::Vec4<float> color) const;
     void appendText(std::vector<Tutorial19VertexGridData>& vertex_data,
-                    const std::string& text,
-                    Math::Vec2<float> origin,
-                    Math::Vec4<float> color) const;
+      const std::string& text,
+      Math::Vec2<float> origin,
+      Math::Vec4<float> color) const;
     void appendImageQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-                         Math::Vec2<float> top_left,
-                         Math::Vec2<float> size,
-                         Math::Vec2<float> uv_min,
-                         Math::Vec2<float> uv_max) const;
+      Math::Vec2<float> top_left,
+      Math::Vec2<float> size,
+      Math::Vec2<float> uv_min,
+      Math::Vec2<float> uv_max) const;
 
     std::vector<Tutorial19VertexGridData> buildTextPassVertexData() const;
     std::vector<Tutorial19VertexGridData> buildIconPassVertexData() const;
     bool updateGridVertexBufferData();
 
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

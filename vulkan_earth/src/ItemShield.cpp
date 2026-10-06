@@ -9,7 +9,7 @@ ItemShield::ItemShield() = default;
 ItemShield::ItemShield(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
-            vulkan_graphix::GameCatalog::ItemKind::Shield));
+      vulkan_graphix::GameCatalog::ItemKind::Shield));
 }
 ItemShield::~ItemShield() = default;
 

@@ -31,14 +31,14 @@ TEST(Tutorial05IntegrationTest, FullLifecycle) {
     ASSERT_TRUE(tutorial->copyVertexData());
 
     for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-         ++i) {
+      ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 
     EXPECT_TRUE(tutorial->onWindowSizeChanged());
 
     for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-         ++i) {
+      ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 }

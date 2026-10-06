@@ -91,7 +91,7 @@ public:
     void keyHandler();
     void draw(vulkan_graphix::Render::RenderContext& context);
     virtual void drawTankHitBox(
-            vulkan_graphix::Render::RenderContext& context);
+      vulkan_graphix::Render::RenderContext& context);
     virtual void updateHitBox();
     void changeHeadTexture(std::int32_t current_player_index);
     void dealDamage(std::int32_t damage);
@@ -207,17 +207,17 @@ protected:
 
     vulkan_graphix::Math::Vec3<float> m_tank_pos;
     vulkan_graphix::Math::Vec3<float> m_right =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_up =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_at =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_left =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_down =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
     vulkan_graphix::Math::Vec3<float> m_back =
-            vulkan_graphix::Math::Vec3<float>(0.0f);
+      vulkan_graphix::Math::Vec3<float>(0.0f);
 };
 
 #endif

@@ -43,7 +43,7 @@ public:
     const std::vector<VkSemaphore>& getRenderingFinishedSemaphores() const;
     std::vector<VkSemaphore>& getRenderingFinishedSemaphores();
     void setRenderingFinishedSemaphores(
-            const std::vector<VkSemaphore>& rendering_finished_semaphores);
+      const std::vector<VkSemaphore>& rendering_finished_semaphores);
 
     const VkFence& getVkFence() const;
     VkFence& getVkFence();
@@ -56,7 +56,7 @@ public:
     const std::vector<VkCommandBuffer>& getVkCommandBuffers() const;
     std::vector<VkCommandBuffer>& getVkCommandBuffers();
     void setVkCommandBuffers(
-            const std::vector<VkCommandBuffer>& vk_command_buffers);
+      const std::vector<VkCommandBuffer>& vk_command_buffers);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -93,11 +93,11 @@ private:
     createShaderModule(const char* filename);
     Tools::AutoDeleter<VkPipelineLayout, PFN_vkDestroyPipelineLayout>
     createPipelineLayout();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
 
     void childClear() override;
     bool childOnWindowSizeChanged() override;

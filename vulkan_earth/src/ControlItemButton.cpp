@@ -19,15 +19,15 @@ extern void playSFX(std::int32_t sfx);
 ControlItemButton::ControlItemButton() = default;
 
 ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
-                                     float new_x_pos,
-                                     float new_y_pos,
-                                     float new_z_pos,
-                                     float red,
-                                     float green,
-                                     float blue,
-                                     std::int32_t new_width,
-                                     std::int32_t new_height,
-                                     const std::string& new_caption) {
+  float new_x_pos,
+  float new_y_pos,
+  float new_z_pos,
+  float red,
+  float green,
+  float blue,
+  std::int32_t new_width,
+  std::int32_t new_height,
+  const std::string& new_caption) {
     m_parent = new_parent;
 
     m_x_pos = new_x_pos;
@@ -48,21 +48,21 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : m_caption) {
-        real_length += vulkan_earth::textAdvance(
-                vulkan_earth::FontId::TimesRoman24, ch);
+        real_length +=
+          vulkan_earth::textAdvance(vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = m_x_pos + ((m_width) / 2) - (real_length / 2);
     float label_y_pos =
-            m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
+      m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     m_label = new TextObject(m_caption,
-                             label_x_pos,
-                             label_y_pos,
-                             m_z_pos,
-                             vulkan_earth::FontId::TimesRoman24,
-                             0.0f,
-                             0.0f,
-                             0.0f);
+      label_x_pos,
+      label_y_pos,
+      m_z_pos,
+      vulkan_earth::FontId::TimesRoman24,
+      0.0f,
+      0.0f,
+      0.0f);
 }
 
 ControlItemButton::~ControlItemButton() { delete m_label; }
@@ -70,16 +70,14 @@ ControlItemButton::~ControlItemButton() { delete m_label; }
 void ControlItemButton::draw(render::RenderContext& context) {
     if (m_built_button_state != m_button_state) {
         m_mesh.clear();
-        vulkan_earth::appendBevel(
-                m_mesh,
-                m_x_pos,
-                m_y_pos,
-                m_z_pos,
-                m_width,
-                m_height,
-                math::Vec4<float>(
-                        m_color[0], m_color[1], m_color[2], m_color[3]),
-                m_button_state != 0);
+        vulkan_earth::appendBevel(m_mesh,
+          m_x_pos,
+          m_y_pos,
+          m_z_pos,
+          m_width,
+          m_height,
+          math::Vec4<float>(m_color[0], m_color[1], m_color[2], m_color[3]),
+          m_button_state != 0);
         m_built_button_state = m_button_state;
     }
     context.draw(m_mesh);
@@ -102,16 +100,15 @@ void ControlItemButton::setOptionText(std::int32_t index) {}
 void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
 
-void ControlItemButton::mouseClickEvent(
-        std::int32_t x,
-        std::int32_t y,
-        std::int32_t state,
-        bool /*still_over_control_item_button*/) {
+void ControlItemButton::mouseClickEvent(std::int32_t x,
+  std::int32_t y,
+  std::int32_t state,
+  bool /*still_over_control_item_button*/) {
     if (state) {
         if ((x >= (m_x_pos) && x <= ((m_x_pos) + (m_width))) &&
-            (y <= (m_y_pos) &&
-             y >= ((m_y_pos) - (m_height)))) {  // This if statement -->
-                                                // stillOverControlItemButton
+          (y <= (m_y_pos) &&
+            y >= ((m_y_pos) - (m_height)))) {  // This if statement -->
+                                               // stillOverControlItemButton
             m_button_state = 1;
             m_toggled = true;
         } else {

@@ -17,9 +17,9 @@ namespace vulkan_graphix::Render {
 class Texture {
 public:
     Texture(ImageParameters image,
-            VkDescriptorSet descriptor_set,
-            std::uint32_t width,
-            std::uint32_t height);
+      VkDescriptorSet descriptor_set,
+      std::uint32_t width,
+      std::uint32_t height);
     ~Texture();
 
     Texture(const Texture&) = delete;

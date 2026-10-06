@@ -85,9 +85,9 @@ bool quit_requested = false;
 // RandR for the primary monitor's real geometry instead, so the window
 // created from it stays confined to that one monitor.
 static void primaryMonitorGeometry(std::int32_t* pos_x,
-                                   std::int32_t* pos_y,
-                                   std::int32_t* width,
-                                   std::int32_t* height) {
+  std::int32_t* pos_y,
+  std::int32_t* width,
+  std::int32_t* height) {
     *pos_x = 0;
     *pos_y = 0;
     *width = 1280;
@@ -101,11 +101,10 @@ static void primaryMonitorGeometry(std::int32_t* pos_x,
     if (resources) {
         RROutput primary = XRRGetOutputPrimary(display, root);
         XRROutputInfo* output =
-                primary ? XRRGetOutputInfo(display, resources, primary)
-                        : nullptr;
+          primary ? XRRGetOutputInfo(display, resources, primary) : nullptr;
         if (output && output->crtc) {
             XRRCrtcInfo* crtc =
-                    XRRGetCrtcInfo(display, resources, output->crtc);
+              XRRGetCrtcInfo(display, resources, output->crtc);
             if (crtc) {
                 *pos_x = crtc->x;
                 *pos_y = crtc->y;
@@ -158,8 +157,8 @@ void loadScript() {
         ScriptEvent event;
         fields >> event.m_frame >> event.m_op;
         if (event.m_op == "capture" || event.m_op == "key" ||
-            event.m_op == "keyup" || event.m_op == "spec" ||
-            event.m_op == "specup") {
+          event.m_op == "keyup" || event.m_op == "spec" ||
+          event.m_op == "specup") {
             fields >> event.m_argument;
         } else {
             fields >> event.m_x >> event.m_y;
@@ -180,7 +179,7 @@ void runScriptFrame() {
         if (event.m_frame != script_frame) continue;
         if (event.m_op == "down")
             mouseHandler(
-                    c_glut_left_button, c_glut_down, event.m_x, event.m_y);
+              c_glut_left_button, c_glut_down, event.m_x, event.m_y);
         else if (event.m_op == "up")
             mouseHandler(c_glut_left_button, c_glut_up, event.m_x, event.m_y);
         else if (event.m_op == "move")
@@ -212,7 +211,7 @@ public:
 
     bool initializeRenderer() {
         return m_renderer.initialize(*this) &&
-               vulkan_earth::initializeGameRendering(m_renderer);
+          vulkan_earth::initializeGameRendering(m_renderer);
     }
 
     bool draw() override {
@@ -235,7 +234,7 @@ public:
         // and arrow keys as GLUT_KEY_* codes.
         if (event.m_character != '\0') {
             const auto character_key =
-                    static_cast<std::uint8_t>(event.m_character);
+              static_cast<std::uint8_t>(event.m_character);
             if (event.m_pressed) {
                 keyHandler(character_key, 0, 0);
             } else {
@@ -266,15 +265,15 @@ public:
     }
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override {
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override {
         // X11 numbers buttons from 1; GLUT from 0 (left, middle, right).
         if (button >= 1 && button <= 3) {
             m_held_buttons += pressed ? 1 : -1;
         }
         mouseHandler(
-                button - 1, pressed ? c_glut_down : c_glut_up, pos_x, pos_y);
+          button - 1, pressed ? c_glut_down : c_glut_up, pos_x, pos_y);
     }
 
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override {
@@ -314,8 +313,8 @@ int main() {
     // The game opens its assets (textures, meshes, sounds) by paths
     // relative to its own directory, where the build copies them.
     std::error_code error;
-    std::filesystem::current_path(vulkan_graphix::Tools::executableDir(),
-                                  error);
+    std::filesystem::current_path(
+      vulkan_graphix::Tools::executableDir(), error);
 
     initSound();
     std::int32_t win_pos_x, win_pos_y;
@@ -328,14 +327,14 @@ int main() {
     os::Window game_window;
     window = &game_window;
     if (!game_window.create(
-                "VulkanEarth", win_pos_x, win_pos_y, win_width, win_height)) {
+          "VulkanEarth", win_pos_x, win_pos_y, win_width, win_height)) {
         return EXIT_FAILURE;
     }
     game_window.setKeyRepeat(false);
 
     VulkanEarthApp earth_app;
     if (!earth_app.prepareVulkan(game_window.getParameters()) ||
-        !earth_app.initializeRenderer()) {
+      !earth_app.initializeRenderer()) {
         return EXIT_FAILURE;
     }
     // The window can come up at a different size than requested.
@@ -347,20 +346,20 @@ int main() {
     player_factory = new PlayerFactory(global_settings);
     player_factory->setNumberofPlayers(global_settings->getPlayerCount());
     mainmenu = new MainMenu(win_width,
-                            win_height,
-                            0.01f,
-                            global_settings,
-                            player_factory,
-                            &screen_state);
+      win_height,
+      0.01f,
+      global_settings,
+      player_factory,
+      &screen_state);
     loading_screen = new LoadingScreen(-win_width / 4.0,
-                                       win_height / 4.0,
-                                       10,
-                                       win_width * 0.5,
-                                       win_height * 0.5,
-                                       0.75,
-                                       0.75,
-                                       0.75,
-                                       1);
+      win_height / 4.0,
+      10,
+      win_width * 0.5,
+      win_height * 0.5,
+      0.75,
+      0.75,
+      0.75,
+      1);
     game_state = nullptr;
     readymenu = nullptr;
     shopmenu = nullptr;
@@ -413,11 +412,11 @@ void resize(std::int32_t width, std::int32_t height) {
 // where one unit is one pixel.
 void menuLookAt(render::RenderContext& context) {
     std::int32_t distance = win_height / 2 * tan(1.04719755);
-    context.setCamera(
-            context.projection(),
-            context.view() * glm::lookAt(math::Vec3<float>(0, 0, distance),
-                                         math::Vec3<float>(0, 0, 0),
-                                         math::Vec3<float>(0, 1, 0)));
+    context.setCamera(context.projection(),
+      context.view() *
+        glm::lookAt(math::Vec3<float>(0, 0, distance),
+          math::Vec3<float>(0, 0, 0),
+          math::Vec3<float>(0, 1, 0)));
 }
 
 // Draws one frame; returns false when the swapchain has to be rebuilt
@@ -432,26 +431,26 @@ bool draw() {
     // projection - near/far 1/1000000 for the menus, 100/100000000 in game
     // - and an identity modelview.
     render::RenderContext* context =
-            renderer.beginFrame(math::Vec4<float>(0.0f));
+      renderer.beginFrame(math::Vec4<float>(0.0f));
     if (context == nullptr) {
         return false;
     }
     const float near_plane = screen_state != GAME_PLAY ? 1.0 : 100.0;
     const float far_plane =
-            screen_state != GAME_PLAY ? 1000000.0 : 100000000.0;
+      screen_state != GAME_PLAY ? 1000000.0 : 100000000.0;
     context->setViewport({0, 0, win_width, win_height});
-    context->setCamera(vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
-                               static_cast<float>(win_width) /
-                                       static_cast<float>(win_height),
-                               60.0,
-                               near_plane,
-                               far_plane),
-                       math::Mat4<float>(1.0f));
+    context->setCamera(
+      vulkan_graphix::Tools::getPerspectiveProjectionMatrix(
+        static_cast<float>(win_width) / static_cast<float>(win_height),
+        60.0,
+        near_plane,
+        far_plane),
+      math::Mat4<float>(1.0f));
     switch (screen_state) {
         case MAIN_MENU: {
             if (prev_screen_state != MAIN_MENU) {
                 mainmenu->getSubMenuLandscape()->m_tm->prepareData(
-                        0, 0, 0, 0, 0);
+                  0, 0, 0, 0, 0);
                 window->setCursorVisible(true);
             }
             menuLookAt(*context);
@@ -471,11 +470,11 @@ bool draw() {
                     return false;
                 }
                 readymenu = new ReadyMenu(win_width,
-                                          win_height,
-                                          0.01f,
-                                          global_settings,
-                                          player_factory,
-                                          &screen_state);
+                  win_height,
+                  0.01f,
+                  global_settings,
+                  player_factory,
+                  &screen_state);
                 context = renderer.beginFrame(math::Vec4<float>(0.0f));
                 if (context == nullptr) {
                     return false;
@@ -493,11 +492,11 @@ bool draw() {
         case SHOP_MENU: {
             if (shopmenu == nullptr) {
                 shopmenu = new ShopMenu(win_width,
-                                        win_height,
-                                        0.01f,
-                                        global_settings,
-                                        player_factory,
-                                        &screen_state);
+                  win_height,
+                  0.01f,
+                  global_settings,
+                  player_factory,
+                  &screen_state);
             }
             if (game_state) {
                 delete game_state;
@@ -510,10 +509,10 @@ bool draw() {
         case GAME_PLAY: {
             if (game_state == nullptr) {
                 game_state = new GameState(win_width,
-                                           win_height,
-                                           player_factory,
-                                           global_settings,
-                                           &screen_state);
+                  win_height,
+                  player_factory,
+                  global_settings,
+                  &screen_state);
                 window->setCursorVisible(false);
             }
             if (readymenu) {
@@ -528,26 +527,26 @@ bool draw() {
 
             // World axes at the origin (red x, green y, blue z).
             const std::vector<render::UiVertex> axes = {
-                    {math::Vec3<float>(0, 0, 0),
-                     math::Vec4<float>(1, 0, 0, 1),
-                     math::Vec2<float>(0.0f)},
-                    {math::Vec3<float>(1000, 0, 0),
-                     math::Vec4<float>(1, 0, 0, 1),
-                     math::Vec2<float>(0.0f)},
-                    {math::Vec3<float>(0, 0, 0),
-                     math::Vec4<float>(0, 1, 0, 1),
-                     math::Vec2<float>(0.0f)},
-                    {math::Vec3<float>(0, 1000, 0),
-                     math::Vec4<float>(0, 1, 0, 1),
-                     math::Vec2<float>(0.0f)},
-                    {math::Vec3<float>(0, 0, 0),
-                     math::Vec4<float>(0, 0, 1, 1),
-                     math::Vec2<float>(0.0f)},
-                    {math::Vec3<float>(0, 0, 1000),
-                     math::Vec4<float>(0, 0, 1, 1),
-                     math::Vec2<float>(0.0f)}};
+              {math::Vec3<float>(0, 0, 0),
+                math::Vec4<float>(1, 0, 0, 1),
+                math::Vec2<float>(0.0f)},
+              {math::Vec3<float>(1000, 0, 0),
+                math::Vec4<float>(1, 0, 0, 1),
+                math::Vec2<float>(0.0f)},
+              {math::Vec3<float>(0, 0, 0),
+                math::Vec4<float>(0, 1, 0, 1),
+                math::Vec2<float>(0.0f)},
+              {math::Vec3<float>(0, 1000, 0),
+                math::Vec4<float>(0, 1, 0, 1),
+                math::Vec2<float>(0.0f)},
+              {math::Vec3<float>(0, 0, 0),
+                math::Vec4<float>(0, 0, 1, 1),
+                math::Vec2<float>(0.0f)},
+              {math::Vec3<float>(0, 0, 1000),
+                math::Vec4<float>(0, 0, 1, 1),
+                math::Vec2<float>(0.0f)}};
             context->drawTransient(
-                    axes, vulkan_earth::pipelines().m_ui_lines, nullptr);
+              axes, vulkan_earth::pipelines().m_ui_lines, nullptr);
 
             break;
         }
@@ -600,7 +599,7 @@ void keyHandler(std::uint8_t key, std::int32_t /*x*/, std::int32_t /*y*/) {
             global_settings->getCurrentTerrain()->toggleWireframe();
         else if (key == 'm')
             screen_state =
-                    MAIN_MENU;  // this is just temporary, delete this later
+              MAIN_MENU;  // this is just temporary, delete this later
         else
             game_state->handleKeyboardInput(key, true);
     }
@@ -637,15 +636,14 @@ void specKeyHandler(std::int32_t key, std::int32_t /*x*/, std::int32_t /*y*/) {
             game_state->handleKeyboardInput(6, true);
         }
         if (key == 2 || key == 3 || key == 4 || key == 5 || key == 6 ||
-            key == 8 || key == 9 || key == 10 || key == 11) {
+          key == 8 || key == 9 || key == 10 || key == 11) {
             game_state->handleKeyboardInput(254, true);
         }
     }
 }
 
-void specKeyHandlerUp(std::int32_t key,
-                      std::int32_t /*x*/,
-                      std::int32_t /*y*/) {
+void specKeyHandlerUp(
+  std::int32_t key, std::int32_t /*x*/, std::int32_t /*y*/) {
     if (screen_state == GAME_PLAY) {
         if (key == 100) {
             game_state->handleKeyboardInput(1, false);
@@ -668,10 +666,8 @@ void specKeyHandlerUp(std::int32_t key,
     }
 }
 
-void mouseHandler(std::int32_t button,
-                  std::int32_t state,
-                  std::int32_t x,
-                  std::int32_t y) {
+void mouseHandler(
+  std::int32_t button, std::int32_t state, std::int32_t x, std::int32_t y) {
     switch (screen_state) {
         case MAIN_MENU: {
             if (button == c_glut_left_button) {
@@ -687,9 +683,9 @@ void mouseHandler(std::int32_t button,
                     // [1]=%s\n",mainmenu->getSubMenuI(0)->getCaption(),mainmenu->getSubMenuI(1)->getCaption());
                 }
                 mainmenu->buttonTest(x - (win_width / 2),
-                                     (win_height / 2) - y,
-                                     state);  // remember to check about screen
-                                              // size changing
+                  (win_height / 2) - y,
+                  state);  // remember to check about screen
+                           // size changing
             }
             break;
         }
@@ -702,9 +698,9 @@ void mouseHandler(std::int32_t button,
                 }
                 if (readymenu)
                     readymenu->buttonTest(x - (win_width / 2),
-                                          (win_height / 2) - y,
-                                          state);  // remember to check about
-                                                   // screen size changing
+                      (win_height / 2) - y,
+                      state);  // remember to check about
+                               // screen size changing
             }
             break;
         }
@@ -717,9 +713,9 @@ void mouseHandler(std::int32_t button,
                 }
                 if (shopmenu)
                     shopmenu->buttonTest(x - (win_width / 2),
-                                         (win_height / 2) - y,
-                                         state);  // remember to check about
-                                                  // screen size changing
+                      (win_height / 2) - y,
+                      state);  // remember to check about
+                               // screen size changing
             }
             break;
         }
@@ -735,8 +731,8 @@ void mouseHandler(std::int32_t button,
 void mouseMotionHandler(std::int32_t x, std::int32_t y) {
     if (mainmenu->getActiveSubMenu() != nullptr) {
         if (mainmenu->getActiveSubMenu()->getUNIQUEIDENTIFIER() == 1) {
-            mainmenu->getActiveSubMenu()->updateMouse(x - (win_width / 2),
-                                                      (win_height / 2) - y);
+            mainmenu->getActiveSubMenu()->updateMouse(
+              x - (win_width / 2), (win_height / 2) - y);
         } else if (mainmenu->getActiveSubMenu()->getUNIQUEIDENTIFIER() == 5) {
             mainmenu->getActiveSubMenu()->updateMouse(x, y);
         }
