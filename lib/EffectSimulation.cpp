@@ -6,14 +6,14 @@
 namespace vulkan_graphix::EffectSimulation {
 
 Particle makeParticle(ParticleKind kind,
-                      float x,
-                      float y,
-                      float z,
-                      float dir_x,
-                      float dir_y,
-                      float dir_z,
-                      float speed,
-                      std::int32_t frames) {
+  float x,
+  float y,
+  float z,
+  float dir_x,
+  float dir_y,
+  float dir_z,
+  float speed,
+  std::int32_t frames) {
     Particle particle;
     particle.m_kind = kind;
     particle.m_x = x;
@@ -50,25 +50,23 @@ bool updateParticle(Particle& particle) {
     switch (particle.m_kind) {
         case ParticleKind::Smoke:
             particle.m_x += particle.m_dir[0] * particle.m_speed;
-            particle.m_y += 7 * (static_cast<float>(particle.m_current_frame) /
-                                 static_cast<float>(particle.m_active_frames));
+            particle.m_y += 7 *
+              (static_cast<float>(particle.m_current_frame) /
+                static_cast<float>(particle.m_active_frames));
             particle.m_z += particle.m_dir[2] * particle.m_speed;
             if (particle.m_current_frame <= 30) {
                 particle.m_blue =
-                        1 -
-                        (static_cast<float>(particle.m_current_frame) / 30.0);
+                  1 - (static_cast<float>(particle.m_current_frame) / 30.0);
             } else if (particle.m_current_frame <= 60) {
-                particle.m_green =
-                        1 - ((static_cast<float>(particle.m_current_frame) -
-                              30.0) /
-                             30.0);
+                particle.m_green = 1 -
+                  ((static_cast<float>(particle.m_current_frame) - 30.0) /
+                    30.0);
             } else {
                 // Measured from frame 30, not 60, as the game had it: red
                 // drops straight to about 0.2 when this band starts.
-                particle.m_red =
-                        1 - ((static_cast<float>(particle.m_current_frame) -
-                              30.0) /
-                             40.0);
+                particle.m_red = 1 -
+                  ((static_cast<float>(particle.m_current_frame) - 30.0) /
+                    40.0);
             }
             break;
         case ParticleKind::Acid:
@@ -87,10 +85,10 @@ bool updateParticle(Particle& particle) {
 }
 
 ParticleEmitter::ParticleEmitter(std::int32_t spawn,
-                                 std::int32_t /*rate*/,
-                                 std::int32_t speed,
-                                 std::int32_t life,
-                                 ParticleKind kind) :
+  std::int32_t /*rate*/,
+  std::int32_t speed,
+  std::int32_t life,
+  ParticleKind kind) :
         m_particles_per_emission(spawn),
         m_emission_speed(speed),
         m_emission_life(life),
@@ -122,33 +120,33 @@ const std::vector<std::optional<Particle>>& ParticleEmitter::slots() const {
 void ParticleEmitter::addParticles() {
     std::int32_t count = 0;
     for (std::size_t i = 0;
-         i < m_slots.size() && count < m_particles_per_emission;
-         ++i) {
+      i < m_slots.size() && count < m_particles_per_emission;
+      ++i) {
         if (m_slots[i]) {
             continue;
         }
-        float dir_x = static_cast<float>(std::rand()) * 2 /
-                              static_cast<float>(RAND_MAX) -
-                      1;
-        float dir_y = static_cast<float>(std::rand()) * 2 /
-                              static_cast<float>(RAND_MAX) -
-                      1;
-        float dir_z = static_cast<float>(std::rand()) * 2 /
-                              static_cast<float>(RAND_MAX) -
-                      1;
+        float dir_x =
+          static_cast<float>(std::rand()) * 2 / static_cast<float>(RAND_MAX) -
+          1;
+        float dir_y =
+          static_cast<float>(std::rand()) * 2 / static_cast<float>(RAND_MAX) -
+          1;
+        float dir_z =
+          static_cast<float>(std::rand()) * 2 / static_cast<float>(RAND_MAX) -
+          1;
         float mag = std::sqrt(dir_x * dir_x + dir_y * dir_y + dir_z * dir_z);
         dir_x /= mag;
         dir_y /= mag;
         dir_z /= mag;
         m_slots[i] = makeParticle(m_kind,
-                                  m_x,
-                                  m_y,
-                                  m_z,
-                                  dir_x,
-                                  dir_y,
-                                  dir_z,
-                                  static_cast<float>(m_emission_speed),
-                                  m_emission_life);
+          m_x,
+          m_y,
+          m_z,
+          dir_x,
+          dir_y,
+          dir_z,
+          static_cast<float>(m_emission_speed),
+          m_emission_life);
         count++;
     }
 }
@@ -173,8 +171,8 @@ ExplosionFrame advanceExplosion(Explosion& explosion) {
     return {-1, alpha};
 }
 
-float explosionSphereRadius(const Explosion& explosion,
-                            std::int32_t weapon_radius) {
+float explosionSphereRadius(
+  const Explosion& explosion, std::int32_t weapon_radius) {
     // "ASSUMING SCALE ON TERRAIN IS 150 I NEED TO GET ACTUAL VALUE"
     return explosion.m_radius * (weapon_radius * 5.56 + 22.22);
 }

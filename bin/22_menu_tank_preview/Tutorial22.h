@@ -61,7 +61,7 @@ struct Tutorial22TankVertexData {
 };
 
 using Tutorial22TankVertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
+  VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 struct Tutorial22TankUniformBufferData {
     Math::Mat4<float> m_view;
@@ -81,10 +81,8 @@ struct Tutorial22PanelVertexData {
     Math::Vec4<float> m_color;
 };
 
-using Tutorial22PanelVertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec2<float>,
-                                     Math::Vec4<float>>;
+using Tutorial22PanelVertexAttributeTraits = VertexTypes::
+  AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
 
 static constexpr std::size_t c_tutorial22_tank_part_count = 3;
 
@@ -118,12 +116,12 @@ public:
     const BufferParameters& getTankUniformBufferParameters() const;
     BufferParameters& getTankUniformBufferParameters();
     void setTankUniformBufferParameters(
-            const BufferParameters& uniform_buffer);
+      const BufferParameters& uniform_buffer);
 
     const BufferParameters& getPanelUniformBufferParameters() const;
     BufferParameters& getPanelUniformBufferParameters();
     void setPanelUniformBufferParameters(
-            const BufferParameters& uniform_buffer);
+      const BufferParameters& uniform_buffer);
 
     const VkDescriptorSetLayout& getVkTankDescriptorSetLayout() const;
     VkDescriptorSetLayout& getVkTankDescriptorSetLayout();
@@ -188,15 +186,15 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -215,9 +213,9 @@ private:
     VkPipeline m_vk_tank_graphics_pipeline;
     VkPipeline m_vk_panel_graphics_pipeline;
     std::array<BufferParameters, c_tutorial22_tank_part_count>
-            m_tank_vertex_buffers;
+      m_tank_vertex_buffers;
     std::array<std::uint32_t, c_tutorial22_tank_part_count>
-            m_tank_vertex_counts;
+      m_tank_vertex_counts;
     BufferParameters m_panel_vertex_buffer;
     std::uint32_t m_panel_vertex_count;
     BufferParameters m_staging_buffer;
@@ -255,55 +253,54 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
 
 private:
     // Generous fixed capacity, same reasoning as Tutorial15's own
     // c_max_quads - a title, a framed preview border, and one button label.
     static constexpr std::size_t c_max_panel_quads = 256;
     static constexpr std::size_t c_max_panel_vertex_count =
-            c_max_panel_quads * 6;
+      c_max_panel_quads * 6;
     static constexpr float c_font_pixel_height = 28.0f;
     static constexpr const char* c_font_path =
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+      "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
     // ReadyMenu.cpp's own tank_angle += 0.25f per frame.
     static constexpr float c_tank_spin_step_radians = 0.25f;
 
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
     bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkFormat format,
-                     VkImageUsageFlags usage,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
+      std::uint32_t height,
+      VkFormat format,
+      VkImageUsageFlags usage,
+      VkImage* image);
+    bool allocateImageMemory(
+      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
     bool createImageView(VkImage image,
-                         VkFormat format,
-                         VkImageAspectFlags aspect_mask,
-                         VkImageView* image_view);
+      VkFormat format,
+      VkImageAspectFlags aspect_mask,
+      VkImageView* image_view);
     bool createTextureFromPixels(std::uint32_t width,
-                                 std::uint32_t height,
-                                 const std::vector<char>& pixels,
-                                 ImageParameters& out_image_parameters);
+      std::uint32_t height,
+      const std::vector<char>& pixels,
+      ImageParameters& out_image_parameters);
     bool destroyDepthResources();
     bool copyBufferData(BufferParameters& destination,
-                        const void* data,
-                        std::uint32_t data_size,
-                        VkAccessFlags dst_access_mask,
-                        VkPipelineStageFlags dst_stage_mask);
+      const void* data,
+      std::uint32_t data_size,
+      VkAccessFlags dst_access_mask,
+      VkPipelineStageFlags dst_stage_mask);
 
     Tutorial22TankUniformBufferData getTankUniformBufferData() const;
     bool updateTankUniformBufferData();
@@ -325,33 +322,33 @@ private:
     // the whole assembly before its real per-part translation, mirroring
     // ReadyMenu.cpp's own tank_angle-driven glRotatef call.
     std::vector<Tutorial22TankVertexData> loadTankPartVertexData(
-            const char* mesh_filename) const;
+      const char* mesh_filename) const;
     bool createTankPartVertexBuffer(const char* mesh_filename,
-                                    BufferParameters& vertex_buffer,
-                                    std::uint32_t& vertex_count);
+      BufferParameters& vertex_buffer,
+      std::uint32_t& vertex_count);
     Math::Mat4<float> getTankPartModelMatrix(
-            const Math::Vec3<float>& part_translation) const;
+      const Math::Vec3<float>& part_translation) const;
 
     Math::Vec2<float> getButtonTopLeft() const;
     Math::Vec2<float> getButtonSize() const;
     std::string getButtonLabel() const;
 
     void appendGlyphQuad(std::vector<Tutorial22PanelVertexData>& vertex_data,
-                         const BitmapFontGlyphQuad& glyph,
-                         Math::Vec4<float> color) const;
+      const BitmapFontGlyphQuad& glyph,
+      Math::Vec4<float> color) const;
     void appendColoredQuad(std::vector<Tutorial22PanelVertexData>& vertex_data,
-                           const std::array<Math::Vec2<float>, 4>& corners,
-                           Math::Vec4<float> color) const;
+      const std::array<Math::Vec2<float>, 4>& corners,
+      Math::Vec4<float> color) const;
     void appendText(std::vector<Tutorial22PanelVertexData>& vertex_data,
-                    const std::string& text,
-                    Math::Vec2<float> origin,
-                    Math::Vec4<float> color) const;
+      const std::string& text,
+      Math::Vec2<float> origin,
+      Math::Vec4<float> color) const;
     std::vector<Tutorial22PanelVertexData> buildPanelVertexData() const;
     bool updatePanelVertexBufferData();
 
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

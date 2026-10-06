@@ -39,7 +39,7 @@ TEST(Tutorial09IntegrationTest, FullLifecycle) {
     ASSERT_TRUE(tutorial->createIndexBuffer());
 
     for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-         ++i) {
+      ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 
@@ -54,14 +54,14 @@ TEST(Tutorial09IntegrationTest, FullLifecycle) {
     tutorial->onMouseButton(c_scroll_up, true, 140, 80);
 
     for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-         ++i) {
+      ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 
     EXPECT_TRUE(tutorial->onWindowSizeChanged());
 
     for (std::int32_t i = 0; i < vulkan_graphix::test::c_draw_iterations;
-         ++i) {
+      ++i) {
         EXPECT_TRUE(tutorial->draw());
     }
 }

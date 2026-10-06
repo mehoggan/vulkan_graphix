@@ -22,10 +22,10 @@ namespace {
 PFN_vkGetDeviceProcAddr g_real_get_device_proc_addr = nullptr;
 const char* g_poisoned_device_function_name = nullptr;
 
-PFN_vkVoidFunction VKAPI_CALL fakeGetDeviceProcAddr(VkDevice device,
-                                                    const char* name) {
+PFN_vkVoidFunction VKAPI_CALL fakeGetDeviceProcAddr(
+  VkDevice device, const char* name) {
     if ((g_poisoned_device_function_name != nullptr) &&
-        (std::strcmp(name, g_poisoned_device_function_name) == 0)) {
+      (std::strcmp(name, g_poisoned_device_function_name) == 0)) {
         return nullptr;
     }
     return g_real_get_device_proc_addr(device, name);
@@ -34,7 +34,7 @@ PFN_vkVoidFunction VKAPI_CALL fakeGetDeviceProcAddr(VkDevice device,
 }  // namespace
 
 TEST(TutorialBaseFaultInjectionDeviceLevelTest,
-     LoadDeviceLevelEntryPointsFailsWhenAFunctionIsMissing) {
+  LoadDeviceLevelEntryPointsFailsWhenAFunctionIsMissing) {
     if (!vulkan_graphix::test::hasDisplay()) {
         GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
                         "and X11 window)";

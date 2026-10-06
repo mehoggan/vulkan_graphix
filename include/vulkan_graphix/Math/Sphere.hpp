@@ -46,10 +46,8 @@ public:
             m_radius(radius) {
         const Icosahedron<T, I> icosahedron(m_radius);
 
-        IndexedVertices_t data = subdivide(icosahedron.points(),
-                                           icosahedron.indices(),
-                                           0,
-                                           level_of_detail);
+        IndexedVertices_t data = subdivide(
+          icosahedron.points(), icosahedron.indices(), 0, level_of_detail);
 
         m_points = std::move(data.first);
         m_indices = std::move(data.second);
@@ -70,7 +68,7 @@ private:
 
     Vec3<T> pointAt(T theta_degrees, T elevation_degrees) const {
         SphericalCoordinates<T, AngleMode::Degrees> coords(
-                theta_degrees, elevation_degrees, m_radius);
+          theta_degrees, elevation_degrees, m_radius);
         return sphericalToCartesian(coords);
     }
 
@@ -86,8 +84,8 @@ private:
 
     void generateVertices(std::uint16_t theta_steps, std::uint16_t phi_steps) {
         const T phi_step =
-                (c_max_elevation_degrees - c_min_elevation_degrees) /
-                static_cast<T>(phi_steps);
+          (c_max_elevation_degrees - c_min_elevation_degrees) /
+          static_cast<T>(phi_steps);
         T elevation_degrees = c_max_elevation_degrees;
         while (elevation_degrees >= c_min_elevation_degrees) {
             if (elevation_degrees - phi_step < c_min_elevation_degrees) {
@@ -101,17 +99,17 @@ private:
         generateNormals();
     }
 
-    void iterateThetaAtElevation(T elevation_degrees,
-                                 std::uint16_t theta_steps) {
+    void iterateThetaAtElevation(
+      T elevation_degrees, std::uint16_t theta_steps) {
         if (elevation_degrees == c_max_elevation_degrees ||
-            elevation_degrees == c_min_elevation_degrees) {
+          elevation_degrees == c_min_elevation_degrees) {
             m_points.push_back(
-                    pointAt(c_min_theta_degrees, elevation_degrees));
+              pointAt(c_min_theta_degrees, elevation_degrees));
             return;
         }
 
         const T theta_step = (c_max_theta_degrees - c_min_theta_degrees) /
-                             static_cast<T>(theta_steps);
+          static_cast<T>(theta_steps);
         T theta_degrees = c_min_theta_degrees;
         while (theta_degrees < c_max_theta_degrees) {
             m_points.push_back(pointAt(theta_degrees, elevation_degrees));
@@ -142,13 +140,12 @@ private:
             } else if (at_top) {
                 const I curr_row = phi_step - 1;
                 const I start_index_for_row = curr_row * theta_steps + 1;
-                const I last_start_index =
-                        start_index_for_row +
-                        static_cast<I>(top_row_vertex_count) - 2;
+                const I last_start_index = start_index_for_row +
+                  static_cast<I>(top_row_vertex_count) - 2;
                 I distance = static_cast<I>(vertex_per_row_count);
                 for (I start_index = start_index_for_row;
-                     start_index <= last_start_index;
-                     ++start_index) {
+                  start_index <= last_start_index;
+                  ++start_index) {
                     m_indices.push_back(start_index);
                     if (start_index != last_start_index) {
                         m_indices.push_back(start_index + 1);
@@ -161,14 +158,13 @@ private:
             } else {
                 const I curr_row = phi_step - 1;
                 const I start_index_for_row = curr_row * theta_steps + 1;
-                const I last_start_index =
-                        start_index_for_row +
-                        static_cast<I>(vertex_per_row_count) - 1;
+                const I last_start_index = start_index_for_row +
+                  static_cast<I>(vertex_per_row_count) - 1;
                 for (I start_index = start_index_for_row;
-                     start_index <= last_start_index;
-                     ++start_index) {
+                  start_index <= last_start_index;
+                  ++start_index) {
                     const I next_row_index =
-                            start_index + static_cast<I>(vertex_per_row_count);
+                      start_index + static_cast<I>(vertex_per_row_count);
                     if (start_index != last_start_index) {
                         m_indices.push_back(next_row_index + 1);
                         m_indices.push_back(next_row_index);
@@ -179,15 +175,13 @@ private:
                         m_indices.push_back(start_index + 1);
                     } else {
                         const I initial_index = start_index_for_row;
-                        m_indices.push_back(
-                                initial_index +
-                                static_cast<I>(vertex_per_row_count));
+                        m_indices.push_back(initial_index +
+                          static_cast<I>(vertex_per_row_count));
                         m_indices.push_back(next_row_index);
                         m_indices.push_back(start_index);
 
-                        m_indices.push_back(
-                                initial_index +
-                                static_cast<I>(vertex_per_row_count));
+                        m_indices.push_back(initial_index +
+                          static_cast<I>(vertex_per_row_count));
                         m_indices.push_back(start_index);
                         m_indices.push_back(initial_index);
                     }
@@ -204,9 +198,9 @@ private:
     using DuplicateCheck_t = std::unordered_map<Vec3<T>, I>;
 
     IndexedVertices_t subdivide(const std::vector<Vec3<T>>& vertices,
-                                const std::vector<I>& indices,
-                                std::uint32_t curr_level,
-                                std::uint32_t desired_level) {
+      const std::vector<I>& indices,
+      std::uint32_t curr_level,
+      std::uint32_t desired_level) {
         if (curr_level == desired_level) {
             return std::make_pair(vertices, indices);
         }
@@ -250,11 +244,11 @@ private:
             // vertices/30 edges get refined along with everything else,
             // instead of staying fixed as sharp corners forever.
             const Vec3<T> mid_01 =
-                    glm::normalize((point_0 + point_1) * T(0.5)) * m_radius;
+              glm::normalize((point_0 + point_1) * T(0.5)) * m_radius;
             const Vec3<T> mid_12 =
-                    glm::normalize((point_1 + point_2) * T(0.5)) * m_radius;
+              glm::normalize((point_1 + point_2) * T(0.5)) * m_radius;
             const Vec3<T> mid_20 =
-                    glm::normalize((point_2 + point_0) * T(0.5)) * m_radius;
+              glm::normalize((point_2 + point_0) * T(0.5)) * m_radius;
 
             const I new_0 = emit(point_0);
             const I new_1 = emit(point_1);
@@ -281,7 +275,7 @@ private:
         }
 
         return subdivide(
-                next_vertices, next_indices, curr_level + 1, desired_level);
+          next_vertices, next_indices, curr_level + 1, desired_level);
     }
 };
 

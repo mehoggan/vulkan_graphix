@@ -11,7 +11,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial20>();
+      std::make_shared<vulkan_graphix::Tutorial20>();
 
     if (!window.create("20 - Effects")) {
         return EXIT_FAILURE;
@@ -22,7 +22,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial20> tutorial20 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial20>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial20>(tutorial);
 
     if (!tutorial20->createRenderingResources()) {
         return EXIT_FAILURE;

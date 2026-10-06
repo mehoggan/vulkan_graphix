@@ -45,12 +45,11 @@ const std::vector<Math::Vec3<float>>& getControlPoints() {
         std::vector<Math::Vec3<float>> result;
         result.reserve(point_count);
         for (std::size_t i = 0; i < point_count; ++i) {
-            const float fraction = static_cast<float>(i) /
-                                   static_cast<float>(point_count - 1);
-            result.emplace_back(
-                    x_start + fraction * (x_end - x_start),
-                    elevation_gain * fraction,
-                    bend_amplitude * std::sin(fraction * half_turn));
+            const float fraction =
+              static_cast<float>(i) / static_cast<float>(point_count - 1);
+            result.emplace_back(x_start + fraction * (x_end - x_start),
+              elevation_gain * fraction,
+              bend_amplitude * std::sin(fraction * half_turn));
         }
         return result;
     }();
@@ -67,34 +66,33 @@ const std::vector<Math::Vec3<float>>& getControlPoints() {
 const std::vector<Math::CurveSample3D<float>>& getCurveSamples() {
     static const std::vector<Math::CurveSample3D<float>> samples = [] {
         const std::vector<Math::Vec3<float>>& control_points =
-                getControlPoints();
+          getControlPoints();
 
         std::vector<Math::Vec3<float>> working_points;
         working_points.reserve(control_points.size() + 2);
         working_points.push_back(control_points.front());
-        working_points.insert(working_points.end(),
-                              control_points.begin(),
-                              control_points.end());
+        working_points.insert(
+          working_points.end(), control_points.begin(), control_points.end());
         working_points.push_back(control_points.back());
 
         std::vector<Math::CurveSample3D<float>> result;
         const std::size_t segment_count = working_points.size() - 3;
         for (std::size_t segment = 0; segment < segment_count; ++segment) {
             const Math::CubicCurve<float> curve(
-                    Math::CubicCurve<float>::Type::CatmullRom,
-                    working_points[segment],
-                    working_points[segment + 1],
-                    working_points[segment + 2],
-                    working_points[segment + 3]);
+              Math::CubicCurve<float>::Type::CatmullRom,
+              working_points[segment],
+              working_points[segment + 1],
+              working_points[segment + 2],
+              working_points[segment + 3]);
             const std::vector<Math::CurveSample3D<float>> segment_samples =
-                    curve.computeSamplesAdaptive(c_chordal_tolerance);
+              curve.computeSamplesAdaptive(c_chordal_tolerance);
 
             // Segment i's last sample and segment i+1's first sample are
             // the same point (the shared control point between them) -
             // skip it to avoid a duplicate vertex in the polyline.
             const std::size_t start_index = (segment == 0) ? 0 : 1;
             for (std::size_t i = start_index; i < segment_samples.size();
-                 ++i) {
+              ++i) {
                 result.push_back(segment_samples[i]);
             }
         }
@@ -123,19 +121,19 @@ VkRenderPass& VulkanTutorial10Parameters::getVkRenderPass() {
     return m_vk_render_pass;
 }
 void VulkanTutorial10Parameters::setVkRenderPass(
-        const VkRenderPass& vk_render_pass) {
+  const VkRenderPass& vk_render_pass) {
     m_vk_render_pass = vk_render_pass;
 }
 
 const ImageParameters& VulkanTutorial10Parameters::getDepthImageParameters()
-        const {
+  const {
     return m_depth_image_parameters;
 }
 ImageParameters& VulkanTutorial10Parameters::getDepthImageParameters() {
     return m_depth_image_parameters;
 }
 void VulkanTutorial10Parameters::setDepthImageParameters(
-        const ImageParameters& depth_image) {
+  const ImageParameters& depth_image) {
     m_depth_image_parameters = depth_image;
 }
 
@@ -147,7 +145,7 @@ BufferParameters& VulkanTutorial10Parameters::getUniformBufferParameters() {
     return m_uniform_buffer;
 }
 void VulkanTutorial10Parameters::setUniformBufferParameters(
-        const BufferParameters& uniform_buffer) {
+  const BufferParameters& uniform_buffer) {
     m_uniform_buffer = uniform_buffer;
 }
 
@@ -160,19 +158,19 @@ VulkanTutorial10Parameters::getDescriptorSetParameters() {
     return m_descriptor_set_parameters;
 }
 void VulkanTutorial10Parameters::setDescriptorSetParameters(
-        const DescriptorSetParameters& descriptor_set_parameters) {
+  const DescriptorSetParameters& descriptor_set_parameters) {
     m_descriptor_set_parameters = descriptor_set_parameters;
 }
 
 const VkPipelineLayout& VulkanTutorial10Parameters::getVkPipelineLayout()
-        const {
+  const {
     return m_vk_pipeline_layout;
 }
 VkPipelineLayout& VulkanTutorial10Parameters::getVkPipelineLayout() {
     return m_vk_pipeline_layout;
 }
 void VulkanTutorial10Parameters::setVkPipelineLayout(
-        const VkPipelineLayout& vk_pipeline_layout) {
+  const VkPipelineLayout& vk_pipeline_layout) {
     m_vk_pipeline_layout = vk_pipeline_layout;
 }
 
@@ -183,7 +181,7 @@ VkPipeline& VulkanTutorial10Parameters::getVkLinePipeline() {
     return m_vk_line_pipeline;
 }
 void VulkanTutorial10Parameters::setVkLinePipeline(
-        const VkPipeline& vk_line_pipeline) {
+  const VkPipeline& vk_line_pipeline) {
     m_vk_line_pipeline = vk_line_pipeline;
 }
 
@@ -196,7 +194,7 @@ VulkanTutorial10Parameters::getCurveVertexBufferParameters() {
     return m_curve_vertex_buffer;
 }
 void VulkanTutorial10Parameters::setCurveVertexBufferParameters(
-        const BufferParameters& vertex_buffer) {
+  const BufferParameters& vertex_buffer) {
     m_curve_vertex_buffer = vertex_buffer;
 }
 
@@ -204,7 +202,7 @@ std::uint32_t VulkanTutorial10Parameters::getCurveVertexCount() const {
     return m_curve_vertex_count;
 }
 void VulkanTutorial10Parameters::setCurveVertexCount(
-        std::uint32_t vertex_count) {
+  std::uint32_t vertex_count) {
     m_curve_vertex_count = vertex_count;
 }
 
@@ -217,16 +215,16 @@ VulkanTutorial10Parameters::getControlPolygonVertexBufferParameters() {
     return m_control_polygon_vertex_buffer;
 }
 void VulkanTutorial10Parameters::setControlPolygonVertexBufferParameters(
-        const BufferParameters& vertex_buffer) {
+  const BufferParameters& vertex_buffer) {
     m_control_polygon_vertex_buffer = vertex_buffer;
 }
 
 std::uint32_t VulkanTutorial10Parameters::getControlPolygonVertexCount()
-        const {
+  const {
     return m_control_polygon_vertex_count;
 }
 void VulkanTutorial10Parameters::setControlPolygonVertexCount(
-        std::uint32_t vertex_count) {
+  std::uint32_t vertex_count) {
     m_control_polygon_vertex_count = vertex_count;
 }
 
@@ -238,7 +236,7 @@ BufferParameters& VulkanTutorial10Parameters::getStagingBufferParameters() {
     return m_staging_buffer;
 }
 void VulkanTutorial10Parameters::setStagingBufferParameters(
-        const BufferParameters& staging_buffer) {
+  const BufferParameters& staging_buffer) {
     m_staging_buffer = staging_buffer;
 }
 
@@ -249,7 +247,7 @@ VkCommandPool& VulkanTutorial10Parameters::getVkCommandPool() {
     return m_vk_command_pool;
 }
 void VulkanTutorial10Parameters::setVkCommandPool(
-        const VkCommandPool& vk_command_pool) {
+  const VkCommandPool& vk_command_pool) {
     m_vk_command_pool = vk_command_pool;
 }
 
@@ -262,7 +260,7 @@ VulkanTutorial10Parameters::getRenderingResources() {
     return m_rendering_resources;
 }
 void VulkanTutorial10Parameters::setRenderingResources(
-        const std::vector<RenderingResourceParameters>& rendering_resources) {
+  const std::vector<RenderingResourceParameters>& rendering_resources) {
     m_rendering_resources = rendering_resources;
 }
 
@@ -275,7 +273,7 @@ VulkanTutorial10Parameters::getFinishedRenderingSemaphores() {
     return m_finished_rendering_semaphores;
 }
 void VulkanTutorial10Parameters::setFinishedRenderingSemaphores(
-        const std::vector<VkSemaphore>& finished_rendering_semaphores) {
+  const std::vector<VkSemaphore>& finished_rendering_semaphores) {
     m_finished_rendering_semaphores = finished_rendering_semaphores;
 }
 
@@ -284,15 +282,13 @@ void VulkanTutorial10Parameters::setFinishedRenderingSemaphores(
 // ************************************************************ //
 Tutorial10::Tutorial10() :
         m_camera(c_initial_camera_yaw,
-                 c_initial_camera_pitch,
-                 c_initial_camera_distance) {}
+          c_initial_camera_pitch,
+          c_initial_camera_distance) {}
 
 Tutorial10::~Tutorial10() { childClear(); }
 
-void Tutorial10::onMouseButton(std::int32_t button,
-                               bool pressed,
-                               std::int32_t pos_x,
-                               std::int32_t pos_y) {
+void Tutorial10::onMouseButton(
+  std::int32_t button, bool pressed, std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseButton(button, pressed, pos_x, pos_y);
 }
 
@@ -300,21 +296,20 @@ void Tutorial10::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
     m_camera.onMouseMove(pos_x, pos_y);
 }
 
-bool Tutorial10::createCommandPool(std::uint32_t queue_family_index,
-                                   VkCommandPool* pool) {
+bool Tutorial10::createCommandPool(
+  std::uint32_t queue_family_index, VkCommandPool* pool) {
     if (!VulkanCommon::FrameResourceFactory(getVkDevice())
-                 .createCommandPool(queue_family_index, pool)) {
+          .createCommandPool(queue_family_index, pool)) {
         Logging::error(LOG_TAG, "Could not create command pool!");
         return false;
     }
     return true;
 }
 
-bool Tutorial10::allocateCommandBuffers(VkCommandPool pool,
-                                        std::uint32_t count,
-                                        VkCommandBuffer* command_buffers) {
+bool Tutorial10::allocateCommandBuffers(
+  VkCommandPool pool, std::uint32_t count, VkCommandBuffer* command_buffers) {
     if (!VulkanCommon::FrameResourceFactory(getVkDevice())
-                 .allocateCommandBuffers(pool, count, command_buffers)) {
+          .allocateCommandBuffers(pool, count, command_buffers)) {
         Logging::error(LOG_TAG, "Could not allocate command buffer!");
         return false;
     }
@@ -322,19 +317,18 @@ bool Tutorial10::allocateCommandBuffers(VkCommandPool pool,
 }
 
 bool Tutorial10::createCommandBuffers() {
-    if (!createCommandPool(
-                getGraphicsQueueParameters().getFamilyIndex(),
-                &m_vulkan_tutorial10_parameters.getVkCommandPool())) {
+    if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
+          &m_vulkan_tutorial10_parameters.getVkCommandPool())) {
         return false;
     }
 
     std::vector<RenderingResourceParameters>& rendering_resources =
-            m_vulkan_tutorial10_parameters.getRenderingResources();
+      m_vulkan_tutorial10_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!allocateCommandBuffers(
-                    m_vulkan_tutorial10_parameters.getVkCommandPool(),
-                    1,
-                    &rendering_resources[i].getVkCommandBuffer())) {
+              m_vulkan_tutorial10_parameters.getVkCommandPool(),
+              1,
+              &rendering_resources[i].getVkCommandBuffer())) {
             return false;
         }
     }
@@ -343,13 +337,13 @@ bool Tutorial10::createCommandBuffers() {
 
 bool Tutorial10::createSemaphores() {
     const VulkanCommon::FrameResourceFactory frame_resource_factory(
-            getVkDevice());
+      getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
-            m_vulkan_tutorial10_parameters.getRenderingResources();
+      m_vulkan_tutorial10_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!frame_resource_factory.createSemaphore(
-                    &rendering_resources[i].getImageAvailableVkSemaphore())) {
+              &rendering_resources[i].getImageAvailableVkSemaphore())) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
@@ -359,13 +353,12 @@ bool Tutorial10::createSemaphores() {
     // swapchain image, not by the rendering-resource slot. See the comment
     // in Tutorial07::createSemaphores() for the full rationale.
     std::vector<VkSemaphore>& finished_rendering_semaphores =
-            m_vulkan_tutorial10_parameters.getFinishedRenderingSemaphores();
+      m_vulkan_tutorial10_parameters.getFinishedRenderingSemaphores();
     finished_rendering_semaphores.assign(
-            getSwapchainParameters().getImageParameters().size(),
-            VK_NULL_HANDLE);
+      getSwapchainParameters().getImageParameters().size(), VK_NULL_HANDLE);
     for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
         if (!frame_resource_factory.createSemaphore(
-                    &finished_rendering_semaphores[i])) {
+              &finished_rendering_semaphores[i])) {
             Logging::error(LOG_TAG, "Could not create semaphores!");
             return false;
         }
@@ -376,13 +369,13 @@ bool Tutorial10::createSemaphores() {
 
 bool Tutorial10::createFences() {
     const VulkanCommon::FrameResourceFactory frame_resource_factory(
-            getVkDevice());
+      getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
-            m_vulkan_tutorial10_parameters.getRenderingResources();
+      m_vulkan_tutorial10_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (!frame_resource_factory.createFence(
-                    /*signaled=*/true, &rendering_resources[i].getVkFence())) {
+              /*signaled=*/true, &rendering_resources[i].getVkFence())) {
             Logging::error(LOG_TAG, "Could not create a fence!");
             return false;
         }
@@ -404,10 +397,10 @@ bool Tutorial10::createRenderingResources() {
 }
 
 bool Tutorial10::createBuffer(VkBufferUsageFlags usage,
-                              VkMemoryPropertyFlags memory_property,
-                              BufferParameters& buffer) {
+  VkMemoryPropertyFlags memory_property,
+  BufferParameters& buffer) {
     if (!VulkanCommon::BufferFactory(getVkDevice(), getVkPhysicalDevice())
-                 .create(usage, memory_property, buffer)) {
+          .create(usage, memory_property, buffer)) {
         Logging::error(LOG_TAG, "Could not create buffer!");
         return false;
     }
@@ -416,11 +409,11 @@ bool Tutorial10::createBuffer(VkBufferUsageFlags usage,
 
 bool Tutorial10::createStagingBuffer() {
     BufferParameters& staging_buffer =
-            m_vulkan_tutorial10_parameters.getStagingBufferParameters();
+      m_vulkan_tutorial10_parameters.getStagingBufferParameters();
     staging_buffer.setSize(2000000);
     if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                      staging_buffer)) {
+          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+          staging_buffer)) {
         Logging::error(LOG_TAG, "Could not create staging buffer!");
         return false;
     }
@@ -429,39 +422,38 @@ bool Tutorial10::createStagingBuffer() {
 }
 
 bool Tutorial10::createImage(std::uint32_t width,
-                             std::uint32_t height,
-                             VkFormat format,
-                             VkImageUsageFlags usage,
-                             VkImage* image) {
+  std::uint32_t height,
+  VkFormat format,
+  VkImageUsageFlags usage,
+  VkImage* image) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
-            .createImage(width, height, format, usage, image);
+      .createImage(width, height, format, usage, image);
 }
 
-bool Tutorial10::allocateImageMemory(VkImage image,
-                                     VkMemoryPropertyFlags property,
-                                     VkDeviceMemory* memory) {
+bool Tutorial10::allocateImageMemory(
+  VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
-            .allocateMemory(image, property, memory);
+      .allocateMemory(image, property, memory);
 }
 
 bool Tutorial10::createImageView(VkImage image,
-                                 VkFormat format,
-                                 VkImageAspectFlags aspect_mask,
-                                 VkImageView* image_view) {
+  VkFormat format,
+  VkImageAspectFlags aspect_mask,
+  VkImageView* image_view) {
     return VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
-            .createImageView(image, format, aspect_mask, image_view);
+      .createImageView(image, format, aspect_mask, image_view);
 }
 
 bool Tutorial10::createDepthResources() {
     ImageParameters& depth_image =
-            m_vulkan_tutorial10_parameters.getDepthImageParameters();
+      m_vulkan_tutorial10_parameters.getDepthImageParameters();
 
     VkImage vk_image;
     if (!createImage(getSwapchainParameters().getVkExtent2d().width,
-                     getSwapchainParameters().getVkExtent2d().height,
-                     c_depth_format,
-                     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                     &vk_image)) {
+          getSwapchainParameters().getVkExtent2d().height,
+          c_depth_format,
+          VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+          &vk_image)) {
         Logging::error(LOG_TAG, "Could not create depth image!");
         return false;
     }
@@ -469,26 +461,26 @@ bool Tutorial10::createDepthResources() {
 
     VkDeviceMemory vk_device_memory;
     if (!allocateImageMemory(depth_image.getVkImage(),
-                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                             &vk_device_memory)) {
+          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+          &vk_device_memory)) {
         Logging::error(LOG_TAG, "Could not allocate memory for depth image!");
         return false;
     }
     depth_image.setVkDeviceMemory(vk_device_memory);
 
     if (vkBindImageMemory(getVkDevice(),
-                          depth_image.getVkImage(),
-                          depth_image.getVkDeviceMemory(),
-                          0) != VK_SUCCESS) {
+          depth_image.getVkImage(),
+          depth_image.getVkDeviceMemory(),
+          0) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not bind memory to depth image!");
         return false;
     }
 
     VkImageView vk_image_view;
     if (!createImageView(depth_image.getVkImage(),
-                         c_depth_format,
-                         VK_IMAGE_ASPECT_DEPTH_BIT,
-                         &vk_image_view)) {
+          c_depth_format,
+          VK_IMAGE_ASPECT_DEPTH_BIT,
+          &vk_image_view)) {
         Logging::error(LOG_TAG, "Could not create depth image view!");
         return false;
     }
@@ -499,22 +491,22 @@ bool Tutorial10::createDepthResources() {
 
 bool Tutorial10::destroyDepthResources() {
     VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice())
-            .destroy(m_vulkan_tutorial10_parameters.getDepthImageParameters());
+      .destroy(m_vulkan_tutorial10_parameters.getDepthImageParameters());
     return true;
 }
 
 bool Tutorial10::createUniformBuffer() {
     BufferParameters& uniform_buffer =
-            m_vulkan_tutorial10_parameters.getUniformBufferParameters();
+      m_vulkan_tutorial10_parameters.getUniformBufferParameters();
     uniform_buffer.setSize(sizeof(Tutorial10UniformBufferData));
     // Host-visible/coherent (not device-local + staging) since this buffer
     // is rewritten every frame as the orbit camera moves; see
     // updateUniformBufferData()/draw() for how the CPU/GPU race that
     // creates is avoided (same approach as Tutorial08/09).
     if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                              VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                      uniform_buffer)) {
+          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+          uniform_buffer)) {
         Logging::error(LOG_TAG, "Could not create uniform buffer!");
         return false;
     }
@@ -524,16 +516,15 @@ bool Tutorial10::createUniformBuffer() {
 
 Tutorial10UniformBufferData Tutorial10::getUniformBufferData() const {
     Tutorial10UniformBufferData data{};
-    data.m_view = glm::lookAt(m_camera.eye(),
-                              m_camera.target(),
-                              Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+    data.m_view = glm::lookAt(
+      m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
 
     const float width =
-            static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
-    const float height = static_cast<float>(
-            getSwapchainParameters().getVkExtent2d().height);
+      static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
+    const float height =
+      static_cast<float>(getSwapchainParameters().getVkExtent2d().height);
     data.m_projection = Tools::getPerspectiveProjectionMatrix(
-            width / height, 45.0f, 0.1f, 100.0f);
+      width / height, 45.0f, 0.1f, 100.0f);
 
     return data;
 }
@@ -541,49 +532,47 @@ Tutorial10UniformBufferData Tutorial10::getUniformBufferData() const {
 bool Tutorial10::updateUniformBufferData() {
     const Tutorial10UniformBufferData uniform_data = getUniformBufferData();
     BufferParameters& uniform_buffer =
-            m_vulkan_tutorial10_parameters.getUniformBufferParameters();
+      m_vulkan_tutorial10_parameters.getUniformBufferParameters();
 
     void* uniform_buffer_memory_pointer;
     if (vkMapMemory(getVkDevice(),
-                    uniform_buffer.getVkDeviceMemory(),
-                    0,
-                    VK_WHOLE_SIZE,
-                    0,
-                    &uniform_buffer_memory_pointer) != VK_SUCCESS) {
+          uniform_buffer.getVkDeviceMemory(),
+          0,
+          VK_WHOLE_SIZE,
+          0,
+          &uniform_buffer_memory_pointer) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not map uniform buffer memory!");
         return false;
     }
-    std::memcpy(uniform_buffer_memory_pointer,
-                &uniform_data,
-                uniform_buffer.getSize());
+    std::memcpy(
+      uniform_buffer_memory_pointer, &uniform_data, uniform_buffer.getSize());
     vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
 
     return true;
 }
 
 bool Tutorial10::createDescriptorSetLayout() {
-    std::vector<VkDescriptorSetLayoutBinding> layout_bindings = {
-            {.binding = 0,
-             .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-             .descriptorCount = 1,
-             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-             .pImmutableSamplers = nullptr}};
+    std::vector<VkDescriptorSetLayoutBinding> layout_bindings = {{.binding = 0,
+      .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+      .descriptorCount = 1,
+      .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+      .pImmutableSamplers = nullptr}};
 
     VkDescriptorSetLayoutCreateInfo descriptor_set_layout_create_info = {
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .bindingCount = static_cast<std::uint32_t>(layout_bindings.size()),
-            .pBindings = layout_bindings.data()};
+      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .bindingCount = static_cast<std::uint32_t>(layout_bindings.size()),
+      .pBindings = layout_bindings.data()};
 
     DescriptorSetParameters& descriptor_set =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
 
     VkDescriptorSetLayout vk_descriptor_set_layout;
     if (vkCreateDescriptorSetLayout(getVkDevice(),
-                                    &descriptor_set_layout_create_info,
-                                    nullptr,
-                                    &vk_descriptor_set_layout) != VK_SUCCESS) {
+          &descriptor_set_layout_create_info,
+          nullptr,
+          &vk_descriptor_set_layout) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create descriptor set layout!");
         return false;
     }
@@ -594,24 +583,24 @@ bool Tutorial10::createDescriptorSetLayout() {
 
 bool Tutorial10::createDescriptorPool() {
     std::vector<VkDescriptorPoolSize> pool_sizes = {
-            {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1}};
+      {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1}};
 
     VkDescriptorPoolCreateInfo descriptor_pool_create_info = {
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .maxSets = 1,
-            .poolSizeCount = static_cast<std::uint32_t>(pool_sizes.size()),
-            .pPoolSizes = pool_sizes.data()};
+      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .maxSets = 1,
+      .poolSizeCount = static_cast<std::uint32_t>(pool_sizes.size()),
+      .pPoolSizes = pool_sizes.data()};
 
     DescriptorSetParameters& descriptor_set =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
 
     VkDescriptorPool vk_descriptor_pool;
     if (vkCreateDescriptorPool(getVkDevice(),
-                               &descriptor_pool_create_info,
-                               nullptr,
-                               &vk_descriptor_pool) != VK_SUCCESS) {
+          &descriptor_pool_create_info,
+          nullptr,
+          &vk_descriptor_pool) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create descriptor pool!");
         return false;
     }
@@ -622,21 +611,21 @@ bool Tutorial10::createDescriptorPool() {
 
 bool Tutorial10::allocateDescriptorSet() {
     DescriptorSetParameters& descriptor_set =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
 
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            descriptor_set.getVkDescriptorSetLayout();
+      descriptor_set.getVkDescriptorSetLayout();
     VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-            .pNext = nullptr,
-            .descriptorPool = descriptor_set.getVkDescriptorPool(),
-            .descriptorSetCount = 1,
-            .pSetLayouts = &vk_descriptor_set_layout};
+      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+      .pNext = nullptr,
+      .descriptorPool = descriptor_set.getVkDescriptorPool(),
+      .descriptorSetCount = 1,
+      .pSetLayouts = &vk_descriptor_set_layout};
 
     VkDescriptorSet vk_descriptor_set;
     if (vkAllocateDescriptorSets(getVkDevice(),
-                                 &descriptor_set_allocate_info,
-                                 &vk_descriptor_set) != VK_SUCCESS) {
+          &descriptor_set_allocate_info,
+          &vk_descriptor_set) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not allocate descriptor set!");
         return false;
     }
@@ -647,94 +636,88 @@ bool Tutorial10::allocateDescriptorSet() {
 
 bool Tutorial10::updateDescriptorSet() {
     const BufferParameters& uniform_buffer =
-            m_vulkan_tutorial10_parameters.getUniformBufferParameters();
+      m_vulkan_tutorial10_parameters.getUniformBufferParameters();
     const DescriptorSetParameters& descriptor_set =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
 
     VkDescriptorBufferInfo buffer_info = {
-            .buffer = uniform_buffer.getVkBuffer(),
-            .offset = 0,
-            .range = uniform_buffer.getSize()};
+      .buffer = uniform_buffer.getVkBuffer(),
+      .offset = 0,
+      .range = uniform_buffer.getSize()};
 
     std::vector<VkWriteDescriptorSet> descriptor_writes = {
-            {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-             .pNext = nullptr,
-             .dstSet = descriptor_set.getVkDescriptorSet(),
-             .dstBinding = 0,
-             .dstArrayElement = 0,
-             .descriptorCount = 1,
-             .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-             .pImageInfo = nullptr,
-             .pBufferInfo = &buffer_info,
-             .pTexelBufferView = nullptr}};
+      {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = nullptr,
+        .dstSet = descriptor_set.getVkDescriptorSet(),
+        .dstBinding = 0,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .pImageInfo = nullptr,
+        .pBufferInfo = &buffer_info,
+        .pTexelBufferView = nullptr}};
 
-    vkUpdateDescriptorSets(
-            getVkDevice(),
-            static_cast<std::uint32_t>(descriptor_writes.size()),
-            descriptor_writes.data(),
-            0,
-            nullptr);
+    vkUpdateDescriptorSets(getVkDevice(),
+      static_cast<std::uint32_t>(descriptor_writes.size()),
+      descriptor_writes.data(),
+      0,
+      nullptr);
     return true;
 }
 
 bool Tutorial10::createRenderPass() {
     VkAttachmentDescription attachment_descriptions[] = {
-            {.flags = 0,
-             .format = getSwapchainParameters().getVkFormat(),
-             .samples = VK_SAMPLE_COUNT_1_BIT,
-             .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-             .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-             .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-             .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-             .initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-             .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL},
-            {.flags = 0,
-             .format = c_depth_format,
-             .samples = VK_SAMPLE_COUNT_1_BIT,
-             .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-             .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-             .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-             .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-             .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-             .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL}};
+      {.flags = 0,
+        .format = getSwapchainParameters().getVkFormat(),
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL},
+      {.flags = 0,
+        .format = c_depth_format,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL}};
 
     VkAttachmentReference color_attachment_references[] = {
-            {.attachment = 0,
-             .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
+      {.attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 
-    VkAttachmentReference depth_attachment_reference = {
-            .attachment = 1,
-            .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
+    VkAttachmentReference depth_attachment_reference = {.attachment = 1,
+      .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
 
-    VkSubpassDescription subpass_descriptions[] = {
-            {.flags = 0,
-             .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-             .inputAttachmentCount = 0,
-             .pInputAttachments = nullptr,
-             .colorAttachmentCount = 1,
-             .pColorAttachments = color_attachment_references,
-             .pResolveAttachments = nullptr,
-             .pDepthStencilAttachment = &depth_attachment_reference,
-             .preserveAttachmentCount = 0,
-             .pPreserveAttachments = nullptr}};
+    VkSubpassDescription subpass_descriptions[] = {{.flags = 0,
+      .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+      .inputAttachmentCount = 0,
+      .pInputAttachments = nullptr,
+      .colorAttachmentCount = 1,
+      .pColorAttachments = color_attachment_references,
+      .pResolveAttachments = nullptr,
+      .pDepthStencilAttachment = &depth_attachment_reference,
+      .preserveAttachmentCount = 0,
+      .pPreserveAttachments = nullptr}};
 
     VkRenderPassCreateInfo render_pass_create_info = {
-            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .attachmentCount = 2,
-            .pAttachments = attachment_descriptions,
-            .subpassCount = 1,
-            .pSubpasses = subpass_descriptions,
-            .dependencyCount = 0,
-            .pDependencies = nullptr};
+      .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .attachmentCount = 2,
+      .pAttachments = attachment_descriptions,
+      .subpassCount = 1,
+      .pSubpasses = subpass_descriptions,
+      .dependencyCount = 0,
+      .pDependencies = nullptr};
 
-    if (vkCreateRenderPass(
-                getVkDevice(),
-                &render_pass_create_info,
-                nullptr,
-                &m_vulkan_tutorial10_parameters.getVkRenderPass()) !=
-        VK_SUCCESS) {
+    if (vkCreateRenderPass(getVkDevice(),
+          &render_pass_create_info,
+          nullptr,
+          &m_vulkan_tutorial10_parameters.getVkRenderPass()) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create render pass!");
         return false;
     }
@@ -744,29 +727,28 @@ bool Tutorial10::createRenderPass() {
 
 bool Tutorial10::createPipelineLayout() {
     VkDescriptorSetLayout vk_descriptor_set_layout =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters()
-                    .getVkDescriptorSetLayout();
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters()
+        .getVkDescriptorSetLayout();
 
     VkPushConstantRange push_constant_range = {
-            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .offset = 0,
-            .size = sizeof(LinePushConstants)};
+      .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+      .offset = 0,
+      .size = sizeof(LinePushConstants)};
 
     VkPipelineLayoutCreateInfo layout_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .setLayoutCount = 1,
-            .pSetLayouts = &vk_descriptor_set_layout,
-            .pushConstantRangeCount = 1,
-            .pPushConstantRanges = &push_constant_range};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .setLayoutCount = 1,
+      .pSetLayouts = &vk_descriptor_set_layout,
+      .pushConstantRangeCount = 1,
+      .pPushConstantRanges = &push_constant_range};
 
-    if (vkCreatePipelineLayout(
-                getVkDevice(),
-                &layout_create_info,
-                nullptr,
-                &m_vulkan_tutorial10_parameters.getVkPipelineLayout()) !=
-        VK_SUCCESS) {
+    if (vkCreatePipelineLayout(getVkDevice(),
+          &layout_create_info,
+          nullptr,
+          &m_vulkan_tutorial10_parameters.getVkPipelineLayout()) !=
+      VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create pipeline layout!");
         return false;
     }
@@ -777,198 +759,187 @@ bool Tutorial10::createPipelineLayout() {
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
 Tutorial10::createShaderModule(const char* filename) {
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule> module =
-            VulkanCommon::createShaderModule(getVkDevice(), filename);
+      VulkanCommon::createShaderModule(getVkDevice(), filename);
     if (!module) {
         Logging::error(LOG_TAG,
-                       "Could not create shader module from a \"",
-                       filename,
-                       "\" file!");
+          "Could not create shader module from a \"",
+          filename,
+          "\" file!");
     }
     return module;
 }
 
 bool Tutorial10::createLinePipeline() {
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            vertex_shader_module =
-                    createShaderModule("shader.10_line.vert.spv");
+      vertex_shader_module = createShaderModule("shader.10_line.vert.spv");
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-            fragment_shader_module =
-                    createShaderModule("shader.10_line.frag.spv");
+      fragment_shader_module = createShaderModule("shader.10_line.frag.spv");
 
     if (!vertex_shader_module || !fragment_shader_module) {
         return false;
     }
 
     std::vector<VkPipelineShaderStageCreateInfo> shader_stage_create_infos = {
-            {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-             .pNext = nullptr,
-             .flags = 0,
-             .stage = VK_SHADER_STAGE_VERTEX_BIT,
-             .module = vertex_shader_module.get(),
-             .pName = "main",
-             .pSpecializationInfo = nullptr},
-            {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-             .pNext = nullptr,
-             .flags = 0,
-             .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-             .module = fragment_shader_module.get(),
-             .pName = "main",
-             .pSpecializationInfo = nullptr}};
+      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .stage = VK_SHADER_STAGE_VERTEX_BIT,
+        .module = vertex_shader_module.get(),
+        .pName = "main",
+        .pSpecializationInfo = nullptr},
+      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .module = fragment_shader_module.get(),
+        .pName = "main",
+        .pSpecializationInfo = nullptr}};
 
     std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions =
-            {{.binding = 0,
-              .stride = LineVertexAttributeTraits::stride,
-              .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
+      {{.binding = 0,
+        .stride = LineVertexAttributeTraits::stride,
+        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
     std::vector<VkVertexInputAttributeDescription>
-            vertex_attribute_descriptions = {
-                    {.location = 0,
-                     .binding = vertex_binding_descriptions[0].binding,
-                     .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-                     .offset = offsetof(struct LineVertexData, m_position)}};
+      vertex_attribute_descriptions = {{.location = 0,
+        .binding = vertex_binding_descriptions[0].binding,
+        .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+        .offset = offsetof(struct LineVertexData, m_position)}};
 
     VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .vertexBindingDescriptionCount = static_cast<std::uint32_t>(
-                    vertex_binding_descriptions.size()),
-            .pVertexBindingDescriptions = vertex_binding_descriptions.data(),
-            .vertexAttributeDescriptionCount = static_cast<std::uint32_t>(
-                    vertex_attribute_descriptions.size()),
-            .pVertexAttributeDescriptions =
-                    vertex_attribute_descriptions.data()};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .vertexBindingDescriptionCount =
+        static_cast<std::uint32_t>(vertex_binding_descriptions.size()),
+      .pVertexBindingDescriptions = vertex_binding_descriptions.data(),
+      .vertexAttributeDescriptionCount =
+        static_cast<std::uint32_t>(vertex_attribute_descriptions.size()),
+      .pVertexAttributeDescriptions = vertex_attribute_descriptions.data()};
 
     VkPipelineInputAssemblyStateCreateInfo input_assembly_state_create_info = {
-            .sType =
-                    VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
-            .primitiveRestartEnable = VK_FALSE};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
+      .primitiveRestartEnable = VK_FALSE};
 
     VkPipelineViewportStateCreateInfo viewport_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .viewportCount = 1,
-            .pViewports = nullptr,
-            .scissorCount = 1,
-            .pScissors = nullptr};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .viewportCount = 1,
+      .pViewports = nullptr,
+      .scissorCount = 1,
+      .pScissors = nullptr};
 
     VkPipelineRasterizationStateCreateInfo rasterization_state_create_info = {
-            .sType =
-                    VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .depthClampEnable = VK_FALSE,
-            .rasterizerDiscardEnable = VK_FALSE,
-            .polygonMode = VK_POLYGON_MODE_FILL,
-            // Per spec, cull mode only affects polygon (triangle)
-            // rasterization and is simply ignored for line topology - set
-            // to BACK anyway for consistency with the rest of the project's
-            // pipelines rather than leaving it in an unspecified state.
-            .cullMode = VK_CULL_MODE_BACK_BIT,
-            .frontFace = VK_FRONT_FACE_CLOCKWISE,
-            .depthBiasEnable = VK_FALSE,
-            .depthBiasConstantFactor = 0.0f,
-            .depthBiasClamp = 0.0f,
-            .depthBiasSlopeFactor = 0.0f,
-            // Ignored per spec: VK_DYNAMIC_STATE_LINE_WIDTH is set below,
-            // via vkCmdSetLineWidth() in prepareFrame() - the curve and
-            // control polygon draw with different widths from one pipeline.
-            .lineWidth = 1.0f};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .depthClampEnable = VK_FALSE,
+      .rasterizerDiscardEnable = VK_FALSE,
+      .polygonMode = VK_POLYGON_MODE_FILL,
+      // Per spec, cull mode only affects polygon (triangle)
+      // rasterization and is simply ignored for line topology - set
+      // to BACK anyway for consistency with the rest of the project's
+      // pipelines rather than leaving it in an unspecified state.
+      .cullMode = VK_CULL_MODE_BACK_BIT,
+      .frontFace = VK_FRONT_FACE_CLOCKWISE,
+      .depthBiasEnable = VK_FALSE,
+      .depthBiasConstantFactor = 0.0f,
+      .depthBiasClamp = 0.0f,
+      .depthBiasSlopeFactor = 0.0f,
+      // Ignored per spec: VK_DYNAMIC_STATE_LINE_WIDTH is set below,
+      // via vkCmdSetLineWidth() in prepareFrame() - the curve and
+      // control polygon draw with different widths from one pipeline.
+      .lineWidth = 1.0f};
 
     VkPipelineMultisampleStateCreateInfo multisample_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
-            .sampleShadingEnable = VK_FALSE,
-            .minSampleShading = 1.0f,
-            .pSampleMask = nullptr,
-            .alphaToCoverageEnable = VK_FALSE,
-            .alphaToOneEnable = VK_FALSE};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+      .sampleShadingEnable = VK_FALSE,
+      .minSampleShading = 1.0f,
+      .pSampleMask = nullptr,
+      .alphaToCoverageEnable = VK_FALSE,
+      .alphaToOneEnable = VK_FALSE};
 
     VkPipelineDepthStencilStateCreateInfo depth_stencil_state_create_info = {
-            .sType =
-                    VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .depthTestEnable = VK_TRUE,
-            .depthWriteEnable = VK_TRUE,
-            .depthCompareOp = VK_COMPARE_OP_LESS,
-            .depthBoundsTestEnable = VK_FALSE,
-            .stencilTestEnable = VK_FALSE,
-            .front = {},
-            .back = {},
-            .minDepthBounds = 0.0f,
-            .maxDepthBounds = 1.0f};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .depthTestEnable = VK_TRUE,
+      .depthWriteEnable = VK_TRUE,
+      .depthCompareOp = VK_COMPARE_OP_LESS,
+      .depthBoundsTestEnable = VK_FALSE,
+      .stencilTestEnable = VK_FALSE,
+      .front = {},
+      .back = {},
+      .minDepthBounds = 0.0f,
+      .maxDepthBounds = 1.0f};
 
     VkPipelineColorBlendAttachmentState color_blend_attachment_state = {
-            .blendEnable = VK_FALSE,
-            .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
-            .dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
-            .colorBlendOp = VK_BLEND_OP_ADD,
-            .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
-            .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-            .alphaBlendOp = VK_BLEND_OP_ADD,
-            .colorWriteMask =
-                    VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-                    VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
+      .blendEnable = VK_FALSE,
+      .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
+      .dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
+      .colorBlendOp = VK_BLEND_OP_ADD,
+      .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
+      .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+      .alphaBlendOp = VK_BLEND_OP_ADD,
+      .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+        VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
 
     VkPipelineColorBlendStateCreateInfo color_blend_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .logicOpEnable = VK_FALSE,
-            .logicOp = VK_LOGIC_OP_COPY,
-            .attachmentCount = 1,
-            .pAttachments = &color_blend_attachment_state,
-            .blendConstants = {0.0f, 0.0f, 0.0f, 0.0f}};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .logicOpEnable = VK_FALSE,
+      .logicOp = VK_LOGIC_OP_COPY,
+      .attachmentCount = 1,
+      .pAttachments = &color_blend_attachment_state,
+      .blendConstants = {0.0f, 0.0f, 0.0f, 0.0f}};
 
     std::vector<VkDynamicState> dynamic_states = {VK_DYNAMIC_STATE_VIEWPORT,
-                                                  VK_DYNAMIC_STATE_SCISSOR,
-                                                  VK_DYNAMIC_STATE_LINE_WIDTH};
+      VK_DYNAMIC_STATE_SCISSOR,
+      VK_DYNAMIC_STATE_LINE_WIDTH};
 
     VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .dynamicStateCount =
-                    static_cast<std::uint32_t>(dynamic_states.size()),
-            .pDynamicStates = dynamic_states.data()};
+      .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .dynamicStateCount = static_cast<std::uint32_t>(dynamic_states.size()),
+      .pDynamicStates = dynamic_states.data()};
 
     VkGraphicsPipelineCreateInfo pipeline_create_info = {
-            .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .stageCount = static_cast<std::uint32_t>(
-                    shader_stage_create_infos.size()),
-            .pStages = shader_stage_create_infos.data(),
-            .pVertexInputState = &vertex_input_state_create_info,
-            .pInputAssemblyState = &input_assembly_state_create_info,
-            .pTessellationState = nullptr,
-            .pViewportState = &viewport_state_create_info,
-            .pRasterizationState = &rasterization_state_create_info,
-            .pMultisampleState = &multisample_state_create_info,
-            .pDepthStencilState = &depth_stencil_state_create_info,
-            .pColorBlendState = &color_blend_state_create_info,
-            .pDynamicState = &dynamic_state_create_info,
-            .layout = m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
-            .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
-            .subpass = 0,
-            .basePipelineHandle = VK_NULL_HANDLE,
-            .basePipelineIndex = -1};
+      .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .stageCount =
+        static_cast<std::uint32_t>(shader_stage_create_infos.size()),
+      .pStages = shader_stage_create_infos.data(),
+      .pVertexInputState = &vertex_input_state_create_info,
+      .pInputAssemblyState = &input_assembly_state_create_info,
+      .pTessellationState = nullptr,
+      .pViewportState = &viewport_state_create_info,
+      .pRasterizationState = &rasterization_state_create_info,
+      .pMultisampleState = &multisample_state_create_info,
+      .pDepthStencilState = &depth_stencil_state_create_info,
+      .pColorBlendState = &color_blend_state_create_info,
+      .pDynamicState = &dynamic_state_create_info,
+      .layout = m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
+      .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
+      .subpass = 0,
+      .basePipelineHandle = VK_NULL_HANDLE,
+      .basePipelineIndex = -1};
 
-    if (vkCreateGraphicsPipelines(
-                getVkDevice(),
-                VK_NULL_HANDLE,
-                1,
-                &pipeline_create_info,
-                nullptr,
-                &m_vulkan_tutorial10_parameters.getVkLinePipeline()) !=
-        VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(getVkDevice(),
+          VK_NULL_HANDLE,
+          1,
+          &pipeline_create_info,
+          nullptr,
+          &m_vulkan_tutorial10_parameters.getVkLinePipeline()) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create line graphics pipeline!");
         return false;
     }
@@ -978,7 +949,7 @@ bool Tutorial10::createLinePipeline() {
 const std::vector<LineVertexData>& Tutorial10::getCurveVertexData() const {
     static const std::vector<LineVertexData> curve_vertices = [] {
         const std::vector<Math::CurveSample3D<float>>& samples =
-                getCurveSamples();
+          getCurveSamples();
         std::vector<LineVertexData> data;
         data.reserve(samples.size());
         for (const Math::CurveSample3D<float>& sample : samples) {
@@ -990,10 +961,10 @@ const std::vector<LineVertexData>& Tutorial10::getCurveVertexData() const {
 }
 
 const std::vector<LineVertexData>& Tutorial10::getControlPolygonVertexData()
-        const {
+  const {
     static const std::vector<LineVertexData> control_polygon_vertices = [] {
         const std::vector<Math::Vec3<float>>& control_points =
-                getControlPoints();
+          getControlPoints();
         std::vector<LineVertexData> data;
         data.reserve(control_points.size());
         for (const Math::Vec3<float>& point : control_points) {
@@ -1018,32 +989,30 @@ float Tutorial10::getLineWidth() const {
 
     VkPhysicalDeviceProperties device_properties;
     vkGetPhysicalDeviceProperties(getVkPhysicalDevice(), &device_properties);
-    return std::min(c_desired_line_width,
-                    device_properties.limits.lineWidthRange[1]);
+    return std::min(
+      c_desired_line_width, device_properties.limits.lineWidthRange[1]);
 }
 
 bool Tutorial10::copyBufferData(BufferParameters& destination,
-                                const void* data,
-                                std::uint32_t data_size,
-                                VkAccessFlags dst_access_mask,
-                                VkPipelineStageFlags dst_stage_mask) {
+  const void* data,
+  std::uint32_t data_size,
+  VkAccessFlags dst_access_mask,
+  VkPipelineStageFlags dst_stage_mask) {
     BufferParameters& staging_buffer =
-            m_vulkan_tutorial10_parameters.getStagingBufferParameters();
+      m_vulkan_tutorial10_parameters.getStagingBufferParameters();
 
-    if (!VulkanCommon::StagedUploader(
-                 getVkDevice(),
-                 getGraphicsQueueParameters().getVkQueue(),
-                 m_vulkan_tutorial10_parameters.getRenderingResources()[0]
-                         .getVkCommandBuffer())
-                 .uploadToBuffer(staging_buffer,
-                                 destination,
-                                 data,
-                                 data_size,
-                                 dst_access_mask,
-                                 dst_stage_mask)) {
-        Logging::error(
-                LOG_TAG,
-                "Could not map memory and upload data to a staging buffer!");
+    if (!VulkanCommon::StagedUploader(getVkDevice(),
+          getGraphicsQueueParameters().getVkQueue(),
+          m_vulkan_tutorial10_parameters.getRenderingResources()[0]
+            .getVkCommandBuffer())
+          .uploadToBuffer(staging_buffer,
+            destination,
+            data,
+            data_size,
+            dst_access_mask,
+            dst_stage_mask)) {
+        Logging::error(LOG_TAG,
+          "Could not map memory and upload data to a staging buffer!");
         return false;
     }
 
@@ -1053,81 +1022,78 @@ bool Tutorial10::copyBufferData(BufferParameters& destination,
 bool Tutorial10::createCurveVertexBuffer() {
     const std::vector<LineVertexData>& vertex_data = getCurveVertexData();
     m_vulkan_tutorial10_parameters.setCurveVertexCount(
-            static_cast<std::uint32_t>(vertex_data.size()));
+      static_cast<std::uint32_t>(vertex_data.size()));
 
     BufferParameters& vertex_buffer =
-            m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
-                                                     sizeof(vertex_data[0])));
-    if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
-                              VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      vertex_buffer)) {
+      m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters();
+    vertex_buffer.setSize(
+      static_cast<std::uint32_t>(vertex_data.size() * sizeof(vertex_data[0])));
+    if (!createBuffer(
+          VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+          vertex_buffer)) {
         Logging::error(LOG_TAG, "Could not create curve vertex buffer!");
         return false;
     }
 
     return copyBufferData(vertex_buffer,
-                          vertex_data.data(),
-                          vertex_buffer.getSize(),
-                          VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-                          VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
+      vertex_data.data(),
+      vertex_buffer.getSize(),
+      VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
+      VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
 bool Tutorial10::createControlPolygonVertexBuffer() {
     const std::vector<LineVertexData>& vertex_data =
-            getControlPolygonVertexData();
+      getControlPolygonVertexData();
     m_vulkan_tutorial10_parameters.setControlPolygonVertexCount(
-            static_cast<std::uint32_t>(vertex_data.size()));
+      static_cast<std::uint32_t>(vertex_data.size()));
 
     BufferParameters& vertex_buffer =
-            m_vulkan_tutorial10_parameters
-                    .getControlPolygonVertexBufferParameters();
-    vertex_buffer.setSize(static_cast<std::uint32_t>(vertex_data.size() *
-                                                     sizeof(vertex_data[0])));
-    if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
-                              VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                      vertex_buffer)) {
-        Logging::error(LOG_TAG,
-                       "Could not create control polygon vertex buffer!");
+      m_vulkan_tutorial10_parameters.getControlPolygonVertexBufferParameters();
+    vertex_buffer.setSize(
+      static_cast<std::uint32_t>(vertex_data.size() * sizeof(vertex_data[0])));
+    if (!createBuffer(
+          VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+          VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+          vertex_buffer)) {
+        Logging::error(
+          LOG_TAG, "Could not create control polygon vertex buffer!");
         return false;
     }
 
     return copyBufferData(vertex_buffer,
-                          vertex_data.data(),
-                          vertex_buffer.getSize(),
-                          VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-                          VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
+      vertex_data.data(),
+      vertex_buffer.getSize(),
+      VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
+      VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 }
 
-bool Tutorial10::createFramebuffer(VkFramebuffer& framebuffer,
-                                   VkImageView image_view) {
+bool Tutorial10::createFramebuffer(
+  VkFramebuffer& framebuffer, VkImageView image_view) {
     if (framebuffer != VK_NULL_HANDLE) {
         vkDestroyFramebuffer(getVkDevice(), framebuffer, nullptr);
         framebuffer = VK_NULL_HANDLE;
     }
 
-    VkImageView attachments[] = {
-            image_view,
-            m_vulkan_tutorial10_parameters.getDepthImageParameters()
-                    .getVkImageView()};
+    VkImageView attachments[] = {image_view,
+      m_vulkan_tutorial10_parameters.getDepthImageParameters()
+        .getVkImageView()};
 
     VkFramebufferCreateInfo framebuffer_create_info = {
-            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
-            .attachmentCount = 2,
-            .pAttachments = attachments,
-            .width = getSwapchainParameters().getVkExtent2d().width,
-            .height = getSwapchainParameters().getVkExtent2d().height,
-            .layers = 1};
+      .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+      .pNext = nullptr,
+      .flags = 0,
+      .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
+      .attachmentCount = 2,
+      .pAttachments = attachments,
+      .width = getSwapchainParameters().getVkExtent2d().width,
+      .height = getSwapchainParameters().getVkExtent2d().height,
+      .layers = 1};
 
-    if (vkCreateFramebuffer(getVkDevice(),
-                            &framebuffer_create_info,
-                            nullptr,
-                            &framebuffer) != VK_SUCCESS) {
+    if (vkCreateFramebuffer(
+          getVkDevice(), &framebuffer_create_info, nullptr, &framebuffer) !=
+      VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not create a framebuffer!");
         return false;
     }
@@ -1136,184 +1102,179 @@ bool Tutorial10::createFramebuffer(VkFramebuffer& framebuffer,
 }
 
 bool Tutorial10::prepareFrame(VkCommandBuffer command_buffer,
-                              const ImageParameters& image_parameters,
-                              VkFramebuffer& framebuffer) {
+  const ImageParameters& image_parameters,
+  VkFramebuffer& framebuffer) {
     if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
         return false;
     }
 
     VkCommandBufferBeginInfo command_buffer_begin_info = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            .pNext = nullptr,
-            .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-            .pInheritanceInfo = nullptr};
+      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+      .pNext = nullptr,
+      .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+      .pInheritanceInfo = nullptr};
 
     vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
 
     VkImageSubresourceRange image_subresource_range = {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .baseMipLevel = 0,
-            .levelCount = 1,
-            .baseArrayLayer = 0,
-            .layerCount = 1};
+      .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+      .baseMipLevel = 0,
+      .levelCount = 1,
+      .baseArrayLayer = 0,
+      .layerCount = 1};
 
     bool queues_differ = getPresentQueueParameters().getVkQueue() !=
-                         getGraphicsQueueParameters().getVkQueue();
-    std::uint32_t present_queue_family_index =
-            queues_differ ? getPresentQueueParameters().getFamilyIndex()
-                          : VK_QUEUE_FAMILY_IGNORED;
-    std::uint32_t graphics_queue_family_index =
-            queues_differ ? getGraphicsQueueParameters().getFamilyIndex()
-                          : VK_QUEUE_FAMILY_IGNORED;
+      getGraphicsQueueParameters().getVkQueue();
+    std::uint32_t present_queue_family_index = queues_differ
+      ? getPresentQueueParameters().getFamilyIndex()
+      : VK_QUEUE_FAMILY_IGNORED;
+    std::uint32_t graphics_queue_family_index = queues_differ
+      ? getGraphicsQueueParameters().getFamilyIndex()
+      : VK_QUEUE_FAMILY_IGNORED;
     VkImageMemoryBarrier barrier_from_present_to_draw = {
-            .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .pNext = nullptr,
-            .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-            .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-            .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-            .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            .srcQueueFamilyIndex = present_queue_family_index,
-            .dstQueueFamilyIndex = graphics_queue_family_index,
-            .image = image_parameters.getVkImage(),
-            .subresourceRange = image_subresource_range};
+      .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+      .pNext = nullptr,
+      .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+      .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+      .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+      .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+      .srcQueueFamilyIndex = present_queue_family_index,
+      .dstQueueFamilyIndex = graphics_queue_family_index,
+      .image = image_parameters.getVkImage(),
+      .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
-                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                         0,
-                         0,
-                         nullptr,
-                         0,
-                         nullptr,
-                         1,
-                         &barrier_from_present_to_draw);
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+      0,
+      0,
+      nullptr,
+      0,
+      nullptr,
+      1,
+      &barrier_from_present_to_draw);
 
     VkClearValue clear_values[] = {
-            {.color = {.float32 = {0.06f, 0.06f, 0.09f, 0.0f}}},
-            {.depthStencil = {.depth = 1.0f, .stencil = 0}}};
+      {.color = {.float32 = {0.06f, 0.06f, 0.09f, 0.0f}}},
+      {.depthStencil = {.depth = 1.0f, .stencil = 0}}};
 
     VkRenderPassBeginInfo render_pass_begin_info = {
-            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .pNext = nullptr,
-            .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
-            .framebuffer = framebuffer,
-            .renderArea = {.offset = {.x = 0, .y = 0},
-                           .extent = getSwapchainParameters().getVkExtent2d()},
-            .clearValueCount = 2,
-            .pClearValues = clear_values};
+      .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+      .pNext = nullptr,
+      .renderPass = m_vulkan_tutorial10_parameters.getVkRenderPass(),
+      .framebuffer = framebuffer,
+      .renderArea = {.offset = {.x = 0, .y = 0},
+        .extent = getSwapchainParameters().getVkExtent2d()},
+      .clearValueCount = 2,
+      .pClearValues = clear_values};
 
-    vkCmdBeginRenderPass(command_buffer,
-                         &render_pass_begin_info,
-                         VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(
+      command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-    VkViewport viewport = {
-            .x = 0.0f,
-            .y = 0.0f,
-            .width = static_cast<float>(
-                    getSwapchainParameters().getVkExtent2d().width),
-            .height = static_cast<float>(
-                    getSwapchainParameters().getVkExtent2d().height),
-            .minDepth = 0.0f,
-            .maxDepth = 1.0f};
+    VkViewport viewport = {.x = 0.0f,
+      .y = 0.0f,
+      .width =
+        static_cast<float>(getSwapchainParameters().getVkExtent2d().width),
+      .height =
+        static_cast<float>(getSwapchainParameters().getVkExtent2d().height),
+      .minDepth = 0.0f,
+      .maxDepth = 1.0f};
 
     VkRect2D scissor = {.offset = {.x = 0, .y = 0},
-                        .extent = getSwapchainParameters().getVkExtent2d()};
+      .extent = getSwapchainParameters().getVkExtent2d()};
 
     vkCmdSetViewport(command_buffer, 0, 1, &viewport);
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
     VkDescriptorSet vk_descriptor_set =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters()
-                    .getVkDescriptorSet();
-    vkCmdBindDescriptorSets(
-            command_buffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
-            0,
-            1,
-            &vk_descriptor_set,
-            0,
-            nullptr);
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters()
+        .getVkDescriptorSet();
+    vkCmdBindDescriptorSets(command_buffer,
+      VK_PIPELINE_BIND_POINT_GRAPHICS,
+      m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
+      0,
+      1,
+      &vk_descriptor_set,
+      0,
+      nullptr);
 
     vkCmdBindPipeline(command_buffer,
-                      VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      m_vulkan_tutorial10_parameters.getVkLinePipeline());
+      VK_PIPELINE_BIND_POINT_GRAPHICS,
+      m_vulkan_tutorial10_parameters.getVkLinePipeline());
 
     VkDeviceSize offset = 0;
 
     // The curve itself: a real polyline through the adaptively-sampled
     // points, in a vibrant color.
     const LinePushConstants curve_push_constants = {
-            Math::Vec4<float>(0.1f, 0.85f, 0.8f, 1.0f)};
+      Math::Vec4<float>(0.1f, 0.85f, 0.8f, 1.0f)};
     vkCmdPushConstants(command_buffer,
-                       m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
-                       VK_SHADER_STAGE_FRAGMENT_BIT,
-                       0,
-                       sizeof(LinePushConstants),
-                       &curve_push_constants);
-    vkCmdBindVertexBuffers(
-            command_buffer,
-            0,
-            1,
-            &m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters()
-                     .getVkBuffer(),
-            &offset);
+      m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
+      VK_SHADER_STAGE_FRAGMENT_BIT,
+      0,
+      sizeof(LinePushConstants),
+      &curve_push_constants);
+    vkCmdBindVertexBuffers(command_buffer,
+      0,
+      1,
+      &m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters()
+        .getVkBuffer(),
+      &offset);
     vkCmdSetLineWidth(command_buffer, getLineWidth());
     vkCmdDraw(command_buffer,
-              m_vulkan_tutorial10_parameters.getCurveVertexCount(),
-              1,
-              0,
-              0);
+      m_vulkan_tutorial10_parameters.getCurveVertexCount(),
+      1,
+      0,
+      0);
 
     // The control polygon: a muted gray reference line connecting the raw
     // control points in order.
     const LinePushConstants control_polygon_push_constants = {
-            Math::Vec4<float>(0.55f, 0.58f, 0.62f, 1.0f)};
+      Math::Vec4<float>(0.55f, 0.58f, 0.62f, 1.0f)};
     vkCmdPushConstants(command_buffer,
-                       m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
-                       VK_SHADER_STAGE_FRAGMENT_BIT,
-                       0,
-                       sizeof(LinePushConstants),
-                       &control_polygon_push_constants);
+      m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
+      VK_SHADER_STAGE_FRAGMENT_BIT,
+      0,
+      sizeof(LinePushConstants),
+      &control_polygon_push_constants);
     vkCmdBindVertexBuffers(command_buffer,
-                           0,
-                           1,
-                           &m_vulkan_tutorial10_parameters
-                                    .getControlPolygonVertexBufferParameters()
-                                    .getVkBuffer(),
-                           &offset);
+      0,
+      1,
+      &m_vulkan_tutorial10_parameters.getControlPolygonVertexBufferParameters()
+        .getVkBuffer(),
+      &offset);
     // Always exactly 1.0 - the thin end of what a line can be regardless
     // of device wideLines support - so it reads as background scaffolding
     // next to the thicker curve.
     vkCmdSetLineWidth(command_buffer, 1.0f);
     vkCmdDraw(command_buffer,
-              m_vulkan_tutorial10_parameters.getControlPolygonVertexCount(),
-              1,
-              0,
-              0);
+      m_vulkan_tutorial10_parameters.getControlPolygonVertexCount(),
+      1,
+      0,
+      0);
 
     vkCmdEndRenderPass(command_buffer);
 
     VkImageMemoryBarrier barrier_from_draw_to_present = {
-            .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .pNext = nullptr,
-            .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-            .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-            .oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-            .srcQueueFamilyIndex = graphics_queue_family_index,
-            .dstQueueFamilyIndex = present_queue_family_index,
-            .image = image_parameters.getVkImage(),
-            .subresourceRange = image_subresource_range};
+      .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+      .pNext = nullptr,
+      .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+      .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+      .oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+      .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+      .srcQueueFamilyIndex = graphics_queue_family_index,
+      .dstQueueFamilyIndex = present_queue_family_index,
+      .image = image_parameters.getVkImage(),
+      .subresourceRange = image_subresource_range};
     vkCmdPipelineBarrier(command_buffer,
-                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                         0,
-                         0,
-                         nullptr,
-                         0,
-                         nullptr,
-                         1,
-                         &barrier_from_draw_to_present);
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+      VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+      0,
+      0,
+      nullptr,
+      0,
+      nullptr,
+      1,
+      &barrier_from_draw_to_present);
 
     if (vkEndCommandBuffer(command_buffer) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Could not record command buffer!");
@@ -1325,19 +1286,18 @@ bool Tutorial10::prepareFrame(VkCommandBuffer command_buffer,
 bool Tutorial10::draw() {
     static std::size_t resource_index = 0;
     RenderingResourceParameters& current_rendering_resource =
-            m_vulkan_tutorial10_parameters
-                    .getRenderingResources()[resource_index];
+      m_vulkan_tutorial10_parameters.getRenderingResources()[resource_index];
     VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
     std::uint32_t image_index;
 
     resource_index =
-            (resource_index + 1) % VulkanTutorial10Parameters::resources_count;
+      (resource_index + 1) % VulkanTutorial10Parameters::resources_count;
 
     if (vkWaitForFences(getVkDevice(),
-                        1,
-                        &current_rendering_resource.getVkFence(),
-                        VK_FALSE,
-                        1000000000) != VK_SUCCESS) {
+          1,
+          &current_rendering_resource.getVkFence(),
+          VK_FALSE,
+          1000000000) != VK_SUCCESS) {
         Logging::error(LOG_TAG, "Waiting for fence takes too long!");
         return false;
     }
@@ -1354,13 +1314,12 @@ bool Tutorial10::draw() {
         return false;
     }
 
-    VkResult result = vkAcquireNextImageKHR(
-            getVkDevice(),
-            swap_chain,
-            UINT64_MAX,
-            current_rendering_resource.getImageAvailableVkSemaphore(),
-            VK_NULL_HANDLE,
-            &image_index);
+    VkResult result = vkAcquireNextImageKHR(getVkDevice(),
+      swap_chain,
+      UINT64_MAX,
+      current_rendering_resource.getImageAvailableVkSemaphore(),
+      VK_NULL_HANDLE,
+      &image_index);
     switch (result) {
         case VK_SUCCESS:
         case VK_SUBOPTIMAL_KHR:
@@ -1368,56 +1327,52 @@ bool Tutorial10::draw() {
         case VK_ERROR_OUT_OF_DATE_KHR:
             return onWindowSizeChanged();
         default:
-            Logging::error(
-                    LOG_TAG,
-                    "Problem occurred during swap chain image acquisition!");
+            Logging::error(LOG_TAG,
+              "Problem occurred during swap chain image acquisition!");
             return false;
     }
 
-    if (!prepareFrame(
-                current_rendering_resource.getVkCommandBuffer(),
-                getSwapchainParameters().getImageParameters()[image_index],
-                current_rendering_resource.getVkFramebuffer())) {
+    if (!prepareFrame(current_rendering_resource.getVkCommandBuffer(),
+          getSwapchainParameters().getImageParameters()[image_index],
+          current_rendering_resource.getVkFramebuffer())) {
         return false;
     }
 
     VkSemaphore& finished_rendering_semaphore =
-            m_vulkan_tutorial10_parameters
-                    .getFinishedRenderingSemaphores()[image_index];
+      m_vulkan_tutorial10_parameters
+        .getFinishedRenderingSemaphores()[image_index];
 
     VkPipelineStageFlags wait_dst_stage_mask =
-            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSubmitInfo submit_info = {
-            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .pNext = nullptr,
-            .waitSemaphoreCount = 1,
-            .pWaitSemaphores =
-                    &current_rendering_resource.getImageAvailableVkSemaphore(),
-            .pWaitDstStageMask = &wait_dst_stage_mask,
-            .commandBufferCount = 1,
-            .pCommandBuffers =
-                    &current_rendering_resource.getVkCommandBuffer(),
-            .signalSemaphoreCount = 1,
-            .pSignalSemaphores = &finished_rendering_semaphore};
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+      .pNext = nullptr,
+      .waitSemaphoreCount = 1,
+      .pWaitSemaphores =
+        &current_rendering_resource.getImageAvailableVkSemaphore(),
+      .pWaitDstStageMask = &wait_dst_stage_mask,
+      .commandBufferCount = 1,
+      .pCommandBuffers = &current_rendering_resource.getVkCommandBuffer(),
+      .signalSemaphoreCount = 1,
+      .pSignalSemaphores = &finished_rendering_semaphore};
 
     if (vkQueueSubmit(getGraphicsQueueParameters().getVkQueue(),
-                      1,
-                      &submit_info,
-                      current_rendering_resource.getVkFence()) != VK_SUCCESS) {
+          1,
+          &submit_info,
+          current_rendering_resource.getVkFence()) != VK_SUCCESS) {
         return false;
     }
 
     VkPresentInfoKHR present_info = {
-            .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-            .pNext = nullptr,
-            .waitSemaphoreCount = 1,
-            .pWaitSemaphores = &finished_rendering_semaphore,
-            .swapchainCount = 1,
-            .pSwapchains = &swap_chain,
-            .pImageIndices = &image_index,
-            .pResults = nullptr};
-    result = vkQueuePresentKHR(getPresentQueueParameters().getVkQueue(),
-                               &present_info);
+      .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+      .pNext = nullptr,
+      .waitSemaphoreCount = 1,
+      .pWaitSemaphores = &finished_rendering_semaphore,
+      .swapchainCount = 1,
+      .pSwapchains = &swap_chain,
+      .pImageIndices = &image_index,
+      .pResults = nullptr};
+    result = vkQueuePresentKHR(
+      getPresentQueueParameters().getVkQueue(), &present_info);
 
     switch (result) {
         case VK_SUCCESS:
@@ -1426,8 +1381,8 @@ bool Tutorial10::draw() {
         case VK_SUBOPTIMAL_KHR:
             return onWindowSizeChanged();
         default:
-            Logging::error(LOG_TAG,
-                           "Problem occurred during image presentation!");
+            Logging::error(
+              LOG_TAG, "Problem occurred during image presentation!");
             return false;
     }
 
@@ -1502,92 +1457,87 @@ void Tutorial10::childClear() {
     vkDeviceWaitIdle(getVkDevice());
 
     std::vector<RenderingResourceParameters>& rendering_resources =
-            m_vulkan_tutorial10_parameters.getRenderingResources();
+      m_vulkan_tutorial10_parameters.getRenderingResources();
     for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
         if (rendering_resources[i].getVkFramebuffer() != VK_NULL_HANDLE) {
             vkDestroyFramebuffer(getVkDevice(),
-                                 rendering_resources[i].getVkFramebuffer(),
-                                 nullptr);
+              rendering_resources[i].getVkFramebuffer(),
+              nullptr);
             rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
         }
         if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
-            vkFreeCommandBuffers(
-                    getVkDevice(),
-                    m_vulkan_tutorial10_parameters.getVkCommandPool(),
-                    1,
-                    &rendering_resources[i].getVkCommandBuffer());
+            vkFreeCommandBuffers(getVkDevice(),
+              m_vulkan_tutorial10_parameters.getVkCommandPool(),
+              1,
+              &rendering_resources[i].getVkCommandBuffer());
         }
         if (rendering_resources[i].getImageAvailableVkSemaphore() !=
-            VK_NULL_HANDLE) {
-            vkDestroySemaphore(
-                    getVkDevice(),
-                    rendering_resources[i].getImageAvailableVkSemaphore(),
-                    nullptr);
+          VK_NULL_HANDLE) {
+            vkDestroySemaphore(getVkDevice(),
+              rendering_resources[i].getImageAvailableVkSemaphore(),
+              nullptr);
         }
         if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-            vkDestroyFence(getVkDevice(),
-                           rendering_resources[i].getVkFence(),
-                           nullptr);
+            vkDestroyFence(
+              getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
         }
     }
 
     std::vector<VkSemaphore>& finished_rendering_semaphores =
-            m_vulkan_tutorial10_parameters.getFinishedRenderingSemaphores();
+      m_vulkan_tutorial10_parameters.getFinishedRenderingSemaphores();
     for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
         if (finished_rendering_semaphores[i] != VK_NULL_HANDLE) {
             vkDestroySemaphore(
-                    getVkDevice(), finished_rendering_semaphores[i], nullptr);
+              getVkDevice(), finished_rendering_semaphores[i], nullptr);
         }
     }
     finished_rendering_semaphores.clear();
 
     if (m_vulkan_tutorial10_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
         vkDestroyCommandPool(getVkDevice(),
-                             m_vulkan_tutorial10_parameters.getVkCommandPool(),
-                             nullptr);
+          m_vulkan_tutorial10_parameters.getVkCommandPool(),
+          nullptr);
         m_vulkan_tutorial10_parameters.getVkCommandPool() = VK_NULL_HANDLE;
     }
 
     destroyBuffer(
-            m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters());
+      m_vulkan_tutorial10_parameters.getCurveVertexBufferParameters());
     destroyBuffer(m_vulkan_tutorial10_parameters
-                          .getControlPolygonVertexBufferParameters());
+        .getControlPolygonVertexBufferParameters());
     destroyBuffer(m_vulkan_tutorial10_parameters.getStagingBufferParameters());
 
     if (m_vulkan_tutorial10_parameters.getVkLinePipeline() != VK_NULL_HANDLE) {
         vkDestroyPipeline(getVkDevice(),
-                          m_vulkan_tutorial10_parameters.getVkLinePipeline(),
-                          nullptr);
+          m_vulkan_tutorial10_parameters.getVkLinePipeline(),
+          nullptr);
         m_vulkan_tutorial10_parameters.getVkLinePipeline() = VK_NULL_HANDLE;
     }
 
     if (m_vulkan_tutorial10_parameters.getVkPipelineLayout() !=
-        VK_NULL_HANDLE) {
-        vkDestroyPipelineLayout(
-                getVkDevice(),
-                m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
-                nullptr);
+      VK_NULL_HANDLE) {
+        vkDestroyPipelineLayout(getVkDevice(),
+          m_vulkan_tutorial10_parameters.getVkPipelineLayout(),
+          nullptr);
         m_vulkan_tutorial10_parameters.getVkPipelineLayout() = VK_NULL_HANDLE;
     }
 
     if (m_vulkan_tutorial10_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
         vkDestroyRenderPass(getVkDevice(),
-                            m_vulkan_tutorial10_parameters.getVkRenderPass(),
-                            nullptr);
+          m_vulkan_tutorial10_parameters.getVkRenderPass(),
+          nullptr);
         m_vulkan_tutorial10_parameters.getVkRenderPass() = VK_NULL_HANDLE;
     }
 
     DescriptorSetParameters& descriptor_set =
-            m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
+      m_vulkan_tutorial10_parameters.getDescriptorSetParameters();
     if (descriptor_set.getVkDescriptorPool() != VK_NULL_HANDLE) {
         vkDestroyDescriptorPool(
-                getVkDevice(), descriptor_set.getVkDescriptorPool(), nullptr);
+          getVkDevice(), descriptor_set.getVkDescriptorPool(), nullptr);
         descriptor_set.setVkDescriptorPool(VK_NULL_HANDLE);
     }
     if (descriptor_set.getVkDescriptorSetLayout() != VK_NULL_HANDLE) {
-        vkDestroyDescriptorSetLayout(getVkDevice(),
-                                     descriptor_set.getVkDescriptorSetLayout(),
-                                     nullptr);
+        vkDestroyDescriptorSetLayout(
+          getVkDevice(), descriptor_set.getVkDescriptorSetLayout(), nullptr);
         descriptor_set.setVkDescriptorSetLayout(VK_NULL_HANDLE);
     }
 

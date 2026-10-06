@@ -38,10 +38,8 @@ struct Tutorial15VertexData {
     Math::Vec4<float> m_color;
 };
 
-using Tutorial15VertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>,
-                                     Math::Vec2<float>,
-                                     Math::Vec4<float>>;
+using Tutorial15VertexAttributeTraits = VertexTypes::
+  AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
 
 // ************************************************************ //
 // VulkanTutorial15Parameters                                   //
@@ -69,7 +67,7 @@ public:
     const DescriptorSetParameters& getDescriptorSetParameters() const;
     DescriptorSetParameters& getDescriptorSetParameters();
     void setDescriptorSetParameters(
-            const DescriptorSetParameters& descriptor_set_parameters);
+      const DescriptorSetParameters& descriptor_set_parameters);
 
     const VkPipelineLayout& getVkPipelineLayout() const;
     VkPipelineLayout& getVkPipelineLayout();
@@ -98,10 +96,10 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     // One per swapchain image, indexed by acquired image index rather than
     // by rendering-resource slot. See the comment in createSemaphores() for
@@ -109,7 +107,7 @@ public:
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -152,9 +150,9 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
 
 private:
     // Generous fixed capacity - a title plus one short button label is a
@@ -164,31 +162,29 @@ private:
     static constexpr float c_font_pixel_height = 28.0f;
     // fonts-dejavu-core (see CLAUDE.md's Initial Setup) provides this.
     static constexpr const char* c_font_path =
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+      "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
-    bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
+    bool createImage(
+      std::uint32_t width, std::uint32_t height, VkImage* image);
+    bool allocateImageMemory(
+      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
     bool createImageView();
     bool createSampler(VkSampler* sampler);
     bool copyTextureData(char* texture_data,
-                         std::uint32_t data_size,
-                         std::uint32_t width,
-                         std::uint32_t height);
+      std::uint32_t data_size,
+      std::uint32_t width,
+      std::uint32_t height);
     Math::Mat4<float> getUniformBufferData() const;
     bool updateUniformBufferData();
     Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
@@ -203,21 +199,21 @@ private:
     std::string getButtonLabel() const;
 
     void appendGlyphQuad(std::vector<Tutorial15VertexData>& vertex_data,
-                         const BitmapFontGlyphQuad& glyph,
-                         Math::Vec4<float> color) const;
+      const BitmapFontGlyphQuad& glyph,
+      Math::Vec4<float> color) const;
     void appendColoredQuad(std::vector<Tutorial15VertexData>& vertex_data,
-                           const std::array<Math::Vec2<float>, 4>& corners,
-                           Math::Vec4<float> color) const;
+      const std::array<Math::Vec2<float>, 4>& corners,
+      Math::Vec4<float> color) const;
     void appendText(std::vector<Tutorial15VertexData>& vertex_data,
-                    const std::string& text,
-                    Math::Vec2<float> origin,
-                    Math::Vec4<float> color) const;
+      const std::string& text,
+      Math::Vec2<float> origin,
+      Math::Vec4<float> color) const;
     std::vector<Tutorial15VertexData> buildUiVertexData() const;
     bool updateVertexBufferData();
 
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

@@ -47,19 +47,19 @@ class GameState {
 public:
     GameState();
     GameState(std::int32_t new_width,
-              std::int32_t new_height,
-              PlayerFactory* new_player_factory,
-              GlobalSettings* new_global_settings,
-              std::int32_t* new_current_game_state);
+      std::int32_t new_height,
+      PlayerFactory* new_player_factory,
+      GlobalSettings* new_global_settings,
+      std::int32_t* new_current_game_state);
     ~GameState();
     void update();
     void draw(vulkan_graphix::Render::RenderContext& context);
     void drawHUD(vulkan_graphix::Render::RenderContext& context);
     void drawHUDText(vulkan_graphix::Render::RenderContext& context,
-                     const vulkan_graphix::Math::Vec4<float>& color,
-                     const std::string& input,
-                     float x,
-                     float y);
+      const vulkan_graphix::Math::Vec4<float>& color,
+      const std::string& input,
+      float x,
+      float y);
     void updateMouse(std::int32_t x, std::int32_t y);
     void useTurn();
     std::int32_t getWinner();
@@ -72,11 +72,11 @@ public:
     bool getProjectileFired();
     void destroyProjectile();
     void calcNormalVector(vulkan_graphix::Math::Vec3<float>* v0,
-                          vulkan_graphix::Math::Vec3<float>* v1,
-                          vulkan_graphix::Math::Vec3<float>* v2,
-                          vulkan_graphix::Math::Vec3<float>* n);
+      vulkan_graphix::Math::Vec3<float>* v1,
+      vulkan_graphix::Math::Vec3<float>* v2,
+      vulkan_graphix::Math::Vec3<float>* n);
     float calcDistanceBetweenVertices(vulkan_graphix::Math::Vec3<float>* v0,
-                                      vulkan_graphix::Math::Vec3<float>* v1);
+      vulkan_graphix::Math::Vec3<float>* v1);
     void playBackgroundSounds();
     void drawHelp(vulkan_graphix::Render::RenderContext& context);
     GlobalSettings* getGlobalSettings();

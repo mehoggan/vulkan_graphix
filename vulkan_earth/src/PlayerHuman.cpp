@@ -40,14 +40,14 @@ PlayerHuman::PlayerHuman(float red, float green, float blue) {
 }
 
 PlayerHuman::PlayerHuman(float red,
-                         float green,
-                         float blue,
-                         const std::string& new_tank_type,
-                         const std::string& new_ai_type,
-                         const std::string& new_name,
-                         char new_team_label,
-                         const std::string& new_player_type,
-                         std::int32_t starting_cash) {
+  float green,
+  float blue,
+  const std::string& new_tank_type,
+  const std::string& new_ai_type,
+  const std::string& new_name,
+  char new_team_label,
+  const std::string& new_player_type,
+  std::int32_t starting_cash) {
     m_color[0] = red;
     m_color[1] = green;
     m_color[2] = blue;
@@ -111,7 +111,7 @@ PlayerHuman::~PlayerHuman() {
 }
 void drawHUD() {}
 void PlayerHuman::updateTank(
-        /* Pass in all paramaters that are associated with a tank */) {}
+  /* Pass in all paramaters that are associated with a tank */) {}
 Tank* PlayerHuman::getCurrentTank() { return m_current_tank; }
 std::string PlayerHuman::getTankType() { return m_tank_type; }
 Item** PlayerHuman::getCurrentItems() { return m_current_items; }
@@ -165,8 +165,9 @@ void PlayerHuman::setTankType(const std::string& new_tank_type) {
     else if (m_tank_type == "Predator")
         m_current_tank = new TankH(0, 0, 0);
     else {
-        printf("ERROR <PlayerHuman::setTankType(const std::string&)>: Wrong "
-               "Tank Type!!\n");
+        printf(
+          "ERROR <PlayerHuman::setTankType(const std::string&)>: Wrong "
+          "Tank Type!!\n");
         m_current_tank = nullptr;
     }
 }

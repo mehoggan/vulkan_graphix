@@ -12,7 +12,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial19>();
+      std::make_shared<vulkan_graphix::Tutorial19>();
 
     if (!window.create("19 - Weapon")) {
         return EXIT_FAILURE;
@@ -23,7 +23,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial19> tutorial19 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial19>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial19>(tutorial);
 
     if (!tutorial19->createRenderingResources()) {
         return EXIT_FAILURE;

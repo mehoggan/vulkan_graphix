@@ -9,7 +9,7 @@ WeaponAcid::WeaponAcid() = default;
 WeaponAcid::WeaponAcid(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::weapon(
-            vulkan_graphix::GameCatalog::WeaponKind::Acid));
+      vulkan_graphix::GameCatalog::WeaponKind::Acid));
 }
 WeaponAcid::~WeaponAcid() = default;
 

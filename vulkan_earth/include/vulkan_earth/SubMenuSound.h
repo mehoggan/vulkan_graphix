@@ -19,16 +19,16 @@ class SubMenuSound : public SubMenu {
 public:
     SubMenuSound();
     SubMenuSound(std::int32_t id,
-                 float new_x_pos,
-                 float new_y_pos,
-                 float new_z_pos,
-                 float red,
-                 float green,
-                 float blue,
-                 std::int32_t new_width,
-                 std::int32_t new_height,
-                 const std::string& new_caption,
-                 float new_percent_border);
+      float new_x_pos,
+      float new_y_pos,
+      float new_z_pos,
+      float red,
+      float green,
+      float blue,
+      std::int32_t new_width,
+      std::int32_t new_height,
+      const std::string& new_caption,
+      float new_percent_border);
     ~SubMenuSound() override;
     std::int32_t getUNIQUEIDENTIFIER() override;
     void setUNIQUEIDENTIFIER(std::int32_t id) override;
@@ -54,9 +54,8 @@ public:
     void setPercentBorder(float percent) override;
     void draw(vulkan_graphix::Render::RenderContext& context) override;
     std::string collectData() override;
-    void subMenuMouseTest(std::int32_t x,
-                          std::int32_t y,
-                          std::int32_t button_down) override;
+    void subMenuMouseTest(
+      std::int32_t x, std::int32_t y, std::int32_t button_down) override;
     void updateMouse(std::int32_t x, std::int32_t y) override;
     void changeVolumes(ControlItem* the_sub_menu_button);
 

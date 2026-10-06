@@ -41,7 +41,7 @@ private:
 
     Vec3<T> pointAt(T theta_degrees, T elevation_degrees) const {
         SphericalCoordinates<T, AngleMode::Degrees> coords(
-                theta_degrees, elevation_degrees, m_radius);
+          theta_degrees, elevation_degrees, m_radius);
         return sphericalToCartesian(coords);
     }
 

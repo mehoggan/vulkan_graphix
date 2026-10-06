@@ -81,37 +81,35 @@ inline void* sharedVulkanLibraryHandle() {
 inline bool bringUpThroughExportedEntryPoints(TestableTutorialBase& tutorial) {
     tutorial.m_vulkan_library_handle = sharedVulkanLibraryHandle();
     return (tutorial.m_vulkan_library_handle != nullptr) &&
-           tutorial.loadExportedEntryPoints();
+      tutorial.loadExportedEntryPoints();
 }
 
 // ... through createInstance() for real.
 inline bool bringUpThroughInstance(TestableTutorialBase& tutorial) {
     return bringUpThroughExportedEntryPoints(tutorial) &&
-           tutorial.loadGlobalLevelEntryPoints() && tutorial.createInstance();
+      tutorial.loadGlobalLevelEntryPoints() && tutorial.createInstance();
 }
 
 // ... through createPresentationSurface() - needs a real window.
-inline bool bringUpThroughSurface(
-        TestableTutorialBase& tutorial,
-        vulkan_graphix::os::WindowParameters params) {
+inline bool bringUpThroughSurface(TestableTutorialBase& tutorial,
+  vulkan_graphix::os::WindowParameters params) {
     tutorial.m_window_parameters = params;
     return bringUpThroughInstance(tutorial) &&
-           tutorial.loadInstanceLevelEntryPoints() &&
-           tutorial.createPresentationSurface();
+      tutorial.loadInstanceLevelEntryPoints() &&
+      tutorial.createPresentationSurface();
 }
 
 // ... through createDevice().
 inline bool bringUpThroughDevice(TestableTutorialBase& tutorial,
-                                 vulkan_graphix::os::WindowParameters params) {
+  vulkan_graphix::os::WindowParameters params) {
     return bringUpThroughSurface(tutorial, params) && tutorial.createDevice();
 }
 
 // ... through getDeviceQueue() - everything createSwapChain() needs.
-inline bool bringUpThroughDeviceQueue(
-        TestableTutorialBase& tutorial,
-        vulkan_graphix::os::WindowParameters params) {
+inline bool bringUpThroughDeviceQueue(TestableTutorialBase& tutorial,
+  vulkan_graphix::os::WindowParameters params) {
     return bringUpThroughDevice(tutorial, params) &&
-           tutorial.loadDeviceLevelEntryPoints() && tutorial.getDeviceQueue();
+      tutorial.loadDeviceLevelEntryPoints() && tutorial.getDeviceQueue();
 }
 
 }  // namespace vulkan_graphix::test

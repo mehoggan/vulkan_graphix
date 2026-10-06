@@ -58,7 +58,10 @@ Checks: >
     readability-identifier-naming,
     readability-identifier-length
 # Format fix-its (clang-tidy --fix) with the project's .clang-format, so
-# e.g. generated template code keeps `template <...>` on its own line.
+# e.g. generated template code keeps `template <...>` on its own line and
+# wrapped parameters/arguments/operands get a plain two-space continuation indent
+# instead of lining up under the open bracket. clang-tidy has no
+# indentation/alignment check of its own; .clang-format is the one source.
 FormatStyle: file
 CheckOptions:
   - key:             llvm-namespace-comment.ShortNamespaceLines

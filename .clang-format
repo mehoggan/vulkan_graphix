@@ -20,11 +20,15 @@
 Language:        Cpp
 # BasedOnStyle:  Google
 AccessModifierOffset: -4
-AlignAfterOpenBracket: Align
+# Wrapped parameters/arguments don't line up under the open bracket; each
+# continuation line is just indented two spaces past the line it continues.
+AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true
-AlignOperands:   true
+# Wrapped binary/ternary operands get the same plain two-space continuation
+# indent instead of lining up under the first operand.
+AlignOperands:   DontAlign
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
@@ -62,7 +66,7 @@ CommentPragmas:  '^ IWYU pragma:'
 BreakConstructorInitializers: AfterColon
 PackConstructorInitializers: Never
 ConstructorInitializerIndentWidth: 8
-ContinuationIndentWidth: 8
+ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat:   false
@@ -122,11 +126,15 @@ UseTab:          Never
 ---
 Language:        ObjC
 AccessModifierOffset: -4
-AlignAfterOpenBracket: Align
+# Wrapped parameters/arguments don't line up under the open bracket; each
+# continuation line is just indented two spaces past the line it continues.
+AlignAfterOpenBracket: DontAlign
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true
-AlignOperands:   true
+# Wrapped binary/ternary operands get the same plain two-space continuation
+# indent instead of lining up under the first operand.
+AlignOperands:   DontAlign
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
@@ -164,7 +172,7 @@ CommentPragmas:  '^ IWYU pragma:'
 BreakConstructorInitializers: AfterColon
 PackConstructorInitializers: Never
 ConstructorInitializerIndentWidth: 8
-ContinuationIndentWidth: 8
+ContinuationIndentWidth: 2
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat:   false

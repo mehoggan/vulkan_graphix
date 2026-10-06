@@ -22,7 +22,7 @@ public:
 
     template <std::size_t Index>
     const std::vector<std::tuple_element_t<Index, std::tuple<Ts...>>>& data()
-            const {
+      const {
         return std::get<Index>(m_data);
     }
 

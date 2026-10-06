@@ -11,7 +11,7 @@
 #include "IntegrationTestCommon.h"
 
 TEST(Tutorial03FaultInjectionTest,
-     EachCreateMethodFailsWhenItsFirstVulkanCallFails) {
+  EachCreateMethodFailsWhenItsFirstVulkanCallFails) {
     if (!vulkan_graphix::test::hasDisplay()) {
         GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
                         "and X11 window)";
@@ -26,9 +26,9 @@ TEST(Tutorial03FaultInjectionTest,
     {
         auto real_fn = vulkan_graphix::vkCreateRenderPass;
         vulkan_graphix::vkCreateRenderPass = [](VkDevice,
-                                                const VkRenderPassCreateInfo*,
-                                                const VkAllocationCallbacks*,
-                                                VkRenderPass*) -> VkResult {
+                                               const VkRenderPassCreateInfo*,
+                                               const VkAllocationCallbacks*,
+                                               VkRenderPass*) -> VkResult {
             return VK_ERROR_INITIALIZATION_FAILED;
         };
         EXPECT_FALSE(tutorial.createRenderPass());
@@ -39,11 +39,10 @@ TEST(Tutorial03FaultInjectionTest,
     // createFramebuffers() fails when vkCreateFramebuffer fails.
     {
         auto real_fn = vulkan_graphix::vkCreateFramebuffer;
-        vulkan_graphix::vkCreateFramebuffer =
-                [](VkDevice,
-                   const VkFramebufferCreateInfo*,
-                   const VkAllocationCallbacks*,
-                   VkFramebuffer*) -> VkResult {
+        vulkan_graphix::vkCreateFramebuffer = [](VkDevice,
+                                                const VkFramebufferCreateInfo*,
+                                                const VkAllocationCallbacks*,
+                                                VkFramebuffer*) -> VkResult {
             return VK_ERROR_INITIALIZATION_FAILED;
         };
         EXPECT_FALSE(tutorial.createFramebuffers());
@@ -54,10 +53,10 @@ TEST(Tutorial03FaultInjectionTest,
     {
         auto real_fn = vulkan_graphix::vkCreateShaderModule;
         vulkan_graphix::vkCreateShaderModule =
-                [](VkDevice,
-                   const VkShaderModuleCreateInfo*,
-                   const VkAllocationCallbacks*,
-                   VkShaderModule*) -> VkResult {
+          [](VkDevice,
+            const VkShaderModuleCreateInfo*,
+            const VkAllocationCallbacks*,
+            VkShaderModule*) -> VkResult {
             return VK_ERROR_INITIALIZATION_FAILED;
         };
         EXPECT_FALSE(tutorial.createPipeline());
@@ -68,9 +67,9 @@ TEST(Tutorial03FaultInjectionTest,
     {
         auto real_fn = vulkan_graphix::vkCreateSemaphore;
         vulkan_graphix::vkCreateSemaphore = [](VkDevice,
-                                               const VkSemaphoreCreateInfo*,
-                                               const VkAllocationCallbacks*,
-                                               VkSemaphore*) -> VkResult {
+                                              const VkSemaphoreCreateInfo*,
+                                              const VkAllocationCallbacks*,
+                                              VkSemaphore*) -> VkResult {
             return VK_ERROR_INITIALIZATION_FAILED;
         };
         EXPECT_FALSE(tutorial.createSemaphores());
@@ -80,11 +79,10 @@ TEST(Tutorial03FaultInjectionTest,
     // createCommandBuffers() fails when its command pool fails.
     {
         auto real_fn = vulkan_graphix::vkCreateCommandPool;
-        vulkan_graphix::vkCreateCommandPool =
-                [](VkDevice,
-                   const VkCommandPoolCreateInfo*,
-                   const VkAllocationCallbacks*,
-                   VkCommandPool*) -> VkResult {
+        vulkan_graphix::vkCreateCommandPool = [](VkDevice,
+                                                const VkCommandPoolCreateInfo*,
+                                                const VkAllocationCallbacks*,
+                                                VkCommandPool*) -> VkResult {
             return VK_ERROR_INITIALIZATION_FAILED;
         };
         EXPECT_FALSE(tutorial.createCommandBuffers());

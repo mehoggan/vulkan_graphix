@@ -84,8 +84,8 @@ public:
      *
      * @return The stream \p ss after being written to.
      */
-    friend std::stringstream& operator<<(std::stringstream& sstream,
-                                         const LogTag& tag) {
+    friend std::stringstream& operator<<(
+      std::stringstream& sstream, const LogTag& tag) {
         sstream << tag.tag();
         return sstream;
     }
@@ -138,9 +138,8 @@ private:
     }
 
     template <typename T, typename... Ts>
-    static void logStringBuilder(std::stringstream& sstream,
-                                 T&& arg,
-                                 Ts&&... args) {
+    static void logStringBuilder(
+      std::stringstream& sstream, T&& arg, Ts&&... args) {
         sstream << std::forward<T>(arg) << " ";
         logStringBuilder(sstream, args...);
     }
@@ -171,8 +170,8 @@ public:
      * @return true if \p tag was not already added to logger, false
      *         otherwise.
      */
-    static bool addStdCoutLogger(const LogTag& tag,
-                                 SeverityLevel level = VULKAN_GRAPHIX_INFO);
+    static bool addStdCoutLogger(
+      const LogTag& tag, SeverityLevel level = VULKAN_GRAPHIX_INFO);
 
     /**
      * @brief Used to create a stderr source tied to a \ref LogTag.
@@ -186,8 +185,8 @@ public:
      * @return true if \p tag was not already added to logger, false
      *         otherwise.
      */
-    static bool addStdCerrLogger(const LogTag& tag,
-                                 SeverityLevel level = VULKAN_GRAPHIX_ERROR);
+    static bool addStdCerrLogger(
+      const LogTag& tag, SeverityLevel level = VULKAN_GRAPHIX_ERROR);
 
     /**
      * @brief Used to create a stdlog source tied to a \ref LogTag.
@@ -199,8 +198,8 @@ public:
      * @return true if \p tag was not already added to logger, false
      *         otherwise.
      */
-    static bool addStdLogLogger(const LogTag& tag,
-                                SeverityLevel level = VULKAN_GRAPHIX_TRACE);
+    static bool addStdLogLogger(
+      const LogTag& tag, SeverityLevel level = VULKAN_GRAPHIX_TRACE);
 
     /**
      * @brief Used to create a file source tied to a \ref LogTag.
@@ -215,8 +214,8 @@ public:
      * @return
      */
     static bool addFileLogger(const LogTag& tag,
-                              const std::filesystem::path& log_path,
-                              SeverityLevel level = VULKAN_GRAPHIX_INFO);
+      const std::filesystem::path& log_path,
+      SeverityLevel level = VULKAN_GRAPHIX_INFO);
 
     /**
      * @brief A utility function used to generate a log tag for a specific
@@ -256,7 +255,7 @@ public:
      *         was created on the local filesystem.
      */
     static std::filesystem::path mktmpdir(
-            const std::filesystem::path& model = "%%%%-%%%%-%%%%-%%%%");
+      const std::filesystem::path& model = "%%%%-%%%%-%%%%-%%%%");
 
     /**
      * @brief A key function for Logging at the \ref VULKAN_GRAPHIX_TRACE
@@ -392,9 +391,8 @@ public:
     static bool clearAll();
 
 private:
-    static void writeSeverityLog(const LogTag& tag,
-                                 SeverityLevel level,
-                                 const std::string& message);
+    static void writeSeverityLog(
+      const LogTag& tag, SeverityLevel level, const std::string& message);
 
 private:
     static std::atomic<bool> s_init;
@@ -421,10 +419,9 @@ private:
  * @return A \ref LogTag generated using RTTI for \p t.
  */
 template <class T>
-LogTag addStdCoutStdErrLoggerForTypeInstance(
-        const T& type,
-        SeverityLevel cout_level = VULKAN_GRAPHIX_INFO,
-        SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR) {
+LogTag addStdCoutStdErrLoggerForTypeInstance(const T& type,
+  SeverityLevel cout_level = VULKAN_GRAPHIX_INFO,
+  SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR) {
     LogTag log_tag = Logging::logTagForThis(type);
     Logging::addStdCoutLogger(log_tag, cout_level);
     Logging::addStdCerrLogger(log_tag, cerr_level);

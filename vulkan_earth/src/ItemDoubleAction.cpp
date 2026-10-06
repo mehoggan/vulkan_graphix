@@ -6,7 +6,7 @@ ItemDoubleAction::ItemDoubleAction() = default;
 ItemDoubleAction::ItemDoubleAction(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
-            vulkan_graphix::GameCatalog::ItemKind::DoubleAction));
+      vulkan_graphix::GameCatalog::ItemKind::DoubleAction));
 }
 ItemDoubleAction::~ItemDoubleAction() = default;
 

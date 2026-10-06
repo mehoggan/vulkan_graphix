@@ -26,28 +26,25 @@ WorldCam::WorldCam(float x, float y, float z) {
     m_matrix[13] = y;
     m_matrix[14] = z;
     m_matrix[15] = 0;
-    std::copy_n(
-            glm::value_ptr(glm::rotate(
-                    glm::make_mat4(m_matrix),
-                    glm::radians(static_cast<float>(-10)),
-                    math::Vec3<float>(m_matrix[4], m_matrix[5], m_matrix[6]))),
-            16,
-            m_matrix);
+    std::copy_n(glm::value_ptr(glm::rotate(glm::make_mat4(m_matrix),
+                  glm::radians(static_cast<float>(-10)),
+                  math::Vec3<float>(m_matrix[4], m_matrix[5], m_matrix[6]))),
+      16,
+      m_matrix);
     m_shake_cam_pos[0] = 0;
     m_shake_cam_pos[1] = 0;
     m_shake_cam_pos[2] = 0;
 }
 
 math::Mat4<float> WorldCam::view() {
-    const math::Mat4<float> view_matrix = glm::lookAt(
-            math::Vec3<float>(m_matrix[12] + m_shake_cam_pos[0],
-                              m_matrix[13] + m_shake_cam_pos[1],
-                              m_matrix[14] + m_shake_cam_pos[2]),
-            math::Vec3<float>(
-                    m_matrix[12] + m_matrix[8] + m_shake_cam_pos[0],
-                    m_matrix[13] + m_matrix[9] + m_shake_cam_pos[1],
-                    m_matrix[14] + m_matrix[10] + m_shake_cam_pos[2]),
-            math::Vec3<float>(m_matrix[4], m_matrix[5], m_matrix[6]));
+    const math::Mat4<float> view_matrix =
+      glm::lookAt(math::Vec3<float>(m_matrix[12] + m_shake_cam_pos[0],
+                    m_matrix[13] + m_shake_cam_pos[1],
+                    m_matrix[14] + m_shake_cam_pos[2]),
+        math::Vec3<float>(m_matrix[12] + m_matrix[8] + m_shake_cam_pos[0],
+          m_matrix[13] + m_matrix[9] + m_shake_cam_pos[1],
+          m_matrix[14] + m_matrix[10] + m_shake_cam_pos[2]),
+        math::Vec3<float>(m_matrix[4], m_matrix[5], m_matrix[6]));
     updateShakeCam();
     return view_matrix;
 }

@@ -7,9 +7,9 @@
 namespace vulkan_graphix::Render {
 
 Texture::Texture(ImageParameters image,
-                 VkDescriptorSet descriptor_set,
-                 std::uint32_t width,
-                 std::uint32_t height) :
+  VkDescriptorSet descriptor_set,
+  std::uint32_t width,
+  std::uint32_t height) :
         m_image(std::move(image)),
         m_descriptor_set(descriptor_set),
         m_width(width),

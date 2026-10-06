@@ -15,14 +15,14 @@ class LoadingScreen {
 public:
     LoadingScreen();
     LoadingScreen(float x,
-                  float y,
-                  float z,
-                  std::int32_t new_width,
-                  std::int32_t new_height,
-                  float red,
-                  float green,
-                  float blue,
-                  float alpha);
+      float y,
+      float z,
+      std::int32_t new_width,
+      std::int32_t new_height,
+      float red,
+      float green,
+      float blue,
+      float alpha);
     ~LoadingScreen();
     void draw(vulkan_graphix::Render::RenderContext& context);
 

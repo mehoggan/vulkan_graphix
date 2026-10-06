@@ -59,20 +59,20 @@ public:
     // Tools::loadOglMeshData(). Characters outside the baked range are
     // skipped; zero-area glyphs (e.g. space) emit no quad.
     std::vector<BitmapFontGlyphQuad> layoutText(
-            const std::string& text, Math::Vec2<float> origin) const;
+      const std::string& text, Math::Vec2<float> origin) const;
     float textWidth(const std::string& text) const;
     float lineHeight() const;
 
     // Greedily word-wraps `text` (space-separated) into lines no wider
     // than max_width per textWidth(). A single word wider than max_width
     // gets a line to itself rather than being split mid-word.
-    std::vector<std::string> wrapText(const std::string& text,
-                                      float max_width) const;
+    std::vector<std::string> wrapText(
+      const std::string& text, float max_width) const;
 
 private:
     static constexpr std::int32_t c_first_char = 32;
     static constexpr std::int32_t c_glyph_count =
-            95;  // ASCII 32-126 inclusive
+      95;  // ASCII 32-126 inclusive
 
     struct Glyph {
         Math::Vec2<float> m_size;

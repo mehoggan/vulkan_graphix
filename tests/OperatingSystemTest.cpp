@@ -33,9 +33,9 @@ public:
     bool readyToDraw() const override { return true; }
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override {
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override {
         if (pressed) {
             ++m_button_press_count;
         } else {
@@ -65,12 +65,12 @@ public:
 };
 
 void sendButtonEvent(Display* send_display,
-                     ::Window handle,
-                     std::int32_t event_type,
-                     std::uint64_t mask,
-                     std::uint32_t button,
-                     std::int32_t pos_x,
-                     std::int32_t pos_y) {
+  ::Window handle,
+  std::int32_t event_type,
+  std::uint64_t mask,
+  std::uint32_t button,
+  std::int32_t pos_x,
+  std::int32_t pos_y) {
     XEvent event{};
     event.xbutton.type = event_type;
     event.xbutton.display = send_display;
@@ -89,9 +89,9 @@ void sendButtonEvent(Display* send_display,
 }
 
 void sendMotionEvent(Display* send_display,
-                     ::Window handle,
-                     std::int32_t pos_x,
-                     std::int32_t pos_y) {
+  ::Window handle,
+  std::int32_t pos_x,
+  std::int32_t pos_y) {
     XEvent event{};
     event.xmotion.type = MotionNotify;
     event.xmotion.display = send_display;
@@ -109,9 +109,9 @@ void sendMotionEvent(Display* send_display,
 }
 
 void sendDeleteWindowMessage(Display* send_display,
-                             ::Window handle,
-                             Atom wm_protocols,
-                             Atom wm_delete_window) {
+  ::Window handle,
+  Atom wm_protocols,
+  Atom wm_delete_window) {
     XEvent event{};
     event.xclient.type = ClientMessage;
     event.xclient.display = send_display;
@@ -137,12 +137,12 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
     ASSERT_NE(send_display, nullptr);
     Atom wm_protocols = XInternAtom(send_display, "WM_PROTOCOLS", False);
     Atom wm_delete_window =
-            XInternAtom(send_display, "WM_DELETE_WINDOW", False);
+      XInternAtom(send_display, "WM_DELETE_WINDOW", False);
 
     FakeProject project;
     bool loop_result = false;
     std::thread loop_thread(
-            [&]() { loop_result = window.renderingLoop(project); });
+      [&]() { loop_result = window.renderingLoop(project); });
 
     // Give XMapWindow/XSelectInput time to take effect before driving events
     // at the window - two distinct sizes guarantee a real resize is
@@ -161,26 +161,21 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
     XFlush(send_display);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-    sendButtonEvent(send_display,
-                    handle,
-                    ButtonPress,
-                    ButtonPressMask,
-                    Button1,
-                    100,
-                    100);
+    sendButtonEvent(
+      send_display, handle, ButtonPress, ButtonPressMask, Button1, 100, 100);
     sendMotionEvent(send_display, handle, 120, 110);
     sendButtonEvent(send_display,
-                    handle,
-                    ButtonRelease,
-                    ButtonReleaseMask,
-                    Button1,
-                    120,
-                    110);
+      handle,
+      ButtonRelease,
+      ButtonReleaseMask,
+      Button1,
+      120,
+      110);
     XFlush(send_display);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     sendDeleteWindowMessage(
-            send_display, handle, wm_protocols, wm_delete_window);
+      send_display, handle, wm_protocols, wm_delete_window);
     XFlush(send_display);
 
     loop_thread.join();
@@ -224,10 +219,10 @@ public:
 };
 
 void sendKeyEvent(Display* send_display,
-                  ::Window handle,
-                  std::int32_t event_type,
-                  std::uint64_t mask,
-                  KeySym keysym) {
+  ::Window handle,
+  std::int32_t event_type,
+  std::uint64_t mask,
+  KeySym keysym) {
     XEvent event{};
     event.xkey.type = event_type;
     event.xkey.display = send_display;
@@ -261,7 +256,7 @@ TEST(OperatingSystemTest, KeyEventsReachOnKeyAndQuitRequestEndsTheLoop) {
     KeyProject project;
     bool loop_result = false;
     std::thread loop_thread(
-            [&]() { loop_result = window.renderingLoop(project); });
+      [&]() { loop_result = window.renderingLoop(project); });
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     sendKeyEvent(send_display, handle, KeyPress, KeyPressMask, XK_a);

@@ -22,16 +22,16 @@ class SubMenuLandscape : public SubMenu {
 public:
     SubMenuLandscape();
     SubMenuLandscape(std::int32_t id,
-                     float new_x_pos,
-                     float new_y_pos,
-                     float new_z_pos,
-                     float red,
-                     float green,
-                     float blue,
-                     std::int32_t new_width,
-                     std::int32_t new_height,
-                     const std::string& new_caption,
-                     float new_percent_border);
+      float new_x_pos,
+      float new_y_pos,
+      float new_z_pos,
+      float red,
+      float green,
+      float blue,
+      std::int32_t new_width,
+      std::int32_t new_height,
+      const std::string& new_caption,
+      float new_percent_border);
     ~SubMenuLandscape() override;
     std::int32_t getUNIQUEIDENTIFIER() override;
     void setUNIQUEIDENTIFIER(std::int32_t id) override;
@@ -57,17 +57,16 @@ public:
     void setPercentBorder(float percent) override;
     void draw(vulkan_graphix::Render::RenderContext& context) override;
     std::string collectData() override;
-    void subMenuMouseTest(std::int32_t x,
-                          std::int32_t y,
-                          std::int32_t button_down) override;
+    void subMenuMouseTest(
+      std::int32_t x, std::int32_t y, std::int32_t button_down) override;
     void updateMouse(std::int32_t x, std::int32_t y) override;
     TerrainMaker* m_tm;  // PUBLIC BECAUSE I AM TOO LAZY TO UPDATE ENTIRE
                          // INTERFACE FOR ONE GET FUNCTION
     ControlItem*
-            m_sub_menu_button[num_control_items_lnd];  // BOTH THESE ITEMS NEED
-                                                       // GETTERS AND SETTERS
-                                                       // WHICH MEANS UPDATE TO
-                                                       // INTERFACE
+      m_sub_menu_button[num_control_items_lnd];  // BOTH THESE ITEMS NEED
+                                                 // GETTERS AND SETTERS
+                                                 // WHICH MEANS UPDATE TO
+                                                 // INTERFACE
 private:
     std::int32_t m_uniqueidentifier;
     std::int32_t m_old_mouse_x, m_old_mouse_y;

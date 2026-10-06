@@ -6,7 +6,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial09>();
+      std::make_shared<vulkan_graphix::Tutorial09>();
 
     // Window creation
     if (!window.create("09 - Tessellated Terrain")) {
@@ -19,7 +19,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial09> tutorial09 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial09>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial09>(tutorial);
 
     // Tutorial 09
     if (!tutorial09->createRenderingResources()) {

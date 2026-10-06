@@ -18,16 +18,16 @@ class MainMenuButton {
 public:
     MainMenuButton();
     MainMenuButton(std::int32_t id,
-                   float new_x_pos,
-                   float new_y_pos,
-                   float new_z_pos,
-                   float red,
-                   float green,
-                   float blue,
-                   std::int32_t new_width,
-                   std::int32_t new_height,
-                   const std::string& new_caption,
-                   SubMenu* new_submenu);
+      float new_x_pos,
+      float new_y_pos,
+      float new_z_pos,
+      float red,
+      float green,
+      float blue,
+      std::int32_t new_width,
+      std::int32_t new_height,
+      const std::string& new_caption,
+      SubMenu* new_submenu);
     ~MainMenuButton();
     void draw(vulkan_graphix::Render::RenderContext& context);
     void pressButton();
@@ -63,6 +63,6 @@ private:
     vulkan_graphix::Render::UiMesh m_mesh;
     bool m_built_pressed = false;
     vulkan_graphix::Math::Vec4<float> m_built_color =
-            vulkan_graphix::Math::Vec4<float>(-1.0f);
+      vulkan_graphix::Math::Vec4<float>(-1.0f);
 };
 #endif  // VULKAN_EARTH_MAINMENUBUTTON_H

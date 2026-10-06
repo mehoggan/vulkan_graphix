@@ -30,11 +30,11 @@ class ShopMenu {
 public:
     ShopMenu();
     ShopMenu(float new_width,
-             float new_height,
-             float new_percent_border,
-             GlobalSettings* new_global_settings,
-             PlayerFactory* new_player_factory,
-             std::int32_t* game_state);
+      float new_height,
+      float new_percent_border,
+      GlobalSettings* new_global_settings,
+      PlayerFactory* new_player_factory,
+      std::int32_t* game_state);
     ~ShopMenu();
     void draw(vulkan_graphix::Render::RenderContext& context);
     void buttonTest(std::int32_t x, std::int32_t y, std::int32_t button_down);

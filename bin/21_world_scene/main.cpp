@@ -13,7 +13,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial21>();
+      std::make_shared<vulkan_graphix::Tutorial21>();
 
     if (!window.create("21 - World")) {
         return EXIT_FAILURE;
@@ -24,7 +24,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial21> tutorial21 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial21>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial21>(tutorial);
 
     if (!tutorial21->createRenderingResources()) {
         return EXIT_FAILURE;

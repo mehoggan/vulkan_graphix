@@ -17,16 +17,16 @@ extern void playSFX(std::int32_t sfx);
 MainMenuButton::MainMenuButton() = default;
 
 MainMenuButton::MainMenuButton(std::int32_t id,
-                               float new_x_pos,
-                               float new_y_pos,
-                               float new_z_pos,
-                               float red,
-                               float green,
-                               float blue,
-                               std::int32_t new_width,
-                               std::int32_t new_height,
-                               const std::string& new_caption,
-                               SubMenu* new_submenu) {
+  float new_x_pos,
+  float new_y_pos,
+  float new_z_pos,
+  float red,
+  float green,
+  float blue,
+  std::int32_t new_width,
+  std::int32_t new_height,
+  const std::string& new_caption,
+  SubMenu* new_submenu) {
     m_uniqueidentifier = id;
     m_pressed = false;
     m_active = false;
@@ -43,21 +43,21 @@ MainMenuButton::MainMenuButton(std::int32_t id,
     /*	BUTTON TEXT PLACEMENT	*/
     std::int32_t real_length = 0;
     for (char ch : m_caption) {
-        real_length += vulkan_earth::textAdvance(
-                vulkan_earth::FontId::TimesRoman24, ch);
+        real_length +=
+          vulkan_earth::textAdvance(vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = m_x_pos + ((m_width) / 2) - (real_length / 2);
     float label_y_pos =
-            m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
+      m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
     /*	END OF BUTTON TEXT PLACEMENT	*/
     m_label = new TextObject(m_caption,
-                             label_x_pos,
-                             label_y_pos,
-                             m_z_pos,
-                             vulkan_earth::FontId::TimesRoman24,
-                             0.0f,
-                             0.0f,
-                             0.0f);
+      label_x_pos,
+      label_y_pos,
+      m_z_pos,
+      vulkan_earth::FontId::TimesRoman24,
+      0.0f,
+      0.0f,
+      0.0f);
     m_submenu = new_submenu;
 }
 
@@ -65,18 +65,18 @@ MainMenuButton::~MainMenuButton() { delete m_label; }
 
 void MainMenuButton::draw(render::RenderContext& context) {
     const math::Vec4<float> current_color(
-            m_color[0], m_color[1], m_color[2], m_color[3]);
+      m_color[0], m_color[1], m_color[2], m_color[3]);
     if (m_mesh.triangles().empty() || m_built_pressed != m_pressed ||
-        m_built_color != current_color) {
+      m_built_color != current_color) {
         m_mesh.clear();
         vulkan_earth::appendBevel(m_mesh,
-                                  m_x_pos,
-                                  m_y_pos,
-                                  m_z_pos,
-                                  m_width,
-                                  m_height,
-                                  current_color,
-                                  m_pressed);
+          m_x_pos,
+          m_y_pos,
+          m_z_pos,
+          m_width,
+          m_height,
+          current_color,
+          m_pressed);
         m_built_pressed = m_pressed;
         m_built_color = current_color;
     }
@@ -111,21 +111,21 @@ void MainMenuButton::setLabel(const std::string& c) {
 
     std::int32_t real_length = 0;
     for (char ch : m_caption) {
-        real_length += vulkan_earth::textAdvance(
-                vulkan_earth::FontId::TimesRoman24, ch);
+        real_length +=
+          vulkan_earth::textAdvance(vulkan_earth::FontId::TimesRoman24, ch);
     }
     float label_x_pos = m_x_pos + ((m_width) / 2) - (real_length / 2);
     float label_y_pos =
-            m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
+      m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
 
     m_label = new TextObject(m_caption,
-                             label_x_pos,
-                             label_y_pos,
-                             m_z_pos,
-                             vulkan_earth::FontId::TimesRoman24,
-                             0.0f,
-                             0.0f,
-                             0.0f);
+      label_x_pos,
+      label_y_pos,
+      m_z_pos,
+      vulkan_earth::FontId::TimesRoman24,
+      0.0f,
+      0.0f,
+      0.0f);
 }
 
 bool MainMenuButton::isPressed() { return m_pressed; }

@@ -6,7 +6,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial06>();
+      std::make_shared<vulkan_graphix::Tutorial06>();
 
     // Window creation
     if (!window.create("06 - Descriptor Sets")) {
@@ -19,7 +19,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial06> tutorial06 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial06>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial06>(tutorial);
 
     // Tutorial 06
     if (!tutorial06->createRenderingResources()) {

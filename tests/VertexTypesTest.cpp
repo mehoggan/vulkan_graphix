@@ -67,29 +67,29 @@ TEST(InterleavedDatumTest, DefaultConstructedValuesAreZeroInitialized) {
 }
 
 TEST(InterleavedDatumTest, ValueConstructorStoresEachAttribute) {
-    InterleavedDatum<glm::vec3, glm::vec2> datum(glm::vec3(1.0f, 2.0f, 3.0f),
-                                                 glm::vec2(4.0f, 5.0f));
+    InterleavedDatum<glm::vec3, glm::vec2> datum(
+      glm::vec3(1.0f, 2.0f, 3.0f), glm::vec2(4.0f, 5.0f));
     EXPECT_EQ(glm::vec3(1.0f, 2.0f, 3.0f), datum.get<0>());
     EXPECT_EQ(glm::vec2(4.0f, 5.0f), datum.get<1>());
 }
 
 TEST(InterleavedDatumTest, EqualityComparesAllAttributes) {
-    InterleavedDatum<glm::vec3, glm::vec2> first(glm::vec3(1.0f),
-                                                 glm::vec2(2.0f));
-    InterleavedDatum<glm::vec3, glm::vec2> second(glm::vec3(1.0f),
-                                                  glm::vec2(2.0f));
-    InterleavedDatum<glm::vec3, glm::vec2> third(glm::vec3(1.0f),
-                                                 glm::vec2(3.0f));
+    InterleavedDatum<glm::vec3, glm::vec2> first(
+      glm::vec3(1.0f), glm::vec2(2.0f));
+    InterleavedDatum<glm::vec3, glm::vec2> second(
+      glm::vec3(1.0f), glm::vec2(2.0f));
+    InterleavedDatum<glm::vec3, glm::vec2> third(
+      glm::vec3(1.0f), glm::vec2(3.0f));
 
     EXPECT_EQ(first, second);
     EXPECT_NE(first, third);
 }
 
 TEST(InterleavedDatumTest, SwapExchangesValues) {
-    InterleavedDatum<glm::vec2, glm::vec2> first(glm::vec2(1.0f, 2.0f),
-                                                 glm::vec2(3.0f, 4.0f));
-    InterleavedDatum<glm::vec2, glm::vec2> second(glm::vec2(5.0f, 6.0f),
-                                                  glm::vec2(7.0f, 8.0f));
+    InterleavedDatum<glm::vec2, glm::vec2> first(
+      glm::vec2(1.0f, 2.0f), glm::vec2(3.0f, 4.0f));
+    InterleavedDatum<glm::vec2, glm::vec2> second(
+      glm::vec2(5.0f, 6.0f), glm::vec2(7.0f, 8.0f));
 
     swap(first, second);
 
@@ -100,21 +100,21 @@ TEST(InterleavedDatumTest, SwapExchangesValues) {
 TEST(InterleavedDataTest, TracksAttributeAndByteCounts) {
     using datum_type = InterleavedDatum<glm::vec3, glm::vec2>;
     InterleavedData<glm::vec3, glm::vec2> data(std::vector<datum_type>{
-            datum_type(glm::vec3(1.0f), glm::vec2(2.0f)),
-            datum_type(glm::vec3(3.0f), glm::vec2(4.0f)),
-            datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
+      datum_type(glm::vec3(1.0f), glm::vec2(2.0f)),
+      datum_type(glm::vec3(3.0f), glm::vec2(4.0f)),
+      datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
     });
 
     EXPECT_EQ(3u, data.getAttributeCount());
-    EXPECT_EQ((sizeof(glm::vec3) + sizeof(glm::vec2)) * 3u,
-              data.getByteCount());
+    EXPECT_EQ(
+      (sizeof(glm::vec3) + sizeof(glm::vec2)) * 3u, data.getByteCount());
     EXPECT_EQ(3u, data.getData().size());
 }
 
 TEST(BatchDataTest, TracksIndependentArraysPerAttribute) {
     BatchData<glm::vec3, glm::vec2> data(
-            std::vector<glm::vec3>{glm::vec3(1.0f), glm::vec3(2.0f)},
-            std::vector<glm::vec2>{glm::vec2(3.0f), glm::vec2(4.0f)});
+      std::vector<glm::vec3>{glm::vec3(1.0f), glm::vec3(2.0f)},
+      std::vector<glm::vec2>{glm::vec2(3.0f), glm::vec2(4.0f)});
 
     EXPECT_EQ(2u, (BatchData<glm::vec3, glm::vec2>::attribute_type_count));
     EXPECT_EQ(2u, data.attributeCount());
@@ -125,7 +125,7 @@ TEST(BatchDataTest, TracksIndependentArraysPerAttribute) {
 
 TEST(IndicesTest, TracksCountAndByteSize) {
     Indices<std::uint32_t> indices(
-            std::vector<std::uint32_t>{0u, 1u, 2u, 0u, 2u, 3u});
+      std::vector<std::uint32_t>{0u, 1u, 2u, 0u, 2u, 3u});
 
     EXPECT_EQ(6u, indices.getIndicesCount());
     EXPECT_EQ(sizeof(std::uint32_t) * 6u, indices.getByteCount());

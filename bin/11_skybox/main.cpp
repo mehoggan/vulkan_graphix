@@ -9,7 +9,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial11>();
+      std::make_shared<vulkan_graphix::Tutorial11>();
 
     if (!window.create("11 - Skybox")) {
         return EXIT_FAILURE;
@@ -20,7 +20,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial11> tutorial11 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial11>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial11>(tutorial);
 
     if (!tutorial11->createRenderingResources()) {
         return EXIT_FAILURE;

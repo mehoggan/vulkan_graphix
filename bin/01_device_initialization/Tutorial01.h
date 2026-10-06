@@ -39,7 +39,7 @@ public:
     const VkDebugUtilsMessengerEXT& getVkDebugUtilsMessenger() const;
     VkDebugUtilsMessengerEXT& getVkDebugUtilsMessenger();
     void setVkDebugUtilsMessenger(
-            const VkDebugUtilsMessengerEXT& vk_debug_utils_messenger);
+      const VkDebugUtilsMessengerEXT& vk_debug_utils_messenger);
 
 private:
     VkInstance m_vk_instance;
@@ -71,8 +71,8 @@ private:
     bool createInstance();
     bool loadInstanceLevelEntryPoints();
     bool createDevice();
-    bool checkPhysicalDeviceProperties(VkPhysicalDevice physical_device,
-                                       std::uint32_t& queue_family_index);
+    bool checkPhysicalDeviceProperties(
+      VkPhysicalDevice physical_device, std::uint32_t& queue_family_index);
     bool loadDeviceLevelEntryPoints();
     bool getDeviceQueue();
 
@@ -81,7 +81,7 @@ private:
     bool destroyDebugMessenger();
 
     friend std::ostream& operator<<(
-            std::ostream& out, const std::vector<VkLayerProperties>& vect);
+      std::ostream& out, const std::vector<VkLayerProperties>& vect);
 
     os::LibraryHandle m_vulkan_library_handle;
     VulkanTutorial01Parameters m_vulkan_tutorial01_parameters;

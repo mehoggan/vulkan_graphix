@@ -28,7 +28,7 @@ struct LineVertexData {
 };
 
 using LineVertexAttributeTraits =
-        VertexTypes::AttributeTraits<Math::Vec4<float>>;
+  VertexTypes::AttributeTraits<Math::Vec4<float>>;
 
 // ************************************************************ //
 // UniformBufferData                                            //
@@ -77,7 +77,7 @@ public:
     const DescriptorSetParameters& getDescriptorSetParameters() const;
     DescriptorSetParameters& getDescriptorSetParameters();
     void setDescriptorSetParameters(
-            const DescriptorSetParameters& descriptor_set_parameters);
+      const DescriptorSetParameters& descriptor_set_parameters);
 
     const VkPipelineLayout& getVkPipelineLayout() const;
     VkPipelineLayout& getVkPipelineLayout();
@@ -97,7 +97,7 @@ public:
     const BufferParameters& getControlPolygonVertexBufferParameters() const;
     BufferParameters& getControlPolygonVertexBufferParameters();
     void setControlPolygonVertexBufferParameters(
-            const BufferParameters& vertex_buffer);
+      const BufferParameters& vertex_buffer);
 
     std::uint32_t getControlPolygonVertexCount() const;
     void setControlPolygonVertexCount(std::uint32_t vertex_count);
@@ -111,10 +111,10 @@ public:
     void setVkCommandPool(const VkCommandPool& vk_command_pool);
 
     const std::vector<RenderingResourceParameters>& getRenderingResources()
-            const;
+      const;
     std::vector<RenderingResourceParameters>& getRenderingResources();
-    void setRenderingResources(const std::vector<RenderingResourceParameters>&
-                                       rendering_resources);
+    void setRenderingResources(
+      const std::vector<RenderingResourceParameters>& rendering_resources);
 
     // One per swapchain image, indexed by acquired image index rather than
     // by rendering-resource slot. See the comment in createSemaphores() for
@@ -122,7 +122,7 @@ public:
     const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
     std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
     void setFinishedRenderingSemaphores(
-            const std::vector<VkSemaphore>& finished_rendering_semaphores);
+      const std::vector<VkSemaphore>& finished_rendering_semaphores);
 
 private:
     VkRenderPass m_vk_render_pass;
@@ -168,38 +168,36 @@ public:
     bool draw() override;
 
     void onMouseButton(std::int32_t button,
-                       bool pressed,
-                       std::int32_t pos_x,
-                       std::int32_t pos_y) override;
+      bool pressed,
+      std::int32_t pos_x,
+      std::int32_t pos_y) override;
     void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
     bool createCommandBuffers();
-    bool createCommandPool(std::uint32_t queue_family_index,
-                           VkCommandPool* pool);
+    bool createCommandPool(
+      std::uint32_t queue_family_index, VkCommandPool* pool);
     bool allocateCommandBuffers(VkCommandPool pool,
-                                std::uint32_t count,
-                                VkCommandBuffer* command_buffers);
+      std::uint32_t count,
+      VkCommandBuffer* command_buffers);
     bool createSemaphores();
     bool createFences();
     bool createBuffer(VkBufferUsageFlags usage,
-                      VkMemoryPropertyFlags memory_property,
-                      BufferParameters& buffer);
-    bool allocateBufferMemory(VkBuffer buffer,
-                              VkMemoryPropertyFlags property,
-                              VkDeviceMemory* memory);
+      VkMemoryPropertyFlags memory_property,
+      BufferParameters& buffer);
+    bool allocateBufferMemory(
+      VkBuffer buffer, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
     bool createImage(std::uint32_t width,
-                     std::uint32_t height,
-                     VkFormat format,
-                     VkImageUsageFlags usage,
-                     VkImage* image);
-    bool allocateImageMemory(VkImage image,
-                             VkMemoryPropertyFlags property,
-                             VkDeviceMemory* memory);
+      std::uint32_t height,
+      VkFormat format,
+      VkImageUsageFlags usage,
+      VkImage* image);
+    bool allocateImageMemory(
+      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
     bool createImageView(VkImage image,
-                         VkFormat format,
-                         VkImageAspectFlags aspect_mask,
-                         VkImageView* image_view);
+      VkFormat format,
+      VkImageAspectFlags aspect_mask,
+      VkImageView* image_view);
     bool destroyDepthResources();
     Tutorial10UniformBufferData getUniformBufferData() const;
     bool updateUniformBufferData();
@@ -209,13 +207,13 @@ private:
     const std::vector<LineVertexData>& getControlPolygonVertexData() const;
     float getLineWidth() const;
     bool copyBufferData(BufferParameters& destination,
-                        const void* data,
-                        std::uint32_t data_size,
-                        VkAccessFlags dst_access_mask,
-                        VkPipelineStageFlags dst_stage_mask);
+      const void* data,
+      std::uint32_t data_size,
+      VkAccessFlags dst_access_mask,
+      VkPipelineStageFlags dst_stage_mask);
     bool prepareFrame(VkCommandBuffer command_buffer,
-                      const ImageParameters& image_parameters,
-                      VkFramebuffer& framebuffer);
+      const ImageParameters& image_parameters,
+      VkFramebuffer& framebuffer);
     bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
     void destroyBuffer(BufferParameters& buffer);
 

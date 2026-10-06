@@ -6,7 +6,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial05>();
+      std::make_shared<vulkan_graphix::Tutorial05>();
 
     // Window creation
     if (!window.create("05 - Staging Resources")) {
@@ -19,7 +19,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial05> tutorial05 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial05>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial05>(tutorial);
 
     // Tutorial 05
     if (!tutorial05->createRenderingResources()) {

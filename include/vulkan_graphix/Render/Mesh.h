@@ -66,9 +66,9 @@ protected:
     // Re-uploads after any change; returns the buffer (triangles first,
     // then lines).
     const HostBuffer& upload(const void* triangles,
-                             std::size_t triangle_bytes,
-                             const void* lines,
-                             std::size_t line_bytes);
+      std::size_t triangle_bytes,
+      const void* lines,
+      std::size_t line_bytes);
     void markDirty();
 
 private:
@@ -110,9 +110,9 @@ public:
 
     const HostBuffer& upload() {
         return RetainedMeshBase::upload(m_triangles.data(),
-                                        m_triangles.size() * sizeof(V),
-                                        m_lines.data(),
-                                        m_lines.size() * sizeof(V));
+          m_triangles.size() * sizeof(V),
+          m_lines.data(),
+          m_lines.size() * sizeof(V));
     }
 
 private:
@@ -129,18 +129,18 @@ public:
     using RetainedMesh<UiVertex>::addLine;
 
     void addQuad(const std::array<Math::Vec3<float>, 4>& corners,
-                 const Math::Vec4<float>& color);
+      const Math::Vec4<float>& color);
     void addTexturedQuad(const std::array<Math::Vec3<float>, 4>& corners,
-                         const std::array<Math::Vec2<float>, 4>& texcoords,
-                         const Math::Vec4<float>& color);
+      const std::array<Math::Vec2<float>, 4>& texcoords,
+      const Math::Vec4<float>& color);
     void addTriangle(const std::array<Math::Vec3<float>, 3>& corners,
-                     const Math::Vec4<float>& color);
+      const Math::Vec4<float>& color);
     // Per-vertex colors.
     void addTriangle(const std::array<Math::Vec3<float>, 3>& corners,
-                     const std::array<Math::Vec4<float>, 3>& colors);
+      const std::array<Math::Vec4<float>, 3>& colors);
     void addLine(const Math::Vec3<float>& start,
-                 const Math::Vec3<float>& end,
-                 const Math::Vec4<float>& color);
+      const Math::Vec3<float>& end,
+      const Math::Vec4<float>& color);
 };
 
 }  // namespace vulkan_graphix::Render

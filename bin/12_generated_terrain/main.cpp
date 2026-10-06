@@ -9,7 +9,7 @@
 int main(int /*argc*/, char** /*argv*/) {
     vulkan_graphix::os::Window window;
     std::shared_ptr<vulkan_graphix::TutorialBase> tutorial =
-            std::make_shared<vulkan_graphix::Tutorial12>();
+      std::make_shared<vulkan_graphix::Tutorial12>();
 
     if (!window.create("12 - Generated Terrain")) {
         return EXIT_FAILURE;
@@ -20,7 +20,7 @@ int main(int /*argc*/, char** /*argv*/) {
     }
 
     std::shared_ptr<vulkan_graphix::Tutorial12> tutorial12 =
-            std::dynamic_pointer_cast<vulkan_graphix::Tutorial12>(tutorial);
+      std::dynamic_pointer_cast<vulkan_graphix::Tutorial12>(tutorial);
 
     if (!tutorial12->createRenderingResources()) {
         return EXIT_FAILURE;

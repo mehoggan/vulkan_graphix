@@ -88,10 +88,10 @@ struct Rect {
     // The same rectangle given with its origin at the bottom-left (OpenGL's
     // window convention), in a framebuffer framebuffer_height tall.
     static Rect fromBottomLeft(std::int32_t x,
-                               std::int32_t y,
-                               std::int32_t width,
-                               std::int32_t height,
-                               std::int32_t framebuffer_height);
+      std::int32_t y,
+      std::int32_t width,
+      std::int32_t height,
+      std::int32_t framebuffer_height);
 };
 
 class RenderContext {
@@ -108,8 +108,8 @@ public:
     const Rect& viewport() const;
 
     // Every subsequent draw's mvp is projection * view * model.
-    void setCamera(const Math::Mat4<float>& projection,
-                   const Math::Mat4<float>& view);
+    void setCamera(
+      const Math::Mat4<float>& projection, const Math::Mat4<float>& view);
     const Math::Mat4<float>& projection() const;
     const Math::Mat4<float>& view() const;
 
@@ -122,45 +122,44 @@ public:
     void clearColorAndDepth(const Math::Vec4<float>& color);
 
     // A UiMesh, through the Renderer's UI pipelines (setUiPipelines()).
-    void draw(UiMesh& mesh,
-              const Math::Mat4<float>& model = Math::Mat4<float>(1.0f));
+    void draw(
+      UiMesh& mesh, const Math::Mat4<float>& model = Math::Mat4<float>(1.0f));
     // Any RetainedMesh, its triangles and lines through the pipelines given.
     template <typename V>
     void draw(RetainedMesh<V>& mesh,
-              PipelineHandle triangle_pipeline,
-              PipelineHandle line_pipeline,
-              const Math::Mat4<float>& model = Math::Mat4<float>(1.0f)) {
+      PipelineHandle triangle_pipeline,
+      PipelineHandle line_pipeline,
+      const Math::Mat4<float>& model = Math::Mat4<float>(1.0f)) {
         drawRetained(mesh.upload(),
-                     mesh,
-                     static_cast<std::uint32_t>(mesh.triangles().size()),
-                     static_cast<std::uint32_t>(mesh.lines().size()),
-                     triangle_pipeline,
-                     line_pipeline,
-                     model);
+          mesh,
+          static_cast<std::uint32_t>(mesh.triangles().size()),
+          static_cast<std::uint32_t>(mesh.lines().size()),
+          triangle_pipeline,
+          line_pipeline,
+          model);
     }
     // One frame's geometry, through the transient ring.
     template <typename V>
-    void drawTransient(
-            const std::vector<V>& vertices,
-            PipelineHandle pipeline,
-            const Texture* texture,
-            const Math::Mat4<float>& model = Math::Mat4<float>(1.0f),
-            const Math::Vec4<float>& params = Math::Vec4<float>(0.0f),
-            float line_width = 1.0f) {
+    void drawTransient(const std::vector<V>& vertices,
+      PipelineHandle pipeline,
+      const Texture* texture,
+      const Math::Mat4<float>& model = Math::Mat4<float>(1.0f),
+      const Math::Vec4<float>& params = Math::Vec4<float>(0.0f),
+      float line_width = 1.0f) {
         drawTransientBytes(vertices.data(),
-                           vertices.size() * sizeof(V),
-                           static_cast<std::uint32_t>(vertices.size()),
-                           pipeline,
-                           texture,
-                           model,
-                           params,
-                           line_width);
+          vertices.size() * sizeof(V),
+          static_cast<std::uint32_t>(vertices.size()),
+          pipeline,
+          texture,
+          model,
+          params,
+          line_width);
     }
     void drawMesh(const Mesh& mesh,
-                  PipelineHandle pipeline,
-                  const Texture* texture,
-                  const Math::Mat4<float>& model,
-                  const Math::Vec4<float>& params);
+      PipelineHandle pipeline,
+      const Texture* texture,
+      const Math::Mat4<float>& model,
+      const Math::Vec4<float>& params);
     // Text at a raster position, the way OpenGL's glRasterPos() +
     // glutBitmapCharacter() placed it: raster_position (under model) is
     // projected to the window; the text's baseline starts at that pixel,
@@ -168,35 +167,35 @@ public:
     // if the position falls outside the view volume. Uses the Renderer's
     // text pipeline (setTextPipeline()).
     void drawText(const Font& font,
-                  const Math::Vec3<float>& raster_position,
-                  std::string_view text,
-                  const Math::Vec4<float>& color,
-                  const Math::Mat4<float>& model = Math::Mat4<float>(1.0f));
+      const Math::Vec3<float>& raster_position,
+      std::string_view text,
+      const Math::Vec4<float>& color,
+      const Math::Mat4<float>& model = Math::Mat4<float>(1.0f));
 
 private:
     friend class Renderer;
     void begin(VkCommandBuffer command_buffer, VkExtent2D extent);
     void bindPipeline(PipelineHandle pipeline);
     void bindTexture(const Texture* texture);
-    void pushConstants(const Math::Mat4<float>& model,
-                       const Math::Vec4<float>& params);
+    void pushConstants(
+      const Math::Mat4<float>& model, const Math::Vec4<float>& params);
     void applyViewport(const Rect& rect);
     VkRect2D toVkRect(const Rect& rect) const;
     void drawRetained(const HostBuffer& buffer,
-                      const RetainedMeshBase& mesh,
-                      std::uint32_t triangle_count,
-                      std::uint32_t line_count,
-                      PipelineHandle triangle_pipeline,
-                      PipelineHandle line_pipeline,
-                      const Math::Mat4<float>& model);
+      const RetainedMeshBase& mesh,
+      std::uint32_t triangle_count,
+      std::uint32_t line_count,
+      PipelineHandle triangle_pipeline,
+      PipelineHandle line_pipeline,
+      const Math::Mat4<float>& model);
     void drawTransientBytes(const void* data,
-                            std::size_t byte_count,
-                            std::uint32_t vertex_count,
-                            PipelineHandle pipeline,
-                            const Texture* texture,
-                            const Math::Mat4<float>& model,
-                            const Math::Vec4<float>& params,
-                            float line_width);
+      std::size_t byte_count,
+      std::uint32_t vertex_count,
+      PipelineHandle pipeline,
+      const Texture* texture,
+      const Math::Mat4<float>& model,
+      const Math::Vec4<float>& params,
+      float line_width);
 
     Renderer& m_renderer;
     VkCommandBuffer m_command_buffer = VK_NULL_HANDLE;
@@ -238,7 +237,7 @@ public:
 
     // Both depth variants of description; nullopt if either fails.
     std::optional<PipelineHandle> createPipeline(
-            const PipelineDescription& description);
+      const PipelineDescription& description);
     // The pipelines draw(UiMesh&) uses.
     void setUiPipelines(PipelineHandle triangles, PipelineHandle lines);
     // The pipeline drawText() uses: UiVertex, sampling the glyph atlas's
@@ -262,38 +261,36 @@ public:
     // RGBA8 pixels, width * height * 4 bytes. CLAMP_TO_BORDER samples an
     // opaque black border (OpenGL's GL_CLAMP on an RGB texture).
     std::shared_ptr<Texture> createTexture(const std::vector<char>& pixels,
-                                           std::uint32_t width,
-                                           std::uint32_t height,
-                                           VkSamplerAddressMode address_mode);
+      std::uint32_t width,
+      std::uint32_t height,
+      VkSamplerAddressMode address_mode);
     // Headerless RGB .raw images (Tools::getRawImageData()), loaded once
     // per (filename, address mode) and shared.
     std::shared_ptr<Texture> loadRawTexture(const std::string& filename,
-                                            std::uint32_t width,
-                                            std::uint32_t height,
-                                            VkSamplerAddressMode address_mode);
+      std::uint32_t width,
+      std::uint32_t height,
+      VkSamplerAddressMode address_mode);
     // .jpg/.png images (Tools::getImageData()), shared the same way.
     std::shared_ptr<Texture> loadImageTexture(
-            const std::string& filename, VkSamplerAddressMode address_mode);
+      const std::string& filename, VkSamplerAddressMode address_mode);
     const Texture& whiteTexture() const;
     // A TrueType font baked at pixel_height, its atlas uploaded.
-    std::unique_ptr<Font> loadFont(const std::string& font_path,
-                                   float pixel_height);
+    std::unique_ptr<Font> loadFont(
+      const std::string& font_path, float pixel_height);
 
     template <typename V>
     std::unique_ptr<Mesh> createMesh(const std::vector<V>& vertices) {
-        return createMeshFromBytes(
-                vertices.data(),
-                vertices.size() * sizeof(V),
-                static_cast<std::uint32_t>(vertices.size()));
+        return createMeshFromBytes(vertices.data(),
+          vertices.size() * sizeof(V),
+          static_cast<std::uint32_t>(vertices.size()));
     }
     template <typename... Ts>
     std::unique_ptr<Mesh> createMesh(
-            const VertexTypes::InterleavedData<Ts...>& data) {
+      const VertexTypes::InterleavedData<Ts...>& data) {
         const std::vector<std::byte> bytes = packInterleaved(data);
-        return createMeshFromBytes(
-                bytes.data(),
-                bytes.size(),
-                static_cast<std::uint32_t>(data.getAttributeCount()));
+        return createMeshFromBytes(bytes.data(),
+          bytes.size(),
+          static_cast<std::uint32_t>(data.getAttributeCount()));
     }
     // A unit sphere of MeshVertex in GLUT's glutSolidSphere(1, slices,
     // stacks) tessellation and triangle order (top fan, stacks top to
@@ -342,8 +339,8 @@ private:
     bool createSwapchainResources();
     void destroySwapchainResources();
     bool createPipelineVariant(const PipelineDescription& description,
-                               bool depth_test,
-                               VkPipeline* out);
+      bool depth_test,
+      VkPipeline* out);
     bool createDescriptorResources();
     bool createFrameSlots();
     void runReleases(FrameSlot& slot);
@@ -353,15 +350,14 @@ private:
     // Copies size bytes into the current frame's transient ring; false when
     // the ring is full.
     bool allocateTransient(const void* data,
-                           VkDeviceSize size,
-                           VkBuffer* buffer,
-                           VkDeviceSize* offset);
+      VkDeviceSize size,
+      VkBuffer* buffer,
+      VkDeviceSize* offset);
     bool writeCapture();
-    VkDescriptorSet allocateTextureDescriptor(VkImageView view,
-                                              VkSampler sampler);
-    std::unique_ptr<Mesh> createMeshFromBytes(const void* data,
-                                              std::size_t byte_count,
-                                              std::uint32_t vertex_count);
+    VkDescriptorSet allocateTextureDescriptor(
+      VkImageView view, VkSampler sampler);
+    std::unique_ptr<Mesh> createMeshFromBytes(
+      const void* data, std::size_t byte_count, std::uint32_t vertex_count);
 
     static Renderer* s_instance;
 
@@ -389,7 +385,7 @@ private:
     std::shared_ptr<Texture> m_white_texture;
     std::map<std::string, std::weak_ptr<Texture>> m_texture_cache;
     std::map<std::pair<std::uint32_t, std::uint32_t>, std::unique_ptr<Mesh>>
-            m_spheres;
+      m_spheres;
     RenderContext m_context;
     std::string m_capture_path;
     HostBuffer m_capture_buffer;

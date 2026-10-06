@@ -22,16 +22,15 @@ PlayerFactory::PlayerFactory(GlobalSettings* new_game_global_settings) {
     }
     for (std::int32_t p = 0; p < m_number_of_players; p++) {
         if (!(m_player_set[p])) {
-            m_player_set[p] = new PlayerCPU(
-                    m_player_color[p][0],
-                    m_player_color[p][1],
-                    m_player_color[p][2],
-                    "Rhinoxx",
-                    "Shooter",
-                    "",
-                    '-',
-                    "CPU",
-                    atoi(m_game_global_settings->getCashAtStart().c_str()));
+            m_player_set[p] = new PlayerCPU(m_player_color[p][0],
+              m_player_color[p][1],
+              m_player_color[p][2],
+              "Rhinoxx",
+              "Shooter",
+              "",
+              '-',
+              "CPU",
+              atoi(m_game_global_settings->getCashAtStart().c_str()));
         }
     }
     // Set Players' Colors
@@ -85,49 +84,61 @@ std::int32_t PlayerFactory::getNumberofPlayers() {
 
 void PlayerFactory::initializePlayerDataBase() {
     std::int32_t change_in_number_of_players =
-            m_number_of_players - m_prev_number_of_players;
+      m_number_of_players - m_prev_number_of_players;
     if (!change_in_number_of_players) { /* No Need To Initialize Or Remove
                                            Players	*/
         m_prev_number_of_players = m_number_of_players;
     } else if (change_in_number_of_players <
-               0) { /* Number of Players Decreased Remove Players	*/
+      0) { /* Number of Players Decreased Remove Players	*/
         for (std::int32_t p = m_prev_number_of_players - 1;
-             p > (m_prev_number_of_players + change_in_number_of_players) - 1;
-             p--) {
+          p > (m_prev_number_of_players + change_in_number_of_players) - 1;
+          p--) {
             delete m_player_set[p];
             m_player_set[p] = nullptr;
         }
         m_prev_number_of_players = m_number_of_players;
     } else if (change_in_number_of_players >
-               0) { /* Number of Players Increased	Add Players*/
+      0) { /* Number of Players Increased	Add Players*/
         for (std::int32_t p = m_prev_number_of_players;
-             p < (m_number_of_players);
-             p++) {
-            m_player_set[p] = new PlayerCPU(
-                    m_player_color[p][0],
-                    m_player_color[p][1],
-                    m_player_color[p][2],
-                    "Rhinoxx",
-                    "Shooter",
-                    "",
-                    '-',
-                    "CPU",
-                    atoi(m_game_global_settings->getCashAtStart().c_str()));
+          p < (m_number_of_players);
+          p++) {
+            m_player_set[p] = new PlayerCPU(m_player_color[p][0],
+              m_player_color[p][1],
+              m_player_color[p][2],
+              "Rhinoxx",
+              "Shooter",
+              "",
+              '-',
+              "CPU",
+              atoi(m_game_global_settings->getCashAtStart().c_str()));
         }
         m_prev_number_of_players = m_number_of_players;
     }
 }
 
 void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
-                                             const std::string& ai_type,
-                                             const std::string& name,
-                                             char team_label,
-                                             const std::string& tank_type,
-                                             std::int32_t player_number) {
+  const std::string& ai_type,
+  const std::string& name,
+  char team_label,
+  const std::string& tank_type,
+  std::int32_t player_number) {
     if (player_type == "CPU") {
         delete m_player_set[player_number];
-        m_player_set[player_number] = new PlayerCPU(
-                m_player_color[player_number][0],
+        m_player_set[player_number] =
+          new PlayerCPU(m_player_color[player_number][0],
+            m_player_color[player_number][1],
+            m_player_color[player_number][2],
+            tank_type,
+            ai_type,
+            name,
+            team_label,
+            player_type,
+            atoi(m_game_global_settings->getCashAtStart().c_str()));
+    } else if (player_type == "HUMAN") {
+        if (m_player_set[player_number]->getPlayerType() == "CPU") {
+            delete m_player_set[player_number];
+            m_player_set[player_number] =
+              new PlayerHuman(m_player_color[player_number][0],
                 m_player_color[player_number][1],
                 m_player_color[player_number][2],
                 tank_type,
@@ -136,19 +147,6 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
                 team_label,
                 player_type,
                 atoi(m_game_global_settings->getCashAtStart().c_str()));
-    } else if (player_type == "HUMAN") {
-        if (m_player_set[player_number]->getPlayerType() == "CPU") {
-            delete m_player_set[player_number];
-            m_player_set[player_number] = new PlayerHuman(
-                    m_player_color[player_number][0],
-                    m_player_color[player_number][1],
-                    m_player_color[player_number][2],
-                    tank_type,
-                    ai_type,
-                    name,
-                    team_label,
-                    player_type,
-                    atoi(m_game_global_settings->getCashAtStart().c_str()));
         } else {
             m_player_set[player_number]->setPlayerType(player_type);
             m_player_set[player_number]->setPlayerName(name);
@@ -159,7 +157,7 @@ void PlayerFactory::updatePlayerBasicStrings(const std::string& player_type,
 
     if (m_player_set[player_number]->getCurrentTank() != nullptr) {
         m_player_set[player_number]->getCurrentTank()->changeHeadTexture(
-                player_number);
+          player_number);
     }
 }
 float* PlayerFactory::collectPlayerColor(std::int32_t i) {

@@ -14,14 +14,14 @@ class ImageObject {
 public:
     ImageObject();
     ImageObject(float new_x_pos,
-                float new_y_pos,
-                float new_z_pos,
-                std::int32_t new_width,
-                std::int32_t new_height,
-                float border,
-                std::int32_t i_width,
-                std::int32_t i_height,
-                const std::string& filename);
+      float new_y_pos,
+      float new_z_pos,
+      std::int32_t new_width,
+      std::int32_t new_height,
+      float border,
+      std::int32_t i_width,
+      std::int32_t i_height,
+      const std::string& filename);
     ~ImageObject();
     float getXpos();
     float getYpos();

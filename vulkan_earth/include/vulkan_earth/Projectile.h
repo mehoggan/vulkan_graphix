@@ -27,9 +27,9 @@ public:
 
     Projectile();
     Projectile(GameState* new_parent,
-               float* turret_matrix,
-               float new_speed,
-               VBOShaderLibrary** new_projectile_models);
+      float* turret_matrix,
+      float new_speed,
+      VBOShaderLibrary** new_projectile_models);
     ~Projectile();
     void draw(vulkan_graphix::Render::RenderContext& context);
     // void update(float gravity);

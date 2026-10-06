@@ -6,7 +6,7 @@ WeaponPadlock::WeaponPadlock() = default;
 WeaponPadlock::WeaponPadlock(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::weapon(
-            vulkan_graphix::GameCatalog::WeaponKind::Padlock));
+      vulkan_graphix::GameCatalog::WeaponKind::Padlock));
 }
 WeaponPadlock::~WeaponPadlock() = default;
 

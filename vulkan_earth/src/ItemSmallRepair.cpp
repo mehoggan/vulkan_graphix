@@ -9,7 +9,7 @@ ItemSmallRepair::ItemSmallRepair() = default;
 ItemSmallRepair::ItemSmallRepair(std::int32_t id) {
     m_uniqueidentifier = id;
     loadSpec(vulkan_graphix::GameCatalog::item(
-            vulkan_graphix::GameCatalog::ItemKind::SmallRepair));
+      vulkan_graphix::GameCatalog::ItemKind::SmallRepair));
 }
 ItemSmallRepair::~ItemSmallRepair() = default;
 

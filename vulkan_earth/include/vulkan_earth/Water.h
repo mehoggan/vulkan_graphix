@@ -21,35 +21,35 @@ public:
     void draw(vulkan_graphix::Render::RenderContext& context);
     void initData();
     void prepareData(std::int32_t steps,
-                     std::int32_t increase,
-                     float radius,
-                     std::int32_t random_jump);
+      std::int32_t increase,
+      float radius,
+      std::int32_t random_jump);
     void calcAverageofSixNormals(vulkan_graphix::Math::Vec3<float>* v_0,
-                                 float x1,
-                                 float y1,
-                                 float z1,
-                                 float x2,
-                                 float y2,
-                                 float z2,
-                                 float x3,
-                                 float y3,
-                                 float z3,
-                                 float x4,
-                                 float y4,
-                                 float z4,
-                                 float x5,
-                                 float y5,
-                                 float z5,
-                                 float x6,
-                                 float y6,
-                                 float z6,
-                                 vulkan_graphix::Math::Vec3<float>* n);
+      float x1,
+      float y1,
+      float z1,
+      float x2,
+      float y2,
+      float z2,
+      float x3,
+      float y3,
+      float z3,
+      float x4,
+      float y4,
+      float z4,
+      float x5,
+      float y5,
+      float z5,
+      float x6,
+      float y6,
+      float z6,
+      vulkan_graphix::Math::Vec3<float>* n);
     void prepTerrain();
     void prepareData();
     void terrainGen(std::int32_t steps,
-                    std::int32_t increase,
-                    float radius,
-                    std::int32_t random_jump);
+      std::int32_t increase,
+      float radius,
+      std::int32_t random_jump);
     std::int32_t getActualSize();
     std::int32_t getScale();
     void stdMessageBox(const std::string& output);

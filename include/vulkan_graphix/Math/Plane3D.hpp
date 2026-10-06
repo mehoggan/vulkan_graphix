@@ -16,10 +16,8 @@ public:
     Plane3D() :
             m_coefficients(T(0), T(0), T(0), T(0)) {}
 
-    Plane3D(const T& coeff_a,
-            const T& coeff_b,
-            const T& coeff_c,
-            const T& coeff_d) :
+    Plane3D(
+      const T& coeff_a, const T& coeff_b, const T& coeff_c, const T& coeff_d) :
             m_coefficients(coeff_a, coeff_b, coeff_c, coeff_d) {}
 
     // Not explicit so a coefficient vector can convert implicitly.

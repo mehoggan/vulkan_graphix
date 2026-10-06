@@ -27,7 +27,7 @@ TerrainMaker::TerrainMaker(std::int32_t i_scale, std::int32_t i_size) :
     // bumpMap.raw as a normal map, which its terrain shader sampled but
     // never used.)
     m_color_texture = render::Renderer::instance().loadRawTexture(
-            "Rocky.raw", 2048, 2048, VK_SAMPLER_ADDRESS_MODE_REPEAT);
+      "Rocky.raw", 2048, 2048, VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
     m_rotation_angle = 0.0;
     m_wireframe_active = false;
@@ -57,17 +57,16 @@ void TerrainMaker::selectTexture(const std::string& tex) {
         filename = "LavaRock.raw";
     if (filename != nullptr) {
         m_color_texture = render::Renderer::instance().loadRawTexture(
-                filename, 2048, 2048, VK_SAMPLER_ADDRESS_MODE_REPEAT);
+          filename, 2048, 2048, VK_SAMPLER_ADDRESS_MODE_REPEAT);
     }
 }
 
 void TerrainMaker::rebuildMesh() {
     std::vector<render::MeshVertex> mesh_vertices(m_vertices.size());
     for (std::size_t i = 0; i < m_vertices.size(); ++i) {
-        mesh_vertices[i] = {
-                m_vertices[i],
-                m_normals[i],
-                math::Vec2<float>(m_tex_coord[i].s, m_tex_coord[i].t)};
+        mesh_vertices[i] = {m_vertices[i],
+          m_normals[i],
+          math::Vec2<float>(m_tex_coord[i].s, m_tex_coord[i].t)};
     }
     m_mesh = render::Renderer::instance().createMesh(mesh_vertices);
 
@@ -79,16 +78,14 @@ void TerrainMaker::rebuildMesh() {
     for (std::int32_t i = 0; i < 255; i += 4) {
         for (std::int32_t j = 0; j < 255; j += 4) {
             const vulkan_graphix::Math::Vec3<float> normal =
-                    getNormalAt(i * draw_scale, j * draw_scale);
+              getNormalAt(i * draw_scale, j * draw_scale);
             m_normal_lines.addLine(
-                    math::Vec3<float>(i * draw_scale,
-                                      m_terrain.heightAt(i, j),
-                                      j * draw_scale),
-                    math::Vec3<float>(
-                            i * draw_scale + 500 * normal.x,
-                            m_terrain.heightAt(i, j) + 500 * normal.y,
-                            j * draw_scale + 500 * normal.z),
-                    white);
+              math::Vec3<float>(
+                i * draw_scale, m_terrain.heightAt(i, j), j * draw_scale),
+              math::Vec3<float>(i * draw_scale + 500 * normal.x,
+                m_terrain.heightAt(i, j) + 500 * normal.y,
+                j * draw_scale + 500 * normal.z),
+              white);
         }
     }
     m_mesh_dirty = false;
@@ -105,17 +102,17 @@ void TerrainMaker::draw(render::RenderContext& context) {
         // Untextured, unlit, line-mode triangles in translucent black, then
         // the debug normals.
         context.drawMesh(*m_mesh,
-                         vulkan_earth::pipelines().m_flat_color_wireframe,
-                         nullptr,
-                         math::Mat4<float>(1.0f),
-                         math::Vec4<float>(0, 0, 0, .75));
+          vulkan_earth::pipelines().m_flat_color_wireframe,
+          nullptr,
+          math::Mat4<float>(1.0f),
+          math::Vec4<float>(0, 0, 0, .75));
         context.draw(m_normal_lines);
     } else {
         context.drawMesh(*m_mesh,
-                         vulkan_earth::pipelines().m_terrain,
-                         m_color_texture.get(),
-                         math::Mat4<float>(1.0f),
-                         math::Vec4<float>(1.0f));
+          vulkan_earth::pipelines().m_terrain,
+          m_color_texture.get(),
+          math::Mat4<float>(1.0f),
+          math::Vec4<float>(1.0f));
     }
 }
 
@@ -126,10 +123,10 @@ void TerrainMaker::initData() {
 }
 
 void TerrainMaker::prepareData(std::int32_t new_steps,
-                               std::int32_t new_increase,
-                               float new_radius,
-                               std::int32_t new_random_jump,
-                               std::int32_t smoothness) {
+  std::int32_t new_increase,
+  float new_radius,
+  std::int32_t new_random_jump,
+  std::int32_t smoothness) {
     std::int32_t chunk_size = m_size / 2;
     m_steps = new_steps;
     m_increase = new_increase;
@@ -139,7 +136,7 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
     std::int32_t prep_size = m_size;
     std::int32_t prep_scale = m_scale;
     m_terrain.generate(
-            new_steps, new_increase, new_radius, new_random_jump, smoothness);
+      new_steps, new_increase, new_radius, new_random_jump, smoothness);
 
     //
     // 				v_k
@@ -159,16 +156,15 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_I -- N_I												*/
             /************************************************************/
-            vulkan_graphix::Math::Vec3<float> v_i(
-                    j * prep_scale,
-                    m_terrain.heightAt(j, i) /*SCALE*/,
-                    i * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_i(j * prep_scale,
+              m_terrain.heightAt(j, i) /*SCALE*/,
+              i * prep_scale);
             m_vertices[index++] = v_i;
             vulkan_graphix::Math::Vec2<float> t_i(
-                    (static_cast<float>(i % (chunk_size - 1))) /
-                            static_cast<float>(chunk_size - 1),
-                    (static_cast<float>(j % (chunk_size - 1))) /
-                            static_cast<float>(chunk_size - 1));
+              (static_cast<float>(i % (chunk_size - 1))) /
+                static_cast<float>(chunk_size - 1),
+              (static_cast<float>(j % (chunk_size - 1))) /
+                static_cast<float>(chunk_size - 1));
             m_tex_coord[index_texture++] = t_i;
             vulkan_graphix::Math::Vec3<float> n_i(0, 0, 0);
             if (i == 0 && j == 0) {
@@ -182,16 +178,15 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_J -- N_J												*/
             /************************************************************/
-            vulkan_graphix::Math::Vec3<float> v_j(
-                    j * prep_scale,
-                    m_terrain.heightAt(j, i + 1) /*SCALE*/,
-                    (i + 1) * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_j(j * prep_scale,
+              m_terrain.heightAt(j, i + 1) /*SCALE*/,
+              (i + 1) * prep_scale);
             m_vertices[index++] = v_j;
             vulkan_graphix::Math::Vec2<float> t_j(
-                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
-                            static_cast<float>(chunk_size - 1),
-                    (static_cast<float>(j % (chunk_size - 1))) /
-                            static_cast<float>(chunk_size - 1));
+              (static_cast<float>(i % (chunk_size - 1)) + 1) /
+                static_cast<float>(chunk_size - 1),
+              (static_cast<float>(j % (chunk_size - 1))) /
+                static_cast<float>(chunk_size - 1));
             m_tex_coord[index_texture++] = t_j;
             vulkan_graphix::Math::Vec3<float> n_j(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
@@ -205,16 +200,15 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_K -- N_K												*/
             /************************************************************/
-            vulkan_graphix::Math::Vec3<float> v_k(
-                    (j + 1) * prep_scale,
-                    m_terrain.heightAt(j + 1, i) /*SCALE*/,
-                    (i)*prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_k((j + 1) * prep_scale,
+              m_terrain.heightAt(j + 1, i) /*SCALE*/,
+              (i)*prep_scale);
             m_vertices[index++] = v_k;
             vulkan_graphix::Math::Vec2<float> t_k(
-                    (static_cast<float>(i % (chunk_size - 1))) /
-                            static_cast<float>(chunk_size - 1),
-                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                            static_cast<float>(chunk_size - 1));
+              (static_cast<float>(i % (chunk_size - 1))) /
+                static_cast<float>(chunk_size - 1),
+              (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                static_cast<float>(chunk_size - 1));
             m_tex_coord[index_texture++] = t_k;
             vulkan_graphix::Math::Vec3<float> n_k(0, 0, 0);
             if (i == 0 && j == prep_size - 2) {
@@ -228,16 +222,15 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_X -- N_X	(SAME AS V_J/N_J)							*/
             /************************************************************/
-            vulkan_graphix::Math::Vec3<float> v_x(
-                    j * prep_scale,
-                    m_terrain.heightAt(j, i + 1) /*SCALE*/,
-                    (i + 1) * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_x(j * prep_scale,
+              m_terrain.heightAt(j, i + 1) /*SCALE*/,
+              (i + 1) * prep_scale);
             m_vertices[index++] = v_x;
             vulkan_graphix::Math::Vec2<float> t_x(
-                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
-                            static_cast<float>(chunk_size - 1),
-                    (static_cast<float>(j % (chunk_size - 1))) /
-                            static_cast<float>(chunk_size - 1));
+              (static_cast<float>(i % (chunk_size - 1)) + 1) /
+                static_cast<float>(chunk_size - 1),
+              (static_cast<float>(j % (chunk_size - 1))) /
+                static_cast<float>(chunk_size - 1));
             m_tex_coord[index_texture++] = t_x;
             vulkan_graphix::Math::Vec3<float> n_x(0, 0, 0);
             if (i == prep_size - 2 && j == 0) {
@@ -251,16 +244,15 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_Y -- N_Y												*/
             /************************************************************/
-            vulkan_graphix::Math::Vec3<float> v_y(
-                    (j + 1) * prep_scale,
-                    m_terrain.heightAt(j + 1, i + 1) /*SCALE*/,
-                    (i + 1) * prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_y((j + 1) * prep_scale,
+              m_terrain.heightAt(j + 1, i + 1) /*SCALE*/,
+              (i + 1) * prep_scale);
             m_vertices[index++] = v_y;
             vulkan_graphix::Math::Vec2<float> t_y(
-                    (static_cast<float>(i % (chunk_size - 1)) + 1) /
-                            static_cast<float>(chunk_size - 1),
-                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                            static_cast<float>(chunk_size - 1));
+              (static_cast<float>(i % (chunk_size - 1)) + 1) /
+                static_cast<float>(chunk_size - 1),
+              (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                static_cast<float>(chunk_size - 1));
             m_tex_coord[index_texture++] = t_y;
             vulkan_graphix::Math::Vec3<float> n_y(0, 0, 0);
             if (i == prep_size - 2 && j == prep_size - 2) {
@@ -274,16 +266,15 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
             /************************************************************/
             /*	V_Z -- N_Z												*/
             /************************************************************/
-            vulkan_graphix::Math::Vec3<float> v_z(
-                    (j + 1) * prep_scale,
-                    m_terrain.heightAt(j + 1, i) /*SCALE*/,
-                    (i)*prep_scale);
+            vulkan_graphix::Math::Vec3<float> v_z((j + 1) * prep_scale,
+              m_terrain.heightAt(j + 1, i) /*SCALE*/,
+              (i)*prep_scale);
             m_vertices[index++] = v_z;
             vulkan_graphix::Math::Vec2<float> t_z(
-                    (static_cast<float>(i % (chunk_size - 1))) /
-                            static_cast<float>(chunk_size - 1),
-                    (static_cast<float>(j % (chunk_size - 1)) + 1) /
-                            static_cast<float>(chunk_size - 1));
+              (static_cast<float>(i % (chunk_size - 1))) /
+                static_cast<float>(chunk_size - 1),
+              (static_cast<float>(j % (chunk_size - 1)) + 1) /
+                static_cast<float>(chunk_size - 1));
             m_tex_coord[index_texture++] = t_z;
             vulkan_graphix::Math::Vec3<float> n_z(0, 0, 0);
             if (i == 0 && j == prep_size - 2) {
@@ -303,10 +294,10 @@ void TerrainMaker::toggleWireframe() {
     m_wireframe_active = !m_wireframe_active;
 }
 
-vulkan_graphix::Math::Vec3<float> TerrainMaker::getTriangleNormal(float x,
-                                                                  float z) {
-    return m_terrain.triangleNormalAt(static_cast<std::int32_t>(x),
-                                      static_cast<std::int32_t>(z));
+vulkan_graphix::Math::Vec3<float> TerrainMaker::getTriangleNormal(
+  float x, float z) {
+    return m_terrain.triangleNormalAt(
+      static_cast<std::int32_t>(x), static_cast<std::int32_t>(z));
 }
 
 vulkan_graphix::Math::Vec3<float> TerrainMaker::getNormalAt(float x, float z) {
@@ -326,18 +317,17 @@ float TerrainMaker::getHeightAt(float x, float z) {
 // outside the (size - 1) x (size - 1) cell grid is skipped rather than
 // written past the end of the buffer. The patched arrays are re-uploaded
 // as a whole on the next draw().
-void TerrainMaker::makeCrater(float impact_x,
-                              float impact_z,
-                              float blast_size) {
+void TerrainMaker::makeCrater(
+  float impact_x, float impact_z, float blast_size) {
     const std::vector<vulkan_graphix::TerrainGridCell> cells =
-            m_terrain.makeCrater(impact_x, impact_z, blast_size);
+      m_terrain.makeCrater(impact_x, impact_z, blast_size);
 
     const std::int32_t cells_per_row = m_size - 1;
     auto slot = [&](std::int32_t row,
-                    std::int32_t col,
-                    std::int32_t corner) -> std::int32_t {
+                  std::int32_t col,
+                  std::int32_t corner) -> std::int32_t {
         if (row < 0 || col < 0 || row >= cells_per_row ||
-            col >= cells_per_row) {
+          col >= cells_per_row) {
             return -1;
         }
         return (row * cells_per_row + col) * 6 + corner;
@@ -361,7 +351,7 @@ void TerrainMaker::makeCrater(float impact_x,
 
     for (const vulkan_graphix::TerrainGridCell& cell : cells) {
         const float height =
-                static_cast<float>(m_terrain.heightAt(cell.m_x, cell.m_z));
+          static_cast<float>(m_terrain.heightAt(cell.m_x, cell.m_z));
         for (std::int32_t index : slots_for(cell.m_x, cell.m_z)) {
             if (index >= 0) {
                 m_vertices[index].y = height;
@@ -371,7 +361,7 @@ void TerrainMaker::makeCrater(float impact_x,
 
     for (const vulkan_graphix::TerrainGridCell& cell : cells) {
         const vulkan_graphix::Math::Vec3<float> normal =
-                m_terrain.normalAt(cell.m_x, cell.m_z);
+          m_terrain.normalAt(cell.m_x, cell.m_z);
         for (std::int32_t index : slots_for(cell.m_x, cell.m_z)) {
             if (index >= 0) {
                 m_normals[index] = normal;

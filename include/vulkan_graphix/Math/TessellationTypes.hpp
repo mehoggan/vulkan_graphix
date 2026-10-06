@@ -15,7 +15,7 @@ template <typename T, typename I>
 class TessellatedTriangleData {
 public:
     explicit TessellatedTriangleData(
-            GeneratorMode mode = GeneratorMode::Fill) :
+      GeneratorMode mode = GeneratorMode::Fill) :
             m_mode(mode) {}
 
     std::vector<Vec3<T>>& points() { return m_points; }
@@ -33,8 +33,8 @@ private:
 };
 
 template <typename T, typename I>
-inline std::ostream& operator<<(std::ostream& out,
-                                const TessellatedTriangleData<T, I>& data) {
+inline std::ostream& operator<<(
+  std::ostream& out, const TessellatedTriangleData<T, I>& data) {
     out << "points = ";
     for (const auto& point : data.points()) {
         out << "(" << point.x << ", " << point.y << ", " << point.z << ") ";

@@ -22,7 +22,7 @@ TankB::TankB(float /*x*/, float /*y*/, float /*z*/) {
     // The Hellfire's part offsets and scale live in libvulkan_graphix's
     // HellfireTank, shared with the tutorials that draw it.
     const vulkan_graphix::TankPlacement::PartOffsets& offsets =
-            vulkan_graphix::HellfireTank::getPartOffsets();
+      vulkan_graphix::HellfireTank::getPartOffsets();
     for (std::int32_t i = 0; i < 3; i++) {
         m_turret_offset[i] = offsets.m_turret[i];
         m_head_offset[i] = offsets.m_head[i];
