@@ -364,16 +364,6 @@ private:
   Math::Vec2<float> getPanelTopLeft(std::size_t player_index) const;
   Math::Vec2<float> getPanelSize() const;
 
-  void appendGlyphQuad(std::vector<Tutorial18VertexHudData>& vertex_data,
-      const BitmapFontGlyphQuad& glyph,
-      Math::Vec4<float> color) const;
-  void appendColoredQuad(std::vector<Tutorial18VertexHudData>& vertex_data,
-      const std::array<Math::Vec2<float>, 4>& corners,
-      Math::Vec4<float> color) const;
-  void appendText(std::vector<Tutorial18VertexHudData>& vertex_data,
-      const std::string& text,
-      Math::Vec2<float> origin,
-      Math::Vec4<float> color) const;
   // Outline + ratio-filled bar, colored via get_bar_color(ratio) - the
   // real GameState::drawHUD() color-ramp formula, passed in so health
   // and power bars (which invert the ramp) can share this one helper.

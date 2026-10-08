@@ -885,28 +885,6 @@ std::string Tutorial15::getButtonLabel() const {
   return "Clicked: " + std::to_string(m_click_count);
 }
 
-void Tutorial15::appendGlyphQuad(
-    std::vector<Tutorial15VertexData>& vertex_data,
-    const BitmapFontGlyphQuad& glyph,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendGlyphQuad(vertex_data, glyph, color);
-}
-
-void Tutorial15::appendColoredQuad(
-    std::vector<Tutorial15VertexData>& vertex_data,
-    const std::array<Math::Vec2<float>, 4>& corners,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendColoredQuad(
-      vertex_data, corners, color, m_font.solidTexelUv());
-}
-
-void Tutorial15::appendText(std::vector<Tutorial15VertexData>& vertex_data,
-    const std::string& text,
-    Math::Vec2<float> origin,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendText(vertex_data, m_font, text, origin, color);
-}
-
 std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
   std::vector<Tutorial15VertexData> vertex_data;
   vertex_data.reserve(c_max_vertex_count);
@@ -919,7 +897,7 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
   const float title_width = m_font.textWidth(title);
   const Math::Vec2<float> title_origin(
       width * 0.5f - title_width * 0.5f, 140.0f);
-  appendText(vertex_data, title, title_origin, text_color);
+  UiGeometry::appendText(vertex_data, m_font, title, title_origin, text_color);
 
   const Math::Vec2<float> button_top_left = getButtonTopLeft();
   const Math::Vec2<float> button_size = getButtonSize();
@@ -928,7 +906,8 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
       UiGeometry::buildButtonBevel(
           button_top_left, button_size, button_color, m_button_pressed);
   for (const UiGeometry::ColoredQuad& quad : bevel) {
-    appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
+    UiGeometry::appendColoredQuad(
+        vertex_data, quad.m_corners, quad.m_color, m_font.solidTexelUv());
   }
 
   const std::string label = getButtonLabel();
@@ -936,7 +915,7 @@ std::vector<Tutorial15VertexData> Tutorial15::buildUiVertexData() const {
   const Math::Vec2<float> label_origin(
       button_top_left.x + button_size.x * 0.5f - label_width * 0.5f,
       button_top_left.y + button_size.y * 0.5f + c_font_pixel_height * 0.3f);
-  appendText(vertex_data, label, label_origin, text_color);
+  UiGeometry::appendText(vertex_data, m_font, label, label_origin, text_color);
 
   return vertex_data;
 }

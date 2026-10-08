@@ -80,4 +80,31 @@ std::vector<ColoredQuad> buildButtonBevel(Math::Vec2<float> top_left,
       bevel_size);
 }
 
+Math::Vec2<float> GridLayout::cellSize() const {
+  const float cell_width =
+      (m_size.x - static_cast<float>(m_columns - 1) * m_gap) /
+      static_cast<float>(m_columns);
+  const float cell_height =
+      (m_size.y - static_cast<float>(m_rows - 1) * m_gap) /
+      static_cast<float>(m_rows);
+  return Math::Vec2<float>(cell_width, cell_height);
+}
+
+Math::Vec2<float> GridLayout::cellTopLeft(std::size_t index) const {
+  const Math::Vec2<float> cell_size = cellSize();
+  const std::uint32_t column = static_cast<std::uint32_t>(index) % m_columns;
+  const std::uint32_t grid_row = static_cast<std::uint32_t>(index) / m_columns;
+  return Math::Vec2<float>(
+      m_top_left.x + static_cast<float>(column) * (cell_size.x + m_gap),
+      m_top_left.y + static_cast<float>(grid_row) * (cell_size.y + m_gap));
+}
+
+Math::Vec4<float> healthBarColor(float ratio) {
+  return Math::Vec4<float>(1.0f - ratio, ratio, 0.0f, 1.0f);
+}
+
+Math::Vec4<float> powerBarColor(float ratio) {
+  return Math::Vec4<float>(ratio, 1.0f - ratio, 0.0f, 1.0f);
+}
+
 }  // namespace vulkan_graphix::UiGeometry

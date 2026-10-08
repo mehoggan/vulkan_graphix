@@ -20,15 +20,6 @@ namespace vulkan_graphix {
 namespace {
 constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 
-// The real GameState::drawHUD() color ramps (GameState.cpp:~700-762):
-// health goes green-to-red as it drops, power (inverted) goes red-to-
-// green as it rises - ported as-is, not second-guessed.
-Math::Vec4<float> getHealthBarColor(float ratio) {
-  return Math::Vec4<float>(1.0f - ratio, ratio, 0.0f, 1.0f);
-}
-Math::Vec4<float> getPowerBarColor(float ratio) {
-  return Math::Vec4<float>(ratio, 1.0f - ratio, 0.0f, 1.0f);
-}
 }  // namespace
 
 // ************************************************************ //
@@ -1590,28 +1581,6 @@ Math::Vec2<float> Tutorial18::getPanelTopLeft(std::size_t player_index) const {
   return Math::Vec2<float>(width - margin - size.x, panel_top);
 }
 
-void Tutorial18::appendGlyphQuad(
-    std::vector<Tutorial18VertexHudData>& vertex_data,
-    const BitmapFontGlyphQuad& glyph,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendGlyphQuad(vertex_data, glyph, color);
-}
-
-void Tutorial18::appendColoredQuad(
-    std::vector<Tutorial18VertexHudData>& vertex_data,
-    const std::array<Math::Vec2<float>, 4>& corners,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendColoredQuad(
-      vertex_data, corners, color, m_font.solidTexelUv());
-}
-
-void Tutorial18::appendText(std::vector<Tutorial18VertexHudData>& vertex_data,
-    const std::string& text,
-    Math::Vec2<float> origin,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendText(vertex_data, m_font, text, origin, color);
-}
-
 void Tutorial18::appendBar(std::vector<Tutorial18VertexHudData>& vertex_data,
     Math::Vec2<float> top_left,
     Math::Vec2<float> size,
@@ -1622,7 +1591,8 @@ void Tutorial18::appendBar(std::vector<Tutorial18VertexHudData>& vertex_data,
       Math::Vec2<float>(top_left.x, top_left.y + size.y),
       Math::Vec2<float>(top_left.x + size.x, top_left.y + size.y),
       Math::Vec2<float>(top_left.x + size.x, top_left.y)};
-  appendColoredQuad(vertex_data, backing_corners, backing_color);
+  UiGeometry::appendColoredQuad(
+      vertex_data, backing_corners, backing_color, m_font.solidTexelUv());
 
   const float fill_width = size.x * std::clamp(ratio, 0.0f, 1.0f);
   if (fill_width > 0.0f) {
@@ -1631,7 +1601,8 @@ void Tutorial18::appendBar(std::vector<Tutorial18VertexHudData>& vertex_data,
         Math::Vec2<float>(top_left.x, top_left.y + size.y),
         Math::Vec2<float>(top_left.x + fill_width, top_left.y + size.y),
         Math::Vec2<float>(top_left.x + fill_width, top_left.y)};
-    appendColoredQuad(vertex_data, fill_corners, fill_color);
+    UiGeometry::appendColoredQuad(
+        vertex_data, fill_corners, fill_color, m_font.solidTexelUv());
   }
 }
 
@@ -1651,17 +1622,20 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
         UiGeometry::buildButtonBevel(
             panel_top_left, panel_size, panel_color, false);
     for (const UiGeometry::ColoredQuad& quad : bevel) {
-      appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
+      UiGeometry::appendColoredQuad(
+          vertex_data, quad.m_corners, quad.m_color, m_font.solidTexelUv());
     }
 
-    appendText(vertex_data,
+    UiGeometry::appendText(vertex_data,
+        m_font,
         players[i].m_name,
         Math::Vec2<float>(panel_top_left.x + 16.0f, panel_top_left.y + 26.0f),
         players[i].m_team_color);
 
     const std::string hp_text = "HP: " + std::to_string(players[i].m_hp) +
         " / " + std::to_string(players[i].m_max_hp);
-    appendText(vertex_data,
+    UiGeometry::appendText(vertex_data,
+        m_font,
         hp_text,
         Math::Vec2<float>(panel_top_left.x + 16.0f, panel_top_left.y + 52.0f),
         text_color);
@@ -1672,12 +1646,13 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
         Math::Vec2<float>(panel_top_left.x + 16.0f, panel_top_left.y + 60.0f),
         Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
         health_ratio,
-        &getHealthBarColor);
+        &UiGeometry::healthBarColor);
 
     const std::string power_text = "Power: " +
         std::to_string(
             static_cast<std::int32_t>(players[i].m_power_ratio * 1000.0f));
-    appendText(vertex_data,
+    UiGeometry::appendText(vertex_data,
+        m_font,
         power_text,
         Math::Vec2<float>(panel_top_left.x + 16.0f, panel_top_left.y + 100.0f),
         text_color);
@@ -1686,7 +1661,7 @@ std::vector<Tutorial18VertexHudData> Tutorial18::buildHudVertexData() const {
         Math::Vec2<float>(panel_top_left.x + 16.0f, panel_top_left.y + 108.0f),
         Math::Vec2<float>(panel_size.x - 32.0f, 14.0f),
         players[i].m_power_ratio,
-        &getPowerBarColor);
+        &UiGeometry::powerBarColor);
   }
 
   return vertex_data;

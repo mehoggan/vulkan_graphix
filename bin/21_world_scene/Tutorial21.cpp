@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "vulkan_graphix/HellfireTank.h"
+#include "vulkan_graphix/SkyboxGeometry.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
@@ -1624,118 +1625,39 @@ Math::Mat4<float> Tutorial21::getTankPartModelMatrix(
 
 const std::vector<Tutorial21ObjectVertexData>&
 Tutorial21::getSkyboxVertexData() const {
-  // Same six-face layout/UV mapping as Tutorial11's own
-  // getVertexData() (see that tutorial's own comments), just at this
-  // tutorial's own c_skybox_half_extent scale instead of Tutorial11's
-  // small pilot scale.
+  // vulkan_earth's SkyboxFactory faces (SkyboxGeometry, shared with the
+  // game and Tutorial11) at this tutorial's c_skybox_half_extent scale;
+  // the top sits at half height, as in the original.
   static const std::vector<Tutorial21ObjectVertexData> vertex_data = [] {
-    const float x_min = -c_skybox_half_extent;
-    const float x_max = c_skybox_half_extent;
-    const float y_min = -c_skybox_half_extent;
-    const float y_max = c_skybox_half_extent * 0.5f;
-    const float z_min = -c_skybox_half_extent;
-    const float z_max = c_skybox_half_extent;
-
-    return std::vector<Tutorial21ObjectVertexData>{
-        // front (z = z_min)
-        {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 1.0f)},
-        {Math::Vec4<float>(x_max, y_min, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_max, z_min, 1.0f),
-            Math::Vec2<float>(1.0f, 0.0f)},
-        {Math::Vec4<float>(x_min, y_max, z_min, 1.0f),
-            Math::Vec2<float>(1.0f, 1.0f)},
-        // right (x = x_max)
-        {Math::Vec4<float>(x_max, y_min, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 1.0f)},
-        {Math::Vec4<float>(x_max, y_min, z_max, 1.0f),
-            Math::Vec2<float>(0.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_max, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_max, z_min, 1.0f),
-            Math::Vec2<float>(1.0f, 1.0f)},
-        // back (z = z_max)
-        {Math::Vec4<float>(x_max, y_min, z_max, 1.0f),
-            Math::Vec2<float>(0.0f, 1.0f)},
-        {Math::Vec4<float>(x_min, y_min, z_max, 1.0f),
-            Math::Vec2<float>(0.0f, 0.0f)},
-        {Math::Vec4<float>(x_min, y_max, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_max, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 1.0f)},
-        // left (x = x_min)
-        {Math::Vec4<float>(x_min, y_min, z_max, 1.0f),
-            Math::Vec2<float>(0.0f, 1.0f)},
-        {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 0.0f)},
-        {Math::Vec4<float>(x_min, y_max, z_min, 1.0f),
-            Math::Vec2<float>(1.0f, 0.0f)},
-        {Math::Vec4<float>(x_min, y_max, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 1.0f)},
-        // top (y = y_max)
-        {Math::Vec4<float>(x_min, y_max, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 1.0f)},
-        {Math::Vec4<float>(x_max, y_max, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_max, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 0.0f)},
-        {Math::Vec4<float>(x_min, y_max, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 1.0f)},
-        // bottom (y = y_min)
-        {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
-            Math::Vec2<float>(0.0f, 1.0f)},
-        {Math::Vec4<float>(x_min, y_min, z_max, 1.0f),
-            Math::Vec2<float>(0.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_min, z_max, 1.0f),
-            Math::Vec2<float>(1.0f, 0.0f)},
-        {Math::Vec4<float>(x_max, y_min, z_min, 1.0f),
-            Math::Vec2<float>(1.0f, 1.0f)},
-    };
+    std::vector<Tutorial21ObjectVertexData> data;
+    for (const SkyboxGeometry::Face& face :
+        SkyboxGeometry::buildFaces(Math::Vec3<float>(-c_skybox_half_extent),
+            Math::Vec3<float>(c_skybox_half_extent,
+                c_skybox_half_extent * 0.5f,
+                c_skybox_half_extent))) {
+      for (std::size_t corner = 0; corner < face.m_corners.size(); ++corner) {
+        data.push_back({Math::Vec4<float>(face.m_corners[corner], 1.0f),
+            face.m_texcoords[corner]});
+      }
+    }
+    return data;
   }();
 
   return vertex_data;
 }
 
 const std::vector<std::uint32_t>& Tutorial21::getSkyboxIndexData() const {
-  static const std::vector<std::uint32_t> index_data = {
-      0,
-      1,
-      2,
-      0,
-      2,
-      3,  // front
-      4,
-      5,
-      6,
-      4,
-      6,
-      7,  // right
-      8,
-      9,
-      10,
-      8,
-      10,
-      11,  // back
-      12,
-      13,
-      14,
-      12,
-      14,
-      15,  // left
-      16,
-      17,
-      18,
-      16,
-      18,
-      19,  // top
-      20,
-      21,
-      22,
-      20,
-      22,
-      23,  // bottom
-  };
+  static const std::vector<std::uint32_t> index_data = [] {
+    std::vector<std::uint32_t> data;
+    for (std::uint32_t face = 0; face < 6; ++face) {
+      for (const std::uint32_t corner :
+          SkyboxGeometry::c_quad_triangle_indices) {
+        data.push_back(face * 4 + corner);
+      }
+    }
+    return data;
+  }();
+
   return index_data;
 }
 

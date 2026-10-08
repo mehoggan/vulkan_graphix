@@ -9,6 +9,7 @@
 #include <cstring>
 
 #include "vulkan_graphix/GameCatalog.h"
+#include "vulkan_graphix/ImageAtlas.h"
 #include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
@@ -416,53 +417,21 @@ bool Tutorial17::createFontAtlas() {
       m_vulkan_tutorial17_parameters.getFontImageParameters());
 }
 
-std::vector<char> Tutorial17::buildIconAtlasPixels() const {
-  std::vector<char> atlas(
-      static_cast<std::size_t>(c_icon_atlas_width) * c_icon_atlas_height * 4,
-      0);
-
+bool Tutorial17::createIconAtlas() {
+  ImageAtlas atlas(c_icon_size, c_icon_atlas_cols, c_icon_atlas_rows);
   const std::array<GameCatalog::ItemSpec, c_inventory_item_count>& items =
       getItemDisplayData();
   for (std::size_t index = 0; index < items.size(); ++index) {
-    const std::vector<char> icon_pixels = Tools::getRawImageData(
-        items[index].m_image_file, c_icon_size, c_icon_size);
-    if (icon_pixels.empty()) {
+    if (!atlas.setTileFromRawFile(index, items[index].m_image_file)) {
       Logging::error(
           LOG_TAG, "Could not load icon \"", items[index].m_image_file, "\"!");
-      return {};
-    }
-
-    const std::uint32_t column =
-        static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-    const std::uint32_t grid_row =
-        static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
-    const std::uint32_t dest_x = column * c_icon_size;
-    const std::uint32_t dest_y = grid_row * c_icon_size;
-
-    for (std::uint32_t y = 0; y < c_icon_size; ++y) {
-      const char* src_row =
-          icon_pixels.data() + static_cast<std::size_t>(y) * c_icon_size * 4;
-      char* dest_row = atlas.data() +
-          (static_cast<std::size_t>(dest_y + y) * c_icon_atlas_width +
-              dest_x) *
-              4;
-      std::memcpy(
-          dest_row, src_row, static_cast<std::size_t>(c_icon_size) * 4);
+      return false;
     }
   }
 
-  return atlas;
-}
-
-bool Tutorial17::createIconAtlas() {
-  const std::vector<char> pixels = buildIconAtlasPixels();
-  if (pixels.empty()) {
-    return false;
-  }
-
-  return createTextureFromPixels(c_icon_atlas_width,
-      c_icon_atlas_height,
-      pixels,
+  return createTextureFromPixels(atlas.width(),
+      atlas.height(),
+      atlas.pixels(),
       m_vulkan_tutorial17_parameters.getIconImageParameters());
 }
 
@@ -965,93 +934,24 @@ Math::Vec2<float> Tutorial17::getGridSize() const {
   return Math::Vec2<float>(panel_size.x - 40.0f, 190.0f);
 }
 
-Math::Vec2<float> Tutorial17::getCellSize() const {
-  const Math::Vec2<float> grid_size = getGridSize();
-  constexpr float c_cell_gap = 10.0f;
-  const float cell_width =
-      (grid_size.x - static_cast<float>(c_icon_atlas_cols - 1) * c_cell_gap) /
-      static_cast<float>(c_icon_atlas_cols);
-  const float cell_height =
-      (grid_size.y - static_cast<float>(c_icon_atlas_rows - 1) * c_cell_gap) /
-      static_cast<float>(c_icon_atlas_rows);
-  return Math::Vec2<float>(cell_width, cell_height);
-}
-
-Math::Vec2<float> Tutorial17::getCellTopLeft(std::size_t index) const {
-  const Math::Vec2<float> grid_top_left = getGridTopLeft();
-  const Math::Vec2<float> cell_size = getCellSize();
-  constexpr float c_cell_gap = 10.0f;
-  const std::uint32_t column =
-      static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-  const std::uint32_t grid_row =
-      static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
-  return Math::Vec2<float>(grid_top_left.x +
-          static_cast<float>(column) * (cell_size.x + c_cell_gap),
-      grid_top_left.y +
-          static_cast<float>(grid_row) * (cell_size.y + c_cell_gap));
-}
-
 float Tutorial17::getDescriptionTop() const {
   const Math::Vec2<float> grid_top_left = getGridTopLeft();
   const Math::Vec2<float> grid_size = getGridSize();
   return grid_top_left.y + grid_size.y + 30.0f;
 }
 
-Math::Vec2<float> Tutorial17::getIconUvMin(std::size_t index) const {
-  const std::uint32_t column =
-      static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-  const std::uint32_t grid_row =
-      static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
-  return Math::Vec2<float>(
-      static_cast<float>(column) / static_cast<float>(c_icon_atlas_cols),
-      static_cast<float>(grid_row) / static_cast<float>(c_icon_atlas_rows));
-}
-
-Math::Vec2<float> Tutorial17::getIconUvMax(std::size_t index) const {
-  const std::uint32_t column =
-      static_cast<std::uint32_t>(index) % c_icon_atlas_cols;
-  const std::uint32_t grid_row =
-      static_cast<std::uint32_t>(index) / c_icon_atlas_cols;
-  return Math::Vec2<float>(
-      static_cast<float>(column + 1) / static_cast<float>(c_icon_atlas_cols),
-      static_cast<float>(grid_row + 1) /
-          static_cast<float>(c_icon_atlas_rows));
+UiGeometry::GridLayout Tutorial17::getGridLayout() const {
+  constexpr float c_cell_gap = 10.0f;
+  return {getGridTopLeft(),
+      getGridSize(),
+      c_icon_atlas_cols,
+      c_icon_atlas_rows,
+      c_cell_gap};
 }
 
 std::vector<std::string> Tutorial17::wrapText(
     const std::string& text, float max_width) const {
   return m_font.wrapText(text, max_width);
-}
-
-void Tutorial17::appendGlyphQuad(
-    std::vector<Tutorial17VertexData>& vertex_data,
-    const BitmapFontGlyphQuad& glyph,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendGlyphQuad(vertex_data, glyph, color);
-}
-
-void Tutorial17::appendColoredQuad(
-    std::vector<Tutorial17VertexData>& vertex_data,
-    const std::array<Math::Vec2<float>, 4>& corners,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendColoredQuad(
-      vertex_data, corners, color, m_font.solidTexelUv());
-}
-
-void Tutorial17::appendText(std::vector<Tutorial17VertexData>& vertex_data,
-    const std::string& text,
-    Math::Vec2<float> origin,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendText(vertex_data, m_font, text, origin, color);
-}
-
-void Tutorial17::appendImageQuad(
-    std::vector<Tutorial17VertexData>& vertex_data,
-    Math::Vec2<float> top_left,
-    Math::Vec2<float> size,
-    Math::Vec2<float> uv_min,
-    Math::Vec2<float> uv_max) const {
-  UiGeometry::appendImageQuad(vertex_data, top_left, size, uv_min, uv_max);
 }
 
 std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
@@ -1067,27 +967,30 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
       UiGeometry::buildButtonBevel(
           panel_top_left, panel_size, panel_color, false);
   for (const UiGeometry::ColoredQuad& quad : panel_bevel) {
-    appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
+    UiGeometry::appendColoredQuad(
+        vertex_data, quad.m_corners, quad.m_color, m_font.solidTexelUv());
   }
 
   const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
   const std::string title = "Tutorial 17 - Inventory";
-  appendText(vertex_data,
+  UiGeometry::appendText(vertex_data,
+      m_font,
       title,
       Math::Vec2<float>(panel_top_left.x + 20.0f, panel_top_left.y + 30.0f),
       text_color);
 
   const std::string explain = "(Click an item to see its description)";
-  appendText(vertex_data,
+  UiGeometry::appendText(vertex_data,
+      m_font,
       explain,
       Math::Vec2<float>(panel_top_left.x + 20.0f, panel_top_left.y + 58.0f),
       text_color);
 
   const std::array<GameCatalog::ItemSpec, c_inventory_item_count>& items =
       getItemDisplayData();
-  const Math::Vec2<float> cell_size = getCellSize();
+  const Math::Vec2<float> cell_size = getGridLayout().cellSize();
   for (std::size_t index = 0; index < items.size(); ++index) {
-    const Math::Vec2<float> cell_top_left = getCellTopLeft(index);
+    const Math::Vec2<float> cell_top_left = getGridLayout().cellTopLeft(index);
 
     if (index == m_selected_index) {
       // A highlight quad behind the icon/label - the icon pass
@@ -1101,12 +1004,16 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
           Math::Vec2<float>(
               cell_top_left.x + cell_size.x, cell_top_left.y + cell_size.y),
           Math::Vec2<float>(cell_top_left.x + cell_size.x, cell_top_left.y)};
-      appendColoredQuad(vertex_data, highlight_corners, highlight_color);
+      UiGeometry::appendColoredQuad(vertex_data,
+          highlight_corners,
+          highlight_color,
+          m_font.solidTexelUv());
     }
 
     const std::string label = "x " + std::to_string(items[index].m_remaining);
     const float label_width = m_font.textWidth(label);
-    appendText(vertex_data,
+    UiGeometry::appendText(vertex_data,
+        m_font,
         label,
         Math::Vec2<float>(
             cell_top_left.x + cell_size.x * 0.5f - label_width * 0.5f,
@@ -1122,7 +1029,8 @@ std::vector<Tutorial17VertexData> Tutorial17::buildTextPassVertexData() const {
   const std::vector<std::string> description_lines =
       wrapText(items[m_selected_index].m_description, max_description_width);
   for (std::size_t line = 0; line < description_lines.size(); ++line) {
-    appendText(vertex_data,
+    UiGeometry::appendText(vertex_data,
+        m_font,
         description_lines[line],
         Math::Vec2<float>(panel_top_left.x + 20.0f,
             description_top + static_cast<float>(line) * m_font.lineHeight()),
@@ -1136,20 +1044,20 @@ std::vector<Tutorial17VertexData> Tutorial17::buildIconPassVertexData() const {
   std::vector<Tutorial17VertexData> vertex_data;
   vertex_data.reserve(c_inventory_item_count * 6);
 
-  const Math::Vec2<float> cell_size = getCellSize();
+  const Math::Vec2<float> cell_size = getGridLayout().cellSize();
   // Icon inset within its cell, leaving room for the "x N" label
   // drawn along the cell's bottom edge in the text pass.
   const float icon_size = std::min(cell_size.x, cell_size.y - 24.0f) * 0.8f;
   for (std::size_t index = 0; index < c_inventory_item_count; ++index) {
-    const Math::Vec2<float> cell_top_left = getCellTopLeft(index);
+    const Math::Vec2<float> cell_top_left = getGridLayout().cellTopLeft(index);
     const Math::Vec2<float> icon_top_left(
         cell_top_left.x + cell_size.x * 0.5f - icon_size * 0.5f,
         cell_top_left.y + 6.0f);
-    appendImageQuad(vertex_data,
+    UiGeometry::appendImageQuad(vertex_data,
         icon_top_left,
         Math::Vec2<float>(icon_size, icon_size),
-        getIconUvMin(index),
-        getIconUvMax(index));
+        ImageAtlas::tileUv(index, c_icon_atlas_cols, c_icon_atlas_rows).m_min,
+        ImageAtlas::tileUv(index, c_icon_atlas_cols, c_icon_atlas_rows).m_max);
   }
 
   return vertex_data;
@@ -1533,9 +1441,9 @@ void Tutorial17::onMouseButton(std::int32_t button,
 
   const float x = static_cast<float>(pos_x);
   const float y = static_cast<float>(pos_y);
-  const Math::Vec2<float> cell_size = getCellSize();
+  const Math::Vec2<float> cell_size = getGridLayout().cellSize();
   for (std::size_t index = 0; index < c_inventory_item_count; ++index) {
-    const Math::Vec2<float> cell_top_left = getCellTopLeft(index);
+    const Math::Vec2<float> cell_top_left = getGridLayout().cellTopLeft(index);
     if (x >= cell_top_left.x && x <= cell_top_left.x + cell_size.x &&
         y >= cell_top_left.y && y <= cell_top_left.y + cell_size.y) {
       m_selected_index = index;

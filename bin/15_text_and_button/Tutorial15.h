@@ -197,16 +197,6 @@ private:
   Math::Vec2<float> getButtonSize() const;
   std::string getButtonLabel() const;
 
-  void appendGlyphQuad(std::vector<Tutorial15VertexData>& vertex_data,
-      const BitmapFontGlyphQuad& glyph,
-      Math::Vec4<float> color) const;
-  void appendColoredQuad(std::vector<Tutorial15VertexData>& vertex_data,
-      const std::array<Math::Vec2<float>, 4>& corners,
-      Math::Vec4<float> color) const;
-  void appendText(std::vector<Tutorial15VertexData>& vertex_data,
-      const std::string& text,
-      Math::Vec2<float> origin,
-      Math::Vec4<float> color) const;
   std::vector<Tutorial15VertexData> buildUiVertexData() const;
   bool updateVertexBufferData();
 

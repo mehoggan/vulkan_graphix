@@ -8,6 +8,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "vulkan_graphix/SkyboxGeometry.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
@@ -904,118 +905,41 @@ bool Tutorial11::createPipeline() {
 }
 
 const std::vector<Tutorial11VertexData>& Tutorial11::getVertexData() const {
-  // Replicates vulkan_earth's SkyboxFactory::draw()'s six hardcoded
-  // GL_QUADS faces exactly - same per-face vertex order and (0,1)/(0,0)/
-  // (1,0)/(1,1) UV corners on every face, no atlas - just at a small,
-  // sane scale instead of the game's *100 world units, and as 24 unique
-  // indexed vertices instead of six independent GL_QUADS draws. Y is
-  // asymmetric on purpose, matching the original: the top is half as far
-  // from center as the bottom/sides.
-  static const float x_min = -2.0f, x_max = 2.0f;
-  static const float y_min = -2.0f, y_max = 1.0f;  // 2.0f * 0.5f
-  static const float z_min = -2.0f, z_max = 2.0f;
-
-  static const std::vector<Tutorial11VertexData> vertex_data = {
-      // front (z = z_min)
-      {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 1.0f)},
-      {Math::Vec4<float>(x_max, y_min, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_max, z_min, 1.0f),
-          Math::Vec2<float>(1.0f, 0.0f)},
-      {Math::Vec4<float>(x_min, y_max, z_min, 1.0f),
-          Math::Vec2<float>(1.0f, 1.0f)},
-      // right (x = x_max)
-      {Math::Vec4<float>(x_max, y_min, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 1.0f)},
-      {Math::Vec4<float>(x_max, y_min, z_max, 1.0f),
-          Math::Vec2<float>(0.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_max, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_max, z_min, 1.0f),
-          Math::Vec2<float>(1.0f, 1.0f)},
-      // back (z = z_max)
-      {Math::Vec4<float>(x_max, y_min, z_max, 1.0f),
-          Math::Vec2<float>(0.0f, 1.0f)},
-      {Math::Vec4<float>(x_min, y_min, z_max, 1.0f),
-          Math::Vec2<float>(0.0f, 0.0f)},
-      {Math::Vec4<float>(x_min, y_max, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_max, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 1.0f)},
-      // left (x = x_min)
-      {Math::Vec4<float>(x_min, y_min, z_max, 1.0f),
-          Math::Vec2<float>(0.0f, 1.0f)},
-      {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 0.0f)},
-      {Math::Vec4<float>(x_min, y_max, z_min, 1.0f),
-          Math::Vec2<float>(1.0f, 0.0f)},
-      {Math::Vec4<float>(x_min, y_max, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 1.0f)},
-      // top (y = y_max)
-      {Math::Vec4<float>(x_min, y_max, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 1.0f)},
-      {Math::Vec4<float>(x_max, y_max, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_max, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 0.0f)},
-      {Math::Vec4<float>(x_min, y_max, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 1.0f)},
-      // bottom (y = y_min)
-      {Math::Vec4<float>(x_min, y_min, z_min, 1.0f),
-          Math::Vec2<float>(0.0f, 1.0f)},
-      {Math::Vec4<float>(x_min, y_min, z_max, 1.0f),
-          Math::Vec2<float>(0.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_min, z_max, 1.0f),
-          Math::Vec2<float>(1.0f, 0.0f)},
-      {Math::Vec4<float>(x_max, y_min, z_min, 1.0f),
-          Math::Vec2<float>(1.0f, 1.0f)},
-  };
+  // vulkan_earth's SkyboxFactory faces (SkyboxGeometry, shared with the
+  // game and Tutorial21) at a small, sane scale instead of the game's *100
+  // world units, as 24 unique indexed vertices instead of six independent
+  // GL_QUADS draws. Y is asymmetric on purpose, matching the original: the
+  // top is half as far from center as the bottom/sides.
+  static const std::vector<Tutorial11VertexData> vertex_data = [] {
+    std::vector<Tutorial11VertexData> data;
+    for (const SkyboxGeometry::Face& face :
+        SkyboxGeometry::buildFaces(Math::Vec3<float>(-2.0f, -2.0f, -2.0f),
+            Math::Vec3<float>(2.0f, 1.0f, 2.0f))) {
+      for (std::size_t corner = 0; corner < face.m_corners.size(); ++corner) {
+        data.push_back({Math::Vec4<float>(face.m_corners[corner], 1.0f),
+            face.m_texcoords[corner]});
+      }
+    }
+    return data;
+  }();
 
   return vertex_data;
 }
 
 const std::vector<std::uint32_t>& Tutorial11::getIndexData() const {
-  // Two triangles per face (0,1,2 and 0,2,3), matching GL_QUADS' implicit
-  // fan triangulation of the same four corners.
-  static const std::vector<std::uint32_t> index_data = {
-      0,
-      1,
-      2,
-      0,
-      2,
-      3,  // front
-      4,
-      5,
-      6,
-      4,
-      6,
-      7,  // right
-      8,
-      9,
-      10,
-      8,
-      10,
-      11,  // back
-      12,
-      13,
-      14,
-      12,
-      14,
-      15,  // left
-      16,
-      17,
-      18,
-      16,
-      18,
-      19,  // top
-      20,
-      21,
-      22,
-      20,
-      22,
-      23,  // bottom
-  };
+  // Two triangles per face, matching GL_QUADS' implicit fan triangulation
+  // of the same four corners.
+  static const std::vector<std::uint32_t> index_data = [] {
+    std::vector<std::uint32_t> data;
+    for (std::uint32_t face = 0; face < 6; ++face) {
+      for (const std::uint32_t corner :
+          SkyboxGeometry::c_quad_triangle_indices) {
+        data.push_back(face * 4 + corner);
+      }
+    }
+    return data;
+  }();
+
   return index_data;
 }
 

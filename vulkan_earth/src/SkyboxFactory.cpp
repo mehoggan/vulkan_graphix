@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include "vulkan_graphix/SkyboxGeometry.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;
@@ -32,68 +33,17 @@ void SkyboxFactory::buildGeometry() {
   m_mesh.setTexture(m_texture.get());
   // GL_REPLACE: texels only (the UI shader's params.x).
   m_mesh.setParams(math::Vec4<float>(1.0f, 0.0f, 0.0f, 0.0f));
-  // front, right, back, left, top, bottom (the box's top is at half
-  // height)
-  m_mesh.addTexturedQuad(
-      {math::Vec3<float>(start * scale, start * scale, start * scale),
-          math::Vec3<float>(bound * scale, start * scale, start * scale),
-          math::Vec3<float>(bound * scale, bound * scale / 2, start * scale),
-          math::Vec3<float>(start * scale, bound * scale / 2, start * scale)},
-      {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
-      math::Vec4<float>(1.0f));
-  m_mesh.addTexturedQuad(
-      {math::Vec3<float>(bound * scale, start * scale, start * scale),
-          math::Vec3<float>(bound * scale, start * scale, bound * scale),
-          math::Vec3<float>(bound * scale, bound * scale / 2, bound * scale),
-          math::Vec3<float>(bound * scale, bound * scale / 2, start * scale)},
-      {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
-      math::Vec4<float>(1.0f));
-  m_mesh.addTexturedQuad(
-      {math::Vec3<float>(bound * scale, start * scale, bound * scale),
-          math::Vec3<float>(start * scale, start * scale, bound * scale),
-          math::Vec3<float>(start * scale, bound * scale / 2, bound * scale),
-          math::Vec3<float>(bound * scale, bound * scale / 2, bound * scale)},
-      {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
-      math::Vec4<float>(1.0f));
-  m_mesh.addTexturedQuad(
-      {math::Vec3<float>(start * scale, start * scale, bound * scale),
-          math::Vec3<float>(start * scale, start * scale, start * scale),
-          math::Vec3<float>(start * scale, bound * scale / 2, start * scale),
-          math::Vec3<float>(start * scale, bound * scale / 2, bound * scale)},
-      {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
-      math::Vec4<float>(1.0f));
-  m_mesh.addTexturedQuad(
-      {math::Vec3<float>(start * scale, bound * scale / 2, start * scale),
-          math::Vec3<float>(bound * scale, bound * scale / 2, start * scale),
-          math::Vec3<float>(bound * scale, bound * scale / 2, bound * scale),
-          math::Vec3<float>(start * scale, bound * scale / 2, bound * scale)},
-      {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
-      math::Vec4<float>(1.0f));
-  m_mesh.addTexturedQuad(
-      {math::Vec3<float>(start * scale, start * scale, start * scale),
-          math::Vec3<float>(start * scale, start * scale, bound * scale),
-          math::Vec3<float>(bound * scale, start * scale, bound * scale),
-          math::Vec3<float>(bound * scale, start * scale, start * scale)},
-      {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
-      math::Vec4<float>(1.0f));
+  // The box's top is at half height (vulkan_graphix::SkyboxGeometry,
+  // shared with Tutorial11/21).
+  for (const vulkan_graphix::SkyboxGeometry::Face& face :
+      vulkan_graphix::SkyboxGeometry::buildFaces(
+          math::Vec3<float>(static_cast<float>(start * scale)),
+          math::Vec3<float>(static_cast<float>(bound * scale),
+              static_cast<float>(bound * scale / 2),
+              static_cast<float>(bound * scale)))) {
+    m_mesh.addTexturedQuad(
+        face.m_corners, face.m_texcoords, math::Vec4<float>(1.0f));
+  }
 }
 
 void SkyboxFactory::draw(render::RenderContext& context) {
