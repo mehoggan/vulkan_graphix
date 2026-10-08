@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "vulkan_earth/ChaseCam.h"
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WeaponDefault.h"
+#include "vulkan_graphix/ChaseCamera.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 
 using namespace std;
@@ -31,7 +31,7 @@ Projectile::Projectile(GameState* new_parent,
   m_v_vec[1] = m_launch.m_velocity.y;
   m_v_vec[2] = m_launch.m_velocity.z;
 
-  m_chase_cam = new ChaseCam(m_pos, m_v_vec);
+  m_chase_cam = new vulkan_graphix::ChaseCamera(m_pos, m_v_vec);
   m_weapon = nullptr;
   m_projectile_models = new_projectile_models;
 
@@ -84,14 +84,18 @@ void Projectile::draw(render::RenderContext& context) {
 
 float* Projectile::getPos() { return m_pos; }
 
-math::Mat4<float> Projectile::chaseView() { return m_chase_cam->view(); }
+math::Mat4<float> Projectile::chaseView() {
+  const math::Mat4<float> view = m_chase_cam->view();
+  m_chase_cam->updateShake();
+  return view;
+}
 
 Weapon* Projectile::getWeapon() { return m_weapon; }
 void Projectile::setWeapon(Weapon* wpn) { m_weapon = wpn; }
 Weapon* Projectile::getDefaultWeapon() { return m_default_weapon; }
 std::int32_t Projectile::getDefaultDamage() { return default_damage; }
 std::int32_t Projectile::getDefaultRadius() { return default_radius; }
-ChaseCam* Projectile::getChaseCam() { return m_chase_cam; }
+vulkan_graphix::ChaseCamera* Projectile::getChaseCam() { return m_chase_cam; }
 std::int32_t Projectile::getRadius() { return default_radius; }
 std::int32_t Projectile::getDamage() { return default_damage; }
 const vulkan_graphix::Ballistics::Launch& Projectile::getLaunch() {

@@ -68,7 +68,8 @@ skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
 `OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`,
 `Tools`, and the gameplay code shared with vulkan_earth
 (`TerrainGenerator`/`Ballistics`/`TankOrientation`/`GameCatalog`/
-`EffectSimulation`, in `tests/GameLogicTest.cpp`) each have their own
+`EffectSimulation`, in `tests/GameLogicTest.cpp`), and the cameras
+(`tests/CameraTest.cpp`) each have their own
 direct unit tests. `TutorialBase` and every
 tutorial's own `create*()` Vulkan-call failure branches (`if (result !=
 VK_SUCCESS) return false;`) are covered by a fault-injection layer: since
@@ -121,7 +122,18 @@ Files" section for the exact invocation.
     file's own top comment for why
   - `TutorialBase.cpp` - Shared base class every tutorial derives from
     (the tutorials themselves live in `bin/`, see below)
-  - `OrbitCamera.cpp/.h` - Mouse-orbit camera, shared by Tutorial09/10-14
+  - `Camera.cpp/.h` - Base class every camera derives from: a subclass
+    supplies `eye()`/`target()` (and `up()`, default +Y); the base builds
+    `view()` (`lookAt`, offset by the current shake) and owns the
+    decaying shake (`setShake()`/`updateShake()`, ported verbatim from
+    vulkan_earth's `WorldCam`/`ChaseCam`)
+    - `OrbitCamera.cpp/.h` - Mouse-orbit camera, used by every 3D
+      tutorial (09-14, 16, 18-21)
+    - `WorldCamera.cpp/.h` - vulkan_earth's overview camera (formerly
+      its `WorldCam`), panned with `move()`
+    - `ChaseCamera.cpp/.h` - vulkan_earth's projectile-following camera
+      (formerly its `ChaseCam`), reading the projectile's live position/
+      velocity arrays
   - `TerrainGenerator.cpp/.h` - The terrain height field ported from
     vulkan_earth's `TerrainMaker`: generation/smoothing, per-vertex
     normals, world-position queries (`heightAtWorld()`/`normalAtWorld()`/
@@ -222,7 +234,7 @@ Files" section for the exact invocation.
   game and a tutorial lives once, in `lib/`, and both call it - the game
   is never left with its own copy of ported logic (see `TerrainGenerator`/
   `Ballistics`/`TankOrientation`/`TankPlacement`/`GameCatalog`/
-  `EffectSimulation`/`Render` above; its vectors and matrices are the
+  `EffectSimulation`/`Render`/the cameras above; its vectors and matrices are the
   library's `Math` types, i.e. glm)
   - `src/VulkanEarth.cpp` - `VulkanEarthApp`, a `TutorialBase` that owns
     the device/swapchain and forwards X11 events to the game's original

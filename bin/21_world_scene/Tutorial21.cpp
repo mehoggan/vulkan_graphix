@@ -678,8 +678,7 @@ Tutorial21TerrainUniformBufferData Tutorial21::getTerrainUniformBufferData()
     const {
   Tutorial21TerrainUniformBufferData data{};
   data.m_model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
-  data.m_view = glm::lookAt(
-      m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  data.m_view = m_camera.view();
 
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -728,8 +727,7 @@ bool Tutorial21::updateTerrainUniformBufferData() {
 Tutorial21ObjectUniformBufferData Tutorial21::getObjectUniformBufferData()
     const {
   Tutorial21ObjectUniformBufferData data{};
-  data.m_view = glm::lookAt(
-      m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  data.m_view = m_camera.view();
 
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);

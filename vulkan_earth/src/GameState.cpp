@@ -7,7 +7,6 @@
 #include <string>
 #include "math.h"
 #include "time.h"
-#include "vulkan_earth/ChaseCam.h"
 #include "vulkan_earth/Explosion.h"
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GlobalSettings.h"
@@ -27,10 +26,11 @@
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/Water.h"
 #include "vulkan_earth/Weapon.h"
-#include "vulkan_earth/WorldCam.h"
 #include "vulkan_graphix/Ballistics.h"
+#include "vulkan_graphix/ChaseCamera.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Tools.h"
+#include "vulkan_graphix/WorldCamera.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must
  * unload their weapons. Call player(i)->setLoadedWeapon(NULL)*/
@@ -99,7 +99,7 @@ GameState::GameState(std::int32_t new_width,
   m_player_cam = false;
   m_chase_cam_active = false;
   m_projectile = nullptr;
-  m_world_cam = new WorldCam(
+  m_world_cam = new vulkan_graphix::WorldCamera(
       0, 20000, m_global_settings->getCurrentTerrain()->getActualSize() / 2);
 
   m_game_sub_state = PASS_TIME;
@@ -383,6 +383,7 @@ void GameState::draw(render::RenderContext& context) {
   if (!m_chase_cam_active) {
     if (!m_player_cam) {
       view = view * m_world_cam->view();
+      m_world_cam->updateShake();
     } else {
       const float* turret_matrix =
           m_current_player->getCurrentTank()->getTurretMatrix();
@@ -499,7 +500,7 @@ void GameState::draw(render::RenderContext& context) {
 
 void GameState::drawHUD(render::RenderContext& context) {
   if (m_player_cam || m_chase_cam_active) {
-    m_world_cam->setShakeCam(0);
+    m_world_cam->setShake(0);
   }
   // Drawn over the scene with blending and depth testing off (every color
   // here is opaque, so only the latter matters), modelview reset to a
@@ -1284,37 +1285,30 @@ void GameState::drawMinimap(render::RenderContext& context) {
 
   // Draw Lines of Sight of World Camera
   if (!m_player_cam && !m_chase_cam_active) {
+    const math::Vec3<float> world_cam_eye = m_world_cam->eye();
     color = math::Vec4<float>(1, 1, 1, 0.8);
     loop.push_back(render::UiVertex{
-        math::Vec3<float>(
-            m_world_cam->getMatrix()[12] - m_world_cam->getMatrix()[13] * 0.38,
+        math::Vec3<float>(world_cam_eye.x - world_cam_eye.y * 0.38,
             10000,
-            m_world_cam->getMatrix()[14] + m_world_cam->getMatrix()[13] -
-                15000 / m_width),
+            world_cam_eye.z + world_cam_eye.y - 15000 / m_width),
         color,
         math::Vec2<float>(0.0f)});
     loop.push_back(render::UiVertex{
-        math::Vec3<float>(
-            m_world_cam->getMatrix()[12] - m_world_cam->getMatrix()[13] * 0.38,
+        math::Vec3<float>(world_cam_eye.x - world_cam_eye.y * 0.38,
             10000,
-            m_world_cam->getMatrix()[14] - m_world_cam->getMatrix()[13] +
-                15000 / m_width),
+            world_cam_eye.z - world_cam_eye.y + 15000 / m_width),
         color,
         math::Vec2<float>(0.0f)});
     loop.push_back(render::UiVertex{
-        math::Vec3<float>(
-            m_world_cam->getMatrix()[12] + m_world_cam->getMatrix()[13] * 0.82,
+        math::Vec3<float>(world_cam_eye.x + world_cam_eye.y * 0.82,
             10000,
-            m_world_cam->getMatrix()[14] - m_world_cam->getMatrix()[13] +
-                15000 / m_width - 1350),
+            world_cam_eye.z - world_cam_eye.y + 15000 / m_width - 1350),
         color,
         math::Vec2<float>(0.0f)});
     loop.push_back(render::UiVertex{
-        math::Vec3<float>(
-            m_world_cam->getMatrix()[12] + m_world_cam->getMatrix()[13] * 0.82,
+        math::Vec3<float>(world_cam_eye.x + world_cam_eye.y * 0.82,
             10000,
-            m_world_cam->getMatrix()[14] + m_world_cam->getMatrix()[13] -
-                15000 / m_width + 1350),
+            world_cam_eye.z + world_cam_eye.y - 15000 / m_width + 1350),
         color,
         math::Vec2<float>(0.0f)});
     for (std::size_t corner = 0; corner < loop.size(); ++corner) {
@@ -1649,17 +1643,17 @@ bool GameState::getProjectileFired() { return m_projectile_fired; }
 
 void GameState::updateWorldCam() {
   if (m_key_monitor['w'])
-    m_world_cam->moveCam(20 + 20 * m_key_monitor['w'], 0, 0);
+    m_world_cam->move(20 + 20 * m_key_monitor['w'], 0, 0);
   if (m_key_monitor['a'])
-    m_world_cam->moveCam(0, 0, -20 - 20 * m_key_monitor['a']);
+    m_world_cam->move(0, 0, -20 - 20 * m_key_monitor['a']);
   if (m_key_monitor['s'])
-    m_world_cam->moveCam(-20 - 20 * m_key_monitor['s'], 0, 0);
+    m_world_cam->move(-20 - 20 * m_key_monitor['s'], 0, 0);
   if (m_key_monitor['d'])
-    m_world_cam->moveCam(0, 0, 20 + 20 * m_key_monitor['d']);
+    m_world_cam->move(0, 0, 20 + 20 * m_key_monitor['d']);
   if (m_key_monitor['r'])
-    m_world_cam->moveCam(0, -20 - 20 * m_key_monitor['r'], 0);
+    m_world_cam->move(0, -20 - 20 * m_key_monitor['r'], 0);
   if (m_key_monitor['f'])
-    m_world_cam->moveCam(0, 20 + 20 * m_key_monitor['f'], 0);
+    m_world_cam->move(0, 20 + 20 * m_key_monitor['f'], 0);
 }
 
 void GameState::createSpecialEffect() {
@@ -1764,7 +1758,7 @@ void GameState::handleProjectileState() {
           m_projectile->getPos()[1],
           m_projectile->getPos()[2]);
       // Make sure chase cam does not shake till impact
-      m_projectile->getChaseCam()->setShakeCam(0);
+      m_projectile->getChaseCam()->setShake(0);
       createSpecialEffect();
     } else {
       m_timer = m_timer + .02f;
@@ -1948,9 +1942,9 @@ void GameState::handleSpecialEffectState() {
         }
       }
     }
-    m_projectile->getChaseCam()->updateFactor();
+    m_projectile->getChaseCam()->riseOverhead();
     std::int32_t shake_it_baby = rand() % 30;
-    m_projectile->getChaseCam()->setShakeCam(20 + shake_it_baby);
+    m_projectile->getChaseCam()->setShake(20 + shake_it_baby);
   } else {
     if (m_special_effect_type == EXPLOSION) {
       for (std::int32_t x = 0; x < m_special_effects_count; x++) {
@@ -1961,8 +1955,8 @@ void GameState::handleSpecialEffectState() {
 
       delete m_special_effects;
     }
-    m_projectile->getChaseCam()->setShakeCam(0);
-    m_projectile->getChaseCam()->resetFactor();
+    m_projectile->getChaseCam()->setShake(0);
+    m_projectile->getChaseCam()->resetHeight();
     destroyProjectile();
     m_special_effect_x = 0;
     m_special_effect_y = 0;

@@ -2,6 +2,8 @@
 #define VULKAN_GRAPHIX_ORBITCAMERA_H
 
 #include <cstdint>
+
+#include "vulkan_graphix/Camera.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 
 namespace vulkan_graphix {
@@ -10,9 +12,9 @@ namespace vulkan_graphix {
 // OrbitCamera                                                  //
 //                                                              //
 // Mouse-driven orbit camera: left-drag rotates around a fixed  //
-// target, the scroll wheel zooms.                              //
+// target, the scroll wheel zooms. Used by the tutorials.       //
 // ************************************************************ //
-class OrbitCamera {
+class OrbitCamera : public Camera {
 public:
   OrbitCamera();
 
@@ -29,8 +31,8 @@ public:
       std::int32_t pos_y);
   void onMouseMove(std::int32_t pos_x, std::int32_t pos_y);
 
-  Math::Vec3<float> eye() const;
-  const Math::Vec3<float>& target() const;
+  Math::Vec3<float> eye() const override;
+  Math::Vec3<float> target() const override;
 
 private:
   float m_yaw;

@@ -517,8 +517,7 @@ bool Tutorial12::createUniformBuffer() {
 Tutorial12UniformBufferData Tutorial12::getUniformBufferData() const {
   Tutorial12UniformBufferData data{};
   data.m_model = Math::Mat4<float>(1.0f);  // static terrain, no rotation
-  data.m_view = glm::lookAt(
-      m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  data.m_view = m_camera.view();
 
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
