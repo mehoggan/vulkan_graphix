@@ -11,7 +11,6 @@
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_graphix/TankPlacement.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
@@ -508,13 +507,13 @@ void Tank::draw(render::RenderContext& context) {
 
 void Tank::drawTankHitBox(render::RenderContext& context) {
   // Six translucent quads with per-vertex colors (debug view).
-  std::vector<render::UiVertex> out_tris;
-  std::vector<render::UiVertex> out_lines;
-  std::vector<render::UiVertex> quad;
+  render::UiVertices out_tris;
+  render::UiVertices out_lines;
+  render::UiVertices quad;
   math::Vec4<float> color(1.0f);
   // top
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -528,11 +527,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -546,11 +545,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -564,11 +563,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -582,12 +581,12 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   // right
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -601,11 +600,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -619,11 +618,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -637,11 +636,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -655,12 +654,12 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   // left
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -674,11 +673,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -692,11 +691,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -710,11 +709,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -728,12 +727,12 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   // front
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -747,11 +746,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -765,11 +764,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -783,11 +782,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -801,12 +800,12 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   // back
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -820,11 +819,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_up.x,
@@ -838,11 +837,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_left.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -856,11 +855,11 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 0.0, .75);
-  quad.push_back(render::UiVertex{
+  quad.add(render::UiVertex{
       math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
               m_hit_box_width / 2.0 * m_right.x +
               m_hit_box_height / 2.0 * m_down.x,
@@ -874,7 +873,7 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
       math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-      out_tris.push_back(quad[corner]);
+      out_tris.add(quad[corner]);
     quad.clear();
   }
   context.drawTransient(

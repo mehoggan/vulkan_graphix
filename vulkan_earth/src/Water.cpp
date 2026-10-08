@@ -6,8 +6,7 @@
 #include "math.h"
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
-// #include "vulkan_earth/MacroCrtdbg.h"
-
+//
 using namespace std;
 
 namespace render = vulkan_graphix::Render;
@@ -748,7 +747,7 @@ void Water::prepareData() {
       m_normals[index_normals++] = n_z;
     }
   }
-  std::vector<render::MeshVertex> mesh_vertices(m_vertices.size());
+  render::MeshVertices mesh_vertices(m_vertices.size());
   for (std::size_t i = 0; i < m_vertices.size(); ++i) {
     mesh_vertices[i] = {m_vertices[i],
         m_normals[i],

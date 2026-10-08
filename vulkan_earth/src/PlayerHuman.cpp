@@ -12,7 +12,6 @@
 #include "vulkan_earth/TankG.h"
 #include "vulkan_earth/TankH.h"
 #include "vulkan_earth/Weapon.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 PlayerHuman::PlayerHuman() = default;
 

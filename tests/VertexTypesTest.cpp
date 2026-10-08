@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -108,6 +109,55 @@ TEST(InterleavedDataTest, TracksAttributeAndByteCounts) {
   EXPECT_EQ(3u, data.getAttributeCount());
   EXPECT_EQ((sizeof(glm::vec3) + sizeof(glm::vec2)) * 3u, data.getByteCount());
   EXPECT_EQ(3u, data.getData().size());
+}
+
+TEST(InterleavedDataTest, BuildsUpLikeAVector) {
+  using datum_type = InterleavedDatum<glm::vec3, glm::vec2>;
+  InterleavedData<glm::vec3, glm::vec2> data = {
+      {glm::vec3(1.0f), glm::vec2(2.0f)}};
+  EXPECT_FALSE(data.empty());
+  data.add({glm::vec3(3.0f), glm::vec2(4.0f)});
+  data.append({datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
+      datum_type(glm::vec3(7.0f), glm::vec2(8.0f))});
+  ASSERT_EQ(4u, data.size());
+  EXPECT_EQ(glm::vec3(3.0f), data[1].get<0>());
+  data[1].get<1>() = glm::vec2(9.0f);
+  EXPECT_EQ(glm::vec2(9.0f), data[1].get<1>());
+
+  float x_sum = 0.0f;
+  for (const datum_type& datum : data) {
+    x_sum += datum.get<0>().x;
+  }
+  EXPECT_FLOAT_EQ(16.0f, x_sum);
+
+  InterleavedData<glm::vec3, glm::vec2> copy(2);
+  EXPECT_EQ(datum_type(), copy[0]);
+  copy.append(data);
+  EXPECT_EQ(6u, copy.size());
+
+  data.clear();
+  EXPECT_TRUE(data.empty());
+  EXPECT_EQ(0u, data.getByteCount());
+}
+
+TEST(InterleavedDataTest, PacksEachAttributeAtItsTraitsOffset) {
+  InterleavedData<glm::vec3, glm::vec4, glm::vec2> data = {
+      {glm::vec3(1.0f, 2.0f, 3.0f),
+          glm::vec4(4.0f, 5.0f, 6.0f, 7.0f),
+          glm::vec2(8.0f, 9.0f)},
+      {glm::vec3(10.0f, 11.0f, 12.0f),
+          glm::vec4(13.0f, 14.0f, 15.0f, 16.0f),
+          glm::vec2(17.0f, 18.0f)}};
+  const std::vector<std::byte> bytes = data.pack();
+  ASSERT_EQ(data.getByteCount(), bytes.size());
+  ASSERT_EQ(2u * 9u * sizeof(float), bytes.size());
+
+  // Plain floats 1..18 in order: position, color, texcoord, per vertex.
+  std::vector<float> floats(bytes.size() / sizeof(float));
+  std::memcpy(floats.data(), bytes.data(), bytes.size());
+  for (std::size_t i = 0; i < floats.size(); ++i) {
+    EXPECT_FLOAT_EQ(static_cast<float>(i + 1), floats[i]) << "float " << i;
+  }
 }
 
 TEST(BatchDataTest, TracksIndependentArraysPerAttribute) {

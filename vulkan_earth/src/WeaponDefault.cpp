@@ -1,6 +1,5 @@
 #include "vulkan_earth/WeaponDefault.h"
 #include <cstdint>
-#include "vulkan_earth/MacroCrtdbg.h"
 
 WeaponDefault::WeaponDefault() = default;
 WeaponDefault::WeaponDefault(std::int32_t id) {

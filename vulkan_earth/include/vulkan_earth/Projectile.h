@@ -9,11 +9,13 @@
 const std::int32_t default_damage = 100;
 const std::int32_t default_radius = 5;
 
-class ChaseCam;
 class Weapon;
 class VBOShaderLibrary;
 class GameState;
 
+namespace vulkan_graphix {
+class ChaseCamera;
+}
 namespace vulkan_graphix::Render {
 class RenderContext;
 }
@@ -42,7 +44,7 @@ public:
   Weapon* getDefaultWeapon();
   std::int32_t getDefaultDamage();
   std::int32_t getDefaultRadius();
-  ChaseCam* getChaseCam();
+  vulkan_graphix::ChaseCamera* getChaseCam();
   std::int32_t getRadius();
   std::int32_t getDamage();
   // Where and how fast this shell left the barrel - feed to
@@ -50,7 +52,7 @@ public:
   const vulkan_graphix::Ballistics::Launch& getLaunch();
 
 private:
-  ChaseCam* m_chase_cam;
+  vulkan_graphix::ChaseCamera* m_chase_cam;
   float m_pos[3];
   float m_v_vec[3];
   float m_speed;

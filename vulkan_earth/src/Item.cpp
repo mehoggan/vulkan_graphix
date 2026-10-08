@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <string>
 #include "vulkan_earth/Sound.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(std::int32_t sfx);
 

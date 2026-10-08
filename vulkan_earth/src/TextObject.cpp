@@ -1,7 +1,6 @@
 #include "vulkan_earth/TextObject.h"
 #include <string>
 #include "vulkan_earth/GameRenderer.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

@@ -4,9 +4,9 @@
 #include <vulkan/vulkan.h>
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
-#include <cstring>
-#include <vector>
+#include <span>
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Render/Vertex.h"
@@ -16,10 +16,11 @@ namespace vulkan_graphix::Render {
 
 class Texture;
 
-// A host-visible, coherent buffer and where it is persistently mapped.
+// A host-visible, coherent buffer and the bytes it is persistently mapped
+// to (empty when creating or mapping it failed).
 struct HostBuffer {
   BufferParameters m_buffer;
-  void* m_mapped = nullptr;
+  std::span<std::byte> m_mapped;
 };
 
 // Geometry uploaded once into device-local memory (models, terrain,
@@ -42,10 +43,10 @@ private:
 };
 
 // Retained geometry an object owns and rebuilds only when it changes (a UI
-// control, a panel): triangles and lines of vertex type V, re-uploaded to a
-// new host-visible buffer the first time it's drawn after a change. Drawn
-// with one texture (none: the Renderer's 1x1 white one) and one params
-// vector, see RenderContext::draw().
+// control, a panel): triangles and lines of one VertexTypes vertex type,
+// re-uploaded to a new host-visible buffer the first time it's drawn after
+// a change. Drawn with one texture (none: the Renderer's 1x1 white one) and
+// one params vector, see RenderContext::draw().
 class RetainedMeshBase {
 public:
   RetainedMeshBase() = default;
@@ -63,13 +64,14 @@ public:
   float lineWidth() const;
 
 protected:
-  // Re-uploads after any change; returns the buffer (triangles first,
-  // then lines).
-  const HostBuffer& upload(const void* triangles,
-      std::size_t triangle_bytes,
-      const void* lines,
-      std::size_t line_bytes);
+  bool dirty() const;
   void markDirty();
+  // Replaces the buffer with a new one of byte_count bytes (none when 0)
+  // and marks the mesh clean; returns its mapped bytes to fill (empty on
+  // failure). A buffer a still-in-flight frame may be reading is never
+  // rewritten in place: the old one is released (deferred).
+  std::span<std::byte> reallocate(std::size_t byte_count);
+  const HostBuffer& buffer() const;
 
 private:
   void releaseBuffer();
@@ -81,52 +83,69 @@ private:
   HostBuffer m_buffer;
 };
 
-template <typename V>
+// Ts... are the vertex's attribute types, as in VertexTypes::
+// InterleavedData<Ts...>.
+template <typename... Ts>
 class RetainedMesh : public RetainedMeshBase {
 public:
-  using vertex_type = V;
+  using vertex_type = VertexTypes::InterleavedDatum<Ts...>;
+  using vertices_type = VertexTypes::InterleavedData<Ts...>;
 
   void clear() {
     m_triangles.clear();
     m_lines.clear();
     markDirty();
   }
-  void addTriangle(const V& v0, const V& v1, const V& v2) {
-    m_triangles.insert(m_triangles.end(), {v0, v1, v2});
+  void addTriangle(
+      const vertex_type& v0, const vertex_type& v1, const vertex_type& v2) {
+    m_triangles.append({v0, v1, v2});
     markDirty();
   }
   // Corners in drawing order, split 0-1-2, 0-2-3 (a GL_QUADS quad).
-  void addQuad(const V& v0, const V& v1, const V& v2, const V& v3) {
-    m_triangles.insert(m_triangles.end(), {v0, v1, v2, v0, v2, v3});
+  void addQuad(const vertex_type& v0,
+      const vertex_type& v1,
+      const vertex_type& v2,
+      const vertex_type& v3) {
+    m_triangles.append({v0, v1, v2, v0, v2, v3});
     markDirty();
   }
-  void addLine(const V& start, const V& end) {
-    m_lines.insert(m_lines.end(), {start, end});
+  void addLine(const vertex_type& start, const vertex_type& end) {
+    m_lines.append({start, end});
     markDirty();
   }
 
-  const std::vector<V>& triangles() const { return m_triangles; }
-  const std::vector<V>& lines() const { return m_lines; }
+  const vertices_type& triangles() const { return m_triangles; }
+  const vertices_type& lines() const { return m_lines; }
 
+  // Re-uploads after any change; returns the buffer (triangles first,
+  // then lines).
   const HostBuffer& upload() {
-    return RetainedMeshBase::upload(m_triangles.data(),
-        m_triangles.size() * sizeof(V),
-        m_lines.data(),
-        m_lines.size() * sizeof(V));
+    if (dirty()) {
+      const std::size_t triangle_bytes = m_triangles.getByteCount();
+      const std::span<std::byte> bytes =
+          reallocate(triangle_bytes + m_lines.getByteCount());
+      if (!bytes.empty()) {
+        m_triangles.packInto(bytes.first(triangle_bytes));
+        m_lines.packInto(bytes.subspan(triangle_bytes));
+      }
+    }
+    return buffer();
   }
 
 private:
-  std::vector<V> m_triangles;
-  std::vector<V> m_lines;
+  vertices_type m_triangles;
+  vertices_type m_lines;
 };
 
 // RetainedMesh of UiVertex, with shorthands for flat-colored and textured
 // shapes; RenderContext::draw() draws it with the Renderer's UI pipelines.
-class UiMesh : public RetainedMesh<UiVertex> {
+class UiMesh : public RetainedMesh<Math::Vec3<float>,
+                   Math::Vec4<float>,
+                   Math::Vec2<float>> {
 public:
-  using RetainedMesh<UiVertex>::addQuad;
-  using RetainedMesh<UiVertex>::addTriangle;
-  using RetainedMesh<UiVertex>::addLine;
+  using RetainedMesh::addLine;
+  using RetainedMesh::addQuad;
+  using RetainedMesh::addTriangle;
 
   void addQuad(const std::array<Math::Vec3<float>, 4>& corners,
       const Math::Vec4<float>& color);

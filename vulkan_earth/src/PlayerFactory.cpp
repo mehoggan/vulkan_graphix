@@ -7,7 +7,6 @@
 #include "vulkan_earth/PlayerCPU.h"
 #include "vulkan_earth/PlayerHuman.h"
 #include "vulkan_earth/Tank.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 PlayerFactory::PlayerFactory() = default;
 

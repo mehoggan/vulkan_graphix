@@ -10,7 +10,6 @@
 #include "vulkan_earth/PlayerHuman.h"
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_earth/Weapon.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;

@@ -644,8 +644,7 @@ bool Tutorial19::createFontAtlas() {
 
 Tutorial19UniformBufferData3D Tutorial19::get3DUniformBufferData() const {
   Tutorial19UniformBufferData3D data{};
-  data.m_view = glm::lookAt(
-      m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  data.m_view = m_camera.view();
 
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);

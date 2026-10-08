@@ -7,7 +7,6 @@
 #include "math.h"
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 
@@ -62,7 +61,7 @@ void TerrainMaker::selectTexture(const std::string& tex) {
 }
 
 void TerrainMaker::rebuildMesh() {
-  std::vector<render::MeshVertex> mesh_vertices(m_vertices.size());
+  render::MeshVertices mesh_vertices(m_vertices.size());
   for (std::size_t i = 0; i < m_vertices.size(); ++i) {
     mesh_vertices[i] = {m_vertices[i],
         m_normals[i],

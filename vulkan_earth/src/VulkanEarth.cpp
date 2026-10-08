@@ -35,7 +35,6 @@
 #include "vulkan_graphix/OperatingSystem.h"
 #include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 #ifdef new
 #undef new
@@ -519,10 +518,9 @@ bool draw() {
       game_state->draw(*context);
 
       // World axes at the origin (red x, green y, blue z).
-      const std::vector<render::UiVertex> axes = {
-          {math::Vec3<float>(0, 0, 0),
-              math::Vec4<float>(1, 0, 0, 1),
-              math::Vec2<float>(0.0f)},
+      const render::UiVertices axes = {{math::Vec3<float>(0, 0, 0),
+                                           math::Vec4<float>(1, 0, 0, 1),
+                                           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(1000, 0, 0),
               math::Vec4<float>(1, 0, 0, 1),
               math::Vec2<float>(0.0f)},

@@ -5,18 +5,24 @@
 #include <tuple>
 #include <utility>
 
+#include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
+
 namespace vulkan_graphix::VertexTypes {
 
 // A single interleaved vertex record: one value per attribute type, in
-// declaration order, packed contiguously as it would appear in a VBO.
+// declaration order. Its in-memory layout is std::tuple's, not a vertex
+// buffer's - InterleavedData::packInto() lays records out for the GPU.
 template <typename... Ts>
 struct InterleavedDatum {
 public:
   static constexpr std::size_t attribute_count = sizeof...(Ts);
+  using traits = AttributeTraits<Ts...>;
 
   InterleavedDatum() = default;
 
-  explicit InterleavedDatum(const Ts&... values) :
+  // Not explicit, so a braced list of attributes is a vertex:
+  // vertices.push_back({position, color, texcoord}).
+  InterleavedDatum(const Ts&... values) :
       m_values(values...) {}
 
   template <std::size_t Index>

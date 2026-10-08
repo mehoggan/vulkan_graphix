@@ -434,8 +434,7 @@ Math::Mat4<float> Tutorial13::getUniformBufferData() const {
   // just do gl_Position = u_ProjectionMatrix * i_Position - really a full
   // model-view-projection slot, exactly what's needed here.
   const Math::Mat4<float> model(1.0f);
-  const Math::Mat4<float> view = glm::lookAt(
-      m_camera.eye(), m_camera.target(), Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  const Math::Mat4<float> view = m_camera.view();
 
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);

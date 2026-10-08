@@ -34,10 +34,10 @@ bool VBOShaderLibrary::loadClientData(const std::string& model_file) {
     std::printf("ERROR: File %s not found\n", model_file.c_str());
     return false;
   }
-  std::vector<render::MeshVertex> vertices;
+  render::MeshVertices vertices;
   vertices.reserve(data.size());
   for (const auto& vertex : data) {
-    vertices.push_back({vertex.m_position,
+    vertices.add({vertex.m_position,
         vertex.m_normal,
         math::Vec2<float>(vertex.m_texcoord.x, vertex.m_texcoord.y)});
   }

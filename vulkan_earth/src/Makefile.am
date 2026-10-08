@@ -8,7 +8,6 @@ bin_PROGRAMS = vulkan_earth_runner
 # predates this codebase and isn't ours to bring up to that bar in one
 # pass.
 vulkan_earth_runner_SOURCES = \
-	ChaseCam.cpp \
 	ControlItem.cpp \
 	ControlItemButton.cpp \
 	ControlItemCheckBox.cpp \
@@ -82,8 +81,7 @@ vulkan_earth_runner_SOURCES = \
 	WeaponRevive.cpp \
 	WeaponTeleport.cpp \
 	WeaponTest.cpp \
-	WeaponThor.cpp \
-	WorldCam.cpp
+	WeaponThor.cpp
 
 # The game calls into libvulkan_graphix for everything it shares with the
 # Vulkan tutorials (terrain height field/queries/craters, ballistics, tank

@@ -71,6 +71,6 @@ Math::Vec3<float> OrbitCamera::eye() const {
           std::cos(m_pitch) * std::cos(m_yaw));
 }
 
-const Math::Vec3<float>& OrbitCamera::target() const { return m_target; }
+Math::Vec3<float> OrbitCamera::target() const { return m_target; }
 
 }  // namespace vulkan_graphix

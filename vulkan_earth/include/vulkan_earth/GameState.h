@@ -7,6 +7,9 @@
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Render/Renderer.h"
 
+namespace vulkan_graphix {
+class WorldCamera;
+}
 namespace vulkan_graphix::Render {
 class RenderContext;
 }
@@ -20,7 +23,6 @@ class SkyboxFactory;
 class Water;
 class TextObject;
 class Projectile;
-class WorldCam;
 class Inventory;
 class ImageObject;
 class VBOShaderLibrary;
@@ -103,7 +105,7 @@ private:
   PlayerFactory* m_player_factory;
   GlobalSettings* m_global_settings;
   Player* m_current_player;
-  WorldCam* m_world_cam;
+  vulkan_graphix::WorldCamera* m_world_cam;
   PossibleGameSubStates m_game_sub_state;
   std::int32_t m_current_player_index;
   std::int32_t m_width;

@@ -5,6 +5,8 @@ libvulkan_graphix_la_CPPFLAGS = -Werror -Wall -pedantic \
 
 libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 														./BitmapFont.cpp \
+														./Camera.cpp \
+														./ChaseCamera.cpp \
 															./EffectSimulation.cpp \
 															./GameCatalog.cpp \
 															./HellfireTank.cpp \
@@ -22,6 +24,7 @@ libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 															./Tools.cpp \
 															./TutorialBase.cpp \
 															./UiGeometry.cpp \
+														./WorldCamera.cpp \
 															./VulkanCommon.cpp \
 															./VulkanFunctions.cpp
 

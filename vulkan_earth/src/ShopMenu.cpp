@@ -31,7 +31,6 @@
 #include "vulkan_earth/WeaponRevive.h"
 #include "vulkan_earth/WeaponTeleport.h"
 #include "vulkan_earth/WeaponThor.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;

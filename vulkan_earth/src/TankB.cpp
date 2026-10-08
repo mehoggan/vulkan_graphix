@@ -3,7 +3,6 @@
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_graphix/HellfireTank.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_b_name = "Hellfire";
 const std::int32_t tank_b_hp = 1000;

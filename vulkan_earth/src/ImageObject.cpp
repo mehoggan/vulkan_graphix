@@ -1,7 +1,6 @@
 #include "vulkan_earth/ImageObject.h"
 #include <cstdint>
 #include <string>
-#include "vulkan_earth/MacroCrtdbg.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;

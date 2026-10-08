@@ -23,7 +23,6 @@
 #include "vulkan_earth/SubMenuTest.h"
 #include "vulkan_earth/SubMenuWeapons.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;

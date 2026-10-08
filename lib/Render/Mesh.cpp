@@ -1,7 +1,5 @@
 #include "vulkan_graphix/Render/Mesh.h"
 
-#include <cstring>
-
 #include "vulkan_graphix/Render/Renderer.h"
 
 namespace vulkan_graphix::Render {
@@ -44,32 +42,19 @@ float RetainedMeshBase::lineWidth() const { return m_line_width; }
 
 void RetainedMeshBase::markDirty() { m_dirty = true; }
 
-const HostBuffer& RetainedMeshBase::upload(const void* triangles,
-    std::size_t triangle_bytes,
-    const void* lines,
-    std::size_t line_bytes) {
-  if (!m_dirty) {
-    return m_buffer;
-  }
-  // A buffer a still-in-flight frame may be reading is never rewritten
-  // in place: the old one is released (deferred) and a new one created.
+bool RetainedMeshBase::dirty() const { return m_dirty; }
+
+std::span<std::byte> RetainedMeshBase::reallocate(std::size_t byte_count) {
   releaseBuffer();
-  if (triangle_bytes + line_bytes != 0) {
+  if (byte_count != 0) {
     m_buffer = Renderer::instance().createHostBuffer(
-        triangle_bytes + line_bytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-    if (m_buffer.m_mapped != nullptr) {
-      auto* destination = static_cast<char*>(m_buffer.m_mapped);
-      if (triangle_bytes != 0) {
-        std::memcpy(destination, triangles, triangle_bytes);
-      }
-      if (line_bytes != 0) {
-        std::memcpy(destination + triangle_bytes, lines, line_bytes);
-      }
-    }
+        byte_count, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
   }
   m_dirty = false;
-  return m_buffer;
+  return m_buffer.m_mapped;
 }
+
+const HostBuffer& RetainedMeshBase::buffer() const { return m_buffer; }
 
 void RetainedMeshBase::releaseBuffer() {
   if (m_buffer.m_buffer.getVkBuffer() != VK_NULL_HANDLE &&

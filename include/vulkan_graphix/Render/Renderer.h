@@ -31,11 +31,13 @@
 #include <vulkan/vulkan.h>
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -125,8 +127,8 @@ public:
   void draw(
       UiMesh& mesh, const Math::Mat4<float>& model = Math::Mat4<float>(1.0f));
   // Any RetainedMesh, its triangles and lines through the pipelines given.
-  template <typename V>
-  void draw(RetainedMesh<V>& mesh,
+  template <typename... Ts>
+  void draw(RetainedMesh<Ts...>& mesh,
       PipelineHandle triangle_pipeline,
       PipelineHandle line_pipeline,
       const Math::Mat4<float>& model = Math::Mat4<float>(1.0f)) {
@@ -138,23 +140,14 @@ public:
         line_pipeline,
         model);
   }
-  // One frame's geometry, through the transient ring.
-  template <typename V>
-  void drawTransient(const std::vector<V>& vertices,
+  // One frame's geometry, packed straight into the transient ring.
+  template <typename... Ts>
+  void drawTransient(const VertexTypes::InterleavedData<Ts...>& vertices,
       PipelineHandle pipeline,
       const Texture* texture,
       const Math::Mat4<float>& model = Math::Mat4<float>(1.0f),
       const Math::Vec4<float>& params = Math::Vec4<float>(0.0f),
-      float line_width = 1.0f) {
-    drawTransientBytes(vertices.data(),
-        vertices.size() * sizeof(V),
-        static_cast<std::uint32_t>(vertices.size()),
-        pipeline,
-        texture,
-        model,
-        params,
-        line_width);
-  }
+      float line_width = 1.0f);
   void drawMesh(const Mesh& mesh,
       PipelineHandle pipeline,
       const Texture* texture,
@@ -188,8 +181,8 @@ private:
       PipelineHandle triangle_pipeline,
       PipelineHandle line_pipeline,
       const Math::Mat4<float>& model);
-  void drawTransientBytes(const void* data,
-      std::size_t byte_count,
+  void drawTransientBuffer(VkBuffer buffer,
+      VkDeviceSize offset,
       std::uint32_t vertex_count,
       PipelineHandle pipeline,
       const Texture* texture,
@@ -278,19 +271,11 @@ public:
   std::unique_ptr<Font> loadFont(
       const std::string& font_path, float pixel_height);
 
-  template <typename V>
-  std::unique_ptr<Mesh> createMesh(const std::vector<V>& vertices) {
-    return createMeshFromBytes(vertices.data(),
-        vertices.size() * sizeof(V),
-        static_cast<std::uint32_t>(vertices.size()));
-  }
   template <typename... Ts>
   std::unique_ptr<Mesh> createMesh(
-      const VertexTypes::InterleavedData<Ts...>& data) {
-    const std::vector<std::byte> bytes = packInterleaved(data);
-    return createMeshFromBytes(bytes.data(),
-        bytes.size(),
-        static_cast<std::uint32_t>(data.getAttributeCount()));
+      const VertexTypes::InterleavedData<Ts...>& vertices) {
+    return createMeshFromBytes(
+        vertices.pack(), static_cast<std::uint32_t>(vertices.size()));
   }
   // A unit sphere of MeshVertex in GLUT's glutSolidSphere(1, slices,
   // stacks) tessellation and triangle order (top fan, stacks top to
@@ -347,17 +332,15 @@ private:
   VkPipeline pipeline(PipelineHandle handle, bool depth_test) const;
   VkPipelineLayout pipelineLayout() const;
   float clampLineWidth(float width) const;
-  // Copies size bytes into the current frame's transient ring; false when
-  // the ring is full.
-  bool allocateTransient(const void* data,
-      VkDeviceSize size,
-      VkBuffer* buffer,
-      VkDeviceSize* offset);
+  // Reserves size bytes of the current frame's transient ring, returning
+  // them to fill (empty when the ring is full) and where they sit.
+  std::span<std::byte> allocateTransient(
+      VkDeviceSize size, VkBuffer* buffer, VkDeviceSize* offset);
   bool writeCapture();
   VkDescriptorSet allocateTextureDescriptor(
       VkImageView view, VkSampler sampler);
   std::unique_ptr<Mesh> createMeshFromBytes(
-      const void* data, std::size_t byte_count, std::uint32_t vertex_count);
+      std::span<const std::byte> bytes, std::uint32_t vertex_count);
 
   static Renderer* s_instance;
 
@@ -390,6 +373,37 @@ private:
   std::string m_capture_path;
   HostBuffer m_capture_buffer;
 };
+
+// Defined here, after Renderer, since it reserves the transient ring
+// space through it.
+template <typename... Ts>
+void RenderContext::drawTransient(
+    const VertexTypes::InterleavedData<Ts...>& vertices,
+    PipelineHandle pipeline,
+    const Texture* texture,
+    const Math::Mat4<float>& model,
+    const Math::Vec4<float>& params,
+    float line_width) {
+  if (vertices.empty()) {
+    return;
+  }
+  VkBuffer buffer = VK_NULL_HANDLE;
+  VkDeviceSize offset = 0;
+  const std::span<std::byte> bytes =
+      m_renderer.allocateTransient(vertices.getByteCount(), &buffer, &offset);
+  if (bytes.empty()) {
+    return;
+  }
+  vertices.packInto(bytes);
+  drawTransientBuffer(buffer,
+      offset,
+      static_cast<std::uint32_t>(vertices.size()),
+      pipeline,
+      texture,
+      model,
+      params,
+      line_width);
+}
 
 }  // namespace vulkan_graphix::Render
 
