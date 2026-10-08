@@ -19,6 +19,7 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -66,6 +67,24 @@ std::vector<ColoredQuad> buildButtonBevel(Math::Vec2<float> top_left,
     Math::Vec4<float> base_color,
     bool pressed,
     float bevel_size = 3.0f);
+
+// A columns x rows grid of equal cells filling top_left/size, gap pixels
+// apart (y down), numbered row-major from the top left.
+struct GridLayout {
+  Math::Vec2<float> m_top_left;
+  Math::Vec2<float> m_size;
+  std::uint32_t m_columns;
+  std::uint32_t m_rows;
+  float m_gap;
+
+  Math::Vec2<float> cellSize() const;
+  Math::Vec2<float> cellTopLeft(std::size_t index) const;
+};
+
+// vulkan_earth's HUD bar color ramps (GameState::drawHUD()), ratio in
+// [0, 1]: health runs red (empty) to green (full), power the reverse.
+Math::Vec4<float> healthBarColor(float ratio);
+Math::Vec4<float> powerBarColor(float ratio);
 
 // Appends one glyph as two triangles, tinted by color.
 template <typename VertexData>

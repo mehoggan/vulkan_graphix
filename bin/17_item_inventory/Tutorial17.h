@@ -19,14 +19,13 @@
 //
 // Two textures are needed - a BitmapFont glyph atlas (all the panel's
 // text) and a combined icon atlas (all 8 item icons, stitched from the
-// real ItemXxx.raw 256x256 assets by buildIconAtlas(), tutorial-local
-// plumbing around this fixed 8-icon set rather than a new shared
-// component) - kept behind ONE pipeline/descriptor-set-layout shape
-// (matching every other tutorial's one-texture-per-descriptor-set
-// precedent) by using TWO descriptor sets from that one layout and
-// drawing in two passes: bind the font set, draw every flat-color/text
-// quad (panel bevel, title/explain/descript, per-cell labels, the
-// selected-cell highlight); bind the icon set, draw the 8 icon quads on
+// real ItemXxx.raw 256x256 assets by the library's ImageAtlas, which
+// also gives each icon's texture coordinates) - kept behind ONE
+// pipeline/descriptor-set-layout shape (matching every other tutorial's
+// one-texture-per-descriptor-set precedent) by using TWO descriptor sets from
+// that one layout and drawing in two passes: bind the font set, draw every
+// flat-color/text quad (panel bevel, title/explain/descript, per-cell labels,
+// the selected-cell highlight); bind the icon set, draw the 8 icon quads on
 // top of that (see prepareFrame()).
 
 #include <array>
@@ -42,6 +41,7 @@
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
+#include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
 
 namespace vulkan_graphix {
@@ -236,7 +236,6 @@ private:
       std::uint32_t height,
       const std::vector<char>& pixels,
       ImageParameters& out_image_parameters);
-  std::vector<char> buildIconAtlasPixels() const;
 
   Math::Mat4<float> getUniformBufferData() const;
   bool updateUniformBufferData();
@@ -250,31 +249,11 @@ private:
   Math::Vec2<float> getPanelSize() const;
   Math::Vec2<float> getGridTopLeft() const;
   Math::Vec2<float> getGridSize() const;
-  Math::Vec2<float> getCellSize() const;
-  Math::Vec2<float> getCellTopLeft(std::size_t index) const;
+  UiGeometry::GridLayout getGridLayout() const;
   float getDescriptionTop() const;
-
-  Math::Vec2<float> getIconUvMin(std::size_t index) const;
-  Math::Vec2<float> getIconUvMax(std::size_t index) const;
 
   std::vector<std::string> wrapText(
       const std::string& text, float max_width) const;
-
-  void appendGlyphQuad(std::vector<Tutorial17VertexData>& vertex_data,
-      const BitmapFontGlyphQuad& glyph,
-      Math::Vec4<float> color) const;
-  void appendColoredQuad(std::vector<Tutorial17VertexData>& vertex_data,
-      const std::array<Math::Vec2<float>, 4>& corners,
-      Math::Vec4<float> color) const;
-  void appendText(std::vector<Tutorial17VertexData>& vertex_data,
-      const std::string& text,
-      Math::Vec2<float> origin,
-      Math::Vec4<float> color) const;
-  void appendImageQuad(std::vector<Tutorial17VertexData>& vertex_data,
-      Math::Vec2<float> top_left,
-      Math::Vec2<float> size,
-      Math::Vec2<float> uv_min,
-      Math::Vec2<float> uv_max) const;
 
   std::vector<Tutorial17VertexData> buildTextPassVertexData() const;
   std::vector<Tutorial17VertexData> buildIconPassVertexData() const;

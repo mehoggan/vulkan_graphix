@@ -4,13 +4,13 @@
 #include <vulkan/vulkan_core.h>
 
 #include <array>
-#include <cmath>
 #include <cstddef>
 #include <cstring>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "vulkan_graphix/HellfireTank.h"
+#include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
@@ -20,14 +20,10 @@ namespace vulkan_graphix {
 namespace {
 constexpr VkFormat c_depth_format = VK_FORMAT_D32_SFLOAT;
 
-// Fixed preview camera - matches Tutorial16's own working OrbitCamera
-// values (yaw=0.6, pitch=-0.05, distance=650), just evaluated once since
-// ReadyMenu's own preview camera is a static gluLookAt, not mouse-
-// orbitable - only the tank itself spins.
-const Math::Vec3<float> c_preview_eye = 650.0f *
-    Math::Vec3<float>(std::cos(-0.05f) * std::sin(0.6f),
-        std::sin(-0.05f),
-        std::cos(-0.05f) * std::cos(0.6f));
+// Fixed preview camera - Tutorial16's own OrbitCamera values (yaw=0.6,
+// pitch=-0.05, distance=650), never fed mouse input, since ReadyMenu's own
+// preview camera is a static gluLookAt - only the tank itself spins.
+const OrbitCamera c_preview_camera(0.6f, -0.05f, 650.0f);
 }  // namespace
 
 // ************************************************************ //
@@ -618,9 +614,7 @@ Math::Vec2<float> Tutorial22::getPreviewTopLeft() const {
 
 Tutorial22TankUniformBufferData Tutorial22::getTankUniformBufferData() const {
   Tutorial22TankUniformBufferData data{};
-  data.m_view = glm::lookAt(c_preview_eye,
-      Math::Vec3<float>(0.0f, 0.0f, 0.0f),
-      Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  data.m_view = c_preview_camera.view();
 
   const Math::Vec2<float> preview_size = getPreviewSize();
   data.m_projection = Tools::getPerspectiveProjectionMatrix(
@@ -1448,29 +1442,6 @@ std::string Tutorial22::getButtonLabel() const {
   return "Ready x" + std::to_string(m_click_count);
 }
 
-void Tutorial22::appendGlyphQuad(
-    std::vector<Tutorial22PanelVertexData>& vertex_data,
-    const BitmapFontGlyphQuad& glyph,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendGlyphQuad(vertex_data, glyph, color);
-}
-
-void Tutorial22::appendColoredQuad(
-    std::vector<Tutorial22PanelVertexData>& vertex_data,
-    const std::array<Math::Vec2<float>, 4>& corners,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendColoredQuad(
-      vertex_data, corners, color, m_font.solidTexelUv());
-}
-
-void Tutorial22::appendText(
-    std::vector<Tutorial22PanelVertexData>& vertex_data,
-    const std::string& text,
-    Math::Vec2<float> origin,
-    Math::Vec4<float> color) const {
-  UiGeometry::appendText(vertex_data, m_font, text, origin, color);
-}
-
 std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
     const {
   std::vector<Tutorial22PanelVertexData> vertex_data;
@@ -1492,14 +1463,15 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
   const Math::Vec4<float> panel_color(0.35f, 0.38f, 0.45f, 1.0f);
   for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
            panel_top_left, panel_size, panel_color, false)) {
-    appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
+    UiGeometry::appendColoredQuad(
+        vertex_data, quad.m_corners, quad.m_color, m_font.solidTexelUv());
   }
 
   const std::string title = "Ready?";
   const float title_width = m_font.textWidth(title);
   const Math::Vec2<float> title_origin(
       width * 0.5f - title_width * 0.5f, panel_top_left.y + 40.0f);
-  appendText(vertex_data, title, title_origin, text_color);
+  UiGeometry::appendText(vertex_data, m_font, title, title_origin, text_color);
 
   // A sunken "well" frame around the live 3D preview - matches
   // ReadyMenu's own tank preview being composited inside its menu
@@ -1514,7 +1486,8 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
   const Math::Vec4<float> frame_color(0.15f, 0.16f, 0.2f, 1.0f);
   for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
            frame_top_left, frame_size, frame_color, true)) {
-    appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
+    UiGeometry::appendColoredQuad(
+        vertex_data, quad.m_corners, quad.m_color, m_font.solidTexelUv());
   }
 
   const Math::Vec2<float> button_top_left = getButtonTopLeft();
@@ -1522,7 +1495,8 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
   const Math::Vec4<float> button_color(0.3f, 0.5f, 0.75f, 1.0f);
   for (const UiGeometry::ColoredQuad& quad : UiGeometry::buildButtonBevel(
            button_top_left, button_size, button_color, m_button_pressed)) {
-    appendColoredQuad(vertex_data, quad.m_corners, quad.m_color);
+    UiGeometry::appendColoredQuad(
+        vertex_data, quad.m_corners, quad.m_color, m_font.solidTexelUv());
   }
 
   const std::string label = getButtonLabel();
@@ -1530,7 +1504,7 @@ std::vector<Tutorial22PanelVertexData> Tutorial22::buildPanelVertexData()
   const Math::Vec2<float> label_origin(
       button_top_left.x + button_size.x * 0.5f - label_width * 0.5f,
       button_top_left.y + button_size.y * 0.5f + c_font_pixel_height * 0.3f);
-  appendText(vertex_data, label, label_origin, text_color);
+  UiGeometry::appendText(vertex_data, m_font, label, label_origin, text_color);
 
   return vertex_data;
 }

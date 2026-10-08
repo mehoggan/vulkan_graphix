@@ -68,8 +68,9 @@ skipped automatically when `DISPLAY` isn't set, e.g. headless CI), and
 `OperatingSystem.cpp`'s X11 event loop, `Logging`/`LoggerHelpers`,
 `Tools`, and the gameplay code shared with vulkan_earth
 (`TerrainGenerator`/`Ballistics`/`TankOrientation`/`GameCatalog`/
-`EffectSimulation`, in `tests/GameLogicTest.cpp`), and the cameras
-(`tests/CameraTest.cpp`) each have their own
+`EffectSimulation`, in `tests/GameLogicTest.cpp`), the cameras
+(`tests/CameraTest.cpp`), and `ImageAtlas`/`SkyboxGeometry`/
+`UiGeometry`'s layout helpers (`tests/GeometryTest.cpp`) each have their own
 direct unit tests. `TutorialBase` and every
 tutorial's own `create*()` Vulkan-call failure branches (`if (result !=
 VK_SUCCESS) return false;`) are covered by a fault-injection layer: since
@@ -159,6 +160,16 @@ Files" section for the exact invocation.
     `append{GlyphQuad,ColoredQuad,Text,ImageQuad}()` templates that turn
     glyph/bevel/icon quads into two-triangle vertex lists for any
     `{position, texcoord, color}` vertex struct
+    - also `GridLayout` (equal cells with gaps, row-major - the item/
+      weapon grids of Tutorial17/19) and the HUD bar color ramps
+      `healthBarColor()`/`powerBarColor()` (vulkan_earth's
+      `GameState::drawHUD()` and Tutorial18 both use them)
+  - `ImageAtlas.cpp/.h` - Equal-size RGBA tiles (e.g. `.raw` icons via
+    `setTileFromRawFile()`) stitched into one image, plus each tile's
+    texture coordinates (`tileUv()`) - Tutorial17/19's icon atlases
+  - `SkyboxGeometry.cpp/.h` - vulkan_earth's six skybox faces (corner
+    order and texcoords exactly as `SkyboxFactory` had them), used by the
+    game's `SkyboxFactory` and Tutorial11/21
   - `TankPlacement.cpp/.h` - Every tank's hierarchical part placement
     (`Tank::setTankPos()`: a child part's offset rotated through its
     parent's basis), used by vulkan_earth's `Tank` and by

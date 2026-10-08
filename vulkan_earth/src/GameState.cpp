@@ -30,6 +30,7 @@
 #include "vulkan_graphix/ChaseCamera.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Tools.h"
+#include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/WorldCamera.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must
@@ -716,7 +717,7 @@ void GameState::drawHUD(render::RenderContext& context) {
       loop.clear();
       context.drawTransient(
           out_lines, vulkan_earth::pipelines().m_ui_lines, nullptr);
-      color = math::Vec4<float>(power_ratio, 1 - power_ratio, 0, 1.0f);
+      color = vulkan_graphix::UiGeometry::powerBarColor(power_ratio);
       quad.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
                                         (0.1 * c_glut_screen_width),
                                     0.05 * c_glut_screen_height,
@@ -821,7 +822,7 @@ void GameState::drawHUD(render::RenderContext& context) {
       loop.clear();
       context.drawTransient(
           out_lines, vulkan_earth::pipelines().m_ui_lines, nullptr);
-      color = math::Vec4<float>(1 - health_ratio, health_ratio, 0, 1.0f);
+      color = vulkan_graphix::UiGeometry::healthBarColor(health_ratio);
       quad.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
                                         (0.1 * c_glut_screen_width),
                                     0.90 * c_glut_screen_height,

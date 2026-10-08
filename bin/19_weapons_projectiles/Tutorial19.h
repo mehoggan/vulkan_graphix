@@ -56,6 +56,7 @@
 #include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
+#include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
 
 namespace vulkan_graphix {
@@ -309,7 +310,6 @@ private:
       std::uint32_t data_size,
       VkAccessFlags dst_access_mask,
       VkPipelineStageFlags dst_stage_mask);
-  std::vector<char> buildIconAtlasPixels() const;
 
   Tutorial19UniformBufferData3D get3DUniformBufferData() const;
   bool update3DUniformBufferData();
@@ -322,35 +322,15 @@ private:
   std::vector<Tutorial19Vertex3DData> loadMeshVertexData(
       const char* mesh_filename) const;
 
-  Math::Vec2<float> getIconUvMin(std::size_t index) const;
-  Math::Vec2<float> getIconUvMax(std::size_t index) const;
-
   Math::Vec2<float> getPanelTopLeft() const;
   Math::Vec2<float> getPanelSize() const;
   Math::Vec2<float> getGridTopLeft() const;
   Math::Vec2<float> getGridSize() const;
-  Math::Vec2<float> getCellSize() const;
-  Math::Vec2<float> getCellTopLeft(std::size_t index) const;
+  UiGeometry::GridLayout getGridLayout() const;
   float getDescriptionTop() const;
 
   std::vector<std::string> wrapText(
       const std::string& text, float max_width) const;
-
-  void appendGlyphQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-      const BitmapFontGlyphQuad& glyph,
-      Math::Vec4<float> color) const;
-  void appendColoredQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-      const std::array<Math::Vec2<float>, 4>& corners,
-      Math::Vec4<float> color) const;
-  void appendText(std::vector<Tutorial19VertexGridData>& vertex_data,
-      const std::string& text,
-      Math::Vec2<float> origin,
-      Math::Vec4<float> color) const;
-  void appendImageQuad(std::vector<Tutorial19VertexGridData>& vertex_data,
-      Math::Vec2<float> top_left,
-      Math::Vec2<float> size,
-      Math::Vec2<float> uv_min,
-      Math::Vec2<float> uv_max) const;
 
   std::vector<Tutorial19VertexGridData> buildTextPassVertexData() const;
   std::vector<Tutorial19VertexGridData> buildIconPassVertexData() const;

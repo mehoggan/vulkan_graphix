@@ -10,6 +10,7 @@ libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 															./EffectSimulation.cpp \
 															./GameCatalog.cpp \
 															./HellfireTank.cpp \
+															./ImageAtlas.cpp \
 															./LoggerHelpers.cpp \
 															./Logging.cpp \
 															./OperatingSystem.cpp \
@@ -18,6 +19,7 @@ libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 															./Render/Mesh.cpp \
 															./Render/Renderer.cpp \
 															./Render/Texture.cpp \
+															./SkyboxGeometry.cpp \
 															./TankOrientation.cpp \
 															./TankPlacement.cpp \
 															./TerrainGenerator.cpp \

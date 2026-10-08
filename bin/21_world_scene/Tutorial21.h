@@ -37,12 +37,10 @@
 // own header comment already makes) so the tank reads as sitting *on* a
 // landscape instead of dwarfing it.
 //
-// Real camera-mode classes (WorldCam/ChaseCam) exist in vulkan_earth but
-// are thin gluLookAt wrappers around inline math with no other portable
-// behavior - OrbitCamera (used by every 3D tutorial so far) already
-// serves this role and is kept, not reimplemented as new classes, for
-// the same reason Tutorial16 didn't reimplement Tank's own positioning
-// as a new class.
+// The game's own cameras (WorldCamera's overview, ChaseCamera following
+// a shell) live in the library beside OrbitCamera, all on the shared
+// Camera base; this tutorial has no shell or player panning to drive
+// them, so it orbits with OrbitCamera like every other 3D tutorial.
 
 #include <array>
 #include <cstddef>

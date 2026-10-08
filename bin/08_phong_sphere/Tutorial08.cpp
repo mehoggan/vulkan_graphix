@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "vulkan_graphix/Math/Sphere.hpp"
+#include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
@@ -405,9 +406,10 @@ Tutorial08UniformBufferData Tutorial08::getUniformBufferData() const {
   data.m_model = glm::rotate(Math::Mat4<float>(1.0f),
       elapsed_seconds,
       Math::Vec3<float>(0.0f, 1.0f, 0.0f));
-  data.m_view = glm::lookAt(Math::Vec3<float>(0.0f, 0.0f, 3.0f),
-      Math::Vec3<float>(0.0f, 0.0f, 0.0f),
-      Math::Vec3<float>(0.0f, 1.0f, 0.0f));
+  // A fixed front-on view from 3 units out: an OrbitCamera never fed
+  // mouse input.
+  static const OrbitCamera camera(0.0f, 0.0f, 3.0f);
+  data.m_view = camera.view();
 
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);

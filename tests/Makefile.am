@@ -1,5 +1,5 @@
 if HAVE_GTEST
-TESTS = vertex_types_test math_test tools_test game_logic_test camera_test \
+TESTS = vertex_types_test math_test tools_test game_logic_test camera_test geometry_test \
 		operating_system_test logging_test logger_helpers_test \
 		tutorial_base_helpers_test tutorial_base_fault_injection_test \
 		tutorial_base_fault_injection_swapchain_test \
@@ -65,6 +65,14 @@ camera_test_LDADD = $(GTEST_LIBS) \
 		$(abs_top_builddir)/lib/libvulkan_graphix.la \
 		$(VULKAN_LIBS) $(X11_LIBS)
 camera_test_LDFLAGS = -pthread
+
+geometry_test_SOURCES = ./GeometryTest.cpp
+geometry_test_CPPFLAGS = -Werror -Wall -pedantic \
+		-I$(abs_top_srcdir)/include $(GTEST_CFLAGS) $(GLM_CFLAGS)
+geometry_test_LDADD = $(GTEST_LIBS) \
+		$(abs_top_builddir)/lib/libvulkan_graphix.la \
+		$(VULKAN_LIBS) $(X11_LIBS)
+geometry_test_LDFLAGS = -pthread
 
 # Drives os::Window::renderingLoop() with synthetic X11 events (see
 # OperatingSystemTest.cpp's header comment) - needs a live DISPLAY, like the
@@ -403,6 +411,8 @@ game_logic_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 game_logic_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 camera_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 camera_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+geometry_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+geometry_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tools_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 operating_system_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 operating_system_test_LDFLAGS += $(COVERAGE_LDFLAGS)
