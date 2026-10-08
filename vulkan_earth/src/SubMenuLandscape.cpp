@@ -17,7 +17,6 @@
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 #define PI 3.1415926535898
 

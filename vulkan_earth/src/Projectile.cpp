@@ -8,7 +8,6 @@
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WeaponDefault.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

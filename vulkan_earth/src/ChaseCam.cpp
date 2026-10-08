@@ -3,7 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "math.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;

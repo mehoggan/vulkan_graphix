@@ -2,7 +2,6 @@
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_e_name = "Eggroid";
 const std::int32_t tank_e_hp = 1000;

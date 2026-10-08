@@ -2,7 +2,6 @@
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_g_name = "Cubix";
 const std::int32_t tank_g_hp = 1000;

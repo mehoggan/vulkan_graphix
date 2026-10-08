@@ -6,8 +6,7 @@
 #include "math.h"
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
-// #include "vulkan_earth/MacroCrtdbg.h"
-
+//
 using namespace std;
 
 namespace render = vulkan_graphix::Render;

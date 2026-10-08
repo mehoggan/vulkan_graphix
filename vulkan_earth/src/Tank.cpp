@@ -11,7 +11,6 @@
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_graphix/TankPlacement.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

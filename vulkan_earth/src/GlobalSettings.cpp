@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string>
 #include "vulkan_earth/TerrainMaker.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

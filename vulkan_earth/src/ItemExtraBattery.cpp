@@ -1,7 +1,6 @@
 #include "vulkan_earth/ItemExtraBattery.h"
 #include <cstdint>
 #include "vulkan_earth/Sound.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playSFX(std::int32_t sfx);
 

@@ -2,7 +2,6 @@
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/VBOShaderLibrary.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 const char* tank_f_name = "Behemoth";
 const std::int32_t tank_f_hp = 1000;

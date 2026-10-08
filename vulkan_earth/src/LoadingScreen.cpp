@@ -2,7 +2,6 @@
 #include <cstdint>
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/ImageObject.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 LoadingScreen::LoadingScreen() = default;
 LoadingScreen::LoadingScreen(float x,

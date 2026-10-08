@@ -31,7 +31,6 @@
 #include "vulkan_graphix/Ballistics.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 /* Later, when a round is finished, make sure all human and/or cpu players must
  * unload their weapons. Call player(i)->setLoadedWeapon(NULL)*/

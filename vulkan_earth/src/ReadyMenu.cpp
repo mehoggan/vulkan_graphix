@@ -34,7 +34,6 @@
 #include "vulkan_earth/TextObject.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/Tools.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 extern void playMusic(std::int32_t music);
 

@@ -1,5 +1,4 @@
 #include "vulkan_earth/SubMenu.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 using namespace std;
 

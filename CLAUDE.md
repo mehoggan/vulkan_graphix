@@ -245,9 +245,7 @@ Files" section for the exact invocation.
   - `src/` - its `.cpp` files
   - `include/vulkan_earth/` - every header, included as
     `"vulkan_earth/Foo.h"` (`src/Makefile.am` adds
-    `-I$(top_srcdir)/vulkan_earth/include`). `MacroCrtdbg.h`
-    must stay the last include (it `#define`s `new`/`malloc`/`free`
-    under `_DEBUG`) - `.clang-format`'s `IncludeCategories` pins it last
+    `-I$(top_srcdir)/vulkan_earth/include`)
   - Assets: the game loads everything by bare filename relative to its
     own directory (it changes to it at startup). Every runtime asset
     (textures, `.ogl` meshes, SPIR-V shaders, font atlases, sounds) lives

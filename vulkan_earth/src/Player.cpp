@@ -14,7 +14,6 @@
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_graphix/TankOrientation.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;

@@ -35,7 +35,6 @@
 #include "vulkan_graphix/OperatingSystem.h"
 #include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
-#include "vulkan_earth/MacroCrtdbg.h"
 
 #ifdef new
 #undef new
