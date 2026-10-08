@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
-#include <cstring>
 #include <utility>
 
 #include "vulkan_graphix/Tools.h"
@@ -216,22 +215,14 @@ void RenderContext::drawRetained(const HostBuffer& buffer,
   }
 }
 
-void RenderContext::drawTransientBytes(const void* data,
-    std::size_t byte_count,
+void RenderContext::drawTransientBuffer(VkBuffer buffer,
+    VkDeviceSize offset,
     std::uint32_t vertex_count,
     PipelineHandle pipeline,
     const Texture* texture,
     const Mat4& model,
     const Vec4& params,
     float line_width) {
-  if (vertex_count == 0) {
-    return;
-  }
-  VkBuffer buffer = VK_NULL_HANDLE;
-  VkDeviceSize offset = 0;
-  if (!m_renderer.allocateTransient(data, byte_count, &buffer, &offset)) {
-    return;
-  }
   bindPipeline(pipeline);
   bindTexture(texture);
   pushConstants(model, params);
@@ -291,7 +282,7 @@ void RenderContext::drawText(const Font& font,
         pixel.y / height * 2.0f - 1.0f,
         device_coords.z);
   };
-  std::vector<UiVertex> vertices;
+  UiVertices vertices;
   for (const BitmapFontGlyphQuad& glyph :
       font.bitmap().layoutText(std::string(text), origin)) {
     const std::array<UiVertex, 4> corners = {
@@ -304,7 +295,7 @@ void RenderContext::drawText(const Font& font,
             color,
             Vec2(glyph.m_uv_bottom_right.x, glyph.m_uv_top_left.y)}};
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U}) {
-      vertices.push_back(corners[corner]);
+      vertices.add(corners[corner]);
     }
   }
   if (vertices.empty()) {
@@ -730,7 +721,7 @@ bool Renderer::createFrameSlots() {
     }
     slot.m_transient =
         createHostBuffer(c_transient_size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-    if (slot.m_transient.m_mapped == nullptr) {
+    if (slot.m_transient.m_mapped.empty()) {
       return false;
     }
   }
@@ -995,7 +986,7 @@ bool Renderer::writeCapture() {
   const bool bgra = m_swapchain.m_format == VK_FORMAT_B8G8R8A8_UNORM ||
       m_swapchain.m_format == VK_FORMAT_B8G8R8A8_SRGB;
   const auto* pixels =
-      static_cast<const std::uint8_t*>(m_capture_buffer.m_mapped);
+      reinterpret_cast<const std::uint8_t*>(m_capture_buffer.m_mapped.data());
   std::vector<std::uint8_t> row_pixels(static_cast<std::size_t>(width) * 3);
   for (std::uint32_t y = 0; y < height; ++y) {
     for (std::uint32_t x = 0; x < width; ++x) {
@@ -1012,22 +1003,18 @@ bool Renderer::writeCapture() {
   return true;
 }
 
-bool Renderer::allocateTransient(const void* data,
-    VkDeviceSize size,
-    VkBuffer* buffer,
-    VkDeviceSize* offset) {
+std::span<std::byte> Renderer::allocateTransient(
+    VkDeviceSize size, VkBuffer* buffer, VkDeviceSize* offset) {
   FrameSlot& slot = m_frames[m_frame_slot];
   const VkDeviceSize aligned =
       (slot.m_transient_offset + 15) & ~VkDeviceSize{15};
-  if (aligned + size > slot.m_transient.m_buffer.getSize()) {
-    return false;
+  if (aligned + size > slot.m_transient.m_mapped.size()) {
+    return {};
   }
-  std::memcpy(
-      static_cast<char*>(slot.m_transient.m_mapped) + aligned, data, size);
   slot.m_transient_offset = aligned + size;
   *buffer = slot.m_transient.m_buffer.getVkBuffer();
   *offset = aligned;
-  return true;
+  return slot.m_transient.m_mapped.subspan(aligned, size);
 }
 
 HostBuffer Renderer::createHostBuffer(
@@ -1042,13 +1029,17 @@ HostBuffer Renderer::createHostBuffer(
           host.m_buffer)) {
     return HostBuffer{};
   }
+  void* mapped = nullptr;
   if (vg::vkMapMemory(m_device.m_device,
           host.m_buffer.getVkDeviceMemory(),
           0,
           host.m_buffer.getSize(),
           0,
-          &host.m_mapped) != VK_SUCCESS) {
-    host.m_mapped = nullptr;
+          &mapped) == VK_SUCCESS) {
+    // vkMapMemory's void* is the one untyped pointer; from here on the
+    // mapping is a span of the buffer's bytes.
+    host.m_mapped = std::span<std::byte>(
+        static_cast<std::byte*>(mapped), host.m_buffer.getSize());
   }
   return host;
 }
@@ -1219,11 +1210,11 @@ std::unique_ptr<Font> Renderer::loadFont(
 }
 
 std::unique_ptr<Mesh> Renderer::createMeshFromBytes(
-    const void* data, std::size_t byte_count, std::uint32_t vertex_count) {
+    std::span<const std::byte> bytes, std::uint32_t vertex_count) {
   if (vertex_count == 0) {
     return std::make_unique<Mesh>(BufferParameters(), 0);
   }
-  const VkDeviceSize size = byte_count;
+  const VkDeviceSize size = bytes.size();
   const vc::BufferFactory factory(
       m_device.m_device, m_device.m_physical_device);
   BufferParameters destination;
@@ -1250,7 +1241,7 @@ std::unique_ptr<Mesh> Renderer::createMeshFromBytes(
       m_device.m_device, m_device.m_graphics_queue, upload_commands)
                             .uploadToBuffer(staging,
                                 destination,
-                                data,
+                                bytes.data(),
                                 static_cast<std::uint32_t>(size),
                                 VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
                                 VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
@@ -1281,9 +1272,9 @@ const Mesh& Renderer::sphere(std::uint32_t slices, std::uint32_t stacks) {
         std::sin(theta) * std::sin(polar_angle),
         std::cos(polar_angle));
   };
-  std::vector<MeshVertex> vertices;
+  MeshVertices vertices;
   auto emit = [&](const Vec3& position) {
-    vertices.push_back({position, position, Vec2(0.0f)});
+    vertices.add({position, position, Vec2(0.0f)});
   };
   for (std::uint32_t stack = 0; stack < stacks; ++stack) {
     for (std::uint32_t slice = 0; slice < slices; ++slice) {

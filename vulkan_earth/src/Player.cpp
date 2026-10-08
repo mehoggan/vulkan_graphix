@@ -461,18 +461,18 @@ void Player::pitchDown(float degrees) {
 
 void Player::drawTestLinesandPlanes(render::RenderContext& context) {
   float scalar = 1000;
-  std::vector<render::UiVertex> lines;
-  std::vector<render::UiVertex> quads;
+  render::UiVertices lines;
+  render::UiVertices quads;
   auto line = [&](const math::Vec4<float>& color,
                   const vulkan_graphix::Math::Vec3<float>& from,
                   const vulkan_graphix::Math::Vec3<float>& end) {
-    lines.push_back({from, color, math::Vec2<float>(0.0f)});
-    lines.push_back({end, color, math::Vec2<float>(0.0f)});
+    lines.add({from, color, math::Vec2<float>(0.0f)});
+    lines.add({end, color, math::Vec2<float>(0.0f)});
   };
   auto quad = [&](const math::Vec4<float>& color,
                   const std::array<math::Vec3<float>, 4>& corners) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U}) {
-      quads.push_back({corners[corner], color, math::Vec2<float>(0.0f)});
+      quads.add({corners[corner], color, math::Vec2<float>(0.0f)});
     }
   };
   /*	START BALISTIC AXES	*/

@@ -2,17 +2,15 @@
 #define VULKAN_GRAPHIX_RENDER_VERTEX_H
 
 // Vertex formats for the Render module: the Vulkan vertex-input layout of
-// any vertex described by VertexTypes::AttributeTraits, the two standard
-// vertex structs most drawing needs, and packing VertexTypes::
-// InterleavedData into vertex-buffer bytes.
+// any vertex described by VertexTypes::AttributeTraits, and the two
+// standard VertexTypes vertex types (and their InterleavedData containers)
+// most drawing needs.
 
 #include <vulkan/vulkan.h>
 
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <cstring>
-#include <utility>
 #include <vector>
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
@@ -91,57 +89,26 @@ VertexLayout vertexLayout(VertexTypes::AttributeTraits<Ts...> /*traits*/) {
   return layout;
 }
 
-// The layout of a vertex struct V that names its attributes as
-// `using Traits = VertexTypes::AttributeTraits<...>` - which must match
-// its members exactly, checked here.
+// The layout of a vertex type V: any InterleavedDatum (V::traits names
+// its attributes).
 template <typename V>
 VertexLayout vertexLayout() {
-  static_assert(sizeof(V) == V::Traits::stride,
-      "vertex struct and its AttributeTraits disagree");
-  return vertexLayout(typename V::Traits{});
+  return vertexLayout(typename V::traits{});
 }
 
 // Flat-colored or textured geometry: UI, text, lines, debug shapes.
-struct UiVertex {
-  using Traits = VertexTypes::
-      AttributeTraits<Math::Vec3<float>, Math::Vec4<float>, Math::Vec2<float>>;
-  Math::Vec3<float> m_position;
-  Math::Vec4<float> m_color;
-  Math::Vec2<float> m_texcoord;
-};
+// Attributes: position, color, texcoord (get<0>(), get<1>(), get<2>()).
+using UiVertex = VertexTypes::
+    InterleavedDatum<Math::Vec3<float>, Math::Vec4<float>, Math::Vec2<float>>;
+using UiVertices = VertexTypes::
+    InterleavedData<Math::Vec3<float>, Math::Vec4<float>, Math::Vec2<float>>;
 
 // Lit, textured surfaces: models, terrain, water, spheres.
-struct MeshVertex {
-  using Traits = VertexTypes::
-      AttributeTraits<Math::Vec3<float>, Math::Vec3<float>, Math::Vec2<float>>;
-  Math::Vec3<float> m_position;
-  Math::Vec3<float> m_normal;
-  Math::Vec2<float> m_texcoord;
-};
-
-// InterleavedData's records as vertex-buffer bytes: each attribute copied
-// to its AttributeTraits byte offset (std::tuple, which InterleavedDatum
-// stores them in, doesn't promise that layout itself).
-template <typename... Ts>
-std::vector<std::byte> packInterleaved(
-    const VertexTypes::InterleavedData<Ts...>& data) {
-  using Traits = VertexTypes::AttributeTraits<Ts...>;
-  constexpr std::array<std::size_t, sizeof...(Ts)> offsets =
-      Traits::byteOffsets();
-  std::vector<std::byte> bytes(data.getByteCount());
-  std::size_t record = 0;
-  for (const auto& datum : data.getData()) {
-    std::byte* const base = bytes.data() + record * Traits::stride;
-    [&]<std::size_t... I>(std::index_sequence<I...>) {
-      (std::memcpy(base + offsets[I],
-           &datum.template get<I>(),
-           sizeof(datum.template get<I>())),
-          ...);
-    }(std::index_sequence_for<Ts...>{});
-    ++record;
-  }
-  return bytes;
-}
+// Attributes: position, normal, texcoord (get<0>(), get<1>(), get<2>()).
+using MeshVertex = VertexTypes::
+    InterleavedDatum<Math::Vec3<float>, Math::Vec3<float>, Math::Vec2<float>>;
+using MeshVertices = VertexTypes::
+    InterleavedData<Math::Vec3<float>, Math::Vec3<float>, Math::Vec2<float>>;
 
 }  // namespace vulkan_graphix::Render
 

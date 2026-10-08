@@ -181,11 +181,18 @@ Files" section for the exact invocation.
     transient vertex ring, frame capture to PPM, and pipelines built from
     client-supplied `PipelineDescription`s (each created with and without
     depth testing, switched per draw via `RenderContext::setDepthTest()`).
-    Vertex layouts come straight from `VertexTypes::AttributeTraits`
-    (`vertexLayout<V>()`, plus `packInterleaved()` for
-    `VertexTypes::InterleavedData`), with two standard vertex structs
-    (`UiVertex`, `MeshVertex`); `Texture`, `Mesh` (device-local),
-    `RetainedMesh<V>`/`UiMesh` (rebuilt only when changed), and `Font`
+    All vertex data is `VertexTypes`: the two standard vertex types are
+    `InterleavedDatum` aliases (`UiVertex` - position/color/texcoord,
+    `MeshVertex` - position/normal/texcoord, read with `get<0>()` etc.),
+    geometry is an `InterleavedData` (`UiVertices`/`MeshVertices`, built
+    with `add()`/`append()`/`operator[]`), and every upload packs it
+    straight into the destination memory with
+    `InterleavedData::packInto()` (a `std::tuple`'s layout isn't a vertex
+    buffer's) - no `void*` anywhere in the Render API, host mappings are
+    `std::span<std::byte>`. Vertex layouts come from the same
+    `AttributeTraits` (`vertexLayout<V>()`); `Texture`, `Mesh`
+    (device-local), `RetainedMesh<Ts...>`/`UiMesh` (rebuilt only when
+    changed), and `Font`
     (a `BitmapFont` plus its atlas texture, drawn at a projected raster
     position by `RenderContext::drawText()`). vulkan_earth renders
     entirely through it, and it is meant to serve the tutorials too
