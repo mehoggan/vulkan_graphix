@@ -14,7 +14,8 @@ public:
   ControlItem();
   virtual ~ControlItem();
   virtual void draw(vulkan_graphix::Render::RenderContext& context) = 0;
-  virtual void mouseClickEvent(std::int32_t x,
+  virtual void mouseClickEvent(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t state,
       bool still_over_arrow_button) = 0;

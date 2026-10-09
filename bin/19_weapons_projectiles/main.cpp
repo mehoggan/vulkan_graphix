@@ -25,49 +25,7 @@ int main(int /*argc*/, char** /*argv*/) {
   std::shared_ptr<vulkan_graphix::Tutorial19> tutorial19 =
       std::dynamic_pointer_cast<vulkan_graphix::Tutorial19>(tutorial);
 
-  if (!tutorial19->createRenderingResources()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createStagingBuffer()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createProjectileTextures()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createFontAtlas()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createIconAtlas()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createUniformBuffers()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createDescriptorSetLayouts()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createDescriptorPool()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->allocateDescriptorSets()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->updateDescriptorSets()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createRenderPass()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createPipelineLayouts()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createPipelines()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createProjectileVertexBuffers()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial19->createGridVertexBuffer()) {
+  if (!tutorial19->createResources()) {
     return EXIT_FAILURE;
   }
 

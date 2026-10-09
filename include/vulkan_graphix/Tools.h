@@ -66,7 +66,8 @@ std::filesystem::path executableDir();
 
 std::vector<char> getBinaryFileContents(const std::string& filename);
 
-std::vector<char> getImageData(const std::string& filename,
+std::vector<char> getImageData(
+    const std::string& filename,
     std::int32_t requested_components,
     std::int32_t* width,
     std::int32_t* height,
@@ -99,6 +100,24 @@ struct OglVertexData {
 // consecutive entries make one triangle). Returns an empty vector on any
 // read failure or if the file's token count isn't a multiple of 8.
 std::vector<OglVertexData> loadOglMeshData(const std::string& filename);
+
+// An .ogl mesh as unlit-textured vertices of type V - any struct built from
+// {Vec4 position (w = 1), Vec2 texcoord} in that order, the layout every
+// tutorial's model shader takes. The normals are dropped, as
+// vulkan_earth's own model shader effectively ignores them. Empty on any
+// read failure.
+template <typename V>
+std::vector<V> loadOglTexturedMesh(const std::string& filename) {
+  const std::vector<OglVertexData> mesh_data = loadOglMeshData(filename);
+  std::vector<V> vertices;
+  vertices.reserve(mesh_data.size());
+  for (const OglVertexData& vertex : mesh_data) {
+    vertices.push_back(
+        {vulkan_graphix::Math::Vec4<float>(vertex.m_position, 1.0f),
+         vertex.m_texcoord});
+  }
+  return vertices;
+}
 
 vulkan_graphix::Math::Mat4<float> getPerspectiveProjectionMatrix(
     const float aspect_ratio,

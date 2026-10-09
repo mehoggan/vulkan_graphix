@@ -29,7 +29,8 @@ const std::int32_t num_sales_item = 8;
 class ShopMenu {
 public:
   ShopMenu();
-  ShopMenu(float new_width,
+  ShopMenu(
+      float new_width,
       float new_height,
       float new_percent_border,
       GlobalSettings* new_global_settings,

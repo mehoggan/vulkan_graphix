@@ -10,6 +10,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "vulkan_graphix/Math/MathTypes.hpp"
+
 namespace vulkan_graphix::GameCatalog {
 
 // In the shop's own order (ShopMenu's shop_items[0..7]); the value is the
@@ -75,10 +77,8 @@ struct WeaponSpec {
   std::int32_t m_damage;
   // The strength of the weapon's side effect (turns, hit points, ...).
   std::int32_t m_special_number;
-  // The four colors its explosion cycles through, as the double literals
-  // the game's OpenGLColors.h color names expand to (the Weapon classes
-  // stored them as floats).
-  std::array<std::array<double, 3>, 4> m_explosion_colors;
+  // The four colors its explosion cycles through (Colors).
+  std::array<Math::Vec4<float>, 4> m_explosion_colors;
 };
 
 const WeaponSpec& weapon(WeaponKind kind);

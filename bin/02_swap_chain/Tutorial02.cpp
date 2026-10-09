@@ -126,7 +126,8 @@ VulkanTutorial02Parameters::getPresentQueueVkCommandBuffers() {
 }
 void VulkanTutorial02Parameters::setPresentQueueVkCommandBuffers(
     const std::vector<VkCommandBuffer>& present_queue_vk_command_buffers) {
-  std::copy(present_queue_vk_command_buffers.begin(),
+  std::copy(
+      present_queue_vk_command_buffers.begin(),
       present_queue_vk_command_buffers.end(),
       std::back_inserter(m_present_queue_vk_command_buffers));
 }
@@ -209,7 +210,8 @@ Tutorial02::~Tutorial02() {
 
     if (m_vulkan_tutorial02_parameters.getImageAvailableVkSemaphore() !=
         VK_NULL_HANDLE) {
-      vkDestroySemaphore(m_vulkan_tutorial02_parameters.getVkDevice(),
+      vkDestroySemaphore(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           m_vulkan_tutorial02_parameters.getImageAvailableVkSemaphore(),
           nullptr);
     }
@@ -217,7 +219,8 @@ Tutorial02::~Tutorial02() {
         m_vulkan_tutorial02_parameters.getRenderingFinishedSemaphores();
     for (std::size_t i = 0; i < rendering_finished_semaphores.size(); ++i) {
       if (rendering_finished_semaphores[i] != VK_NULL_HANDLE) {
-        vkDestroySemaphore(m_vulkan_tutorial02_parameters.getVkDevice(),
+        vkDestroySemaphore(
+            m_vulkan_tutorial02_parameters.getVkDevice(),
             rendering_finished_semaphores[i],
             nullptr);
       }
@@ -225,12 +228,14 @@ Tutorial02::~Tutorial02() {
     rendering_finished_semaphores.clear();
 
     if (m_vulkan_tutorial02_parameters.getVkFence() != VK_NULL_HANDLE) {
-      vkDestroyFence(m_vulkan_tutorial02_parameters.getVkDevice(),
+      vkDestroyFence(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           m_vulkan_tutorial02_parameters.getVkFence(),
           nullptr);
     }
     if (m_vulkan_tutorial02_parameters.getVkSwapchainKHR() != VK_NULL_HANDLE) {
-      vkDestroySwapchainKHR(m_vulkan_tutorial02_parameters.getVkDevice(),
+      vkDestroySwapchainKHR(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           m_vulkan_tutorial02_parameters.getVkSwapchainKHR(),
           nullptr);
     }
@@ -239,7 +244,8 @@ Tutorial02::~Tutorial02() {
 
   if (m_vulkan_tutorial02_parameters.getPresentVkSurfaceKHR() !=
       VK_NULL_HANDLE) {
-    vkDestroySurfaceKHR(m_vulkan_tutorial02_parameters.getVkInstance(),
+    vkDestroySurfaceKHR(
+        m_vulkan_tutorial02_parameters.getVkInstance(),
         m_vulkan_tutorial02_parameters.getPresentVkSurfaceKHR(),
         nullptr);
   }
@@ -320,7 +326,8 @@ bool Tutorial02::createSwapChain() {
            &formats_count,
            nullptr) != VK_SUCCESS) ||
       (formats_count == 0)) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Error occurred during presentation surface formats "
         "enumeration!");
     return false;
@@ -332,7 +339,8 @@ bool Tutorial02::createSwapChain() {
           m_vulkan_tutorial02_parameters.getPresentVkSurfaceKHR(),
           &formats_count,
           surface_formats.data()) != VK_SUCCESS) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Error occurred during presentation surface formats "
         "enumeration!");
     return false;
@@ -345,7 +353,8 @@ bool Tutorial02::createSwapChain() {
            &present_modes_count,
            nullptr) != VK_SUCCESS) ||
       (present_modes_count == 0)) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Error occurred during presentation surface present modes "
         "enumeration!");
     return false;
@@ -357,7 +366,8 @@ bool Tutorial02::createSwapChain() {
           m_vulkan_tutorial02_parameters.getPresentVkSurfaceKHR(),
           &present_modes_count,
           present_modes.data()) != VK_SUCCESS) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Error occurred during presentation surface present modes "
         "enumeration!");
     return false;
@@ -410,7 +420,8 @@ bool Tutorial02::createSwapChain() {
       .clipped = VK_TRUE,
       .oldSwapchain = old_swap_chain};
 
-  if (vkCreateSwapchainKHR(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkCreateSwapchainKHR(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           &swap_chain_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getVkSwapchainKHR()) != VK_SUCCESS) {
@@ -447,7 +458,8 @@ bool Tutorial02::createCommandBuffers() {
       .queueFamilyIndex =
           m_vulkan_tutorial02_parameters.getPresentQueueFamilyIndex()};
 
-  if (vkCreateCommandPool(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkCreateCommandPool(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           &cmd_pool_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getPresentQueueVkCommandPool()) !=
@@ -457,7 +469,8 @@ bool Tutorial02::createCommandBuffers() {
   }
 
   std::uint32_t image_count = 0;
-  if ((vkGetSwapchainImagesKHR(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if ((vkGetSwapchainImagesKHR(
+           m_vulkan_tutorial02_parameters.getVkDevice(),
            m_vulkan_tutorial02_parameters.getVkSwapchainKHR(),
            &image_count,
            nullptr) != VK_SUCCESS) ||
@@ -488,7 +501,8 @@ bool Tutorial02::createCommandBuffers() {
         .flags = 0};
     rendering_finished_semaphores.assign(image_count, VK_NULL_HANDLE);
     for (std::uint32_t i = 0; i < image_count; ++i) {
-      if (vkCreateSemaphore(m_vulkan_tutorial02_parameters.getVkDevice(),
+      if (vkCreateSemaphore(
+              m_vulkan_tutorial02_parameters.getVkDevice(),
               &semaphore_create_info,
               nullptr,
               &rendering_finished_semaphores[i]) != VK_SUCCESS) {
@@ -505,7 +519,8 @@ bool Tutorial02::createCommandBuffers() {
           m_vulkan_tutorial02_parameters.getPresentQueueVkCommandPool(),
       .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
       .commandBufferCount = image_count};
-  if (vkAllocateCommandBuffers(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkAllocateCommandBuffers(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           &cmd_buffer_allocate_info,
           m_vulkan_tutorial02_parameters.getPresentQueueVkCommandBuffers()
               .data()) != VK_SUCCESS) {
@@ -521,7 +536,8 @@ bool Tutorial02::createCommandBuffers() {
 }
 
 bool Tutorial02::draw() {
-  if (vkWaitForFences(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkWaitForFences(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           1,
           &m_vulkan_tutorial02_parameters.getVkFence(),
           VK_FALSE,
@@ -529,18 +545,19 @@ bool Tutorial02::draw() {
     Logging::error(LOG_TAG, "Waiting for fence takes too long!");
     return false;
   }
-  vkResetFences(m_vulkan_tutorial02_parameters.getVkDevice(),
+  vkResetFences(
+      m_vulkan_tutorial02_parameters.getVkDevice(),
       1,
       &m_vulkan_tutorial02_parameters.getVkFence());
 
   std::uint32_t image_index;
-  VkResult result =
-      vkAcquireNextImageKHR(m_vulkan_tutorial02_parameters.getVkDevice(),
-          m_vulkan_tutorial02_parameters.getVkSwapchainKHR(),
-          UINT64_MAX,
-          m_vulkan_tutorial02_parameters.getImageAvailableVkSemaphore(),
-          VK_NULL_HANDLE,
-          &image_index);
+  VkResult result = vkAcquireNextImageKHR(
+      m_vulkan_tutorial02_parameters.getVkDevice(),
+      m_vulkan_tutorial02_parameters.getVkSwapchainKHR(),
+      UINT64_MAX,
+      m_vulkan_tutorial02_parameters.getImageAvailableVkSemaphore(),
+      VK_NULL_HANDLE,
+      &image_index);
   switch (result) {
     case VK_SUCCESS:
     case VK_SUBOPTIMAL_KHR:
@@ -558,7 +575,8 @@ bool Tutorial02::draw() {
           .getRenderingFinishedSemaphores()[image_index];
 
   VkPipelineStageFlags wait_dst_stage_mask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-  VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+  VkSubmitInfo submit_info = {
+      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
       .pNext = nullptr,
       .waitSemaphoreCount = 1,
       .pWaitSemaphores =
@@ -566,18 +584,20 @@ bool Tutorial02::draw() {
       .pWaitDstStageMask = &wait_dst_stage_mask,
       .commandBufferCount = 1,
       .pCommandBuffers = &m_vulkan_tutorial02_parameters
-          .getPresentQueueVkCommandBuffers()[image_index],
+                              .getPresentQueueVkCommandBuffers()[image_index],
       .signalSemaphoreCount = 1,
       .pSignalSemaphores = &rendering_finished_semaphore};
 
-  if (vkQueueSubmit(m_vulkan_tutorial02_parameters.getPresentVkQueue(),
+  if (vkQueueSubmit(
+          m_vulkan_tutorial02_parameters.getPresentVkQueue(),
           1,
           &submit_info,
           m_vulkan_tutorial02_parameters.getVkFence()) != VK_SUCCESS) {
     return false;
   }
 
-  VkPresentInfoKHR present_info = {.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+  VkPresentInfoKHR present_info = {
+      .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
       .pNext = nullptr,
       .waitSemaphoreCount = 1,
       .pWaitSemaphores = &rendering_finished_semaphore,
@@ -641,7 +661,8 @@ bool Tutorial02::loadGlobalLevelEntryPoints() {
 
 bool Tutorial02::createInstance() {
   if (!checkValidationLayerSupport()) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Failed to create an instance that does not support",
         "validation layers.");
   }
@@ -656,9 +677,9 @@ bool Tutorial02::createInstance() {
   }
 
   std::vector<VkExtensionProperties> available_extensions(extensions_count);
-  if (vkEnumerateInstanceExtensionProperties(nullptr,
-          &extensions_count,
-          available_extensions.data()) != VK_SUCCESS) {
+  if (vkEnumerateInstanceExtensionProperties(
+          nullptr, &extensions_count, available_extensions.data()) !=
+      VK_SUCCESS) {
     Logging::error(
         LOG_TAG, "Error occurred during instance extensions enumeration!");
     return false;
@@ -669,7 +690,8 @@ bool Tutorial02::createInstance() {
 
   for (size_t i = 0; i < extensions.size(); ++i) {
     if (!checkExtensionAvailability(extensions[i], available_extensions)) {
-      Logging::error(LOG_TAG,
+      Logging::error(
+          LOG_TAG,
           "Could not find instance extension named \"",
           extensions[i],
           "\"!");
@@ -699,7 +721,8 @@ bool Tutorial02::createInstance() {
       .enabledExtensionCount = static_cast<std::uint32_t>(extensions.size()),
       .ppEnabledExtensionNames = extensions.data()};
 
-  if (vkCreateInstance(&instance_create_info,
+  if (vkCreateInstance(
+          &instance_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getVkInstance()) != VK_SUCCESS) {
     Logging::error(LOG_TAG, "Could not create Vulkan instance!");
@@ -733,7 +756,8 @@ bool Tutorial02::createPresentationSurface() {
       .flags = 0,
       .dpy = m_window_parameters.getDisplayPtr(),
       .window = m_window_parameters.getWindowHandle()};
-  if (vkCreateXlibSurfaceKHR(m_vulkan_tutorial02_parameters.getVkInstance(),
+  if (vkCreateXlibSurfaceKHR(
+          m_vulkan_tutorial02_parameters.getVkInstance(),
           &surface_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getPresentVkSurfaceKHR()) ==
@@ -771,7 +795,8 @@ bool Tutorial02::createDevice() {
   std::uint32_t selected_present_queue_family_index = UINT32_MAX;
 
   for (std::uint32_t i = 0; i < num_devices; ++i) {
-    if (checkPhysicalDeviceProperties(physical_devices[i],
+    if (checkPhysicalDeviceProperties(
+            physical_devices[i],
             selected_graphics_queue_family_index,
             selected_present_queue_family_index)) {
       m_vulkan_tutorial02_parameters.setVkPhysicalDevice(physical_devices[i]);
@@ -779,7 +804,8 @@ bool Tutorial02::createDevice() {
     }
   }
   if (m_vulkan_tutorial02_parameters.getVkPhysicalDevice() == VK_NULL_HANDLE) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Could not select physical device based on the chosen "
         "properties!");
     return false;
@@ -788,23 +814,25 @@ bool Tutorial02::createDevice() {
   std::vector<VkDeviceQueueCreateInfo> queue_create_infos;
   std::vector<float> queue_priorities = {1.0f};
 
-  queue_create_infos.push_back(VkDeviceQueueCreateInfo{
-      .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .queueFamilyIndex = selected_graphics_queue_family_index,
-      .queueCount = static_cast<std::uint32_t>(queue_priorities.size()),
-      .pQueuePriorities = queue_priorities.data()});
+  queue_create_infos.push_back(
+      VkDeviceQueueCreateInfo{
+          .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+          .pNext = nullptr,
+          .flags = 0,
+          .queueFamilyIndex = selected_graphics_queue_family_index,
+          .queueCount = static_cast<std::uint32_t>(queue_priorities.size()),
+          .pQueuePriorities = queue_priorities.data()});
 
   if (selected_graphics_queue_family_index !=
       selected_present_queue_family_index) {
-    queue_create_infos.push_back(VkDeviceQueueCreateInfo{
-        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        .pNext = nullptr,
-        .flags = 0,
-        .queueFamilyIndex = selected_present_queue_family_index,
-        .queueCount = static_cast<std::uint32_t>(queue_priorities.size()),
-        .pQueuePriorities = queue_priorities.data()});
+    queue_create_infos.push_back(
+        VkDeviceQueueCreateInfo{
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .queueFamilyIndex = selected_present_queue_family_index,
+            .queueCount = static_cast<std::uint32_t>(queue_priorities.size()),
+            .pQueuePriorities = queue_priorities.data()});
   }
 
   std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
@@ -822,7 +850,8 @@ bool Tutorial02::createDevice() {
       .ppEnabledExtensionNames = extensions.data(),
       .pEnabledFeatures = nullptr};
 
-  if (vkCreateDevice(m_vulkan_tutorial02_parameters.getVkPhysicalDevice(),
+  if (vkCreateDevice(
+          m_vulkan_tutorial02_parameters.getVkPhysicalDevice(),
           &device_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getVkDevice()) != VK_SUCCESS) {
@@ -844,9 +873,10 @@ bool Tutorial02::checkPhysicalDeviceProperties(
   std::uint32_t extensions_count = 0;
   if ((vkEnumerateDeviceExtensionProperties(
            physical_device, nullptr, &extensions_count, nullptr) !=
-          VK_SUCCESS) ||
+       VK_SUCCESS) ||
       (extensions_count == 0)) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Error occurred during physical device",
         physical_device,
         "extensions enumeration!");
@@ -854,11 +884,13 @@ bool Tutorial02::checkPhysicalDeviceProperties(
   }
 
   std::vector<VkExtensionProperties> available_extensions(extensions_count);
-  if (vkEnumerateDeviceExtensionProperties(physical_device,
+  if (vkEnumerateDeviceExtensionProperties(
+          physical_device,
           nullptr,
           &extensions_count,
           available_extensions.data()) != VK_SUCCESS) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Error occurred during physical device",
         physical_device,
         "extensions enumeration!");
@@ -871,7 +903,8 @@ bool Tutorial02::checkPhysicalDeviceProperties(
   for (size_t i = 0; i < device_extensions.size(); ++i) {
     if (!checkExtensionAvailability(
             device_extensions[i], available_extensions)) {
-      Logging::error(LOG_TAG,
+      Logging::error(
+          LOG_TAG,
           "Physical device ",
           physical_device,
           " doesn't support extension named \"",
@@ -891,7 +924,8 @@ bool Tutorial02::checkPhysicalDeviceProperties(
 
   if ((major_version < 1) ||
       (device_properties.limits.maxImageDimension2D < 4096)) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Physical device ",
         physical_device,
         " doesn't support required parameters!");
@@ -902,7 +936,8 @@ bool Tutorial02::checkPhysicalDeviceProperties(
   vkGetPhysicalDeviceQueueFamilyProperties(
       physical_device, &queue_families_count, nullptr);
   if (queue_families_count == 0) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Physical device ",
         physical_device,
         " doesn't have any queue families!");
@@ -920,7 +955,8 @@ bool Tutorial02::checkPhysicalDeviceProperties(
   std::uint32_t present_queue_family_index = UINT32_MAX;
 
   for (std::uint32_t i = 0; i < queue_families_count; ++i) {
-    vkGetPhysicalDeviceSurfaceSupportKHR(physical_device,
+    vkGetPhysicalDeviceSurfaceSupportKHR(
+        physical_device,
         i,
         m_vulkan_tutorial02_parameters.getPresentVkSurfaceKHR(),
         &queue_present_support[i]);
@@ -955,7 +991,8 @@ bool Tutorial02::checkPhysicalDeviceProperties(
   // capabilities don't use it
   if ((graphics_queue_family_index == UINT32_MAX) ||
       (present_queue_family_index == UINT32_MAX)) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Could not find queue family with required properties on "
         "physical device ",
         physical_device,
@@ -983,11 +1020,13 @@ bool Tutorial02::loadDeviceLevelEntryPoints() {
 }
 
 bool Tutorial02::getDeviceQueue() {
-  vkGetDeviceQueue(m_vulkan_tutorial02_parameters.getVkDevice(),
+  vkGetDeviceQueue(
+      m_vulkan_tutorial02_parameters.getVkDevice(),
       m_vulkan_tutorial02_parameters.getGraphicsQueueFamilyIndex(),
       0,
       &m_vulkan_tutorial02_parameters.getGraphicsVkQueue());
-  vkGetDeviceQueue(m_vulkan_tutorial02_parameters.getVkDevice(),
+  vkGetDeviceQueue(
+      m_vulkan_tutorial02_parameters.getVkDevice(),
       m_vulkan_tutorial02_parameters.getPresentQueueFamilyIndex(),
       0,
       &m_vulkan_tutorial02_parameters.getPresentVkQueue());
@@ -1003,7 +1042,8 @@ bool Tutorial02::createSemaphores() {
   // The per-swapchain-image "rendering finished" semaphores are created
   // later, in createCommandBuffers(): this runs from prepareVulkan(),
   // before the swapchain (and therefore its image count) exists.
-  if (vkCreateSemaphore(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkCreateSemaphore(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           &semaphore_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getImageAvailableVkSemaphore()) !=
@@ -1017,7 +1057,8 @@ bool Tutorial02::createSemaphores() {
       .pNext = nullptr,
       .flags = VK_FENCE_CREATE_SIGNALED_BIT};
 
-  if (vkCreateFence(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkCreateFence(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           &fence_create_info,
           nullptr,
           &m_vulkan_tutorial02_parameters.getVkFence()) != VK_SUCCESS) {
@@ -1033,7 +1074,8 @@ bool Tutorial02::recordCommandBuffers() {
       m_vulkan_tutorial02_parameters.getPresentQueueVkCommandBuffers().size());
 
   std::vector<VkImage> swap_chain_images(image_count);
-  if (vkGetSwapchainImagesKHR(m_vulkan_tutorial02_parameters.getVkDevice(),
+  if (vkGetSwapchainImagesKHR(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           m_vulkan_tutorial02_parameters.getVkSwapchainKHR(),
           &image_count,
           swap_chain_images.data()) != VK_SUCCESS) {
@@ -1116,7 +1158,8 @@ bool Tutorial02::recordCommandBuffers() {
         1,
         &barrier_from_clear_to_present);
     if (vkEndCommandBuffer(m_vulkan_tutorial02_parameters
-                .getPresentQueueVkCommandBuffers()[i]) != VK_SUCCESS) {
+                               .getPresentQueueVkCommandBuffers()[i]) !=
+        VK_SUCCESS) {
       Logging::error(LOG_TAG, "Could not record command buffers!");
       return false;
     }
@@ -1130,10 +1173,11 @@ void Tutorial02::clear() {
     vkDeviceWaitIdle(m_vulkan_tutorial02_parameters.getVkDevice());
 
     if ((!m_vulkan_tutorial02_parameters.getPresentQueueVkCommandBuffers()
-                .empty()) &&
+              .empty()) &&
         (m_vulkan_tutorial02_parameters.getPresentQueueVkCommandBuffers()[0] !=
-            VK_NULL_HANDLE)) {
-      vkFreeCommandBuffers(m_vulkan_tutorial02_parameters.getVkDevice(),
+         VK_NULL_HANDLE)) {
+      vkFreeCommandBuffers(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           m_vulkan_tutorial02_parameters.getPresentQueueVkCommandPool(),
           static_cast<std::uint32_t>(
               m_vulkan_tutorial02_parameters.getPresentQueueVkCommandBuffers()
@@ -1145,7 +1189,8 @@ void Tutorial02::clear() {
 
     if (m_vulkan_tutorial02_parameters.getPresentQueueVkCommandPool() !=
         VK_NULL_HANDLE) {
-      vkDestroyCommandPool(m_vulkan_tutorial02_parameters.getVkDevice(),
+      vkDestroyCommandPool(
+          m_vulkan_tutorial02_parameters.getVkDevice(),
           m_vulkan_tutorial02_parameters.getPresentQueueVkCommandPool(),
           nullptr);
       m_vulkan_tutorial02_parameters.getPresentQueueVkCommandPool() =
@@ -1168,14 +1213,15 @@ bool Tutorial02::checkValidationLayerSupport() const {
 
   bool response = true;
   for (const char* layer_name : validation_layers) {
-    std::vector<VkLayerProperties>::iterator layer_it =
-        std::find_if(vk_layer_properties.begin(),
-            vk_layer_properties.end(),
-            [&layer_name](const VkLayerProperties& vk_layer_property) {
-              return strcmp(layer_name, vk_layer_property.layerName) == 0;
-            });
+    std::vector<VkLayerProperties>::iterator layer_it = std::find_if(
+        vk_layer_properties.begin(),
+        vk_layer_properties.end(),
+        [&layer_name](const VkLayerProperties& vk_layer_property) {
+          return strcmp(layer_name, vk_layer_property.layerName) == 0;
+        });
     if (layer_it == vk_layer_properties.end()) {
-      Logging::error(LOG_TAG,
+      Logging::error(
+          LOG_TAG,
           "The following layer \"",
           layer_name,
           "\""
@@ -1201,7 +1247,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     log_tag_created.store(true);
   }
 
-  Logging::error(debug_log_tag,
+  Logging::error(
+      debug_log_tag,
       "validation layer:",
       vk_debug_utils_messenger_callback_data_ext->pMessage);
 
@@ -1234,7 +1281,8 @@ bool Tutorial02::setupDebugMessenger() {
 
     VkResult vk_result = VK_SUCCESS;
     if (func != nullptr) {
-      vk_result = func(m_vulkan_tutorial02_parameters.getVkInstance(),
+      vk_result = func(
+          m_vulkan_tutorial02_parameters.getVkInstance(),
           &vk_debug_utils_messenger_create_info_ext,
           nullptr,
           &m_vulkan_tutorial02_parameters.getVkDebugUtilsMessenger());
@@ -1251,10 +1299,12 @@ bool Tutorial02::setupDebugMessenger() {
 bool Tutorial02::destroyDebugMessenger() {
   bool response = false;
   auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-      vkGetInstanceProcAddr(m_vulkan_tutorial02_parameters.getVkInstance(),
+      vkGetInstanceProcAddr(
+          m_vulkan_tutorial02_parameters.getVkInstance(),
           "vkDestroyDebugUtilsMessengerEXT"));
   if (func != nullptr) {
-    func(m_vulkan_tutorial02_parameters.getVkInstance(),
+    func(
+        m_vulkan_tutorial02_parameters.getVkInstance(),
         m_vulkan_tutorial02_parameters.getVkDebugUtilsMessenger(),
         nullptr);
     response = true;
@@ -1263,7 +1313,8 @@ bool Tutorial02::destroyDebugMessenger() {
   return response;
 }
 
-bool Tutorial02::checkExtensionAvailability(const char* extension_name,
+bool Tutorial02::checkExtensionAvailability(
+    const char* extension_name,
     const std::vector<VkExtensionProperties>& available_extensions) {
   for (size_t i = 0; i < available_extensions.size(); ++i) {
     if (strcmp(available_extensions[i].extensionName, extension_name) == 0) {
@@ -1349,41 +1400,42 @@ VkImageUsageFlags Tutorial02::getSwapChainUsageFlags(
     return VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
         VK_IMAGE_USAGE_TRANSFER_DST_BIT;
   }
-  Logging::error(LOG_TAG,
+  Logging::error(
+      LOG_TAG,
       "VK_IMAGE_USAGE_TRANSFER_DST image usage is not supported by "
       "the swap chain!\n",
       "Supported swap chain's image usages include:\n",
       (surface_capabilities.supportedUsageFlags &
-                  VK_IMAGE_USAGE_TRANSFER_SRC_BIT
-              ? "    VK_IMAGE_USAGE_TRANSFER_SRC\n"
-              : ""),
+               VK_IMAGE_USAGE_TRANSFER_SRC_BIT
+           ? "    VK_IMAGE_USAGE_TRANSFER_SRC\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags &
-                  VK_IMAGE_USAGE_TRANSFER_DST_BIT
-              ? "    VK_IMAGE_USAGE_TRANSFER_DST\n"
-              : ""),
+               VK_IMAGE_USAGE_TRANSFER_DST_BIT
+           ? "    VK_IMAGE_USAGE_TRANSFER_DST\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags & VK_IMAGE_USAGE_SAMPLED_BIT
-              ? "    VK_IMAGE_USAGE_SAMPLED\n"
-              : ""),
+           ? "    VK_IMAGE_USAGE_SAMPLED\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags & VK_IMAGE_USAGE_STORAGE_BIT
-              ? "    VK_IMAGE_USAGE_STORAGE\n"
-              : ""),
+           ? "    VK_IMAGE_USAGE_STORAGE\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags &
-                  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
-              ? "    VK_IMAGE_USAGE_COLOR_ATTACHMENT\n"
-              : ""),
+               VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
+           ? "    VK_IMAGE_USAGE_COLOR_ATTACHMENT\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags &
-                  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
-              ? "    "
-                "VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT\n"
-              : ""),
+               VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
+           ? "    "
+             "VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags &
-                  VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
-              ? "    VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT\n"
-              : ""),
+               VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
+           ? "    VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT\n"
+           : ""),
       (surface_capabilities.supportedUsageFlags &
-                  VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT
-              ? "    VK_IMAGE_USAGE_INPUT_ATTACHMENT"
-              : ""));
+               VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT
+           ? "    VK_IMAGE_USAGE_INPUT_ATTACHMENT"
+           : ""));
   return static_cast<VkImageUsageFlags>(-1);
 }
 

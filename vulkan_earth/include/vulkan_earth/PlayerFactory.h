@@ -17,7 +17,8 @@ public:
   void setNumberofPlayers(std::int32_t new_number_of_players);
   std::int32_t getNumberofPlayers();
   void initializePlayerDataBase();
-  void updatePlayerBasicStrings(const std::string& player_type,
+  void updatePlayerBasicStrings(
+      const std::string& player_type,
       const std::string& ai_type,
       const std::string& name,
       char team_label,

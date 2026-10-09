@@ -21,7 +21,8 @@ const std::int32_t preview_button = 3;
 class SubMenuLandscape : public SubMenu {
 public:
   SubMenuLandscape();
-  SubMenuLandscape(std::int32_t id,
+  SubMenuLandscape(
+      std::int32_t id,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,

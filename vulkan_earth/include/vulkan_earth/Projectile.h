@@ -10,15 +10,15 @@ const std::int32_t default_damage = 100;
 const std::int32_t default_radius = 5;
 
 class Weapon;
-class VBOShaderLibrary;
 class GameState;
 
 namespace vulkan_graphix {
 class ChaseCamera;
 }
 namespace vulkan_graphix::Render {
+class TexturedModel;
 class RenderContext;
-}
+}  // namespace vulkan_graphix::Render
 
 class Projectile {
 public:
@@ -28,10 +28,11 @@ public:
   static constexpr float c_muzzle_distance = 500.0f;
 
   Projectile();
-  Projectile(GameState* new_parent,
+  Projectile(
+      GameState* new_parent,
       float* turret_matrix,
       float new_speed,
-      VBOShaderLibrary** new_projectile_models);
+      vulkan_graphix::Render::TexturedModel** new_projectile_models);
   ~Projectile();
   void draw(vulkan_graphix::Render::RenderContext& context);
   // void update(float gravity);
@@ -59,8 +60,8 @@ private:
   float m_wind;  // implement later
   Weapon* m_weapon;
   Weapon* m_default_weapon;
-  VBOShaderLibrary* m_projectile_default;
-  VBOShaderLibrary** m_projectile_models;
+  vulkan_graphix::Render::TexturedModel* m_projectile_default;
+  vulkan_graphix::Render::TexturedModel** m_projectile_models;
   float m_rotate;
   float m_y_not;
   std::int32_t m_timer;

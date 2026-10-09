@@ -102,13 +102,15 @@ private:
   createPipelineLayout();
   bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
+  bool allocateCommandBuffers(
+      VkCommandPool pool,
       std::uint32_t count,
       VkCommandBuffer* command_buffers);
   bool createCommandBuffers();
   bool createSemaphores();
   bool createFences();
-  bool prepareFrame(VkCommandBuffer command_buffer,
+  bool prepareFrame(
+      VkCommandBuffer command_buffer,
       const ImageParameters& image_parameters,
       VkFramebuffer& framebuffer);
   bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);

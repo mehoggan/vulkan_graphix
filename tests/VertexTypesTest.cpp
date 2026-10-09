@@ -100,11 +100,12 @@ TEST(InterleavedDatumTest, SwapExchangesValues) {
 
 TEST(InterleavedDataTest, TracksAttributeAndByteCounts) {
   using datum_type = InterleavedDatum<glm::vec3, glm::vec2>;
-  InterleavedData<glm::vec3, glm::vec2> data(std::vector<datum_type>{
-      datum_type(glm::vec3(1.0f), glm::vec2(2.0f)),
-      datum_type(glm::vec3(3.0f), glm::vec2(4.0f)),
-      datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
-  });
+  InterleavedData<glm::vec3, glm::vec2> data(
+      std::vector<datum_type>{
+          datum_type(glm::vec3(1.0f), glm::vec2(2.0f)),
+          datum_type(glm::vec3(3.0f), glm::vec2(4.0f)),
+          datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
+      });
 
   EXPECT_EQ(3u, data.getAttributeCount());
   EXPECT_EQ((sizeof(glm::vec3) + sizeof(glm::vec2)) * 3u, data.getByteCount());
@@ -117,8 +118,9 @@ TEST(InterleavedDataTest, BuildsUpLikeAVector) {
       {glm::vec3(1.0f), glm::vec2(2.0f)}};
   EXPECT_FALSE(data.empty());
   data.add({glm::vec3(3.0f), glm::vec2(4.0f)});
-  data.append({datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
-      datum_type(glm::vec3(7.0f), glm::vec2(8.0f))});
+  data.append(
+      {datum_type(glm::vec3(5.0f), glm::vec2(6.0f)),
+       datum_type(glm::vec3(7.0f), glm::vec2(8.0f))});
   ASSERT_EQ(4u, data.size());
   EXPECT_EQ(glm::vec3(3.0f), data[1].get<0>());
   data[1].get<1>() = glm::vec2(9.0f);
@@ -143,11 +145,11 @@ TEST(InterleavedDataTest, BuildsUpLikeAVector) {
 TEST(InterleavedDataTest, PacksEachAttributeAtItsTraitsOffset) {
   InterleavedData<glm::vec3, glm::vec4, glm::vec2> data = {
       {glm::vec3(1.0f, 2.0f, 3.0f),
-          glm::vec4(4.0f, 5.0f, 6.0f, 7.0f),
-          glm::vec2(8.0f, 9.0f)},
+       glm::vec4(4.0f, 5.0f, 6.0f, 7.0f),
+       glm::vec2(8.0f, 9.0f)},
       {glm::vec3(10.0f, 11.0f, 12.0f),
-          glm::vec4(13.0f, 14.0f, 15.0f, 16.0f),
-          glm::vec2(17.0f, 18.0f)}};
+       glm::vec4(13.0f, 14.0f, 15.0f, 16.0f),
+       glm::vec2(17.0f, 18.0f)}};
   const std::vector<std::byte> bytes = data.pack();
   ASSERT_EQ(data.getByteCount(), bytes.size());
   ASSERT_EQ(2u * 9u * sizeof(float), bytes.size());

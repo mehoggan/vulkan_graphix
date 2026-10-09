@@ -41,7 +41,8 @@ public:
   // passes (matching TerrainMaker::prepareData()'s own `for (int i = -1;
   // i < smoothness; i++) terrainSmoothe(10);` loop). Uses the C library's
   // rand(), exactly as TerrainMaker did - seed it with srand() first.
-  void generate(std::int32_t steps,
+  void generate(
+      std::int32_t steps,
       std::int32_t increase,
       float radius,
       std::int32_t random_jump,
@@ -85,12 +86,14 @@ public:
       float impact_x, float impact_z, float blast_size);
 
 private:
-  void terrainGen(std::int32_t steps,
+  void terrainGen(
+      std::int32_t steps,
       std::int32_t increase,
       float radius,
       std::int32_t random_jump);
   void terrainSmoothe(std::int32_t box_width);
-  void calcNormal(std::int32_t x,
+  void calcNormal(
+      std::int32_t x,
       std::int32_t z,
       std::int32_t flag,
       Math::Vec3<float>* normal) const;

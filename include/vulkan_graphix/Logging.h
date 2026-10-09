@@ -213,7 +213,8 @@ public:
    *
    * @return
    */
-  static bool addFileLogger(const LogTag& tag,
+  static bool addFileLogger(
+      const LogTag& tag,
       const std::filesystem::path& log_path,
       SeverityLevel level = VULKAN_GRAPHIX_INFO);
 
@@ -419,7 +420,8 @@ private:
  * @return A \ref LogTag generated using RTTI for \p t.
  */
 template <class T>
-LogTag addStdCoutStdErrLoggerForTypeInstance(const T& type,
+LogTag addStdCoutStdErrLoggerForTypeInstance(
+    const T& type,
     SeverityLevel cout_level = VULKAN_GRAPHIX_INFO,
     SeverityLevel cerr_level = VULKAN_GRAPHIX_ERROR) {
   LogTag log_tag = Logging::logTagForThis(type);

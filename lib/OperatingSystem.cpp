@@ -22,7 +22,8 @@ ProjectBase& ProjectBase::operator=(const ProjectBase& other) = default;
 
 bool ProjectBase::readyToDraw() const { return m_can_render; }
 
-void ProjectBase::onMouseButton(std::int32_t /*button*/,
+void ProjectBase::onMouseButton(
+    std::int32_t /*button*/,
     bool /*pressed*/,
     std::int32_t /*pos_x*/,
     std::int32_t /*pos_y*/) {}
@@ -72,7 +73,8 @@ bool Window::create(const std::string& title) {
   return create(title, 20, 20, 500, 500);
 }
 
-bool Window::create(const std::string& title,
+bool Window::create(
+    const std::string& title,
     std::int32_t pos_x,
     std::int32_t pos_y,
     std::int32_t width,
@@ -85,7 +87,8 @@ bool Window::create(const std::string& title,
 
   std::int32_t default_screen = DefaultScreen(m_parameters.getDisplayPtr());
 
-  ::Window handle = XCreateSimpleWindow(m_parameters.getDisplayPtr(),
+  ::Window handle = XCreateSimpleWindow(
+      m_parameters.getDisplayPtr(),
       DefaultRootWindow(m_parameters.getDisplayPtr()),
       pos_x,
       pos_y,
@@ -104,7 +107,8 @@ bool Window::create(const std::string& title,
   size_hints.y = pos_y;
   size_hints.width = width;
   size_hints.height = height;
-  XSetStandardProperties(m_parameters.getDisplayPtr(),
+  XSetStandardProperties(
+      m_parameters.getDisplayPtr(),
       m_parameters.getWindowHandle(),
       title.c_str(),
       title.c_str(),
@@ -112,7 +116,8 @@ bool Window::create(const std::string& title,
       nullptr,
       0,
       &size_hints);
-  XSelectInput(m_parameters.getDisplayPtr(),
+  XSelectInput(
+      m_parameters.getDisplayPtr(),
       m_parameters.getWindowHandle(),
       ExposureMask | KeyPressMask | KeyReleaseMask | StructureNotifyMask |
           ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
@@ -139,7 +144,8 @@ void Window::setCursorVisible(bool visible) {
   } else {
     if (m_blank_cursor == None) {
       const std::array<char, 1> empty_bits = {0};
-      const Pixmap blank = XCreateBitmapFromData(display_ptr,
+      const Pixmap blank = XCreateBitmapFromData(
+          display_ptr,
           m_parameters.getWindowHandle(),
           empty_bits.data(),
           1,
@@ -188,9 +194,9 @@ bool Window::renderingLoop(ProjectBase& project) {
           static std::int32_t height = event.xconfigure.height;
 
           if (((event.xconfigure.width > 0) &&
-                  (event.xconfigure.width != width)) ||
+               (event.xconfigure.width != width)) ||
               ((event.xconfigure.height > 0) &&
-                  (event.xconfigure.height != height))) {
+               (event.xconfigure.height != height))) {
             width = event.xconfigure.width;
             height = event.xconfigure.height;
             resize = true;
@@ -212,12 +218,14 @@ bool Window::renderingLoop(ProjectBase& project) {
           }
           std::array<char, 8> text = {};
           KeySym keysym = NoSymbol;
-          const std::int32_t length = XLookupString(&event.xkey,
+          const std::int32_t length = XLookupString(
+              &event.xkey,
               text.data(),
               static_cast<std::int32_t>(text.size()),
               &keysym,
               nullptr);
-          const KeyEvent key_event{static_cast<std::uint64_t>(keysym),
+          const KeyEvent key_event{
+              static_cast<std::uint64_t>(keysym),
               length == 1 ? text[0] : '\0',
               pressed};
           if (!project.onKey(key_event)) {

@@ -38,7 +38,8 @@ PlayerHuman::PlayerHuman(float red, float green, float blue) {
   m_loaded_weapon = nullptr;
 }
 
-PlayerHuman::PlayerHuman(float red,
+PlayerHuman::PlayerHuman(
+    float red,
     float green,
     float blue,
     const std::string& new_tank_type,

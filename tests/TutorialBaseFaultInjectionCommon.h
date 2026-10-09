@@ -91,7 +91,8 @@ inline bool bringUpThroughInstance(TestableTutorialBase& tutorial) {
 }
 
 // ... through createPresentationSurface() - needs a real window.
-inline bool bringUpThroughSurface(TestableTutorialBase& tutorial,
+inline bool bringUpThroughSurface(
+    TestableTutorialBase& tutorial,
     vulkan_graphix::os::WindowParameters params) {
   tutorial.m_window_parameters = params;
   return bringUpThroughInstance(tutorial) &&
@@ -100,13 +101,15 @@ inline bool bringUpThroughSurface(TestableTutorialBase& tutorial,
 }
 
 // ... through createDevice().
-inline bool bringUpThroughDevice(TestableTutorialBase& tutorial,
+inline bool bringUpThroughDevice(
+    TestableTutorialBase& tutorial,
     vulkan_graphix::os::WindowParameters params) {
   return bringUpThroughSurface(tutorial, params) && tutorial.createDevice();
 }
 
 // ... through getDeviceQueue() - everything createSwapChain() needs.
-inline bool bringUpThroughDeviceQueue(TestableTutorialBase& tutorial,
+inline bool bringUpThroughDeviceQueue(
+    TestableTutorialBase& tutorial,
     vulkan_graphix::os::WindowParameters params) {
   return bringUpThroughDevice(tutorial, params) &&
       tutorial.loadDeviceLevelEntryPoints() && tutorial.getDeviceQueue();

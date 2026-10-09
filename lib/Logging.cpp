@@ -99,7 +99,8 @@ bool Logging::addStdLogLogger(const LogTag& tag, SeverityLevel level) {
   return true;
 }
 
-bool Logging::addFileLogger(const LogTag& tag,
+bool Logging::addFileLogger(
+    const LogTag& tag,
     const std::filesystem::path& log_path,
     SeverityLevel level) {
   std::lock_guard<std::mutex> lock(Logging::s_loggers_mutex);

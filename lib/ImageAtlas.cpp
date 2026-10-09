@@ -25,7 +25,8 @@ bool ImageAtlas::setTile(
   const std::size_t dest_x = (index % m_columns) * m_tile_size;
   const std::size_t dest_y = (index / m_columns) * m_tile_size;
   for (std::size_t y = 0; y < m_tile_size; ++y) {
-    std::memcpy(m_pixels.data() + ((dest_y + y) * width() + dest_x) * 4,
+    std::memcpy(
+        m_pixels.data() + ((dest_y + y) * width() + dest_x) * 4,
         rgba_pixels.data() + y * row_bytes,
         row_bytes);
   }
@@ -53,9 +54,10 @@ ImageAtlas::UvRect ImageAtlas::tileUv(
     std::size_t index, std::uint32_t columns, std::uint32_t rows) {
   const std::uint32_t column = static_cast<std::uint32_t>(index) % columns;
   const std::uint32_t grid_row = static_cast<std::uint32_t>(index) / columns;
-  return {Math::Vec2<float>(
-              static_cast<float>(column) / static_cast<float>(columns),
-              static_cast<float>(grid_row) / static_cast<float>(rows)),
+  return {
+      Math::Vec2<float>(
+          static_cast<float>(column) / static_cast<float>(columns),
+          static_cast<float>(grid_row) / static_cast<float>(rows)),
       Math::Vec2<float>(
           static_cast<float>(column + 1) / static_cast<float>(columns),
           static_cast<float>(grid_row + 1) / static_cast<float>(rows))};

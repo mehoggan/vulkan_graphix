@@ -17,7 +17,8 @@ extern void playSFX(std::int32_t sfx);
 
 ControlItemButton::ControlItemButton() = default;
 
-ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
+ControlItemButton::ControlItemButton(
+    SubMenuLandscape* new_parent,
     float new_x_pos,
     float new_y_pos,
     float new_z_pos,
@@ -54,7 +55,8 @@ ControlItemButton::ControlItemButton(SubMenuLandscape* new_parent,
   float label_y_pos =
       m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
   /*	END OF BUTTON TEXT PLACEMENT	*/
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       m_z_pos,
@@ -69,7 +71,8 @@ ControlItemButton::~ControlItemButton() { delete m_label; }
 void ControlItemButton::draw(render::RenderContext& context) {
   if (m_built_button_state != m_button_state) {
     m_mesh.clear();
-    vulkan_earth::appendBevel(m_mesh,
+    vulkan_earth::appendBevel(
+        m_mesh,
         m_x_pos,
         m_y_pos,
         m_z_pos,
@@ -99,15 +102,16 @@ void ControlItemButton::setOptionText(std::int32_t index) {}
 void ControlItemButton::setOptionText(const std::string& new_text) {}
 std::string ControlItemButton::collectData() { return "Button"; }
 
-void ControlItemButton::mouseClickEvent(std::int32_t x,
+void ControlItemButton::mouseClickEvent(
+    std::int32_t x,
     std::int32_t y,
     std::int32_t state,
     bool /*still_over_control_item_button*/) {
   if (state) {
     if ((x >= (m_x_pos) && x <= ((m_x_pos) + (m_width))) &&
         (y <= (m_y_pos) &&
-            y >= ((m_y_pos) - (m_height)))) {  // This if statement -->
-                                               // stillOverControlItemButton
+         y >= ((m_y_pos) - (m_height)))) {  // This if statement -->
+                                            // stillOverControlItemButton
       m_button_state = 1;
       m_toggled = true;
     } else {

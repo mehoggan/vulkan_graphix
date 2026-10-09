@@ -142,8 +142,8 @@ private:
             start_index_for_row + static_cast<I>(top_row_vertex_count) - 2;
         I distance = static_cast<I>(vertex_per_row_count);
         for (I start_index = start_index_for_row;
-            start_index <= last_start_index;
-            ++start_index) {
+             start_index <= last_start_index;
+             ++start_index) {
           m_indices.push_back(start_index);
           if (start_index != last_start_index) {
             m_indices.push_back(start_index + 1);
@@ -159,8 +159,8 @@ private:
         const I last_start_index =
             start_index_for_row + static_cast<I>(vertex_per_row_count) - 1;
         for (I start_index = start_index_for_row;
-            start_index <= last_start_index;
-            ++start_index) {
+             start_index <= last_start_index;
+             ++start_index) {
           const I next_row_index =
               start_index + static_cast<I>(vertex_per_row_count);
           if (start_index != last_start_index) {
@@ -195,7 +195,8 @@ private:
   using IndexedVertices_t = std::pair<std::vector<Vec3<T>>, std::vector<I>>;
   using DuplicateCheck_t = std::unordered_map<Vec3<T>, I>;
 
-  IndexedVertices_t subdivide(const std::vector<Vec3<T>>& vertices,
+  IndexedVertices_t subdivide(
+      const std::vector<Vec3<T>>& vertices,
       const std::vector<I>& indices,
       std::uint32_t curr_level,
       std::uint32_t desired_level) {

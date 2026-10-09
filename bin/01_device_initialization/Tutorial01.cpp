@@ -170,7 +170,8 @@ bool Tutorial01::loadGlobalLevelEntryPoints() {
 
 bool Tutorial01::createInstance() {
   if (!checkValidationLayerSupport()) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Failed to create an instance that does not support",
         "validation layers.");
     return false;
@@ -196,7 +197,8 @@ bool Tutorial01::createInstance() {
   std::vector<const char*> vk_extensions =
       (m_enable_vulkan_debug.load() ? get_required_extensions()
                                     : std::vector<const char*>{});
-  Logging::info(LOG_TAG,
+  Logging::info(
+      LOG_TAG,
       "Creating an instance with the following extensions",
       vk_extensions);
 
@@ -216,7 +218,8 @@ bool Tutorial01::createInstance() {
     instance_create_info.ppEnabledExtensionNames = vk_extensions.data();
   }
 
-  if (vkCreateInstance(&instance_create_info,
+  if (vkCreateInstance(
+          &instance_create_info,
           nullptr,
           &m_vulkan_tutorial01_parameters.getVkInstance()) != VK_SUCCESS) {
     Logging::error(LOG_TAG, "Could not create Vulkan instance!");
@@ -280,7 +283,8 @@ bool Tutorial01::createDevice() {
     }
   }
   if (vk_physical_device == VK_NULL_HANDLE) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Could not select physical device based on the chosen "
         "properties!");
     return false;
@@ -308,7 +312,8 @@ bool Tutorial01::createDevice() {
       .ppEnabledExtensionNames = nullptr,
       .pEnabledFeatures = nullptr};
 
-  if (vkCreateDevice(vk_physical_device,
+  if (vkCreateDevice(
+          vk_physical_device,
           &vk_device_create_info,
           nullptr,
           &m_vulkan_tutorial01_parameters.getVkDevice()) != VK_SUCCESS) {
@@ -336,7 +341,8 @@ bool Tutorial01::checkPhysicalDeviceProperties(
 
   if ((major_version < 1) ||
       (vk_physical_device_properties.limits.maxImageDimension2D < 4096)) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Physical device",
         vk_physical_device,
         "doesn't support required parameters!");
@@ -347,7 +353,8 @@ bool Tutorial01::checkPhysicalDeviceProperties(
   vkGetPhysicalDeviceQueueFamilyProperties(
       vk_physical_device, &queue_families_count, nullptr);
   if (queue_families_count == 0) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Physical device",
         vk_physical_device,
         "doesn't have any queue families!");
@@ -356,7 +363,8 @@ bool Tutorial01::checkPhysicalDeviceProperties(
 
   std::vector<VkQueueFamilyProperties> vk_queue_family_properties(
       queue_families_count);
-  vkGetPhysicalDeviceQueueFamilyProperties(vk_physical_device,
+  vkGetPhysicalDeviceQueueFamilyProperties(
+      vk_physical_device,
       &queue_families_count,
       vk_queue_family_properties.data());
   bool found = false;
@@ -364,7 +372,8 @@ bool Tutorial01::checkPhysicalDeviceProperties(
     if ((vk_queue_family_properties[i].queueCount > 0) &&
         (vk_queue_family_properties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
       queue_family_index = i;
-      Logging::info(LOG_TAG,
+      Logging::info(
+          LOG_TAG,
           "Selected device:",
           vk_physical_device_properties.deviceName);
       found = true;
@@ -373,7 +382,8 @@ bool Tutorial01::checkPhysicalDeviceProperties(
   }
 
   if (!found) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Could not find queue family with required properties on",
         "physical device",
         vk_physical_device,
@@ -401,7 +411,8 @@ bool Tutorial01::loadDeviceLevelEntryPoints() {
 }
 
 bool Tutorial01::getDeviceQueue() {
-  vkGetDeviceQueue(m_vulkan_tutorial01_parameters.getVkDevice(),
+  vkGetDeviceQueue(
+      m_vulkan_tutorial01_parameters.getVkDevice(),
       m_vulkan_tutorial01_parameters.getQueueFamilyIndex(),
       0,
       &m_vulkan_tutorial01_parameters.getVkQueue());
@@ -422,14 +433,15 @@ bool Tutorial01::checkValidationLayerSupport() const {
 
   bool response = true;
   for (const char* layer_name : validation_layers) {
-    std::vector<VkLayerProperties>::iterator layer_it =
-        std::find_if(vk_layer_properties.begin(),
-            vk_layer_properties.end(),
-            [&layer_name](const VkLayerProperties& vk_layer_property) {
-              return strcmp(layer_name, vk_layer_property.layerName) == 0;
-            });
+    std::vector<VkLayerProperties>::iterator layer_it = std::find_if(
+        vk_layer_properties.begin(),
+        vk_layer_properties.end(),
+        [&layer_name](const VkLayerProperties& vk_layer_property) {
+          return strcmp(layer_name, vk_layer_property.layerName) == 0;
+        });
     if (layer_it == vk_layer_properties.end()) {
-      Logging::error(LOG_TAG,
+      Logging::error(
+          LOG_TAG,
           "The following layer \"",
           layer_name,
           "\""
@@ -455,7 +467,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     log_tag_created.store(true);
   }
 
-  Logging::error(debug_log_tag,
+  Logging::error(
+      debug_log_tag,
       "validation layer:",
       vk_debug_utils_messenger_callback_data_ext->pMessage);
 
@@ -488,7 +501,8 @@ bool Tutorial01::setupDebugMessenger() {
 
     VkResult vk_result = VK_SUCCESS;
     if (func != nullptr) {
-      vk_result = func(m_vulkan_tutorial01_parameters.getVkInstance(),
+      vk_result = func(
+          m_vulkan_tutorial01_parameters.getVkInstance(),
           &vk_debug_utils_messenger_create_info_ext,
           nullptr,
           &m_vulkan_tutorial01_parameters.getVkDebugUtilsMessenger());
@@ -505,10 +519,12 @@ bool Tutorial01::setupDebugMessenger() {
 bool Tutorial01::destroyDebugMessenger() {
   bool response = false;
   auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
-      vkGetInstanceProcAddr(m_vulkan_tutorial01_parameters.getVkInstance(),
+      vkGetInstanceProcAddr(
+          m_vulkan_tutorial01_parameters.getVkInstance(),
           "vkDestroyDebugUtilsMessengerEXT"));
   if (func != nullptr) {
-    func(m_vulkan_tutorial01_parameters.getVkInstance(),
+    func(
+        m_vulkan_tutorial01_parameters.getVkInstance(),
         m_vulkan_tutorial01_parameters.getVkDebugUtilsMessenger(),
         nullptr);
     response = true;

@@ -7,7 +7,8 @@ namespace vulkan_graphix::TankPlacement {
 namespace {
 // parent + offset.x * col0 + offset.y * col1 + offset.z * col2, summed
 // left to right exactly as Tank::setTankPos() wrote it out per component.
-Math::Vec3<float> offsetThroughBasis(const Math::Vec3<float>& parent,
+Math::Vec3<float> offsetThroughBasis(
+    const Math::Vec3<float>& parent,
     const Math::Mat4<float>& basis,
     const Math::Vec3<float>& offset) {
   Math::Vec3<float> result;

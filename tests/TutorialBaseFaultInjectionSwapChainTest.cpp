@@ -15,7 +15,8 @@
 using vulkan_graphix::test::bringUpThroughDeviceQueue;
 using vulkan_graphix::test::TestableTutorialBase;
 
-TEST(TutorialBaseFaultInjectionSwapChainTest,
+TEST(
+    TutorialBaseFaultInjectionSwapChainTest,
     CreateSwapChainImageViewsFailsWhenCreateImageViewFails) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
@@ -32,9 +33,9 @@ TEST(TutorialBaseFaultInjectionSwapChainTest,
 
   auto real_fn = vulkan_graphix::vkCreateImageView;
   vulkan_graphix::vkCreateImageView = [](VkDevice,
-                                          const VkImageViewCreateInfo*,
-                                          const VkAllocationCallbacks*,
-                                          VkImageView*) -> VkResult {
+                                         const VkImageViewCreateInfo*,
+                                         const VkAllocationCallbacks*,
+                                         VkImageView*) -> VkResult {
     return VK_ERROR_INITIALIZATION_FAILED;
   };
 

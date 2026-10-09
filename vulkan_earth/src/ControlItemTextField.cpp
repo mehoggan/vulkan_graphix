@@ -18,7 +18,8 @@ extern void playSFX(std::int32_t sfx);
 
 ControlItemTextField::ControlItemTextField() = default;
 
-ControlItemTextField::ControlItemTextField(float new_x_pos,
+ControlItemTextField::ControlItemTextField(
+    float new_x_pos,
     float new_y_pos,
     float new_z_pos,
     float red,
@@ -56,18 +57,21 @@ void ControlItemTextField::draw(render::RenderContext& context) {
   m_number_of_frames++;
 
   if (m_frame_mesh.triangles().empty()) {
-    vulkan_earth::appendFrame(m_frame_mesh,
+    vulkan_earth::appendFrame(
+        m_frame_mesh,
         m_x_pos,
         m_y_pos,
         m_z_pos,
         m_width,
         m_height,
-        Vec4(m_color[0] - 0.6f,
+        Vec4(
+            m_color[0] - 0.6f,
             m_color[1] - 0.6f,
             m_color[2] - 0.6f,
             m_color[3]),
         Vec4(m_color[0], m_color[1], m_color[2], m_color[3]),
-        Vec4(m_color[0] - 0.3f,
+        Vec4(
+            m_color[0] - 0.3f,
             m_color[1] - 0.3f,
             m_color[2] - 0.3f,
             m_color[3]));
@@ -87,18 +91,22 @@ void ControlItemTextField::draw(render::RenderContext& context) {
         }
       }
       m_cursor_mesh.addQuad(
-          {Vec3(m_x_pos + 0.02 * m_width + real_length,
+          {Vec3(
+               m_x_pos + 0.02 * m_width + real_length,
                m_y_pos - 0.15 * m_height,
                m_z_pos + 0.1),
-              Vec3(m_x_pos + 0.02 * m_width + real_length,
-                  m_y_pos - m_height + 0.15 * m_height,
-                  m_z_pos + 0.1),
-              Vec3(m_x_pos + 0.02 * m_width + real_length + 2,
-                  m_y_pos - m_height + 0.15 * m_height,
-                  m_z_pos + 0.1),
-              Vec3(m_x_pos + 0.02 * m_width + real_length + 2,
-                  m_y_pos - 0.15 * m_height,
-                  m_z_pos + 0.1)},
+           Vec3(
+               m_x_pos + 0.02 * m_width + real_length,
+               m_y_pos - m_height + 0.15 * m_height,
+               m_z_pos + 0.1),
+           Vec3(
+               m_x_pos + 0.02 * m_width + real_length + 2,
+               m_y_pos - m_height + 0.15 * m_height,
+               m_z_pos + 0.1),
+           Vec3(
+               m_x_pos + 0.02 * m_width + real_length + 2,
+               m_y_pos - 0.15 * m_height,
+               m_z_pos + 0.1)},
           Vec4(0, 0, 0, 1));
     }
     m_cursor_built_visible = cursor_visible;
@@ -131,7 +139,8 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
   float label_x_pos = m_x_pos + 0.02 * m_width;
   float label_y_pos =
       m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
-  m_current_text = new TextObject(new_text,
+  m_current_text = new TextObject(
+      new_text,
       label_x_pos,
       label_y_pos,
       m_z_pos + 0.1,
@@ -141,7 +150,8 @@ void ControlItemTextField::setOptionText(const std::string& new_text) {
       0.0f);
 }
 
-void ControlItemTextField::mouseClickEvent(std::int32_t /*x*/,
+void ControlItemTextField::mouseClickEvent(
+    std::int32_t /*x*/,
     std::int32_t /*y*/,
     std::int32_t state,
     bool still_over_control_item_text_field) {

@@ -62,7 +62,8 @@ void resetToFullWindow(render::RenderContext& context);
 // viewport cleared to (0.75, 0.75, 0.75, 1), seen through a 60-degree
 // perspective of aspect width / (1.5 * height), from window height / 4 *
 // tan(60 degrees) away.
-void beginOverlayPanel(render::RenderContext& context,
+void beginOverlayPanel(
+    render::RenderContext& context,
     const render::Rect& viewport,
     std::int32_t width,
     std::int32_t height);
@@ -71,7 +72,8 @@ void beginOverlayPanel(render::RenderContext& context,
 // UiGeometry::buildBevelFrame()/buildButtonBevel():
 // - a raised or pressed button bevel: top_left is (x, y), the face
 //   extending width right and height down;
-void appendBevel(render::UiMesh& mesh,
+void appendBevel(
+    render::UiMesh& mesh,
     float x,
     float y,
     float z,
@@ -82,7 +84,8 @@ void appendBevel(render::UiMesh& mesh,
     float bevel_size = 3.0f);
 // - the same frame with explicit colors (top and left wedges in top_left,
 //   bottom and right in bottom_right);
-void appendFrame(render::UiMesh& mesh,
+void appendFrame(
+    render::UiMesh& mesh,
     float x,
     float y,
     float z,

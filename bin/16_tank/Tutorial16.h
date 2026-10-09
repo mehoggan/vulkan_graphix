@@ -27,19 +27,22 @@
 // Tutorial10's LinePushConstants (a per-draw flat color) is this
 // project's only other push-constant precedent; this is the first one
 // carrying a model matrix.
+//
+// The Vulkan scaffolding - render pass, pipelines, descriptors, buffers,
+// texture uploads, and the frame loop - is the library's (VulkanCommon's
+// ResourceContext/FrameLoop); this file is what's specific to the
+// tutorial.
 
-#include <cstddef>
 #include <cstdint>
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/OrbitCamera.h"
-#include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
-#include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
+#include "vulkan_graphix/VulkanCommon/FrameLoop.h"
+#include "vulkan_graphix/VulkanCommon/ResourceContext.h"
 
 namespace vulkan_graphix {
 
@@ -49,9 +52,6 @@ struct Tutorial16VertexData {
   Math::Vec4<float> m_position;
   Math::Vec2<float> m_texcoord;
 };
-
-using Tutorial16VertexAttributeTraits =
-    VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
 
 // Shared by all three parts, updated once per frame as the orbit
 // camera moves - see Tutorial10UniformBufferData for the same split.
@@ -65,167 +65,31 @@ struct Tutorial16PushConstants {
   Math::Mat4<float> m_model;
 };
 
-// ************************************************************ //
-// VulkanTutorial16Parameters                                   //
-//                                                              //
-// Vulkan specific parameters                                   //
-// ************************************************************ //
-struct VulkanTutorial16Parameters {
-public:
-  static const std::size_t resources_count = 3;
-
-  VulkanTutorial16Parameters();
-
-  const VkRenderPass& getVkRenderPass() const;
-  VkRenderPass& getVkRenderPass();
-  void setVkRenderPass(const VkRenderPass& vk_render_pass);
-
-  const ImageParameters& getImageParameters() const;
-  ImageParameters& getImageParameters();
-  void setImageParameters(const ImageParameters& image_parameters);
-
-  const BufferParameters& getUniformBufferParameters() const;
-  BufferParameters& getUniformBufferParameters();
-  void setUniformBufferParameters(const BufferParameters& uniform_buffer);
-
-  const DescriptorSetParameters& getDescriptorSetParameters() const;
-  DescriptorSetParameters& getDescriptorSetParameters();
-  void setDescriptorSetParameters(
-      const DescriptorSetParameters& descriptor_set_parameters);
-
-  const VkPipelineLayout& getVkPipelineLayout() const;
-  VkPipelineLayout& getVkPipelineLayout();
-  void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
-
-  const VkPipeline& getVkGraphicsPipeline() const;
-  VkPipeline& getVkGraphicsPipeline();
-  void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
-
-  const BufferParameters& getBodyVertexBufferParameters() const;
-  BufferParameters& getBodyVertexBufferParameters();
-  void setBodyVertexBufferParameters(const BufferParameters& vertex_buffer);
-  std::uint32_t getBodyVertexCount() const;
-  void setBodyVertexCount(std::uint32_t vertex_count);
-
-  const BufferParameters& getHeadVertexBufferParameters() const;
-  BufferParameters& getHeadVertexBufferParameters();
-  void setHeadVertexBufferParameters(const BufferParameters& vertex_buffer);
-  std::uint32_t getHeadVertexCount() const;
-  void setHeadVertexCount(std::uint32_t vertex_count);
-
-  const BufferParameters& getTurretVertexBufferParameters() const;
-  BufferParameters& getTurretVertexBufferParameters();
-  void setTurretVertexBufferParameters(const BufferParameters& vertex_buffer);
-  std::uint32_t getTurretVertexCount() const;
-  void setTurretVertexCount(std::uint32_t vertex_count);
-
-  const BufferParameters& getStagingBufferParameters() const;
-  BufferParameters& getStagingBufferParameters();
-  void setStagingBufferParameters(const BufferParameters& staging_buffer);
-
-  const VkCommandPool& getVkCommandPool() const;
-  VkCommandPool& getVkCommandPool();
-  void setVkCommandPool(const VkCommandPool& vk_command_pool);
-
-  const std::vector<RenderingResourceParameters>& getRenderingResources()
-      const;
-  std::vector<RenderingResourceParameters>& getRenderingResources();
-  void setRenderingResources(
-      const std::vector<RenderingResourceParameters>& rendering_resources);
-
-  // One per swapchain image, indexed by acquired image index rather than
-  // by rendering-resource slot. See the comment in createSemaphores() for
-  // why this can't just live in RenderingResourceParameters.
-  const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
-  std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
-  void setFinishedRenderingSemaphores(
-      const std::vector<VkSemaphore>& finished_rendering_semaphores);
-
-private:
-  VkRenderPass m_vk_render_pass;
-  ImageParameters m_image_parameters;
-  BufferParameters m_uniform_buffer;
-  DescriptorSetParameters m_descriptor_set_parameters;
-  VkPipelineLayout m_vk_pipeline_layout;
-  VkPipeline m_vk_graphics_pipeline;
-  BufferParameters m_body_vertex_buffer;
-  std::uint32_t m_body_vertex_count;
-  BufferParameters m_head_vertex_buffer;
-  std::uint32_t m_head_vertex_count;
-  BufferParameters m_turret_vertex_buffer;
-  std::uint32_t m_turret_vertex_count;
-  BufferParameters m_staging_buffer;
-  VkCommandPool m_vk_command_pool;
-  std::vector<RenderingResourceParameters> m_rendering_resources;
-  std::vector<VkSemaphore> m_finished_rendering_semaphores;
-};
-
-// ************************************************************ //
-// Tutorial16                                                   //
-//                                                              //
-// Class for presenting Vulkan usage topics                     //
-// ************************************************************ //
 class Tutorial16 : public TutorialBase {
 public:
   Tutorial16();
   ~Tutorial16() override;
 
-  bool createRenderingResources();
-  bool createStagingBuffer();
-  bool createTexture();
-  bool createUniformBuffer();
-  bool createDescriptorSetLayout();
-  bool createDescriptorPool();
-  bool allocateDescriptorSet();
-  bool updateDescriptorSet();
-  bool createRenderPass();
-  bool createPipelineLayout();
-  bool createPipeline();
-  bool createVertexBuffers();
+  // Everything the tutorial draws with; call once after prepareVulkan().
+  bool createResources();
 
   bool draw() override;
-
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
   void onMouseMove(std::int32_t pos_x, std::int32_t pos_y) override;
 
 private:
-  bool createCommandBuffers();
-  bool createCommandPool(
-      std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
-      std::uint32_t count,
-      VkCommandBuffer* command_buffers);
-  bool createSemaphores();
-  bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags memory_property,
-      BufferParameters& buffer);
-  bool createImage(std::uint32_t width, std::uint32_t height, VkImage* image);
-  bool allocateImageMemory(
-      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
-  bool createImageView();
-  bool createSampler(VkSampler* sampler);
-  bool copyTextureData(char* texture_data,
-      std::uint32_t data_size,
-      std::uint32_t width,
-      std::uint32_t height);
-  bool copyBufferData(BufferParameters& destination,
-      const void* data,
-      std::uint32_t data_size,
-      VkAccessFlags dst_access_mask,
-      VkPipelineStageFlags dst_stage_mask);
+  // One tank part: its mesh, uploaded once.
+  struct Part {
+    BufferParameters m_vertex_buffer;
+    std::uint32_t m_vertex_count = 0;
+  };
+
   Tutorial16UniformBufferData getUniformBufferData() const;
-  bool updateUniformBufferData();
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-  createShaderModule(const char* filename);
-  std::vector<Tutorial16VertexData> loadPartVertexData(
-      const char* mesh_filename) const;
-  bool createPartVertexBuffer(const char* mesh_filename,
-      BufferParameters& vertex_buffer,
-      std::uint32_t& vertex_count);
+  bool createPart(const char* mesh_filename, Part& out);
 
   // TankB's own constructor values (body_offset/head_offset/
   // turret_offset, a shared 50x scale) combined with the right/up/at
@@ -236,16 +100,19 @@ private:
   Math::Mat4<float> getHeadModelMatrix() const;
   Math::Mat4<float> getTurretModelMatrix() const;
 
-  bool prepareFrame(VkCommandBuffer command_buffer,
-      const ImageParameters& image_parameters,
-      VkFramebuffer& framebuffer);
-  bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
-  void destroyBuffer(BufferParameters& buffer);
-
   bool childOnWindowSizeChanged() override;
   void childClear() override;
 
-  VulkanTutorial16Parameters m_vulkan_tutorial16_parameters;
+  VulkanCommon::ResourceContext m_resources;
+  VulkanCommon::FrameLoop m_frames;
+  ImageParameters m_texture;
+  BufferParameters m_uniform_buffer;
+  Part m_body;
+  Part m_head;
+  Part m_turret;
+  VkDescriptorSet m_descriptor_set = VK_NULL_HANDLE;
+  VkPipelineLayout m_pipeline_layout = VK_NULL_HANDLE;
+  VkPipeline m_pipeline = VK_NULL_HANDLE;
   OrbitCamera m_camera;
 };
 

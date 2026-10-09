@@ -15,7 +15,8 @@ namespace vulkan_graphix::Math {
 enum class AngleMode { Degrees, Radians };
 
 template <typename T>
-bool pointsOfTriangleAreCollinear(const Triangle<T>& tri,
+bool pointsOfTriangleAreCollinear(
+    const Triangle<T>& tri,
     float epsilon = std::numeric_limits<float>::epsilon()) {
   Vec3<T> edge1 = tri.p1() - tri.p0();
   Vec3<T> edge2 = tri.p2() - tri.p0();
@@ -60,7 +61,8 @@ Vec3<T> sphericalToCartesian(const SphericalCoordinates<T, AM>& coords) {
     theta = glm::radians(theta);
     azimuth = glm::radians(azimuth);
   }
-  return Vec3<T>(coords.radius() * std::cos(azimuth) * std::cos(theta),
+  return Vec3<T>(
+      coords.radius() * std::cos(azimuth) * std::cos(theta),
       coords.radius() * std::sin(azimuth),
       coords.radius() * std::cos(azimuth) * std::sin(theta));
 }

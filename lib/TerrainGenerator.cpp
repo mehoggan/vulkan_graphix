@@ -24,7 +24,8 @@ bool TerrainGenerator::inGrid(std::int32_t x, std::int32_t z) const {
   return x >= 0 && x < m_grid_size && z >= 0 && z < m_grid_size;
 }
 
-void TerrainGenerator::generate(std::int32_t steps,
+void TerrainGenerator::generate(
+    std::int32_t steps,
     std::int32_t increase,
     float radius,
     std::int32_t random_jump,
@@ -36,7 +37,8 @@ void TerrainGenerator::generate(std::int32_t steps,
   }
 }
 
-void TerrainGenerator::terrainGen(std::int32_t steps,
+void TerrainGenerator::terrainGen(
+    std::int32_t steps,
     std::int32_t increase,
     float radius,
     std::int32_t random_jump) {
@@ -79,9 +81,9 @@ void TerrainGenerator::terrainGen(std::int32_t steps,
     const std::int32_t y_max = static_cast<std::int32_t>(current_y + radius);
     for (std::int32_t x = x_min; x < x_max; ++x) {
       for (std::int32_t y = y_min; y < y_max; ++y) {
-        const float distance =
-            std::sqrt(std::pow(static_cast<double>(current_x - x), 2) +
-                std::pow(static_cast<double>(current_y) - y, 2));
+        const float distance = std::sqrt(
+            std::pow(static_cast<double>(current_x - x), 2) +
+            std::pow(static_cast<double>(current_y) - y, 2));
         if ((distance < radius) &&
             ((x >= 0 && x < m_grid_size) && (y >= 0 && y < m_grid_size))) {
           m_heights[x][y] += increase;
@@ -99,9 +101,9 @@ void TerrainGenerator::terrainSmoothe(std::int32_t box_width) {
     for (std::int32_t x = 0; x < m_grid_size; ++x) {
       std::int32_t height_sum = 0;
       for (std::int32_t i = y - (box_width / 2); i < y + (box_width / 2);
-          ++i) {
+           ++i) {
         for (std::int32_t j = x - (box_width / 2); j < x + (box_width / 2);
-            ++j) {
+             ++j) {
           if ((i >= 0 && i < m_grid_size) && (j >= 0 && j < m_grid_size)) {
             height_sum += m_heights[i][j];
           }
@@ -127,7 +129,8 @@ void TerrainGenerator::terrainSmoothe(std::int32_t box_width) {
 // from the th[z][x] its own vertices were built from - so every vertex was
 // lit with the normal of the terrain mirrored across its diagonal. This
 // reads m_heights[z][x], the same orientation as heightAt().
-void TerrainGenerator::calcNormal(std::int32_t x,
+void TerrainGenerator::calcNormal(
+    std::int32_t x,
     std::int32_t z,
     std::int32_t flag,
     Math::Vec3<float>* normal) const {
@@ -166,8 +169,9 @@ void TerrainGenerator::calcNormal(std::int32_t x,
     normal->x = v1[1] * v2[2] - v1[2] * v2[1];
     normal->y = v1[2] * v2[0] - v1[0] * v2[2];
     normal->z = v1[0] * v2[1] - v1[1] * v2[0];
-    const float mag = std::sqrt((normal->x * normal->x) +
-        (normal->y * normal->y) + (normal->z * normal->z));
+    const float mag = std::sqrt(
+        (normal->x * normal->x) + (normal->y * normal->y) +
+        (normal->z * normal->z));
     normal->x /= mag;
     normal->y /= mag;
     normal->z /= mag;
@@ -268,14 +272,17 @@ Math::Vec3<float> TerrainGenerator::normalAtWorld(
     return Math::Vec3<float>(0.0f, 1.0f, 0.0f);
   }
 
-  const std::array<float, 3> v = {0.0f,
+  const std::array<float, 3> v = {
+      0.0f,
       static_cast<float>(m_heights[n_z][n_x + 1] - m_heights[n_z][n_x]),
       scale};
-  const std::array<float, 3> u = {scale,
+  const std::array<float, 3> u = {
+      scale,
       static_cast<float>(m_heights[n_z + 1][n_x] - m_heights[n_z][n_x]),
       0.0f};
 
-  Math::Vec3<float> normal((v[1] * u[2] - u[1] * v[2]),
+  Math::Vec3<float> normal(
+      (v[1] * u[2] - u[1] * v[2]),
       (u[0] * v[2] - v[0] * u[2]),
       (v[0] * u[1] - u[0] * v[1]));
   const float mag = std::sqrt(
@@ -296,13 +303,16 @@ Math::Vec3<float> TerrainGenerator::triangleNormalAt(
     return Math::Vec3<float>(0.0f, 1.0f, 0.0f);
   }
 
-  const Math::Vec3<float> v0(static_cast<float>(x),
+  const Math::Vec3<float> v0(
+      static_cast<float>(x),
       static_cast<float>(m_heights[z][x]),
       static_cast<float>(z));
-  const Math::Vec3<float> v1(static_cast<float>(x + 1),
+  const Math::Vec3<float> v1(
+      static_cast<float>(x + 1),
       static_cast<float>(m_heights[z][x + 1]),
       static_cast<float>(z));
-  const Math::Vec3<float> v2(static_cast<float>(x),
+  const Math::Vec3<float> v2(
+      static_cast<float>(x),
       static_cast<float>(m_heights[z + 1][x]),
       static_cast<float>(z + 1));
 
@@ -311,14 +321,15 @@ Math::Vec3<float> TerrainGenerator::triangleNormalAt(
   const std::array<float, 3> v = {
       (v2.x - v0.x), (v2.y / 100 - v0.y / 100), (v2.z - v0.z)};
 
-  Math::Vec3<float> normal((u[1] * v[2] - v[1] * u[2]),
+  Math::Vec3<float> normal(
+      (u[1] * v[2] - v[1] * u[2]),
       (u[2] * v[0] - u[0] * v[2]),
       (u[0] * v[1] - v[0] * u[1]));
 
-  const float mag = static_cast<float>(
-      std::sqrt(std::pow(static_cast<double>(normal.x), 2.0) +
-          std::pow(static_cast<double>(normal.y), 2.0) +
-          std::pow(static_cast<double>(normal.z), 2.0)));
+  const float mag = static_cast<float>(std::sqrt(
+      std::pow(static_cast<double>(normal.x), 2.0) +
+      std::pow(static_cast<double>(normal.y), 2.0) +
+      std::pow(static_cast<double>(normal.z), 2.0)));
   normal.x /= mag;
   normal.y /= mag;
   normal.z /= mag;
@@ -354,10 +365,11 @@ std::vector<TerrainGridCell> TerrainGenerator::makeCrater(
       const float z_dis = static_cast<float>(std::abs(j - z));
       const float dist_radius = std::sqrt(x_dis * x_dis + z_dis * z_dis);
 
-      const float damage_depth = -((std::sqrt(dist_radius * dist_radius +
-                                        x_dis * x_dis + z_dis * z_dis) -
-                                       blast_size * 2) *
-          scale / 2);
+      const float damage_depth =
+          -((std::sqrt(
+                 dist_radius * dist_radius + x_dis * x_dis + z_dis * z_dis) -
+             blast_size * 2) *
+            scale / 2);
       float adjust_height = static_cast<float>(m_heights[j][i]);
       if (adjust_height > (impact_y + damage_depth)) {
         adjust_height -= damage_depth;

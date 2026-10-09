@@ -23,12 +23,12 @@
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TerrainMaker.h"
 #include "vulkan_earth/TextObject.h"
-#include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/Water.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_graphix/Ballistics.h"
 #include "vulkan_graphix/ChaseCamera.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/TexturedModel.h"
 #include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/UiGeometry.h"
 #include "vulkan_graphix/WorldCamera.h"
@@ -56,7 +56,8 @@ constexpr std::int32_t c_glut_screen_height = 0x00C9;
 
 GameState::GameState() = default;
 
-GameState::GameState(std::int32_t new_width,
+GameState::GameState(
+    std::int32_t new_width,
     std::int32_t new_height,
     PlayerFactory* new_player_factory,
     GlobalSettings* new_global_settings,
@@ -83,7 +84,8 @@ GameState::GameState(std::int32_t new_width,
 
   m_selected_weapon_img = nullptr;
   m_selected_weapon_remain = nullptr;
-  m_weapon_slot = new ImageObject(0,
+  m_weapon_slot = new ImageObject(
+      0,
       0,
       2,
       new_width * 0.08,
@@ -165,13 +167,13 @@ GameState::GameState(std::int32_t new_width,
   m_camera_y = 15000;
   m_camera_z = 4000;
   //
-  m_camera_radius =
-      sqrt((pow(static_cast<double>(m_camera_x - m_offset), 2.0)) +
-          (pow(static_cast<double>(m_camera_y), 2.0)) +
-          (pow(static_cast<double>(m_camera_z - m_offset), 2.0)));
-  m_plane_radius =
-      sqrt((pow(static_cast<double>(m_camera_x - m_offset), 2.0)) +
-          (pow(static_cast<double>(m_camera_z - m_offset), 2.0)));
+  m_camera_radius = sqrt(
+      (pow(static_cast<double>(m_camera_x - m_offset), 2.0)) +
+      (pow(static_cast<double>(m_camera_y), 2.0)) +
+      (pow(static_cast<double>(m_camera_z - m_offset), 2.0)));
+  m_plane_radius = sqrt(
+      (pow(static_cast<double>(m_camera_x - m_offset), 2.0)) +
+      (pow(static_cast<double>(m_camera_z - m_offset), 2.0)));
   m_current_tank_theta = 0.0;
   m_current_world_theta = 0.0;
   m_current_tank_phi =
@@ -189,54 +191,55 @@ GameState::GameState(std::int32_t new_width,
   // IMPORTANT: Be careful about the order. It should match with the order in
   // that the weapons are created in the ShopMenu constructor
   for (std::int32_t i = 0; i < max_projectile_models; i++) {
-    m_projectile_models[i] = new VBOShaderLibrary();
+    m_projectile_models[i] = new vulkan_graphix::Render::TexturedModel();
   }
 
-  m_projectile_models[10]->loadClientData("Projectiles/projectileDefault.ogl");
-  m_projectile_models[10]->loadTexture(
+  m_projectile_models[10]->loadOgl("Projectiles/projectileDefault.ogl");
+  m_projectile_models[10]->loadRawTexture(
       "Projectiles/projectileDefault.raw", 512, 512);
 
-  m_projectile_models[0]->loadClientData("Projectiles/projectileBFB.ogl");
-  m_projectile_models[0]->loadTexture(
+  m_projectile_models[0]->loadOgl("Projectiles/projectileBFB.ogl");
+  m_projectile_models[0]->loadRawTexture(
       "Projectiles/projectileMFB.raw", 512, 512);
 
-  m_projectile_models[1]->loadClientData("Projectiles/projectileBFB.ogl");
-  m_projectile_models[1]->loadTexture(
+  m_projectile_models[1]->loadOgl("Projectiles/projectileBFB.ogl");
+  m_projectile_models[1]->loadRawTexture(
       "Projectiles/projectileBFB.raw", 512, 512);
 
-  m_projectile_models[2]->loadClientData("Projectiles/projectileAcid.ogl");
-  m_projectile_models[2]->loadTexture(
+  m_projectile_models[2]->loadOgl("Projectiles/projectileAcid.ogl");
+  m_projectile_models[2]->loadRawTexture(
       "Projectiles/projectileAcid.raw", 512, 512);
 
-  m_projectile_models[3]->loadClientData("Projectiles/projectileThor.ogl");
-  m_projectile_models[3]->loadTexture(
+  m_projectile_models[3]->loadOgl("Projectiles/projectileThor.ogl");
+  m_projectile_models[3]->loadRawTexture(
       "Projectiles/projectileThor.raw", 512, 512);
 
-  m_projectile_models[4]->loadClientData("Projectiles/projectileEMP.ogl");
-  m_projectile_models[4]->loadTexture(
+  m_projectile_models[4]->loadOgl("Projectiles/projectileEMP.ogl");
+  m_projectile_models[4]->loadRawTexture(
       "Projectiles/projectileEMP.raw", 512, 512);
 
-  m_projectile_models[5]->loadClientData("Projectiles/projectileDefault.ogl");
-  m_projectile_models[5]->loadTexture(
+  m_projectile_models[5]->loadOgl("Projectiles/projectileDefault.ogl");
+  m_projectile_models[5]->loadRawTexture(
       "Projectiles/projectilePadlock.raw", 512, 512);
 
-  m_projectile_models[6]->loadClientData("Projectiles/projectileDefault.ogl");
-  m_projectile_models[6]->loadTexture(
+  m_projectile_models[6]->loadOgl("Projectiles/projectileDefault.ogl");
+  m_projectile_models[6]->loadRawTexture(
       "Projectiles/projectileRevive.raw", 512, 512);
 
-  m_projectile_models[7]->loadClientData("Projectiles/projectileDefault.ogl");
-  m_projectile_models[7]->loadTexture(
+  m_projectile_models[7]->loadOgl("Projectiles/projectileDefault.ogl");
+  m_projectile_models[7]->loadRawTexture(
       "Projectiles/projectileTeleport.raw", 512, 512);
 
-  m_projectile_models[8]->loadClientData("Projectiles/projectileDefault.ogl");
-  m_projectile_models[8]->loadTexture(
+  m_projectile_models[8]->loadOgl("Projectiles/projectileDefault.ogl");
+  m_projectile_models[8]->loadRawTexture(
       "Projectiles/projectileAtom.raw", 512, 512);
 
-  m_projectile_models[9]->loadClientData("Projectiles/projectileNuke.ogl");
-  m_projectile_models[9]->loadTexture(
+  m_projectile_models[9]->loadOgl("Projectiles/projectileNuke.ogl");
+  m_projectile_models[9]->loadRawTexture(
       "Projectiles/projectileNuke.raw", 512, 512);
 
-  m_manual = new ImageObject(new_width * -0.175,
+  m_manual = new ImageObject(
+      new_width * -0.175,
       new_height * 0.25,
       2,
       new_width * 0.35,
@@ -312,7 +315,8 @@ float GameState::calcDistanceBetweenVertices(
 
 void GameState::timerEvent(float new_timer) {}
 
-void GameState::calcNormalVector(vulkan_graphix::Math::Vec3<float>* v0,
+void GameState::calcNormalVector(
+    vulkan_graphix::Math::Vec3<float>* v0,
     vulkan_graphix::Math::Vec3<float>* v1,
     vulkan_graphix::Math::Vec3<float>* v2,
     vulkan_graphix::Math::Vec3<float>* n) {
@@ -323,7 +327,8 @@ void GameState::calcNormalVector(vulkan_graphix::Math::Vec3<float>* v0,
   n->y = u[2] * v[0] - u[0] * v[2];
   n->z = u[0] * v[1] - v[0] * u[1];
 
-  float mag = static_cast<float>(sqrt(pow(static_cast<double>(n->x), 2.0) +
+  float mag = static_cast<float>(sqrt(
+      pow(static_cast<double>(n->x), 2.0) +
       pow(static_cast<double>(n->y), 2.0) +
       pow(static_cast<double>(n->z), 2.0)));
   if (mag != 0) {
@@ -392,13 +397,15 @@ void GameState::draw(render::RenderContext& context) {
           m_current_player->getCurrentTank()->getHeadMatrix();
       view = view *
           glm::lookAt(
-              math::Vec3<float>(head_matrix[12] + head_matrix[8] * 4000,
-                  head_matrix[13] + 2000,
-                  head_matrix[14] + head_matrix[10] * 4000),
-              math::Vec3<float>(head_matrix[12] - head_matrix[8] * 3000,
-                  head_matrix[13] + head_matrix[9] * 0,
-                  head_matrix[14] - head_matrix[10] * 3000),
-              math::Vec3<float>(0, 1, 0));
+                 math::Vec3<float>(
+                     head_matrix[12] + head_matrix[8] * 4000,
+                     head_matrix[13] + 2000,
+                     head_matrix[14] + head_matrix[10] * 4000),
+                 math::Vec3<float>(
+                     head_matrix[12] - head_matrix[8] * 3000,
+                     head_matrix[13] + head_matrix[9] * 0,
+                     head_matrix[14] - head_matrix[10] * 3000),
+                 math::Vec3<float>(0, 1, 0));
     }
   }
   context.setCamera(context.projection(), view);
@@ -419,7 +426,8 @@ void GameState::draw(render::RenderContext& context) {
   }
 
   // The ocean alone is translated (glPushMatrix()/glPopMatrix()).
-  context.setCamera(context.projection(),
+  context.setCamera(
+      context.projection(),
       glm::translate(
           view, math::Vec3<float>(-256.00f * 400, -5000.00f, -256.00f * 400)));
   m_ocean->draw(context);
@@ -470,13 +478,14 @@ void GameState::draw(render::RenderContext& context) {
       const render::UiVertices line = {
           {math::Vec3<float>(
                turret_matrix[12], turret_matrix[13], turret_matrix[14]),
-              color,
-              math::Vec2<float>(0.0f)},
+           color,
+           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(
                body_matrix[12], body_matrix[13], body_matrix[14]),
-              color,
-              math::Vec2<float>(0.0f)}};
-      context.drawTransient(line,
+           color,
+           math::Vec2<float>(0.0f)}};
+      context.drawTransient(
+          line,
           vulkan_earth::pipelines().m_ui_lines,
           nullptr,
           math::Mat4<float>(1.0f),
@@ -525,7 +534,8 @@ void GameState::drawHUD(render::RenderContext& context) {
         m_player_factory->getPlayer(m_current_player_index)->getGreen(),
         m_player_factory->getPlayer(m_current_player_index)->getBlue(),
         1);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
         m_player_factory->getPlayer(m_current_player_index)->getPlayerName(),
         0,
@@ -539,11 +549,13 @@ void GameState::drawHUD(render::RenderContext& context) {
   drawHUDText(context, color, "Player Name", -0.76 * new_x, 0.75 * new_y);
   drawHUDText(context, color, "Team", -0.525 * new_x, 0.75 * new_y);
   for (std::int32_t i = 0; i < m_player_factory->getNumberofPlayers(); i++) {
-    color = math::Vec4<float>(m_player_factory->getPlayer(i)->getRed(),
+    color = math::Vec4<float>(
+        m_player_factory->getPlayer(i)->getRed(),
         m_player_factory->getPlayer(i)->getGreen(),
         m_player_factory->getPlayer(i)->getBlue(),
         1);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
         m_player_factory->getPlayer(i)->getPlayerName(),
         -0.76 * new_x,
@@ -554,13 +566,15 @@ void GameState::drawHUD(render::RenderContext& context) {
         context, color, team, -0.475 * new_x, 0.70 * new_y - 0.05 * new_y * i);
     char buffer[128];
     memset(buffer, 0, 128);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
-        (sprintf(buffer,
+        (sprintf(
+             buffer,
              "%d",
              static_cast<std::int32_t>(
                  m_player_factory->getPlayer(i)->getCurrentWait())),
-            buffer),
+         buffer),
         -0.95 * new_x,
         0.70 * new_y - 0.05 * new_y * i);
     if (!m_player_factory->getPlayer(i)->getCurrentTank()->isAlive()) {
@@ -574,12 +588,14 @@ void GameState::drawHUD(render::RenderContext& context) {
         0) {
       color = math::Vec4<float>(0, 1, 0, 1);
     }
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
-        (sprintf(buffer,
+        (sprintf(
+             buffer,
              "%d",
              m_player_factory->getPlayer(i)->getCurrentTank()->getHP()),
-            buffer),
+         buffer),
         -0.87 * new_x,
         0.70 * new_y - 0.05 * new_y * i);
   }
@@ -595,10 +611,11 @@ void GameState::drawHUD(render::RenderContext& context) {
     memset(buffer, 0, 128);
     color = math::Vec4<float>(1, 1, 1, 1);
     drawHUDText(context, color, "Power:", 0.7 * new_x, -0.7 * new_y);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
         (sprintf(buffer, "%d", static_cast<std::int32_t>(power_ratio * 1000)),
-            buffer),
+         buffer),
         0.95 * new_x,
         -0.7 * new_y);
     // show previous power
@@ -606,14 +623,16 @@ void GameState::drawHUD(render::RenderContext& context) {
     memset(buffer1, 0, 128);
     color = math::Vec4<float>(0.55, 0.55, 0.55, 1);
     drawHUDText(context, color, "Power:", 0.7 * new_x, -0.65 * new_y);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
-        (sprintf(buffer1,
+        (sprintf(
+             buffer1,
              "%d",
              m_player_factory->getPlayer(m_current_player_index)
                  ->getCurrentTank()
                  ->getPreviousPower()),
-            buffer1),
+         buffer1),
         0.95 * new_x,
         -0.65 * new_y);
 
@@ -622,16 +641,18 @@ void GameState::drawHUD(render::RenderContext& context) {
     memset(buffer2, 0, 128);
     color = math::Vec4<float>(1, 1, 1, 1);
     drawHUDText(context, color, "Angle:", 0.7 * new_x, -0.8 * new_y);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
-        (sprintf(buffer2,
+        (sprintf(
+             buffer2,
              "%d",
              static_cast<std::int32_t>(
                  m_player_factory->getPlayer(m_current_player_index)
                      ->getCurrentTank()
                      ->getTurretDegrees() +
                  1)),
-            buffer2),
+         buffer2),
         0.95 * new_x,
         -0.8 * new_y);
     // show previous angle
@@ -639,14 +660,16 @@ void GameState::drawHUD(render::RenderContext& context) {
     memset(buffer3, 0, 128);
     color = math::Vec4<float>(0.55, 0.55, 0.55, 1);
     drawHUDText(context, color, "Angle:", 0.7 * new_x, -0.75 * new_y);
-    drawHUDText(context,
+    drawHUDText(
+        context,
         color,
-        (sprintf(buffer3,
+        (sprintf(
+             buffer3,
              "%d",
              m_player_factory->getPlayer(m_current_player_index)
                  ->getCurrentTank()
                  ->getPreviousAngle()),
-            buffer3),
+         buffer3),
         0.95 * new_x,
         -0.75 * new_y);
 
@@ -686,30 +709,38 @@ void GameState::drawHUD(render::RenderContext& context) {
       render::UiVertices loop;
       // glPolygonMode(GL_LINE): the quad's outline
       color = math::Vec4<float>(1, 0, 0, 1.0f);
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.05 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.08 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) +
-                                        (0.1 * c_glut_screen_width),
-                                    0.08 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) +
-                                        (0.1 * c_glut_screen_width),
-                                    0.05 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.05 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.08 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) + (0.1 * c_glut_screen_width),
+                  0.08 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) + (0.1 * c_glut_screen_width),
+                  0.05 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
       for (std::size_t corner = 0; corner < loop.size(); ++corner) {
         out_lines.add(loop[corner]);
         out_lines.add(loop[(corner + 1) % loop.size()]);
@@ -718,34 +749,12 @@ void GameState::drawHUD(render::RenderContext& context) {
       context.drawTransient(
           out_lines, vulkan_earth::pipelines().m_ui_lines, nullptr);
       color = vulkan_graphix::UiGeometry::powerBarColor(power_ratio);
-      quad.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.05 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      if (quad.size() == 4) {
-        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-          out_tris.add(quad[corner]);
-        quad.clear();
-      }
-      quad.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.08 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      if (quad.size() == 4) {
-        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-          out_tris.add(quad[corner]);
-        quad.clear();
-      }
       quad.add(
-          render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                   (0.1 * c_glut_screen_width) +
-                                   (power_ratio * 0.2) * c_glut_screen_width,
-                               0.08 * c_glut_screen_height,
-                               2),
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.05 * c_glut_screen_height,
+                  2),
               color,
               math::Vec2<float>(0.0f)});
       if (quad.size() == 4) {
@@ -754,11 +763,39 @@ void GameState::drawHUD(render::RenderContext& context) {
         quad.clear();
       }
       quad.add(
-          render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                   (0.1 * c_glut_screen_width) +
-                                   (power_ratio * 0.2) * c_glut_screen_width,
-                               0.05 * c_glut_screen_height,
-                               2),
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.08 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+          out_tris.add(quad[corner]);
+        quad.clear();
+      }
+      quad.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width) +
+                      (power_ratio * 0.2) * c_glut_screen_width,
+                  0.08 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+          out_tris.add(quad[corner]);
+        quad.clear();
+      }
+      quad.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width) +
+                      (power_ratio * 0.2) * c_glut_screen_width,
+                  0.05 * c_glut_screen_height,
+                  2),
               color,
               math::Vec2<float>(0.0f)});
       if (quad.size() == 4) {
@@ -773,11 +810,12 @@ void GameState::drawHUD(render::RenderContext& context) {
     // Graphic meter: Health
     float health_ratio =
         static_cast<float>(m_player_factory->getPlayer(m_current_player_index)
-                ->getCurrentTank()
-                ->getHP()) /
-        static_cast<float>(m_player_factory->getPlayer(m_current_player_index)
                                ->getCurrentTank()
-                               ->getArmor() *
+                               ->getHP()) /
+        static_cast<float>(
+            m_player_factory->getPlayer(m_current_player_index)
+                ->getCurrentTank()
+                ->getArmor() *
             100);
     // glOrtho() over c_glut_screen_width x c_glut_screen_height; as in
     // the original, it stays in effect for the rest of the HUD.
@@ -791,30 +829,38 @@ void GameState::drawHUD(render::RenderContext& context) {
       render::UiVertices loop;
       // glPolygonMode(GL_LINE): the quad's outline
       color = math::Vec4<float>(1, 0, 0, 1.0f);
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.90 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.93 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) +
-                                        (0.1 * c_glut_screen_width),
-                                    0.93 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      loop.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) +
-                                        (0.1 * c_glut_screen_width),
-                                    0.90 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.90 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.93 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) + (0.1 * c_glut_screen_width),
+                  0.93 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      loop.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) + (0.1 * c_glut_screen_width),
+                  0.90 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
       for (std::size_t corner = 0; corner < loop.size(); ++corner) {
         out_lines.add(loop[corner]);
         out_lines.add(loop[(corner + 1) % loop.size()]);
@@ -823,34 +869,12 @@ void GameState::drawHUD(render::RenderContext& context) {
       context.drawTransient(
           out_lines, vulkan_earth::pipelines().m_ui_lines, nullptr);
       color = vulkan_graphix::UiGeometry::healthBarColor(health_ratio);
-      quad.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.90 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      if (quad.size() == 4) {
-        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-          out_tris.add(quad[corner]);
-        quad.clear();
-      }
-      quad.add(render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                        (0.1 * c_glut_screen_width),
-                                    0.93 * c_glut_screen_height,
-                                    2),
-          color,
-          math::Vec2<float>(0.0f)});
-      if (quad.size() == 4) {
-        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
-          out_tris.add(quad[corner]);
-        quad.clear();
-      }
       quad.add(
-          render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                   (0.1 * c_glut_screen_width) +
-                                   (health_ratio * 0.2) * c_glut_screen_width,
-                               0.93 * c_glut_screen_height,
-                               2),
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.90 * c_glut_screen_height,
+                  2),
               color,
               math::Vec2<float>(0.0f)});
       if (quad.size() == 4) {
@@ -859,11 +883,39 @@ void GameState::drawHUD(render::RenderContext& context) {
         quad.clear();
       }
       quad.add(
-          render::UiVertex{math::Vec3<float>((c_glut_screen_width / 2) -
-                                   (0.1 * c_glut_screen_width) +
-                                   (health_ratio * 0.2) * c_glut_screen_width,
-                               0.90 * c_glut_screen_height,
-                               2),
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width),
+                  0.93 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+          out_tris.add(quad[corner]);
+        quad.clear();
+      }
+      quad.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width) +
+                      (health_ratio * 0.2) * c_glut_screen_width,
+                  0.93 * c_glut_screen_height,
+                  2),
+              color,
+              math::Vec2<float>(0.0f)});
+      if (quad.size() == 4) {
+        for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
+          out_tris.add(quad[corner]);
+        quad.clear();
+      }
+      quad.add(
+          render::UiVertex{
+              math::Vec3<float>(
+                  (c_glut_screen_width / 2) - (0.1 * c_glut_screen_width) +
+                      (health_ratio * 0.2) * c_glut_screen_width,
+                  0.90 * c_glut_screen_height,
+                  2),
               color,
               math::Vec2<float>(0.0f)});
       if (quad.size() == 4) {
@@ -880,7 +932,8 @@ void GameState::drawHUD(render::RenderContext& context) {
   context.setCamera(projection, saved_view);
 }
 
-void GameState::drawHUDText(render::RenderContext& context,
+void GameState::drawHUDText(
+    render::RenderContext& context,
     const math::Vec4<float>& color,
     const std::string& input,
     float x,
@@ -974,7 +1027,8 @@ std::int32_t GameState::getWinner() {
         winner = i + 1;
       }
       // CHECK FOR TEAM WINNER
-      else if ((m_player_factory->getPlayer(i)->getTeamLabel() - 48) + 100 ==
+      else if (
+          (m_player_factory->getPlayer(i)->getTeamLabel() - 48) + 100 ==
               winner ||
           winner == 0) {
         winner = (m_player_factory->getPlayer(i)->getTeamLabel() - 48) + 100;
@@ -1027,62 +1081,75 @@ void GameState::debugMode(render::RenderContext& context) {
   vulkan_graphix::Math::Vec3<float> n =
       m_current_player->getCurrentTank()->getAlignmentVector();
   color = math::Vec4<float>(0.00, 0.50, 0.50, 1.0f);
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12],
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14]),
-      color,
-      math::Vec2<float>(0.0f)});
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] + 800 * n.x,
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
-              800 * n.y,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] + 800 * n.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12],
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14]),
+          color,
+          math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] +
+                  800 * n.x,
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
+                  800 * n.y,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] +
+                  800 * n.z),
+          color,
+          math::Vec2<float>(0.0f)});
   //*/
   //*/
   color = math::Vec4<float>(0.00, 0.00, 1.00, 1.0f);
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12],
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14]),
-      color,
-      math::Vec2<float>(0.0f)});
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] +
-              1000 * (m_current_player->getCurrentTank()->getHeadMatrix()[4]),
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
-              1000 * (m_current_player->getCurrentTank()->getHeadMatrix()[5]),
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] +
-              1000 * (m_current_player->getCurrentTank()->getHeadMatrix()[6])),
-      color,
-      math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12],
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14]),
+          color,
+          math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] +
+                  1000 *
+                      (m_current_player->getCurrentTank()->getHeadMatrix()[4]),
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
+                  1000 *
+                      (m_current_player->getCurrentTank()->getHeadMatrix()[5]),
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] +
+                  1000 *
+                      (m_current_player->getCurrentTank()
+                           ->getHeadMatrix()[6])),
+          color,
+          math::Vec2<float>(0.0f)});
   //*/
   //*/
   vulkan_graphix::Math::Vec3<float> m =
       m_current_player->getCurrentTank()->getRotateAbout();
   color = math::Vec4<float>(0.75, 0.50, 0.50, 1.0f);
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12],
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14]),
-      color,
-      math::Vec2<float>(0.0f)});
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] + 1000 * m.x,
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
-              1000 * m.y,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] +
-              1000 * m.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12],
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14]),
+          color,
+          math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] +
+                  1000 * m.x,
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 100 +
+                  1000 * m.y,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] +
+                  1000 * m.z),
+          color,
+          math::Vec2<float>(0.0f)});
   //*/
   /*END OF TANK ORIENTATION DEBUGGING*/
   context.drawTransient(
@@ -1093,7 +1160,8 @@ void GameState::drawMinimap(render::RenderContext& context) {
   // Its own viewport (glViewport()'s float -> int truncation kept),
   // cleared to the sea color.
   context.setViewport(
-      vulkan_earth::glRect(static_cast<std::int32_t>(m_width - m_width / 5.8),
+      vulkan_earth::glRect(
+          static_cast<std::int32_t>(m_width - m_width / 5.8),
           static_cast<std::int32_t>(m_height - m_height / 4.8),
           static_cast<std::int32_t>(m_width / 6.0),
           static_cast<std::int32_t>(m_height / 5.0)));
@@ -1102,8 +1170,9 @@ void GameState::drawMinimap(render::RenderContext& context) {
   std::int32_t size = static_cast<std::int32_t>(
       m_global_settings->getCurrentTerrain()->getActualSize());
 
-  context.setCamera(vulkan_graphix::Tools::getOrthographicProjectionMatrix(
-                        -18000, 18000, 15000, -15000, 1, 20000000),
+  context.setCamera(
+      vulkan_graphix::Tools::getOrthographicProjectionMatrix(
+          -18000, 18000, 15000, -15000, 1, 20000000),
       glm::lookAt(
           math::Vec3<float>(size / 2, size + (size / m_width), size / 2),
           math::Vec3<float>(size / 2, 0, size / 2),
@@ -1120,87 +1189,94 @@ void GameState::drawMinimap(render::RenderContext& context) {
   for (std::int32_t i = 0; i < m_player_factory->getNumberofPlayers(); i++) {
     if (m_player_factory->getPlayer(i)->getCurrentTank()->getDurationCloak() ==
         0) {
-      color = math::Vec4<float>(m_player_factory->collectPlayerColor(i)[0],
+      color = math::Vec4<float>(
+          m_player_factory->collectPlayerColor(i)[0],
           m_player_factory->collectPlayerColor(i)[1],
           m_player_factory->collectPlayerColor(i)[2],
           1.0f);
       out_tris.add(
-          render::UiVertex{math::Vec3<float>(m_player_factory->getPlayer(i)
-                                                 ->getCurrentTank()
-                                                 ->getHeadMatrix()[12] -
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[8] *
-                                       900,
-                               m_player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[13] +
-                                   12000,
-                               m_player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[14] -
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[10] *
-                                       900),
+          render::UiVertex{
+              math::Vec3<float>(
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[12] -
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[8] *
+                          900,
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[13] +
+                      12000,
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[14] -
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[10] *
+                          900),
               color,
               math::Vec2<float>(0.0f)});
       out_tris.add(
-          render::UiVertex{math::Vec3<float>(m_player_factory->getPlayer(i)
-                                                 ->getCurrentTank()
-                                                 ->getHeadMatrix()[12] +
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[0] *
-                                       700 +
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[8] *
-                                       900,
-                               m_player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[13] +
-                                   12000,
-                               m_player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[14] +
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[2] *
-                                       700 +
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[10] *
-                                       900),
+          render::UiVertex{
+              math::Vec3<float>(
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[12] +
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[0] *
+                          700 +
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[8] *
+                          900,
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[13] +
+                      12000,
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[14] +
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[2] *
+                          700 +
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[10] *
+                          900),
               color,
               math::Vec2<float>(0.0f)});
       out_tris.add(
-          render::UiVertex{math::Vec3<float>(m_player_factory->getPlayer(i)
-                                                 ->getCurrentTank()
-                                                 ->getHeadMatrix()[12] -
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[0] *
-                                       700 +
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[8] *
-                                       900,
-                               m_player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[13] +
-                                   12000,
-                               m_player_factory->getPlayer(i)
-                                       ->getCurrentTank()
-                                       ->getHeadMatrix()[14] -
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[2] *
-                                       700 +
-                                   m_player_factory->getPlayer(i)
-                                           ->getCurrentTank()
-                                           ->getHeadMatrix()[10] *
-                                       900),
+          render::UiVertex{
+              math::Vec3<float>(
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[12] -
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[0] *
+                          700 +
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[8] *
+                          900,
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[13] +
+                      12000,
+                  m_player_factory->getPlayer(i)
+                          ->getCurrentTank()
+                          ->getHeadMatrix()[14] -
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[2] *
+                          700 +
+                      m_player_factory->getPlayer(i)
+                              ->getCurrentTank()
+                              ->getHeadMatrix()[10] *
+                          900),
               color,
               math::Vec2<float>(0.0f)});
     }
@@ -1211,61 +1287,69 @@ void GameState::drawMinimap(render::RenderContext& context) {
       m_player_factory->collectPlayerColor(m_current_player_index)[1],
       m_player_factory->collectPlayerColor(m_current_player_index)[2],
       0.50);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] +
-              m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] +
-              m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] +
+                  m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] +
+                  m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
-  quad.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] +
-              m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
-              m_current_player->getCurrentTank()->getHeadMatrix()[8] * 24000,
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] +
-              m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
-              m_current_player->getCurrentTank()->getHeadMatrix()[10] * 24000),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] +
+                  m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[8] *
+                      24000,
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] +
+                  m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[10] *
+                      24000),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
-  quad.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] -
-              m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
-              m_current_player->getCurrentTank()->getHeadMatrix()[8] * 24000,
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] -
-              m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
-              m_current_player->getCurrentTank()->getHeadMatrix()[10] * 24000),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60 -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[8] *
+                      24000,
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60 -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[10] *
+                      24000),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
-  quad.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getHeadMatrix()[12] -
-              m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
-          m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
-          m_current_player->getCurrentTank()->getHeadMatrix()[14] -
-              m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getHeadMatrix()[12] -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[0] * 60,
+              m_current_player->getCurrentTank()->getHeadMatrix()[13] + 10000,
+              m_current_player->getCurrentTank()->getHeadMatrix()[14] -
+                  m_current_player->getCurrentTank()->getHeadMatrix()[2] * 60),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
@@ -1276,30 +1360,38 @@ void GameState::drawMinimap(render::RenderContext& context) {
   if (!m_player_cam && !m_chase_cam_active) {
     const math::Vec3<float> world_cam_eye = m_world_cam->eye();
     color = math::Vec4<float>(1, 1, 1, 0.8);
-    loop.add(render::UiVertex{
-        math::Vec3<float>(world_cam_eye.x - world_cam_eye.y * 0.38,
-            10000,
-            world_cam_eye.z + world_cam_eye.y - 15000 / m_width),
-        color,
-        math::Vec2<float>(0.0f)});
-    loop.add(render::UiVertex{
-        math::Vec3<float>(world_cam_eye.x - world_cam_eye.y * 0.38,
-            10000,
-            world_cam_eye.z - world_cam_eye.y + 15000 / m_width),
-        color,
-        math::Vec2<float>(0.0f)});
-    loop.add(render::UiVertex{
-        math::Vec3<float>(world_cam_eye.x + world_cam_eye.y * 0.82,
-            10000,
-            world_cam_eye.z - world_cam_eye.y + 15000 / m_width - 1350),
-        color,
-        math::Vec2<float>(0.0f)});
-    loop.add(render::UiVertex{
-        math::Vec3<float>(world_cam_eye.x + world_cam_eye.y * 0.82,
-            10000,
-            world_cam_eye.z + world_cam_eye.y - 15000 / m_width + 1350),
-        color,
-        math::Vec2<float>(0.0f)});
+    loop.add(
+        render::UiVertex{
+            math::Vec3<float>(
+                world_cam_eye.x - world_cam_eye.y * 0.38,
+                10000,
+                world_cam_eye.z + world_cam_eye.y - 15000 / m_width),
+            color,
+            math::Vec2<float>(0.0f)});
+    loop.add(
+        render::UiVertex{
+            math::Vec3<float>(
+                world_cam_eye.x - world_cam_eye.y * 0.38,
+                10000,
+                world_cam_eye.z - world_cam_eye.y + 15000 / m_width),
+            color,
+            math::Vec2<float>(0.0f)});
+    loop.add(
+        render::UiVertex{
+            math::Vec3<float>(
+                world_cam_eye.x + world_cam_eye.y * 0.82,
+                10000,
+                world_cam_eye.z - world_cam_eye.y + 15000 / m_width - 1350),
+            color,
+            math::Vec2<float>(0.0f)});
+    loop.add(
+        render::UiVertex{
+            math::Vec3<float>(
+                world_cam_eye.x + world_cam_eye.y * 0.82,
+                10000,
+                world_cam_eye.z + world_cam_eye.y - 15000 / m_width + 1350),
+            color,
+            math::Vec2<float>(0.0f)});
     for (std::size_t corner = 0; corner < loop.size(); ++corner) {
       out_lines.add(loop[corner]);
       out_lines.add(loop[(corner + 1) % loop.size()]);
@@ -1321,9 +1413,11 @@ void GameState::drawMinimap(render::RenderContext& context) {
   if (m_projectile) {
     color = math::Vec4<float>(1, 1, 1, 1.0f);
     quad.add(
-        render::UiVertex{math::Vec3<float>(m_projectile->getPos()[0] - 200,
-                             10000,
-                             m_projectile->getPos()[2] - 200),
+        render::UiVertex{
+            math::Vec3<float>(
+                m_projectile->getPos()[0] - 200,
+                10000,
+                m_projectile->getPos()[2] - 200),
             color,
             math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
@@ -1332,9 +1426,11 @@ void GameState::drawMinimap(render::RenderContext& context) {
       quad.clear();
     }
     quad.add(
-        render::UiVertex{math::Vec3<float>(m_projectile->getPos()[0] - 200,
-                             10000,
-                             m_projectile->getPos()[2] + 200),
+        render::UiVertex{
+            math::Vec3<float>(
+                m_projectile->getPos()[0] - 200,
+                10000,
+                m_projectile->getPos()[2] + 200),
             color,
             math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
@@ -1343,9 +1439,11 @@ void GameState::drawMinimap(render::RenderContext& context) {
       quad.clear();
     }
     quad.add(
-        render::UiVertex{math::Vec3<float>(m_projectile->getPos()[0] + 200,
-                             10000,
-                             m_projectile->getPos()[2] + 200),
+        render::UiVertex{
+            math::Vec3<float>(
+                m_projectile->getPos()[0] + 200,
+                10000,
+                m_projectile->getPos()[2] + 200),
             color,
             math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
@@ -1354,9 +1452,11 @@ void GameState::drawMinimap(render::RenderContext& context) {
       quad.clear();
     }
     quad.add(
-        render::UiVertex{math::Vec3<float>(m_projectile->getPos()[0] + 200,
-                             10000,
-                             m_projectile->getPos()[2] - 200),
+        render::UiVertex{
+            math::Vec3<float>(
+                m_projectile->getPos()[0] + 200,
+                10000,
+                m_projectile->getPos()[2] - 200),
             color,
             math::Vec2<float>(0.0f)});
     if (quad.size() == 4) {
@@ -1372,39 +1472,51 @@ void GameState::drawMinimap(render::RenderContext& context) {
       m_player_factory->collectPlayerColor(m_current_player_index)[1],
       m_player_factory->collectPlayerColor(m_current_player_index)[2],
       1.0f);
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getProjectileLandPos()[0] - 900,
-          10000,
-          m_current_player->getCurrentTank()->getProjectileLandPos()[1] - 900),
-      color,
-      math::Vec2<float>(0.0f)});
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getProjectileLandPos()[0] + 900,
-          10000,
-          m_current_player->getCurrentTank()->getProjectileLandPos()[1] + 900),
-      color,
-      math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getProjectileLandPos()[0] -
+                  900,
+              10000,
+              m_current_player->getCurrentTank()->getProjectileLandPos()[1] -
+                  900),
+          color,
+          math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getProjectileLandPos()[0] +
+                  900,
+              10000,
+              m_current_player->getCurrentTank()->getProjectileLandPos()[1] +
+                  900),
+          color,
+          math::Vec2<float>(0.0f)});
   color = math::Vec4<float>(
       m_player_factory->collectPlayerColor(m_current_player_index)[0],
       m_player_factory->collectPlayerColor(m_current_player_index)[1],
       m_player_factory->collectPlayerColor(m_current_player_index)[2],
       1.0f);
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getProjectileLandPos()[0] + 900,
-          10000,
-          m_current_player->getCurrentTank()->getProjectileLandPos()[1] - 900),
-      color,
-      math::Vec2<float>(0.0f)});
-  out_lines.add(render::UiVertex{
-      math::Vec3<float>(
-          m_current_player->getCurrentTank()->getProjectileLandPos()[0] - 900,
-          10000,
-          m_current_player->getCurrentTank()->getProjectileLandPos()[1] + 900),
-      color,
-      math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getProjectileLandPos()[0] +
+                  900,
+              10000,
+              m_current_player->getCurrentTank()->getProjectileLandPos()[1] -
+                  900),
+          color,
+          math::Vec2<float>(0.0f)});
+  out_lines.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_current_player->getCurrentTank()->getProjectileLandPos()[0] -
+                  900,
+              10000,
+              m_current_player->getCurrentTank()->getProjectileLandPos()[1] +
+                  900),
+          color,
+          math::Vec2<float>(0.0f)});
 
   context.drawTransient(
       out_tris, vulkan_earth::pipelines().m_ui_triangles, nullptr);
@@ -1525,8 +1637,10 @@ void GameState::playBackgroundSounds() {
 
 void GameState::drawHelp(render::RenderContext& context) {
   // glViewport()'s float -> int truncation kept.
-  vulkan_earth::beginOverlayPanel(context,
-      vulkan_earth::glRect(static_cast<std::int32_t>(m_width * 0.25),
+  vulkan_earth::beginOverlayPanel(
+      context,
+      vulkan_earth::glRect(
+          static_cast<std::int32_t>(m_width * 0.25),
           static_cast<std::int32_t>(m_height * 0.1),
           static_cast<std::int32_t>(m_width * 0.5),
           static_cast<std::int32_t>(m_height * 0.8)),
@@ -1581,9 +1695,9 @@ void GameState::handlePlayerControlUpdates() {
 
   if (m_key_monitor[2]) {
     if ((m_player_factory->getPlayer(m_current_player_index)
-                ->getCurrentTank()
-                ->getTurretDegrees() +
-            0.1 + 0.4 * m_key_monitor[2] / 50) < 90) {
+             ->getCurrentTank()
+             ->getTurretDegrees() +
+         0.1 + 0.4 * m_key_monitor[2] / 50) < 90) {
       playSFX(TANK_CONTROL1);
       m_player_factory->getPlayer(m_current_player_index)
           ->getCurrentTank()
@@ -1594,9 +1708,9 @@ void GameState::handlePlayerControlUpdates() {
     }
   } else if (m_key_monitor[4]) {
     if ((m_player_factory->getPlayer(m_current_player_index)
-                ->getCurrentTank()
-                ->getTurretDegrees() -
-            0.1 - 0.4 * m_key_monitor[4] / 50) >= 0) {
+             ->getCurrentTank()
+             ->getTurretDegrees() -
+         0.1 - 0.4 * m_key_monitor[4] / 50) >= 0) {
       playSFX(TANK_CONTROL1);
       m_player_factory->getPlayer(m_current_player_index)
           ->getCurrentTank()
@@ -1655,10 +1769,11 @@ void GameState::createSpecialEffect() {
       ->setPreviousPower(static_cast<std::int32_t>(power_ratio * 1000));
   m_player_factory->getPlayer(m_current_player_index)
       ->getCurrentTank()
-      ->setPreviousAngle(static_cast<std::int32_t>(m_player_factory
-                                 ->getPlayer(m_current_player_index)
-                                 ->getCurrentTank()
-                                 ->getTurretDegrees()) +
+      ->setPreviousAngle(
+          static_cast<std::int32_t>(
+              m_player_factory->getPlayer(m_current_player_index)
+                  ->getCurrentTank()
+                  ->getTurretDegrees()) +
           1);
   m_player_factory->getPlayer(m_current_player_index)
       ->getCurrentTank()
@@ -1703,7 +1818,8 @@ void GameState::createSpecialEffect() {
     m_special_effects_count = (special_effect_time_limit / time_divisors);
     m_special_effects = new SpecialEffect*[m_special_effects_count];
     for (std::int32_t x = 0; x < m_special_effects_count; x++) {
-      m_special_effects[x] = new Explosion(m_special_effect_x,
+      m_special_effects[x] = new Explosion(
+          m_special_effect_x,
           m_special_effect_y,
           m_special_effect_z,
           static_cast<std::int32_t>(m_radius_of_current_explosion));
@@ -1743,7 +1859,8 @@ void GameState::handleProjectileState() {
       /* RESET AI VARIABLES	*/
       m_timer = 0;
       /* DONE RESETING AI VARIABLES */
-      setPositionOfLastProjectile(m_projectile->getPos()[0],
+      setPositionOfLastProjectile(
+          m_projectile->getPos()[0],
           m_projectile->getPos()[1],
           m_projectile->getPos()[2]);
       // Make sure chase cam does not shake till impact
@@ -1776,7 +1893,8 @@ void GameState::handleProjectileState() {
     matrix[12] = turret_matrix[12] + 1000 * turret_matrix[4];
     matrix[13] = turret_matrix[13] + 1000 * turret_matrix[5];
     matrix[13] = turret_matrix[14] + 1000 * turret_matrix[6];
-    m_projectile = new Projectile(this,
+    m_projectile = new Projectile(
+        this,
         matrix,
         tank_attribute_power * power_bar * m_balistic_scalar,
         m_projectile_models);
@@ -1850,7 +1968,8 @@ void GameState::constructProjectile() {
                         land_pos[0], land_pos[2])) {
     m_projectile = nullptr;
   } else {
-    m_projectile = new Projectile(this,
+    m_projectile = new Projectile(
+        this,
         m_player_factory->getPlayer(m_current_player_index)
             ->getCurrentTank()
             ->getTurretMatrix(),
@@ -1878,7 +1997,8 @@ void GameState::handleSpecialEffectState() {
                                          ->getBodyMatrix();
           vulkan_graphix::Math::Vec3<float> v0(
               body_matrix[12], body_matrix[13], body_matrix[14]);
-          vulkan_graphix::Math::Vec3<float> v1(m_projectile->getPos()[0],
+          vulkan_graphix::Math::Vec3<float> v1(
+              m_projectile->getPos()[0],
               m_projectile->getPos()[1],
               m_projectile->getPos()[2]);
           float distance = calcDistanceBetweenVertices(&v0, &v1);
@@ -2007,20 +2127,22 @@ void GameState::handleInventoryKeyboard(std::int32_t key, bool key_status) {
           }
           m_current_player->setLoadedWeapon(
               m_current_player->getCurrentWeapons()[index]);
-          m_selected_weapon_img =
-              new ImageObject(m_weapon_slot->getXpos() * 1.01,
-                  m_weapon_slot->getYpos() * 1.01,
-                  2,
-                  m_weapon_slot->getWidth() * 0.9,
-                  m_weapon_slot->getHeight() * 0.9,
-                  0,
-                  256,
-                  256,
-                  m_current_player->getLoadedWeapon()->getImageFileName());
-          std::string remain = "x " +
+          m_selected_weapon_img = new ImageObject(
+              m_weapon_slot->getXpos() * 1.01,
+              m_weapon_slot->getYpos() * 1.01,
+              2,
+              m_weapon_slot->getWidth() * 0.9,
+              m_weapon_slot->getHeight() * 0.9,
+              0,
+              256,
+              256,
+              m_current_player->getLoadedWeapon()->getImageFileName());
+          std::string remain =
+              "x " +
               std::to_string(
                   m_current_player->getLoadedWeapon()->getRemaining());
-          m_selected_weapon_remain = new TextObject(remain,
+          m_selected_weapon_remain = new TextObject(
+              remain,
               0,
               0,
               3,
@@ -2031,7 +2153,8 @@ void GameState::handleInventoryKeyboard(std::int32_t key, bool key_status) {
         }
       }
       // USE AN ITEM
-      else if (player_max_weapons <= index &&
+      else if (
+          player_max_weapons <= index &&
           index < player_max_weapons + player_max_items &&
           m_current_player->getCurrentItems()[index - player_max_weapons] !=
               nullptr) {
@@ -2058,11 +2181,11 @@ void GameState::handleInventoryKeyboard(std::int32_t key, bool key_status) {
 void GameState::handleNonInventoryKeyboard(std::int32_t key, bool key_status) {
   if ((key == 'c') && (key_status))
     toggleCamera();
-  else if ((key == ' ') && (key_status) &&
-      (m_game_sub_state == PLAYER_CONTROL)) {
+  else if (
+      (key == ' ') && (key_status) && (m_game_sub_state == PLAYER_CONTROL)) {
     currentPlayerFire();
-  } else if ((key == 5) && (key_status) &&
-      (m_game_sub_state == PLAYER_CONTROL)) {
+  } else if (
+      (key == 5) && (key_status) && (m_game_sub_state == PLAYER_CONTROL)) {
     m_prev_music_volume = Mix_VolumeMusic(-1);
     m_prev_music_volume = Mix_VolumeMusic(m_prev_music_volume / 3);
     playSFX(MANUAL);
@@ -2076,8 +2199,8 @@ void GameState::handleNonInventoryKeyboard(std::int32_t key, bool key_status) {
     Mix_HaltMusic();
     Mix_HaltChannel(-1);
     *m_current_game_state = MAIN_MENU;
-  } else if ((key == 'i') && (key_status) &&
-      (m_game_sub_state == PLAYER_CONTROL)) {
+  } else if (
+      (key == 'i') && (key_status) && (m_game_sub_state == PLAYER_CONTROL)) {
     if (m_current_player->getPlayerType() == "HUMAN" &&
         m_current_player->getCurrentTank()->getDurationPadlock() == 0) {
       Mix_HaltChannel(2);
@@ -2119,21 +2242,22 @@ void GameState::handleNonInventoryKeyboard(std::int32_t key, bool key_status) {
 
 void GameState::handlePassTime() {
   if ((m_player_factory->getPlayer(m_current_player_index)->getCurrentWait() <=
-          0) &&
+       0) &&
       (m_player_factory->getPlayer(m_current_player_index)
-              ->getCurrentTank()
-              ->isAlive())) {
+           ->getCurrentTank()
+           ->isAlive())) {
     m_game_sub_state = PLAYER_CONTROL;
     m_current_player = m_player_factory->getPlayer(m_current_player_index);
   } else {
     do {
       m_player_factory->getPlayer(m_current_player_index)
-          ->setCurrentWait(m_player_factory->getPlayer(m_current_player_index)
-                               ->getCurrentWait() -
+          ->setCurrentWait(
+              m_player_factory->getPlayer(m_current_player_index)
+                  ->getCurrentWait() -
               1);
       if (!m_player_factory->getPlayer(m_current_player_index)
-              ->getCurrentTank()
-              ->isAlive()) {
+               ->getCurrentTank()
+               ->isAlive()) {
         m_player_factory->getPlayer(m_current_player_index)
             ->setCurrentWait(-1);
       }
@@ -2169,20 +2293,22 @@ void GameState::handlePassTime() {
         delete m_selected_weapon_remain;
       }
       if (m_current_player->getLoadedWeapon() != nullptr) {
-        m_selected_weapon_img =
-            new ImageObject(m_weapon_slot->getXpos() * 1.01,
-                m_weapon_slot->getYpos() * 1.01,
-                2,
-                m_weapon_slot->getWidth() * 0.9,
-                m_weapon_slot->getHeight() * 0.9,
-                0,
-                256,
-                256,
-                m_current_player->getLoadedWeapon()->getImageFileName());
-        std::string remain = "x " +
+        m_selected_weapon_img = new ImageObject(
+            m_weapon_slot->getXpos() * 1.01,
+            m_weapon_slot->getYpos() * 1.01,
+            2,
+            m_weapon_slot->getWidth() * 0.9,
+            m_weapon_slot->getHeight() * 0.9,
+            0,
+            256,
+            256,
+            m_current_player->getLoadedWeapon()->getImageFileName());
+        std::string remain =
+            "x " +
             std::to_string(
                 m_current_player->getLoadedWeapon()->getRemaining());
-        m_selected_weapon_remain = new TextObject(remain,
+        m_selected_weapon_remain = new TextObject(
+            remain,
             m_weapon_slot->getXpos() * 1.1,
             m_weapon_slot->getYpos() * 1.3,
             3,
@@ -2202,7 +2328,7 @@ void GameState::resetTables(std::int32_t index) {
   if (index == -1) {
     for (std::int32_t i = 0; i < m_player_factory->getNumberofPlayers(); i++) {
       for (std::int32_t j = 0; j < m_player_factory->getNumberofPlayers();
-          j++) {
+           j++) {
         m_tank_reachable[i][j] = true;
         m_distance_to_target[i][j] = 1E+37;  // MAX FLOAT
       }
@@ -2242,7 +2368,8 @@ void GameState::nearestEnemy() {
           m_tank_list[i] != nullptr) {
         const float* target_matrix =
             m_tank_list[m_current_player_index][i]->getBodyMatrix();
-        float distance = sqrt((tank_matrix[12] - target_matrix[12]) *
+        float distance = sqrt(
+            (tank_matrix[12] - target_matrix[12]) *
                 (tank_matrix[12] - target_matrix[12]) +
             (tank_matrix[13] - target_matrix[13]) *
                 (tank_matrix[13] - target_matrix[13]) +
@@ -2265,10 +2392,10 @@ void GameState::nearestEnemy() {
             m_tank_list[m_current_player_index][i]->isAlive() &&
             m_tank_list[m_current_player_index][i]->getDurationCloak() == 0 &&
             (m_player_factory->getPlayer(m_current_player_index)
-                        ->getTeamLabel() !=
-                    m_player_factory->getPlayer(i)->getTeamLabel() ||
-                m_player_factory->getPlayer(m_current_player_index)
-                        ->getTeamLabel() == '-')) {
+                     ->getTeamLabel() !=
+                 m_player_factory->getPlayer(i)->getTeamLabel() ||
+             m_player_factory->getPlayer(m_current_player_index)
+                     ->getTeamLabel() == '-')) {
           minimum_reachable_tank_index = i;
           minimum_distance = m_distance_to_target[m_current_player_index][i];
         }

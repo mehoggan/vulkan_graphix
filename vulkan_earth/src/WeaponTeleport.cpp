@@ -7,8 +7,9 @@ extern void playSFX(std::int32_t sfx);
 WeaponTeleport::WeaponTeleport() = default;
 WeaponTeleport::WeaponTeleport(std::int32_t id) {
   m_uniqueidentifier = id;
-  loadSpec(vulkan_graphix::GameCatalog::weapon(
-      vulkan_graphix::GameCatalog::WeaponKind::Teleport));
+  loadSpec(
+      vulkan_graphix::GameCatalog::weapon(
+          vulkan_graphix::GameCatalog::WeaponKind::Teleport));
 }
 WeaponTeleport::~WeaponTeleport() = default;
 

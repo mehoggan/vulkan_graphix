@@ -39,7 +39,8 @@ PlayerCPU::PlayerCPU(float red, float green, float blue) {
   m_loaded_weapon = nullptr;
 }
 
-PlayerCPU::PlayerCPU(float red,
+PlayerCPU::PlayerCPU(
+    float red,
     float green,
     float blue,
     const std::string& new_tank_type,

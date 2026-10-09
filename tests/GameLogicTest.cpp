@@ -72,11 +72,13 @@ TEST(GameLogicTest, GenerationIsDeterministicForASeed) {
 TEST(GameLogicTest, HeightAtWorldRoundsToTheNearestVertexInXThenZOrder) {
   const vg::TerrainGenerator terrain = makeGeneratedTerrain();
   // Just past a vertex rounds down; more than halfway rounds up.
-  EXPECT_EQ(terrain.heightAtWorld(
-                5 * c_grid_scale + 10.0f, 9 * c_grid_scale + 10.0f),
+  EXPECT_EQ(
+      terrain.heightAtWorld(
+          5 * c_grid_scale + 10.0f, 9 * c_grid_scale + 10.0f),
       static_cast<float>(terrain.heightAt(5, 9)));
-  EXPECT_EQ(terrain.heightAtWorld(
-                5 * c_grid_scale + 60.0f, 9 * c_grid_scale + 60.0f),
+  EXPECT_EQ(
+      terrain.heightAtWorld(
+          5 * c_grid_scale + 60.0f, 9 * c_grid_scale + 60.0f),
       static_cast<float>(terrain.heightAt(6, 10)));
   // Outside the grid reads as height 0.
   EXPECT_EQ(terrain.heightAtWorld(-1.0f, 50.0f), 0.0f);
@@ -113,7 +115,8 @@ TEST(GameLogicTest, CraterLowersTheImpactAndReportsTheBlastCells) {
   for (const vg::TerrainGridCell& cell : cells) {
     reported.insert({cell.m_x, cell.m_z});
     const float distance = std::sqrt(
-        static_cast<float>((cell.m_x - impact_x) * (cell.m_x - impact_x) +
+        static_cast<float>(
+            (cell.m_x - impact_x) * (cell.m_x - impact_x) +
             (cell.m_z - impact_z) * (cell.m_z - impact_z)));
     EXPECT_LE(distance, blast_size);
   }
@@ -149,25 +152,29 @@ TEST(GameLogicTest, BallisticsLaunchesDownTheBarrelAndFallsUnderGravity) {
 
 TEST(GameLogicTest, AngleBetweenDegrees) {
   using vg::Math::Vec3;
-  EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(
-                  Vec3<float>(1, 0, 0), Vec3<float>(0, 1, 0)),
+  EXPECT_NEAR(
+      vg::TankOrientation::angleBetweenDegrees(
+          Vec3<float>(1, 0, 0), Vec3<float>(0, 1, 0)),
       90.0f,
       1e-3f);
-  EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(
-                  Vec3<float>(2, 0, 0), Vec3<float>(-3, 0, 0)),
+  EXPECT_NEAR(
+      vg::TankOrientation::angleBetweenDegrees(
+          Vec3<float>(2, 0, 0), Vec3<float>(-3, 0, 0)),
       180.0f,
       1e-3f);
   // A zero-length input stays unnormalized (dot = 0 -> 90 degrees), as
   // vulkan_earth's own normalizeVector() left it.
-  EXPECT_NEAR(vg::TankOrientation::angleBetweenDegrees(
-                  Vec3<float>(0, 0, 0), Vec3<float>(0, 1, 0)),
+  EXPECT_NEAR(
+      vg::TankOrientation::angleBetweenDegrees(
+          Vec3<float>(0, 0, 0), Vec3<float>(0, 1, 0)),
       90.0f,
       1e-3f);
 }
 
 TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
   // vulkan_earth's tank basis: an x<->z axis swap.
-  vg::Math::Mat4<float> body(vg::Math::Vec4<float>(0, 0, 1, 0),
+  vg::Math::Mat4<float> body(
+      vg::Math::Vec4<float>(0, 0, 1, 0),
       vg::Math::Vec4<float>(0, 1, 0, 0),
       vg::Math::Vec4<float>(1, 0, 0, 0),
       vg::Math::Vec4<float>(5, 6, 7, 1));
@@ -186,7 +193,8 @@ TEST(GameLogicTest, AlignToGroundPointsTheTanksUpAlongTheNormal) {
   EXPECT_NEAR(new_up.y, ground.y, 1e-3f);
   EXPECT_NEAR(new_up.z, ground.z, 1e-3f);
   // Translation is untouched.
-  EXPECT_EQ(vg::Math::Vec3<float>(alignment->m_matrix[3]),
+  EXPECT_EQ(
+      vg::Math::Vec3<float>(alignment->m_matrix[3]),
       vg::Math::Vec3<float>(5, 6, 7));
 }
 
@@ -196,7 +204,8 @@ TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
       std::string(catalog::item(catalog::ItemKind::SmallRepair).m_image_file),
       "ItemSmallRepair.raw");
   EXPECT_EQ(catalog::item(catalog::ItemKind::BigRepair).m_special_num, 700);
-  EXPECT_EQ(std::string(catalog::item(catalog::ItemKind::Float).m_image_file),
+  EXPECT_EQ(
+      std::string(catalog::item(catalog::ItemKind::Float).m_image_file),
       "ItemFloat.raw");
   EXPECT_EQ(catalog::weapon(catalog::WeaponKind::MFB).m_damage, 300);
   EXPECT_EQ(catalog::weapon(catalog::WeaponKind::Nuke).m_price, 500);
@@ -218,12 +227,12 @@ TEST(GameLogicTest, CatalogHasEveryShopItemAndWeaponInShopOrder) {
 
 TEST(GameLogicTest, CatalogKeepsThorsTwoComponentMediumSlateBlue) {
   namespace catalog = vg::GameCatalog;
-  // OpenGLColors.h's MediumSlateBlue has no blue component.
+  // The game's old OpenGLColors.h MediumSlateBlue had no blue component.
   const auto& color =
       catalog::weapon(catalog::WeaponKind::Thor).m_explosion_colors[1];
-  EXPECT_DOUBLE_EQ(color[0], 0.498039);
-  EXPECT_DOUBLE_EQ(color[1], 1.0);
-  EXPECT_DOUBLE_EQ(color[2], 0.0);
+  EXPECT_FLOAT_EQ(color[0], 0.498039f);
+  EXPECT_FLOAT_EQ(color[1], 1.0f);
+  EXPECT_FLOAT_EQ(color[2], 0.0f);
 }
 
 TEST(GameLogicTest, SmokeParticleRisesAndFadesThroughItsColorBands) {
@@ -279,8 +288,9 @@ TEST(GameLogicTest, EmitterSpawnsEachUpdateAndRecyclesFinishedParticles) {
   for (const auto& slot : emitter.slots()) {
     if (slot) {
       EXPECT_EQ(slot->m_x, 1.0f);
-      const float length = std::sqrt(slot->m_dir[0] * slot->m_dir[0] +
-          slot->m_dir[1] * slot->m_dir[1] + slot->m_dir[2] * slot->m_dir[2]);
+      const float length = std::sqrt(
+          slot->m_dir[0] * slot->m_dir[0] + slot->m_dir[1] * slot->m_dir[1] +
+          slot->m_dir[2] * slot->m_dir[2]);
       EXPECT_NEAR(length, 1.0f, c_epsilon);
     }
   }
@@ -309,7 +319,8 @@ TEST(GameLogicTest, ExplosionStepsThroughItsColorsAndLeavesTheGap) {
     frame = effects::advanceExplosion(explosion);
   }
   EXPECT_EQ(frame.m_color_index, 3);
-  EXPECT_NEAR(effects::explosionSphereRadius(explosion, 30),
+  EXPECT_NEAR(
+      effects::explosionSphereRadius(explosion, 30),
       explosion.m_radius * (30 * 5.56f + 22.22f),
       1e-2f);
 }

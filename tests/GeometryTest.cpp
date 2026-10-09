@@ -39,10 +39,11 @@ TEST(ImageAtlasTest, PlacesTilesRowMajorFromTheTopLeft) {
     for (std::uint32_t x = 0; x < atlas.width(); ++x) {
       const bool inside = x >= 2 && x < 4 && y >= 2 && y < 4;
       for (std::uint32_t channel = 0; channel < 4; ++channel) {
-        EXPECT_EQ(inside ? 7 : 0,
-            atlas.pixels()[(static_cast<std::size_t>(y) * atlas.width() + x) *
-                    4 +
-                channel])
+        EXPECT_EQ(
+            inside ? 7 : 0,
+            atlas.pixels()
+                [(static_cast<std::size_t>(y) * atlas.width() + x) * 4 +
+                 channel])
             << "pixel " << x << "," << y;
       }
     }
@@ -72,7 +73,8 @@ TEST(ImageAtlasTest, TileUvsCoverEachTile) {
 }
 
 TEST(GridLayoutTest, SplitsTheGridIntoEqualCellsWithGaps) {
-  const vg::UiGeometry::GridLayout grid{math::Vec2<float>(10.0f, 20.0f),
+  const vg::UiGeometry::GridLayout grid{
+      math::Vec2<float>(10.0f, 20.0f),
       math::Vec2<float>(320.0f, 110.0f),
       4,
       2,
@@ -84,11 +86,14 @@ TEST(GridLayoutTest, SplitsTheGridIntoEqualCellsWithGaps) {
 }
 
 TEST(HudBarColorTest, HealthAndPowerRampInOppositeDirections) {
-  EXPECT_EQ(math::Vec4<float>(0.0f, 1.0f, 0.0f, 1.0f),
+  EXPECT_EQ(
+      math::Vec4<float>(0.0f, 1.0f, 0.0f, 1.0f),
       vg::UiGeometry::healthBarColor(1.0f));
-  EXPECT_EQ(math::Vec4<float>(1.0f, 0.0f, 0.0f, 1.0f),
+  EXPECT_EQ(
+      math::Vec4<float>(1.0f, 0.0f, 0.0f, 1.0f),
       vg::UiGeometry::healthBarColor(0.0f));
-  EXPECT_EQ(math::Vec4<float>(0.25f, 0.75f, 0.0f, 1.0f),
+  EXPECT_EQ(
+      math::Vec4<float>(0.25f, 0.75f, 0.0f, 1.0f),
       vg::UiGeometry::powerBarColor(0.25f));
 }
 

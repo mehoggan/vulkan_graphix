@@ -28,7 +28,8 @@ public:
   ~TerrainMaker();
   void draw(vulkan_graphix::Render::RenderContext& context);
   void initData();
-  void prepareData(std::int32_t new_steps,
+  void prepareData(
+      std::int32_t new_steps,
       std::int32_t new_increase,
       float new_radius,
       std::int32_t new_random_jump,

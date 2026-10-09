@@ -10,7 +10,8 @@ namespace {
 // screen-up, then tilted 10 degrees about its own side axis so it looks
 // slightly ahead along +X.
 Math::Mat4<float> initialFrame(float x, float y, float z) {
-  const Math::Mat4<float> frame(0.0f,
+  const Math::Mat4<float> frame(
+      0.0f,
       0.0f,
       1.0f,
       0.0f,
@@ -26,7 +27,8 @@ Math::Mat4<float> initialFrame(float x, float y, float z) {
       y,
       z,
       0.0f);
-  return glm::rotate(frame,
+  return glm::rotate(
+      frame,
       glm::radians(-10.0f),
       Math::Vec3<float>(frame[1][0], frame[1][1], frame[1][2]));
 }

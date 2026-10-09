@@ -16,7 +16,8 @@ class TextObject;
 class ControlItemGrid : public ControlItem {
 public:
   ControlItemGrid();
-  ControlItemGrid(float new_x_pos,
+  ControlItemGrid(
+      float new_x_pos,
       float new_y_pos,
       float new_z_pos,
       std::int32_t new_width,
@@ -30,7 +31,8 @@ public:
       bool new_multi_selectable);
   ~ControlItemGrid() override;
   void draw(vulkan_graphix::Render::RenderContext& context) override;
-  void mouseClickEvent(std::int32_t x,
+  void mouseClickEvent(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t state,
       bool still_over_arrow_button) override;

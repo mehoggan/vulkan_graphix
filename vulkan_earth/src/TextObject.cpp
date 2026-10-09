@@ -9,7 +9,8 @@ namespace math = vulkan_graphix::Math;
 
 TextObject::TextObject() = default;
 
-TextObject::TextObject(const std::string& input,
+TextObject::TextObject(
+    const std::string& input,
     float new_pos_x,
     float new_pos_y,
     float new_pos_z,
@@ -46,7 +47,8 @@ void TextObject::draw(render::RenderContext& context) {
   const math::Vec4<float> text_color(m_color[0], m_color[1], m_color[2], 1.0f);
   float x_pos = m_pos_x;
   for (char ch : m_output) {
-    context.drawText(font,
+    context.drawText(
+        font,
         math::Vec3<float>(x_pos, m_pos_y, m_pos_z),
         std::string_view(&ch, 1),
         text_color);

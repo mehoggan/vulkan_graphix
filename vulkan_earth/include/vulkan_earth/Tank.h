@@ -9,11 +9,11 @@
 // class vulkan_graphix::Math::Vec3<float>;
 
 class ParticleGenerator;
-class VBOShaderLibrary;
 
 namespace vulkan_graphix::Render {
+class TexturedModel;
 class RenderContext;
-}
+}  // namespace vulkan_graphix::Render
 
 class Tank {
 public:
@@ -172,10 +172,10 @@ protected:
   float m_hit_box_height;
   float m_hit_box_width;
 
-  VBOShaderLibrary* m_vbo_shader_turret;
-  VBOShaderLibrary* m_vbo_shader_body;
-  VBOShaderLibrary* m_vbo_shader_head;
-  VBOShaderLibrary* m_vbo_shader_wheel;
+  vulkan_graphix::Render::TexturedModel* m_vbo_shader_turret;
+  vulkan_graphix::Render::TexturedModel* m_vbo_shader_body;
+  vulkan_graphix::Render::TexturedModel* m_vbo_shader_head;
+  vulkan_graphix::Render::TexturedModel* m_vbo_shader_wheel;
 
   bool m_tank_alive;
   ParticleGenerator* m_smoke_gen;

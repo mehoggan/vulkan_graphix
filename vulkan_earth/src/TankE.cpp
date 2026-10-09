@@ -1,7 +1,7 @@
 #include "vulkan_earth/TankE.h"
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
-#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_graphix/Render/TexturedModel.h"
 
 const char* tank_e_name = "Eggroid";
 const std::int32_t tank_e_hp = 1000;
@@ -46,19 +46,19 @@ TankE::TankE(float /*x*/, float /*y*/, float /*z*/) {
   m_previous_angle = 1;
   m_hp = m_armor * 100;
 
-  m_vbo_shader_head = new VBOShaderLibrary();
-  m_vbo_shader_body = new VBOShaderLibrary();
-  m_vbo_shader_turret = new VBOShaderLibrary();
-  // vbo_shader_wheel=new VBOShaderLibrary();
+  m_vbo_shader_head = new vulkan_graphix::Render::TexturedModel();
+  m_vbo_shader_body = new vulkan_graphix::Render::TexturedModel();
+  m_vbo_shader_turret = new vulkan_graphix::Render::TexturedModel();
+  // vbo_shader_wheel=new vulkan_graphix::Render::TexturedModel();
 
-  m_vbo_shader_turret->loadClientData("./Eggroid/Eggroid_Turret.ogl");
-  m_vbo_shader_body->loadClientData("./Eggroid/Eggroid_Body.ogl");
-  m_vbo_shader_head->loadClientData("./Eggroid/Eggroid_Head.ogl");
-  // vbo_shader_wheel->loadClientData("./Eggroid/Eggroid_Wheel.ogl");
+  m_vbo_shader_turret->loadOgl("./Eggroid/Eggroid_Turret.ogl");
+  m_vbo_shader_body->loadOgl("./Eggroid/Eggroid_Body.ogl");
+  m_vbo_shader_head->loadOgl("./Eggroid/Eggroid_Head.ogl");
+  // vbo_shader_wheel->loadOgl("./Eggroid/Eggroid_Wheel.ogl");
 
-  m_vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
-  m_vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
-  m_vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_turret->loadRawTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_body->loadRawTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_head->loadRawTexture("TestImage.raw", 1024, 1024);
   // vbo_shader_wheel->LoadTexture("TestImage.raw",1024,1024);
 
   m_projectile_land_pos[0] = 9999999;

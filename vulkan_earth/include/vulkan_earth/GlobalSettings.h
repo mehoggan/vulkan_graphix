@@ -13,7 +13,8 @@ class GlobalSettings {
 public:
   GlobalSettings();
   ~GlobalSettings();
-  void setVariables(const std::string& global_options,
+  void setVariables(
+      const std::string& global_options,
       const std::string& round_and_player_count);
   std::string getGameSpeed();
   std::string getInterestRate();

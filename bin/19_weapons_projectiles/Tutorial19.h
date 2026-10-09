@@ -41,6 +41,11 @@
 // Tutorial18's two tanks, these three projectiles are placed side by
 // side with no overlap risk under the tutorial's fixed-ish camera
 // angle, the same simplification Tutorial16 itself originally used).
+//
+// The Vulkan scaffolding - render pass, pipelines, descriptors, buffers,
+// texture uploads, and the frame loop - is the library's (VulkanCommon's
+// ResourceContext/FrameLoop); this file is what's specific to the
+// tutorial.
 
 #include <array>
 #include <cstddef>
@@ -49,15 +54,14 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "vulkan_graphix/BitmapFont.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/OrbitCamera.h"
-#include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/UiGeometry.h"
-#include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
+#include "vulkan_graphix/VulkanCommon/FrameLoop.h"
+#include "vulkan_graphix/VulkanCommon/ResourceContext.h"
 
 namespace vulkan_graphix {
 
@@ -67,18 +71,12 @@ struct Tutorial19Vertex3DData {
   Math::Vec2<float> m_texcoord;
 };
 
-using Tutorial19Vertex3DAttributeTraits =
-    VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
-
 // Same shape as Tutorial15/17/18-HUD VertexData.
 struct Tutorial19VertexGridData {
   Math::Vec4<float> m_position;
   Math::Vec2<float> m_texcoord;
   Math::Vec4<float> m_color;
 };
-
-using Tutorial19VertexGridAttributeTraits = VertexTypes::
-    AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
 
 struct Tutorial19UniformBufferData3D {
   Math::Mat4<float> m_view;
@@ -94,182 +92,17 @@ struct Tutorial19PushConstants {
 static constexpr std::size_t c_weapon_grid_item_count = 10;
 static constexpr std::size_t c_projectile_mesh_count = 3;
 
-// ************************************************************ //
-// VulkanTutorial19Parameters                                   //
-//                                                              //
-// Vulkan specific parameters                                   //
-// ************************************************************ //
-struct VulkanTutorial19Parameters {
-public:
-  static const std::size_t resources_count = 3;
-
-  VulkanTutorial19Parameters();
-
-  const VkRenderPass& getVkRenderPass() const;
-  VkRenderPass& getVkRenderPass();
-  void setVkRenderPass(const VkRenderPass& vk_render_pass);
-
-  // One ImageParameters per projectile mesh (Default/Acid/BFB, in
-  // that fixed order) - each has its own dedicated texture.
-  const std::array<ImageParameters, c_projectile_mesh_count>&
-  getProjectileImageParameters() const;
-  std::array<ImageParameters, c_projectile_mesh_count>&
-  getProjectileImageParameters();
-
-  const ImageParameters& getFontImageParameters() const;
-  ImageParameters& getFontImageParameters();
-  void setFontImageParameters(const ImageParameters& image_parameters);
-
-  const ImageParameters& getIconImageParameters() const;
-  ImageParameters& getIconImageParameters();
-  void setIconImageParameters(const ImageParameters& image_parameters);
-
-  const BufferParameters& getUniformBuffer3DParameters() const;
-  BufferParameters& getUniformBuffer3DParameters();
-  void setUniformBuffer3DParameters(const BufferParameters& uniform_buffer);
-
-  const BufferParameters& getUniformBufferGridParameters() const;
-  BufferParameters& getUniformBufferGridParameters();
-  void setUniformBufferGridParameters(const BufferParameters& uniform_buffer);
-
-  const VkDescriptorSetLayout& getVk3DDescriptorSetLayout() const;
-  VkDescriptorSetLayout& getVk3DDescriptorSetLayout();
-  void setVk3DDescriptorSetLayout(const VkDescriptorSetLayout& other);
-
-  const VkDescriptorSetLayout& getVkGridDescriptorSetLayout() const;
-  VkDescriptorSetLayout& getVkGridDescriptorSetLayout();
-  void setVkGridDescriptorSetLayout(const VkDescriptorSetLayout& other);
-
-  const VkDescriptorPool& getVkDescriptorPool() const;
-  VkDescriptorPool& getVkDescriptorPool();
-  void setVkDescriptorPool(const VkDescriptorPool& other);
-
-  // One 3D descriptor set per projectile mesh (Default/Acid/BFB).
-  const std::array<VkDescriptorSet, c_projectile_mesh_count>&
-  get3DVkDescriptorSets() const;
-  std::array<VkDescriptorSet, c_projectile_mesh_count>&
-  get3DVkDescriptorSets();
-
-  const VkDescriptorSet& getFontVkDescriptorSet() const;
-  VkDescriptorSet& getFontVkDescriptorSet();
-  void setFontVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkDescriptorSet& getIconVkDescriptorSet() const;
-  VkDescriptorSet& getIconVkDescriptorSet();
-  void setIconVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkPipelineLayout& getVk3DPipelineLayout() const;
-  VkPipelineLayout& getVk3DPipelineLayout();
-  void setVk3DPipelineLayout(const VkPipelineLayout& other);
-
-  const VkPipelineLayout& getVkGridPipelineLayout() const;
-  VkPipelineLayout& getVkGridPipelineLayout();
-  void setVkGridPipelineLayout(const VkPipelineLayout& other);
-
-  const VkPipeline& getVk3DGraphicsPipeline() const;
-  VkPipeline& getVk3DGraphicsPipeline();
-  void setVk3DGraphicsPipeline(const VkPipeline& other);
-
-  const VkPipeline& getVkGridGraphicsPipeline() const;
-  VkPipeline& getVkGridGraphicsPipeline();
-  void setVkGridGraphicsPipeline(const VkPipeline& other);
-
-  // One vertex buffer + count per projectile mesh (Default/Acid/BFB).
-  const std::array<BufferParameters, c_projectile_mesh_count>&
-  getProjectileVertexBufferParameters() const;
-  std::array<BufferParameters, c_projectile_mesh_count>&
-  getProjectileVertexBufferParameters();
-  const std::array<std::uint32_t, c_projectile_mesh_count>&
-  getProjectileVertexCounts() const;
-  std::array<std::uint32_t, c_projectile_mesh_count>&
-  getProjectileVertexCounts();
-
-  const BufferParameters& getGridVertexBufferParameters() const;
-  BufferParameters& getGridVertexBufferParameters();
-  void setGridVertexBufferParameters(const BufferParameters& vertex_buffer);
-  std::uint32_t getTextVertexCount() const;
-  void setTextVertexCount(std::uint32_t vertex_count);
-  std::uint32_t getIconVertexCount() const;
-  void setIconVertexCount(std::uint32_t vertex_count);
-
-  const BufferParameters& getStagingBufferParameters() const;
-  BufferParameters& getStagingBufferParameters();
-  void setStagingBufferParameters(const BufferParameters& staging_buffer);
-
-  const VkCommandPool& getVkCommandPool() const;
-  VkCommandPool& getVkCommandPool();
-  void setVkCommandPool(const VkCommandPool& vk_command_pool);
-
-  const std::vector<RenderingResourceParameters>& getRenderingResources()
-      const;
-  std::vector<RenderingResourceParameters>& getRenderingResources();
-  void setRenderingResources(
-      const std::vector<RenderingResourceParameters>& rendering_resources);
-
-  const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
-  std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
-  void setFinishedRenderingSemaphores(
-      const std::vector<VkSemaphore>& finished_rendering_semaphores);
-
-private:
-  VkRenderPass m_vk_render_pass;
-  std::array<ImageParameters, c_projectile_mesh_count> m_projectile_images;
-  ImageParameters m_font_image_parameters;
-  ImageParameters m_icon_image_parameters;
-  BufferParameters m_uniform_buffer_3d;
-  BufferParameters m_uniform_buffer_grid;
-  VkDescriptorSetLayout m_vk_3d_descriptor_set_layout;
-  VkDescriptorSetLayout m_vk_grid_descriptor_set_layout;
-  VkDescriptorPool m_vk_descriptor_pool;
-  std::array<VkDescriptorSet, c_projectile_mesh_count> m_vk_3d_descriptor_sets;
-  VkDescriptorSet m_vk_font_descriptor_set;
-  VkDescriptorSet m_vk_icon_descriptor_set;
-  VkPipelineLayout m_vk_3d_pipeline_layout;
-  VkPipelineLayout m_vk_grid_pipeline_layout;
-  VkPipeline m_vk_3d_graphics_pipeline;
-  VkPipeline m_vk_grid_graphics_pipeline;
-  std::array<BufferParameters, c_projectile_mesh_count>
-      m_projectile_vertex_buffers;
-  std::array<std::uint32_t, c_projectile_mesh_count>
-      m_projectile_vertex_counts;
-  BufferParameters m_grid_vertex_buffer;
-  std::uint32_t m_text_vertex_count;
-  std::uint32_t m_icon_vertex_count;
-  BufferParameters m_staging_buffer;
-  VkCommandPool m_vk_command_pool;
-  std::vector<RenderingResourceParameters> m_rendering_resources;
-  std::vector<VkSemaphore> m_finished_rendering_semaphores;
-};
-
-// ************************************************************ //
-// Tutorial19                                                   //
-//                                                              //
-// Class for presenting Vulkan usage topics                     //
-// ************************************************************ //
 class Tutorial19 : public TutorialBase {
 public:
   Tutorial19();
   ~Tutorial19() override;
 
-  bool createRenderingResources();
-  bool createStagingBuffer();
-  bool createProjectileTextures();
-  bool createFontAtlas();
-  bool createIconAtlas();
-  bool createUniformBuffers();
-  bool createDescriptorSetLayouts();
-  bool createDescriptorPool();
-  bool allocateDescriptorSets();
-  bool updateDescriptorSets();
-  bool createRenderPass();
-  bool createPipelineLayouts();
-  bool createPipelines();
-  bool createProjectileVertexBuffers();
-  bool createGridVertexBuffer();
+  // Everything the tutorial draws with; call once after prepareVulkan().
+  bool createResources();
 
   bool draw() override;
-
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
@@ -290,37 +123,9 @@ private:
   static constexpr std::uint32_t c_icon_atlas_height =
       c_icon_size * c_icon_atlas_rows;
 
-  bool createCommandBuffers();
-  bool createCommandPool(
-      std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
-      std::uint32_t count,
-      VkCommandBuffer* command_buffers);
-  bool createSemaphores();
-  bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags memory_property,
-      BufferParameters& buffer);
-  bool createTextureFromPixels(std::uint32_t width,
-      std::uint32_t height,
-      const std::vector<char>& pixels,
-      ImageParameters& out_image_parameters);
-  bool copyBufferData(BufferParameters& destination,
-      const void* data,
-      std::uint32_t data_size,
-      VkAccessFlags dst_access_mask,
-      VkPipelineStageFlags dst_stage_mask);
-
+  bool createIconAtlas();
   Tutorial19UniformBufferData3D get3DUniformBufferData() const;
-  bool update3DUniformBufferData();
   Math::Mat4<float> getGridUniformBufferData() const;
-  bool updateGridUniformBufferData();
-
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-  createShaderModule(const char* filename);
-
-  std::vector<Tutorial19Vertex3DData> loadMeshVertexData(
-      const char* mesh_filename) const;
 
   Math::Vec2<float> getPanelTopLeft() const;
   Math::Vec2<float> getPanelSize() const;
@@ -336,16 +141,30 @@ private:
   std::vector<Tutorial19VertexGridData> buildIconPassVertexData() const;
   bool updateGridVertexBufferData();
 
-  bool prepareFrame(VkCommandBuffer command_buffer,
-      const ImageParameters& image_parameters,
-      VkFramebuffer& framebuffer);
-  bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
-  void destroyBuffer(BufferParameters& buffer);
-
   bool childOnWindowSizeChanged() override;
   void childClear() override;
 
-  VulkanTutorial19Parameters m_vulkan_tutorial19_parameters;
+  VulkanCommon::ResourceContext m_resources;
+  VulkanCommon::FrameLoop m_frames;
+  ImageParameters m_font_texture;
+  ImageParameters m_icon_texture;
+  std::array<ImageParameters, c_projectile_mesh_count> m_projectile_textures;
+  std::array<BufferParameters, c_projectile_mesh_count> m_projectile_buffers;
+  std::array<std::uint32_t, c_projectile_mesh_count> m_projectile_counts{};
+  BufferParameters m_uniform_buffer_3d;
+  BufferParameters m_uniform_buffer_grid;
+  BufferParameters m_grid_vertex_buffer;
+  std::uint32_t m_text_vertex_count = 0;
+  std::uint32_t m_icon_vertex_count = 0;
+  // One 3D set per projectile (its own texture); the grid's font and icon
+  // sets share the grid layout.
+  std::array<VkDescriptorSet, c_projectile_mesh_count> m_descriptor_sets_3d{};
+  VkDescriptorSet m_font_descriptor_set = VK_NULL_HANDLE;
+  VkDescriptorSet m_icon_descriptor_set = VK_NULL_HANDLE;
+  VkPipelineLayout m_pipeline_layout_3d = VK_NULL_HANDLE;
+  VkPipelineLayout m_pipeline_layout_grid = VK_NULL_HANDLE;
+  VkPipeline m_pipeline_3d = VK_NULL_HANDLE;
+  VkPipeline m_pipeline_grid = VK_NULL_HANDLE;
   OrbitCamera m_camera;
   BitmapFont m_font;
   std::size_t m_selected_index;

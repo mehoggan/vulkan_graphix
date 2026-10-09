@@ -18,7 +18,8 @@ const std::int32_t num_control_items_phy = 3;
 class SubMenuPhysics : public SubMenu {
 public:
   SubMenuPhysics();
-  SubMenuPhysics(std::int32_t id,
+  SubMenuPhysics(
+      std::int32_t id,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,

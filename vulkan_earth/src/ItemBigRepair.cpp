@@ -7,8 +7,9 @@ extern void playSFX(std::int32_t sfx);
 ItemBigRepair::ItemBigRepair() = default;
 ItemBigRepair::ItemBigRepair(std::int32_t id) {
   m_uniqueidentifier = id;
-  loadSpec(vulkan_graphix::GameCatalog::item(
-      vulkan_graphix::GameCatalog::ItemKind::BigRepair));
+  loadSpec(
+      vulkan_graphix::GameCatalog::item(
+          vulkan_graphix::GameCatalog::ItemKind::BigRepair));
 }
 ItemBigRepair::~ItemBigRepair() = default;
 

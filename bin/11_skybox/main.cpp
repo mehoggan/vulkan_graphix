@@ -22,43 +22,7 @@ int main(int /*argc*/, char** /*argv*/) {
   std::shared_ptr<vulkan_graphix::Tutorial11> tutorial11 =
       std::dynamic_pointer_cast<vulkan_graphix::Tutorial11>(tutorial);
 
-  if (!tutorial11->createRenderingResources()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createStagingBuffer()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createTexture()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createUniformBuffer()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createDescriptorSetLayout()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createDescriptorPool()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->allocateDescriptorSet()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->updateDescriptorSet()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createRenderPass()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createPipelineLayout()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createPipeline()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createVertexBuffer()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial11->createIndexBuffer()) {
+  if (!tutorial11->createResources()) {
     return EXIT_FAILURE;
   }
 

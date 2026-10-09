@@ -14,7 +14,8 @@ class TextObject;
 class ControlItemSliderbar : public ControlItem {
 public:
   ControlItemSliderbar();
-  ControlItemSliderbar(float new_x_pos,
+  ControlItemSliderbar(
+      float new_x_pos,
       float new_y_pos,
       float new_z_pos,
       float red,
@@ -27,7 +28,8 @@ public:
       std::int32_t slider_starting_index);
   ~ControlItemSliderbar() override;
   void draw(vulkan_graphix::Render::RenderContext& context) override;
-  void mouseClickEvent(std::int32_t x,
+  void mouseClickEvent(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t state,
       bool still_over_control_item_sliderbar) override;

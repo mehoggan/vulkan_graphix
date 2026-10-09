@@ -7,8 +7,9 @@ extern void playSFX(std::int32_t sfx);
 ItemAntiAcid::ItemAntiAcid() = default;
 ItemAntiAcid::ItemAntiAcid(std::int32_t id) {
   m_uniqueidentifier = id;
-  loadSpec(vulkan_graphix::GameCatalog::item(
-      vulkan_graphix::GameCatalog::ItemKind::AntiAcid));
+  loadSpec(
+      vulkan_graphix::GameCatalog::item(
+          vulkan_graphix::GameCatalog::ItemKind::AntiAcid));
 }
 ItemAntiAcid::~ItemAntiAcid() = default;
 

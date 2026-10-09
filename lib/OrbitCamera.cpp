@@ -9,7 +9,8 @@ namespace vulkan_graphix {
 OrbitCamera::OrbitCamera() :
     OrbitCamera(0.0f, 0.45f, 9.0f) {}
 
-OrbitCamera::OrbitCamera(float initial_yaw_radians,
+OrbitCamera::OrbitCamera(
+    float initial_yaw_radians,
     float initial_pitch_radians,
     float initial_distance) :
     m_yaw(initial_yaw_radians),
@@ -20,7 +21,8 @@ OrbitCamera::OrbitCamera(float initial_yaw_radians,
     m_last_y(0),
     m_target(0.0f, 0.0f, 0.0f) {}
 
-void OrbitCamera::onMouseButton(std::int32_t button,
+void OrbitCamera::onMouseButton(
+    std::int32_t button,
     bool pressed,
     std::int32_t pos_x,
     std::int32_t pos_y) {
@@ -66,7 +68,8 @@ void OrbitCamera::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
 Math::Vec3<float> OrbitCamera::eye() const {
   return m_target +
       m_distance *
-      Math::Vec3<float>(std::cos(m_pitch) * std::sin(m_yaw),
+      Math::Vec3<float>(
+          std::cos(m_pitch) * std::sin(m_yaw),
           std::sin(m_pitch),
           std::cos(m_pitch) * std::cos(m_yaw));
 }

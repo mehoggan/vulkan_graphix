@@ -18,6 +18,7 @@ libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 															./Render/Font.cpp \
 															./Render/Mesh.cpp \
 															./Render/Renderer.cpp \
+															./Render/TexturedModel.cpp \
 															./Render/Texture.cpp \
 															./SkyboxGeometry.cpp \
 															./TankOrientation.cpp \
@@ -28,6 +29,10 @@ libvulkan_graphix_la_SOURCES = ./Ballistics.cpp \
 															./UiGeometry.cpp \
 														./WorldCamera.cpp \
 															./VulkanCommon.cpp \
+															./VulkanCommon/Descriptors.cpp \
+															./VulkanCommon/FrameLoop.cpp \
+															./VulkanCommon/Pipeline.cpp \
+															./VulkanCommon/ResourceContext.cpp \
 															./VulkanFunctions.cpp
 
 libvulkan_graphix_la_LIBADD = $(VULKAN_LIBS) $(X11_LIBS)

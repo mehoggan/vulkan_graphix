@@ -82,17 +82,18 @@ bool BitmapFont::load(const std::string& font_path, float pixel_height) {
       m_atlas_pixels[pixel_index + 3] = static_cast<char>(0xFF);
     }
   }
-  m_solid_texel_uv =
-      Math::Vec2<float>(static_cast<float>(block_x + c_solid_block_size / 2) /
-              static_cast<float>(m_atlas_width),
-          static_cast<float>(block_y + c_solid_block_size / 2) /
-              static_cast<float>(m_atlas_height));
+  m_solid_texel_uv = Math::Vec2<float>(
+      static_cast<float>(block_x + c_solid_block_size / 2) /
+          static_cast<float>(m_atlas_width),
+      static_cast<float>(block_y + c_solid_block_size / 2) /
+          static_cast<float>(m_atlas_height));
 
   for (std::int32_t i = 0; i < c_glyph_count; ++i) {
     float pen_x = 0.0f;
     float pen_y = 0.0f;
     stbtt_aligned_quad quad{};
-    stbtt_GetBakedQuad(baked_chars.data(),
+    stbtt_GetBakedQuad(
+        baked_chars.data(),
         static_cast<std::int32_t>(m_atlas_width),
         static_cast<std::int32_t>(m_atlas_height),
         i,

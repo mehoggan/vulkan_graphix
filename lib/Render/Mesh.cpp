@@ -65,16 +65,19 @@ void RetainedMeshBase::releaseBuffer() {
 }
 
 void UiMesh::addQuad(const std::array<Vec3, 4>& corners, const Vec4& color) {
-  addQuad({corners[0], color, Vec2(0.0f)},
+  addQuad(
+      {corners[0], color, Vec2(0.0f)},
       {corners[1], color, Vec2(0.0f)},
       {corners[2], color, Vec2(0.0f)},
       {corners[3], color, Vec2(0.0f)});
 }
 
-void UiMesh::addTexturedQuad(const std::array<Vec3, 4>& corners,
+void UiMesh::addTexturedQuad(
+    const std::array<Vec3, 4>& corners,
     const std::array<Vec2, 4>& texcoords,
     const Vec4& color) {
-  addQuad({corners[0], color, texcoords[0]},
+  addQuad(
+      {corners[0], color, texcoords[0]},
       {corners[1], color, texcoords[1]},
       {corners[2], color, texcoords[2]},
       {corners[3], color, texcoords[3]});
@@ -82,14 +85,16 @@ void UiMesh::addTexturedQuad(const std::array<Vec3, 4>& corners,
 
 void UiMesh::addTriangle(
     const std::array<Vec3, 3>& corners, const Vec4& color) {
-  addTriangle({corners[0], color, Vec2(0.0f)},
+  addTriangle(
+      {corners[0], color, Vec2(0.0f)},
       {corners[1], color, Vec2(0.0f)},
       {corners[2], color, Vec2(0.0f)});
 }
 
 void UiMesh::addTriangle(
     const std::array<Vec3, 3>& corners, const std::array<Vec4, 3>& colors) {
-  addTriangle({corners[0], colors[0], Vec2(0.0f)},
+  addTriangle(
+      {corners[0], colors[0], Vec2(0.0f)},
       {corners[1], colors[1], Vec2(0.0f)},
       {corners[2], colors[2], Vec2(0.0f)});
 }

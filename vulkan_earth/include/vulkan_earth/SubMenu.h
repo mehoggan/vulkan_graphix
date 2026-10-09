@@ -14,7 +14,8 @@ class RenderContext;
 class SubMenu {
 public:
   SubMenu();
-  SubMenu(std::int32_t id,
+  SubMenu(
+      std::int32_t id,
       float x_pos,
       float y_pos,
       float z_pos,

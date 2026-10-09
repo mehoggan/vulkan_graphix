@@ -13,7 +13,8 @@ class TextObject;
 class ControlItemTextField : public ControlItem {
 public:
   ControlItemTextField();
-  ControlItemTextField(float new_x_pos,
+  ControlItemTextField(
+      float new_x_pos,
       float new_y_pos,
       float new_z_pos,
       float red,
@@ -23,7 +24,8 @@ public:
       std::int32_t new_height);
   ~ControlItemTextField() override;
   void draw(vulkan_graphix::Render::RenderContext& context) override;
-  void mouseClickEvent(std::int32_t x,
+  void mouseClickEvent(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t state,
       bool still_over_control_item_text_field) override;

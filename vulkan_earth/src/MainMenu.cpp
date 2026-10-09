@@ -31,7 +31,8 @@ extern void playMusic(std::int32_t music);
 
 MainMenu::MainMenu() = default;
 
-MainMenu::MainMenu(float new_width,
+MainMenu::MainMenu(
+    float new_width,
     float new_height,
     float new_percent_border,
     GlobalSettings* new_global_settings,
@@ -64,7 +65,8 @@ MainMenu::MainMenu(float new_width,
   m_pos[0] = m_pos[1] = m_pos[2] = 0;
 
   /*	BUTTON 0 AND ITS SUBMENU	*/
-  m_submenus[0] = new SubMenuSelectTanks(0,
+  m_submenus[0] = new SubMenuSelectTanks(
+      0,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -75,7 +77,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Select Your Tanks",
       .006);
-  m_buttons[0] = new MainMenuButton(0,
+  m_buttons[0] = new MainMenuButton(
+      0,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .05 * m_height),
       1.0f,
@@ -87,31 +90,32 @@ MainMenu::MainMenu(float new_width,
       "Start",
       m_submenus[0]);
   /*	ARROW BUTTON 1 NUMBER OF PLAYERS	*/
-  m_arrowsbutton[0] =
-      new ControlItemSelectionBox(-1 * m_width / 2.0 + .05 * m_width,
-          ((m_height / 2.0) - .10 * m_height),
-          1.0f,
-          0.5f,
-          0.5f,
-          0.5f,
-          0.2 * m_width,
-          0.04 * (m_height),
-          "# of Players",
-          "2/3/4/5/6/7/8/9/10/");
+  m_arrowsbutton[0] = new ControlItemSelectionBox(
+      -1 * m_width / 2.0 + .05 * m_width,
+      ((m_height / 2.0) - .10 * m_height),
+      1.0f,
+      0.5f,
+      0.5f,
+      0.5f,
+      0.2 * m_width,
+      0.04 * (m_height),
+      "# of Players",
+      "2/3/4/5/6/7/8/9/10/");
   /*	ARROW BUTTON 2	NUMBER OF ROUNDS	*/
-  m_arrowsbutton[1] =
-      new ControlItemSelectionBox(-1 * m_width / 2.0 + .05 * m_width,
-          ((m_height / 2.0) - .15 * m_height),
-          1.0f,
-          0.5f,
-          0.5f,
-          0.5f,
-          0.2 * m_width,
-          0.04 * (m_height),
-          "# of Rounds",
-          "1/2/3/4/5/6/7/8/9/");
+  m_arrowsbutton[1] = new ControlItemSelectionBox(
+      -1 * m_width / 2.0 + .05 * m_width,
+      ((m_height / 2.0) - .15 * m_height),
+      1.0f,
+      0.5f,
+      0.5f,
+      0.5f,
+      0.2 * m_width,
+      0.04 * (m_height),
+      "# of Rounds",
+      "1/2/3/4/5/6/7/8/9/");
   /*	BUTTON 1 AND ITS SUBMENU	*/
-  m_submenus[1] = new SubMenuSound(1,
+  m_submenus[1] = new SubMenuSound(
+      1,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -122,7 +126,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Sound Options Menu",
       .006);
-  m_buttons[1] = new MainMenuButton(1,
+  m_buttons[1] = new MainMenuButton(
+      1,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .20 * m_height),
       1.0f,
@@ -134,7 +139,8 @@ MainMenu::MainMenu(float new_width,
       "Sound Options",
       m_submenus[1]);
   /*	BUTTON 2 AND ITS SUBMENU	*/
-  m_submenus[2] = new SubMenuHardware(2,
+  m_submenus[2] = new SubMenuHardware(
+      2,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -145,7 +151,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Hardware Options Menu",
       .006);
-  m_buttons[2] = new MainMenuButton(2,
+  m_buttons[2] = new MainMenuButton(
+      2,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .25 * m_height),
       1.0f,
@@ -157,7 +164,8 @@ MainMenu::MainMenu(float new_width,
       "Hardware Options",
       m_submenus[2]);
   /*	BUTTON 3 AND ITS SUBMENU	*/
-  m_submenus[3] = new SubMenuEconomics(3,
+  m_submenus[3] = new SubMenuEconomics(
+      3,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -168,7 +176,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Economics Options Menu",
       .006);
-  m_buttons[3] = new MainMenuButton(3,
+  m_buttons[3] = new MainMenuButton(
+      3,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .30 * m_height),
       1.0f,
@@ -180,7 +189,8 @@ MainMenu::MainMenu(float new_width,
       "Economics",
       m_submenus[3]);
   /*	BUTTON 4 AND ITS SUBMENU	*/
-  m_submenus[4] = new SubMenuPhysics(4,
+  m_submenus[4] = new SubMenuPhysics(
+      4,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -191,7 +201,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Physics Options Menu",
       .006);
-  m_buttons[4] = new MainMenuButton(4,
+  m_buttons[4] = new MainMenuButton(
+      4,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .35 * m_height),
       1.0f,
@@ -203,7 +214,8 @@ MainMenu::MainMenu(float new_width,
       "Physics",
       m_submenus[4]);
   /*	BUTTON 5 AND ITS SUBMENU	*/
-  m_submenus[5] = new SubMenuLandscape(5,
+  m_submenus[5] = new SubMenuLandscape(
+      5,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -214,7 +226,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Landscape Options Menu",
       .006);
-  m_buttons[5] = new MainMenuButton(5,
+  m_buttons[5] = new MainMenuButton(
+      5,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .40 * m_height),
       1.0f,
@@ -226,7 +239,8 @@ MainMenu::MainMenu(float new_width,
       "Landscape",
       m_submenus[5]);
   /*	BUTTON 6 AND ITS SUBMENU	*/
-  m_submenus[6] = new SubMenuPlayOptions(6,
+  m_submenus[6] = new SubMenuPlayOptions(
+      6,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -237,7 +251,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Play Settings Options Menu",
       .006);
-  m_buttons[6] = new MainMenuButton(6,
+  m_buttons[6] = new MainMenuButton(
+      6,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .45 * m_height),
       1.0f,
@@ -249,7 +264,8 @@ MainMenu::MainMenu(float new_width,
       "Play Settings",
       m_submenus[6]);
   /*	BUTTON 7 AND ITS SUBMENU	*/
-  m_submenus[7] = new SubMenuWeapons(7,
+  m_submenus[7] = new SubMenuWeapons(
+      7,
       (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       3.0f,
@@ -260,7 +276,8 @@ MainMenu::MainMenu(float new_width,
       0.75 * m_height,
       "Weapons Option Menu",
       .006);
-  m_buttons[7] = new MainMenuButton(7,
+  m_buttons[7] = new MainMenuButton(
+      7,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .50 * m_height),
       1.0f,
@@ -272,7 +289,8 @@ MainMenu::MainMenu(float new_width,
       "Weapons",
       m_submenus[7]);
   /*	BUTTON 8 SAVE OPTIONS	*/
-  m_buttons[8] = new MainMenuButton(8,
+  m_buttons[8] = new MainMenuButton(
+      8,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .55 * m_height),
       1.0f,
@@ -285,7 +303,8 @@ MainMenu::MainMenu(float new_width,
       nullptr);
 
   /*	QUIT BUTTON AND IMAGES	*/
-  m_buttons[9] = new MainMenuButton(9,
+  m_buttons[9] = new MainMenuButton(
+      9,
       (-1 * m_width / 2.0 + .05 * m_width),
       ((m_height / 2.0) - .87 * m_height),
       1.0f,
@@ -296,7 +315,8 @@ MainMenu::MainMenu(float new_width,
       0.04f * (m_height),
       "Quit",
       nullptr);
-  m_images[0] = new ImageObject((-1 * m_width / 2.0 + .30 * m_width),
+  m_images[0] = new ImageObject(
+      (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .17 * m_height),
       2.0f,
       0.65f * m_width,
@@ -305,7 +325,8 @@ MainMenu::MainMenu(float new_width,
       1280,
       1024,
       "SplashScreen.raw");
-  m_images[1] = new ImageObject((-1 * m_width / 2.0 + .30 * m_width),
+  m_images[1] = new ImageObject(
+      (-1 * m_width / 2.0 + .30 * m_width),
       ((m_height / 2.0) - .03 * m_height),
       2.0f,
       0.65f * m_width,
@@ -372,15 +393,15 @@ void MainMenu::buttonTest(
     std::int32_t x, std::int32_t y, std::int32_t button_down) {
   if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
     for (std::int32_t button_i = 0; button_i < num_button;
-        button_i++) {             // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
+         button_i++) {            // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
                                   // IF CLICK LANDS IN BUTTON I
       if (m_buttons[button_i]) {  // JUST TO MAKE SURE
         if ((x >= m_buttons[button_i]->getXPos()) &&
             (x <= (m_buttons[button_i]->getXPos() +
-                      m_buttons[button_i]->getWidth())) &&
+                   m_buttons[button_i]->getWidth())) &&
             (y <= m_buttons[button_i]->getYPos()) &&
             (y >= (m_buttons[button_i]->getYPos() -
-                      m_buttons[button_i]->getHeight()))) {
+                   m_buttons[button_i]->getHeight()))) {
           m_buttons[button_i]->pressButton();      // PRESS BUTTON
           m_button_pressed = m_buttons[button_i];  // KEEP TRACK OF WHICH
                                                    // BUTTON WAS PRESSED
@@ -392,11 +413,12 @@ void MainMenu::buttonTest(
                                          // A ARROW BUTTON???
           if ((x >= m_arrowsbutton[button_i]->getXPos()) &&
               (x <= (m_arrowsbutton[button_i]->getXPos() +
-                        m_arrowsbutton[button_i]->getWidth())) &&
+                     m_arrowsbutton[button_i]->getWidth())) &&
               (y <= m_arrowsbutton[button_i]->getYPos()) &&
               (y >= (m_arrowsbutton[button_i]->getYPos() -
-                        m_arrowsbutton[button_i]->getHeight()))) {
-            m_arrowsbutton[button_i]->mouseClickEvent(x,
+                     m_arrowsbutton[button_i]->getHeight()))) {
+            m_arrowsbutton[button_i]->mouseClickEvent(
+                x,
                 y,
                 button_down,
                 true);  // YOU PRESSED OVER A ARROWBUTTON
@@ -412,10 +434,10 @@ void MainMenu::buttonTest(
                     // CHECK TO SEE IF YOU ARE STILL OVER SAME BUTTON
       if ((x >= m_button_pressed->getXPos()) &&
           (x <=
-              (m_button_pressed->getXPos() + m_button_pressed->getWidth())) &&
+           (m_button_pressed->getXPos() + m_button_pressed->getWidth())) &&
           (y <= m_button_pressed->getYPos()) &&
           (y >=
-              (m_button_pressed->getYPos() - m_button_pressed->getHeight()))) {
+           (m_button_pressed->getYPos() - m_button_pressed->getHeight()))) {
         if (m_button_pressed->isActive()) {  // IF OVER SAME BUTTON MAKE SURE
                                              // IT WAS NOT ALREADY ACTIVATED
                                              // SOME BUTTONS HAVE EXTRA ACTIONS
@@ -463,7 +485,7 @@ void MainMenu::buttonTest(
             collectData();
           } else {
             for (std::int32_t i = 0; i < num_button;
-                i++) {             // DEACTIVATE ALL OTHER MENUS
+                 i++) {            // DEACTIVATE ALL OTHER MENUS
               if (m_buttons[i]) {  // SAFEGUARD AGAINST NULL
                                    // POINTER
                 m_buttons[i]->deactivateSubMenu();
@@ -494,23 +516,25 @@ void MainMenu::buttonTest(
         // activeSubMenu=NULL;
         // //GET RID OF ACTIVE SUBMENU JUST IN CASE (in case of what?)
       }
-    } else if (m_arrow_button_pressed !=
-        nullptr) {  // IF YOU MANAGED TO CLICK INSIDE AN ARROW
-                    // BUTTON
-                    // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
+    } else if (m_arrow_button_pressed != nullptr) {  // IF YOU MANAGED TO CLICK
+                                                     // INSIDE AN ARROW BUTTON
+                                                     // CHECK TO MAKE SURE YOU
+                                                     // ARE OVER THE SAME ONE
       if ((x >= m_arrow_button_pressed->getXPos()) &&
           (x <= (m_arrow_button_pressed->getXPos() +
-                    m_arrow_button_pressed->getWidth())) &&
+                 m_arrow_button_pressed->getWidth())) &&
           (y <= m_arrow_button_pressed->getYPos()) &&
           (y >= (m_arrow_button_pressed->getYPos() -
-                    m_arrow_button_pressed->getHeight()))) {
-        m_arrow_button_pressed->mouseClickEvent(x,
+                 m_arrow_button_pressed->getHeight()))) {
+        m_arrow_button_pressed->mouseClickEvent(
+            x,
             y,
             button_down,
             true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                     // RELEASE THE MOUSE
       } else {
-        m_arrow_button_pressed->mouseClickEvent(x,
+        m_arrow_button_pressed->mouseClickEvent(
+            x,
             y,
             button_down,
             false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
@@ -528,7 +552,7 @@ void MainMenu::buttonTest(
 void MainMenu::collectData() {
   std::string optionsarray;
   for (std::int32_t x = 2; x < num_submenus;
-      x++) {  // SOUND AND START GAME ARE 1 AND 0 RESPECTIVLY
+       x++) {  // SOUND AND START GAME ARE 1 AND 0 RESPECTIVLY
     if (m_submenus[x]) {
       optionsarray += m_submenus[x]->collectData();
     }

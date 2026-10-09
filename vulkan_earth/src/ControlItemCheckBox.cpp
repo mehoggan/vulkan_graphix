@@ -15,7 +15,8 @@ extern void playSFX(std::int32_t sfx);
 
 ControlItemCheckBox::ControlItemCheckBox() = default;
 
-ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
+ControlItemCheckBox::ControlItemCheckBox(
+    float new_x_pos,
     float new_y_pos,
     float new_z_pos,
     float red,
@@ -49,7 +50,8 @@ ControlItemCheckBox::ControlItemCheckBox(float new_x_pos,
   float label_y_pos =
       m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
   /*	END OF BUTTON TEXT PLACEMENT	*/
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       m_z_pos,
@@ -74,32 +76,35 @@ void ControlItemCheckBox::draw(render::RenderContext& context) {
     const Vec4 face(m_color[0], m_color[1], m_color[2], m_color[3]);
     const Vec4 light(
         m_color[0] + 0.4f, m_color[1] + 0.4f, m_color[2] + 0.4f, m_color[3]);
-    m_mesh.addQuad({Vec3(m_x_pos, m_y_pos, m_z_pos),
-                       Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
-                       Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
-                       Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
+    m_mesh.addQuad(
+        {Vec3(m_x_pos, m_y_pos, m_z_pos),
+         Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
+         Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
+         Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
         dark);
-    m_mesh.addQuad({Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
-                       Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
-                       Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
-                       Vec3(m_x_pos, m_y_pos, m_z_pos)},
+    m_mesh.addQuad(
+        {Vec3(m_x_pos - 3, m_y_pos + 3, m_z_pos),
+         Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
+         Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
+         Vec3(m_x_pos, m_y_pos, m_z_pos)},
         dark);
-    m_mesh.addQuad({Vec3(m_x_pos, m_y_pos, m_z_pos),
-                       Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
-                       Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
-                       Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
+    m_mesh.addQuad(
+        {Vec3(m_x_pos, m_y_pos, m_z_pos),
+         Vec3(m_x_pos, m_y_pos - m_height, m_z_pos),
+         Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
+         Vec3(m_x_pos + m_width, m_y_pos, m_z_pos)},
         face);
     m_mesh.addQuad(
         {Vec3(m_x_pos - 3, m_y_pos - m_height - 3, m_z_pos),
-            Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
-            Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
-            Vec3(m_x_pos, m_y_pos - m_height, m_z_pos)},
+         Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
+         Vec3(m_x_pos + m_width, m_y_pos - m_height, m_z_pos),
+         Vec3(m_x_pos, m_y_pos - m_height, m_z_pos)},
         light);
     m_mesh.addQuad(
         {Vec3(m_x_pos + m_width, m_y_pos, m_z_pos),
-            Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
-            Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
-            Vec3(m_x_pos + m_width, m_y_pos + -m_height, m_z_pos)},
+         Vec3(m_x_pos + m_width + 3, m_y_pos + 3, m_z_pos),
+         Vec3(m_x_pos + m_width + 3, m_y_pos - m_height - 3, m_z_pos),
+         Vec3(m_x_pos + m_width, m_y_pos + -m_height, m_z_pos)},
         light);
 
     // draw the actual check box itself: 4 smaller squares (2 triangles
@@ -111,77 +116,101 @@ void ControlItemCheckBox::draw(render::RenderContext& context) {
     const float z1 = m_z_pos + 1;
     const Vec3 center(
         m_x_pos + (m_width - m_height / 2), (m_y_pos - m_height / 2), z1);
-    const Vec3 center4(m_x_pos + (m_width - m_height) + (m_height / 2),
+    const Vec3 center4(
+        m_x_pos + (m_width - m_height) + (m_height / 2),
         (m_y_pos - m_height / 2),
         z1);
     // square 1
-    m_mesh.addTriangle({Vec3(m_x_pos + (m_width - m_height * 0.9),
-                            (m_y_pos - m_height * 0.1),
-                            z1),
-                           Vec3(m_x_pos + (m_width - m_height * 0.9),
-                               (m_y_pos - m_height / 2),
-                               z1),
-                           center},
+    m_mesh.addTriangle(
+        {Vec3(
+             m_x_pos + (m_width - m_height * 0.9),
+             (m_y_pos - m_height * 0.1),
+             z1),
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.9),
+             (m_y_pos - m_height / 2),
+             z1),
+         center},
         {raised, raised, center_color});
-    m_mesh.addTriangle({Vec3(m_x_pos + (m_width - m_height * 0.9),
-                            (m_y_pos - m_height * 0.1),
-                            z1),
-                           center,
-                           Vec3(m_x_pos + (m_width - m_height / 2),
-                               (m_y_pos - m_height * 0.1),
-                               z1)},
+    m_mesh.addTriangle(
+        {Vec3(
+             m_x_pos + (m_width - m_height * 0.9),
+             (m_y_pos - m_height * 0.1),
+             z1),
+         center,
+         Vec3(
+             m_x_pos + (m_width - m_height / 2),
+             (m_y_pos - m_height * 0.1),
+             z1)},
         {raised, center_color, raised});
     // square 2
-    m_mesh.addTriangle({Vec3(m_x_pos + (m_width - m_height * 0.9),
-                            (m_y_pos - m_height / 2),
-                            z1),
-                           Vec3(m_x_pos + (m_width - m_height * 0.9),
-                               (m_y_pos - m_height * 0.9),
-                               z1),
-                           center},
+    m_mesh.addTriangle(
+        {Vec3(
+             m_x_pos + (m_width - m_height * 0.9),
+             (m_y_pos - m_height / 2),
+             z1),
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.9),
+             (m_y_pos - m_height * 0.9),
+             z1),
+         center},
         {raised, raised, center_color});
-    m_mesh.addTriangle({Vec3(m_x_pos + (m_width - m_height * 0.9),
-                            (m_y_pos - m_height * 0.9),
-                            z1),
-                           Vec3(m_x_pos + (m_width - m_height / 2),
-                               (m_y_pos - m_height * 0.9),
-                               z1),
-                           center},
+    m_mesh.addTriangle(
+        {Vec3(
+             m_x_pos + (m_width - m_height * 0.9),
+             (m_y_pos - m_height * 0.9),
+             z1),
+         Vec3(
+             m_x_pos + (m_width - m_height / 2),
+             (m_y_pos - m_height * 0.9),
+             z1),
+         center},
         {raised, raised, center_color});
     // square 3
     m_mesh.addTriangle(
         {center,
-            Vec3(m_x_pos + (m_width - m_height / 2),
-                (m_y_pos - m_height * 0.9),
-                z1),
-            Vec3(m_x_pos + (m_width - m_height) + m_height * 0.9,
-                (m_y_pos - m_height * 0.9),
-                z1)},
+         Vec3(
+             m_x_pos + (m_width - m_height / 2),
+             (m_y_pos - m_height * 0.9),
+             z1),
+         Vec3(
+             m_x_pos + (m_width - m_height) + m_height * 0.9,
+             (m_y_pos - m_height * 0.9),
+             z1)},
         {center_color, raised, raised});
-    m_mesh.addTriangle({center,
-                           Vec3(m_x_pos + (m_width - m_height * 0.1),
-                               (m_y_pos - m_height * 0.9),
-                               z1),
-                           Vec3(m_x_pos + (m_width - m_height * 0.1),
-                               (m_y_pos - m_height / 2),
-                               z1)},
+    m_mesh.addTriangle(
+        {center,
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.1),
+             (m_y_pos - m_height * 0.9),
+             z1),
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.1),
+             (m_y_pos - m_height / 2),
+             z1)},
         {center_color, raised, raised});
     // square 4
-    m_mesh.addTriangle({Vec3(m_x_pos + (m_width - m_height / 2),
-                            (m_y_pos - m_height * 0.1),
-                            z1),
-                           center4,
-                           Vec3(m_x_pos + (m_width - m_height * 0.1),
-                               (m_y_pos - m_height * 0.1),
-                               z1)},
+    m_mesh.addTriangle(
+        {Vec3(
+             m_x_pos + (m_width - m_height / 2),
+             (m_y_pos - m_height * 0.1),
+             z1),
+         center4,
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.1),
+             (m_y_pos - m_height * 0.1),
+             z1)},
         {raised, center_color, raised});
-    m_mesh.addTriangle({center4,
-                           Vec3(m_x_pos + (m_width - m_height * 0.1),
-                               (m_y_pos - m_height / 2),
-                               z1),
-                           Vec3(m_x_pos + (m_width - m_height * 0.1),
-                               (m_y_pos - m_height * 0.1),
-                               z1)},
+    m_mesh.addTriangle(
+        {center4,
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.1),
+             (m_y_pos - m_height / 2),
+             z1),
+         Vec3(
+             m_x_pos + (m_width - m_height * 0.1),
+             (m_y_pos - m_height * 0.1),
+             z1)},
         {center_color, raised, raised});
 
     // draw check mark if it was toggled on, otherwise dont
@@ -189,32 +218,40 @@ void ControlItemCheckBox::draw(render::RenderContext& context) {
       const Vec4 green(0.0f, 1.0f, 0.0f, 1.0f);
       const float z2 = m_z_pos + 2;
       m_mesh.addQuad(
-          {Vec3(m_x_pos + (m_width - m_height + (m_height * 0.2)),
+          {Vec3(
+               m_x_pos + (m_width - m_height + (m_height * 0.2)),
                (m_y_pos - m_height / 2) + (0.015 * m_width),
                z2),
-              Vec3(m_x_pos + (m_width - m_height + (m_height * 0.2)),
-                  (m_y_pos - m_height / 2) + (0.005 * m_width),
-                  z2),
-              Vec3(m_x_pos + (m_width - m_height / 2),
-                  (m_y_pos - m_height / 2) - (0.015 * m_width),
-                  z2),
-              Vec3(m_x_pos + (m_width - m_height / 2),
-                  (m_y_pos - m_height / 2),
-                  z2)},
-          green);
-      m_mesh.addQuad(
-          {Vec3(m_x_pos + (m_width - m_height / 2),
+           Vec3(
+               m_x_pos + (m_width - m_height + (m_height * 0.2)),
+               (m_y_pos - m_height / 2) + (0.005 * m_width),
+               z2),
+           Vec3(
+               m_x_pos + (m_width - m_height / 2),
                (m_y_pos - m_height / 2) - (0.015 * m_width),
                z2),
-              Vec3(m_x_pos + (m_width - m_height / 2),
-                  (m_y_pos - m_height / 2),
-                  z2),
-              Vec3(m_x_pos + (m_width - m_height) + (0.95 * m_height),
-                  (m_y_pos - m_height / 2) + (0.025 * m_width),
-                  z2),
-              Vec3(m_x_pos + (m_width - m_height) + (0.95 * m_height),
-                  (m_y_pos - m_height / 2) + (0.015 * m_width),
-                  z2)},
+           Vec3(
+               m_x_pos + (m_width - m_height / 2),
+               (m_y_pos - m_height / 2),
+               z2)},
+          green);
+      m_mesh.addQuad(
+          {Vec3(
+               m_x_pos + (m_width - m_height / 2),
+               (m_y_pos - m_height / 2) - (0.015 * m_width),
+               z2),
+           Vec3(
+               m_x_pos + (m_width - m_height / 2),
+               (m_y_pos - m_height / 2),
+               z2),
+           Vec3(
+               m_x_pos + (m_width - m_height) + (0.95 * m_height),
+               (m_y_pos - m_height / 2) + (0.025 * m_width),
+               z2),
+           Vec3(
+               m_x_pos + (m_width - m_height) + (0.95 * m_height),
+               (m_y_pos - m_height / 2) + (0.015 * m_width),
+               z2)},
           green);
     }
     m_built_button_state = m_button_state;
@@ -241,14 +278,15 @@ void ControlItemCheckBox::setOptionText(const std::string& new_text) {}
 
 // NOTE: I use height for the x value check, this is intentional to
 // maintain a square
-void ControlItemCheckBox::mouseClickEvent(std::int32_t x,
+void ControlItemCheckBox::mouseClickEvent(
+    std::int32_t x,
     std::int32_t y,
     std::int32_t state,
     bool still_over_control_item_check_box) {
   if ((x >= (m_x_pos + m_width - (m_height * 0.9)) &&
-          (x <= m_x_pos + m_width - (m_height * 0.1))) &&
+       (x <= m_x_pos + m_width - (m_height * 0.1))) &&
       ((y <= (m_y_pos - (m_height * 0.1))) &&
-          (y >= (m_y_pos - m_height * 0.9)))) {
+       (y >= (m_y_pos - m_height * 0.9)))) {
     if (state == 1) {
       m_button_state = 1;
     } else if (state == 0) {

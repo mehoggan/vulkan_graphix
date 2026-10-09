@@ -15,7 +15,8 @@ namespace math = vulkan_graphix::Math;
 extern void playSFX(std::int32_t sfx);
 
 ControlItemGrid::ControlItemGrid() = default;
-ControlItemGrid::ControlItemGrid(float new_x_pos,
+ControlItemGrid::ControlItemGrid(
+    float new_x_pos,
     float new_y_pos,
     float new_z_pos,
     std::int32_t new_width,
@@ -54,7 +55,8 @@ ControlItemGrid::ControlItemGrid(float new_x_pos,
   std::int32_t button_i = 0;
   for (std::int32_t r = 0; r < new_rows; r++) {
     for (std::int32_t c = 0; c < new_cols; c++) {
-      m_buttons[button_i] = new ControlItemButton(nullptr,
+      m_buttons[button_i] = new ControlItemButton(
+          nullptr,
           m_x_pos + m_cell_width * c,
           m_y_pos - m_cell_height * r,
           m_z_pos + 0.5,
@@ -91,7 +93,8 @@ void ControlItemGrid::draw(render::RenderContext& context) {
   m_mesh.clear();
 
   // Draw main body (sunken bevel: -0.2 top/left, +0.4 bottom/right)
-  vulkan_earth::appendFrame(m_mesh,
+  vulkan_earth::appendFrame(
+      m_mesh,
       m_x_pos,
       m_y_pos,
       m_z_pos + 0.4,
@@ -108,16 +111,21 @@ void ControlItemGrid::draw(render::RenderContext& context) {
     for (std::int32_t r = 0; r < m_rows; r++)
       for (std::int32_t c = 0; c < m_cols; c++) {
         // GL_LINE_LOOP: the four edges, closing back to the start.
-        const std::array<Vec3, 4> loop = {Vec3(m_x_pos + m_cell_width * c,
-                                              m_y_pos - m_cell_height * r,
-                                              m_z_pos + 0.5),
-            Vec3(m_x_pos + m_cell_width * c,
+        const std::array<Vec3, 4> loop = {
+            Vec3(
+                m_x_pos + m_cell_width * c,
+                m_y_pos - m_cell_height * r,
+                m_z_pos + 0.5),
+            Vec3(
+                m_x_pos + m_cell_width * c,
                 m_y_pos - m_cell_height * (r + 1),
                 m_z_pos + 0.5),
-            Vec3(m_x_pos + m_cell_width * (c + 1),
+            Vec3(
+                m_x_pos + m_cell_width * (c + 1),
                 m_y_pos - m_cell_height * (r + 1),
                 m_z_pos + 0.5),
-            Vec3(m_x_pos + m_cell_width * (c + 1),
+            Vec3(
+                m_x_pos + m_cell_width * (c + 1),
                 m_y_pos - m_cell_height * r,
                 m_z_pos + 0.5)};
         for (std::size_t corner = 0; corner < loop.size(); ++corner) {
@@ -137,19 +145,24 @@ void ControlItemGrid::draw(render::RenderContext& context) {
   for (std::int32_t i = 0; i < m_rows * m_cols; i++) {
     if (toggled[i]) {
       m_mesh.addQuad(
-          {Vec3(m_buttons[i]->getXPos() + 3,
+          {Vec3(
+               m_buttons[i]->getXPos() + 3,
                m_buttons[i]->getYPos() - 3,
                m_z_pos + 0.6),
-              Vec3(m_buttons[i]->getXPos() + 3,
-                  m_buttons[i]->getYPos() - m_buttons[i]->getHeight() + 3,
-                  m_z_pos + 0.6),
-              Vec3(m_buttons[i]->getXPos() + m_buttons[i]->getWidth() - 3,
-                  m_buttons[i]->getYPos() - m_buttons[i]->getHeight() + 3,
-                  m_z_pos + 0.6),
-              Vec3(m_buttons[i]->getXPos() + m_buttons[i]->getWidth() - 3,
-                  m_buttons[i]->getYPos() - 3,
-                  m_z_pos + 0.6)},
-          Vec4(m_active_cell_color[0],
+           Vec3(
+               m_buttons[i]->getXPos() + 3,
+               m_buttons[i]->getYPos() - m_buttons[i]->getHeight() + 3,
+               m_z_pos + 0.6),
+           Vec3(
+               m_buttons[i]->getXPos() + m_buttons[i]->getWidth() - 3,
+               m_buttons[i]->getYPos() - m_buttons[i]->getHeight() + 3,
+               m_z_pos + 0.6),
+           Vec3(
+               m_buttons[i]->getXPos() + m_buttons[i]->getWidth() - 3,
+               m_buttons[i]->getYPos() - 3,
+               m_z_pos + 0.6)},
+          Vec4(
+              m_active_cell_color[0],
               m_active_cell_color[1],
               m_active_cell_color[2],
               1));
@@ -160,7 +173,8 @@ void ControlItemGrid::draw(render::RenderContext& context) {
   context.draw(m_mesh);
 }
 
-void ControlItemGrid::mouseClickEvent(std::int32_t x,
+void ControlItemGrid::mouseClickEvent(
+    std::int32_t x,
     std::int32_t y,
     std::int32_t state,
     bool /*still_over_arrow_button*/) {
@@ -189,11 +203,11 @@ void ControlItemGrid::mouseClickEvent(std::int32_t x,
       else {
         for (std::int32_t i = 0; i < m_rows * m_cols; i++) {
           if ((x >= (m_buttons[i]->getXPos()) &&
-                  x <= ((m_buttons[i]->getXPos()) +
-                           (m_buttons[i]->getWidth()))) &&
+               x <=
+                   ((m_buttons[i]->getXPos()) + (m_buttons[i]->getWidth()))) &&
               (y <= (m_buttons[i]->getYPos()) &&
-                  y >= ((m_buttons[i]->getYPos()) -
-                           (m_buttons[i]->getHeight())))) {
+               y >= ((m_buttons[i]->getYPos()) -
+                     (m_buttons[i]->getHeight())))) {
             m_buttons[i]->mouseClickEvent(x, y, state, true);
             if (m_buttons[i]->isToggled() && !m_selected_cells[i]) {
               m_selected_cells[i] = true;
@@ -251,9 +265,11 @@ void ControlItemGrid::setImageSizeToCell(ImageObject* img, float scale) {
 
 void ControlItemGrid::placeImageToCell(
     ImageObject* img, std::int32_t row, std::int32_t col) {
-  img->setXpos(m_x_pos + (m_cell_width * col) +
+  img->setXpos(
+      m_x_pos + (m_cell_width * col) +
       ((m_cell_width - img->getWidth()) / 2.0));
-  img->setYpos(m_y_pos - (m_cell_height * row) -
+  img->setYpos(
+      m_y_pos - (m_cell_height * row) -
       ((m_cell_height - img->getHeight()) / 2.0));
   img->setZpos(m_z_pos + 1);
 }

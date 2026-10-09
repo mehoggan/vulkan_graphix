@@ -20,7 +20,8 @@ const std::int32_t num_control_items_st =
 class SubMenuSelectTanks : public SubMenu {
 public:
   SubMenuSelectTanks();
-  SubMenuSelectTanks(std::int32_t id,
+  SubMenuSelectTanks(
+      std::int32_t id,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,

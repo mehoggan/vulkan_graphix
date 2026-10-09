@@ -12,7 +12,8 @@ namespace math = vulkan_graphix::Math;
 
 SubMenuTest::SubMenuTest() = default;
 
-SubMenuTest::SubMenuTest(std::int32_t id,
+SubMenuTest::SubMenuTest(
+    std::int32_t id,
     float new_x_pos,
     float new_y_pos,
     float new_z_pos,
@@ -46,7 +47,8 @@ SubMenuTest::SubMenuTest(std::int32_t id,
   float label_y_pos = m_y_pos - m_height / 20;
   /*	END OF BUTTON TEXT PLACEMENT	*/
 
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       (m_z_pos + 1),
@@ -90,7 +92,8 @@ void SubMenuTest::setPercentBorder(float percent) {
 void SubMenuTest::draw(render::RenderContext& context) {
   // The same raised 3-pixel bevel every button draws.
   if (m_frame_mesh.triangles().empty()) {
-    vulkan_earth::appendBevel(m_frame_mesh,
+    vulkan_earth::appendBevel(
+        m_frame_mesh,
         m_x_pos,
         m_y_pos,
         m_z_pos,

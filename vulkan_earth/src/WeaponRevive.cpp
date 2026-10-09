@@ -7,8 +7,9 @@ extern void playSFX(std::int32_t sfx);
 WeaponRevive::WeaponRevive() = default;
 WeaponRevive::WeaponRevive(std::int32_t id) {
   m_uniqueidentifier = id;
-  loadSpec(vulkan_graphix::GameCatalog::weapon(
-      vulkan_graphix::GameCatalog::WeaponKind::Revive));
+  loadSpec(
+      vulkan_graphix::GameCatalog::weapon(
+          vulkan_graphix::GameCatalog::WeaponKind::Revive));
 }
 WeaponRevive::~WeaponRevive() = default;
 

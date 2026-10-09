@@ -78,10 +78,11 @@ public:
     std::byte* record = destination.data();
     for (const datum_type& datum : m_data) {
       [&]<std::size_t... I>(std::index_sequence<I...>) {
-        (std::memcpy(record + offsets[I],
+        (std::memcpy(
+             record + offsets[I],
              &datum.template get<I>(),
              sizeof(datum.template get<I>())),
-            ...);
+         ...);
       }(std::index_sequence_for<Ts...>{});
       record += traits::stride;
     }

@@ -7,8 +7,9 @@ extern void playSFX(std::int32_t sfx);
 ItemShield::ItemShield() = default;
 ItemShield::ItemShield(std::int32_t id) {
   m_uniqueidentifier = id;
-  loadSpec(vulkan_graphix::GameCatalog::item(
-      vulkan_graphix::GameCatalog::ItemKind::Shield));
+  loadSpec(
+      vulkan_graphix::GameCatalog::item(
+          vulkan_graphix::GameCatalog::ItemKind::Shield));
 }
 ItemShield::~ItemShield() = default;
 

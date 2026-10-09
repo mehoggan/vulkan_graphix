@@ -81,10 +81,11 @@ VertexLayout vertexLayout(VertexTypes::AttributeTraits<Ts...> /*traits*/) {
   VertexLayout layout;
   layout.m_stride = static_cast<std::uint32_t>(Traits::stride);
   for (std::size_t i = 0; i < sizeof...(Ts); ++i) {
-    layout.m_attributes.push_back({static_cast<std::uint32_t>(i),
-        0,
-        formats[i],
-        static_cast<std::uint32_t>(offsets[i])});
+    layout.m_attributes.push_back(
+        {static_cast<std::uint32_t>(i),
+         0,
+         formats[i],
+         static_cast<std::uint32_t>(offsets[i])});
   }
   return layout;
 }

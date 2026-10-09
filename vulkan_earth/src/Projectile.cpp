@@ -2,12 +2,13 @@
 #include <cstdint>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GameState.h"
-#include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_earth/Weapon.h"
 #include "vulkan_earth/WeaponDefault.h"
 #include "vulkan_graphix/ChaseCamera.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/TexturedModel.h"
 
 using namespace std;
 
@@ -16,10 +17,11 @@ namespace math = vulkan_graphix::Math;
 
 Projectile::Projectile() = default;
 
-Projectile::Projectile(GameState* new_parent,
+Projectile::Projectile(
+    GameState* new_parent,
     float* turret_matrix,
     float new_speed,
-    VBOShaderLibrary** new_projectile_models) {
+    vulkan_graphix::Render::TexturedModel** new_projectile_models) {
   m_default_weapon = new WeaponDefault(10);
   m_parent = new_parent;
   m_launch = vulkan_graphix::Ballistics::launchFromBarrel(
@@ -35,9 +37,9 @@ Projectile::Projectile(GameState* new_parent,
   m_weapon = nullptr;
   m_projectile_models = new_projectile_models;
 
-  m_projectile_default = new VBOShaderLibrary();
-  m_projectile_default->loadClientData("Projectiles/projectileDefault.ogl");
-  m_projectile_default->loadTexture(
+  m_projectile_default = new vulkan_graphix::Render::TexturedModel();
+  m_projectile_default->loadOgl("Projectiles/projectileDefault.ogl");
+  m_projectile_default->loadRawTexture(
       "Projectiles/projectileDefault.raw", 512, 512);
 
   m_rotate = 4;
@@ -64,18 +66,26 @@ void Projectile::update(float x, float y, float z) {
 }
 
 void Projectile::draw(render::RenderContext& context) {
-  math::Mat4<float> model = glm::translate(math::Mat4<float>(1.0f),
+  math::Mat4<float> model = glm::translate(
+      math::Mat4<float>(1.0f),
       math::Vec3<float>(m_pos[0], m_pos[1], m_pos[2]));
-  model = glm::rotate(model,
+  model = glm::rotate(
+      model,
       glm::radians(static_cast<float>(m_rotate)),
       math::Vec3<float>(-1, .3, -.4));
   if (m_weapon == nullptr) {
     m_projectile_default->draw(
-        context, glm::scale(model, math::Vec3<float>(60, 60, 60)));
+        context,
+        vulkan_earth::pipelines().m_mesh,
+        glm::scale(model, math::Vec3<float>(60, 60, 60)));
   } else {
-    m_projectile_models[m_weapon->getUNIQUEIDENTIFIER()]->draw(context,
-        glm::scale(model,
-            math::Vec3<float>(m_weapon->getScale(),
+    m_projectile_models[m_weapon->getUNIQUEIDENTIFIER()]->draw(
+        context,
+        vulkan_earth::pipelines().m_mesh,
+        glm::scale(
+            model,
+            math::Vec3<float>(
+                m_weapon->getScale(),
                 m_weapon->getScale(),
                 m_weapon->getScale())));
   }

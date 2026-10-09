@@ -15,7 +15,8 @@ class SubMenuLandscape;
 class ControlItemButton : public ControlItem {
 public:
   ControlItemButton();
-  ControlItemButton(SubMenuLandscape* new_parent,
+  ControlItemButton(
+      SubMenuLandscape* new_parent,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,
@@ -27,7 +28,8 @@ public:
       const std::string& new_caption);
   ~ControlItemButton() override;
   void draw(vulkan_graphix::Render::RenderContext& context) override;
-  void mouseClickEvent(std::int32_t x,
+  void mouseClickEvent(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t state,
       bool still_over_control_item_button) override;

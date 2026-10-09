@@ -15,7 +15,8 @@ class PlayerHuman : public Player {
 public:
   PlayerHuman();
   PlayerHuman(float red, float green, float blue);
-  PlayerHuman(float red,
+  PlayerHuman(
+      float red,
       float green,
       float blue,
       const std::string& new_tank_type,

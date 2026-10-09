@@ -17,7 +17,8 @@ TEST(LoggerHelpersTest, StreamsAVectorOfCStringsCommaSeparatedInBrackets) {
 
   out_stream << values;
 
-  EXPECT_EQ(out_stream.str(),
+  EXPECT_EQ(
+      out_stream.str(),
       "[VK_LAYER_KHRONOS_validation, VK_LAYER_MESA_overlay, ]");
 }
 
@@ -32,7 +33,8 @@ TEST(LoggerHelpersTest, StreamsAnEmptyVectorOfCStringsAsEmptyBrackets) {
 
 TEST(LoggerHelpersTest, StreamsAVkLayerPropertiesAsItsLayerName) {
   VkLayerProperties properties{};
-  std::strncpy(properties.layerName,
+  std::strncpy(
+      properties.layerName,
       "VK_LAYER_KHRONOS_validation",
       sizeof(properties.layerName) - 1);
   std::stringstream out_stream;
@@ -42,7 +44,8 @@ TEST(LoggerHelpersTest, StreamsAVkLayerPropertiesAsItsLayerName) {
   EXPECT_EQ(out_stream.str(), "VK_LAYER_KHRONOS_validation");
 }
 
-TEST(LoggerHelpersTest,
+TEST(
+    LoggerHelpersTest,
     StreamsAVectorOfVkLayerPropertiesTabIndentedBetweenEntries) {
   VkLayerProperties first{};
   std::strncpy(first.layerName, "layer-one", sizeof(first.layerName) - 1);

@@ -115,12 +115,33 @@ Files" section for the exact invocation.
     (staging-buffer + one-shot command buffer) uploads (`StagedUploader`),
     command-pool/command-buffer/semaphore/fence creation
     (`FrameResourceFactory`), and shader module loading
-    (`createShaderModule()`) - the boilerplate every tutorial from
-    Tutorial03 on used to reimplement independently, now shared. Device/
-    instance/swapchain bring-up and presentation/synchronization orchestration
-    stay in `TutorialBase` (see Architecture Notes below); constructed as
-    cheap call-site temporaries, not stored as tutorial members - see the
-    file's own top comment for why
+    (`createShaderModule()`), plus `createTextureFromPixels()` and
+    `createDepthImage()` - the per-object boilerplate every tutorial from
+    Tutorial03 on used to reimplement independently, now shared;
+    constructed as cheap call-site temporaries - see the file's own top
+    comment for why
+  - `VulkanCommon/` (`include/vulkan_graphix/VulkanCommon/`, same
+    namespace) - the renderer scaffolding built on those, used by
+    Tutorial11-22 and `Render::Renderer` alike:
+    - `Pipeline.h` - render passes (`RenderPassDescription`: a color
+      attachment and an optional depth one), pipeline layouts, and
+      graphics pipelines (`GraphicsPipelineDescription`: shaders, one
+      vertex binding, topology/cull/front face/polygon mode, optional
+      `DepthState`, `opaqueBlend()`/`alphaBlend()`, dynamic states)
+    - `Descriptors.h` - descriptor set layouts, pools sized for N sets,
+      allocation, and image-sampler/uniform-buffer writes, from a list of
+      `DescriptorBinding`s
+    - `ResourceContext.h` - creates device-local buffers (staged
+      uploads), host-visible/uniform buffers (`writeBuffer()`), textures
+      (from pixels, `.png`/`.jpg`, or `.raw`), depth images, render
+      passes, pipelines, and descriptor objects, and releases them all,
+      newest first, in one `releaseAll()` - a tutorial's whole teardown
+    - `FrameLoop.h` - the acquire -> record -> submit -> present loop
+      over a TutorialBase's swapchain (three frames in flight, per-image
+      framebuffers and rendering-finished semaphores, the swapchain
+      image barriers, a full-extent viewport/scissor); `draw(base,
+      clear_values, record)` also rebuilds through
+      `onWindowSizeChanged()` when the swapchain goes out of date
   - `TutorialBase.cpp` - Shared base class every tutorial derives from
     (the tutorials themselves live in `bin/`, see below)
   - `Camera.cpp/.h` - Base class every camera derives from: a subclass
@@ -211,8 +232,10 @@ Files" section for the exact invocation.
     per-tag logging framework
   - `LoggerHelpers.cpp/.h`, `LoggedClass.hpp` - Logging infrastructure
   - `Tools.cpp/.h` - Utility functions (also holds `loadOglMeshData()`,
-    the one parser for vulkan_earth's `.ogl` mesh format, used by
-    Tutorial13/16/19 and the game's `VBOShaderLibrary`, and
+    the one parser for vulkan_earth's `.ogl` mesh format, used by the
+    game's `VBOShaderLibrary` and - through `loadOglTexturedMesh<V>()`,
+    which turns it into `{vec4 position, vec2 texcoord}` vertices -
+    Tutorial13/16/18/19/21/22, and
     `executableDir()`, where every binary finds its copied assets)
   - `OperatingSystem.cpp/.h` - Platform-specific abstractions
   - `VulkanFunctions.cpp/.h` - Vulkan function wrappers
@@ -366,11 +389,14 @@ lists end the constructor's own line with `:`, then put one initializer
 per line, two indents (four spaces) in, each followed by its `,`
 (`BreakConstructorInitializers: AfterColon`,
 `PackConstructorInitializers: Never`) - so a comment about the
-constructor goes above it, not between it and its `:`. Wrapped
-parameters, arguments, and operands never line up under the open bracket
-or first operand - each continuation line is just indented four spaces
-past the line it continues, twice the block indent so it stands apart
-from the body (`AlignAfterOpenBracket: DontAlign`, `AlignOperands:
+constructor goes above it, not between it and its `:`. A parameter or
+argument list that doesn't fit within the column limit breaks right after
+its open bracket - even the first parameter goes on its own line - one per
+line (`AlignAfterOpenBracket: AlwaysBreak`, `BinPackParameters`/
+`BinPackArguments: false`). Wrapped parameters, arguments, and operands
+never line up under the open bracket or first operand - each continuation
+line is just indented four spaces past the line it continues, twice the
+block indent so it stands apart from the body (`AlignOperands:
 DontAlign`, `ContinuationIndentWidth: 4`).
 clang-tidy has no check for qualifier placement or alignment, so these
 are enforced by clang-format itself: the
@@ -414,16 +440,30 @@ optional `VkBorderColor` (default transparent black) for
 black to reproduce GL's `GL_CLAMP` on its RGB textures.
 
 Device/instance/swapchain bring-up (`createInstance()`, `createDevice()`,
-`createSwapChain()`, `createPresentationSurface()`, ...) and each tutorial's
-own presentation/synchronization orchestration (acquire -> record -> submit
--> present, one `RenderingResourceParameters` slot per swapchain image) stay
-in `TutorialBase` - `VulkanCommon` only factors out the per-object creation
-boilerplate underneath, not the frame-loop or device bring-up logic. Every
-tutorial from Tutorial03 on shares `VulkanCommon` instead of reimplementing
-this - each tutorial's own `createBuffer()`/`createImage()`/etc. stay as
-thin private wrappers (so existing fault-injection/integration tests keep
-calling the same public method names) that just delegate to a
-`VulkanCommon::X` constructed as a temporary at the call site.
+`createSwapChain()`, `createPresentationSurface()`, ...) stays in
+`TutorialBase`. Above that, the tutorials split in two:
+
+- Tutorial01-10 are step-by-step Vulkan lessons and stay that way: each
+  spells out its own render pass, pipeline, descriptors, and
+  acquire/record/submit/present loop (that's what they teach, and what
+  the fault-injection tests exercise step by step), sharing only
+  `VulkanCommon`'s per-object factories through thin private wrappers
+  (`createBuffer()`/`createImage()`/...) constructed as temporaries at
+  the call site.
+- Tutorial11-22 are applications built on the library: each holds a
+  `VulkanCommon::ResourceContext` and a `FrameLoop`, creates everything
+  in one public `createResources()` (which `main.cpp` calls after
+  `prepareVulkan()`, and `childOnWindowSizeChanged()` calls again after a
+  resize), records its draws in `draw()` through `FrameLoop::draw()`,
+  and tears down with `m_frames.destroy(); m_resources.releaseAll();`.
+  What's left in each is what's specific to it - geometry, uniforms,
+  layout, pipeline choices, draw order.
+
+`Render::Renderer` builds its render pass, pipelines, and depth image
+through the same `VulkanCommon` functions (with its own GL-style choices:
+the pass does the swapchain layout transitions, blending applies to
+alpha too, line width is dynamic). `tests/VulkanCommonIntegrationTest.cpp`
+drives the building blocks on a live device.
 
 Tutorial classes inherit patterns from Tutorial01, building incrementally:
 - Tutorial01: Basic device initialization
@@ -584,10 +624,12 @@ Tutorial classes inherit patterns from Tutorial01, building incrementally:
 
 1. Create `bin/NN_<terse_description>/` holding `TutorialNN.h`,
    `TutorialNN.cpp`, and `main.cpp` (which includes `"TutorialNN.h"`)
-2. Implement the tutorial class with Vulkan setup; anything vulkan_earth
-   would also need (not just this tutorial) goes in a shared `lib/`
-   module instead, added to `lib/Makefile.am`'s
-   libvulkan_graphix_la_SOURCES
+2. Implement the tutorial class on `VulkanCommon::ResourceContext`/
+   `FrameLoop` the way Tutorial11-22 do (a public `createResources()`,
+   `draw()` through `FrameLoop::draw()`, `childClear()` releasing both) -
+   unless it's a step-by-step Vulkan lesson in the 01-10 style. Anything
+   reusable (not just this tutorial's) goes in a shared `lib/` module
+   instead, added to `lib/Makefile.am`'s libvulkan_graphix_la_SOURCES
 3. Give that folder its own `Makefile.am` (`bin_PROGRAMS =
    tutorialNN_runner`, `tutorialNN_runner_SOURCES = ./main.cpp
    ./TutorialNN.cpp ./TutorialNN.h`, copy an existing one), add the

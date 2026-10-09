@@ -7,7 +7,8 @@ namespace math = vulkan_graphix::Math;
 
 ImageObject::ImageObject() = default;
 
-ImageObject::ImageObject(float new_x_pos,
+ImageObject::ImageObject(
+    float new_x_pos,
     float new_y_pos,
     float new_z_pos,
     std::int32_t new_width,
@@ -23,7 +24,8 @@ ImageObject::ImageObject(float new_x_pos,
   m_height = new_height;
   m_border_size = border;
   // GL_LINEAR filtering, GL_CLAMP wrapping (as draw() used to set).
-  m_texture = render::Renderer::instance().loadRawTexture(filename,
+  m_texture = render::Renderer::instance().loadRawTexture(
+      filename,
       static_cast<std::uint32_t>(i_width),
       static_cast<std::uint32_t>(i_height),
       VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
@@ -70,41 +72,46 @@ void ImageObject::buildGeometry() {
 
   // image plane
   m_image_mesh.clear();
-  m_image_mesh.addTexturedQuad({Vec3(m_x_pos, m_y_pos, m_z_pos),
-                                   Vec3(m_x_pos, m_y_pos - h, m_z_pos),
-                                   Vec3(m_x_pos + w, m_y_pos - h, m_z_pos),
-                                   Vec3(m_x_pos + w, m_y_pos, m_z_pos)},
+  m_image_mesh.addTexturedQuad(
+      {Vec3(m_x_pos, m_y_pos, m_z_pos),
+       Vec3(m_x_pos, m_y_pos - h, m_z_pos),
+       Vec3(m_x_pos + w, m_y_pos - h, m_z_pos),
+       Vec3(m_x_pos + w, m_y_pos, m_z_pos)},
       {math::Vec2<float>(0, 1),
-          math::Vec2<float>(0, 0),
-          math::Vec2<float>(1, 0),
-          math::Vec2<float>(1, 1)},
+       math::Vec2<float>(0, 0),
+       math::Vec2<float>(1, 0),
+       math::Vec2<float>(1, 1)},
       Vec4(1.0f));
 
   m_border_mesh.clear();
   if (m_border_size != 0) {
     // top and right borders
     const Vec4 dark(0.45f, 0.45f, 0.45f, 1.0f);
-    m_border_mesh.addQuad({Vec3(m_x_pos, m_y_pos, m_z_pos),
-                              Vec3(m_x_pos - b, m_y_pos + b, m_z_pos),
-                              Vec3(m_x_pos + w + b, m_y_pos + b, m_z_pos),
-                              Vec3(m_x_pos + w, m_y_pos, m_z_pos)},
+    m_border_mesh.addQuad(
+        {Vec3(m_x_pos, m_y_pos, m_z_pos),
+         Vec3(m_x_pos - b, m_y_pos + b, m_z_pos),
+         Vec3(m_x_pos + w + b, m_y_pos + b, m_z_pos),
+         Vec3(m_x_pos + w, m_y_pos, m_z_pos)},
         dark);
-    m_border_mesh.addQuad({Vec3(m_x_pos - b, m_y_pos + b, m_z_pos),
-                              Vec3(m_x_pos - b, m_y_pos - h - b, m_z_pos),
-                              Vec3(m_x_pos, m_y_pos - h, m_z_pos),
-                              Vec3(m_x_pos, m_y_pos, m_z_pos)},
+    m_border_mesh.addQuad(
+        {Vec3(m_x_pos - b, m_y_pos + b, m_z_pos),
+         Vec3(m_x_pos - b, m_y_pos - h - b, m_z_pos),
+         Vec3(m_x_pos, m_y_pos - h, m_z_pos),
+         Vec3(m_x_pos, m_y_pos, m_z_pos)},
         dark);
     // bottom and left borders
     const Vec4 light(0.85f, 0.85f, 0.85f, 1.0f);
-    m_border_mesh.addQuad({Vec3(m_x_pos - b, m_y_pos - h - b, m_z_pos),
-                              Vec3(m_x_pos + w + b, m_y_pos - h - b, m_z_pos),
-                              Vec3(m_x_pos + w, m_y_pos - h, m_z_pos),
-                              Vec3(m_x_pos, m_y_pos - h, m_z_pos)},
+    m_border_mesh.addQuad(
+        {Vec3(m_x_pos - b, m_y_pos - h - b, m_z_pos),
+         Vec3(m_x_pos + w + b, m_y_pos - h - b, m_z_pos),
+         Vec3(m_x_pos + w, m_y_pos - h, m_z_pos),
+         Vec3(m_x_pos, m_y_pos - h, m_z_pos)},
         light);
-    m_border_mesh.addQuad({Vec3(m_x_pos + w, m_y_pos, m_z_pos),
-                              Vec3(m_x_pos + w + b, m_y_pos + b, m_z_pos),
-                              Vec3(m_x_pos + w + b, m_y_pos - h - b, m_z_pos),
-                              Vec3(m_x_pos + w, m_y_pos - h, m_z_pos)},
+    m_border_mesh.addQuad(
+        {Vec3(m_x_pos + w, m_y_pos, m_z_pos),
+         Vec3(m_x_pos + w + b, m_y_pos + b, m_z_pos),
+         Vec3(m_x_pos + w + b, m_y_pos - h - b, m_z_pos),
+         Vec3(m_x_pos + w, m_y_pos - h, m_z_pos)},
         light);
   }
   m_geometry_dirty = false;

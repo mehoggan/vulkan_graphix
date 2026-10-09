@@ -14,7 +14,8 @@ class TextObject;
 class ControlItemSelectionBox : public ControlItem {
 public:
   ControlItemSelectionBox();
-  ControlItemSelectionBox(float new_x_pos,
+  ControlItemSelectionBox(
+      float new_x_pos,
       float new_y_pos,
       float new_z_pos,
       float red,
@@ -26,7 +27,8 @@ public:
       const std::string& menu_string);
   ~ControlItemSelectionBox() override;
   void draw(vulkan_graphix::Render::RenderContext& context) override;
-  void mouseClickEvent(std::int32_t x,
+  void mouseClickEvent(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t state,
       bool still_over_control_item_selection_box) override;
