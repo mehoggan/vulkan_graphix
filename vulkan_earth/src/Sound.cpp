@@ -1,10 +1,43 @@
 #include "vulkan_earth/Sound.h"
 #include <cstdint>
+#include <cstdlib>
 
 Mix_Chunk* sfx[max_sfx_files];
 Mix_Music* music[total_music_files];
 
+namespace {
+
+// Stops SDL's audio thread before the process tears down. Left running, it
+// keeps calling into the mixer while exit() destroys statics and unloads
+// libraries, and intermittently jumps through a pointer that's already
+// gone (a segfault on the SDLAudio thread after the game has finished).
+void closeSound() {
+  Mix_HaltChannel(-1);
+  Mix_HaltMusic();
+  for (std::int32_t i = 0; i < max_sfx_files; i++) {
+    if (sfx[i] != nullptr) {
+      Mix_FreeChunk(sfx[i]);
+      sfx[i] = nullptr;
+    }
+  }
+  for (std::int32_t i = 0; i < total_music_files; i++) {
+    if (music[i] != nullptr) {
+      Mix_FreeMusic(music[i]);
+      music[i] = nullptr;
+    }
+  }
+  Mix_CloseAudio();
+  SDL_Quit();
+}
+
+}  // namespace
+
 void initSound() {
+  // Every way the game ends - returning from main() or one of its exit(0)
+  // error paths - runs atexit handlers before static destructors and
+  // library unloading, so the audio thread is gone by then.
+  std::atexit(closeSound);
+
   std::int32_t audio_rate = 48000;
   Uint16 audio_format = AUDIO_S16SYS;
   std::int32_t audio_channels = 2;

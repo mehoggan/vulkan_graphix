@@ -92,45 +92,47 @@ Tutorial04::Tutorial04() = default;
 Tutorial04::~Tutorial04() { childClear(); }
 
 bool Tutorial04::createRenderPass() {
-  VkAttachmentDescription attachment_descriptions[] = {{.flags = 0,
-      .format = getSwapchainParameters().getVkFormat(),
-      .samples = VK_SAMPLE_COUNT_1_BIT,
-      .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-      .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-      .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-      .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-      .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-      .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR}};
+  VkAttachmentDescription attachment_descriptions[] = {
+      {.flags = 0,
+       .format = getSwapchainParameters().getVkFormat(),
+       .samples = VK_SAMPLE_COUNT_1_BIT,
+       .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+       .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+       .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+       .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+       .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+       .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR}};
 
   VkAttachmentReference color_attachment_references[] = {
       {.attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 
-  VkSubpassDescription subpass_descriptions[] = {{.flags = 0,
-      .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-      .inputAttachmentCount = 0,
-      .pInputAttachments = nullptr,
-      .colorAttachmentCount = 1,
-      .pColorAttachments = color_attachment_references,
-      .pResolveAttachments = nullptr,
-      .pDepthStencilAttachment = nullptr,
-      .preserveAttachmentCount = 0,
-      .pPreserveAttachments = nullptr}};
+  VkSubpassDescription subpass_descriptions[] = {
+      {.flags = 0,
+       .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+       .inputAttachmentCount = 0,
+       .pInputAttachments = nullptr,
+       .colorAttachmentCount = 1,
+       .pColorAttachments = color_attachment_references,
+       .pResolveAttachments = nullptr,
+       .pDepthStencilAttachment = nullptr,
+       .preserveAttachmentCount = 0,
+       .pPreserveAttachments = nullptr}};
 
   std::vector<VkSubpassDependency> dependencies = {
       {.srcSubpass = VK_SUBPASS_EXTERNAL,
-          .dstSubpass = 0,
-          .srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-          .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-          .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-          .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-          .dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT},
+       .dstSubpass = 0,
+       .srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+       .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+       .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+       .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+       .dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT},
       {.srcSubpass = 0,
-          .dstSubpass = VK_SUBPASS_EXTERNAL,
-          .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-          .dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-          .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-          .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-          .dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT}};
+       .dstSubpass = VK_SUBPASS_EXTERNAL,
+       .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+       .dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+       .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+       .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
+       .dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT}};
 
   VkRenderPassCreateInfo render_pass_create_info = {
       .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
@@ -143,7 +145,8 @@ bool Tutorial04::createRenderPass() {
       .dependencyCount = static_cast<std::uint32_t>(dependencies.size()),
       .pDependencies = dependencies.data()};
 
-  if (vkCreateRenderPass(getVkDevice(),
+  if (vkCreateRenderPass(
+          getVkDevice(),
           &render_pass_create_info,
           nullptr,
           &m_vulkan_tutorial04_parameters.getVkRenderPass()) != VK_SUCCESS) {
@@ -159,7 +162,8 @@ Tutorial04::createShaderModule(const char* filename) {
   Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule> module =
       VulkanCommon::createShaderModule(getVkDevice(), filename);
   if (!module) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Could not create shader module from a \"",
         filename,
         "\" file!");
@@ -203,36 +207,36 @@ bool Tutorial04::createPipeline() {
   std::vector<VkPipelineShaderStageCreateInfo> shader_stage_create_infos = {
       // Vertex shader
       {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_VERTEX_BIT,
-          .module = vertex_shader_module.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr},
+       .pNext = nullptr,
+       .flags = 0,
+       .stage = VK_SHADER_STAGE_VERTEX_BIT,
+       .module = vertex_shader_module.get(),
+       .pName = "main",
+       .pSpecializationInfo = nullptr},
       // Fragment shader
       {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .module = fragment_shader_module.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr}};
+       .pNext = nullptr,
+       .flags = 0,
+       .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+       .module = fragment_shader_module.get(),
+       .pName = "main",
+       .pSpecializationInfo = nullptr}};
 
   std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions = {
       {.binding = 0,
-          .stride = VertexAttributeTraits::stride,
-          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
+       .stride = VertexAttributeTraits::stride,
+       .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
   std::vector<VkVertexInputAttributeDescription>
       vertex_attribute_descriptions = {
           {.location = 0,
-              .binding = vertex_binding_descriptions[0].binding,
-              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-              .offset = offsetof(struct Tutorial04VertexData, m_position)},
+           .binding = vertex_binding_descriptions[0].binding,
+           .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+           .offset = offsetof(struct Tutorial04VertexData, m_position)},
           {.location = 1,
-              .binding = vertex_binding_descriptions[0].binding,
-              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-              .offset = offsetof(struct Tutorial04VertexData, m_color)}};
+           .binding = vertex_binding_descriptions[0].binding,
+           .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+           .offset = offsetof(struct Tutorial04VertexData, m_color)}};
 
   VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
       .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -346,7 +350,8 @@ bool Tutorial04::createPipeline() {
       .basePipelineHandle = VK_NULL_HANDLE,
       .basePipelineIndex = -1};
 
-  if (vkCreateGraphicsPipelines(getVkDevice(),
+  if (vkCreateGraphicsPipelines(
+          getVkDevice(),
           VK_NULL_HANDLE,
           1,
           &pipeline_create_info,
@@ -362,28 +367,30 @@ bool Tutorial04::createPipeline() {
 bool Tutorial04::createVertexBuffer() {
   Tutorial04VertexData vertex_data[] = {
       {Math::Vec4<float>(-0.7f, -0.7f, 0.0f, 1.0f),
-          Math::Vec4<float>(1.0f, 0.0f, 0.0f, 0.0f)},
+       Math::Vec4<float>(1.0f, 0.0f, 0.0f, 0.0f)},
       {Math::Vec4<float>(-0.7f, 0.7f, 0.0f, 1.0f),
-          Math::Vec4<float>(0.0f, 1.0f, 0.0f, 0.0f)},
+       Math::Vec4<float>(0.0f, 1.0f, 0.0f, 0.0f)},
       {Math::Vec4<float>(0.7f, -0.7f, 0.0f, 1.0f),
-          Math::Vec4<float>(0.0f, 0.0f, 1.0f, 0.0f)},
+       Math::Vec4<float>(0.0f, 0.0f, 1.0f, 0.0f)},
       {Math::Vec4<float>(0.7f, 0.7f, 0.0f, 1.0f),
-          Math::Vec4<float>(0.3f, 0.3f, 0.3f, 0.0f)}};
+       Math::Vec4<float>(0.3f, 0.3f, 0.3f, 0.0f)}};
 
   BufferParameters& vertex_buffer =
       m_vulkan_tutorial04_parameters.getVertexBufferParameters();
   vertex_buffer.setSize(static_cast<std::uint32_t>(sizeof(vertex_data)));
 
   if (!VulkanCommon::BufferFactory(getVkDevice(), getVkPhysicalDevice())
-          .create(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-              vertex_buffer)) {
+           .create(
+               VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+               vertex_buffer)) {
     Logging::error(LOG_TAG, "Could not create a vertex buffer!");
     return false;
   }
 
   void* vertex_buffer_memory_pointer;
-  if (vkMapMemory(getVkDevice(),
+  if (vkMapMemory(
+          getVkDevice(),
           vertex_buffer.getVkDeviceMemory(),
           0,
           vertex_buffer.getSize(),
@@ -416,7 +423,8 @@ bool Tutorial04::createCommandPool(
       .createCommandPool(queue_family_index, pool);
 }
 
-bool Tutorial04::allocateCommandBuffers(VkCommandPool pool,
+bool Tutorial04::allocateCommandBuffers(
+    VkCommandPool pool,
     std::uint32_t count,
     VkCommandBuffer* command_buffers) {
   return VulkanCommon::FrameResourceFactory(getVkDevice())
@@ -424,7 +432,8 @@ bool Tutorial04::allocateCommandBuffers(VkCommandPool pool,
 }
 
 bool Tutorial04::createCommandBuffers() {
-  if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
+  if (!createCommandPool(
+          getGraphicsQueueParameters().getFamilyIndex(),
           &m_vulkan_tutorial04_parameters.getVkCommandPool())) {
     Logging::error(LOG_TAG, "Could not create command pool!");
     return false;
@@ -537,7 +546,8 @@ bool Tutorial04::createFramebuffer(
   return true;
 }
 
-bool Tutorial04::prepareFrame(VkCommandBuffer command_buffer,
+bool Tutorial04::prepareFrame(
+    VkCommandBuffer command_buffer,
     const ImageParameters& image_parameters,
     VkFramebuffer& framebuffer) {
   if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
@@ -572,7 +582,8 @@ bool Tutorial04::prepareFrame(VkCommandBuffer command_buffer,
         .dstQueueFamilyIndex = getGraphicsQueueParameters().getFamilyIndex(),
         .image = image_parameters.getVkImage(),
         .subresourceRange = image_subresource_range};
-    vkCmdPipelineBarrier(command_buffer,
+    vkCmdPipelineBarrier(
+        command_buffer,
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         0,
@@ -591,19 +602,22 @@ bool Tutorial04::prepareFrame(VkCommandBuffer command_buffer,
       .pNext = nullptr,
       .renderPass = m_vulkan_tutorial04_parameters.getVkRenderPass(),
       .framebuffer = framebuffer,
-      .renderArea = {.offset = {.x = 0, .y = 0},
-          .extent = getSwapchainParameters().getVkExtent2d()},
+      .renderArea =
+          {.offset = {.x = 0, .y = 0},
+           .extent = getSwapchainParameters().getVkExtent2d()},
       .clearValueCount = 1,
       .pClearValues = &clear_value};
 
   vkCmdBeginRenderPass(
       command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-  vkCmdBindPipeline(command_buffer,
+  vkCmdBindPipeline(
+      command_buffer,
       VK_PIPELINE_BIND_POINT_GRAPHICS,
       m_vulkan_tutorial04_parameters.getVkGraphicsPipeline());
 
-  VkViewport viewport = {.x = 0.0f,
+  VkViewport viewport = {
+      .x = 0.0f,
       .y = 0.0f,
       .width =
           static_cast<float>(getSwapchainParameters().getVkExtent2d().width),
@@ -612,18 +626,20 @@ bool Tutorial04::prepareFrame(VkCommandBuffer command_buffer,
       .minDepth = 0.0f,
       .maxDepth = 1.0f};
 
-  VkRect2D scissor = {.offset = {.x = 0, .y = 0},
+  VkRect2D scissor = {
+      .offset = {.x = 0, .y = 0},
       .extent = getSwapchainParameters().getVkExtent2d()};
 
   vkCmdSetViewport(command_buffer, 0, 1, &viewport);
   vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
   VkDeviceSize offset = 0;
-  vkCmdBindVertexBuffers(command_buffer,
+  vkCmdBindVertexBuffers(
+      command_buffer,
       0,
       1,
       &m_vulkan_tutorial04_parameters.getVertexBufferParameters()
-          .getVkBuffer(),
+           .getVkBuffer(),
       &offset);
 
   vkCmdDraw(command_buffer, 4, 1, 0, 0);
@@ -643,7 +659,8 @@ bool Tutorial04::prepareFrame(VkCommandBuffer command_buffer,
         .dstQueueFamilyIndex = getPresentQueueParameters().getFamilyIndex(),
         .image = image_parameters.getVkImage(),
         .subresourceRange = image_subresource_range};
-    vkCmdPipelineBarrier(command_buffer,
+    vkCmdPipelineBarrier(
+        command_buffer,
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
         0,
@@ -672,7 +689,8 @@ bool Tutorial04::draw() {
   resource_index =
       (resource_index + 1) % VulkanTutorial04Parameters::resources_count;
 
-  if (vkWaitForFences(getVkDevice(),
+  if (vkWaitForFences(
+          getVkDevice(),
           1,
           &current_rendering_resource.getVkFence(),
           VK_FALSE,
@@ -682,7 +700,8 @@ bool Tutorial04::draw() {
   }
   vkResetFences(getVkDevice(), 1, &current_rendering_resource.getVkFence());
 
-  VkResult result = vkAcquireNextImageKHR(getVkDevice(),
+  VkResult result = vkAcquireNextImageKHR(
+      getVkDevice(),
       swap_chain,
       UINT64_MAX,
       current_rendering_resource.getImageAvailableVkSemaphore(),
@@ -700,7 +719,8 @@ bool Tutorial04::draw() {
       return false;
   }
 
-  if (!prepareFrame(current_rendering_resource.getVkCommandBuffer(),
+  if (!prepareFrame(
+          current_rendering_resource.getVkCommandBuffer(),
           getSwapchainParameters().getImageParameters()[image_index],
           current_rendering_resource.getVkFramebuffer())) {
     return false;
@@ -712,7 +732,8 @@ bool Tutorial04::draw() {
 
   VkPipelineStageFlags wait_dst_stage_mask =
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+  VkSubmitInfo submit_info = {
+      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
       .pNext = nullptr,
       .waitSemaphoreCount = 1,
       .pWaitSemaphores =
@@ -723,14 +744,16 @@ bool Tutorial04::draw() {
       .signalSemaphoreCount = 1,
       .pSignalSemaphores = &finished_rendering_semaphore};
 
-  if (vkQueueSubmit(getGraphicsQueueParameters().getVkQueue(),
+  if (vkQueueSubmit(
+          getGraphicsQueueParameters().getVkQueue(),
           1,
           &submit_info,
           current_rendering_resource.getVkFence()) != VK_SUCCESS) {
     return false;
   }
 
-  VkPresentInfoKHR present_info = {.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+  VkPresentInfoKHR present_info = {
+      .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
       .pNext = nullptr,
       .waitSemaphoreCount = 1,
       .pWaitSemaphores = &finished_rendering_semaphore,
@@ -770,14 +793,16 @@ void Tutorial04::childClear() {
       rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
     }
     if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
-      vkFreeCommandBuffers(getVkDevice(),
+      vkFreeCommandBuffers(
+          getVkDevice(),
           m_vulkan_tutorial04_parameters.getVkCommandPool(),
           1,
           &rendering_resources[i].getVkCommandBuffer());
     }
     if (rendering_resources[i].getImageAvailableVkSemaphore() !=
         VK_NULL_HANDLE) {
-      vkDestroySemaphore(getVkDevice(),
+      vkDestroySemaphore(
+          getVkDevice(),
           rendering_resources[i].getImageAvailableVkSemaphore(),
           nullptr);
     }
@@ -798,7 +823,8 @@ void Tutorial04::childClear() {
   finished_rendering_semaphores.clear();
 
   if (m_vulkan_tutorial04_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-    vkDestroyCommandPool(getVkDevice(),
+    vkDestroyCommandPool(
+        getVkDevice(),
         m_vulkan_tutorial04_parameters.getVkCommandPool(),
         nullptr);
     m_vulkan_tutorial04_parameters.getVkCommandPool() = VK_NULL_HANDLE;
@@ -817,14 +843,16 @@ void Tutorial04::childClear() {
 
   if (m_vulkan_tutorial04_parameters.getVkGraphicsPipeline() !=
       VK_NULL_HANDLE) {
-    vkDestroyPipeline(getVkDevice(),
+    vkDestroyPipeline(
+        getVkDevice(),
         m_vulkan_tutorial04_parameters.getVkGraphicsPipeline(),
         nullptr);
     m_vulkan_tutorial04_parameters.getVkGraphicsPipeline() = VK_NULL_HANDLE;
   }
 
   if (m_vulkan_tutorial04_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-    vkDestroyRenderPass(getVkDevice(),
+    vkDestroyRenderPass(
+        getVkDevice(),
         m_vulkan_tutorial04_parameters.getVkRenderPass(),
         nullptr);
     m_vulkan_tutorial04_parameters.getVkRenderPass() = VK_NULL_HANDLE;

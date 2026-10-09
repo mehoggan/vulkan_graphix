@@ -25,49 +25,7 @@ int main(int /*argc*/, char** /*argv*/) {
   std::shared_ptr<vulkan_graphix::Tutorial22> tutorial22 =
       std::dynamic_pointer_cast<vulkan_graphix::Tutorial22>(tutorial);
 
-  if (!tutorial22->createRenderingResources()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createStagingBuffer()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createDepthResources()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createTankTexture()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createFontAtlas()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createUniformBuffers()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createDescriptorSetLayouts()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createDescriptorPool()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->allocateDescriptorSets()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->updateDescriptorSets()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createRenderPass()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createPipelineLayouts()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createPipelines()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createTankVertexBuffers()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial22->createPanelVertexBuffer()) {
+  if (!tutorial22->createResources()) {
     return EXIT_FAILURE;
   }
 

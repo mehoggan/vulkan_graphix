@@ -11,8 +11,9 @@ namespace vulkan_graphix {
 class WorldCamera;
 }
 namespace vulkan_graphix::Render {
+class TexturedModel;
 class RenderContext;
-}
+}  // namespace vulkan_graphix::Render
 
 using namespace std;
 
@@ -25,7 +26,6 @@ class TextObject;
 class Projectile;
 class Inventory;
 class ImageObject;
-class VBOShaderLibrary;
 class SpecialEffect;
 class Explosion;
 class Tank;
@@ -48,7 +48,8 @@ enum PossibleSpecialEffects { EXPLOSION };
 class GameState {
 public:
   GameState();
-  GameState(std::int32_t new_width,
+  GameState(
+      std::int32_t new_width,
       std::int32_t new_height,
       PlayerFactory* new_player_factory,
       GlobalSettings* new_global_settings,
@@ -57,7 +58,8 @@ public:
   void update();
   void draw(vulkan_graphix::Render::RenderContext& context);
   void drawHUD(vulkan_graphix::Render::RenderContext& context);
-  void drawHUDText(vulkan_graphix::Render::RenderContext& context,
+  void drawHUDText(
+      vulkan_graphix::Render::RenderContext& context,
       const vulkan_graphix::Math::Vec4<float>& color,
       const std::string& input,
       float x,
@@ -73,11 +75,13 @@ public:
   void timerEvent(float new_timer);
   bool getProjectileFired();
   void destroyProjectile();
-  void calcNormalVector(vulkan_graphix::Math::Vec3<float>* v0,
+  void calcNormalVector(
+      vulkan_graphix::Math::Vec3<float>* v0,
       vulkan_graphix::Math::Vec3<float>* v1,
       vulkan_graphix::Math::Vec3<float>* v2,
       vulkan_graphix::Math::Vec3<float>* n);
-  float calcDistanceBetweenVertices(vulkan_graphix::Math::Vec3<float>* v0,
+  float calcDistanceBetweenVertices(
+      vulkan_graphix::Math::Vec3<float>* v0,
       vulkan_graphix::Math::Vec3<float>* v1);
   void playBackgroundSounds();
   void drawHelp(vulkan_graphix::Render::RenderContext& context);
@@ -138,7 +142,8 @@ private:
   ImageObject* m_weapon_slot;
   ImageObject* m_selected_weapon_img;
   TextObject* m_selected_weapon_remain;
-  VBOShaderLibrary* m_projectile_models[max_projectile_models];
+  vulkan_graphix::Render::TexturedModel*
+      m_projectile_models[max_projectile_models];
 
   SpecialEffect** m_special_effects;
   float m_radius_increase1;

@@ -10,7 +10,8 @@
 
 #include "IntegrationTestCommon.h"
 
-TEST(Tutorial09FaultInjectionTest,
+TEST(
+    Tutorial09FaultInjectionTest,
     EachCreateMethodFailsWhenItsFirstVulkanCallFails) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
@@ -26,9 +27,9 @@ TEST(Tutorial09FaultInjectionTest,
   {
     auto real_fn = vulkan_graphix::vkCreateCommandPool;
     vulkan_graphix::vkCreateCommandPool = [](VkDevice,
-                                              const VkCommandPoolCreateInfo*,
-                                              const VkAllocationCallbacks*,
-                                              VkCommandPool*) -> VkResult {
+                                             const VkCommandPoolCreateInfo*,
+                                             const VkAllocationCallbacks*,
+                                             VkCommandPool*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createRenderingResources());
@@ -44,9 +45,9 @@ TEST(Tutorial09FaultInjectionTest,
   {
     auto real_fn = vulkan_graphix::vkCreateBuffer;
     vulkan_graphix::vkCreateBuffer = [](VkDevice,
-                                         const VkBufferCreateInfo*,
-                                         const VkAllocationCallbacks*,
-                                         VkBuffer*) -> VkResult {
+                                        const VkBufferCreateInfo*,
+                                        const VkAllocationCallbacks*,
+                                        VkBuffer*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createStagingBuffer());
@@ -63,9 +64,9 @@ TEST(Tutorial09FaultInjectionTest,
   {
     auto real_fn = vulkan_graphix::vkCreateImage;
     vulkan_graphix::vkCreateImage = [](VkDevice,
-                                        const VkImageCreateInfo*,
-                                        const VkAllocationCallbacks*,
-                                        VkImage*) -> VkResult {
+                                       const VkImageCreateInfo*,
+                                       const VkAllocationCallbacks*,
+                                       VkImage*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createDepthResources());
@@ -79,9 +80,9 @@ TEST(Tutorial09FaultInjectionTest,
     auto real_fn = vulkan_graphix::vkCreateDescriptorSetLayout;
     vulkan_graphix::vkCreateDescriptorSetLayout =
         [](VkDevice,
-            const VkDescriptorSetLayoutCreateInfo*,
-            const VkAllocationCallbacks*,
-            VkDescriptorSetLayout*) -> VkResult {
+           const VkDescriptorSetLayoutCreateInfo*,
+           const VkAllocationCallbacks*,
+           VkDescriptorSetLayout*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createDescriptorSetLayout());
@@ -94,9 +95,9 @@ TEST(Tutorial09FaultInjectionTest,
     auto real_fn = vulkan_graphix::vkCreateDescriptorPool;
     vulkan_graphix::vkCreateDescriptorPool =
         [](VkDevice,
-            const VkDescriptorPoolCreateInfo*,
-            const VkAllocationCallbacks*,
-            VkDescriptorPool*) -> VkResult {
+           const VkDescriptorPoolCreateInfo*,
+           const VkAllocationCallbacks*,
+           VkDescriptorPool*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createDescriptorPool());
@@ -107,9 +108,9 @@ TEST(Tutorial09FaultInjectionTest,
   {
     auto real_fn = vulkan_graphix::vkCreateRenderPass;
     vulkan_graphix::vkCreateRenderPass = [](VkDevice,
-                                             const VkRenderPassCreateInfo*,
-                                             const VkAllocationCallbacks*,
-                                             VkRenderPass*) -> VkResult {
+                                            const VkRenderPassCreateInfo*,
+                                            const VkAllocationCallbacks*,
+                                            VkRenderPass*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createRenderPass());
@@ -121,9 +122,9 @@ TEST(Tutorial09FaultInjectionTest,
     auto real_fn = vulkan_graphix::vkCreatePipelineLayout;
     vulkan_graphix::vkCreatePipelineLayout =
         [](VkDevice,
-            const VkPipelineLayoutCreateInfo*,
-            const VkAllocationCallbacks*,
-            VkPipelineLayout*) -> VkResult {
+           const VkPipelineLayoutCreateInfo*,
+           const VkAllocationCallbacks*,
+           VkPipelineLayout*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createPipelineLayout());
@@ -134,9 +135,9 @@ TEST(Tutorial09FaultInjectionTest,
   {
     auto real_fn = vulkan_graphix::vkCreateShaderModule;
     vulkan_graphix::vkCreateShaderModule = [](VkDevice,
-                                               const VkShaderModuleCreateInfo*,
-                                               const VkAllocationCallbacks*,
-                                               VkShaderModule*) -> VkResult {
+                                              const VkShaderModuleCreateInfo*,
+                                              const VkAllocationCallbacks*,
+                                              VkShaderModule*) -> VkResult {
       return VK_ERROR_INITIALIZATION_FAILED;
     };
     EXPECT_FALSE(tutorial.createPipeline());

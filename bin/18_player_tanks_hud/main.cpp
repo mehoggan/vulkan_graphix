@@ -24,49 +24,7 @@ int main(int /*argc*/, char** /*argv*/) {
   std::shared_ptr<vulkan_graphix::Tutorial18> tutorial18 =
       std::dynamic_pointer_cast<vulkan_graphix::Tutorial18>(tutorial);
 
-  if (!tutorial18->createRenderingResources()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createStagingBuffer()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createDepthResources()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createTankTexture()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createFontAtlas()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createUniformBuffers()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createDescriptorSetLayouts()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createDescriptorPool()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->allocateDescriptorSets()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->updateDescriptorSets()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createRenderPass()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createPipelineLayouts()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createPipelines()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createTankVertexBuffers()) {
-    return EXIT_FAILURE;
-  }
-  if (!tutorial18->createHudVertexBuffer()) {
+  if (!tutorial18->createResources()) {
     return EXIT_FAILURE;
   }
 

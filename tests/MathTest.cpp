@@ -86,7 +86,8 @@ TEST(Plane3DTest, DefaultConstructedIsInvalid) {
 }
 
 TEST(GeometryTest, CentroidAndMidpoint) {
-  Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> flat_tri(
+      Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(3.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 3.0f, 0.0f));
   EXPECT_EQ(Vec3<float>(1.0f, 1.0f, 0.0f), centroidOfTriangle(flat_tri));
@@ -97,12 +98,14 @@ TEST(GeometryTest, CentroidAndMidpoint) {
 }
 
 TEST(GeometryTest, CollinearPointsAreDetected) {
-  Triangle<float> collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> collinear(
+      Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(2.0f, 0.0f, 0.0f));
   EXPECT_TRUE(pointsOfTriangleAreCollinear(collinear));
 
-  Triangle<float> non_collinear(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> non_collinear(
+      Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 1.0f, 0.0f));
   EXPECT_FALSE(pointsOfTriangleAreCollinear(non_collinear));
@@ -120,7 +123,8 @@ TEST(GeometryTest, SphericalCartesianRoundTrip) {
 }
 
 TEST(TessellationOpsTest, SubdivisionProducesMoreTrianglesThanBaseCase) {
-  Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> flat_tri(
+      Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 1.0f, 0.0f));
 
@@ -137,7 +141,8 @@ TEST(TessellationOpsTest, SubdivisionProducesMoreTrianglesThanBaseCase) {
 }
 
 TEST(TessellationOpsTest, MidpointSubdivisionSharesEdgeVertices) {
-  Triangle<float> flat_tri(Vec3<float>(0.0f, 0.0f, 0.0f),
+  Triangle<float> flat_tri(
+      Vec3<float>(0.0f, 0.0f, 0.0f),
       Vec3<float>(1.0f, 0.0f, 0.0f),
       Vec3<float>(0.0f, 1.0f, 0.0f));
 
@@ -356,7 +361,8 @@ TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
   // The original basis-matrix bug broke exactly this property - every
   // segment boundary had a visible gap - which is why Tutorial10's
   // polyline looked tangled independent of its control-point layout.
-  std::vector<Vec3<float>> control_points = {Vec3<float>(-3.0f, 0.0f, 0.0f),
+  std::vector<Vec3<float>> control_points = {
+      Vec3<float>(-3.0f, 0.0f, 0.0f),
       Vec3<float>(-1.5f, 1.0f, 0.5f),
       Vec3<float>(0.0f, 0.2f, 1.0f),
       Vec3<float>(1.5f, -0.6f, 0.3f),
@@ -373,7 +379,8 @@ TEST(CubicCurveTest, CatmullRomChainIsPositionContinuousAcrossSegments) {
   std::vector<CubicCurve<float>> segments;
   segments.reserve(segment_count);
   for (std::size_t segment = 0; segment < segment_count; ++segment) {
-    segments.emplace_back(CubicCurve<float>::Type::CatmullRom,
+    segments.emplace_back(
+        CubicCurve<float>::Type::CatmullRom,
         working_points[segment],
         working_points[segment + 1],
         working_points[segment + 2],
@@ -415,7 +422,8 @@ TEST(CubicCurveTest, ComputeSamplesUniformProducesRequestedCountAndEndpoints) {
   EXPECT_FLOAT_EQ(0.0f, samples.front().m_parameter);
   EXPECT_FLOAT_EQ(1.0f, samples.back().m_parameter);
   for (std::size_t index = 1; index < samples.size(); ++index) {
-    EXPECT_NEAR(0.25f,
+    EXPECT_NEAR(
+        0.25f,
         samples[index].m_parameter - samples[index - 1].m_parameter,
         1e-4f);
   }

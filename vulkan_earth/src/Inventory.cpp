@@ -20,7 +20,8 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
   m_y_pos = y - y * 0.01;
   m_width = w + w * 0.01;
   m_height = h + h * 0.01;
-  m_inven_grid = new ControlItemGrid(-m_width / 4.0,
+  m_inven_grid = new ControlItemGrid(
+      -m_width / 4.0,
       m_height / 4.0,
       1,
       m_width * 0.5,
@@ -36,7 +37,8 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
     m_img_inven[i] = nullptr;
     m_remainings[i] = nullptr;
   }
-  m_title = new TextObject("Inventory",
+  m_title = new TextObject(
+      "Inventory",
       -m_width / 3.3,
       m_height / 2.5,
       1,
@@ -44,16 +46,17 @@ Inventory::Inventory(float x, float y, std::int32_t w, std::int32_t h) {
       0,
       0,
       0);
-  m_explain =
-      new TextObject("(Press Enter to load/unload a weapon or use an item)",
-          -m_width / 3.3,
-          m_height / 3.0,
-          1,
-          vulkan_earth::FontId::TimesRoman24,
-          0,
-          0,
-          0);
-  m_descript = new TextObject("",
+  m_explain = new TextObject(
+      "(Press Enter to load/unload a weapon or use an item)",
+      -m_width / 3.3,
+      m_height / 3.0,
+      1,
+      vulkan_earth::FontId::TimesRoman24,
+      0,
+      0,
+      0);
+  m_descript = new TextObject(
+      "",
       -m_width / 3.6,
       -m_height / 3.0,
       1,
@@ -93,7 +96,8 @@ void Inventory::setupInventory(Player* player) {
           0, 0, 0, 0, 0, 0, 256, 256, m_weapons[i]->getImageFileName());
       m_inven_grid->setImageSizeToCell(m_img_inven[i], 0.8);
       std::string remain = "x " + std::to_string(m_weapons[i]->getRemaining());
-      m_remainings[i] = new TextObject(remain,
+      m_remainings[i] = new TextObject(
+          remain,
           0,
           0,
           0,
@@ -122,7 +126,8 @@ void Inventory::setupInventory(Player* player) {
       m_inven_grid->setImageSizeToCell(
           m_img_inven[player_max_weapons + i], 0.8);
       std::string remain = "x " + std::to_string(m_items[i]->getRemaining());
-      m_remainings[player_max_weapons + i] = new TextObject(remain,
+      m_remainings[player_max_weapons + i] = new TextObject(
+          remain,
           0,
           0,
           0,
@@ -155,7 +160,8 @@ void Inventory::setupInventory(Player* player) {
   m_inven_grid->selectCell(m_select_cell_row, m_select_cell_col);
   if (m_weapons[0] != nullptr) {
     delete m_descript;
-    m_descript = new TextObject(m_weapons[0]->getDescription(),
+    m_descript = new TextObject(
+        m_weapons[0]->getDescription(),
         -m_width / 3.6,
         -m_height / 3.0,
         1,
@@ -165,7 +171,8 @@ void Inventory::setupInventory(Player* player) {
         0);
   } else {
     delete m_descript;
-    m_descript = new TextObject("",
+    m_descript = new TextObject(
+        "",
         -m_width / 3.6,
         -m_height / 3.0,
         1,
@@ -189,8 +196,9 @@ void Inventory::handleInventory(
         for (index = 0; index < player_max_weapons; index++) {
           if (current_player->getCurrentWeapons()[index] == nullptr) {
             // do nothing
-          } else if (current_player->getCurrentWeapons()[index]
-                         ->getUNIQUEIDENTIFIER() ==
+          } else if (
+              current_player->getCurrentWeapons()[index]
+                  ->getUNIQUEIDENTIFIER() ==
               current_player->getLoadedWeapon()->getUNIQUEIDENTIFIER()) {
             delete current_player->getLoadedWeapon();
             current_player->getCurrentWeapons()[index] = nullptr;
@@ -250,18 +258,19 @@ void Inventory::keyHandler(std::int32_t key) {
   if (m_select_cell_row == 0) {
     if (m_weapons[m_select_cell_col] != nullptr) {
       delete m_descript;
-      m_descript =
-          new TextObject(m_weapons[m_select_cell_col]->getDescription(),
-              -m_width / 3.6,
-              -m_height / 3.0,
-              1,
-              vulkan_earth::FontId::TimesRoman24,
-              0,
-              0,
-              0);
+      m_descript = new TextObject(
+          m_weapons[m_select_cell_col]->getDescription(),
+          -m_width / 3.6,
+          -m_height / 3.0,
+          1,
+          vulkan_earth::FontId::TimesRoman24,
+          0,
+          0,
+          0);
     } else {
       delete m_descript;
-      m_descript = new TextObject("",
+      m_descript = new TextObject(
+          "",
           -m_width / 3.6,
           -m_height / 3.0,
           1,
@@ -275,7 +284,8 @@ void Inventory::keyHandler(std::int32_t key) {
   else {
     if (m_items[m_select_cell_col] != nullptr) {
       delete m_descript;
-      m_descript = new TextObject(m_items[m_select_cell_col]->getDescription(),
+      m_descript = new TextObject(
+          m_items[m_select_cell_col]->getDescription(),
           -m_width / 3.6,
           -m_height / 3.0,
           1,
@@ -285,7 +295,8 @@ void Inventory::keyHandler(std::int32_t key) {
           0);
     } else {
       delete m_descript;
-      m_descript = new TextObject("",
+      m_descript = new TextObject(
+          "",
           -m_width / 3.6,
           -m_height / 3.0,
           1,
@@ -299,8 +310,10 @@ void Inventory::keyHandler(std::int32_t key) {
 
 void Inventory::draw(render::RenderContext& context) {
   // glViewport()'s float -> int truncation kept.
-  vulkan_earth::beginOverlayPanel(context,
-      vulkan_earth::glRect(static_cast<std::int32_t>(m_x_pos),
+  vulkan_earth::beginOverlayPanel(
+      context,
+      vulkan_earth::glRect(
+          static_cast<std::int32_t>(m_x_pos),
           static_cast<std::int32_t>(m_y_pos),
           m_width,
           m_height),

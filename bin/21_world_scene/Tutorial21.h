@@ -41,6 +41,11 @@
 // a shell) live in the library beside OrbitCamera, all on the shared
 // Camera base; this tutorial has no shell or player panning to drive
 // them, so it orbits with OrbitCamera like every other 3D tutorial.
+//
+// The Vulkan scaffolding - render pass, pipelines, descriptors, buffers,
+// texture uploads, and the frame loop - is the library's (VulkanCommon's
+// ResourceContext/FrameLoop); this file is what's specific to the
+// tutorial.
 
 #include <array>
 #include <cstddef>
@@ -48,14 +53,13 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "vulkan_graphix/Math/MathTypes.hpp"
 #include "vulkan_graphix/OrbitCamera.h"
 #include "vulkan_graphix/TerrainGenerator.h"
-#include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
-#include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
+#include "vulkan_graphix/VulkanCommon/FrameLoop.h"
+#include "vulkan_graphix/VulkanCommon/ResourceContext.h"
 
 namespace vulkan_graphix {
 
@@ -66,9 +70,6 @@ struct Tutorial21TerrainVertexData {
   Math::Vec3<float> m_normal;
   Math::Vec2<float> m_texcoord;
 };
-
-using Tutorial21TerrainVertexAttributeTraits = VertexTypes::
-    AttributeTraits<Math::Vec4<float>, Math::Vec3<float>, Math::Vec2<float>>;
 
 // Matches Tutorial12UniformBufferData's shape byte-for-byte.
 struct Tutorial21TerrainUniformBufferData {
@@ -87,9 +88,6 @@ struct Tutorial21ObjectVertexData {
   Math::Vec2<float> m_texcoord;
 };
 
-using Tutorial21ObjectVertexAttributeTraits =
-    VertexTypes::AttributeTraits<Math::Vec4<float>, Math::Vec2<float>>;
-
 struct Tutorial21ObjectUniformBufferData {
   Math::Mat4<float> m_view;
   Math::Mat4<float> m_projection;
@@ -102,196 +100,17 @@ struct Tutorial21PushConstants {
 
 static constexpr std::size_t c_tank_part_count = 3;
 
-// ************************************************************ //
-// VulkanTutorial21Parameters                                   //
-//                                                              //
-// Vulkan specific parameters                                   //
-// ************************************************************ //
-struct VulkanTutorial21Parameters {
-public:
-  static const std::size_t resources_count = 3;
-
-  VulkanTutorial21Parameters();
-
-  const VkRenderPass& getVkRenderPass() const;
-  VkRenderPass& getVkRenderPass();
-  void setVkRenderPass(const VkRenderPass& vk_render_pass);
-
-  const ImageParameters& getDepthImageParameters() const;
-  ImageParameters& getDepthImageParameters();
-  void setDepthImageParameters(const ImageParameters& depth_image);
-
-  const ImageParameters& getTerrainImageParameters() const;
-  ImageParameters& getTerrainImageParameters();
-  void setTerrainImageParameters(const ImageParameters& image_parameters);
-
-  const ImageParameters& getTankImageParameters() const;
-  ImageParameters& getTankImageParameters();
-  void setTankImageParameters(const ImageParameters& image_parameters);
-
-  const ImageParameters& getSkyboxImageParameters() const;
-  ImageParameters& getSkyboxImageParameters();
-  void setSkyboxImageParameters(const ImageParameters& image_parameters);
-
-  const BufferParameters& getTerrainUniformBufferParameters() const;
-  BufferParameters& getTerrainUniformBufferParameters();
-  void setTerrainUniformBufferParameters(
-      const BufferParameters& uniform_buffer);
-
-  const BufferParameters& getObjectUniformBufferParameters() const;
-  BufferParameters& getObjectUniformBufferParameters();
-  void setObjectUniformBufferParameters(
-      const BufferParameters& uniform_buffer);
-
-  const VkDescriptorSetLayout& getVkTerrainDescriptorSetLayout() const;
-  VkDescriptorSetLayout& getVkTerrainDescriptorSetLayout();
-  void setVkTerrainDescriptorSetLayout(const VkDescriptorSetLayout& other);
-
-  const VkDescriptorSetLayout& getVkObjectDescriptorSetLayout() const;
-  VkDescriptorSetLayout& getVkObjectDescriptorSetLayout();
-  void setVkObjectDescriptorSetLayout(const VkDescriptorSetLayout& other);
-
-  const VkDescriptorPool& getVkDescriptorPool() const;
-  VkDescriptorPool& getVkDescriptorPool();
-  void setVkDescriptorPool(const VkDescriptorPool& other);
-
-  const VkDescriptorSet& getTerrainVkDescriptorSet() const;
-  VkDescriptorSet& getTerrainVkDescriptorSet();
-  void setTerrainVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkDescriptorSet& getTankVkDescriptorSet() const;
-  VkDescriptorSet& getTankVkDescriptorSet();
-  void setTankVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkDescriptorSet& getSkyboxVkDescriptorSet() const;
-  VkDescriptorSet& getSkyboxVkDescriptorSet();
-  void setSkyboxVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkPipelineLayout& getVkTerrainPipelineLayout() const;
-  VkPipelineLayout& getVkTerrainPipelineLayout();
-  void setVkTerrainPipelineLayout(const VkPipelineLayout& other);
-
-  const VkPipelineLayout& getVkObjectPipelineLayout() const;
-  VkPipelineLayout& getVkObjectPipelineLayout();
-  void setVkObjectPipelineLayout(const VkPipelineLayout& other);
-
-  const VkPipeline& getVkTerrainGraphicsPipeline() const;
-  VkPipeline& getVkTerrainGraphicsPipeline();
-  void setVkTerrainGraphicsPipeline(const VkPipeline& other);
-
-  const VkPipeline& getVkObjectGraphicsPipeline() const;
-  VkPipeline& getVkObjectGraphicsPipeline();
-  void setVkObjectGraphicsPipeline(const VkPipeline& other);
-
-  const VkPipeline& getVkSkyboxGraphicsPipeline() const;
-  VkPipeline& getVkSkyboxGraphicsPipeline();
-  void setVkSkyboxGraphicsPipeline(const VkPipeline& other);
-
-  const BufferParameters& getTerrainVertexBufferParameters() const;
-  BufferParameters& getTerrainVertexBufferParameters();
-  void setTerrainVertexBufferParameters(const BufferParameters& vertex_buffer);
-  std::uint32_t getTerrainVertexCount() const;
-  void setTerrainVertexCount(std::uint32_t vertex_count);
-
-  const std::array<BufferParameters, c_tank_part_count>&
-  getTankVertexBufferParameters() const;
-  std::array<BufferParameters, c_tank_part_count>&
-  getTankVertexBufferParameters();
-  const std::array<std::uint32_t, c_tank_part_count>& getTankVertexCounts()
-      const;
-  std::array<std::uint32_t, c_tank_part_count>& getTankVertexCounts();
-
-  const BufferParameters& getSkyboxVertexBufferParameters() const;
-  BufferParameters& getSkyboxVertexBufferParameters();
-  void setSkyboxVertexBufferParameters(const BufferParameters& vertex_buffer);
-  const BufferParameters& getSkyboxIndexBufferParameters() const;
-  BufferParameters& getSkyboxIndexBufferParameters();
-  void setSkyboxIndexBufferParameters(const BufferParameters& index_buffer);
-  std::uint32_t getSkyboxIndexCount() const;
-  void setSkyboxIndexCount(std::uint32_t index_count);
-
-  const BufferParameters& getStagingBufferParameters() const;
-  BufferParameters& getStagingBufferParameters();
-  void setStagingBufferParameters(const BufferParameters& staging_buffer);
-
-  const VkCommandPool& getVkCommandPool() const;
-  VkCommandPool& getVkCommandPool();
-  void setVkCommandPool(const VkCommandPool& vk_command_pool);
-
-  const std::vector<RenderingResourceParameters>& getRenderingResources()
-      const;
-  std::vector<RenderingResourceParameters>& getRenderingResources();
-  void setRenderingResources(
-      const std::vector<RenderingResourceParameters>& rendering_resources);
-
-  const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
-  std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
-  void setFinishedRenderingSemaphores(
-      const std::vector<VkSemaphore>& finished_rendering_semaphores);
-
-private:
-  VkRenderPass m_vk_render_pass;
-  ImageParameters m_depth_image_parameters;
-  ImageParameters m_terrain_image_parameters;
-  ImageParameters m_tank_image_parameters;
-  ImageParameters m_skybox_image_parameters;
-  BufferParameters m_terrain_uniform_buffer;
-  BufferParameters m_object_uniform_buffer;
-  VkDescriptorSetLayout m_vk_terrain_descriptor_set_layout;
-  VkDescriptorSetLayout m_vk_object_descriptor_set_layout;
-  VkDescriptorPool m_vk_descriptor_pool;
-  VkDescriptorSet m_vk_terrain_descriptor_set;
-  VkDescriptorSet m_vk_tank_descriptor_set;
-  VkDescriptorSet m_vk_skybox_descriptor_set;
-  VkPipelineLayout m_vk_terrain_pipeline_layout;
-  VkPipelineLayout m_vk_object_pipeline_layout;
-  VkPipeline m_vk_terrain_graphics_pipeline;
-  VkPipeline m_vk_object_graphics_pipeline;
-  VkPipeline m_vk_skybox_graphics_pipeline;
-  BufferParameters m_terrain_vertex_buffer;
-  std::uint32_t m_terrain_vertex_count;
-  std::array<BufferParameters, c_tank_part_count> m_tank_vertex_buffers;
-  std::array<std::uint32_t, c_tank_part_count> m_tank_vertex_counts;
-  BufferParameters m_skybox_vertex_buffer;
-  BufferParameters m_skybox_index_buffer;
-  std::uint32_t m_skybox_index_count;
-  BufferParameters m_staging_buffer;
-  VkCommandPool m_vk_command_pool;
-  std::vector<RenderingResourceParameters> m_rendering_resources;
-  std::vector<VkSemaphore> m_finished_rendering_semaphores;
-};
-
-// ************************************************************ //
-// Tutorial21                                                   //
-//                                                              //
-// Class for presenting Vulkan usage topics                     //
-// ************************************************************ //
 class Tutorial21 : public TutorialBase {
 public:
   Tutorial21();
   ~Tutorial21() override;
 
-  bool createRenderingResources();
-  bool createStagingBuffer();
-  bool createDepthResources();
-  bool createTerrainTexture();
-  bool createTankTexture();
-  bool createSkyboxTexture();
-  bool createUniformBuffers();
-  bool createDescriptorSetLayouts();
-  bool createDescriptorPool();
-  bool allocateDescriptorSets();
-  bool updateDescriptorSets();
-  bool createRenderPass();
-  bool createPipelineLayouts();
-  bool createPipelines();
-  bool createTerrainVertexBuffer();
-  bool createTankVertexBuffers();
-  bool createSkyboxBuffers();
+  // Everything the tutorial draws with; call once after prepareVulkan().
+  bool createResources();
 
   bool draw() override;
-
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
@@ -323,47 +142,8 @@ private:
   // camera distance precisely, just stay bigger than it.
   static constexpr float c_skybox_half_extent = 3000.0f;
 
-  bool createCommandBuffers();
-  bool createCommandPool(
-      std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
-      std::uint32_t count,
-      VkCommandBuffer* command_buffers);
-  bool createSemaphores();
-  bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags memory_property,
-      BufferParameters& buffer);
-  bool createImage(std::uint32_t width,
-      std::uint32_t height,
-      VkFormat format,
-      VkImageUsageFlags usage,
-      VkImage* image);
-  bool allocateImageMemory(
-      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
-  bool createImageView(VkImage image,
-      VkFormat format,
-      VkImageAspectFlags aspect_mask,
-      VkImageView* image_view);
-  bool createTextureFromPixels(std::uint32_t width,
-      std::uint32_t height,
-      const std::vector<char>& pixels,
-      VkSamplerAddressMode address_mode,
-      ImageParameters& out_image_parameters);
-  bool destroyDepthResources();
-  bool copyBufferData(BufferParameters& destination,
-      const void* data,
-      std::uint32_t data_size,
-      VkAccessFlags dst_access_mask,
-      VkPipelineStageFlags dst_stage_mask);
-
   Tutorial21TerrainUniformBufferData getTerrainUniformBufferData() const;
-  bool updateTerrainUniformBufferData();
   Tutorial21ObjectUniformBufferData getObjectUniformBufferData() const;
-  bool updateObjectUniformBufferData();
-
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-  createShaderModule(const char* filename);
 
   // Runs TerrainGenerator::generate() exactly once (guarded by
   // m_terrain_generated) - shared by getTerrainVertexData() and
@@ -383,22 +163,31 @@ private:
   const std::vector<Tutorial21ObjectVertexData>& getSkyboxVertexData() const;
   const std::vector<std::uint32_t>& getSkyboxIndexData() const;
 
-  std::vector<Tutorial21ObjectVertexData> loadTankPartVertexData(
-      const char* mesh_filename) const;
-  bool createTankPartVertexBuffer(const char* mesh_filename,
-      BufferParameters& vertex_buffer,
-      std::uint32_t& vertex_count);
-
-  bool prepareFrame(VkCommandBuffer command_buffer,
-      const ImageParameters& image_parameters,
-      VkFramebuffer& framebuffer);
-  bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
-  void destroyBuffer(BufferParameters& buffer);
-
   bool childOnWindowSizeChanged() override;
   void childClear() override;
 
-  VulkanTutorial21Parameters m_vulkan_tutorial21_parameters;
+  VulkanCommon::ResourceContext m_resources;
+  VulkanCommon::FrameLoop m_frames;
+  ImageParameters m_terrain_texture;
+  ImageParameters m_tank_texture;
+  ImageParameters m_skybox_texture;
+  ImageParameters m_depth_image;
+  BufferParameters m_terrain_uniform_buffer;
+  BufferParameters m_object_uniform_buffer;
+  BufferParameters m_terrain_vertex_buffer;
+  BufferParameters m_skybox_vertex_buffer;
+  BufferParameters m_skybox_index_buffer;
+  std::uint32_t m_skybox_index_count = 0;
+  std::array<BufferParameters, c_tank_part_count> m_tank_vertex_buffers;
+  std::array<std::uint32_t, c_tank_part_count> m_tank_vertex_counts{};
+  VkDescriptorSet m_terrain_descriptor_set = VK_NULL_HANDLE;
+  VkDescriptorSet m_tank_descriptor_set = VK_NULL_HANDLE;
+  VkDescriptorSet m_skybox_descriptor_set = VK_NULL_HANDLE;
+  VkPipelineLayout m_terrain_pipeline_layout = VK_NULL_HANDLE;
+  VkPipelineLayout m_object_pipeline_layout = VK_NULL_HANDLE;
+  VkPipeline m_terrain_pipeline = VK_NULL_HANDLE;
+  VkPipeline m_object_pipeline = VK_NULL_HANDLE;
+  VkPipeline m_skybox_pipeline = VK_NULL_HANDLE;
   OrbitCamera m_camera;
 
   std::vector<Tutorial21TerrainVertexData> m_terrain_vertex_data;

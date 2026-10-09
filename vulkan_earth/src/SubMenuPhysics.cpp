@@ -15,7 +15,8 @@ namespace math = vulkan_graphix::Math;
 
 SubMenuPhysics::SubMenuPhysics() = default;
 
-SubMenuPhysics::SubMenuPhysics(std::int32_t id,
+SubMenuPhysics::SubMenuPhysics(
+    std::int32_t id,
     float new_x_pos,
     float new_y_pos,
     float new_z_pos,
@@ -49,7 +50,8 @@ SubMenuPhysics::SubMenuPhysics(std::int32_t id,
   float label_y_pos = m_y_pos - m_height / 20;
   /*	END OF BUTTON TEXT PLACEMENT	*/
 
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       (m_z_pos + 1),
@@ -58,38 +60,38 @@ SubMenuPhysics::SubMenuPhysics(std::int32_t id,
       0.0f,
       0.0f);
   m_button_pressed = nullptr;
-  m_sub_menu_button[0] =
-      new ControlItemSelectionBox(m_x_pos + (m_width / 2) - (0.3 * m_width),
-          m_y_pos - (m_height * 0.2),
-          m_z_pos + 1,
-          0.5f,
-          0.5f,
-          0.5f,
-          0.6f * m_width,
-          0.06 * (m_height),
-          "Air Viscosity",
-          "Low/Medium/High/");
-  m_sub_menu_button[1] =
-      new ControlItemSelectionBox(m_x_pos + (m_width / 2) - (0.3 * m_width),
-          m_y_pos - (m_height * 0.27),
-          m_z_pos + 1,
-          0.5f,
-          0.5f,
-          0.5f,
-          0.6f * m_width,
-          0.06 * (m_height),
-          "Gravity",
-          "0.1/0.2/0.5/1.0/1.5/2.0/");
-  m_sub_menu_button[2] =
-      new ControlItemCheckBox(m_x_pos + (m_width / 2) - (0.3 * m_width),
-          m_y_pos - (m_height * 0.34),
-          m_z_pos + 1,
-          0.5f,
-          0.5f,
-          0.5f,
-          0.6f * m_width,
-          0.06 * (m_height),
-          "Tanks Fall");
+  m_sub_menu_button[0] = new ControlItemSelectionBox(
+      m_x_pos + (m_width / 2) - (0.3 * m_width),
+      m_y_pos - (m_height * 0.2),
+      m_z_pos + 1,
+      0.5f,
+      0.5f,
+      0.5f,
+      0.6f * m_width,
+      0.06 * (m_height),
+      "Air Viscosity",
+      "Low/Medium/High/");
+  m_sub_menu_button[1] = new ControlItemSelectionBox(
+      m_x_pos + (m_width / 2) - (0.3 * m_width),
+      m_y_pos - (m_height * 0.27),
+      m_z_pos + 1,
+      0.5f,
+      0.5f,
+      0.5f,
+      0.6f * m_width,
+      0.06 * (m_height),
+      "Gravity",
+      "0.1/0.2/0.5/1.0/1.5/2.0/");
+  m_sub_menu_button[2] = new ControlItemCheckBox(
+      m_x_pos + (m_width / 2) - (0.3 * m_width),
+      m_y_pos - (m_height * 0.34),
+      m_z_pos + 1,
+      0.5f,
+      0.5f,
+      0.5f,
+      0.6f * m_width,
+      0.06 * (m_height),
+      "Tanks Fall");
 }
 
 SubMenuPhysics::~SubMenuPhysics() {
@@ -134,7 +136,8 @@ void SubMenuPhysics::setPercentBorder(float percent) {
 void SubMenuPhysics::draw(render::RenderContext& context) {
   // The same raised 3-pixel bevel every button draws.
   if (m_frame_mesh.triangles().empty()) {
-    vulkan_earth::appendBevel(m_frame_mesh,
+    vulkan_earth::appendBevel(
+        m_frame_mesh,
         m_x_pos,
         m_y_pos,
         m_z_pos,
@@ -167,16 +170,17 @@ void SubMenuPhysics::subMenuMouseTest(
     std::int32_t x, std::int32_t y, std::int32_t button_down) {
   if (button_down) {  // FIRST CONDITION IS LEFT MOUSE BUTTON DOWN
     for (std::int32_t button_i = 0; button_i < num_control_items_phy;
-        button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
-                       // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
-                       // CLICKED A ARROW BUTTON???
+         button_i++) {  // SCAN ALL BUTTONS TO SEE IF ONE WAS CLICKED
+                        // IF YOU DID NOT CLICK A BUTTON PERHAPS YOU
+                        // CLICKED A ARROW BUTTON???
       if ((x >= m_sub_menu_button[button_i]->getXPos()) &&
           (x <= (m_sub_menu_button[button_i]->getXPos() +
-                    m_sub_menu_button[button_i]->getWidth())) &&
+                 m_sub_menu_button[button_i]->getWidth())) &&
           (y <= m_sub_menu_button[button_i]->getYPos()) &&
           (y >= (m_sub_menu_button[button_i]->getYPos() -
-                    m_sub_menu_button[button_i]->getHeight()))) {
-        m_sub_menu_button[button_i]->mouseClickEvent(x,
+                 m_sub_menu_button[button_i]->getHeight()))) {
+        m_sub_menu_button[button_i]->mouseClickEvent(
+            x,
             y,
             button_down,
             true);  // YOU PRESSED OVER A ARROWBUTTON
@@ -190,17 +194,19 @@ void SubMenuPhysics::subMenuMouseTest(
                     // CHECK TO MAKE SURE YOU ARE OVER THE SAME ONE
       if ((x >= m_button_pressed->getXPos()) &&
           (x <=
-              (m_button_pressed->getXPos() + m_button_pressed->getWidth())) &&
+           (m_button_pressed->getXPos() + m_button_pressed->getWidth())) &&
           (y <= m_button_pressed->getYPos()) &&
           (y >=
-              (m_button_pressed->getYPos() - m_button_pressed->getHeight()))) {
-        m_button_pressed->mouseClickEvent(x,
+           (m_button_pressed->getYPos() - m_button_pressed->getHeight()))) {
+        m_button_pressed->mouseClickEvent(
+            x,
             y,
             button_down,
             true);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU
                     // RELEASE THE MOUSE
       } else {
-        m_button_pressed->mouseClickEvent(x,
+        m_button_pressed->mouseClickEvent(
+            x,
             y,
             button_down,
             false);  // IF YOU ARE THEN TELL THE ARROW BUTTON YOU

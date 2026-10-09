@@ -22,8 +22,8 @@ std::stringstream& operator<<(
     std::stringstream& out, const std::vector<VkLayerProperties>& vect) {
   for (std::vector<VkLayerProperties>::const_iterator vector_const_it =
            vect.cbegin();
-      vector_const_it != vect.cend();
-      ++vector_const_it) {
+       vector_const_it != vect.cend();
+       ++vector_const_it) {
     out << (*vector_const_it);
     if (vector_const_it != vect.cend() - 1) {
       out << "\n\t";

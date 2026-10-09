@@ -54,7 +54,8 @@ TEST(TutorialBaseHelpersTest, GetSwapChainNumImagesClampsToTheDeviceMaximum) {
   EXPECT_EQ(tutorial.getSwapChainNumImages(capabilities), 3u);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainFormatDefaultsToRgba8WhenFormatIsUndefined) {
   TestableTutorialBase tutorial;
   std::vector<VkSurfaceFormatKHR> formats = {
@@ -77,7 +78,8 @@ TEST(TutorialBaseHelpersTest, GetSwapChainFormatPrefersRgba8WhenListed) {
   EXPECT_EQ(result.format, VK_FORMAT_R8G8B8A8_UNORM);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainFormatFallsBackToTheFirstListedFormat) {
   TestableTutorialBase tutorial;
   std::vector<VkSurfaceFormatKHR> formats = {
@@ -89,7 +91,8 @@ TEST(TutorialBaseHelpersTest,
   EXPECT_EQ(result.format, VK_FORMAT_B8G8R8A8_UNORM);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainExtentUsesTheWindowSizeWhenCurrentExtentIsSpecial) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
@@ -104,7 +107,8 @@ TEST(TutorialBaseHelpersTest,
   EXPECT_EQ(extent.height, 480u);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainExtentClampsTheDefaultToTheDeviceMinimum) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
@@ -119,7 +123,8 @@ TEST(TutorialBaseHelpersTest,
   EXPECT_EQ(extent.height, 600u);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainExtentClampsTheDefaultToTheDeviceMaximum) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
@@ -134,7 +139,8 @@ TEST(TutorialBaseHelpersTest,
   EXPECT_EQ(extent.height, 240u);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainExtentUsesTheCurrentExtentWhenNotSpecial) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
@@ -146,39 +152,47 @@ TEST(TutorialBaseHelpersTest,
   EXPECT_EQ(extent.height, 720u);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainUsageFlagsReturnsColorAttachmentWhenSupported) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
   capabilities.supportedUsageFlags = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-  EXPECT_EQ(tutorial.getSwapChainUsageFlags(capabilities),
+  EXPECT_EQ(
+      tutorial.getSwapChainUsageFlags(capabilities),
       static_cast<VkImageUsageFlags>(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT));
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainUsageFlagsAddsTransferSourceWhenSupported) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
   capabilities.supportedUsageFlags = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
       VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
-  EXPECT_EQ(tutorial.getSwapChainUsageFlags(capabilities),
-      static_cast<VkImageUsageFlags>(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+  EXPECT_EQ(
+      tutorial.getSwapChainUsageFlags(capabilities),
+      static_cast<VkImageUsageFlags>(
+          VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
           VK_IMAGE_USAGE_TRANSFER_SRC_BIT));
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainUsageFlagsReturnsAllOnesWhenColorAttachmentUnsupported) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
   capabilities.supportedUsageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 
-  EXPECT_EQ(tutorial.getSwapChainUsageFlags(capabilities),
+  EXPECT_EQ(
+      tutorial.getSwapChainUsageFlags(capabilities),
       static_cast<VkImageUsageFlags>(-1));
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainTransformPrefersIdentityWhenSupported) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
@@ -186,24 +200,28 @@ TEST(TutorialBaseHelpersTest,
       VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR;
   capabilities.currentTransform = VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR;
 
-  EXPECT_EQ(tutorial.getSwapChainTransform(capabilities),
+  EXPECT_EQ(
+      tutorial.getSwapChainTransform(capabilities),
       VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainTransformFallsBackToCurrentTransformWhenIdentityUnsupported) {
   TestableTutorialBase tutorial;
   VkSurfaceCapabilitiesKHR capabilities{};
   capabilities.supportedTransforms = VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR;
   capabilities.currentTransform = VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR;
 
-  EXPECT_EQ(tutorial.getSwapChainTransform(capabilities),
+  EXPECT_EQ(
+      tutorial.getSwapChainTransform(capabilities),
       VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR);
 }
 
 TEST(TutorialBaseHelpersTest, GetSwapChainPresentModePrefersMailbox) {
   TestableTutorialBase tutorial;
-  std::vector<VkPresentModeKHR> modes = {VK_PRESENT_MODE_FIFO_KHR,
+  std::vector<VkPresentModeKHR> modes = {
+      VK_PRESENT_MODE_FIFO_KHR,
       VK_PRESENT_MODE_IMMEDIATE_KHR,
       VK_PRESENT_MODE_MAILBOX_KHR};
 
@@ -211,7 +229,8 @@ TEST(TutorialBaseHelpersTest, GetSwapChainPresentModePrefersMailbox) {
       tutorial.getSwapChainPresentMode(modes), VK_PRESENT_MODE_MAILBOX_KHR);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainPresentModeFallsBackToImmediateWhenMailboxUnavailable) {
   TestableTutorialBase tutorial;
   std::vector<VkPresentModeKHR> modes = {
@@ -221,7 +240,8 @@ TEST(TutorialBaseHelpersTest,
       tutorial.getSwapChainPresentMode(modes), VK_PRESENT_MODE_IMMEDIATE_KHR);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainPresentModeFallsBackToFifoWhenNeitherPreferredIsAvailable) {
   TestableTutorialBase tutorial;
   std::vector<VkPresentModeKHR> modes = {VK_PRESENT_MODE_FIFO_KHR};
@@ -229,19 +249,22 @@ TEST(TutorialBaseHelpersTest,
   EXPECT_EQ(tutorial.getSwapChainPresentMode(modes), VK_PRESENT_MODE_FIFO_KHR);
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     GetSwapChainPresentModeReturnsInvalidWhenFifoIsNotEvenAvailable) {
   TestableTutorialBase tutorial;
   std::vector<VkPresentModeKHR> modes;
 
-  EXPECT_EQ(tutorial.getSwapChainPresentMode(modes),
+  EXPECT_EQ(
+      tutorial.getSwapChainPresentMode(modes),
       static_cast<VkPresentModeKHR>(-1));
 }
 
 TEST(TutorialBaseHelpersTest, CheckExtensionAvailabilityFindsAListedName) {
   TestableTutorialBase tutorial;
   std::vector<VkExtensionProperties> extensions(1);
-  std::snprintf(extensions[0].extensionName,
+  std::snprintf(
+      extensions[0].extensionName,
       sizeof(extensions[0].extensionName),
       "%s",
       "VK_KHR_swapchain");
@@ -250,11 +273,13 @@ TEST(TutorialBaseHelpersTest, CheckExtensionAvailabilityFindsAListedName) {
       tutorial.checkExtensionAvailability("VK_KHR_swapchain", extensions));
 }
 
-TEST(TutorialBaseHelpersTest,
+TEST(
+    TutorialBaseHelpersTest,
     CheckExtensionAvailabilityReturnsFalseForAnUnlistedName) {
   TestableTutorialBase tutorial;
   std::vector<VkExtensionProperties> extensions(1);
-  std::snprintf(extensions[0].extensionName,
+  std::snprintf(
+      extensions[0].extensionName,
       sizeof(extensions[0].extensionName),
       "%s",
       "VK_KHR_swapchain");

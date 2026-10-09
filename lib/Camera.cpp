@@ -34,7 +34,8 @@ void Camera::updateShake() {
 }
 
 Math::Vec3<float> Camera::shakeOffset() const {
-  return Math::Vec3<float>(static_cast<float>(m_shake[0]),
+  return Math::Vec3<float>(
+      static_cast<float>(m_shake[0]),
       static_cast<float>(m_shake[1]),
       static_cast<float>(m_shake[2]));
 }

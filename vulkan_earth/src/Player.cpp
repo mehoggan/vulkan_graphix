@@ -7,12 +7,12 @@
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/GameState.h"
 #include "vulkan_earth/GlobalSettings.h"
-#include "vulkan_earth/OpenGLColors.h"
 #include "vulkan_earth/PlayerFactory.h"
 #include "vulkan_earth/Projectile.h"
 #include "vulkan_earth/Sound.h"
 #include "vulkan_earth/Tank.h"
 #include "vulkan_earth/TerrainMaker.h"
+#include "vulkan_graphix/Colors.h"
 #include "vulkan_graphix/TankOrientation.h"
 
 namespace render = vulkan_graphix::Render;
@@ -271,10 +271,12 @@ void Player::setUpYawVectors() {
       (matrix[12] - 10000 * matrix[8]),
       (matrix[13]),
       (matrix[14] - 10000 * matrix[10]));
-  vulkan_graphix::Math::Vec3<float> left_mark((matrix[12] + 1000 * matrix[0]),
+  vulkan_graphix::Math::Vec3<float> left_mark(
+      (matrix[12] + 1000 * matrix[0]),
       (matrix[13]),
       (matrix[14] + 1000 * matrix[2]));
-  vulkan_graphix::Math::Vec3<float> right_mark((matrix[12] - 1000 * matrix[0]),
+  vulkan_graphix::Math::Vec3<float> right_mark(
+      (matrix[12] - 1000 * matrix[0]),
       (matrix[13]),
       (matrix[14] - 1000 * matrix[2]));
   vulkan_graphix::Math::Vec3<float> left_ortho(
@@ -478,28 +480,34 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
   /*	START BALISTIC AXES	*/
   vulkan_graphix::Math::Vec3<float> xyzri(
       m_balistic_matrix[12], m_balistic_matrix[13], m_balistic_matrix[14]);
-  vulkan_graphix::Math::Vec3<float> xyzrf(scalar * m_balistic_matrix[0],
+  vulkan_graphix::Math::Vec3<float> xyzrf(
+      scalar * m_balistic_matrix[0],
       scalar * m_balistic_matrix[1],
       scalar * m_balistic_matrix[2]);
-  line(math::Vec4<float>(Red, 1.0f),
+  line(
+      vulkan_graphix::Colors::c_red,
       xyzri,
       vulkan_graphix::Math::Vec3<float>(
           xyzri.x + xyzrf.x, xyzri.y + xyzrf.y, xyzri.z + xyzrf.z));
   vulkan_graphix::Math::Vec3<float> xyzui(
       m_balistic_matrix[12], m_balistic_matrix[13], m_balistic_matrix[14]);
-  vulkan_graphix::Math::Vec3<float> xyzuf(scalar * m_balistic_matrix[4],
+  vulkan_graphix::Math::Vec3<float> xyzuf(
+      scalar * m_balistic_matrix[4],
       scalar * m_balistic_matrix[5],
       scalar * m_balistic_matrix[6]);
-  line(math::Vec4<float>(Green, 1.0f),
+  line(
+      vulkan_graphix::Colors::c_green,
       xyzui,
       vulkan_graphix::Math::Vec3<float>(
           xyzui.x + xyzuf.x, xyzui.y + xyzuf.y, xyzui.z + xyzuf.z));
   vulkan_graphix::Math::Vec3<float> xyzai(
       m_balistic_matrix[12], m_balistic_matrix[13], m_balistic_matrix[14]);
-  vulkan_graphix::Math::Vec3<float> xyzaf(scalar * m_balistic_matrix[8],
+  vulkan_graphix::Math::Vec3<float> xyzaf(
+      scalar * m_balistic_matrix[8],
       scalar * m_balistic_matrix[9],
       scalar * m_balistic_matrix[10]);
-  line(math::Vec4<float>(Blue, 1.0f),
+  line(
+      vulkan_graphix::Colors::c_blue,
       xyzai,
       vulkan_graphix::Math::Vec3<float>(
           xyzai.x + xyzaf.x, xyzai.y + xyzaf.y, xyzai.z + xyzaf.z));
@@ -511,7 +519,7 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
         m_balistic_matrix[12], m_balistic_matrix[13], m_balistic_matrix[14]);
     vulkan_graphix::Math::Vec3<float> enemypos(
         m_enemy_position.x, mypos.y, m_enemy_position.z);
-    line(math::Vec4<float>(LightSteelBlue, 1.0f), mypos, enemypos);
+    line(vulkan_graphix::Colors::c_light_steel_blue, mypos, enemypos);
     /*	END ENEMY VECTOR AXES	*/
     ///*	START PERP VECTORS	*/
     // glBegin(GL_LINES);
@@ -544,42 +552,50 @@ void Player::drawTestLinesandPlanes(render::RenderContext& context) {
         o3.x - 100000 * m_balistic_matrix[8],
         o3.y,
         o3.z - 100000 * m_balistic_matrix[10]);
-    line(math::Vec4<float>(MediumGoldenrod, 1.0f), o3, path_end);
+    line(vulkan_graphix::Colors::c_medium_goldenrod, o3, path_end);
     /*	END	PROJECTILE PATH		*/
 
     const float* matrix = getBalisticMatrix();
-    quad(math::Vec4<float>(Pink, 0.75f),
-        {math::Vec3<float>(matrix[12] - 1000 * matrix[0],
+    quad(
+        vulkan_graphix::Colors::withAlpha(
+            vulkan_graphix::Colors::c_pink, 0.75f),
+        {math::Vec3<float>(
+             matrix[12] - 1000 * matrix[0],
              matrix[13],
              matrix[14] - 1000 * matrix[2]),
-            math::Vec3<float>(
-                matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
-                matrix[13],
-                matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]),
-            math::Vec3<float>(
-                matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
-                matrix[13],
-                matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]),
-            math::Vec3<float>(matrix[12] + 1000 * matrix[0],
-                matrix[13],
-                matrix[14] + 1000 * matrix[2])});
+         math::Vec3<float>(
+             matrix[12] - 1000 * matrix[0] - 10000 * matrix[8],
+             matrix[13],
+             matrix[14] - 1000 * matrix[2] - 10000 * matrix[10]),
+         math::Vec3<float>(
+             matrix[12] + 1000 * matrix[0] - 10000 * matrix[8],
+             matrix[13],
+             matrix[14] + 1000 * matrix[2] - 10000 * matrix[10]),
+         math::Vec3<float>(
+             matrix[12] + 1000 * matrix[0],
+             matrix[13],
+             matrix[14] + 1000 * matrix[2])});
 
     const float* t_matrix = getCurrentTank()->getTurretMatrix();
-    quad(math::Vec4<float>(Red, 0.75f),
-        {math::Vec3<float>(t_matrix[12] - 1000 * t_matrix[0],
+    quad(
+        vulkan_graphix::Colors::withAlpha(
+            vulkan_graphix::Colors::c_red, 0.75f),
+        {math::Vec3<float>(
+             t_matrix[12] - 1000 * t_matrix[0],
              t_matrix[13] - 1000 * t_matrix[1],
              t_matrix[14] - 1000 * t_matrix[2]),
-            math::Vec3<float>(
-                t_matrix[12] - 1000 * t_matrix[0] - 10000 * t_matrix[8],
-                t_matrix[13] - 1000 * t_matrix[1] - 10000 * t_matrix[9],
-                t_matrix[14] - 1000 * t_matrix[2] - 10000 * t_matrix[10]),
-            math::Vec3<float>(
-                t_matrix[12] + 1000 * t_matrix[0] - 10000 * t_matrix[8],
-                t_matrix[13] + 1000 * t_matrix[1] - 10000 * t_matrix[9],
-                t_matrix[14] + 1000 * t_matrix[2] - 10000 * t_matrix[10]),
-            math::Vec3<float>(t_matrix[12] + 1000 * t_matrix[0],
-                t_matrix[13] + 1000 * t_matrix[1],
-                t_matrix[14] + 1000 * t_matrix[2])});
+         math::Vec3<float>(
+             t_matrix[12] - 1000 * t_matrix[0] - 10000 * t_matrix[8],
+             t_matrix[13] - 1000 * t_matrix[1] - 10000 * t_matrix[9],
+             t_matrix[14] - 1000 * t_matrix[2] - 10000 * t_matrix[10]),
+         math::Vec3<float>(
+             t_matrix[12] + 1000 * t_matrix[0] - 10000 * t_matrix[8],
+             t_matrix[13] + 1000 * t_matrix[1] - 10000 * t_matrix[9],
+             t_matrix[14] + 1000 * t_matrix[2] - 10000 * t_matrix[10]),
+         math::Vec3<float>(
+             t_matrix[12] + 1000 * t_matrix[0],
+             t_matrix[13] + 1000 * t_matrix[1],
+             t_matrix[14] + 1000 * t_matrix[2])});
   }
   context.drawTransient(lines, vulkan_earth::pipelines().m_ui_lines, nullptr);
   context.drawTransient(

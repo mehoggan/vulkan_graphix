@@ -1,7 +1,7 @@
 #include "vulkan_earth/TankH.h"
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
-#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_graphix/Render/TexturedModel.h"
 
 const char* tank_h_name = "Predator";
 const std::int32_t tank_h_hp = 1000;
@@ -41,17 +41,17 @@ TankH::TankH(float /*x*/, float /*y*/, float /*z*/) {
   m_previous_angle = 1;
   m_hp = m_armor * 100;
 
-  m_vbo_shader_head = new VBOShaderLibrary();
-  m_vbo_shader_body = new VBOShaderLibrary();
-  m_vbo_shader_turret = new VBOShaderLibrary();
+  m_vbo_shader_head = new vulkan_graphix::Render::TexturedModel();
+  m_vbo_shader_body = new vulkan_graphix::Render::TexturedModel();
+  m_vbo_shader_turret = new vulkan_graphix::Render::TexturedModel();
 
-  m_vbo_shader_turret->loadClientData("./Predator/Predator_Turret.ogl");
-  m_vbo_shader_body->loadClientData("./Predator/Predator_Body.ogl");
-  m_vbo_shader_head->loadClientData("./Predator/Predator_Head.ogl");
+  m_vbo_shader_turret->loadOgl("./Predator/Predator_Turret.ogl");
+  m_vbo_shader_body->loadOgl("./Predator/Predator_Body.ogl");
+  m_vbo_shader_head->loadOgl("./Predator/Predator_Head.ogl");
 
-  m_vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
-  m_vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
-  m_vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_turret->loadRawTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_body->loadRawTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_head->loadRawTexture("TestImage.raw", 1024, 1024);
 
   m_projectile_land_pos[0] = 9999999;
   m_projectile_land_pos[1] = 9999999;

@@ -42,13 +42,15 @@ public:
   // Reads the buffer's size from buffer.getSize(), which the caller must
   // set before calling this (matches every existing tutorial's own
   // createBuffer() convention).
-  bool create(VkBufferUsageFlags usage,
+  bool create(
+      VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& out) const;
   void destroy(BufferParameters& buffer) const;
 
 private:
-  bool allocateMemory(VkBuffer buffer,
+  bool allocateMemory(
+      VkBuffer buffer,
       VkMemoryPropertyFlags property,
       VkDeviceMemory* memory) const;
 
@@ -67,17 +69,20 @@ class ImageFactory {
 public:
   ImageFactory(VkDevice device, VkPhysicalDevice physical_device);
 
-  bool createImage(std::uint32_t width,
+  bool createImage(
+      std::uint32_t width,
       std::uint32_t height,
       VkFormat format,
       VkImageUsageFlags usage,
       VkImage* out) const;
-  bool createImageView(VkImage image,
+  bool createImageView(
+      VkImage image,
       VkFormat format,
       VkImageAspectFlags aspect_mask,
       VkImageView* out) const;
   // border_color only matters for VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER.
-  bool createSampler(VkSamplerAddressMode address_mode,
+  bool createSampler(
+      VkSamplerAddressMode address_mode,
       VkSampler* out,
       VkBorderColor border_color =
           VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK) const;
@@ -88,7 +93,8 @@ public:
   // need a view and/or sampler created *between* allocating an
   // image's memory and binding it, so they can't go through a single
   // combined call the way BufferFactory::create() does.
-  bool allocateMemory(VkImage image,
+  bool allocateMemory(
+      VkImage image,
       VkMemoryPropertyFlags property,
       VkDeviceMemory* memory) const;
 
@@ -117,17 +123,20 @@ private:
 // staging buffer sequentially across many unrelated uploads.
 class StagedUploader {
 public:
-  StagedUploader(VkDevice device,
+  StagedUploader(
+      VkDevice device,
       VkQueue graphics_queue,
       VkCommandBuffer upload_command_buffer);
 
-  bool uploadToImage(BufferParameters& staging_buffer,
+  bool uploadToImage(
+      BufferParameters& staging_buffer,
       VkImage image,
       const char* data,
       std::uint32_t data_size,
       std::uint32_t width,
       std::uint32_t height) const;
-  bool uploadToBuffer(BufferParameters& staging_buffer,
+  bool uploadToBuffer(
+      BufferParameters& staging_buffer,
       BufferParameters& destination,
       const void* data,
       std::uint32_t data_size,
@@ -166,7 +175,8 @@ private:
 // sampler-then-upload-pixels pattern several tutorials (17/18/19/21/22)
 // each already have their own near-identical private
 // createTextureFromPixels() for.
-bool createTextureFromPixels(const ImageFactory& image_factory,
+bool createTextureFromPixels(
+    const ImageFactory& image_factory,
     const StagedUploader& uploader,
     BufferParameters& staging_buffer,
     std::uint32_t width,
@@ -175,6 +185,14 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
     VkSamplerAddressMode address_mode,
     ImageParameters& out,
     VkBorderColor border_color = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK);
+
+// A depth attachment of extent: image, device-local memory, and view
+// (whatever of them got created is in out, even on failure).
+bool createDepthImage(
+    const ImageFactory& image_factory,
+    VkExtent2D extent,
+    VkFormat format,
+    ImageParameters& out);
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
 createShaderModule(VkDevice device, const char* filename);

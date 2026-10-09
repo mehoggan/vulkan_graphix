@@ -1,7 +1,7 @@
 #include "vulkan_earth/TankC.h"
 #include <cstdint>
 #include "vulkan_earth/Tank.h"
-#include "vulkan_earth/VBOShaderLibrary.h"
+#include "vulkan_graphix/Render/TexturedModel.h"
 
 const char* tank_c_name = "HeavyD";
 const std::int32_t tank_c_hp = 1000;
@@ -42,17 +42,17 @@ TankC::TankC(float /*x*/, float /*y*/, float /*z*/) {
   m_previous_angle = 1;
   m_hp = m_armor * 100;
 
-  m_vbo_shader_head = new VBOShaderLibrary();
-  m_vbo_shader_body = new VBOShaderLibrary();
-  m_vbo_shader_turret = new VBOShaderLibrary();
+  m_vbo_shader_head = new vulkan_graphix::Render::TexturedModel();
+  m_vbo_shader_body = new vulkan_graphix::Render::TexturedModel();
+  m_vbo_shader_turret = new vulkan_graphix::Render::TexturedModel();
 
-  m_vbo_shader_turret->loadClientData("./HeavyD/HeavyD_Turret.ogl");
-  m_vbo_shader_body->loadClientData("./HeavyD/HeavyD_Body.ogl");
-  m_vbo_shader_head->loadClientData("./HeavyD/HeavyD_Head.ogl");
+  m_vbo_shader_turret->loadOgl("./HeavyD/HeavyD_Turret.ogl");
+  m_vbo_shader_body->loadOgl("./HeavyD/HeavyD_Body.ogl");
+  m_vbo_shader_head->loadOgl("./HeavyD/HeavyD_Head.ogl");
 
-  m_vbo_shader_turret->loadTexture("TestImage.raw", 1024, 1024);
-  m_vbo_shader_body->loadTexture("TestImage.raw", 1024, 1024);
-  m_vbo_shader_head->loadTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_turret->loadRawTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_body->loadRawTexture("TestImage.raw", 1024, 1024);
+  m_vbo_shader_head->loadRawTexture("TestImage.raw", 1024, 1024);
 
   m_projectile_land_pos[0] = 9999999;
   m_projectile_land_pos[1] = 9999999;

@@ -5,7 +5,8 @@
 
 namespace vulkan_graphix::EffectSimulation {
 
-Particle makeParticle(ParticleKind kind,
+Particle makeParticle(
+    ParticleKind kind,
     float x,
     float y,
     float z,
@@ -52,7 +53,7 @@ bool updateParticle(Particle& particle) {
       particle.m_x += particle.m_dir[0] * particle.m_speed;
       particle.m_y += 7 *
           (static_cast<float>(particle.m_current_frame) /
-              static_cast<float>(particle.m_active_frames));
+           static_cast<float>(particle.m_active_frames));
       particle.m_z += particle.m_dir[2] * particle.m_speed;
       if (particle.m_current_frame <= 30) {
         particle.m_blue =
@@ -82,7 +83,8 @@ bool updateParticle(Particle& particle) {
   return particle.m_current_frame != particle.m_active_frames;
 }
 
-ParticleEmitter::ParticleEmitter(std::int32_t spawn,
+ParticleEmitter::ParticleEmitter(
+    std::int32_t spawn,
     std::int32_t /*rate*/,
     std::int32_t speed,
     std::int32_t life,
@@ -118,8 +120,8 @@ const std::vector<std::optional<Particle>>& ParticleEmitter::slots() const {
 void ParticleEmitter::addParticles() {
   std::int32_t count = 0;
   for (std::size_t i = 0;
-      i < m_slots.size() && count < m_particles_per_emission;
-      ++i) {
+       i < m_slots.size() && count < m_particles_per_emission;
+       ++i) {
     if (m_slots[i]) {
       continue;
     }
@@ -133,7 +135,8 @@ void ParticleEmitter::addParticles() {
     dir_x /= mag;
     dir_y /= mag;
     dir_z /= mag;
-    m_slots[i] = makeParticle(m_kind,
+    m_slots[i] = makeParticle(
+        m_kind,
         m_x,
         m_y,
         m_z,

@@ -49,7 +49,8 @@ inline constexpr float c_particle_alpha = 0.4f;
 
 // A new particle of kind at (x, y, z), heading along the unit vector
 // (dir_x, dir_y, dir_z) at speed, living frames updates.
-Particle makeParticle(ParticleKind kind,
+Particle makeParticle(
+    ParticleKind kind,
     float x,
     float y,
     float z,
@@ -72,7 +73,8 @@ public:
 
   // The second argument (the original's emission rate) is accepted for
   // its signature's sake but, as there, never read.
-  ParticleEmitter(std::int32_t spawn,
+  ParticleEmitter(
+      std::int32_t spawn,
       std::int32_t rate,
       std::int32_t speed,
       std::int32_t life,

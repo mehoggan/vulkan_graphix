@@ -7,8 +7,8 @@
 #include <optional>
 #include "vulkan_earth/GameRenderer.h"
 #include "vulkan_earth/ParticleGenerator.h"
-#include "vulkan_earth/VBOShaderLibrary.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
+#include "vulkan_graphix/Render/TexturedModel.h"
 #include "vulkan_graphix/TankOrientation.h"
 #include "vulkan_graphix/TankPlacement.h"
 
@@ -95,11 +95,10 @@ void Tank::setTankPos(float x, float y, float z) {
           glm::make_mat4(m_head_matrix),
           {vg::Math::Vec3<float>(
                m_body_offset[0], m_body_offset[1], m_body_offset[2]),
-              vg::Math::Vec3<float>(
-                  m_head_offset[0], m_head_offset[1], m_head_offset[2]),
-              vg::Math::Vec3<float>(m_turret_offset[0],
-                  m_turret_offset[1],
-                  m_turret_offset[2])});
+           vg::Math::Vec3<float>(
+               m_head_offset[0], m_head_offset[1], m_head_offset[2]),
+           vg::Math::Vec3<float>(
+               m_turret_offset[0], m_turret_offset[1], m_turret_offset[2])});
   for (std::int32_t i = 0; i < 3; ++i) {
     m_body_matrix[12 + i] = parts.m_body[i];
     m_head_matrix[12 + i] = parts.m_head[i];
@@ -174,37 +173,57 @@ void Tank::rotateHead(float degrees) {
       vulkan_graphix::Math::Vec3<float>(
           m_turret_matrix[4], m_turret_matrix[5], m_turret_matrix[6]));
 
-  std::copy_n(glm::value_ptr(glm::rotate(glm::make_mat4(m_head_matrix),
-                  glm::radians(static_cast<float>(degrees)),
-                  math::Vec3<float>(0, 1, 0))),
+  std::copy_n(
+      glm::value_ptr(
+          glm::rotate(
+              glm::make_mat4(m_head_matrix),
+              glm::radians(static_cast<float>(degrees)),
+              math::Vec3<float>(0, 1, 0))),
       16,
       m_head_matrix);
 
-  std::copy_n(glm::value_ptr(glm::rotate(glm::make_mat4(m_turret_matrix),
-                  glm::radians(static_cast<float>(-angle)),
-                  math::Vec3<float>(1, 0, 0))),
+  std::copy_n(
+      glm::value_ptr(
+          glm::rotate(
+              glm::make_mat4(m_turret_matrix),
+              glm::radians(static_cast<float>(-angle)),
+              math::Vec3<float>(1, 0, 0))),
       16,
       m_turret_matrix);
   std::copy_n(
-      glm::value_ptr(glm::translate(glm::make_mat4(m_turret_matrix),
-          math::Vec3<float>(
-              -m_turret_offset[0], -m_turret_offset[1], -m_turret_offset[2]))),
-      16,
-      m_turret_matrix);
-  std::copy_n(glm::value_ptr(glm::rotate(glm::make_mat4(m_turret_matrix),
-                  glm::radians(static_cast<float>(degrees)),
-                  math::Vec3<float>(0, 1, 0))),
+      glm::value_ptr(
+          glm::translate(
+              glm::make_mat4(m_turret_matrix),
+              math::Vec3<float>(
+                  -m_turret_offset[0],
+                  -m_turret_offset[1],
+                  -m_turret_offset[2]))),
       16,
       m_turret_matrix);
   std::copy_n(
-      glm::value_ptr(glm::translate(glm::make_mat4(m_turret_matrix),
-          math::Vec3<float>(
-              m_turret_offset[0], m_turret_offset[1], m_turret_offset[2]))),
+      glm::value_ptr(
+          glm::rotate(
+              glm::make_mat4(m_turret_matrix),
+              glm::radians(static_cast<float>(degrees)),
+              math::Vec3<float>(0, 1, 0))),
       16,
       m_turret_matrix);
-  std::copy_n(glm::value_ptr(glm::rotate(glm::make_mat4(m_turret_matrix),
-                  glm::radians(static_cast<float>(angle)),
-                  math::Vec3<float>(1, 0, 0))),
+  std::copy_n(
+      glm::value_ptr(
+          glm::translate(
+              glm::make_mat4(m_turret_matrix),
+              math::Vec3<float>(
+                  m_turret_offset[0],
+                  m_turret_offset[1],
+                  m_turret_offset[2]))),
+      16,
+      m_turret_matrix);
+  std::copy_n(
+      glm::value_ptr(
+          glm::rotate(
+              glm::make_mat4(m_turret_matrix),
+              glm::radians(static_cast<float>(angle)),
+              math::Vec3<float>(1, 0, 0))),
       16,
       m_turret_matrix);
   /*cout << "63. ";
@@ -222,9 +241,12 @@ void Tank::rotateTurret(float degrees) {
   if ((m_turret_degrees + degrees <= 90) &&
       (m_turret_degrees + degrees >= 0)) {
     m_turret_degrees += degrees;
-    std::copy_n(glm::value_ptr(glm::rotate(glm::make_mat4(m_turret_matrix),
-                    glm::radians(static_cast<float>(degrees)),
-                    math::Vec3<float>(1, 0, 0))),
+    std::copy_n(
+        glm::value_ptr(
+            glm::rotate(
+                glm::make_mat4(m_turret_matrix),
+                glm::radians(static_cast<float>(degrees)),
+                math::Vec3<float>(1, 0, 0))),
         16,
         m_turret_matrix);
     // cout << "65. ";
@@ -240,7 +262,8 @@ void Tank::rotateTurret(float degrees) {
 
 bool Tank::checkCollision(float x, float y, float z) {
   // First check distance from tank, then check each face of hit box
-  if (sqrt(pow((x - m_tank_pos.x), 2) + pow((y - m_tank_pos.y), 2) +
+  if (sqrt(
+          pow((x - m_tank_pos.x), 2) + pow((y - m_tank_pos.y), 2) +
           pow((z - m_tank_pos.z), 2)) < 50000000) {
     // top
     float plane_x = m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
@@ -462,12 +485,18 @@ float Tank::getTurretDegrees() { return m_turret_degrees; }
 
 void Tank::draw(render::RenderContext& context) {
   // Each part: its own matrix (glMultMatrixf) then its scale (glScalef).
-  m_vbo_shader_turret->draw(context,
-      glm::scale(glm::make_mat4(m_turret_matrix),
+  m_vbo_shader_turret->draw(
+      context,
+      vulkan_earth::pipelines().m_mesh,
+      glm::scale(
+          glm::make_mat4(m_turret_matrix),
           math::Vec3<float>(
               m_turret_scale[0], m_turret_scale[1], m_turret_scale[2])));
-  m_vbo_shader_head->draw(context,
-      glm::scale(glm::make_mat4(m_head_matrix),
+  m_vbo_shader_head->draw(
+      context,
+      vulkan_earth::pipelines().m_mesh,
+      glm::scale(
+          glm::make_mat4(m_head_matrix),
           math::Vec3<float>(
               m_head_scale[0], m_head_scale[1], m_head_scale[2])));
   const math::Mat4<float> body = glm::make_mat4(m_body_matrix);
@@ -477,13 +506,17 @@ void Tank::draw(render::RenderContext& context) {
     m_float_gen->draw(context, body);
   }
   // Draw tank body
-  m_vbo_shader_body->draw(context,
-      glm::scale(body,
+  m_vbo_shader_body->draw(
+      context,
+      vulkan_earth::pipelines().m_mesh,
+      glm::scale(
+          body,
           math::Vec3<float>(
               m_body_scale[0], m_body_scale[1], m_body_scale[2])));
   // shield: glutSolidSphere(300, 20, 20) in translucent blue
   if (m_duration_shield > 0) {
-    context.drawMesh(render::Renderer::instance().sphere(20, 20),
+    context.drawMesh(
+        render::Renderer::instance().sphere(20, 20),
         vulkan_earth::pipelines().m_flat_color,
         nullptr,
         glm::scale(body, math::Vec3<float>(300, 300, 300)),
@@ -513,72 +546,80 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
   math::Vec4<float> color(1.0f);
   // top
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
@@ -586,72 +627,80 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
   }
   // right
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
@@ -659,72 +708,80 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
   }
   // left
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(1.0, 1.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
@@ -732,72 +789,80 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
   }
   // front
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_at.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_at.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_at.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
@@ -805,72 +870,80 @@ void Tank::drawTankHitBox(render::RenderContext& context) {
   }
   // back
   color = math::Vec4<float>(1.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 1.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_up.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_up.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_up.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_up.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_up.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_up.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 1.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_left.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_left.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_left.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_left.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_left.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_left.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
     quad.clear();
   }
   color = math::Vec4<float>(0.0, 0.0, 0.0, .75);
-  quad.add(render::UiVertex{
-      math::Vec3<float>(m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
-              m_hit_box_width / 2.0 * m_right.x +
-              m_hit_box_height / 2.0 * m_down.x,
-          m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
-              m_hit_box_width / 2.0 * m_right.y +
-              m_hit_box_height / 2.0 * m_down.y,
-          m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
-              m_hit_box_width / 2.0 * m_right.z +
-              m_hit_box_height / 2.0 * m_down.z),
-      color,
-      math::Vec2<float>(0.0f)});
+  quad.add(
+      render::UiVertex{
+          math::Vec3<float>(
+              m_tank_pos.x + m_hit_box_length / 2.0 * m_back.x +
+                  m_hit_box_width / 2.0 * m_right.x +
+                  m_hit_box_height / 2.0 * m_down.x,
+              m_tank_pos.y + m_hit_box_length / 2.0 * m_back.y +
+                  m_hit_box_width / 2.0 * m_right.y +
+                  m_hit_box_height / 2.0 * m_down.y,
+              m_tank_pos.z + m_hit_box_length / 2.0 * m_back.z +
+                  m_hit_box_width / 2.0 * m_right.z +
+                  m_hit_box_height / 2.0 * m_down.z),
+          color,
+          math::Vec2<float>(0.0f)});
   if (quad.size() == 4) {
     for (std::size_t corner : {0U, 1U, 2U, 0U, 2U, 3U})
       out_tris.add(quad[corner]);
@@ -900,10 +973,12 @@ void Tank::rotateWheel(float degrees) {
   if (!(m_wheel_degrees + degrees > 90) || (m_wheel_degrees - degrees < 0)) {
     m_wheel_degrees += degrees;
     std::copy_n(
-        glm::value_ptr(glm::rotate(glm::make_mat4(m_wheel_matrix),
-            glm::radians(static_cast<float>(degrees)),
-            math::Vec3<float>(
-                m_wheel_matrix[4], m_wheel_matrix[5], m_wheel_matrix[6]))),
+        glm::value_ptr(
+            glm::rotate(
+                glm::make_mat4(m_wheel_matrix),
+                glm::radians(static_cast<float>(degrees)),
+                math::Vec3<float>(
+                    m_wheel_matrix[4], m_wheel_matrix[5], m_wheel_matrix[6]))),
         16,
         m_wheel_matrix);
   }
@@ -911,25 +986,25 @@ void Tank::rotateWheel(float degrees) {
 
 void Tank::changeHeadTexture(std::int32_t current_player_index) {
   if (current_player_index == 0)
-    m_vbo_shader_head->swapTexture("player1Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player1Head.raw", 1024, 1024);
   else if (current_player_index == 1)
-    m_vbo_shader_head->swapTexture("player2Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player2Head.raw", 1024, 1024);
   else if (current_player_index == 2)
-    m_vbo_shader_head->swapTexture("player3Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player3Head.raw", 1024, 1024);
   else if (current_player_index == 3)
-    m_vbo_shader_head->swapTexture("player4Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player4Head.raw", 1024, 1024);
   else if (current_player_index == 4)
-    m_vbo_shader_head->swapTexture("player5Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player5Head.raw", 1024, 1024);
   else if (current_player_index == 5)
-    m_vbo_shader_head->swapTexture("player6Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player6Head.raw", 1024, 1024);
   else if (current_player_index == 6)
-    m_vbo_shader_head->swapTexture("player7Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player7Head.raw", 1024, 1024);
   else if (current_player_index == 7)
-    m_vbo_shader_head->swapTexture("player8Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player8Head.raw", 1024, 1024);
   else if (current_player_index == 8)
-    m_vbo_shader_head->swapTexture("player9Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player9Head.raw", 1024, 1024);
   else if (current_player_index == 9)
-    m_vbo_shader_head->swapTexture("player10Head.raw", 1024, 1024);
+    m_vbo_shader_head->loadRawTexture("player10Head.raw", 1024, 1024);
   else {
     printf(
         "\nERROR <Tank::changeHeadTexture(int)>: Wrong parameter "

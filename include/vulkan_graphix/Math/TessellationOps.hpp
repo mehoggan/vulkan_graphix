@@ -35,7 +35,8 @@ namespace vulkan_graphix::Math {
 namespace detail {
 
 template <typename T, typename I>
-void updateTessellatedTriangleData(const Vec3<T>& point,
+void updateTessellatedTriangleData(
+    const Vec3<T>& point,
     I& current_index,
     std::unordered_map<Vec3<T>, I>& point_to_index_map,
     TessellatedTriangleData<T, I>& out) {
@@ -51,7 +52,8 @@ void updateTessellatedTriangleData(const Vec3<T>& point,
 }
 
 template <typename T, typename I>
-void updateTessellatedWireframeTriangleData(const Line<T>& line,
+void updateTessellatedWireframeTriangleData(
+    const Line<T>& line,
     I& current_index,
     std::unordered_map<Vec3<T>, I>& point_to_index_map,
     TessellatedTriangleData<T, I>& out) {
@@ -62,7 +64,8 @@ void updateTessellatedWireframeTriangleData(const Line<T>& line,
 }
 
 template <typename T, typename I>
-void handleBaseCase(const Triangle<T>& tri,
+void handleBaseCase(
+    const Triangle<T>& tri,
     I& current_index,
     std::unordered_map<Vec3<T>, I>& point_to_index_map,
     TessellatedTriangleData<T, I>& out) {
@@ -87,7 +90,8 @@ void handleBaseCase(const Triangle<T>& tri,
 }
 
 template <typename T, typename I>
-void tessellateTriangleBySubdivision(const Triangle<T>& tri,
+void tessellateTriangleBySubdivision(
+    const Triangle<T>& tri,
     std::size_t subdivision_count,
     I& current_index,
     std::unordered_map<Vec3<T>, I>& point_to_index_map,
@@ -114,7 +118,8 @@ void tessellateTriangleBySubdivision(const Triangle<T>& tri,
 }
 
 template <typename T, typename I>
-void tessellateTriangleByMidpointSubdivision(const Triangle<T>& tri,
+void tessellateTriangleByMidpointSubdivision(
+    const Triangle<T>& tri,
     std::size_t subdivision_count,
     I& current_index,
     std::unordered_map<Vec3<T>, I>& point_to_index_map,
@@ -153,7 +158,8 @@ void tessellateTriangleByMidpointSubdivision(const Triangle<T>& tri,
 }  // namespace detail
 
 template <typename T, typename I>
-void tessellateTriangleBySubdivision(const Triangle<T>& tri,
+void tessellateTriangleBySubdivision(
+    const Triangle<T>& tri,
     std::size_t subdivision_count,
     I& current_index,
     TessellatedTriangleData<T, I>& out) {
@@ -163,7 +169,8 @@ void tessellateTriangleBySubdivision(const Triangle<T>& tri,
 }
 
 template <typename T, typename I>
-void tessellateTrianglesBySubdivision(const std::vector<Triangle<T>>& tris,
+void tessellateTrianglesBySubdivision(
+    const std::vector<Triangle<T>>& tris,
     std::size_t subdivision_count,
     I& current_index,
     TessellatedTriangleData<T, I>& out) {
@@ -175,7 +182,8 @@ void tessellateTrianglesBySubdivision(const std::vector<Triangle<T>>& tris,
 }
 
 template <typename T, typename I>
-void tessellateTriangleByMidpointSubdivision(const Triangle<T>& tri,
+void tessellateTriangleByMidpointSubdivision(
+    const Triangle<T>& tri,
     std::size_t subdivision_count,
     I& current_index,
     TessellatedTriangleData<T, I>& out) {

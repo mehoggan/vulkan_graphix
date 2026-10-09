@@ -89,7 +89,8 @@ struct Rect {
 
   // The same rectangle given with its origin at the bottom-left (OpenGL's
   // window convention), in a framebuffer framebuffer_height tall.
-  static Rect fromBottomLeft(std::int32_t x,
+  static Rect fromBottomLeft(
+      std::int32_t x,
       std::int32_t y,
       std::int32_t width,
       std::int32_t height,
@@ -128,11 +129,13 @@ public:
       UiMesh& mesh, const Math::Mat4<float>& model = Math::Mat4<float>(1.0f));
   // Any RetainedMesh, its triangles and lines through the pipelines given.
   template <typename... Ts>
-  void draw(RetainedMesh<Ts...>& mesh,
+  void draw(
+      RetainedMesh<Ts...>& mesh,
       PipelineHandle triangle_pipeline,
       PipelineHandle line_pipeline,
       const Math::Mat4<float>& model = Math::Mat4<float>(1.0f)) {
-    drawRetained(mesh.upload(),
+    drawRetained(
+        mesh.upload(),
         mesh,
         static_cast<std::uint32_t>(mesh.triangles().size()),
         static_cast<std::uint32_t>(mesh.lines().size()),
@@ -142,13 +145,15 @@ public:
   }
   // One frame's geometry, packed straight into the transient ring.
   template <typename... Ts>
-  void drawTransient(const VertexTypes::InterleavedData<Ts...>& vertices,
+  void drawTransient(
+      const VertexTypes::InterleavedData<Ts...>& vertices,
       PipelineHandle pipeline,
       const Texture* texture,
       const Math::Mat4<float>& model = Math::Mat4<float>(1.0f),
       const Math::Vec4<float>& params = Math::Vec4<float>(0.0f),
       float line_width = 1.0f);
-  void drawMesh(const Mesh& mesh,
+  void drawMesh(
+      const Mesh& mesh,
       PipelineHandle pipeline,
       const Texture* texture,
       const Math::Mat4<float>& model,
@@ -159,7 +164,8 @@ public:
   // advancing in window pixels, drawn at its depth - and nothing is drawn
   // if the position falls outside the view volume. Uses the Renderer's
   // text pipeline (setTextPipeline()).
-  void drawText(const Font& font,
+  void drawText(
+      const Font& font,
       const Math::Vec3<float>& raster_position,
       std::string_view text,
       const Math::Vec4<float>& color,
@@ -174,14 +180,16 @@ private:
       const Math::Mat4<float>& model, const Math::Vec4<float>& params);
   void applyViewport(const Rect& rect);
   VkRect2D toVkRect(const Rect& rect) const;
-  void drawRetained(const HostBuffer& buffer,
+  void drawRetained(
+      const HostBuffer& buffer,
       const RetainedMeshBase& mesh,
       std::uint32_t triangle_count,
       std::uint32_t line_count,
       PipelineHandle triangle_pipeline,
       PipelineHandle line_pipeline,
       const Math::Mat4<float>& model);
-  void drawTransientBuffer(VkBuffer buffer,
+  void drawTransientBuffer(
+      VkBuffer buffer,
       VkDeviceSize offset,
       std::uint32_t vertex_count,
       PipelineHandle pipeline,
@@ -253,13 +261,15 @@ public:
 
   // RGBA8 pixels, width * height * 4 bytes. CLAMP_TO_BORDER samples an
   // opaque black border (OpenGL's GL_CLAMP on an RGB texture).
-  std::shared_ptr<Texture> createTexture(const std::vector<char>& pixels,
+  std::shared_ptr<Texture> createTexture(
+      const std::vector<char>& pixels,
       std::uint32_t width,
       std::uint32_t height,
       VkSamplerAddressMode address_mode);
   // Headerless RGB .raw images (Tools::getRawImageData()), loaded once
   // per (filename, address mode) and shared.
-  std::shared_ptr<Texture> loadRawTexture(const std::string& filename,
+  std::shared_ptr<Texture> loadRawTexture(
+      const std::string& filename,
       std::uint32_t width,
       std::uint32_t height,
       VkSamplerAddressMode address_mode);
@@ -323,7 +333,8 @@ private:
   bool createRenderPass();
   bool createSwapchainResources();
   void destroySwapchainResources();
-  bool createPipelineVariant(const PipelineDescription& description,
+  bool createPipelineVariant(
+      const PipelineDescription& description,
       bool depth_test,
       VkPipeline* out);
   bool createDescriptorResources();
@@ -395,7 +406,8 @@ void RenderContext::drawTransient(
     return;
   }
   vertices.packInto(bytes);
-  drawTransientBuffer(buffer,
+  drawTransientBuffer(
+      buffer,
       offset,
       static_cast<std::uint32_t>(vertices.size()),
       pipeline,

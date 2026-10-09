@@ -36,11 +36,12 @@ void SkyboxFactory::buildGeometry() {
   // The box's top is at half height (vulkan_graphix::SkyboxGeometry,
   // shared with Tutorial11/21).
   for (const vulkan_graphix::SkyboxGeometry::Face& face :
-      vulkan_graphix::SkyboxGeometry::buildFaces(
-          math::Vec3<float>(static_cast<float>(start * scale)),
-          math::Vec3<float>(static_cast<float>(bound * scale),
-              static_cast<float>(bound * scale / 2),
-              static_cast<float>(bound * scale)))) {
+       vulkan_graphix::SkyboxGeometry::buildFaces(
+           math::Vec3<float>(static_cast<float>(start * scale)),
+           math::Vec3<float>(
+               static_cast<float>(bound * scale),
+               static_cast<float>(bound * scale / 2),
+               static_cast<float>(bound * scale)))) {
     m_mesh.addTexturedQuad(
         face.m_corners, face.m_texcoords, math::Vec4<float>(1.0f));
   }

@@ -63,7 +63,8 @@ void TerrainMaker::selectTexture(const std::string& tex) {
 void TerrainMaker::rebuildMesh() {
   render::MeshVertices mesh_vertices(m_vertices.size());
   for (std::size_t i = 0; i < m_vertices.size(); ++i) {
-    mesh_vertices[i] = {m_vertices[i],
+    mesh_vertices[i] = {
+        m_vertices[i],
         m_normals[i],
         math::Vec2<float>(m_tex_coord[i].s, m_tex_coord[i].t)};
   }
@@ -81,7 +82,8 @@ void TerrainMaker::rebuildMesh() {
       m_normal_lines.addLine(
           math::Vec3<float>(
               i * draw_scale, m_terrain.heightAt(i, j), j * draw_scale),
-          math::Vec3<float>(i * draw_scale + 500 * normal.x,
+          math::Vec3<float>(
+              i * draw_scale + 500 * normal.x,
               m_terrain.heightAt(i, j) + 500 * normal.y,
               j * draw_scale + 500 * normal.z),
           white);
@@ -100,14 +102,16 @@ void TerrainMaker::draw(render::RenderContext& context) {
   if (m_wireframe_active) {
     // Untextured, unlit, line-mode triangles in translucent black, then
     // the debug normals.
-    context.drawMesh(*m_mesh,
+    context.drawMesh(
+        *m_mesh,
         vulkan_earth::pipelines().m_flat_color_wireframe,
         nullptr,
         math::Mat4<float>(1.0f),
         math::Vec4<float>(0, 0, 0, .75));
     context.draw(m_normal_lines);
   } else {
-    context.drawMesh(*m_mesh,
+    context.drawMesh(
+        *m_mesh,
         vulkan_earth::pipelines().m_terrain,
         m_color_texture.get(),
         math::Mat4<float>(1.0f),
@@ -121,7 +125,8 @@ void TerrainMaker::initData() {
   m_tex_coord.resize(m_tri_strip_buffer_size);
 }
 
-void TerrainMaker::prepareData(std::int32_t new_steps,
+void TerrainMaker::prepareData(
+    std::int32_t new_steps,
     std::int32_t new_increase,
     float new_radius,
     std::int32_t new_random_jump,
@@ -176,7 +181,8 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
       /************************************************************/
       /*	V_J -- N_J												*/
       /************************************************************/
-      vulkan_graphix::Math::Vec3<float> v_j(j * prep_scale,
+      vulkan_graphix::Math::Vec3<float> v_j(
+          j * prep_scale,
           m_terrain.heightAt(j, i + 1) /*SCALE*/,
           (i + 1) * prep_scale);
       m_vertices[index++] = v_j;
@@ -198,7 +204,8 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
       /************************************************************/
       /*	V_K -- N_K												*/
       /************************************************************/
-      vulkan_graphix::Math::Vec3<float> v_k((j + 1) * prep_scale,
+      vulkan_graphix::Math::Vec3<float> v_k(
+          (j + 1) * prep_scale,
           m_terrain.heightAt(j + 1, i) /*SCALE*/,
           (i)*prep_scale);
       m_vertices[index++] = v_k;
@@ -220,7 +227,8 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
       /************************************************************/
       /*	V_X -- N_X	(SAME AS V_J/N_J)							*/
       /************************************************************/
-      vulkan_graphix::Math::Vec3<float> v_x(j * prep_scale,
+      vulkan_graphix::Math::Vec3<float> v_x(
+          j * prep_scale,
           m_terrain.heightAt(j, i + 1) /*SCALE*/,
           (i + 1) * prep_scale);
       m_vertices[index++] = v_x;
@@ -242,7 +250,8 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
       /************************************************************/
       /*	V_Y -- N_Y												*/
       /************************************************************/
-      vulkan_graphix::Math::Vec3<float> v_y((j + 1) * prep_scale,
+      vulkan_graphix::Math::Vec3<float> v_y(
+          (j + 1) * prep_scale,
           m_terrain.heightAt(j + 1, i + 1) /*SCALE*/,
           (i + 1) * prep_scale);
       m_vertices[index++] = v_y;
@@ -264,7 +273,8 @@ void TerrainMaker::prepareData(std::int32_t new_steps,
       /************************************************************/
       /*	V_Z -- N_Z												*/
       /************************************************************/
-      vulkan_graphix::Math::Vec3<float> v_z((j + 1) * prep_scale,
+      vulkan_graphix::Math::Vec3<float> v_z(
+          (j + 1) * prep_scale,
           m_terrain.heightAt(j + 1, i) /*SCALE*/,
           (i)*prep_scale);
       m_vertices[index++] = v_z;

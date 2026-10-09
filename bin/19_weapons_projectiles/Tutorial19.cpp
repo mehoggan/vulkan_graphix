@@ -1,19 +1,18 @@
 #include "Tutorial19.h"
-#include <cstdint>
-
-#include <vulkan/vulkan_core.h>
 
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <cstring>
+#include <cstdint>
+#include <string>
+#include <utility>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "vulkan_graphix/GameCatalog.h"
 #include "vulkan_graphix/ImageAtlas.h"
+#include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/UiGeometry.h"
-#include "vulkan_graphix/VulkanCommon.h"
 #include "vulkan_graphix/VulkanFunctions.h"
 
 namespace vulkan_graphix {
@@ -35,17 +34,17 @@ getProjectileMeshInfo() {
   using GameCatalog::WeaponKind;
   static const std::array<ProjectileMeshInfo, c_projectile_mesh_count> info = {
       {{"projectileDefault.ogl",
-           "projectileDefault.raw",
-           weapon(WeaponKind::Default).m_scale,
-           -220.0f},
-          {"projectileAcid.ogl",
-              "projectileAcid.raw",
-              weapon(WeaponKind::Acid).m_scale,
-              0.0f},
-          {"projectileBFB.ogl",
-              "projectileBFB.raw",
-              weapon(WeaponKind::BFB).m_scale,
-              220.0f}}};
+        "projectileDefault.raw",
+        weapon(WeaponKind::Default).m_scale,
+        -220.0f},
+       {"projectileAcid.ogl",
+        "projectileAcid.raw",
+        weapon(WeaponKind::Acid).m_scale,
+        0.0f},
+       {"projectileBFB.ogl",
+        "projectileBFB.raw",
+        weapon(WeaponKind::BFB).m_scale,
+        220.0f}}};
   return info;
 }
 
@@ -72,309 +71,8 @@ getWeaponDisplayData() {
 }
 }  // namespace
 
-// ************************************************************ //
-// VulkanTutorial19Parameters                                   //
-// ************************************************************ //
-VulkanTutorial19Parameters::VulkanTutorial19Parameters() :
-    m_vk_render_pass(VK_NULL_HANDLE),
-    m_vk_3d_descriptor_set_layout(VK_NULL_HANDLE),
-    m_vk_grid_descriptor_set_layout(VK_NULL_HANDLE),
-    m_vk_descriptor_pool(VK_NULL_HANDLE),
-    m_vk_3d_descriptor_sets{VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE},
-    m_vk_font_descriptor_set(VK_NULL_HANDLE),
-    m_vk_icon_descriptor_set(VK_NULL_HANDLE),
-    m_vk_3d_pipeline_layout(VK_NULL_HANDLE),
-    m_vk_grid_pipeline_layout(VK_NULL_HANDLE),
-    m_vk_3d_graphics_pipeline(VK_NULL_HANDLE),
-    m_vk_grid_graphics_pipeline(VK_NULL_HANDLE),
-    m_projectile_vertex_counts{0, 0, 0},
-    m_text_vertex_count(0),
-    m_icon_vertex_count(0),
-    m_vk_command_pool(VK_NULL_HANDLE),
-    m_rendering_resources(resources_count) {}
+namespace vc = VulkanCommon;
 
-const VkRenderPass& VulkanTutorial19Parameters::getVkRenderPass() const {
-  return m_vk_render_pass;
-}
-VkRenderPass& VulkanTutorial19Parameters::getVkRenderPass() {
-  return m_vk_render_pass;
-}
-void VulkanTutorial19Parameters::setVkRenderPass(
-    const VkRenderPass& vk_render_pass) {
-  m_vk_render_pass = vk_render_pass;
-}
-
-const std::array<ImageParameters, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::getProjectileImageParameters() const {
-  return m_projectile_images;
-}
-std::array<ImageParameters, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::getProjectileImageParameters() {
-  return m_projectile_images;
-}
-
-const ImageParameters& VulkanTutorial19Parameters::getFontImageParameters()
-    const {
-  return m_font_image_parameters;
-}
-ImageParameters& VulkanTutorial19Parameters::getFontImageParameters() {
-  return m_font_image_parameters;
-}
-void VulkanTutorial19Parameters::setFontImageParameters(
-    const ImageParameters& image_parameters) {
-  m_font_image_parameters = image_parameters;
-}
-
-const ImageParameters& VulkanTutorial19Parameters::getIconImageParameters()
-    const {
-  return m_icon_image_parameters;
-}
-ImageParameters& VulkanTutorial19Parameters::getIconImageParameters() {
-  return m_icon_image_parameters;
-}
-void VulkanTutorial19Parameters::setIconImageParameters(
-    const ImageParameters& image_parameters) {
-  m_icon_image_parameters = image_parameters;
-}
-
-const BufferParameters&
-VulkanTutorial19Parameters::getUniformBuffer3DParameters() const {
-  return m_uniform_buffer_3d;
-}
-BufferParameters& VulkanTutorial19Parameters::getUniformBuffer3DParameters() {
-  return m_uniform_buffer_3d;
-}
-void VulkanTutorial19Parameters::setUniformBuffer3DParameters(
-    const BufferParameters& uniform_buffer) {
-  m_uniform_buffer_3d = uniform_buffer;
-}
-
-const BufferParameters&
-VulkanTutorial19Parameters::getUniformBufferGridParameters() const {
-  return m_uniform_buffer_grid;
-}
-BufferParameters&
-VulkanTutorial19Parameters::getUniformBufferGridParameters() {
-  return m_uniform_buffer_grid;
-}
-void VulkanTutorial19Parameters::setUniformBufferGridParameters(
-    const BufferParameters& uniform_buffer) {
-  m_uniform_buffer_grid = uniform_buffer;
-}
-
-const VkDescriptorSetLayout&
-VulkanTutorial19Parameters::getVk3DDescriptorSetLayout() const {
-  return m_vk_3d_descriptor_set_layout;
-}
-VkDescriptorSetLayout&
-VulkanTutorial19Parameters::getVk3DDescriptorSetLayout() {
-  return m_vk_3d_descriptor_set_layout;
-}
-void VulkanTutorial19Parameters::setVk3DDescriptorSetLayout(
-    const VkDescriptorSetLayout& other) {
-  m_vk_3d_descriptor_set_layout = other;
-}
-
-const VkDescriptorSetLayout&
-VulkanTutorial19Parameters::getVkGridDescriptorSetLayout() const {
-  return m_vk_grid_descriptor_set_layout;
-}
-VkDescriptorSetLayout&
-VulkanTutorial19Parameters::getVkGridDescriptorSetLayout() {
-  return m_vk_grid_descriptor_set_layout;
-}
-void VulkanTutorial19Parameters::setVkGridDescriptorSetLayout(
-    const VkDescriptorSetLayout& other) {
-  m_vk_grid_descriptor_set_layout = other;
-}
-
-const VkDescriptorPool& VulkanTutorial19Parameters::getVkDescriptorPool()
-    const {
-  return m_vk_descriptor_pool;
-}
-VkDescriptorPool& VulkanTutorial19Parameters::getVkDescriptorPool() {
-  return m_vk_descriptor_pool;
-}
-void VulkanTutorial19Parameters::setVkDescriptorPool(
-    const VkDescriptorPool& other) {
-  m_vk_descriptor_pool = other;
-}
-
-const std::array<VkDescriptorSet, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::get3DVkDescriptorSets() const {
-  return m_vk_3d_descriptor_sets;
-}
-std::array<VkDescriptorSet, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::get3DVkDescriptorSets() {
-  return m_vk_3d_descriptor_sets;
-}
-
-const VkDescriptorSet& VulkanTutorial19Parameters::getFontVkDescriptorSet()
-    const {
-  return m_vk_font_descriptor_set;
-}
-VkDescriptorSet& VulkanTutorial19Parameters::getFontVkDescriptorSet() {
-  return m_vk_font_descriptor_set;
-}
-void VulkanTutorial19Parameters::setFontVkDescriptorSet(
-    const VkDescriptorSet& other) {
-  m_vk_font_descriptor_set = other;
-}
-
-const VkDescriptorSet& VulkanTutorial19Parameters::getIconVkDescriptorSet()
-    const {
-  return m_vk_icon_descriptor_set;
-}
-VkDescriptorSet& VulkanTutorial19Parameters::getIconVkDescriptorSet() {
-  return m_vk_icon_descriptor_set;
-}
-void VulkanTutorial19Parameters::setIconVkDescriptorSet(
-    const VkDescriptorSet& other) {
-  m_vk_icon_descriptor_set = other;
-}
-
-const VkPipelineLayout& VulkanTutorial19Parameters::getVk3DPipelineLayout()
-    const {
-  return m_vk_3d_pipeline_layout;
-}
-VkPipelineLayout& VulkanTutorial19Parameters::getVk3DPipelineLayout() {
-  return m_vk_3d_pipeline_layout;
-}
-void VulkanTutorial19Parameters::setVk3DPipelineLayout(
-    const VkPipelineLayout& other) {
-  m_vk_3d_pipeline_layout = other;
-}
-
-const VkPipelineLayout& VulkanTutorial19Parameters::getVkGridPipelineLayout()
-    const {
-  return m_vk_grid_pipeline_layout;
-}
-VkPipelineLayout& VulkanTutorial19Parameters::getVkGridPipelineLayout() {
-  return m_vk_grid_pipeline_layout;
-}
-void VulkanTutorial19Parameters::setVkGridPipelineLayout(
-    const VkPipelineLayout& other) {
-  m_vk_grid_pipeline_layout = other;
-}
-
-const VkPipeline& VulkanTutorial19Parameters::getVk3DGraphicsPipeline() const {
-  return m_vk_3d_graphics_pipeline;
-}
-VkPipeline& VulkanTutorial19Parameters::getVk3DGraphicsPipeline() {
-  return m_vk_3d_graphics_pipeline;
-}
-void VulkanTutorial19Parameters::setVk3DGraphicsPipeline(
-    const VkPipeline& other) {
-  m_vk_3d_graphics_pipeline = other;
-}
-
-const VkPipeline& VulkanTutorial19Parameters::getVkGridGraphicsPipeline()
-    const {
-  return m_vk_grid_graphics_pipeline;
-}
-VkPipeline& VulkanTutorial19Parameters::getVkGridGraphicsPipeline() {
-  return m_vk_grid_graphics_pipeline;
-}
-void VulkanTutorial19Parameters::setVkGridGraphicsPipeline(
-    const VkPipeline& other) {
-  m_vk_grid_graphics_pipeline = other;
-}
-
-const std::array<BufferParameters, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::getProjectileVertexBufferParameters() const {
-  return m_projectile_vertex_buffers;
-}
-std::array<BufferParameters, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::getProjectileVertexBufferParameters() {
-  return m_projectile_vertex_buffers;
-}
-const std::array<std::uint32_t, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::getProjectileVertexCounts() const {
-  return m_projectile_vertex_counts;
-}
-std::array<std::uint32_t, c_projectile_mesh_count>&
-VulkanTutorial19Parameters::getProjectileVertexCounts() {
-  return m_projectile_vertex_counts;
-}
-
-const BufferParameters&
-VulkanTutorial19Parameters::getGridVertexBufferParameters() const {
-  return m_grid_vertex_buffer;
-}
-BufferParameters& VulkanTutorial19Parameters::getGridVertexBufferParameters() {
-  return m_grid_vertex_buffer;
-}
-void VulkanTutorial19Parameters::setGridVertexBufferParameters(
-    const BufferParameters& vertex_buffer) {
-  m_grid_vertex_buffer = vertex_buffer;
-}
-std::uint32_t VulkanTutorial19Parameters::getTextVertexCount() const {
-  return m_text_vertex_count;
-}
-void VulkanTutorial19Parameters::setTextVertexCount(
-    std::uint32_t vertex_count) {
-  m_text_vertex_count = vertex_count;
-}
-std::uint32_t VulkanTutorial19Parameters::getIconVertexCount() const {
-  return m_icon_vertex_count;
-}
-void VulkanTutorial19Parameters::setIconVertexCount(
-    std::uint32_t vertex_count) {
-  m_icon_vertex_count = vertex_count;
-}
-
-const BufferParameters&
-VulkanTutorial19Parameters::getStagingBufferParameters() const {
-  return m_staging_buffer;
-}
-BufferParameters& VulkanTutorial19Parameters::getStagingBufferParameters() {
-  return m_staging_buffer;
-}
-void VulkanTutorial19Parameters::setStagingBufferParameters(
-    const BufferParameters& staging_buffer) {
-  m_staging_buffer = staging_buffer;
-}
-
-const VkCommandPool& VulkanTutorial19Parameters::getVkCommandPool() const {
-  return m_vk_command_pool;
-}
-VkCommandPool& VulkanTutorial19Parameters::getVkCommandPool() {
-  return m_vk_command_pool;
-}
-void VulkanTutorial19Parameters::setVkCommandPool(
-    const VkCommandPool& vk_command_pool) {
-  m_vk_command_pool = vk_command_pool;
-}
-
-const std::vector<RenderingResourceParameters>&
-VulkanTutorial19Parameters::getRenderingResources() const {
-  return m_rendering_resources;
-}
-std::vector<RenderingResourceParameters>&
-VulkanTutorial19Parameters::getRenderingResources() {
-  return m_rendering_resources;
-}
-void VulkanTutorial19Parameters::setRenderingResources(
-    const std::vector<RenderingResourceParameters>& rendering_resources) {
-  m_rendering_resources = rendering_resources;
-}
-
-const std::vector<VkSemaphore>&
-VulkanTutorial19Parameters::getFinishedRenderingSemaphores() const {
-  return m_finished_rendering_semaphores;
-}
-std::vector<VkSemaphore>&
-VulkanTutorial19Parameters::getFinishedRenderingSemaphores() {
-  return m_finished_rendering_semaphores;
-}
-void VulkanTutorial19Parameters::setFinishedRenderingSemaphores(
-    const std::vector<VkSemaphore>& finished_rendering_semaphores) {
-  m_finished_rendering_semaphores = finished_rendering_semaphores;
-}
-
-// ************************************************************ //
-// Tutorial19                                                   //
-// ************************************************************ //
 // Real weapon scales (60-100) applied to these meshes' own raw
 // modeling units puts each projectile at dozens of world units
 // across (BFB, the "Big Force Bomb", reads as noticeably larger
@@ -386,193 +84,196 @@ Tutorial19::Tutorial19() :
 
 Tutorial19::~Tutorial19() { childClear(); }
 
-void Tutorial19::onMouseButton(std::int32_t button,
-    bool pressed,
-    std::int32_t pos_x,
-    std::int32_t pos_y) {
-  constexpr std::int32_t c_left_button = 1;
-  if (button == c_left_button && pressed) {
-    const float x = static_cast<float>(pos_x);
-    const float y = static_cast<float>(pos_y);
-    const Math::Vec2<float> cell_size = getGridLayout().cellSize();
-    for (std::size_t index = 0; index < c_weapon_grid_item_count; ++index) {
-      const Math::Vec2<float> cell_top_left =
-          getGridLayout().cellTopLeft(index);
-      if (x >= cell_top_left.x && x <= cell_top_left.x + cell_size.x &&
-          y >= cell_top_left.y && y <= cell_top_left.y + cell_size.y) {
-        m_selected_index = index;
-        return;
-      }
-    }
-  }
-  m_camera.onMouseButton(button, pressed, pos_x, pos_y);
-}
-
-void Tutorial19::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
-  m_camera.onMouseMove(pos_x, pos_y);
-}
-
-bool Tutorial19::createCommandPool(
-    std::uint32_t queue_family_index, VkCommandPool* pool) {
-  if (!VulkanCommon::FrameResourceFactory(getVkDevice())
-          .createCommandPool(queue_family_index, pool)) {
-    Logging::error(LOG_TAG, "Could not create command pool!");
-    return false;
-  }
-  return true;
-}
-
-bool Tutorial19::allocateCommandBuffers(VkCommandPool pool,
-    std::uint32_t count,
-    VkCommandBuffer* command_buffers) {
-  if (!VulkanCommon::FrameResourceFactory(getVkDevice())
-          .allocateCommandBuffers(pool, count, command_buffers)) {
-    Logging::error(LOG_TAG, "Could not allocate command buffer!");
-    return false;
-  }
-  return true;
-}
-
-bool Tutorial19::createCommandBuffers() {
-  if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
-          &m_vulkan_tutorial19_parameters.getVkCommandPool())) {
+bool Tutorial19::createResources() {
+  if (!m_resources.initialize(*this)) {
     return false;
   }
 
-  std::vector<RenderingResourceParameters>& rendering_resources =
-      m_vulkan_tutorial19_parameters.getRenderingResources();
-  for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-    if (!allocateCommandBuffers(
-            m_vulkan_tutorial19_parameters.getVkCommandPool(),
-            1,
-            &rendering_resources[i].getVkCommandBuffer())) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool Tutorial19::createSemaphores() {
-  VulkanCommon::FrameResourceFactory factory(getVkDevice());
-
-  std::vector<RenderingResourceParameters>& rendering_resources =
-      m_vulkan_tutorial19_parameters.getRenderingResources();
-  for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-    if (!factory.createSemaphore(
-            &rendering_resources[i].getImageAvailableVkSemaphore())) {
-      Logging::error(LOG_TAG, "Could not create semaphores!");
-      return false;
-    }
-  }
-
-  std::vector<VkSemaphore>& finished_rendering_semaphores =
-      m_vulkan_tutorial19_parameters.getFinishedRenderingSemaphores();
-  finished_rendering_semaphores.assign(
-      getSwapchainParameters().getImageParameters().size(), VK_NULL_HANDLE);
-  for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
-    if (!factory.createSemaphore(&finished_rendering_semaphores[i])) {
-      Logging::error(LOG_TAG, "Could not create semaphores!");
-      return false;
-    }
-  }
-
-  return true;
-}
-
-bool Tutorial19::createFences() {
-  VulkanCommon::FrameResourceFactory factory(getVkDevice());
-
-  std::vector<RenderingResourceParameters>& rendering_resources =
-      m_vulkan_tutorial19_parameters.getRenderingResources();
-  for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-    if (!factory.createFence(true, &rendering_resources[i].getVkFence())) {
-      Logging::error(LOG_TAG, "Could not create a fence!");
-      return false;
-    }
-  }
-  return true;
-}
-
-bool Tutorial19::createRenderingResources() {
-  if (!createCommandBuffers()) {
-    return false;
-  }
-  if (!createSemaphores()) {
-    return false;
-  }
-  if (!createFences()) {
-    return false;
-  }
-  return true;
-}
-
-bool Tutorial19::createBuffer(VkBufferUsageFlags usage,
-    VkMemoryPropertyFlags memory_property,
-    BufferParameters& buffer) {
-  if (!VulkanCommon::BufferFactory(getVkDevice(), getVkPhysicalDevice())
-          .create(usage, memory_property, buffer)) {
-    Logging::error(LOG_TAG, "Could not create buffer!");
-    return false;
-  }
-  return true;
-}
-
-bool Tutorial19::createStagingBuffer() {
-  BufferParameters& staging_buffer =
-      m_vulkan_tutorial19_parameters.getStagingBufferParameters();
-  // Reused sequentially for the icon atlas (c_icon_atlas_width x
-  // c_icon_atlas_height RGBA = 5*256 x 2*256 x 4 = 2,621,440 bytes, the
-  // largest single upload here), the font atlas (512x512 RGBA =
-  // 1,048,576 bytes), and each projectile texture (512x512 RGBA =
-  // 1,048,576 bytes) - sized with headroom over the largest one.
-  staging_buffer.setSize(4 * 1024 * 1024);
-  if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-          staging_buffer)) {
-    Logging::error(LOG_TAG, "Could not create staging buffer!");
-    return false;
-  }
-
-  return true;
-}
-
-bool Tutorial19::createTextureFromPixels(std::uint32_t width,
-    std::uint32_t height,
-    const std::vector<char>& pixels,
-    ImageParameters& out_image_parameters) {
-  if (!VulkanCommon::createTextureFromPixels(
-          VulkanCommon::ImageFactory(getVkDevice(), getVkPhysicalDevice()),
-          VulkanCommon::StagedUploader(getVkDevice(),
-              getGraphicsQueueParameters().getVkQueue(),
-              m_vulkan_tutorial19_parameters.getRenderingResources()[0]
-                  .getVkCommandBuffer()),
-          m_vulkan_tutorial19_parameters.getStagingBufferParameters(),
-          width,
-          height,
-          pixels,
-          VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-          out_image_parameters)) {
-    Logging::error(LOG_TAG, "Could not create texture from pixels!");
-    return false;
-  }
-  return true;
-}
-
-bool Tutorial19::createProjectileTextures() {
   const std::array<ProjectileMeshInfo, c_projectile_mesh_count>& mesh_info =
       getProjectileMeshInfo();
-  std::array<ImageParameters, c_projectile_mesh_count>& images =
-      m_vulkan_tutorial19_parameters.getProjectileImageParameters();
-
   for (std::size_t i = 0; i < mesh_info.size(); ++i) {
-    std::vector<char> texture_data =
-        Tools::getRawImageData(mesh_info[i].m_texture_file, 512, 512);
-    if (texture_data.empty()) {
+    if (!m_resources.loadRawTexture(
+            mesh_info[i].m_texture_file,
+            512,
+            512,
+            VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+            m_projectile_textures[i])) {
+      Logging::error(
+          LOG_TAG,
+          "Could not load texture \"",
+          mesh_info[i].m_texture_file,
+          "\"!");
       return false;
     }
-    if (!createTextureFromPixels(512, 512, texture_data, images[i])) {
+    const std::vector<Tutorial19Vertex3DData> vertex_data =
+        Tools::loadOglTexturedMesh<Tutorial19Vertex3DData>(
+            mesh_info[i].m_mesh_file);
+    m_projectile_counts[i] = static_cast<std::uint32_t>(vertex_data.size());
+    if (vertex_data.empty() ||
+        !m_resources.createDeviceLocalBuffer(
+            vertex_data,
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+            m_projectile_buffers[i])) {
+      Logging::error(
+          LOG_TAG,
+          "Could not load mesh data from \"",
+          mesh_info[i].m_mesh_file,
+          "\"!");
       return false;
     }
+  }
+  if (!m_font.load(c_font_path, c_font_pixel_height)) {
+    Logging::error(
+        LOG_TAG,
+        "Could not load font \"",
+        c_font_path,
+        "\" - is the fonts-dejavu-core package installed?");
+    return false;
+  }
+  if (!m_resources.createTexture(
+          m_font.atlasWidth(),
+          m_font.atlasHeight(),
+          m_font.atlasPixels(),
+          VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+          m_font_texture) ||
+      !createIconAtlas()) {
+    Logging::error(LOG_TAG, "Could not create the atlas textures!");
+    return false;
+  }
+  if (!m_resources.createUniformBuffer(
+          sizeof(Tutorial19UniformBufferData3D), m_uniform_buffer_3d) ||
+      !m_resources.writeBuffer(
+          m_uniform_buffer_3d, get3DUniformBufferData()) ||
+      !m_resources.createUniformBuffer(
+          sizeof(Math::Mat4<float>), m_uniform_buffer_grid) ||
+      !m_resources.writeBuffer(
+          m_uniform_buffer_grid, getGridUniformBufferData())) {
+    Logging::error(LOG_TAG, "Could not create the uniform buffers!");
+    return false;
+  }
+
+  // 3D layout matches Tutorial16's shaders exactly; the grid layout
+  // matches Tutorial15/17's.
+  const std::vector<vc::DescriptorBinding> bindings_3d = {
+      {0,
+       VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+       VK_SHADER_STAGE_FRAGMENT_BIT},
+      {1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT}};
+  const std::vector<vc::DescriptorBinding> bindings_grid = {
+      {0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT},
+      {1,
+       VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+       VK_SHADER_STAGE_FRAGMENT_BIT}};
+  VkDescriptorSetLayout set_layout_3d = VK_NULL_HANDLE;
+  VkDescriptorSetLayout set_layout_grid = VK_NULL_HANDLE;
+  VkDescriptorPool pool = VK_NULL_HANDLE;
+  if (!m_resources.createDescriptorSetLayout(bindings_3d, &set_layout_3d) ||
+      !m_resources.createDescriptorSetLayout(
+          bindings_grid, &set_layout_grid) ||
+      !m_resources.createDescriptorPool(
+          bindings_3d, c_projectile_mesh_count + 2, &pool)) {
+    Logging::error(LOG_TAG, "Could not create the descriptor pool!");
+    return false;
+  }
+  for (std::size_t i = 0; i < c_projectile_mesh_count; ++i) {
+    if (!vc::allocateDescriptorSet(
+            getVkDevice(), pool, set_layout_3d, &m_descriptor_sets_3d[i])) {
+      Logging::error(LOG_TAG, "Could not allocate a descriptor set!");
+      return false;
+    }
+    vc::writeImageDescriptor(
+        getVkDevice(), m_descriptor_sets_3d[i], 0, m_projectile_textures[i]);
+    vc::writeUniformBufferDescriptor(
+        getVkDevice(), m_descriptor_sets_3d[i], 1, m_uniform_buffer_3d);
+  }
+  if (!vc::allocateDescriptorSet(
+          getVkDevice(), pool, set_layout_grid, &m_font_descriptor_set) ||
+      !vc::allocateDescriptorSet(
+          getVkDevice(), pool, set_layout_grid, &m_icon_descriptor_set)) {
+    Logging::error(LOG_TAG, "Could not allocate a descriptor set!");
+    return false;
+  }
+  for (const auto& [descriptor_set, texture] :
+       {std::pair{m_font_descriptor_set, &m_font_texture},
+        std::pair{m_icon_descriptor_set, &m_icon_texture}}) {
+    vc::writeUniformBufferDescriptor(
+        getVkDevice(), descriptor_set, 0, m_uniform_buffer_grid);
+    vc::writeImageDescriptor(getVkDevice(), descriptor_set, 1, *texture);
+  }
+
+  VkRenderPass render_pass = VK_NULL_HANDLE;
+  if (!m_resources.createRenderPass(
+          {.m_color_format = getSwapchainParameters().getVkFormat()},
+          &render_pass) ||
+      !m_resources.createPipelineLayout(
+          {set_layout_3d},
+          {{VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Tutorial19PushConstants)}},
+          &m_pipeline_layout_3d) ||
+      !m_resources.createPipelineLayout(
+          {set_layout_grid}, {}, &m_pipeline_layout_grid)) {
+    Logging::error(LOG_TAG, "Could not create the render pass!");
+    return false;
+  }
+
+  // 3D pipeline: the three projectile meshes, no depth buffer (three
+  // separate, non-overlapping static meshes). Culling is NONE: these
+  // hand-authored assets' winding order hasn't been verified against this
+  // project's usual CCW convention, same reasoning Tutorial13/16 use.
+  if (!m_resources.createGraphicsPipeline(
+          {.m_vertex_shader = "shader.19_3d.vert.spv",
+           .m_fragment_shader = "shader.19_3d.frag.spv",
+           .m_vertex_stride = sizeof(Tutorial19Vertex3DData),
+           .m_vertex_attributes =
+               {{0,
+                 0,
+                 VK_FORMAT_R32G32B32A32_SFLOAT,
+                 offsetof(Tutorial19Vertex3DData, m_position)},
+                {1,
+                 0,
+                 VK_FORMAT_R32G32_SFLOAT,
+                 offsetof(Tutorial19Vertex3DData, m_texcoord)}},
+           .m_layout = m_pipeline_layout_3d,
+           .m_render_pass = render_pass},
+          &m_pipeline_3d) ||
+      // Grid pipeline: the 2D weapon inventory grid, alpha-blended.
+      !m_resources.createGraphicsPipeline(
+          {.m_vertex_shader = "shader.19_grid.vert.spv",
+           .m_fragment_shader = "shader.19_grid.frag.spv",
+           .m_vertex_stride = sizeof(Tutorial19VertexGridData),
+           .m_vertex_attributes =
+               {{0,
+                 0,
+                 VK_FORMAT_R32G32B32A32_SFLOAT,
+                 offsetof(Tutorial19VertexGridData, m_position)},
+                {1,
+                 0,
+                 VK_FORMAT_R32G32_SFLOAT,
+                 offsetof(Tutorial19VertexGridData, m_texcoord)},
+                {2,
+                 0,
+                 VK_FORMAT_R32G32B32A32_SFLOAT,
+                 offsetof(Tutorial19VertexGridData, m_color)}},
+           .m_blend = vc::alphaBlend(),
+           .m_layout = m_pipeline_layout_grid,
+           .m_render_pass = render_pass},
+          &m_pipeline_grid)) {
+    Logging::error(LOG_TAG, "Could not create the pipelines!");
+    return false;
+  }
+
+  if (!m_resources.createHostVisibleBuffer(
+          static_cast<std::uint32_t>(
+              c_max_grid_vertex_count * sizeof(Tutorial19VertexGridData)),
+          VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+          m_grid_vertex_buffer) ||
+      !updateGridVertexBufferData()) {
+    Logging::error(LOG_TAG, "Could not create the grid vertex buffer!");
+    return false;
+  }
+
+  if (!m_frames.create(*this, render_pass)) {
+    Logging::error(LOG_TAG, "Could not create the frame resources!");
+    return false;
   }
   return true;
 }
@@ -583,7 +284,8 @@ bool Tutorial19::createIconAtlas() {
       weapons = getWeaponDisplayData();
   for (std::size_t index = 0; index < weapons.size(); ++index) {
     if (!atlas.setTileFromRawFile(index, weapons[index].m_image_file)) {
-      Logging::error(LOG_TAG,
+      Logging::error(
+          LOG_TAG,
           "Could not load icon \"",
           weapons[index].m_image_file,
           "\"!");
@@ -591,25 +293,12 @@ bool Tutorial19::createIconAtlas() {
     }
   }
 
-  return createTextureFromPixels(atlas.width(),
+  return m_resources.createTexture(
+      atlas.width(),
       atlas.height(),
       atlas.pixels(),
-      m_vulkan_tutorial19_parameters.getIconImageParameters());
-}
-
-bool Tutorial19::createFontAtlas() {
-  if (!m_font.load(c_font_path, c_font_pixel_height)) {
-    Logging::error(LOG_TAG,
-        "Could not load font \"",
-        c_font_path,
-        "\" - is the fonts-dejavu-core package installed?");
-    return false;
-  }
-
-  return createTextureFromPixels(m_font.atlasWidth(),
-      m_font.atlasHeight(),
-      m_font.atlasPixels(),
-      m_vulkan_tutorial19_parameters.getFontImageParameters());
+      VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+      m_icon_texture);
 }
 
 Tutorial19UniformBufferData3D Tutorial19::get3DUniformBufferData() const {
@@ -626,28 +315,6 @@ Tutorial19UniformBufferData3D Tutorial19::get3DUniformBufferData() const {
   return data;
 }
 
-bool Tutorial19::update3DUniformBufferData() {
-  const Tutorial19UniformBufferData3D uniform_data = get3DUniformBufferData();
-  BufferParameters& uniform_buffer =
-      m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters();
-
-  void* uniform_buffer_memory_pointer;
-  if (vkMapMemory(getVkDevice(),
-          uniform_buffer.getVkDeviceMemory(),
-          0,
-          VK_WHOLE_SIZE,
-          0,
-          &uniform_buffer_memory_pointer) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not map uniform buffer memory!");
-    return false;
-  }
-  std::memcpy(
-      uniform_buffer_memory_pointer, &uniform_data, uniform_buffer.getSize());
-  vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
-
-  return true;
-}
-
 Math::Mat4<float> Tutorial19::getGridUniformBufferData() const {
   const float width =
       static_cast<float>(getSwapchainParameters().getVkExtent2d().width);
@@ -657,785 +324,10 @@ Math::Mat4<float> Tutorial19::getGridUniformBufferData() const {
       0.0f, width, 0.0f, height, -1.0f, 1.0f);
 }
 
-bool Tutorial19::updateGridUniformBufferData() {
-  const Math::Mat4<float> uniform_data = getGridUniformBufferData();
-  BufferParameters& uniform_buffer =
-      m_vulkan_tutorial19_parameters.getUniformBufferGridParameters();
-
-  void* uniform_buffer_memory_pointer;
-  if (vkMapMemory(getVkDevice(),
-          uniform_buffer.getVkDeviceMemory(),
-          0,
-          VK_WHOLE_SIZE,
-          0,
-          &uniform_buffer_memory_pointer) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not map uniform buffer memory!");
-    return false;
-  }
-  std::memcpy(
-      uniform_buffer_memory_pointer, &uniform_data, uniform_buffer.getSize());
-  vkUnmapMemory(getVkDevice(), uniform_buffer.getVkDeviceMemory());
-
-  return true;
-}
-
-bool Tutorial19::createUniformBuffers() {
-  BufferParameters& uniform_buffer_3d =
-      m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters();
-  uniform_buffer_3d.setSize(sizeof(Tutorial19UniformBufferData3D));
-  if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-              VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-          uniform_buffer_3d)) {
-    Logging::error(LOG_TAG, "Could not create 3D uniform buffer!");
-    return false;
-  }
-  if (!update3DUniformBufferData()) {
-    return false;
-  }
-
-  BufferParameters& uniform_buffer_grid =
-      m_vulkan_tutorial19_parameters.getUniformBufferGridParameters();
-  uniform_buffer_grid.setSize(sizeof(Math::Mat4<float>));
-  if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-              VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-          uniform_buffer_grid)) {
-    Logging::error(LOG_TAG, "Could not create grid uniform buffer!");
-    return false;
-  }
-  return updateGridUniformBufferData();
-}
-
-bool Tutorial19::createDescriptorSetLayouts() {
-  // 3D layout matches Tutorial16's shaders exactly.
-  std::vector<VkDescriptorSetLayoutBinding> layout_bindings_3d = {
-      {.binding = 0,
-          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .pImmutableSamplers = nullptr},
-      {.binding = 1,
-          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-          .pImmutableSamplers = nullptr}};
-  VkDescriptorSetLayoutCreateInfo layout_create_info_3d = {
-      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .bindingCount = static_cast<std::uint32_t>(layout_bindings_3d.size()),
-      .pBindings = layout_bindings_3d.data()};
-  VkDescriptorSetLayout vk_3d_layout;
-  if (vkCreateDescriptorSetLayout(
-          getVkDevice(), &layout_create_info_3d, nullptr, &vk_3d_layout) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create 3D descriptor set layout!");
-    return false;
-  }
-  m_vulkan_tutorial19_parameters.setVk3DDescriptorSetLayout(vk_3d_layout);
-
-  // Grid layout matches Tutorial15/17's shaders exactly.
-  std::vector<VkDescriptorSetLayoutBinding> layout_bindings_grid = {
-      {.binding = 0,
-          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-          .pImmutableSamplers = nullptr},
-      {.binding = 1,
-          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .pImmutableSamplers = nullptr}};
-  VkDescriptorSetLayoutCreateInfo layout_create_info_grid = {
-      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .bindingCount = static_cast<std::uint32_t>(layout_bindings_grid.size()),
-      .pBindings = layout_bindings_grid.data()};
-  VkDescriptorSetLayout vk_grid_layout;
-  if (vkCreateDescriptorSetLayout(
-          getVkDevice(), &layout_create_info_grid, nullptr, &vk_grid_layout) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create grid descriptor set layout!");
-    return false;
-  }
-  m_vulkan_tutorial19_parameters.setVkGridDescriptorSetLayout(vk_grid_layout);
-
-  return true;
-}
-
-bool Tutorial19::createDescriptorPool() {
-  // 3 sets for the 3D pass (one per projectile) + 2 sets for the grid
-  // pass (font, icon) = 5 sets total, each with one sampler and one
-  // uniform buffer.
-  std::vector<VkDescriptorPoolSize> pool_sizes = {
-      {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 5},
-      {.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .descriptorCount = 5}};
-
-  VkDescriptorPoolCreateInfo descriptor_pool_create_info = {
-      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .maxSets = 5,
-      .poolSizeCount = static_cast<std::uint32_t>(pool_sizes.size()),
-      .pPoolSizes = pool_sizes.data()};
-
-  VkDescriptorPool vk_descriptor_pool;
-  if (vkCreateDescriptorPool(getVkDevice(),
-          &descriptor_pool_create_info,
-          nullptr,
-          &vk_descriptor_pool) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create descriptor pool!");
-    return false;
-  }
-  m_vulkan_tutorial19_parameters.setVkDescriptorPool(vk_descriptor_pool);
-
-  return true;
-}
-
-bool Tutorial19::allocateDescriptorSets() {
-  VkDescriptorSetLayout vk_3d_layout =
-      m_vulkan_tutorial19_parameters.getVk3DDescriptorSetLayout();
-  std::array<VkDescriptorSet, c_projectile_mesh_count>& sets_3d =
-      m_vulkan_tutorial19_parameters.get3DVkDescriptorSets();
-  for (std::size_t i = 0; i < sets_3d.size(); ++i) {
-    VkDescriptorSetAllocateInfo allocate_info = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        .pNext = nullptr,
-        .descriptorPool = m_vulkan_tutorial19_parameters.getVkDescriptorPool(),
-        .descriptorSetCount = 1,
-        .pSetLayouts = &vk_3d_layout};
-    if (vkAllocateDescriptorSets(getVkDevice(), &allocate_info, &sets_3d[i]) !=
-        VK_SUCCESS) {
-      Logging::error(LOG_TAG, "Could not allocate 3D descriptor set!");
-      return false;
-    }
-  }
-
-  VkDescriptorSetLayout vk_grid_layout =
-      m_vulkan_tutorial19_parameters.getVkGridDescriptorSetLayout();
-  VkDescriptorSetAllocateInfo allocate_info_font = {
-      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-      .pNext = nullptr,
-      .descriptorPool = m_vulkan_tutorial19_parameters.getVkDescriptorPool(),
-      .descriptorSetCount = 1,
-      .pSetLayouts = &vk_grid_layout};
-  VkDescriptorSet vk_font_set;
-  if (vkAllocateDescriptorSets(
-          getVkDevice(), &allocate_info_font, &vk_font_set) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not allocate font descriptor set!");
-    return false;
-  }
-  m_vulkan_tutorial19_parameters.setFontVkDescriptorSet(vk_font_set);
-
-  VkDescriptorSetAllocateInfo allocate_info_icon = {
-      .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-      .pNext = nullptr,
-      .descriptorPool = m_vulkan_tutorial19_parameters.getVkDescriptorPool(),
-      .descriptorSetCount = 1,
-      .pSetLayouts = &vk_grid_layout};
-  VkDescriptorSet vk_icon_set;
-  if (vkAllocateDescriptorSets(
-          getVkDevice(), &allocate_info_icon, &vk_icon_set) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not allocate icon descriptor set!");
-    return false;
-  }
-  m_vulkan_tutorial19_parameters.setIconVkDescriptorSet(vk_icon_set);
-
-  return true;
-}
-
-bool Tutorial19::updateDescriptorSets() {
-  BufferParameters& uniform_buffer_3d =
-      m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters();
-  VkDescriptorBufferInfo buffer_info_3d = {
-      .buffer = uniform_buffer_3d.getVkBuffer(),
-      .offset = 0,
-      .range = uniform_buffer_3d.getSize()};
-
-  std::array<ImageParameters, c_projectile_mesh_count>& projectile_images =
-      m_vulkan_tutorial19_parameters.getProjectileImageParameters();
-  std::array<VkDescriptorSet, c_projectile_mesh_count>& sets_3d =
-      m_vulkan_tutorial19_parameters.get3DVkDescriptorSets();
-
-  std::array<VkDescriptorImageInfo, c_projectile_mesh_count> image_infos_3d{};
-  std::vector<VkWriteDescriptorSet> descriptor_writes;
-  for (std::size_t i = 0; i < c_projectile_mesh_count; ++i) {
-    image_infos_3d[i] = {.sampler = projectile_images[i].getVkSampler(),
-        .imageView = projectile_images[i].getVkImageView(),
-        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-    descriptor_writes.push_back(
-        {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = nullptr,
-            .dstSet = sets_3d[i],
-            .dstBinding = 0,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .pImageInfo = &image_infos_3d[i],
-            .pBufferInfo = nullptr,
-            .pTexelBufferView = nullptr});
-    descriptor_writes.push_back(
-        {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = nullptr,
-            .dstSet = sets_3d[i],
-            .dstBinding = 1,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .pImageInfo = nullptr,
-            .pBufferInfo = &buffer_info_3d,
-            .pTexelBufferView = nullptr});
-  }
-
-  BufferParameters& uniform_buffer_grid =
-      m_vulkan_tutorial19_parameters.getUniformBufferGridParameters();
-  VkDescriptorBufferInfo buffer_info_grid = {
-      .buffer = uniform_buffer_grid.getVkBuffer(),
-      .offset = 0,
-      .range = uniform_buffer_grid.getSize()};
-
-  ImageParameters& font_image =
-      m_vulkan_tutorial19_parameters.getFontImageParameters();
-  VkDescriptorImageInfo font_image_info = {
-      .sampler = font_image.getVkSampler(),
-      .imageView = font_image.getVkImageView(),
-      .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-
-  ImageParameters& icon_image =
-      m_vulkan_tutorial19_parameters.getIconImageParameters();
-  VkDescriptorImageInfo icon_image_info = {
-      .sampler = icon_image.getVkSampler(),
-      .imageView = icon_image.getVkImageView(),
-      .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
-
-  descriptor_writes.push_back({.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-      .pNext = nullptr,
-      .dstSet = m_vulkan_tutorial19_parameters.getFontVkDescriptorSet(),
-      .dstBinding = 0,
-      .dstArrayElement = 0,
-      .descriptorCount = 1,
-      .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-      .pImageInfo = nullptr,
-      .pBufferInfo = &buffer_info_grid,
-      .pTexelBufferView = nullptr});
-  descriptor_writes.push_back({.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-      .pNext = nullptr,
-      .dstSet = m_vulkan_tutorial19_parameters.getFontVkDescriptorSet(),
-      .dstBinding = 1,
-      .dstArrayElement = 0,
-      .descriptorCount = 1,
-      .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-      .pImageInfo = &font_image_info,
-      .pBufferInfo = nullptr,
-      .pTexelBufferView = nullptr});
-  descriptor_writes.push_back({.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-      .pNext = nullptr,
-      .dstSet = m_vulkan_tutorial19_parameters.getIconVkDescriptorSet(),
-      .dstBinding = 0,
-      .dstArrayElement = 0,
-      .descriptorCount = 1,
-      .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-      .pImageInfo = nullptr,
-      .pBufferInfo = &buffer_info_grid,
-      .pTexelBufferView = nullptr});
-  descriptor_writes.push_back({.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-      .pNext = nullptr,
-      .dstSet = m_vulkan_tutorial19_parameters.getIconVkDescriptorSet(),
-      .dstBinding = 1,
-      .dstArrayElement = 0,
-      .descriptorCount = 1,
-      .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-      .pImageInfo = &icon_image_info,
-      .pBufferInfo = nullptr,
-      .pTexelBufferView = nullptr});
-
-  vkUpdateDescriptorSets(getVkDevice(),
-      static_cast<std::uint32_t>(descriptor_writes.size()),
-      descriptor_writes.data(),
-      0,
-      nullptr);
-  return true;
-}
-
-bool Tutorial19::createRenderPass() {
-  VkAttachmentDescription attachment_descriptions[] = {{.flags = 0,
-      .format = getSwapchainParameters().getVkFormat(),
-      .samples = VK_SAMPLE_COUNT_1_BIT,
-      .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-      .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-      .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-      .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-      .initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-      .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
-
-  VkAttachmentReference color_attachment_references[] = {
-      {.attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
-
-  VkSubpassDescription subpass_descriptions[] = {{.flags = 0,
-      .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-      .inputAttachmentCount = 0,
-      .pInputAttachments = nullptr,
-      .colorAttachmentCount = 1,
-      .pColorAttachments = color_attachment_references,
-      .pResolveAttachments = nullptr,
-      .pDepthStencilAttachment = nullptr,
-      .preserveAttachmentCount = 0,
-      .pPreserveAttachments = nullptr}};
-
-  VkRenderPassCreateInfo render_pass_create_info = {
-      .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .attachmentCount = 1,
-      .pAttachments = attachment_descriptions,
-      .subpassCount = 1,
-      .pSubpasses = subpass_descriptions,
-      .dependencyCount = 0,
-      .pDependencies = nullptr};
-
-  if (vkCreateRenderPass(getVkDevice(),
-          &render_pass_create_info,
-          nullptr,
-          &m_vulkan_tutorial19_parameters.getVkRenderPass()) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create render pass!");
-    return false;
-  }
-
-  return true;
-}
-
-bool Tutorial19::createPipelineLayouts() {
-  VkDescriptorSetLayout vk_3d_layout =
-      m_vulkan_tutorial19_parameters.getVk3DDescriptorSetLayout();
-  VkPushConstantRange push_constant_range = {
-      .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-      .offset = 0,
-      .size = sizeof(Tutorial19PushConstants)};
-  VkPipelineLayoutCreateInfo layout_create_info_3d = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .setLayoutCount = 1,
-      .pSetLayouts = &vk_3d_layout,
-      .pushConstantRangeCount = 1,
-      .pPushConstantRanges = &push_constant_range};
-  if (vkCreatePipelineLayout(getVkDevice(),
-          &layout_create_info_3d,
-          nullptr,
-          &m_vulkan_tutorial19_parameters.getVk3DPipelineLayout()) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create 3D pipeline layout!");
-    return false;
-  }
-
-  VkDescriptorSetLayout vk_grid_layout =
-      m_vulkan_tutorial19_parameters.getVkGridDescriptorSetLayout();
-  VkPipelineLayoutCreateInfo layout_create_info_grid = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .setLayoutCount = 1,
-      .pSetLayouts = &vk_grid_layout,
-      .pushConstantRangeCount = 0,
-      .pPushConstantRanges = nullptr};
-  if (vkCreatePipelineLayout(getVkDevice(),
-          &layout_create_info_grid,
-          nullptr,
-          &m_vulkan_tutorial19_parameters.getVkGridPipelineLayout()) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create grid pipeline layout!");
-    return false;
-  }
-
-  return true;
-}
-
-Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-Tutorial19::createShaderModule(const char* filename) {
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule> module =
-      VulkanCommon::createShaderModule(getVkDevice(), filename);
-  if (!module) {
-    Logging::error(LOG_TAG,
-        "Could not create shader module from a \"",
-        filename,
-        "\" file!");
-  }
-  return module;
-}
-
-bool Tutorial19::createPipelines() {
-  // --- 3D pipeline (three projectile meshes) ---
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-      vertex_shader_module_3d = createShaderModule("shader.19_3d.vert.spv");
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-      fragment_shader_module_3d = createShaderModule("shader.19_3d.frag.spv");
-  if (!vertex_shader_module_3d || !fragment_shader_module_3d) {
-    return false;
-  }
-
-  std::vector<VkPipelineShaderStageCreateInfo> shader_stages_3d = {
-      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_VERTEX_BIT,
-          .module = vertex_shader_module_3d.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr},
-      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .module = fragment_shader_module_3d.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr}};
-
-  std::vector<VkVertexInputBindingDescription> vertex_bindings_3d = {
-      {.binding = 0,
-          .stride = Tutorial19Vertex3DAttributeTraits::stride,
-          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
-  std::vector<VkVertexInputAttributeDescription> vertex_attributes_3d = {
-      {.location = 0,
-          .binding = 0,
-          .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-          .offset = offsetof(struct Tutorial19Vertex3DData, m_position)},
-      {.location = 1,
-          .binding = 0,
-          .format = VK_FORMAT_R32G32_SFLOAT,
-          .offset = offsetof(struct Tutorial19Vertex3DData, m_texcoord)}};
-  VkPipelineVertexInputStateCreateInfo vertex_input_state_3d = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .vertexBindingDescriptionCount =
-          static_cast<std::uint32_t>(vertex_bindings_3d.size()),
-      .pVertexBindingDescriptions = vertex_bindings_3d.data(),
-      .vertexAttributeDescriptionCount =
-          static_cast<std::uint32_t>(vertex_attributes_3d.size()),
-      .pVertexAttributeDescriptions = vertex_attributes_3d.data()};
-
-  VkPipelineInputAssemblyStateCreateInfo input_assembly_3d = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-      .primitiveRestartEnable = VK_FALSE};
-
-  VkPipelineViewportStateCreateInfo viewport_state = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .viewportCount = 1,
-      .pViewports = nullptr,
-      .scissorCount = 1,
-      .pScissors = nullptr};
-
-  VkPipelineRasterizationStateCreateInfo rasterization_3d = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .depthClampEnable = VK_FALSE,
-      .rasterizerDiscardEnable = VK_FALSE,
-      .polygonMode = VK_POLYGON_MODE_FILL,
-      // NONE: these hand-authored assets' winding order hasn't
-      // been verified against this project's usual CCW
-      // convention, same reasoning Tutorial13/16 use.
-      .cullMode = VK_CULL_MODE_NONE,
-      .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
-      .depthBiasEnable = VK_FALSE,
-      .depthBiasConstantFactor = 0.0f,
-      .depthBiasClamp = 0.0f,
-      .depthBiasSlopeFactor = 0.0f,
-      .lineWidth = 1.0f};
-
-  VkPipelineMultisampleStateCreateInfo multisample_state = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
-      .sampleShadingEnable = VK_FALSE,
-      .minSampleShading = 1.0f,
-      .pSampleMask = nullptr,
-      .alphaToCoverageEnable = VK_FALSE,
-      .alphaToOneEnable = VK_FALSE};
-
-  VkPipelineColorBlendAttachmentState color_blend_attachment_3d = {
-      .blendEnable = VK_FALSE,
-      .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
-      .dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
-      .colorBlendOp = VK_BLEND_OP_ADD,
-      .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
-      .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-      .alphaBlendOp = VK_BLEND_OP_ADD,
-      .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-          VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
-  VkPipelineColorBlendStateCreateInfo color_blend_state_3d = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .logicOpEnable = VK_FALSE,
-      .logicOp = VK_LOGIC_OP_COPY,
-      .attachmentCount = 1,
-      .pAttachments = &color_blend_attachment_3d,
-      .blendConstants = {0.0f, 0.0f, 0.0f, 0.0f}};
-
-  std::vector<VkDynamicState> dynamic_states = {
-      VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
-  VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .dynamicStateCount = static_cast<std::uint32_t>(dynamic_states.size()),
-      .pDynamicStates = dynamic_states.data()};
-
-  VkGraphicsPipelineCreateInfo pipeline_create_info_3d = {
-      .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .stageCount = static_cast<std::uint32_t>(shader_stages_3d.size()),
-      .pStages = shader_stages_3d.data(),
-      .pVertexInputState = &vertex_input_state_3d,
-      .pInputAssemblyState = &input_assembly_3d,
-      .pTessellationState = nullptr,
-      .pViewportState = &viewport_state,
-      .pRasterizationState = &rasterization_3d,
-      .pMultisampleState = &multisample_state,
-      .pDepthStencilState = nullptr,
-      .pColorBlendState = &color_blend_state_3d,
-      .pDynamicState = &dynamic_state_create_info,
-      .layout = m_vulkan_tutorial19_parameters.getVk3DPipelineLayout(),
-      .renderPass = m_vulkan_tutorial19_parameters.getVkRenderPass(),
-      .subpass = 0,
-      .basePipelineHandle = VK_NULL_HANDLE,
-      .basePipelineIndex = -1};
-  if (vkCreateGraphicsPipelines(getVkDevice(),
-          VK_NULL_HANDLE,
-          1,
-          &pipeline_create_info_3d,
-          nullptr,
-          &m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline()) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create 3D graphics pipeline!");
-    return false;
-  }
-
-  // --- Grid pipeline (2D weapon inventory grid) ---
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-      vertex_shader_module_grid =
-          createShaderModule("shader.19_grid.vert.spv");
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-      fragment_shader_module_grid =
-          createShaderModule("shader.19_grid.frag.spv");
-  if (!vertex_shader_module_grid || !fragment_shader_module_grid) {
-    return false;
-  }
-
-  std::vector<VkPipelineShaderStageCreateInfo> shader_stages_grid = {
-      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_VERTEX_BIT,
-          .module = vertex_shader_module_grid.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr},
-      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .module = fragment_shader_module_grid.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr}};
-
-  std::vector<VkVertexInputBindingDescription> vertex_bindings_grid = {
-      {.binding = 0,
-          .stride = Tutorial19VertexGridAttributeTraits::stride,
-          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
-  std::vector<VkVertexInputAttributeDescription> vertex_attributes_grid = {
-      {.location = 0,
-          .binding = 0,
-          .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-          .offset = offsetof(struct Tutorial19VertexGridData, m_position)},
-      {.location = 1,
-          .binding = 0,
-          .format = VK_FORMAT_R32G32_SFLOAT,
-          .offset = offsetof(struct Tutorial19VertexGridData, m_texcoord)},
-      {.location = 2,
-          .binding = 0,
-          .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-          .offset = offsetof(struct Tutorial19VertexGridData, m_color)}};
-  VkPipelineVertexInputStateCreateInfo vertex_input_state_grid = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .vertexBindingDescriptionCount =
-          static_cast<std::uint32_t>(vertex_bindings_grid.size()),
-      .pVertexBindingDescriptions = vertex_bindings_grid.data(),
-      .vertexAttributeDescriptionCount =
-          static_cast<std::uint32_t>(vertex_attributes_grid.size()),
-      .pVertexAttributeDescriptions = vertex_attributes_grid.data()};
-
-  VkPipelineInputAssemblyStateCreateInfo input_assembly_grid = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-      .primitiveRestartEnable = VK_FALSE};
-
-  VkPipelineRasterizationStateCreateInfo rasterization_grid = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .depthClampEnable = VK_FALSE,
-      .rasterizerDiscardEnable = VK_FALSE,
-      .polygonMode = VK_POLYGON_MODE_FILL,
-      .cullMode = VK_CULL_MODE_NONE,
-      .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
-      .depthBiasEnable = VK_FALSE,
-      .depthBiasConstantFactor = 0.0f,
-      .depthBiasClamp = 0.0f,
-      .depthBiasSlopeFactor = 0.0f,
-      .lineWidth = 1.0f};
-
-  VkPipelineColorBlendAttachmentState color_blend_attachment_grid = {
-      .blendEnable = VK_TRUE,
-      .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
-      .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-      .colorBlendOp = VK_BLEND_OP_ADD,
-      .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
-      .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-      .alphaBlendOp = VK_BLEND_OP_ADD,
-      .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-          VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
-  VkPipelineColorBlendStateCreateInfo color_blend_state_grid = {
-      .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .logicOpEnable = VK_FALSE,
-      .logicOp = VK_LOGIC_OP_COPY,
-      .attachmentCount = 1,
-      .pAttachments = &color_blend_attachment_grid,
-      .blendConstants = {0.0f, 0.0f, 0.0f, 0.0f}};
-
-  VkGraphicsPipelineCreateInfo pipeline_create_info_grid = {
-      .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .stageCount = static_cast<std::uint32_t>(shader_stages_grid.size()),
-      .pStages = shader_stages_grid.data(),
-      .pVertexInputState = &vertex_input_state_grid,
-      .pInputAssemblyState = &input_assembly_grid,
-      .pTessellationState = nullptr,
-      .pViewportState = &viewport_state,
-      .pRasterizationState = &rasterization_grid,
-      .pMultisampleState = &multisample_state,
-      .pDepthStencilState = nullptr,
-      .pColorBlendState = &color_blend_state_grid,
-      .pDynamicState = &dynamic_state_create_info,
-      .layout = m_vulkan_tutorial19_parameters.getVkGridPipelineLayout(),
-      .renderPass = m_vulkan_tutorial19_parameters.getVkRenderPass(),
-      .subpass = 0,
-      .basePipelineHandle = VK_NULL_HANDLE,
-      .basePipelineIndex = -1};
-  if (vkCreateGraphicsPipelines(getVkDevice(),
-          VK_NULL_HANDLE,
-          1,
-          &pipeline_create_info_grid,
-          nullptr,
-          &m_vulkan_tutorial19_parameters.getVkGridGraphicsPipeline()) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create grid graphics pipeline!");
-    return false;
-  }
-
-  return true;
-}
-
-std::vector<Tutorial19Vertex3DData> Tutorial19::loadMeshVertexData(
-    const char* mesh_filename) const {
-  const std::vector<Tools::OglVertexData> mesh_data =
-      Tools::loadOglMeshData(mesh_filename);
-  std::vector<Tutorial19Vertex3DData> vertex_data;
-  vertex_data.reserve(mesh_data.size());
-  for (const Tools::OglVertexData& vertex : mesh_data) {
-    vertex_data.push_back(
-        {Math::Vec4<float>(vertex.m_position, 1.0f), vertex.m_texcoord});
-  }
-  return vertex_data;
-}
-
-bool Tutorial19::createProjectileVertexBuffers() {
-  const std::array<ProjectileMeshInfo, c_projectile_mesh_count>& mesh_info =
-      getProjectileMeshInfo();
-  std::array<BufferParameters, c_projectile_mesh_count>& vertex_buffers =
-      m_vulkan_tutorial19_parameters.getProjectileVertexBufferParameters();
-  std::array<std::uint32_t, c_projectile_mesh_count>& vertex_counts =
-      m_vulkan_tutorial19_parameters.getProjectileVertexCounts();
-
-  for (std::size_t i = 0; i < mesh_info.size(); ++i) {
-    const std::vector<Tutorial19Vertex3DData> vertex_data =
-        loadMeshVertexData(mesh_info[i].m_mesh_file);
-    if (vertex_data.empty()) {
-      Logging::error(LOG_TAG,
-          "Could not load mesh data from \"",
-          mesh_info[i].m_mesh_file,
-          "\"!");
-      return false;
-    }
-    vertex_counts[i] = static_cast<std::uint32_t>(vertex_data.size());
-
-    vertex_buffers[i].setSize(static_cast<std::uint32_t>(
-        vertex_data.size() * sizeof(vertex_data[0])));
-    if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
-                VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            vertex_buffers[i])) {
-      Logging::error(LOG_TAG, "Could not create vertex buffer!");
-      return false;
-    }
-
-    if (!copyBufferData(vertex_buffers[i],
-            vertex_data.data(),
-            vertex_buffers[i].getSize(),
-            VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-            VK_PIPELINE_STAGE_VERTEX_INPUT_BIT)) {
-      Logging::error(LOG_TAG, "Could not upload vertex buffer data!");
-      return false;
-    }
-  }
-
-  return true;
-}
-
-bool Tutorial19::copyBufferData(BufferParameters& destination,
-    const void* data,
-    std::uint32_t data_size,
-    VkAccessFlags dst_access_mask,
-    VkPipelineStageFlags dst_stage_mask) {
-  BufferParameters& staging_buffer =
-      m_vulkan_tutorial19_parameters.getStagingBufferParameters();
-
-  if (!VulkanCommon::StagedUploader(getVkDevice(),
-          getGraphicsQueueParameters().getVkQueue(),
-          m_vulkan_tutorial19_parameters.getRenderingResources()[0]
-              .getVkCommandBuffer())
-          .uploadToBuffer(staging_buffer,
-              destination,
-              data,
-              data_size,
-              dst_access_mask,
-              dst_stage_mask)) {
-    Logging::error(LOG_TAG, "Could not upload buffer data!");
-    return false;
-  }
-
-  return true;
-}
-
 UiGeometry::GridLayout Tutorial19::getGridLayout() const {
   constexpr float c_cell_gap = 8.0f;
-  return {getGridTopLeft(),
+  return {
+      getGridTopLeft(),
       getGridSize(),
       c_icon_atlas_cols,
       c_icon_atlas_rows,
@@ -1497,7 +389,8 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
 
   const Math::Vec4<float> text_color(0.05f, 0.05f, 0.05f, 1.0f);
   const std::string title = "Tutorial 19 - Weapons";
-  UiGeometry::appendText(vertex_data,
+  UiGeometry::appendText(
+      vertex_data,
       m_font,
       title,
       Math::Vec2<float>(panel_top_left.x + 16.0f, panel_top_left.y + 16.0f),
@@ -1517,7 +410,8 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
           Math::Vec2<float>(
               cell_top_left.x + cell_size.x, cell_top_left.y + cell_size.y),
           Math::Vec2<float>(cell_top_left.x + cell_size.x, cell_top_left.y)};
-      UiGeometry::appendColoredQuad(vertex_data,
+      UiGeometry::appendColoredQuad(
+          vertex_data,
           highlight_corners,
           highlight_color,
           m_font.solidTexelUv());
@@ -1525,7 +419,8 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
 
     const std::string label = "$" + std::to_string(weapons[index].m_price);
     const float label_width = m_font.textWidth(label);
-    UiGeometry::appendText(vertex_data,
+    UiGeometry::appendText(
+        vertex_data,
         m_font,
         label,
         Math::Vec2<float>(
@@ -1539,10 +434,12 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildTextPassVertexData()
   const std::vector<std::string> description_lines =
       wrapText(weapons[m_selected_index].m_description, max_description_width);
   for (std::size_t line = 0; line < description_lines.size(); ++line) {
-    UiGeometry::appendText(vertex_data,
+    UiGeometry::appendText(
+        vertex_data,
         m_font,
         description_lines[line],
-        Math::Vec2<float>(panel_top_left.x + 16.0f,
+        Math::Vec2<float>(
+            panel_top_left.x + 16.0f,
             description_top + static_cast<float>(line) * m_font.lineHeight()),
         text_color);
   }
@@ -1562,7 +459,8 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildIconPassVertexData()
     const Math::Vec2<float> icon_top_left(
         cell_top_left.x + cell_size.x * 0.5f - icon_size * 0.5f,
         cell_top_left.y + 4.0f);
-    UiGeometry::appendImageQuad(vertex_data,
+    UiGeometry::appendImageQuad(
+        vertex_data,
         icon_top_left,
         Math::Vec2<float>(icon_size, icon_size),
         ImageAtlas::tileUv(index, c_icon_atlas_cols, c_icon_atlas_rows).m_min,
@@ -1573,604 +471,150 @@ std::vector<Tutorial19VertexGridData> Tutorial19::buildIconPassVertexData()
 }
 
 bool Tutorial19::updateGridVertexBufferData() {
-  const std::vector<Tutorial19VertexGridData> text_vertex_data =
+  std::vector<Tutorial19VertexGridData> vertex_data =
       buildTextPassVertexData();
   const std::vector<Tutorial19VertexGridData> icon_vertex_data =
       buildIconPassVertexData();
-
-  if (text_vertex_data.size() + icon_vertex_data.size() >
-      c_max_grid_vertex_count) {
-    Logging::error(LOG_TAG,
+  if (vertex_data.size() + icon_vertex_data.size() > c_max_grid_vertex_count) {
+    Logging::error(
+        LOG_TAG,
         "Weapon grid vertex data (",
-        text_vertex_data.size() + icon_vertex_data.size(),
+        vertex_data.size() + icon_vertex_data.size(),
         " vertices) exceeds c_max_grid_vertex_count (",
         c_max_grid_vertex_count,
         ")!");
     return false;
   }
-  m_vulkan_tutorial19_parameters.setTextVertexCount(
-      static_cast<std::uint32_t>(text_vertex_data.size()));
-  m_vulkan_tutorial19_parameters.setIconVertexCount(
-      static_cast<std::uint32_t>(icon_vertex_data.size()));
-
-  BufferParameters& vertex_buffer =
-      m_vulkan_tutorial19_parameters.getGridVertexBufferParameters();
-  void* vertex_buffer_memory_pointer;
-  if (vkMapMemory(getVkDevice(),
-          vertex_buffer.getVkDeviceMemory(),
-          0,
-          VK_WHOLE_SIZE,
-          0,
-          &vertex_buffer_memory_pointer) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not map grid vertex buffer memory!");
-    return false;
-  }
-  char* dest = static_cast<char*>(vertex_buffer_memory_pointer);
-  if (!text_vertex_data.empty()) {
-    std::memcpy(dest,
-        text_vertex_data.data(),
-        text_vertex_data.size() * sizeof(Tutorial19VertexGridData));
-    dest += text_vertex_data.size() * sizeof(Tutorial19VertexGridData);
-  }
-  if (!icon_vertex_data.empty()) {
-    std::memcpy(dest,
-        icon_vertex_data.data(),
-        icon_vertex_data.size() * sizeof(Tutorial19VertexGridData));
-  }
-  vkUnmapMemory(getVkDevice(), vertex_buffer.getVkDeviceMemory());
-
-  return true;
-}
-
-bool Tutorial19::createGridVertexBuffer() {
-  BufferParameters& vertex_buffer =
-      m_vulkan_tutorial19_parameters.getGridVertexBufferParameters();
-  vertex_buffer.setSize(static_cast<std::uint32_t>(
-      c_max_grid_vertex_count * sizeof(Tutorial19VertexGridData)));
-  if (!createBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-              VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-          vertex_buffer)) {
-    Logging::error(LOG_TAG, "Could not create grid vertex buffer!");
-    return false;
-  }
-
-  return updateGridVertexBufferData();
-}
-
-bool Tutorial19::createFramebuffer(
-    VkFramebuffer& framebuffer, VkImageView image_view) {
-  if (framebuffer != VK_NULL_HANDLE) {
-    vkDestroyFramebuffer(getVkDevice(), framebuffer, nullptr);
-    framebuffer = VK_NULL_HANDLE;
-  }
-
-  VkFramebufferCreateInfo framebuffer_create_info = {
-      .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-      .pNext = nullptr,
-      .flags = 0,
-      .renderPass = m_vulkan_tutorial19_parameters.getVkRenderPass(),
-      .attachmentCount = 1,
-      .pAttachments = &image_view,
-      .width = getSwapchainParameters().getVkExtent2d().width,
-      .height = getSwapchainParameters().getVkExtent2d().height,
-      .layers = 1};
-
-  if (vkCreateFramebuffer(
-          getVkDevice(), &framebuffer_create_info, nullptr, &framebuffer) !=
-      VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not create a framebuffer!");
-    return false;
-  }
-
-  return true;
-}
-
-bool Tutorial19::prepareFrame(VkCommandBuffer command_buffer,
-    const ImageParameters& image_parameters,
-    VkFramebuffer& framebuffer) {
-  if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
-    return false;
-  }
-
-  VkCommandBufferBeginInfo command_buffer_begin_info = {
-      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-      .pNext = nullptr,
-      .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-      .pInheritanceInfo = nullptr};
-
-  vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
-
-  VkImageSubresourceRange image_subresource_range = {
-      .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-      .baseMipLevel = 0,
-      .levelCount = 1,
-      .baseArrayLayer = 0,
-      .layerCount = 1};
-
-  bool queues_differ = getPresentQueueParameters().getVkQueue() !=
-      getGraphicsQueueParameters().getVkQueue();
-  std::uint32_t present_queue_family_index = queues_differ
-      ? getPresentQueueParameters().getFamilyIndex()
-      : VK_QUEUE_FAMILY_IGNORED;
-  std::uint32_t graphics_queue_family_index = queues_differ
-      ? getGraphicsQueueParameters().getFamilyIndex()
-      : VK_QUEUE_FAMILY_IGNORED;
-  VkImageMemoryBarrier barrier_from_present_to_draw = {
-      .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-      .pNext = nullptr,
-      .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-      .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-      .oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-      .newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-      .srcQueueFamilyIndex = present_queue_family_index,
-      .dstQueueFamilyIndex = graphics_queue_family_index,
-      .image = image_parameters.getVkImage(),
-      .subresourceRange = image_subresource_range};
-  vkCmdPipelineBarrier(command_buffer,
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-      0,
-      0,
-      nullptr,
-      0,
-      nullptr,
-      1,
-      &barrier_from_present_to_draw);
-
-  VkClearValue clear_value = {
-      .color = {.float32 = {0.15f, 0.15f, 0.18f, 1.0f}}};
-
-  VkRenderPassBeginInfo render_pass_begin_info = {
-      .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-      .pNext = nullptr,
-      .renderPass = m_vulkan_tutorial19_parameters.getVkRenderPass(),
-      .framebuffer = framebuffer,
-      .renderArea = {.offset = {.x = 0, .y = 0},
-          .extent = getSwapchainParameters().getVkExtent2d()},
-      .clearValueCount = 1,
-      .pClearValues = &clear_value};
-
-  vkCmdBeginRenderPass(
-      command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
-
-  VkViewport viewport = {.x = 0.0f,
-      .y = 0.0f,
-      .width =
-          static_cast<float>(getSwapchainParameters().getVkExtent2d().width),
-      .height =
-          static_cast<float>(getSwapchainParameters().getVkExtent2d().height),
-      .minDepth = 0.0f,
-      .maxDepth = 1.0f};
-  VkRect2D scissor = {.offset = {.x = 0, .y = 0},
-      .extent = getSwapchainParameters().getVkExtent2d()};
-  vkCmdSetViewport(command_buffer, 0, 1, &viewport);
-  vkCmdSetScissor(command_buffer, 0, 1, &scissor);
-
-  // --- 3D pass: three projectile meshes, each with its own texture
-  // (descriptor set) and its own push-constant model matrix.
-  vkCmdBindPipeline(command_buffer,
-      VK_PIPELINE_BIND_POINT_GRAPHICS,
-      m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline());
-
-  const VkDeviceSize zero_offset = 0;
-  const std::array<ProjectileMeshInfo, c_projectile_mesh_count>& mesh_info =
-      getProjectileMeshInfo();
-  std::array<VkDescriptorSet, c_projectile_mesh_count>& sets_3d =
-      m_vulkan_tutorial19_parameters.get3DVkDescriptorSets();
-  std::array<BufferParameters, c_projectile_mesh_count>& vertex_buffers =
-      m_vulkan_tutorial19_parameters.getProjectileVertexBufferParameters();
-  std::array<std::uint32_t, c_projectile_mesh_count>& vertex_counts =
-      m_vulkan_tutorial19_parameters.getProjectileVertexCounts();
-
-  for (std::size_t i = 0; i < c_projectile_mesh_count; ++i) {
-    vkCmdBindDescriptorSets(command_buffer,
-        VK_PIPELINE_BIND_POINT_GRAPHICS,
-        m_vulkan_tutorial19_parameters.getVk3DPipelineLayout(),
-        0,
-        1,
-        &sets_3d[i],
-        0,
-        nullptr);
-    vkCmdBindVertexBuffers(
-        command_buffer, 0, 1, &vertex_buffers[i].getVkBuffer(), &zero_offset);
-    Tutorial19PushConstants push_constants{
-        buildProjectileMatrix(mesh_info[i].m_world_x, mesh_info[i].m_scale)};
-    vkCmdPushConstants(command_buffer,
-        m_vulkan_tutorial19_parameters.getVk3DPipelineLayout(),
-        VK_SHADER_STAGE_VERTEX_BIT,
-        0,
-        sizeof(Tutorial19PushConstants),
-        &push_constants);
-    vkCmdDraw(command_buffer, vertex_counts[i], 1, 0, 0);
-  }
-
-  // --- Grid pass: weapon icons/labels, drawn on top ---
-  vkCmdBindPipeline(command_buffer,
-      VK_PIPELINE_BIND_POINT_GRAPHICS,
-      m_vulkan_tutorial19_parameters.getVkGridGraphicsPipeline());
-
-  VkDeviceSize text_offset = 0;
-  vkCmdBindVertexBuffers(command_buffer,
-      0,
-      1,
-      &m_vulkan_tutorial19_parameters.getGridVertexBufferParameters()
-          .getVkBuffer(),
-      &text_offset);
-  VkDescriptorSet vk_font_descriptor_set =
-      m_vulkan_tutorial19_parameters.getFontVkDescriptorSet();
-  vkCmdBindDescriptorSets(command_buffer,
-      VK_PIPELINE_BIND_POINT_GRAPHICS,
-      m_vulkan_tutorial19_parameters.getVkGridPipelineLayout(),
-      0,
-      1,
-      &vk_font_descriptor_set,
-      0,
-      nullptr);
-  vkCmdDraw(command_buffer,
-      m_vulkan_tutorial19_parameters.getTextVertexCount(),
-      1,
-      0,
-      0);
-
-  const VkDeviceSize icon_offset =
-      static_cast<VkDeviceSize>(
-          m_vulkan_tutorial19_parameters.getTextVertexCount()) *
-      sizeof(Tutorial19VertexGridData);
-  vkCmdBindVertexBuffers(command_buffer,
-      0,
-      1,
-      &m_vulkan_tutorial19_parameters.getGridVertexBufferParameters()
-          .getVkBuffer(),
-      &icon_offset);
-  VkDescriptorSet vk_icon_descriptor_set =
-      m_vulkan_tutorial19_parameters.getIconVkDescriptorSet();
-  vkCmdBindDescriptorSets(command_buffer,
-      VK_PIPELINE_BIND_POINT_GRAPHICS,
-      m_vulkan_tutorial19_parameters.getVkGridPipelineLayout(),
-      0,
-      1,
-      &vk_icon_descriptor_set,
-      0,
-      nullptr);
-  vkCmdDraw(command_buffer,
-      m_vulkan_tutorial19_parameters.getIconVertexCount(),
-      1,
-      0,
-      0);
-
-  vkCmdEndRenderPass(command_buffer);
-
-  VkImageMemoryBarrier barrier_from_draw_to_present = {
-      .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-      .pNext = nullptr,
-      .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-      .dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
-      .oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-      .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-      .srcQueueFamilyIndex = graphics_queue_family_index,
-      .dstQueueFamilyIndex = present_queue_family_index,
-      .image = image_parameters.getVkImage(),
-      .subresourceRange = image_subresource_range};
-  vkCmdPipelineBarrier(command_buffer,
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-      VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-      0,
-      0,
-      nullptr,
-      0,
-      nullptr,
-      1,
-      &barrier_from_draw_to_present);
-
-  if (vkEndCommandBuffer(command_buffer) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Could not record command buffer!");
-    return false;
-  }
-  return true;
+  m_text_vertex_count = static_cast<std::uint32_t>(vertex_data.size());
+  m_icon_vertex_count = static_cast<std::uint32_t>(icon_vertex_data.size());
+  vertex_data.insert(
+      vertex_data.end(), icon_vertex_data.begin(), icon_vertex_data.end());
+  return m_resources.writeBuffer(m_grid_vertex_buffer, vertex_data);
 }
 
 bool Tutorial19::draw() {
-  static std::size_t resource_index = 0;
-  std::vector<RenderingResourceParameters>& rendering_resources =
-      m_vulkan_tutorial19_parameters.getRenderingResources();
-  RenderingResourceParameters& current_rendering_resource =
-      rendering_resources[resource_index];
-  VkSwapchainKHR swap_chain = getSwapchainParameters().getVkSwapchainKhr();
-  std::uint32_t image_index;
-
-  resource_index =
-      (resource_index + 1) % VulkanTutorial19Parameters::resources_count;
-
-  if (vkWaitForFences(getVkDevice(),
-          1,
-          &current_rendering_resource.getVkFence(),
-          VK_FALSE,
-          1000000000) != VK_SUCCESS) {
-    Logging::error(LOG_TAG, "Waiting for fence takes too long!");
-    return false;
-  }
-  vkResetFences(getVkDevice(), 1, &current_rendering_resource.getVkFence());
-
   // Vertex buffer/UBO writes race a previous frame's in-flight command
-  // buffer without this, same reasoning Tutorial15/17 use for their
-  // own per-frame vertex buffer writes.
+  // buffer without this, same reasoning Tutorial15/17 use for their own
+  // per-frame vertex buffer writes.
   vkDeviceWaitIdle(getVkDevice());
-  if (!update3DUniformBufferData()) {
-    return false;
-  }
-  if (!updateGridVertexBufferData()) {
-    return false;
-  }
-
-  VkResult result = vkAcquireNextImageKHR(getVkDevice(),
-      swap_chain,
-      UINT64_MAX,
-      current_rendering_resource.getImageAvailableVkSemaphore(),
-      VK_NULL_HANDLE,
-      &image_index);
-  switch (result) {
-    case VK_SUCCESS:
-    case VK_SUBOPTIMAL_KHR:
-      break;
-    case VK_ERROR_OUT_OF_DATE_KHR:
-      return onWindowSizeChanged();
-    default:
-      Logging::error(
-          LOG_TAG, "Problem occurred during swap chain image acquisition!");
-      return false;
-  }
-
-  if (!prepareFrame(current_rendering_resource.getVkCommandBuffer(),
-          getSwapchainParameters().getImageParameters()[image_index],
-          current_rendering_resource.getVkFramebuffer())) {
+  if (!m_resources.writeBuffer(
+          m_uniform_buffer_3d, get3DUniformBufferData()) ||
+      !updateGridVertexBufferData()) {
     return false;
   }
 
-  VkSemaphore& finished_rendering_semaphore =
-      m_vulkan_tutorial19_parameters
-          .getFinishedRenderingSemaphores()[image_index];
+  VkClearValue clear_value = {};
+  clear_value.color = {{0.15f, 0.15f, 0.18f, 1.0f}};
+  return m_frames.draw(
+      *this, {clear_value}, [this](VkCommandBuffer command_buffer) {
+        // --- 3D pass: three projectile meshes, each with its own texture
+        // (descriptor set) and its own push-constant model matrix.
+        vkCmdBindPipeline(
+            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline_3d);
+        const VkDeviceSize zero_offset = 0;
+        const std::array<ProjectileMeshInfo, c_projectile_mesh_count>&
+            mesh_info = getProjectileMeshInfo();
+        for (std::size_t i = 0; i < c_projectile_mesh_count; ++i) {
+          vkCmdBindDescriptorSets(
+              command_buffer,
+              VK_PIPELINE_BIND_POINT_GRAPHICS,
+              m_pipeline_layout_3d,
+              0,
+              1,
+              &m_descriptor_sets_3d[i],
+              0,
+              nullptr);
+          vkCmdBindVertexBuffers(
+              command_buffer,
+              0,
+              1,
+              &m_projectile_buffers[i].getVkBuffer(),
+              &zero_offset);
+          const Tutorial19PushConstants push_constants{buildProjectileMatrix(
+              mesh_info[i].m_world_x, mesh_info[i].m_scale)};
+          vkCmdPushConstants(
+              command_buffer,
+              m_pipeline_layout_3d,
+              VK_SHADER_STAGE_VERTEX_BIT,
+              0,
+              sizeof(Tutorial19PushConstants),
+              &push_constants);
+          vkCmdDraw(command_buffer, m_projectile_counts[i], 1, 0, 0);
+        }
 
-  VkPipelineStageFlags wait_dst_stage_mask =
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      .pNext = nullptr,
-      .waitSemaphoreCount = 1,
-      .pWaitSemaphores =
-          &current_rendering_resource.getImageAvailableVkSemaphore(),
-      .pWaitDstStageMask = &wait_dst_stage_mask,
-      .commandBufferCount = 1,
-      .pCommandBuffers = &current_rendering_resource.getVkCommandBuffer(),
-      .signalSemaphoreCount = 1,
-      .pSignalSemaphores = &finished_rendering_semaphore};
+        // --- Grid pass: weapon labels (font set), then icons (icon set)
+        // drawn on top from the second range of the same vertex buffer.
+        vkCmdBindPipeline(
+            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline_grid);
+        const VkBuffer grid_buffer = m_grid_vertex_buffer.getVkBuffer();
+        vkCmdBindVertexBuffers(
+            command_buffer, 0, 1, &grid_buffer, &zero_offset);
+        vkCmdBindDescriptorSets(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_pipeline_layout_grid,
+            0,
+            1,
+            &m_font_descriptor_set,
+            0,
+            nullptr);
+        vkCmdDraw(command_buffer, m_text_vertex_count, 1, 0, 0);
 
-  if (vkQueueSubmit(getGraphicsQueueParameters().getVkQueue(),
-          1,
-          &submit_info,
-          current_rendering_resource.getVkFence()) != VK_SUCCESS) {
-    return false;
-  }
-
-  VkPresentInfoKHR present_info = {.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-      .pNext = nullptr,
-      .waitSemaphoreCount = 1,
-      .pWaitSemaphores = &finished_rendering_semaphore,
-      .swapchainCount = 1,
-      .pSwapchains = &swap_chain,
-      .pImageIndices = &image_index,
-      .pResults = nullptr};
-  result = vkQueuePresentKHR(
-      getPresentQueueParameters().getVkQueue(), &present_info);
-
-  switch (result) {
-    case VK_SUCCESS:
-      break;
-    case VK_ERROR_OUT_OF_DATE_KHR:
-    case VK_SUBOPTIMAL_KHR:
-      return onWindowSizeChanged();
-    default:
-      Logging::error(LOG_TAG, "Problem occurred during image presentation!");
-      return false;
-  }
-
-  return true;
+        const VkDeviceSize icon_offset =
+            static_cast<VkDeviceSize>(m_text_vertex_count) *
+            sizeof(Tutorial19VertexGridData);
+        vkCmdBindVertexBuffers(
+            command_buffer, 0, 1, &grid_buffer, &icon_offset);
+        vkCmdBindDescriptorSets(
+            command_buffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_pipeline_layout_grid,
+            0,
+            1,
+            &m_icon_descriptor_set,
+            0,
+            nullptr);
+        vkCmdDraw(command_buffer, m_icon_vertex_count, 1, 0, 0);
+      });
 }
 
-void Tutorial19::destroyBuffer(BufferParameters& buffer) {
-  if (buffer.getVkBuffer() != VK_NULL_HANDLE) {
-    vkDestroyBuffer(getVkDevice(), buffer.getVkBuffer(), nullptr);
-    buffer.setVkBuffer(VK_NULL_HANDLE);
+void Tutorial19::onMouseButton(
+    std::int32_t button,
+    bool pressed,
+    std::int32_t pos_x,
+    std::int32_t pos_y) {
+  constexpr std::int32_t c_left_button = 1;
+  if (button == c_left_button && pressed) {
+    const float x = static_cast<float>(pos_x);
+    const float y = static_cast<float>(pos_y);
+    const Math::Vec2<float> cell_size = getGridLayout().cellSize();
+    for (std::size_t index = 0; index < c_weapon_grid_item_count; ++index) {
+      const Math::Vec2<float> cell_top_left =
+          getGridLayout().cellTopLeft(index);
+      if (x >= cell_top_left.x && x <= cell_top_left.x + cell_size.x &&
+          y >= cell_top_left.y && y <= cell_top_left.y + cell_size.y) {
+        m_selected_index = index;
+        return;
+      }
+    }
   }
-  if (buffer.getVkDeviceMemory() != VK_NULL_HANDLE) {
-    vkFreeMemory(getVkDevice(), buffer.getVkDeviceMemory(), nullptr);
-    buffer.setVkDeviceMemory(VK_NULL_HANDLE);
-  }
+  m_camera.onMouseButton(button, pressed, pos_x, pos_y);
+}
+
+void Tutorial19::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
+  m_camera.onMouseMove(pos_x, pos_y);
 }
 
 bool Tutorial19::childOnWindowSizeChanged() {
   if (getVkDevice() == VK_NULL_HANDLE) {
     return true;
   }
-  vkDeviceWaitIdle(getVkDevice());
-
-  if (!createRenderingResources()) {
-    return false;
-  }
-  if (!createStagingBuffer()) {
-    return false;
-  }
-  if (!createProjectileTextures()) {
-    return false;
-  }
-  if (!createFontAtlas()) {
-    return false;
-  }
-  if (!createIconAtlas()) {
-    return false;
-  }
-  if (!createUniformBuffers()) {
-    return false;
-  }
-  if (!createDescriptorSetLayouts()) {
-    return false;
-  }
-  if (!createDescriptorPool()) {
-    return false;
-  }
-  if (!allocateDescriptorSets()) {
-    return false;
-  }
-  if (!updateDescriptorSets()) {
-    return false;
-  }
-  if (!createRenderPass()) {
-    return false;
-  }
-  if (!createPipelineLayouts()) {
-    return false;
-  }
-  if (!createPipelines()) {
-    return false;
-  }
-  if (!createProjectileVertexBuffers()) {
-    return false;
-  }
-  return createGridVertexBuffer();
+  return createResources();
 }
 
 void Tutorial19::childClear() {
-  if (getVkDevice() == VK_NULL_HANDLE) {
-    return;
-  }
-  vkDeviceWaitIdle(getVkDevice());
-
-  std::vector<RenderingResourceParameters>& rendering_resources =
-      m_vulkan_tutorial19_parameters.getRenderingResources();
-  for (std::size_t i = 0; i < rendering_resources.size(); ++i) {
-    if (rendering_resources[i].getVkFramebuffer() != VK_NULL_HANDLE) {
-      vkDestroyFramebuffer(
-          getVkDevice(), rendering_resources[i].getVkFramebuffer(), nullptr);
-      rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
-    }
-    if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
-      vkFreeCommandBuffers(getVkDevice(),
-          m_vulkan_tutorial19_parameters.getVkCommandPool(),
-          1,
-          &rendering_resources[i].getVkCommandBuffer());
-    }
-    if (rendering_resources[i].getImageAvailableVkSemaphore() !=
-        VK_NULL_HANDLE) {
-      vkDestroySemaphore(getVkDevice(),
-          rendering_resources[i].getImageAvailableVkSemaphore(),
-          nullptr);
-    }
-    if (rendering_resources[i].getVkFence() != VK_NULL_HANDLE) {
-      vkDestroyFence(
-          getVkDevice(), rendering_resources[i].getVkFence(), nullptr);
-    }
-  }
-
-  std::vector<VkSemaphore>& finished_rendering_semaphores =
-      m_vulkan_tutorial19_parameters.getFinishedRenderingSemaphores();
-  for (std::size_t i = 0; i < finished_rendering_semaphores.size(); ++i) {
-    if (finished_rendering_semaphores[i] != VK_NULL_HANDLE) {
-      vkDestroySemaphore(
-          getVkDevice(), finished_rendering_semaphores[i], nullptr);
-    }
-  }
-  finished_rendering_semaphores.clear();
-
-  if (m_vulkan_tutorial19_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-    vkDestroyCommandPool(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVkCommandPool(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVkCommandPool(VK_NULL_HANDLE);
-  }
-
-  std::array<BufferParameters, c_projectile_mesh_count>& vertex_buffers =
-      m_vulkan_tutorial19_parameters.getProjectileVertexBufferParameters();
-  for (BufferParameters& buffer : vertex_buffers) {
-    destroyBuffer(buffer);
-  }
-  destroyBuffer(
-      m_vulkan_tutorial19_parameters.getGridVertexBufferParameters());
-  destroyBuffer(m_vulkan_tutorial19_parameters.getStagingBufferParameters());
-
-  if (m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline() !=
-      VK_NULL_HANDLE) {
-    vkDestroyPipeline(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVk3DGraphicsPipeline(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVk3DGraphicsPipeline(VK_NULL_HANDLE);
-  }
-  if (m_vulkan_tutorial19_parameters.getVkGridGraphicsPipeline() !=
-      VK_NULL_HANDLE) {
-    vkDestroyPipeline(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVkGridGraphicsPipeline(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVkGridGraphicsPipeline(VK_NULL_HANDLE);
-  }
-
-  if (m_vulkan_tutorial19_parameters.getVk3DPipelineLayout() !=
-      VK_NULL_HANDLE) {
-    vkDestroyPipelineLayout(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVk3DPipelineLayout(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVk3DPipelineLayout(VK_NULL_HANDLE);
-  }
-  if (m_vulkan_tutorial19_parameters.getVkGridPipelineLayout() !=
-      VK_NULL_HANDLE) {
-    vkDestroyPipelineLayout(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVkGridPipelineLayout(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVkGridPipelineLayout(VK_NULL_HANDLE);
-  }
-
-  if (m_vulkan_tutorial19_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-    vkDestroyRenderPass(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVkRenderPass(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVkRenderPass(VK_NULL_HANDLE);
-  }
-
-  if (m_vulkan_tutorial19_parameters.getVkDescriptorPool() != VK_NULL_HANDLE) {
-    vkDestroyDescriptorPool(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVkDescriptorPool(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVkDescriptorPool(VK_NULL_HANDLE);
-  }
-  if (m_vulkan_tutorial19_parameters.getVk3DDescriptorSetLayout() !=
-      VK_NULL_HANDLE) {
-    vkDestroyDescriptorSetLayout(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVk3DDescriptorSetLayout(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVk3DDescriptorSetLayout(VK_NULL_HANDLE);
-  }
-  if (m_vulkan_tutorial19_parameters.getVkGridDescriptorSetLayout() !=
-      VK_NULL_HANDLE) {
-    vkDestroyDescriptorSetLayout(getVkDevice(),
-        m_vulkan_tutorial19_parameters.getVkGridDescriptorSetLayout(),
-        nullptr);
-    m_vulkan_tutorial19_parameters.setVkGridDescriptorSetLayout(
-        VK_NULL_HANDLE);
-  }
-
-  destroyBuffer(m_vulkan_tutorial19_parameters.getUniformBuffer3DParameters());
-  destroyBuffer(
-      m_vulkan_tutorial19_parameters.getUniformBufferGridParameters());
-
-  VulkanCommon::ImageFactory image_factory(
-      getVkDevice(), getVkPhysicalDevice());
-  std::array<ImageParameters, c_projectile_mesh_count>& projectile_images =
-      m_vulkan_tutorial19_parameters.getProjectileImageParameters();
-  for (ImageParameters& image : projectile_images) {
-    image_factory.destroy(image);
-  }
-
-  image_factory.destroy(
-      m_vulkan_tutorial19_parameters.getFontImageParameters());
-  image_factory.destroy(
-      m_vulkan_tutorial19_parameters.getIconImageParameters());
+  m_frames.destroy();
+  m_resources.releaseAll();
 }
 
 }  // namespace vulkan_graphix

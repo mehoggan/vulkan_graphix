@@ -7,8 +7,9 @@ extern void playSFX(std::int32_t sfx);
 ItemFloat::ItemFloat() = default;
 ItemFloat::ItemFloat(std::int32_t id) {
   m_uniqueidentifier = id;
-  loadSpec(vulkan_graphix::GameCatalog::item(
-      vulkan_graphix::GameCatalog::ItemKind::Float));
+  loadSpec(
+      vulkan_graphix::GameCatalog::item(
+          vulkan_graphix::GameCatalog::ItemKind::Float));
 }
 ItemFloat::~ItemFloat() = default;
 

@@ -14,7 +14,8 @@ class RenderContext;
 class LoadingScreen {
 public:
   LoadingScreen();
-  LoadingScreen(float x,
+  LoadingScreen(
+      float x,
       float y,
       float z,
       std::int32_t new_width,

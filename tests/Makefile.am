@@ -18,7 +18,8 @@ TESTS = vertex_types_test math_test tools_test game_logic_test camera_test geome
 		tutorial07_integration_test \
 		tutorial08_integration_test \
 		tutorial09_integration_test \
-		tutorial10_integration_test
+		tutorial10_integration_test \
+		vulkan_common_integration_test
 check_PROGRAMS = $(TESTS)
 
 vertex_types_test_SOURCES = ./VertexTypesTest.cpp
@@ -329,6 +330,13 @@ tutorial07_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
 tutorial07_integration_test_LDADD = $(integration_test_common_ldadd)
 tutorial07_integration_test_LDFLAGS = $(integration_test_common_ldflags)
 
+# The library's VulkanCommon building blocks on a live device (borrows
+# Tutorial07's shaders, which all-local already copies here).
+vulkan_common_integration_test_SOURCES = ./VulkanCommonIntegrationTest.cpp
+vulkan_common_integration_test_CPPFLAGS = $(integration_test_common_cppflags)
+vulkan_common_integration_test_LDADD = $(integration_test_common_ldadd)
+vulkan_common_integration_test_LDFLAGS = $(integration_test_common_ldflags)
+
 tutorial08_integration_test_SOURCES = ./Tutorial08IntegrationTest.cpp \
 		../bin/08_phong_sphere/Tutorial08.cpp
 tutorial08_integration_test_CPPFLAGS = $(integration_test_common_cppflags) \
@@ -460,6 +468,8 @@ tutorial06_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial06_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial07_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial07_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
+vulkan_common_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
+vulkan_common_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial08_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)
 tutorial08_integration_test_LDFLAGS += $(COVERAGE_LDFLAGS)
 tutorial09_integration_test_CPPFLAGS += $(COVERAGE_CXXFLAGS)

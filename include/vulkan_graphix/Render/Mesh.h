@@ -102,7 +102,8 @@ public:
     markDirty();
   }
   // Corners in drawing order, split 0-1-2, 0-2-3 (a GL_QUADS quad).
-  void addQuad(const vertex_type& v0,
+  void addQuad(
+      const vertex_type& v0,
       const vertex_type& v1,
       const vertex_type& v2,
       const vertex_type& v3) {
@@ -139,7 +140,8 @@ private:
 
 // RetainedMesh of UiVertex, with shorthands for flat-colored and textured
 // shapes; RenderContext::draw() draws it with the Renderer's UI pipelines.
-class UiMesh : public RetainedMesh<Math::Vec3<float>,
+class UiMesh : public RetainedMesh<
+                   Math::Vec3<float>,
                    Math::Vec4<float>,
                    Math::Vec2<float>> {
 public:
@@ -147,17 +149,22 @@ public:
   using RetainedMesh::addQuad;
   using RetainedMesh::addTriangle;
 
-  void addQuad(const std::array<Math::Vec3<float>, 4>& corners,
+  void addQuad(
+      const std::array<Math::Vec3<float>, 4>& corners,
       const Math::Vec4<float>& color);
-  void addTexturedQuad(const std::array<Math::Vec3<float>, 4>& corners,
+  void addTexturedQuad(
+      const std::array<Math::Vec3<float>, 4>& corners,
       const std::array<Math::Vec2<float>, 4>& texcoords,
       const Math::Vec4<float>& color);
-  void addTriangle(const std::array<Math::Vec3<float>, 3>& corners,
+  void addTriangle(
+      const std::array<Math::Vec3<float>, 3>& corners,
       const Math::Vec4<float>& color);
   // Per-vertex colors.
-  void addTriangle(const std::array<Math::Vec3<float>, 3>& corners,
+  void addTriangle(
+      const std::array<Math::Vec3<float>, 3>& corners,
       const std::array<Math::Vec4<float>, 3>& colors);
-  void addLine(const Math::Vec3<float>& start,
+  void addLine(
+      const Math::Vec3<float>& start,
       const Math::Vec3<float>& end,
       const Math::Vec4<float>& color);
 };

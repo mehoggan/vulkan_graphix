@@ -20,11 +20,13 @@ public:
   ~Water();
   void draw(vulkan_graphix::Render::RenderContext& context);
   void initData();
-  void prepareData(std::int32_t steps,
+  void prepareData(
+      std::int32_t steps,
       std::int32_t increase,
       float radius,
       std::int32_t random_jump);
-  void calcAverageofSixNormals(vulkan_graphix::Math::Vec3<float>* v_0,
+  void calcAverageofSixNormals(
+      vulkan_graphix::Math::Vec3<float>* v_0,
       float x1,
       float y1,
       float z1,
@@ -46,7 +48,8 @@ public:
       vulkan_graphix::Math::Vec3<float>* n);
   void prepTerrain();
   void prepareData();
-  void terrainGen(std::int32_t steps,
+  void terrainGen(
+      std::int32_t steps,
       std::int32_t increase,
       float radius,
       std::int32_t random_jump);

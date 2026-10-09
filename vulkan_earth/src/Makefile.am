@@ -67,7 +67,6 @@ vulkan_earth_runner_SOURCES = \
 	TankH.cpp \
 	TerrainMaker.cpp \
 	TextObject.cpp \
-	VBOShaderLibrary.cpp \
 	Water.cpp \
 	Weapon.cpp \
 	WeaponAcid.cpp \

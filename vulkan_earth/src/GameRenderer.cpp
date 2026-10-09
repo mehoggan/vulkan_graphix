@@ -53,7 +53,8 @@ std::optional<render::PipelineHandle> createPipeline(
 
 // buildBevelFrame()'s y-down quads, mirrored into the game's y-up plane at
 // depth z.
-void appendQuads(render::UiMesh& mesh,
+void appendQuads(
+    render::UiMesh& mesh,
     const std::vector<vulkan_graphix::UiGeometry::ColoredQuad>& quads,
     float z) {
   for (const auto& quad : quads) {
@@ -76,7 +77,8 @@ bool initializeGameRendering(render::Renderer& renderer) {
       renderer, "ui", ui_layout, VK_PRIMITIVE_TOPOLOGY_LINE_LIST);
   auto text = createPipeline(renderer, "text", ui_layout);
   auto mesh_pipeline = createPipeline(renderer, "mesh", mesh_layout);
-  auto mesh_background = createPipeline(renderer,
+  auto mesh_background = createPipeline(
+      renderer,
       "mesh",
       mesh_layout,
       VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -84,7 +86,8 @@ bool initializeGameRendering(render::Renderer& renderer) {
   auto terrain = createPipeline(renderer, "terrain", mesh_layout);
   auto water = createPipeline(renderer, "water", mesh_layout);
   auto flat_color = createPipeline(renderer, "flat", mesh_layout);
-  auto flat_color_wireframe = createPipeline(renderer,
+  auto flat_color_wireframe = createPipeline(
+      renderer,
       "flat",
       mesh_layout,
       VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -95,7 +98,8 @@ bool initializeGameRendering(render::Renderer& renderer) {
       !flat_color_wireframe) {
     return false;
   }
-  g_pipelines = {*ui_triangles,
+  g_pipelines = {
+      *ui_triangles,
       *ui_lines,
       *text,
       *mesh_pipeline,
@@ -110,7 +114,8 @@ bool initializeGameRendering(render::Renderer& renderer) {
   g_serif_font = renderer.loadFont(c_serif_font_path, c_serif_pixel_height);
   g_mono_font = renderer.loadFont(c_mono_font_path, c_mono_pixel_height);
   if (!g_serif_font || !g_mono_font) {
-    std::fprintf(stderr,
+    std::fprintf(
+        stderr,
         "vulkan_earth: is the fonts-dejavu-core package "
         "installed?\n");
     return false;
@@ -162,7 +167,8 @@ void resetToFullWindow(render::RenderContext& context) {
       Mat4(1.0f));
 }
 
-void beginOverlayPanel(render::RenderContext& context,
+void beginOverlayPanel(
+    render::RenderContext& context,
     const render::Rect& viewport,
     std::int32_t width,
     std::int32_t height) {
@@ -180,7 +186,8 @@ void beginOverlayPanel(render::RenderContext& context,
           Vec3(0, 0, distance), Vec3(0, 0, 0), Vec3(0.0f, 1.0f, 0.0f)));
 }
 
-void appendBevel(render::UiMesh& mesh,
+void appendBevel(
+    render::UiMesh& mesh,
     float x,
     float y,
     float z,
@@ -189,13 +196,15 @@ void appendBevel(render::UiMesh& mesh,
     const Vec4& color,
     bool pressed,
     float bevel_size) {
-  appendQuads(mesh,
+  appendQuads(
+      mesh,
       vulkan_graphix::UiGeometry::buildButtonBevel(
           Vec2(x, -y), Vec2(width, height), color, pressed, bevel_size),
       z);
 }
 
-void appendFrame(render::UiMesh& mesh,
+void appendFrame(
+    render::UiMesh& mesh,
     float x,
     float y,
     float z,
@@ -205,8 +214,10 @@ void appendFrame(render::UiMesh& mesh,
     const Vec4& face,
     const Vec4& bottom_right,
     float border) {
-  appendQuads(mesh,
-      vulkan_graphix::UiGeometry::buildBevelFrame(Vec2(x, -y),
+  appendQuads(
+      mesh,
+      vulkan_graphix::UiGeometry::buildBevelFrame(
+          Vec2(x, -y),
           Vec2(width, height),
           {face, top_left, top_left, bottom_right, bottom_right},
           border),
@@ -218,15 +229,16 @@ void appendMenuPanel(
   const float b = percent_border * (height);
   const float left = -1 * (width / 2.0);
   const float top_edge = (height / 2.0);
-  appendQuads(mesh,
+  appendQuads(
+      mesh,
       vulkan_graphix::UiGeometry::buildBevelFrame(
           Vec2(left + b, -(top_edge - b)),
           Vec2(width - 2 * b, height - 2 * b),
           {Vec4(0.75f, 0.75f, 0.75f, 1.0f),
-              Vec4(0.80f, 0.80f, 0.80f, 1.0f),
-              Vec4(0.85f, 0.85f, 0.85f, 1.0f),
-              Vec4(0.45f, 0.45f, 0.45f, 1.0f),
-              Vec4(0.40f, 0.40f, 0.40f, 1.0f)},
+           Vec4(0.80f, 0.80f, 0.80f, 1.0f),
+           Vec4(0.85f, 0.85f, 0.85f, 1.0f),
+           Vec4(0.45f, 0.45f, 0.45f, 1.0f),
+           Vec4(0.40f, 0.40f, 0.40f, 1.0f)},
           b),
       0.0f);
 }

@@ -17,7 +17,8 @@ class RenderContext;
 class MainMenuButton {
 public:
   MainMenuButton();
-  MainMenuButton(std::int32_t id,
+  MainMenuButton(
+      std::int32_t id,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,

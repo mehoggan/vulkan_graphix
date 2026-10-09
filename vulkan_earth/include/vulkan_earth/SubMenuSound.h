@@ -18,7 +18,8 @@ const std::int32_t num_control_items_snd = 2;
 class SubMenuSound : public SubMenu {
 public:
   SubMenuSound();
-  SubMenuSound(std::int32_t id,
+  SubMenuSound(
+      std::int32_t id,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,

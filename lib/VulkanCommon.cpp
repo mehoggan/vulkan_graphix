@@ -11,7 +11,8 @@ namespace {
 // Shared by BufferFactory::allocateMemory() and ImageFactory::
 // allocateMemory() - identical first-fit memory-type scan, differing only
 // in how the VkMemoryRequirements are obtained.
-bool findAndAllocateMemory(VkDevice device,
+bool findAndAllocateMemory(
+    VkDevice device,
     VkPhysicalDevice physical_device,
     const VkMemoryRequirements& requirements,
     VkMemoryPropertyFlags property,
@@ -22,7 +23,7 @@ bool findAndAllocateMemory(VkDevice device,
   for (std::uint32_t i = 0; i < memory_properties.memoryTypeCount; ++i) {
     if ((requirements.memoryTypeBits & (1 << i)) &&
         ((memory_properties.memoryTypes[i].propertyFlags & property) ==
-            property)) {
+         property)) {
       VkMemoryAllocateInfo memory_allocate_info = {
           .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
           .pNext = nullptr,
@@ -48,19 +49,22 @@ BufferFactory::BufferFactory(
     m_device(device),
     m_physical_device(physical_device) {}
 
-bool BufferFactory::allocateMemory(VkBuffer buffer,
+bool BufferFactory::allocateMemory(
+    VkBuffer buffer,
     VkMemoryPropertyFlags property,
     VkDeviceMemory* memory) const {
   VkMemoryRequirements buffer_memory_requirements;
   vkGetBufferMemoryRequirements(m_device, buffer, &buffer_memory_requirements);
-  return findAndAllocateMemory(m_device,
+  return findAndAllocateMemory(
+      m_device,
       m_physical_device,
       buffer_memory_requirements,
       property,
       memory);
 }
 
-bool BufferFactory::create(VkBufferUsageFlags usage,
+bool BufferFactory::create(
+    VkBufferUsageFlags usage,
     VkMemoryPropertyFlags memory_property,
     BufferParameters& out) const {
   VkBufferCreateInfo buffer_create_info = {
@@ -109,12 +113,14 @@ ImageFactory::ImageFactory(VkDevice device, VkPhysicalDevice physical_device) :
     m_device(device),
     m_physical_device(physical_device) {}
 
-bool ImageFactory::allocateMemory(VkImage image,
+bool ImageFactory::allocateMemory(
+    VkImage image,
     VkMemoryPropertyFlags property,
     VkDeviceMemory* memory) const {
   VkMemoryRequirements image_memory_requirements;
   vkGetImageMemoryRequirements(m_device, image, &image_memory_requirements);
-  return findAndAllocateMemory(m_device,
+  return findAndAllocateMemory(
+      m_device,
       m_physical_device,
       image_memory_requirements,
       property,
@@ -125,7 +131,8 @@ bool ImageFactory::bindMemory(VkImage image, VkDeviceMemory memory) const {
   return vkBindImageMemory(m_device, image, memory, 0) == VK_SUCCESS;
 }
 
-bool ImageFactory::createImage(std::uint32_t width,
+bool ImageFactory::createImage(
+    std::uint32_t width,
     std::uint32_t height,
     VkFormat format,
     VkImageUsageFlags usage,
@@ -151,7 +158,8 @@ bool ImageFactory::createImage(std::uint32_t width,
       VK_SUCCESS;
 }
 
-bool ImageFactory::createImageView(VkImage image,
+bool ImageFactory::createImageView(
+    VkImage image,
     VkFormat format,
     VkImageAspectFlags aspect_mask,
     VkImageView* out) const {
@@ -162,11 +170,13 @@ bool ImageFactory::createImageView(VkImage image,
       .image = image,
       .viewType = VK_IMAGE_VIEW_TYPE_2D,
       .format = format,
-      .components = {.r = VK_COMPONENT_SWIZZLE_IDENTITY,
-          .g = VK_COMPONENT_SWIZZLE_IDENTITY,
-          .b = VK_COMPONENT_SWIZZLE_IDENTITY,
-          .a = VK_COMPONENT_SWIZZLE_IDENTITY},
-      .subresourceRange = {.aspectMask = aspect_mask,
+      .components =
+          {.r = VK_COMPONENT_SWIZZLE_IDENTITY,
+           .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+           .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+           .a = VK_COMPONENT_SWIZZLE_IDENTITY},
+      .subresourceRange = {
+          .aspectMask = aspect_mask,
           .baseMipLevel = 0,
           .levelCount = 1,
           .baseArrayLayer = 0,
@@ -176,7 +186,8 @@ bool ImageFactory::createImageView(VkImage image,
       VK_SUCCESS;
 }
 
-bool ImageFactory::createSampler(VkSamplerAddressMode address_mode,
+bool ImageFactory::createSampler(
+    VkSamplerAddressMode address_mode,
     VkSampler* out,
     VkBorderColor border_color) const {
   VkSamplerCreateInfo sampler_create_info = {
@@ -225,14 +236,16 @@ void ImageFactory::destroy(ImageParameters& image) const {
 // ************************************************************ //
 // StagedUploader                                               //
 // ************************************************************ //
-StagedUploader::StagedUploader(VkDevice device,
+StagedUploader::StagedUploader(
+    VkDevice device,
     VkQueue graphics_queue,
     VkCommandBuffer upload_command_buffer) :
     m_device(device),
     m_graphics_queue(graphics_queue),
     m_upload_command_buffer(upload_command_buffer) {}
 
-bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
+bool StagedUploader::uploadToImage(
+    BufferParameters& staging_buffer,
     VkImage image,
     const char* data,
     std::uint32_t data_size,
@@ -243,7 +256,8 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
   }
 
   void* staging_buffer_memory_pointer;
-  if (vkMapMemory(m_device,
+  if (vkMapMemory(
+          m_device,
           staging_buffer.getVkDeviceMemory(),
           0,
           VK_WHOLE_SIZE,
@@ -289,7 +303,8 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
       .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
       .image = image,
       .subresourceRange = image_subresource_range};
-  vkCmdPipelineBarrier(m_upload_command_buffer,
+  vkCmdPipelineBarrier(
+      m_upload_command_buffer,
       VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
       VK_PIPELINE_STAGE_TRANSFER_BIT,
       0,
@@ -300,16 +315,19 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
       1,
       &barrier_to_transfer_dst);
 
-  VkBufferImageCopy buffer_image_copy_info = {.bufferOffset = 0,
+  VkBufferImageCopy buffer_image_copy_info = {
+      .bufferOffset = 0,
       .bufferRowLength = 0,
       .bufferImageHeight = 0,
-      .imageSubresource = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-          .mipLevel = 0,
-          .baseArrayLayer = 0,
-          .layerCount = 1},
+      .imageSubresource =
+          {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+           .mipLevel = 0,
+           .baseArrayLayer = 0,
+           .layerCount = 1},
       .imageOffset = {.x = 0, .y = 0, .z = 0},
       .imageExtent = {.width = width, .height = height, .depth = 1}};
-  vkCmdCopyBufferToImage(m_upload_command_buffer,
+  vkCmdCopyBufferToImage(
+      m_upload_command_buffer,
       staging_buffer.getVkBuffer(),
       image,
       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -327,7 +345,8 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
       .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
       .image = image,
       .subresourceRange = image_subresource_range};
-  vkCmdPipelineBarrier(m_upload_command_buffer,
+  vkCmdPipelineBarrier(
+      m_upload_command_buffer,
       VK_PIPELINE_STAGE_TRANSFER_BIT,
       VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
       0,
@@ -340,7 +359,8 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
 
   vkEndCommandBuffer(m_upload_command_buffer);
 
-  VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+  VkSubmitInfo submit_info = {
+      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
       .pNext = nullptr,
       .waitSemaphoreCount = 0,
       .pWaitSemaphores = nullptr,
@@ -359,7 +379,8 @@ bool StagedUploader::uploadToImage(BufferParameters& staging_buffer,
   return true;
 }
 
-bool StagedUploader::uploadToBuffer(BufferParameters& staging_buffer,
+bool StagedUploader::uploadToBuffer(
+    BufferParameters& staging_buffer,
     BufferParameters& destination,
     const void* data,
     std::uint32_t data_size,
@@ -370,7 +391,8 @@ bool StagedUploader::uploadToBuffer(BufferParameters& staging_buffer,
   }
 
   void* staging_buffer_memory_pointer;
-  if (vkMapMemory(m_device,
+  if (vkMapMemory(
+          m_device,
           staging_buffer.getVkDeviceMemory(),
           0,
           VK_WHOLE_SIZE,
@@ -400,7 +422,8 @@ bool StagedUploader::uploadToBuffer(BufferParameters& staging_buffer,
 
   VkBufferCopy buffer_copy_info = {
       .srcOffset = 0, .dstOffset = 0, .size = data_size};
-  vkCmdCopyBuffer(m_upload_command_buffer,
+  vkCmdCopyBuffer(
+      m_upload_command_buffer,
       staging_buffer.getVkBuffer(),
       destination.getVkBuffer(),
       1,
@@ -416,7 +439,8 @@ bool StagedUploader::uploadToBuffer(BufferParameters& staging_buffer,
       .buffer = destination.getVkBuffer(),
       .offset = 0,
       .size = VK_WHOLE_SIZE};
-  vkCmdPipelineBarrier(m_upload_command_buffer,
+  vkCmdPipelineBarrier(
+      m_upload_command_buffer,
       VK_PIPELINE_STAGE_TRANSFER_BIT,
       dst_stage_mask,
       0,
@@ -429,7 +453,8 @@ bool StagedUploader::uploadToBuffer(BufferParameters& staging_buffer,
 
   vkEndCommandBuffer(m_upload_command_buffer);
 
-  VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+  VkSubmitInfo submit_info = {
+      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
       .pNext = nullptr,
       .waitSemaphoreCount = 0,
       .pWaitSemaphores = nullptr,
@@ -505,7 +530,8 @@ bool FrameResourceFactory::createFence(bool signaled, VkFence* out) const {
 // ************************************************************ //
 // Free functions                                               //
 // ************************************************************ //
-bool createTextureFromPixels(const ImageFactory& image_factory,
+bool createTextureFromPixels(
+    const ImageFactory& image_factory,
     const StagedUploader& uploader,
     BufferParameters& staging_buffer,
     std::uint32_t width,
@@ -522,7 +548,8 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
   constexpr VkFormat c_texture_format = VK_FORMAT_R8G8B8A8_UNORM;
 
   VkImage vk_image;
-  if (!image_factory.createImage(width,
+  if (!image_factory.createImage(
+          width,
           height,
           c_texture_format,
           VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -532,7 +559,8 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
   out.setVkImage(vk_image);
 
   VkDeviceMemory vk_device_memory;
-  if (!image_factory.allocateMemory(out.getVkImage(),
+  if (!image_factory.allocateMemory(
+          out.getVkImage(),
           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
           &vk_device_memory)) {
     return false;
@@ -550,7 +578,8 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
   out.setVkSampler(vk_sampler);
 
   VkImageView vk_image_view;
-  if (!image_factory.createImageView(out.getVkImage(),
+  if (!image_factory.createImageView(
+          out.getVkImage(),
           c_texture_format,
           VK_IMAGE_ASPECT_COLOR_BIT,
           &vk_image_view)) {
@@ -558,12 +587,44 @@ bool createTextureFromPixels(const ImageFactory& image_factory,
   }
   out.setVkImageView(vk_image_view);
 
-  return uploader.uploadToImage(staging_buffer,
+  return uploader.uploadToImage(
+      staging_buffer,
       out.getVkImage(),
       pixels.data(),
       static_cast<std::uint32_t>(pixels.size()),
       width,
       height);
+}
+
+bool createDepthImage(
+    const ImageFactory& image_factory,
+    VkExtent2D extent,
+    VkFormat format,
+    ImageParameters& out) {
+  VkImage image = VK_NULL_HANDLE;
+  if (!image_factory.createImage(
+          extent.width,
+          extent.height,
+          format,
+          VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+          &image)) {
+    return false;
+  }
+  out.setVkImage(image);
+  VkDeviceMemory memory = VK_NULL_HANDLE;
+  if (!image_factory.allocateMemory(
+          image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &memory)) {
+    return false;
+  }
+  out.setVkDeviceMemory(memory);
+  VkImageView view = VK_NULL_HANDLE;
+  if (!image_factory.bindMemory(image, memory) ||
+      !image_factory.createImageView(
+          image, format, VK_IMAGE_ASPECT_DEPTH_BIT, &view)) {
+    return false;
+  }
+  out.setVkImageView(view);
+  return true;
 }
 
 Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>

@@ -104,7 +104,8 @@ TEST(ToolsTest, GetPerspectiveProjectionMatrixMatchesTheStandardFormula) {
   EXPECT_NEAR(result[1][1], -expected_fov_value, c_epsilon);
   EXPECT_NEAR(result[2][2], far_clip / (near_clip - far_clip), c_epsilon);
   EXPECT_NEAR(result[2][3], -1.0f, c_epsilon);
-  EXPECT_NEAR(result[3][2],
+  EXPECT_NEAR(
+      result[3][2],
       (near_clip * far_clip) / (near_clip - far_clip),
       c_epsilon);
 }

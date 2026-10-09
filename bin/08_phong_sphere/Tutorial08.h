@@ -159,17 +159,20 @@ private:
   bool createCommandBuffers();
   bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
+  bool allocateCommandBuffers(
+      VkCommandPool pool,
       std::uint32_t count,
       VkCommandBuffer* command_buffers);
   bool createSemaphores();
   bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
+  bool createBuffer(
+      VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& buffer);
   bool allocateBufferMemory(
       VkBuffer buffer, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
-  bool createImage(std::uint32_t width,
+  bool createImage(
+      std::uint32_t width,
       std::uint32_t height,
       VkFormat format,
       VkImageUsageFlags usage,
@@ -183,12 +186,14 @@ private:
   createShaderModule(const char* filename);
   const std::vector<Tutorial08VertexData>& getVertexData() const;
   const std::vector<std::uint32_t>& getIndexData() const;
-  bool copyBufferData(BufferParameters& destination,
+  bool copyBufferData(
+      BufferParameters& destination,
       const void* data,
       std::uint32_t data_size,
       VkAccessFlags dst_access_mask,
       VkPipelineStageFlags dst_stage_mask);
-  bool prepareFrame(VkCommandBuffer command_buffer,
+  bool prepareFrame(
+      VkCommandBuffer command_buffer,
       const ImageParameters& image_parameters,
       VkFramebuffer& framebuffer);
   bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);

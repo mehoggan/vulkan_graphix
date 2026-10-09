@@ -162,7 +162,8 @@ public:
 
   bool draw() override;
 
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
@@ -172,27 +173,32 @@ private:
   bool createCommandBuffers();
   bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
+  bool allocateCommandBuffers(
+      VkCommandPool pool,
       std::uint32_t count,
       VkCommandBuffer* command_buffers);
   bool createSemaphores();
   bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
+  bool createBuffer(
+      VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& buffer);
-  bool createImage(std::uint32_t width,
+  bool createImage(
+      std::uint32_t width,
       std::uint32_t height,
       VkFormat format,
       VkImageUsageFlags usage,
       VkImage* image);
   bool allocateImageMemory(
       VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
-  bool createImageView(VkImage image,
+  bool createImageView(
+      VkImage image,
       VkFormat format,
       VkImageAspectFlags aspect_mask,
       VkImageView* image_view);
   bool createSampler(VkSamplerAddressMode address_mode, VkSampler* sampler);
-  bool copyTextureData(char* texture_data,
+  bool copyTextureData(
+      char* texture_data,
       std::uint32_t data_size,
       std::uint32_t width,
       std::uint32_t height);
@@ -203,12 +209,14 @@ private:
   createShaderModule(const char* filename);
   const std::vector<Tutorial09VertexData>& getVertexData() const;
   const std::vector<std::uint32_t>& getIndexData() const;
-  bool copyBufferData(BufferParameters& destination,
+  bool copyBufferData(
+      BufferParameters& destination,
       const void* data,
       std::uint32_t data_size,
       VkAccessFlags dst_access_mask,
       VkPipelineStageFlags dst_stage_mask);
-  bool prepareFrame(VkCommandBuffer command_buffer,
+  bool prepareFrame(
+      VkCommandBuffer command_buffer,
       const ImageParameters& image_parameters,
       VkFramebuffer& framebuffer);
   bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);

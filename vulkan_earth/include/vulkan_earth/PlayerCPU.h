@@ -14,7 +14,8 @@ class PlayerCPU : public Player {
 public:
   PlayerCPU();
   PlayerCPU(float red, float green, float blue);
-  PlayerCPU(float red,
+  PlayerCPU(
+      float red,
       float green,
       float blue,
       const std::string& new_tank_type,

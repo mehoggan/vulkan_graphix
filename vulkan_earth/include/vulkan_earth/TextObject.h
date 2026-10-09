@@ -14,7 +14,8 @@ public:
   // font is the GLUT bitmap font the text was written for; as in the
   // original, a window narrower than 1300 pixels always uses the 9x15
   // font instead.
-  TextObject(const std::string& input,
+  TextObject(
+      const std::string& input,
       float new_pos_x,
       float new_pos_y,
       float new_pos_z,

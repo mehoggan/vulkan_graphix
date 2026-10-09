@@ -11,7 +11,8 @@ namespace math = vulkan_graphix::Math;
 extern void playSFX(std::int32_t sfx);
 
 ControlItemSliderbar::ControlItemSliderbar() = default;
-ControlItemSliderbar::ControlItemSliderbar(float new_x_pos,
+ControlItemSliderbar::ControlItemSliderbar(
+    float new_x_pos,
     float new_y_pos,
     float new_z_pos,
     float red,
@@ -75,7 +76,8 @@ ControlItemSliderbar::ControlItemSliderbar(float new_x_pos,
   float label_x_pos = m_bar_x_pos;
   float label_y_pos = m_y_pos - m_height * 0.45;
   /*	END OF BUTTON TEXT PLACEMENT	*/
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       m_z_pos,
@@ -95,37 +97,46 @@ void ControlItemSliderbar::draw(render::RenderContext& context) {
   if (m_frame_mesh.triangles().empty()) {
     // draw main button box (sunken bevel: -0.2 top/left, +0.4
     // bottom/right)
-    vulkan_earth::appendFrame(m_frame_mesh,
+    vulkan_earth::appendFrame(
+        m_frame_mesh,
         m_x_pos,
         m_y_pos,
         m_z_pos,
         m_width,
         m_height,
-        Vec4(m_color[0] - 0.2f,
+        Vec4(
+            m_color[0] - 0.2f,
             m_color[1] - 0.2f,
             m_color[2] - 0.2f,
             m_color[3]),
         Vec4(m_color[0], m_color[1], m_color[2], m_color[3]),
-        Vec4(m_color[0] + 0.4f,
+        Vec4(
+            m_color[0] + 0.4f,
             m_color[1] + 0.4f,
             m_color[2] + 0.4f,
             m_color[3]));
     // draw bar lines
     const Vec4 black(0, 0, 0, 1);
-    m_frame_mesh.addLine(Vec3(m_bar_x_pos, m_bar_y_pos + 1, m_bar_z_pos),
+    m_frame_mesh.addLine(
+        Vec3(m_bar_x_pos, m_bar_y_pos + 1, m_bar_z_pos),
         Vec3(m_bar_x_pos + m_bar_width, m_bar_y_pos + 1, m_bar_z_pos),
         black);
-    m_frame_mesh.addLine(Vec3(m_bar_x_pos, m_bar_y_pos, m_bar_z_pos),
+    m_frame_mesh.addLine(
+        Vec3(m_bar_x_pos, m_bar_y_pos, m_bar_z_pos),
         Vec3(m_bar_x_pos + m_bar_width, m_bar_y_pos, m_bar_z_pos),
         black);
-    m_frame_mesh.addLine(Vec3(m_bar_x_pos, m_bar_y_pos - 1, m_bar_z_pos),
+    m_frame_mesh.addLine(
+        Vec3(m_bar_x_pos, m_bar_y_pos - 1, m_bar_z_pos),
         Vec3(m_bar_x_pos + m_bar_width, m_bar_y_pos - 1, m_bar_z_pos),
         black);
     for (std::int32_t i = 0; i < m_number_of_options; i++) {
-      m_frame_mesh.addLine(Vec3(m_bar_x_pos + (m_interval * i),
-                               m_bar_y_pos + m_height * 0.07,
-                               m_bar_z_pos),
-          Vec3(m_bar_x_pos + (m_interval * i),
+      m_frame_mesh.addLine(
+          Vec3(
+              m_bar_x_pos + (m_interval * i),
+              m_bar_y_pos + m_height * 0.07,
+              m_bar_z_pos),
+          Vec3(
+              m_bar_x_pos + (m_interval * i),
               m_bar_y_pos - m_height * 0.07,
               m_bar_z_pos),
           black);
@@ -140,7 +151,8 @@ void ControlItemSliderbar::draw(render::RenderContext& context) {
           static_cast<std::int32_t>(m_is_slider_clicked)) {
     m_slider_mesh.clear();
     if (!m_is_slider_clicked) {
-      vulkan_earth::appendBevel(m_slider_mesh,
+      vulkan_earth::appendBevel(
+          m_slider_mesh,
           m_slider_x_pos,
           m_slider_y_pos,
           m_slider_z_pos,
@@ -149,21 +161,25 @@ void ControlItemSliderbar::draw(render::RenderContext& context) {
           Vec4(m_color[0], m_color[1], m_color[2], m_color[3]),
           false);
     } else {
-      vulkan_earth::appendFrame(m_slider_mesh,
+      vulkan_earth::appendFrame(
+          m_slider_mesh,
           m_slider_x_pos,
           m_slider_y_pos,
           m_slider_z_pos,
           m_slider_width,
           m_slider_height,
-          Vec4(m_color[0] + 0.4f,
+          Vec4(
+              m_color[0] + 0.4f,
               m_color[1] + 0.4f,
               m_color[2] + 0.4f,
               m_color[3]),
-          Vec4(m_color[0] + 0.2f,
+          Vec4(
+              m_color[0] + 0.2f,
               m_color[1] + 0.2f,
               m_color[2] + 0.2f,
               m_color[3]),
-          Vec4(m_color[0] - 0.2f,
+          Vec4(
+              m_color[0] - 0.2f,
               m_color[1] - 0.2f,
               m_color[2] - 0.2f,
               m_color[3]));
@@ -200,7 +216,8 @@ void ControlItemSliderbar::setOptionText(std::int32_t index) {
   float label_x_pos = m_x_pos + (m_width / 2) - (real_length / 2);
   float label_y_pos = m_y_pos - m_height * 0.45;
   delete m_option_text;
-  m_option_text = new TextObject(m_current_option,
+  m_option_text = new TextObject(
+      m_current_option,
       label_x_pos,
       label_y_pos,
       m_z_pos,
@@ -212,7 +229,8 @@ void ControlItemSliderbar::setOptionText(std::int32_t index) {
   m_slider_x_pos = m_bar_x_pos + m_interval * index;
 }
 
-void ControlItemSliderbar::mouseClickEvent(std::int32_t x,
+void ControlItemSliderbar::mouseClickEvent(
+    std::int32_t x,
     std::int32_t y,
     std::int32_t state,
     bool /*still_over_control_item_sliderbar*/) {
@@ -223,19 +241,21 @@ void ControlItemSliderbar::mouseClickEvent(std::int32_t x,
       m_is_slider_clicked = true;
     }
     // check if the click is either left or right side from the slider
-    else if ((m_bar_x_pos < x && x < m_slider_x_pos) &&
+    else if (
+        (m_bar_x_pos < x && x < m_slider_x_pos) &&
         (m_slider_y_pos - m_slider_height - 5.5 < y &&
-            y < m_slider_y_pos + 5.5)) {
+         y < m_slider_y_pos + 5.5)) {
       playSFX(SMALL_CLICK);
       m_slider_x_pos -= m_interval;
       m_menu_state--;
       if (m_menu_state < 0)  // wrap around check
         m_menu_state += m_number_of_options;
       setOptionText(m_menu_state);
-    } else if ((m_slider_x_pos + m_slider_width < x &&
-                   x < m_bar_x_pos + m_bar_width) &&
+    } else if (
+        (m_slider_x_pos + m_slider_width < x &&
+         x < m_bar_x_pos + m_bar_width) &&
         (m_slider_y_pos - m_slider_height - 5.5 < y &&
-            y < m_slider_y_pos + 5.5)) {
+         y < m_slider_y_pos + 5.5)) {
       playSFX(SMALL_CLICK);
       m_slider_x_pos += m_interval;
       m_menu_state++;
@@ -259,7 +279,8 @@ void ControlItemSliderbar::updateMouse(std::int32_t x, std::int32_t /*y*/) {
         m_menu_state += m_number_of_options;
       setOptionText(m_menu_state);
       playSFX(SMALL_CLICK);
-    } else if (m_slider_x_pos + m_interval / 2 + m_slider_width < x &&
+    } else if (
+        m_slider_x_pos + m_interval / 2 + m_slider_width < x &&
         x < m_bar_x_pos + m_bar_width) {
       m_slider_x_pos += m_interval;
       m_menu_state++;

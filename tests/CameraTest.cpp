@@ -65,7 +65,8 @@ void originalUpdateShake(std::array<std::int32_t, 3>& shake) {
 TEST(CameraTest, OrbitCameraDefaultsToFrontOnView) {
   const vg::OrbitCamera camera;
   expectNear(camera.target(), math::Vec3<float>(0.0f));
-  expectNear(camera.eye(),
+  expectNear(
+      camera.eye(),
       9.0f * math::Vec3<float>(0.0f, std::sin(0.45f), std::cos(0.45f)));
   expectNear(camera.up(), math::Vec3<float>(0.0f, 1.0f, 0.0f));
   expectNear(
@@ -80,7 +81,8 @@ TEST(CameraTest, OrbitCameraDragRotatesAndScrollZoomsWithinLimits) {
   camera.onMouseButton(1, true, 0, 0);
   camera.onMouseMove(100, 0);  // yaw += 1 radian
   camera.onMouseButton(1, false, 100, 0);
-  expectNear(camera.eye(),
+  expectNear(
+      camera.eye(),
       math::Vec3<float>(2.0f * std::sin(1.0f), 0.0f, 2.0f * std::cos(1.0f)));
 
   for (std::int32_t i = 0; i < 10; ++i) {
@@ -96,16 +98,20 @@ TEST(CameraTest, ShakeMatchesTheGamesOriginalDecay) {
   camera.setShake(37);
   std::array<std::int32_t, 3> expected{37, 37, 37};
   expectNear(camera.shakeOffset(), math::Vec3<float>(37.0f));
-  expectNear(camera.view(),
-      glm::lookAt(camera.eye() + math::Vec3<float>(37.0f),
+  expectNear(
+      camera.view(),
+      glm::lookAt(
+          camera.eye() + math::Vec3<float>(37.0f),
           camera.target() + math::Vec3<float>(37.0f),
           camera.up()));
 
   for (std::int32_t frame = 0; frame < 400; ++frame) {
     camera.updateShake();
     originalUpdateShake(expected);
-    ASSERT_EQ(camera.shakeOffset(),
-        math::Vec3<float>(static_cast<float>(expected[0]),
+    ASSERT_EQ(
+        camera.shakeOffset(),
+        math::Vec3<float>(
+            static_cast<float>(expected[0]),
             static_cast<float>(expected[1]),
             static_cast<float>(expected[2])))
         << "frame " << frame;
@@ -123,14 +129,16 @@ TEST(CameraTest, WorldCameraLooksDownTiltedTowardPlusX) {
   vg::WorldCamera camera(10.0f, 20000.0f, 300.0f);
   const float tilt = glm::radians(10.0f);
   expectNear(camera.eye(), math::Vec3<float>(10.0f, 20000.0f, 300.0f));
-  expectNear(camera.target() - camera.eye(),
+  expectNear(
+      camera.target() - camera.eye(),
       math::Vec3<float>(std::sin(tilt), -std::cos(tilt), 0.0f));
   expectNear(
       camera.up(), math::Vec3<float>(std::cos(tilt), std::sin(tilt), 0.0f));
 
   camera.move(20.0f, -40.0f, 5.0f);
   expectNear(camera.eye(), math::Vec3<float>(30.0f, 19960.0f, 305.0f));
-  expectNear(camera.target() - camera.eye(),
+  expectNear(
+      camera.target() - camera.eye(),
       math::Vec3<float>(std::sin(tilt), -std::cos(tilt), 0.0f));
 }
 

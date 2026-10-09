@@ -109,17 +109,20 @@ private:
   createPipelineLayout();
   bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
+  bool allocateCommandBuffers(
+      VkCommandPool pool,
       std::uint32_t count,
       VkCommandBuffer* command_buffers);
   bool createCommandBuffers();
   bool createSemaphores();
   bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
+  bool createBuffer(
+      VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& buffer);
   const std::vector<Tutorial05VertexData>& getVertexData() const;
-  bool prepareFrame(VkCommandBuffer command_buffer,
+  bool prepareFrame(
+      VkCommandBuffer command_buffer,
       const ImageParameters& image_parameters,
       VkFramebuffer& framebuffer);
   bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);

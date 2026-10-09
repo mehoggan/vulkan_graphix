@@ -34,7 +34,8 @@ const std::int32_t player_attributes = 4;
 class ReadyMenu {
 public:
   ReadyMenu();
-  ReadyMenu(float new_width,
+  ReadyMenu(
+      float new_width,
       float new_height,
       float new_percent_border,
       GlobalSettings* new_global_settings,

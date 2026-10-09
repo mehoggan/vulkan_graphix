@@ -16,7 +16,8 @@ namespace vulkan_graphix::Render {
 // can still use them.
 class Texture {
 public:
-  Texture(ImageParameters image,
+  Texture(
+      ImageParameters image,
       VkDescriptorSet descriptor_set,
       std::uint32_t width,
       std::uint32_t height);

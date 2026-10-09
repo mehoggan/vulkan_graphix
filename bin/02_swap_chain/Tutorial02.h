@@ -130,7 +130,8 @@ private:
   bool loadInstanceLevelEntryPoints();
   bool createPresentationSurface();
   bool createDevice();
-  bool checkPhysicalDeviceProperties(VkPhysicalDevice physical_device,
+  bool checkPhysicalDeviceProperties(
+      VkPhysicalDevice physical_device,
       std::uint32_t& graphics_queue_family_index,
       std::uint32_t& present_queue_family_index);
   bool loadDeviceLevelEntryPoints();
@@ -143,7 +144,8 @@ private:
   bool setupDebugMessenger();
   bool destroyDebugMessenger();
 
-  bool checkExtensionAvailability(const char* extension_name,
+  bool checkExtensionAvailability(
+      const char* extension_name,
       const std::vector<VkExtensionProperties>& available_extensions);
   std::uint32_t getSwapChainNumImages(
       VkSurfaceCapabilitiesKHR& surface_capabilities);

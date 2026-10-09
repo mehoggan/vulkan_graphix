@@ -12,7 +12,8 @@ ChaseCamera::ChaseCamera(
     m_up_factor(1.0f) {}
 
 float ChaseCamera::directionLength() const {
-  return std::sqrt(m_followed_direction[0] * m_followed_direction[0] +
+  return std::sqrt(
+      m_followed_direction[0] * m_followed_direction[0] +
       m_followed_direction[1] * m_followed_direction[1] +
       m_followed_direction[2] * m_followed_direction[2]);
 }
@@ -20,7 +21,8 @@ float ChaseCamera::directionLength() const {
 // The eye's z ignoring m_back_factor is the original's, kept as-is.
 Math::Vec3<float> ChaseCamera::eye() const {
   const float mag = directionLength();
-  return Math::Vec3<float>(m_followed_position[0] -
+  return Math::Vec3<float>(
+      m_followed_position[0] -
           500 * m_followed_direction[0] / mag * m_back_factor,
       m_followed_position[1] + m_up_factor,
       m_followed_position[2] - 500 * m_followed_direction[2] / mag);

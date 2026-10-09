@@ -30,7 +30,8 @@ Math::Vec3<float> pointAlongBarrel(
 
 // A shell fired at `speed` from pointAlongBarrel(turret_matrix,
 // muzzle_distance), travelling down the barrel.
-Launch launchFromBarrel(const Math::Mat4<float>& turret_matrix,
+Launch launchFromBarrel(
+    const Math::Mat4<float>& turret_matrix,
     float speed,
     float muzzle_distance);
 

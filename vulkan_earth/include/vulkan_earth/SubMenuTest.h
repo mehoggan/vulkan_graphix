@@ -13,7 +13,8 @@ class SubMenu;
 class SubMenuTest : public SubMenu {
 public:
   SubMenuTest();
-  SubMenuTest(std::int32_t id,
+  SubMenuTest(
+      std::int32_t id,
       float new_x_pos,
       float new_y_pos,
       float new_z_pos,

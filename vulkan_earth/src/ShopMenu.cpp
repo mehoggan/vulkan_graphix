@@ -39,7 +39,8 @@ extern void playSFX(std::int32_t sfx);
 extern void playMusic(std::int32_t music);
 
 ShopMenu::ShopMenu() = default;
-ShopMenu::ShopMenu(float new_width,
+ShopMenu::ShopMenu(
+    float new_width,
     float new_height,
     float new_percent_border,
     GlobalSettings* new_global_settings,
@@ -66,7 +67,8 @@ ShopMenu::ShopMenu(float new_width,
   m_percent_border = new_percent_border;
   m_pos[0] = m_pos[1] = m_pos[2] = 0;
 
-  m_grids[0] = new ControlItemGrid(m_pos[0] - m_width * 0.4,
+  m_grids[0] = new ControlItemGrid(
+      m_pos[0] - m_width * 0.4,
       m_pos[1] + m_height * 0.28,
       m_pos[2],
       m_width * 0.3,
@@ -78,7 +80,8 @@ ShopMenu::ShopMenu(float new_width,
       0.41,
       false,
       false);
-  m_grids[1] = new ControlItemGrid(m_pos[0] + m_width * 0.175,
+  m_grids[1] = new ControlItemGrid(
+      m_pos[0] + m_width * 0.175,
       m_pos[1] + m_height * 0.30,
       m_pos[2],
       m_width * 0.12,
@@ -90,7 +93,8 @@ ShopMenu::ShopMenu(float new_width,
       0.43,
       true,
       true);
-  m_buttons[0] = new ControlItemButton(nullptr,
+  m_buttons[0] = new ControlItemButton(
+      nullptr,
       m_pos[0] - m_width * 0.34,
       m_pos[1] + m_height * 0.35,
       m_pos[2] + 0.5,
@@ -103,7 +107,8 @@ ShopMenu::ShopMenu(float new_width,
   m_buttons[0]->setToggled(true);
   m_buttons[0]->updateButtonState();
 
-  m_buttons[1] = new ControlItemButton(nullptr,
+  m_buttons[1] = new ControlItemButton(
+      nullptr,
       m_pos[0] - m_width * 0.235,
       m_pos[1] + m_height * 0.35,
       m_pos[2] + 0.5,
@@ -113,7 +118,8 @@ ShopMenu::ShopMenu(float new_width,
       0.075 * (m_width),
       0.04 * (m_height),
       "Item");
-  m_buttons[2] = new ControlItemButton(nullptr,
+  m_buttons[2] = new ControlItemButton(
+      nullptr,
       m_pos[0] - m_width * 0.2,
       m_pos[1] - m_height * 0.175,
       m_pos[2] + 0.5,
@@ -123,7 +129,8 @@ ShopMenu::ShopMenu(float new_width,
       0.075 * (m_width),
       0.04 * (m_height),
       "Buy");
-  m_buttons[3] = new ControlItemButton(nullptr,
+  m_buttons[3] = new ControlItemButton(
+      nullptr,
       m_pos[0] + m_width * 0.275,
       m_pos[1] - m_height * 0.175,
       m_pos[2] + 0.5,
@@ -133,7 +140,8 @@ ShopMenu::ShopMenu(float new_width,
       0.075 * (m_width),
       0.04 * (m_height),
       "Sell");
-  m_buttons[4] = new ControlItemButton(nullptr,
+  m_buttons[4] = new ControlItemButton(
+      nullptr,
       m_pos[0] + m_width * 0.15,
       m_pos[1] - m_height * 0.365,
       m_pos[2] + 0.5,
@@ -145,7 +153,8 @@ ShopMenu::ShopMenu(float new_width,
       "Finish Shopping");
 
   /*LABEL PLACEMENT*/
-  m_label_wpn = new TextObject("Weapon",
+  m_label_wpn = new TextObject(
+      "Weapon",
       m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.05,
       m_grids[1]->getYPos() + 15,
       (m_pos[2] + 1),
@@ -153,7 +162,8 @@ ShopMenu::ShopMenu(float new_width,
       0.0f,
       0.0f,
       0.0f);
-  m_label_item = new TextObject("Item",
+  m_label_item = new TextObject(
+      "Item",
       m_grids[1]->getXPos() + m_grids[1]->getWidth() / 1.6,
       m_grids[1]->getYPos() + 15,
       (m_pos[2] + 1),
@@ -161,7 +171,8 @@ ShopMenu::ShopMenu(float new_width,
       0.0f,
       0.0f,
       0.0f);
-  m_label_player_num = new TextObject("Player 1 Balance:",
+  m_label_player_num = new TextObject(
+      "Player 1 Balance:",
       m_pos[0] - m_width * 0.35,
       m_pos[1] - m_height * 0.39,
       (m_pos[2] + 1),
@@ -169,7 +180,8 @@ ShopMenu::ShopMenu(float new_width,
       0.0f,
       0.0f,
       0.0f);
-  m_label_discription = new TextObject("",
+  m_label_discription = new TextObject(
+      "",
       m_pos[0] - m_width * 0.4,
       m_pos[1] - m_height * 0.1,
       m_pos[2] + 1,
@@ -177,7 +189,8 @@ ShopMenu::ShopMenu(float new_width,
       0.0f,
       0.0f,
       0.0f);
-  m_label_buy_price = new TextObject("",
+  m_label_buy_price = new TextObject(
+      "",
       m_pos[0] - m_width * 0.35,
       m_pos[1] - m_height * 0.2,
       m_pos[2] + 1,
@@ -185,7 +198,8 @@ ShopMenu::ShopMenu(float new_width,
       0.0f,
       0.0f,
       0.0f);
-  m_label_sell_price = new TextObject("$ 0",
+  m_label_sell_price = new TextObject(
+      "$ 0",
       m_pos[0] + m_width * 0.15,
       m_pos[1] - m_height * 0.2,
       m_pos[2] + 1,
@@ -194,7 +208,8 @@ ShopMenu::ShopMenu(float new_width,
       0.0f,
       0.0f);
   std::string balance = "$ " + std::to_string(m_current_player_balance);
-  m_label_player_balance = new TextObject(balance,
+  m_label_player_balance = new TextObject(
+      balance,
       m_pos[0] - m_width * 0.2,
       m_pos[1] - m_height * 0.39,
       (m_pos[2] + 1),
@@ -228,7 +243,8 @@ ShopMenu::ShopMenu(float new_width,
 
   /*Images and remainsLabels Creation*/
   for (std::int32_t i = 0; i < num_sales_weapon; i++) {
-    m_img_shop_wpns[i] = new ImageObject(0,
+    m_img_shop_wpns[i] = new ImageObject(
+        0,
         0,
         2.0f,
         100,
@@ -245,7 +261,8 @@ ShopMenu::ShopMenu(float new_width,
         remain, 0, 0, 0, vulkan_earth::FontId::TimesRoman24, 0.6f, 0.3f, 0.4f);
   }
   for (std::int32_t i = 0; i < num_sales_item; i++) {
-    m_img_shop_items[i] = new ImageObject(0,
+    m_img_shop_items[i] = new ImageObject(
+        0,
         0,
         2.0f,
         100,
@@ -345,9 +362,10 @@ void ShopMenu::saveCurrentPlayerInfo() {
 }
 
 void ShopMenu::displayCurrentPlayerInfo() {
-  while ((m_current_player_index < m_num_players) &&
+  while (
+      (m_current_player_index < m_num_players) &&
       (m_player_factory->getPlayer(m_current_player_index)->getPlayerType() ==
-          "CPU")) {
+       "CPU")) {
     m_current_player_index++;
   }
 
@@ -364,7 +382,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
         std::string remain =
             "x " + std::to_string(m_inven_wpns[i]->getRemaining());
         delete m_label_inven_wpn_remains[i];
-        m_label_inven_wpn_remains[i] = new TextObject(remain,
+        m_label_inven_wpn_remains[i] = new TextObject(
+            remain,
             0,
             0,
             0,
@@ -386,7 +405,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
         std::string remain =
             "x " + std::to_string(m_inven_items[i]->getRemaining());
         delete m_label_inven_item_remains[i];
-        m_label_inven_item_remains[i] = new TextObject(remain,
+        m_label_inven_item_remains[i] = new TextObject(
+            remain,
             0,
             0,
             0,
@@ -402,7 +422,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
     delete m_label_player_num;
     std::string label_text =
         "Player " + std::to_string(m_current_player_index + 1) + " Balance:";
-    m_label_player_num = new TextObject(label_text,
+    m_label_player_num = new TextObject(
+        label_text,
         m_pos[0] - m_width * 0.35,
         m_pos[1] - m_height * 0.39,
         (m_pos[2] + 1),
@@ -416,7 +437,8 @@ void ShopMenu::displayCurrentPlayerInfo() {
         m_player_factory->getPlayer(m_current_player_index)->getCash();
     delete m_label_player_balance;
     std::string balance = "$ " + std::to_string(m_current_player_balance);
-    m_label_player_balance = new TextObject(balance,
+    m_label_player_balance = new TextObject(
+        balance,
         m_pos[0] - m_width * 0.2,
         m_pos[1] - m_height * 0.39,
         (m_pos[2] + 1),
@@ -441,26 +463,32 @@ void ShopMenu::printDebugInfo() {
   printf("\n*************************************");
   for (std::int32_t i = 0; i < m_player_factory->getNumberofPlayers(); i++) {
     printf("\n\nPlayer%d", i + 1);
-    printf("\nPlayer Type: %s",
+    printf(
+        "\nPlayer Type: %s",
         m_player_factory->getPlayer(i)->getPlayerType().c_str());
-    printf("\nAI Difficulty: %s",
+    printf(
+        "\nAI Difficulty: %s",
         m_player_factory->getPlayer(i)->getAiType().c_str());
-    printf("\nPlayer Name: %s",
+    printf(
+        "\nPlayer Name: %s",
         m_player_factory->getPlayer(i)->getPlayerName().c_str());
     printf(
         "\nTeam Number: %c", m_player_factory->getPlayer(i)->getTeamLabel());
-    printf("\nTank Type: %s",
+    printf(
+        "\nTank Type: %s",
         m_player_factory->getPlayer(i)->getTankType().c_str());
     printf("\nCurrent Money: %d", m_player_factory->getPlayer(i)->getCash());
     for (std::int32_t j = 0; j < inven_grid_row; j++) {
       if (m_player_factory->getPlayer(i)->getCurrentWeapons()[j]) {
-        printf("\nWeapon Slot %i: %s",
+        printf(
+            "\nWeapon Slot %i: %s",
             j,
             m_player_factory->getPlayer(i)
                 ->getCurrentWeapons()[j]
                 ->getDescription()
                 .c_str());
-        printf("\nWeapon Slot %i amount: %i",
+        printf(
+            "\nWeapon Slot %i amount: %i",
             j,
             m_player_factory->getPlayer(i)
                 ->getCurrentWeapons()[j]
@@ -469,13 +497,15 @@ void ShopMenu::printDebugInfo() {
     }
     for (std::int32_t j = 0; j < inven_grid_row; j++) {
       if (m_player_factory->getPlayer(i)->getCurrentItems()[j]) {
-        printf("\nItem Slot %i: %s",
+        printf(
+            "\nItem Slot %i: %s",
             j,
             m_player_factory->getPlayer(i)
                 ->getCurrentItems()[j]
                 ->getDescription()
                 .c_str());
-        printf("\nItem Slot %i amount: %i",
+        printf(
+            "\nItem Slot %i amount: %i",
             j,
             m_player_factory->getPlayer(i)
                 ->getCurrentItems()[j]
@@ -494,7 +524,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
       if (selected_cells[i]) {
         delete m_label_discription;
         delete m_label_buy_price;
-        m_label_discription = new TextObject(m_shop_wpns[i]->getDescription(),
+        m_label_discription = new TextObject(
+            m_shop_wpns[i]->getDescription(),
             m_pos[0] - m_width * 0.4,
             m_pos[1] - m_height * 0.1,
             m_pos[2] + 1,
@@ -503,7 +534,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
             0.0f,
             0.0f);
         std::string price = "$ " + std::to_string(m_shop_wpns[i]->getPrice());
-        m_label_buy_price = new TextObject(price,
+        m_label_buy_price = new TextObject(
+            price,
             m_pos[0] - m_width * 0.35,
             m_pos[1] - m_height * 0.2,
             m_pos[2] + 1,
@@ -526,7 +558,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
       if (selected_cells[i]) {
         delete m_label_discription;
         delete m_label_buy_price;
-        m_label_discription = new TextObject(m_shop_items[i]->getDescription(),
+        m_label_discription = new TextObject(
+            m_shop_items[i]->getDescription(),
             m_pos[0] - m_width * 0.4,
             m_pos[1] - m_height * 0.1,
             m_pos[2] + 1,
@@ -535,7 +568,8 @@ void ShopMenu::updateBuyDiscriptLabel() {
             0.0f,
             0.0f);
         std::string price = "$ " + std::to_string(m_shop_items[i]->getPrice());
-        m_label_buy_price = new TextObject(price,
+        m_label_buy_price = new TextObject(
+            price,
             m_pos[0] - m_width * 0.35,
             m_pos[1] - m_height * 0.2,
             m_pos[2] + 1,
@@ -565,22 +599,23 @@ void ShopMenu::updateSellLabel() {
         i % 2 == 0) {  //	i%2 == 0 is weapon inventory
       total_sell += static_cast<std::int32_t>(
           ((m_inven_wpns[i / 2]->getPrice() /
-               m_inven_wpns[i / 2]->getPackageNum()) /
-              1.5) *
+            m_inven_wpns[i / 2]->getPackageNum()) /
+           1.5) *
           m_inven_wpns[i / 2]->getRemaining());
     }
     if (selected_cells[i] && m_inven_items[i / 2] != nullptr && i % 2 == 1) {
       total_sell += static_cast<std::int32_t>(
           ((m_inven_items[i / 2]->getPrice() /
-               m_inven_items[i / 2]->getPackageNum()) /
-              1.5) *
+            m_inven_items[i / 2]->getPackageNum()) /
+           1.5) *
           m_inven_items[i / 2]->getRemaining());
     }
   }
 
   delete m_label_sell_price;
   std::string price = "$ " + std::to_string(total_sell);
-  m_label_sell_price = new TextObject(price,
+  m_label_sell_price = new TextObject(
+      price,
       m_pos[0] + m_width * 0.15,
       m_pos[1] - m_height * 0.2,
       m_pos[2] + 1,
@@ -600,14 +635,15 @@ void ShopMenu::buyHandler() {
         for (inven_i = 0; inven_i < inven_grid_row; inven_i++) {
           if ((m_inven_wpns[inven_i] == nullptr) ||
               (m_shop_wpns[i]->getUNIQUEIDENTIFIER() ==
-                  m_inven_wpns[inven_i]->getUNIQUEIDENTIFIER()))
+               m_inven_wpns[inven_i]->getUNIQUEIDENTIFIER()))
             break;
         }
         if ((m_current_player_balance >= m_shop_wpns[i]->getPrice()) &&
             (inven_i < inven_grid_row)) {
           if (m_inven_wpns[inven_i] == nullptr) {
             playSFX(TRANSACTION);
-            m_img_inven_wpns[inven_i] = new ImageObject(0,
+            m_img_inven_wpns[inven_i] = new ImageObject(
+                0,
                 0,
                 0,
                 0,
@@ -641,7 +677,8 @@ void ShopMenu::buyHandler() {
           delete m_label_player_balance;
           std::string balance =
               "$ " + std::to_string(m_current_player_balance);
-          m_label_player_balance = new TextObject(balance,
+          m_label_player_balance = new TextObject(
+              balance,
               m_pos[0] - m_width * 0.2,
               m_pos[1] - m_height * 0.39,
               (m_pos[2] + 1),
@@ -653,7 +690,8 @@ void ShopMenu::buyHandler() {
           std::string remain =
               "x " + std::to_string(m_inven_wpns[inven_i]->getRemaining());
           delete m_label_inven_wpn_remains[inven_i];
-          m_label_inven_wpn_remains[inven_i] = new TextObject(remain,
+          m_label_inven_wpn_remains[inven_i] = new TextObject(
+              remain,
               0,
               0,
               0,
@@ -675,14 +713,15 @@ void ShopMenu::buyHandler() {
         for (inven_i = 0; inven_i < inven_grid_row; inven_i++) {
           if ((m_inven_items[inven_i] == nullptr) ||
               (m_shop_items[i]->getUNIQUEIDENTIFIER() ==
-                  m_inven_items[inven_i]->getUNIQUEIDENTIFIER()))
+               m_inven_items[inven_i]->getUNIQUEIDENTIFIER()))
             break;
         }
         if (m_current_player_balance >= m_shop_items[i]->getPrice() &&
             inven_i < inven_grid_row) {
           if (m_inven_items[inven_i] == nullptr) {
             playSFX(TRANSACTION);
-            m_img_inven_items[inven_i] = new ImageObject(0,
+            m_img_inven_items[inven_i] = new ImageObject(
+                0,
                 0,
                 0,
                 0,
@@ -716,7 +755,8 @@ void ShopMenu::buyHandler() {
           delete m_label_player_balance;
           std::string balance =
               "$ " + std::to_string(m_current_player_balance);
-          m_label_player_balance = new TextObject(balance,
+          m_label_player_balance = new TextObject(
+              balance,
               m_pos[0] - m_width * 0.2,
               m_pos[1] - m_height * 0.39,
               (m_pos[2] + 1),
@@ -728,7 +768,8 @@ void ShopMenu::buyHandler() {
           std::string remain =
               "x " + std::to_string(m_inven_items[inven_i]->getRemaining());
           delete m_label_inven_item_remains[inven_i];
-          m_label_inven_item_remains[inven_i] = new TextObject(remain,
+          m_label_inven_item_remains[inven_i] = new TextObject(
+              remain,
               0,
               0,
               0,
@@ -756,8 +797,8 @@ void ShopMenu::sellHandler() {
         i % 2 == 0) {  // i%2 == 0 is weapon inventory
       total_sell += static_cast<std::int32_t>(
           ((m_inven_wpns[i / 2]->getPrice() /
-               m_inven_wpns[i / 2]->getPackageNum()) /
-              1.5) *
+            m_inven_wpns[i / 2]->getPackageNum()) /
+           1.5) *
           m_inven_wpns[i / 2]->getRemaining());
       delete m_img_inven_wpns[i / 2];
       delete m_label_inven_wpn_remains[i / 2];
@@ -769,8 +810,8 @@ void ShopMenu::sellHandler() {
     if (selected_cells[i] && m_inven_items[i / 2] != nullptr && i % 2 == 1) {
       total_sell += static_cast<std::int32_t>(
           ((m_inven_items[i / 2]->getPrice() /
-               m_inven_items[i / 2]->getPackageNum()) /
-              1.5) *
+            m_inven_items[i / 2]->getPackageNum()) /
+           1.5) *
           m_inven_items[i / 2]->getRemaining());
       delete m_img_inven_items[i / 2];
       delete m_label_inven_item_remains[i / 2];
@@ -786,7 +827,8 @@ void ShopMenu::sellHandler() {
     m_current_player_balance += total_sell;
     delete m_label_player_balance;
     std::string balance = "$ " + std::to_string(m_current_player_balance);
-    m_label_player_balance = new TextObject(balance,
+    m_label_player_balance = new TextObject(
+        balance,
         m_pos[0] - m_width * 0.2,
         m_pos[1] - m_height * 0.39,
         (m_pos[2] + 1),
@@ -810,28 +852,36 @@ void ShopMenu::draw(render::RenderContext& context) {
         m_panel_mesh, m_width, m_height, m_percent_border);
     const Vec4 black(0, 0, 0, 1);
     for (float offset : {-1.0f, 0.0f, 1.0f}) {
-      m_panel_mesh.addLine(Vec3(m_pos[0] + m_width * 0.04 + offset,
-                               m_pos[1] + m_height * 0.45,
-                               m_pos[2] + 1),
-          Vec3(m_pos[0] + m_width * 0.04 + offset,
+      m_panel_mesh.addLine(
+          Vec3(
+              m_pos[0] + m_width * 0.04 + offset,
+              m_pos[1] + m_height * 0.45,
+              m_pos[2] + 1),
+          Vec3(
+              m_pos[0] + m_width * 0.04 + offset,
               m_pos[1] - m_height * 0.277,
               m_pos[2] + 1),
           black);
     }
     for (float offset : {1.0f, 0.0f, -1.0f}) {
-      m_panel_mesh.addLine(Vec3(m_pos[0] - m_width * 0.45,
-                               m_pos[1] - m_height * 0.29 + offset,
-                               m_pos[2] + 1),
-          Vec3(m_pos[0] + m_width * 0.45,
+      m_panel_mesh.addLine(
+          Vec3(
+              m_pos[0] - m_width * 0.45,
+              m_pos[1] - m_height * 0.29 + offset,
+              m_pos[2] + 1),
+          Vec3(
+              m_pos[0] + m_width * 0.45,
               m_pos[1] - m_height * 0.29 + offset,
               m_pos[2] + 1),
           black);
     }
     m_panel_mesh.addLine(
-        Vec3(m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.5,
+        Vec3(
+            m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.5,
             m_grids[1]->getYPos() + 35,
             m_pos[2] + 1),
-        Vec3(m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.5,
+        Vec3(
+            m_grids[1]->getXPos() + m_grids[1]->getWidth() * 0.5,
             m_grids[1]->getYPos() + 5,
             m_pos[2] + 1),
         black);
@@ -887,9 +937,9 @@ void ShopMenu::buttonTest(
   updateSellLabel();
 
   if ((x >= (m_buttons[0]->getXPos()) &&
-          x <= ((m_buttons[0]->getXPos()) + (m_buttons[0]->getWidth()))) &&
+       x <= ((m_buttons[0]->getXPos()) + (m_buttons[0]->getWidth()))) &&
       (y <= (m_buttons[0]->getYPos()) &&
-          y >= ((m_buttons[0]->getYPos()) - (m_buttons[0]->getHeight())))) {
+       y >= ((m_buttons[0]->getYPos()) - (m_buttons[0]->getHeight())))) {
     if (button_down) playSFX(SMALL_CLICK);
     m_grids[0]->deselectAllCells();
     delete m_label_discription;
@@ -907,9 +957,9 @@ void ShopMenu::buttonTest(
   }
 
   if ((x >= (m_buttons[1]->getXPos()) &&
-          x <= ((m_buttons[1]->getXPos()) + (m_buttons[1]->getWidth()))) &&
+       x <= ((m_buttons[1]->getXPos()) + (m_buttons[1]->getWidth()))) &&
       (y <= (m_buttons[1]->getYPos()) &&
-          y >= ((m_buttons[1]->getYPos()) - (m_buttons[1]->getHeight())))) {
+       y >= ((m_buttons[1]->getYPos()) - (m_buttons[1]->getHeight())))) {
     if (button_down) playSFX(SMALL_CLICK);
     m_grids[0]->deselectAllCells();
     delete m_label_discription;

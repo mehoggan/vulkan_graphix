@@ -15,7 +15,8 @@ extern void playSFX(std::int32_t sfx);
 
 MainMenuButton::MainMenuButton() = default;
 
-MainMenuButton::MainMenuButton(std::int32_t id,
+MainMenuButton::MainMenuButton(
+    std::int32_t id,
     float new_x_pos,
     float new_y_pos,
     float new_z_pos,
@@ -49,7 +50,8 @@ MainMenuButton::MainMenuButton(std::int32_t id,
   float label_y_pos =
       m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
   /*	END OF BUTTON TEXT PLACEMENT	*/
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       m_z_pos,
@@ -68,7 +70,8 @@ void MainMenuButton::draw(render::RenderContext& context) {
   if (m_mesh.triangles().empty() || m_built_pressed != m_pressed ||
       m_built_color != current_color) {
     m_mesh.clear();
-    vulkan_earth::appendBevel(m_mesh,
+    vulkan_earth::appendBevel(
+        m_mesh,
         m_x_pos,
         m_y_pos,
         m_z_pos,
@@ -117,7 +120,8 @@ void MainMenuButton::setLabel(const std::string& c) {
   float label_y_pos =
       m_y_pos + ((m_y_pos - (m_y_pos + m_height)) / 2) - m_height / 4;
 
-  m_label = new TextObject(m_caption,
+  m_label = new TextObject(
+      m_caption,
       label_x_pos,
       label_y_pos,
       m_z_pos,

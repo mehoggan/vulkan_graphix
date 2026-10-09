@@ -20,10 +20,13 @@
 Language:        Cpp
 # BasedOnStyle:  Google
 AccessModifierOffset: -2
-# Wrapped parameters/arguments don't line up under the open bracket; each
-# continuation line is just indented four spaces past the line it continues
-# (twice the two-space block indent, so it stands apart from the body).
-AlignAfterOpenBracket: DontAlign
+# A parameter or argument list that doesn't fit on the line breaks right
+# after the open bracket, so even the first one goes on its own line, each
+# continuation line four spaces past the line it continues (twice the
+# two-space block indent, so it stands apart from the body) - never lined
+# up under the bracket. With BinPackParameters/Arguments off, that's one
+# per line.
+AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true
@@ -123,10 +126,13 @@ UseTab:          Never
 ---
 Language:        ObjC
 AccessModifierOffset: -2
-# Wrapped parameters/arguments don't line up under the open bracket; each
-# continuation line is just indented four spaces past the line it continues
-# (twice the two-space block indent, so it stands apart from the body).
-AlignAfterOpenBracket: DontAlign
+# A parameter or argument list that doesn't fit on the line breaks right
+# after the open bracket, so even the first one goes on its own line, each
+# continuation line four spaces past the line it continues (twice the
+# two-space block indent, so it stands apart from the body) - never lined
+# up under the bracket. With BinPackParameters/Arguments off, that's one
+# per line.
+AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: true

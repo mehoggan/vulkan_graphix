@@ -10,15 +10,18 @@ Math::Vec3<float> pointAlongBarrel(
       distance * Math::Vec3<float>(turret_matrix[2]);
 }
 
-Launch launchFromBarrel(const Math::Mat4<float>& turret_matrix,
+Launch launchFromBarrel(
+    const Math::Mat4<float>& turret_matrix,
     float speed,
     float muzzle_distance) {
-  return Launch{pointAlongBarrel(turret_matrix, muzzle_distance),
+  return Launch{
+      pointAlongBarrel(turret_matrix, muzzle_distance),
       -Math::Vec3<float>(turret_matrix[2]) * speed};
 }
 
 Math::Vec3<float> positionAt(const Launch& launch, float gravity, float time) {
-  return Math::Vec3<float>(launch.m_velocity.x * time + launch.m_origin.x,
+  return Math::Vec3<float>(
+      launch.m_velocity.x * time + launch.m_origin.x,
       static_cast<float>(
           0.5f * gravity * std::pow(static_cast<double>(time), 2.0) +
           launch.m_velocity.y * time + launch.m_origin.y),

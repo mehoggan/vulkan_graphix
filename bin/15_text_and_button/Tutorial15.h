@@ -15,6 +15,11 @@
 // correct Vulkan pattern for small, per-frame-dynamic geometry, the same
 // way every other tutorial already maps/memcpy's its uniform buffer each
 // frame rather than staging it.
+//
+// The Vulkan scaffolding - render pass, pipelines, descriptors, buffers,
+// texture uploads, and the frame loop - is the library's (VulkanCommon's
+// ResourceContext/FrameLoop); this file is what's specific to the
+// tutorial.
 
 #include <cstddef>
 #include <cstdint>
@@ -22,13 +27,12 @@
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "vulkan_graphix/BitmapFont.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
-#include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
-#include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
+#include "vulkan_graphix/VulkanCommon/FrameLoop.h"
+#include "vulkan_graphix/VulkanCommon/ResourceContext.h"
 
 namespace vulkan_graphix {
 
@@ -38,118 +42,17 @@ struct Tutorial15VertexData {
   Math::Vec4<float> m_color;
 };
 
-using Tutorial15VertexAttributeTraits = VertexTypes::
-    AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
-
-// ************************************************************ //
-// VulkanTutorial15Parameters                                   //
-//                                                              //
-// Vulkan specific parameters                                   //
-// ************************************************************ //
-struct VulkanTutorial15Parameters {
-public:
-  static const std::size_t resources_count = 3;
-
-  VulkanTutorial15Parameters();
-
-  const VkRenderPass& getVkRenderPass() const;
-  VkRenderPass& getVkRenderPass();
-  void setVkRenderPass(const VkRenderPass& vk_render_pass);
-
-  const ImageParameters& getImageParameters() const;
-  ImageParameters& getImageParameters();
-  void setImageParameters(const ImageParameters& image_parameters);
-
-  const BufferParameters& getUniformBufferParameters() const;
-  BufferParameters& getUniformBufferParameters();
-  void setUniformBufferParameters(const BufferParameters& uniform_buffer);
-
-  const DescriptorSetParameters& getDescriptorSetParameters() const;
-  DescriptorSetParameters& getDescriptorSetParameters();
-  void setDescriptorSetParameters(
-      const DescriptorSetParameters& descriptor_set_parameters);
-
-  const VkPipelineLayout& getVkPipelineLayout() const;
-  VkPipelineLayout& getVkPipelineLayout();
-  void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
-
-  const VkPipeline& getVkGraphicsPipeline() const;
-  VkPipeline& getVkGraphicsPipeline();
-  void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
-
-  // Host-visible/coherent, sized once for c_max_vertex_count - see
-  // Tutorial15.h's own comment and updateVertexBufferData().
-  const BufferParameters& getVertexBufferParameters() const;
-  BufferParameters& getVertexBufferParameters();
-  void setVertexBufferParameters(const BufferParameters& vertex_buffer);
-
-  std::uint32_t getVertexCount() const;
-  void setVertexCount(std::uint32_t vertex_count);
-
-  // Only used once, to upload the font atlas texture.
-  const BufferParameters& getStagingBufferParameters() const;
-  BufferParameters& getStagingBufferParameters();
-  void setStagingBufferParameters(const BufferParameters& staging_buffer);
-
-  const VkCommandPool& getVkCommandPool() const;
-  VkCommandPool& getVkCommandPool();
-  void setVkCommandPool(const VkCommandPool& vk_command_pool);
-
-  const std::vector<RenderingResourceParameters>& getRenderingResources()
-      const;
-  std::vector<RenderingResourceParameters>& getRenderingResources();
-  void setRenderingResources(
-      const std::vector<RenderingResourceParameters>& rendering_resources);
-
-  // One per swapchain image, indexed by acquired image index rather than
-  // by rendering-resource slot. See the comment in createSemaphores() for
-  // why this can't just live in RenderingResourceParameters.
-  const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
-  std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
-  void setFinishedRenderingSemaphores(
-      const std::vector<VkSemaphore>& finished_rendering_semaphores);
-
-private:
-  VkRenderPass m_vk_render_pass;
-  ImageParameters m_image_parameters;
-  BufferParameters m_uniform_buffer;
-  DescriptorSetParameters m_descriptor_set_parameters;
-  VkPipelineLayout m_vk_pipeline_layout;
-  VkPipeline m_vk_graphics_pipeline;
-  BufferParameters m_vertex_buffer;
-  std::uint32_t m_vertex_count;
-  BufferParameters m_staging_buffer;
-  VkCommandPool m_vk_command_pool;
-  std::vector<RenderingResourceParameters> m_rendering_resources;
-  std::vector<VkSemaphore> m_finished_rendering_semaphores;
-};
-
-// ************************************************************ //
-// Tutorial15                                                   //
-//                                                              //
-// Class for presenting Vulkan usage topics                     //
-// ************************************************************ //
 class Tutorial15 : public TutorialBase {
 public:
   Tutorial15();
   ~Tutorial15() override;
 
-  bool createRenderingResources();
-  bool createStagingBuffer();
-  bool createFontAtlas();
-  bool createUniformBuffer();
-  bool createDescriptorSetLayout();
-  bool createDescriptorPool();
-  bool allocateDescriptorSet();
-  bool updateDescriptorSet();
-  bool createRenderPass();
-  bool createPipelineLayout();
-  bool createPipeline();
-  bool createVertexBuffer();
+  // Everything the tutorial draws with; call once after prepareVulkan().
+  bool createResources();
 
   bool draw() override;
-
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
@@ -164,30 +67,7 @@ private:
   static constexpr const char* c_font_path =
       "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 
-  bool createCommandBuffers();
-  bool createCommandPool(
-      std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
-      std::uint32_t count,
-      VkCommandBuffer* command_buffers);
-  bool createSemaphores();
-  bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags memory_property,
-      BufferParameters& buffer);
-  bool createImage(std::uint32_t width, std::uint32_t height, VkImage* image);
-  bool allocateImageMemory(
-      VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
-  bool createImageView();
-  bool createSampler(VkSampler* sampler);
-  bool copyTextureData(char* texture_data,
-      std::uint32_t data_size,
-      std::uint32_t width,
-      std::uint32_t height);
   Math::Mat4<float> getUniformBufferData() const;
-  bool updateUniformBufferData();
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-  createShaderModule(const char* filename);
 
   // Layout: button top-left/size in the same screen-pixel, top-left-
   // origin, y-down convention the vertex/projection setup uses -
@@ -200,16 +80,18 @@ private:
   std::vector<Tutorial15VertexData> buildUiVertexData() const;
   bool updateVertexBufferData();
 
-  bool prepareFrame(VkCommandBuffer command_buffer,
-      const ImageParameters& image_parameters,
-      VkFramebuffer& framebuffer);
-  bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
-  void destroyBuffer(BufferParameters& buffer);
-
   bool childOnWindowSizeChanged() override;
   void childClear() override;
 
-  VulkanTutorial15Parameters m_vulkan_tutorial15_parameters;
+  VulkanCommon::ResourceContext m_resources;
+  VulkanCommon::FrameLoop m_frames;
+  ImageParameters m_font_texture;
+  BufferParameters m_uniform_buffer;
+  BufferParameters m_vertex_buffer;
+  std::uint32_t m_vertex_count = 0;
+  VkDescriptorSet m_descriptor_set = VK_NULL_HANDLE;
+  VkPipelineLayout m_pipeline_layout = VK_NULL_HANDLE;
+  VkPipeline m_pipeline = VK_NULL_HANDLE;
   BitmapFont m_font;
   bool m_button_pressed;
   std::int32_t m_click_count;

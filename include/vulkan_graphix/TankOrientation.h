@@ -38,7 +38,8 @@ struct Alignment {
 // axis.x) - swizzled exactly as Tank::orientTank()'s glRotatef call did,
 // which converts the world-space axis into the frame of vulkan_earth's
 // tank basis (an x<->z axis swap, see HellfireTank::getPartBasis()).
-std::optional<Alignment> alignToGround(const Math::Mat4<float>& body_matrix,
+std::optional<Alignment> alignToGround(
+    const Math::Mat4<float>& body_matrix,
     const Math::Vec3<float>& ground_normal);
 
 }  // namespace vulkan_graphix::TankOrientation

@@ -133,12 +133,14 @@ private:
   bool createCommandBuffers();
   bool createCommandPool(
       std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
+  bool allocateCommandBuffers(
+      VkCommandPool pool,
       std::uint32_t count,
       VkCommandBuffer* command_buffers);
   bool createSemaphores();
   bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
+  bool createBuffer(
+      VkBufferUsageFlags usage,
       VkMemoryPropertyFlags memory_property,
       BufferParameters& buffer);
   bool createImage(std::uint32_t width, std::uint32_t height, VkImage* image);
@@ -146,7 +148,8 @@ private:
       VkImage image, VkMemoryPropertyFlags property, VkDeviceMemory* memory);
   bool createImageView();
   bool createSampler(VkSampler* sampler);
-  bool copyTextureData(char* texture_data,
+  bool copyTextureData(
+      char* texture_data,
       std::uint32_t data_size,
       std::uint32_t width,
       std::uint32_t height);
@@ -156,7 +159,8 @@ private:
   createShaderModule(const char* filename);
   const std::vector<Tutorial07VertexData>& getVertexData() const;
   bool copyVertexData();
-  bool prepareFrame(VkCommandBuffer command_buffer,
+  bool prepareFrame(
+      VkCommandBuffer command_buffer,
       const ImageParameters& image_parameters,
       VkFramebuffer& framebuffer);
   bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);

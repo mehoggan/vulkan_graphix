@@ -42,7 +42,8 @@ public:
   // unaffected. `button` follows X11 convention: 1/2/3 = left/middle/
   // right, 4/5 = scroll wheel up/down (reported as a press with no
   // matching release).
-  virtual void onMouseButton(std::int32_t button,
+  virtual void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y);
@@ -89,7 +90,8 @@ public:
 
   // 500x500 at (20, 20) - every tutorial's window.
   bool create(const std::string& title);
-  bool create(const std::string& title,
+  bool create(
+      const std::string& title,
       std::int32_t pos_x,
       std::int32_t pos_y,
       std::int32_t width,

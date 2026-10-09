@@ -26,23 +26,28 @@
 // that one layout and drawing in two passes: bind the font set, draw every
 // flat-color/text quad (panel bevel, title/explain/descript, per-cell labels,
 // the selected-cell highlight); bind the icon set, draw the 8 icon quads on
-// top of that (see prepareFrame()).
+// top of that (see draw()).
 
 #include <array>
+//
+// The Vulkan scaffolding - render pass, pipelines, descriptors, buffers,
+// texture uploads, and the frame loop - is the library's (VulkanCommon's
+// ResourceContext/FrameLoop); this file is what's specific to the
+// tutorial.
+
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
 
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
 
 #include "vulkan_graphix/BitmapFont.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
-#include "vulkan_graphix/Tools.h"
 #include "vulkan_graphix/Tutorial/TutorialBase.h"
 #include "vulkan_graphix/UiGeometry.h"
-#include "vulkan_graphix/VertexTypes/AttributeTraits.hpp"
+#include "vulkan_graphix/VulkanCommon/FrameLoop.h"
+#include "vulkan_graphix/VulkanCommon/ResourceContext.h"
 
 namespace vulkan_graphix {
 
@@ -55,147 +60,19 @@ struct Tutorial17VertexData {
   Math::Vec4<float> m_color;
 };
 
-using Tutorial17VertexAttributeTraits = VertexTypes::
-    AttributeTraits<Math::Vec4<float>, Math::Vec2<float>, Math::Vec4<float>>;
-
 static constexpr std::size_t c_inventory_item_count = 8;
 
-// ************************************************************ //
-// VulkanTutorial17Parameters                                   //
-//                                                              //
-// Vulkan specific parameters                                   //
-// ************************************************************ //
-struct VulkanTutorial17Parameters {
-public:
-  static const std::size_t resources_count = 3;
-
-  VulkanTutorial17Parameters();
-
-  const VkRenderPass& getVkRenderPass() const;
-  VkRenderPass& getVkRenderPass();
-  void setVkRenderPass(const VkRenderPass& vk_render_pass);
-
-  const ImageParameters& getFontImageParameters() const;
-  ImageParameters& getFontImageParameters();
-  void setFontImageParameters(const ImageParameters& image_parameters);
-
-  const ImageParameters& getIconImageParameters() const;
-  ImageParameters& getIconImageParameters();
-  void setIconImageParameters(const ImageParameters& image_parameters);
-
-  const BufferParameters& getUniformBufferParameters() const;
-  BufferParameters& getUniformBufferParameters();
-  void setUniformBufferParameters(const BufferParameters& uniform_buffer);
-
-  // One shared layout/pool, two sets allocated from it (see this
-  // header's top comment) - not two full DescriptorSetParameters,
-  // which would duplicate the layout/pool for no reason.
-  const VkDescriptorSetLayout& getVkDescriptorSetLayout() const;
-  VkDescriptorSetLayout& getVkDescriptorSetLayout();
-  void setVkDescriptorSetLayout(const VkDescriptorSetLayout& other);
-
-  const VkDescriptorPool& getVkDescriptorPool() const;
-  VkDescriptorPool& getVkDescriptorPool();
-  void setVkDescriptorPool(const VkDescriptorPool& other);
-
-  const VkDescriptorSet& getFontVkDescriptorSet() const;
-  VkDescriptorSet& getFontVkDescriptorSet();
-  void setFontVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkDescriptorSet& getIconVkDescriptorSet() const;
-  VkDescriptorSet& getIconVkDescriptorSet();
-  void setIconVkDescriptorSet(const VkDescriptorSet& other);
-
-  const VkPipelineLayout& getVkPipelineLayout() const;
-  VkPipelineLayout& getVkPipelineLayout();
-  void setVkPipelineLayout(const VkPipelineLayout& vk_pipeline_layout);
-
-  const VkPipeline& getVkGraphicsPipeline() const;
-  VkPipeline& getVkGraphicsPipeline();
-  void setVkGraphicsPipeline(const VkPipeline& vk_graphics_pipeline);
-
-  // Host-visible/coherent, sized once for c_max_vertex_count - holds both
-  // passes' quads back-to-back (text-pass range first, icon-pass range
-  // second) - see updateVertexBufferData().
-  const BufferParameters& getVertexBufferParameters() const;
-  BufferParameters& getVertexBufferParameters();
-  void setVertexBufferParameters(const BufferParameters& vertex_buffer);
-
-  std::uint32_t getTextVertexCount() const;
-  void setTextVertexCount(std::uint32_t vertex_count);
-  std::uint32_t getIconVertexCount() const;
-  void setIconVertexCount(std::uint32_t vertex_count);
-
-  // Only used twice, to upload the font atlas and then the icon atlas.
-  const BufferParameters& getStagingBufferParameters() const;
-  BufferParameters& getStagingBufferParameters();
-  void setStagingBufferParameters(const BufferParameters& staging_buffer);
-
-  const VkCommandPool& getVkCommandPool() const;
-  VkCommandPool& getVkCommandPool();
-  void setVkCommandPool(const VkCommandPool& vk_command_pool);
-
-  const std::vector<RenderingResourceParameters>& getRenderingResources()
-      const;
-  std::vector<RenderingResourceParameters>& getRenderingResources();
-  void setRenderingResources(
-      const std::vector<RenderingResourceParameters>& rendering_resources);
-
-  // One per swapchain image, indexed by acquired image index rather than
-  // by rendering-resource slot. See the comment in createSemaphores() for
-  // why this can't just live in RenderingResourceParameters.
-  const std::vector<VkSemaphore>& getFinishedRenderingSemaphores() const;
-  std::vector<VkSemaphore>& getFinishedRenderingSemaphores();
-  void setFinishedRenderingSemaphores(
-      const std::vector<VkSemaphore>& finished_rendering_semaphores);
-
-private:
-  VkRenderPass m_vk_render_pass;
-  ImageParameters m_font_image_parameters;
-  ImageParameters m_icon_image_parameters;
-  BufferParameters m_uniform_buffer;
-  VkDescriptorSetLayout m_vk_descriptor_set_layout;
-  VkDescriptorPool m_vk_descriptor_pool;
-  VkDescriptorSet m_vk_font_descriptor_set;
-  VkDescriptorSet m_vk_icon_descriptor_set;
-  VkPipelineLayout m_vk_pipeline_layout;
-  VkPipeline m_vk_graphics_pipeline;
-  BufferParameters m_vertex_buffer;
-  std::uint32_t m_text_vertex_count;
-  std::uint32_t m_icon_vertex_count;
-  BufferParameters m_staging_buffer;
-  VkCommandPool m_vk_command_pool;
-  std::vector<RenderingResourceParameters> m_rendering_resources;
-  std::vector<VkSemaphore> m_finished_rendering_semaphores;
-};
-
-// ************************************************************ //
-// Tutorial17                                                   //
-//                                                              //
-// Class for presenting Vulkan usage topics                     //
-// ************************************************************ //
 class Tutorial17 : public TutorialBase {
 public:
   Tutorial17();
   ~Tutorial17() override;
 
-  bool createRenderingResources();
-  bool createStagingBuffer();
-  bool createFontAtlas();
-  bool createIconAtlas();
-  bool createUniformBuffer();
-  bool createDescriptorSetLayout();
-  bool createDescriptorPool();
-  bool allocateDescriptorSets();
-  bool updateDescriptorSets();
-  bool createRenderPass();
-  bool createPipelineLayout();
-  bool createPipeline();
-  bool createVertexBuffer();
+  // Everything the tutorial draws with; call once after prepareVulkan().
+  bool createResources();
 
   bool draw() override;
-
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override;
@@ -219,28 +96,8 @@ private:
   static constexpr std::uint32_t c_icon_atlas_height =
       c_icon_size * c_icon_atlas_rows;
 
-  bool createCommandBuffers();
-  bool createCommandPool(
-      std::uint32_t queue_family_index, VkCommandPool* pool);
-  bool allocateCommandBuffers(VkCommandPool pool,
-      std::uint32_t count,
-      VkCommandBuffer* command_buffers);
-  bool createSemaphores();
-  bool createFences();
-  bool createBuffer(VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags memory_property,
-      BufferParameters& buffer);
-  // Shared by createFontAtlas()/createIconAtlas(): creates the image,
-  // memory, view, sampler, and uploads pixels, all in one call.
-  bool createTextureFromPixels(std::uint32_t width,
-      std::uint32_t height,
-      const std::vector<char>& pixels,
-      ImageParameters& out_image_parameters);
-
+  bool createIconAtlas();
   Math::Mat4<float> getUniformBufferData() const;
-  bool updateUniformBufferData();
-  Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule>
-  createShaderModule(const char* filename);
 
   // Layout - shared between rendering and onMouseButton()'s hit test,
   // same top-left-origin/y-down screen-pixel convention Tutorial15
@@ -259,16 +116,22 @@ private:
   std::vector<Tutorial17VertexData> buildIconPassVertexData() const;
   bool updateVertexBufferData();
 
-  bool prepareFrame(VkCommandBuffer command_buffer,
-      const ImageParameters& image_parameters,
-      VkFramebuffer& framebuffer);
-  bool createFramebuffer(VkFramebuffer& framebuffer, VkImageView image_view);
-  void destroyBuffer(BufferParameters& buffer);
-
   bool childOnWindowSizeChanged() override;
   void childClear() override;
 
-  VulkanTutorial17Parameters m_vulkan_tutorial17_parameters;
+  VulkanCommon::ResourceContext m_resources;
+  VulkanCommon::FrameLoop m_frames;
+  ImageParameters m_font_texture;
+  ImageParameters m_icon_texture;
+  BufferParameters m_uniform_buffer;
+  BufferParameters m_vertex_buffer;
+  std::uint32_t m_text_vertex_count = 0;
+  std::uint32_t m_icon_vertex_count = 0;
+  // One layout, two sets: the font atlas's and the icon atlas's.
+  VkDescriptorSet m_font_descriptor_set = VK_NULL_HANDLE;
+  VkDescriptorSet m_icon_descriptor_set = VK_NULL_HANDLE;
+  VkPipelineLayout m_pipeline_layout = VK_NULL_HANDLE;
+  VkPipeline m_pipeline = VK_NULL_HANDLE;
   BitmapFont m_font;
   std::size_t m_selected_index;
 };

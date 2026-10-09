@@ -16,13 +16,15 @@ class RenderContext;
 // Tutorial20), drawn as translucent spheres.
 class ParticleGenerator {
 public:
-  ParticleGenerator(std::int32_t spawn,
+  ParticleGenerator(
+      std::int32_t spawn,
       std::int32_t rate,
       std::int32_t speed,
       std::int32_t life,
       std::int32_t new_type);
   void update(float new_x, float new_y, float new_z);
-  void draw(vulkan_graphix::Render::RenderContext& context,
+  void draw(
+      vulkan_graphix::Render::RenderContext& context,
       const vulkan_graphix::Math::Mat4<float>& model =
           vulkan_graphix::Math::Mat4<float>(1.0f));
   void killGenerator();

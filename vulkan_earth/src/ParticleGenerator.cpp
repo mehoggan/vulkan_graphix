@@ -8,12 +8,14 @@ namespace render = vulkan_graphix::Render;
 namespace math = vulkan_graphix::Math;
 namespace effects = vulkan_graphix::EffectSimulation;
 
-ParticleGenerator::ParticleGenerator(std::int32_t spawn,
+ParticleGenerator::ParticleGenerator(
+    std::int32_t spawn,
     std::int32_t rate,
     std::int32_t speed,
     std::int32_t life,
     std::int32_t new_type) :
-    m_emitter(spawn,
+    m_emitter(
+        spawn,
         rate,
         speed,
         life,
@@ -32,15 +34,18 @@ void ParticleGenerator::draw(
       continue;
     }
     const effects::Particle& particle = *slot;
-    context.drawMesh(render::Renderer::instance().sphere(10, 10),
+    context.drawMesh(
+        render::Renderer::instance().sphere(10, 10),
         vulkan_earth::pipelines().m_flat_color,
         nullptr,
         glm::scale(
-            glm::translate(model,
+            glm::translate(
+                model,
                 math::Vec3<float>(particle.m_x, particle.m_y, particle.m_z)),
             math::Vec3<float>(
                 particle.m_size, particle.m_size, particle.m_size)),
-        math::Vec4<float>(particle.m_red,
+        math::Vec4<float>(
+            particle.m_red,
             particle.m_green,
             particle.m_blue,
             effects::c_particle_alpha));

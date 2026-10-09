@@ -17,7 +17,8 @@ namespace detail {
 
 template <typename T>
 Mat4<T> catmullRomBasis() {
-  return Mat4<T>(Vec4<T>(T(-0.5), T(+1.5), T(-1.5), T(+0.5)),
+  return Mat4<T>(
+      Vec4<T>(T(-0.5), T(+1.5), T(-1.5), T(+0.5)),
       Vec4<T>(T(+1.0), T(-2.5), T(+2.0), T(-0.5)),
       Vec4<T>(T(-0.5), T(+0.0), T(+0.5), T(+0.0)),
       Vec4<T>(T(+0.0), T(+1.0), T(+0.0), T(+0.0)));
@@ -25,7 +26,8 @@ Mat4<T> catmullRomBasis() {
 
 template <typename T>
 Mat4<T> bezierBasis() {
-  return Mat4<T>(Vec4<T>(T(-1.0), T(+3.0), T(-3.0), T(+1.0)),
+  return Mat4<T>(
+      Vec4<T>(T(-1.0), T(+3.0), T(-3.0), T(+1.0)),
       Vec4<T>(T(+3.0), T(-6.0), T(+3.0), T(+0.0)),
       Vec4<T>(T(-3.0), T(+3.0), T(+0.0), T(+0.0)),
       Vec4<T>(T(+1.0), T(+0.0), T(+0.0), T(+0.0)));
@@ -33,7 +35,8 @@ Mat4<T> bezierBasis() {
 
 template <typename T>
 Mat4<T> hermiteBasis() {
-  return Mat4<T>(Vec4<T>(T(+2.0), T(-2.0), T(+1.0), T(+1.0)),
+  return Mat4<T>(
+      Vec4<T>(T(+2.0), T(-2.0), T(+1.0), T(+1.0)),
       Vec4<T>(T(-3.0), T(+3.0), T(-2.0), T(-1.0)),
       Vec4<T>(T(+0.0), T(+0.0), T(+1.0), T(+0.0)),
       Vec4<T>(T(+1.0), T(+0.0), T(+0.0), T(+0.0)));
@@ -52,7 +55,8 @@ public:
       m_cubic(T(1)),
       m_impl(impl) {}
 
-  CubicCurve(const Vec3<T>& point0,
+  CubicCurve(
+      const Vec3<T>& point0,
       const Vec3<T>& point1,
       const Vec3<T>& tangent0,
       const Vec3<T>& tangent1) :
@@ -61,7 +65,8 @@ public:
     setHermite(point0, point1, tangent0, tangent1);
   }
 
-  CubicCurve(Type impl,
+  CubicCurve(
+      Type impl,
       const Vec3<T>& point0,
       const Vec3<T>& point1,
       const Vec3<T>& point2,
@@ -83,36 +88,42 @@ public:
 
   Type type() const { return m_impl; }
 
-  void setHermite(const Vec3<T>& point0,
+  void setHermite(
+      const Vec3<T>& point0,
       const Vec3<T>& point1,
       const Vec3<T>& tangent0,
       const Vec3<T>& tangent1) {
     m_impl = Type::Hermite;
-    Mat4<T> geom(controlColumn(point0),
+    Mat4<T> geom(
+        controlColumn(point0),
         controlColumn(point1),
         controlColumn(tangent0),
         controlColumn(tangent1));
     m_cubic = geom * detail::hermiteBasis<T>();
   }
 
-  void setBezier(const Vec3<T>& point0,
+  void setBezier(
+      const Vec3<T>& point0,
       const Vec3<T>& point1,
       const Vec3<T>& point2,
       const Vec3<T>& point3) {
     m_impl = Type::Bezier;
-    Mat4<T> geom(controlColumn(point0),
+    Mat4<T> geom(
+        controlColumn(point0),
         controlColumn(point1),
         controlColumn(point2),
         controlColumn(point3));
     m_cubic = geom * detail::bezierBasis<T>();
   }
 
-  void setCatmullRom(const Vec3<T>& point0,
+  void setCatmullRom(
+      const Vec3<T>& point0,
       const Vec3<T>& point1,
       const Vec3<T>& point2,
       const Vec3<T>& point3) {
     m_impl = Type::CatmullRom;
-    Mat4<T> geom(controlColumn(point0),
+    Mat4<T> geom(
+        controlColumn(point0),
         controlColumn(point1),
         controlColumn(point2),
         controlColumn(point3));
@@ -187,18 +198,21 @@ private:
 
   static constexpr std::uint16_t max_subdivide_depth = 10;
 
-  T chordalDistanceSquaredFromSecant(const CurveSample3D<T>& point0,
+  T chordalDistanceSquaredFromSecant(
+      const CurveSample3D<T>& point0,
       const CurveSample3D<T>& point1,
       T percent) const {
     Vec3<T> secant_position =
         glm::mix(point0.m_position, point1.m_position, percent);
-    CurveSample3D<T> curve_position = evaluate(point0.m_parameter +
+    CurveSample3D<T> curve_position = evaluate(
+        point0.m_parameter +
         (percent * (point1.m_parameter - point0.m_parameter)));
     Vec3<T> delta = curve_position.m_position - secant_position;
     return glm::dot(delta, delta);
   }
 
-  bool isOfGoodQuality(const CurveSample3D<T>& point0,
+  bool isOfGoodQuality(
+      const CurveSample3D<T>& point0,
       T mid_t,
       const CurveSample3D<T>& point1,
       T chordal_tolerance,
@@ -230,7 +244,8 @@ private:
     return is_good;
   }
 
-  void subdivide(std::vector<CurveSample3D<T>>& out_samples,
+  void subdivide(
+      std::vector<CurveSample3D<T>>& out_samples,
       const CurveSample3D<T>& point0,
       const CurveSample3D<T>& point1,
       T chordal_tolerance,

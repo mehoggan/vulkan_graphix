@@ -11,7 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "vulkan_earth/GameRenderer.h"
-#include "vulkan_earth/OpenGLColors.h"
+#include "vulkan_graphix/Colors.h"
 #include "vulkan_graphix/Math/MathTypes.hpp"
 
 namespace render = vulkan_graphix::Render;
@@ -32,10 +32,22 @@ Explosion::Explosion(
   m_trans_matrix[14] = m_z;
   m_weapon_radius = new_weapon_radius;
 
-  float temp_colors1[3] = {White};
-  float temp_colors2[3] = {Yellow};
-  float temp_colors3[3] = {Orange};
-  float temp_colors4[3] = {Red};
+  float temp_colors1[3] = {
+      vulkan_graphix::Colors::c_white.x,
+      vulkan_graphix::Colors::c_white.y,
+      vulkan_graphix::Colors::c_white.z};
+  float temp_colors2[3] = {
+      vulkan_graphix::Colors::c_yellow.x,
+      vulkan_graphix::Colors::c_yellow.y,
+      vulkan_graphix::Colors::c_yellow.z};
+  float temp_colors3[3] = {
+      vulkan_graphix::Colors::c_orange.x,
+      vulkan_graphix::Colors::c_orange.y,
+      vulkan_graphix::Colors::c_orange.z};
+  float temp_colors4[3] = {
+      vulkan_graphix::Colors::c_red.x,
+      vulkan_graphix::Colors::c_red.y,
+      vulkan_graphix::Colors::c_red.z};
   for (std::int32_t i = 0; i < 3; i++) {
     m_colors1[i] = temp_colors1[i];
     m_colors2[i] = temp_colors2[i];
@@ -61,11 +73,13 @@ void Explosion::draw(render::RenderContext& context) {
   const float sphere_radius =
       vulkan_graphix::EffectSimulation::explosionSphereRadius(
           m_simulation, m_weapon_radius);
-  context.drawMesh(render::Renderer::instance().sphere(90, 180),
+  context.drawMesh(
+      render::Renderer::instance().sphere(90, 180),
       vulkan_earth::pipelines().m_flat_color,
       nullptr,
-      glm::scale(glm::translate(math::Mat4<float>(1.0f),
-                     math::Vec3<float>(m_x, m_y, m_z)),
+      glm::scale(
+          glm::translate(
+              math::Mat4<float>(1.0f), math::Vec3<float>(m_x, m_y, m_z)),
           math::Vec3<float>(sphere_radius, sphere_radius, sphere_radius)),
       m_current_color);
 }
@@ -91,10 +105,22 @@ void Explosion::setColors4(float* new_colors4) {
   m_colors4[2] = new_colors4[2];
 }
 void Explosion::setDefaultColors() {
-  float temp_colors1[3] = {White};
-  float temp_colors2[3] = {Yellow};
-  float temp_colors3[3] = {Orange};
-  float temp_colors4[3] = {Red};
+  float temp_colors1[3] = {
+      vulkan_graphix::Colors::c_white.x,
+      vulkan_graphix::Colors::c_white.y,
+      vulkan_graphix::Colors::c_white.z};
+  float temp_colors2[3] = {
+      vulkan_graphix::Colors::c_yellow.x,
+      vulkan_graphix::Colors::c_yellow.y,
+      vulkan_graphix::Colors::c_yellow.z};
+  float temp_colors3[3] = {
+      vulkan_graphix::Colors::c_orange.x,
+      vulkan_graphix::Colors::c_orange.y,
+      vulkan_graphix::Colors::c_orange.z};
+  float temp_colors4[3] = {
+      vulkan_graphix::Colors::c_red.x,
+      vulkan_graphix::Colors::c_red.y,
+      vulkan_graphix::Colors::c_red.z};
   for (std::int32_t i = 0; i < 3; i++) {
     m_colors1[i] = temp_colors1[i];
     m_colors2[i] = temp_colors2[i];

@@ -61,7 +61,8 @@ std::vector<char> getBinaryFileContents(const std::string& filename) {
 //                                                              //
 // Function loading image (texture) data from a specified file  //
 // ************************************************************ //
-std::vector<char> getImageData(const std::string& filename,
+std::vector<char> getImageData(
+    const std::string& filename,
     std::int32_t requested_components,
     std::int32_t* width,
     std::int32_t* height,
@@ -73,13 +74,13 @@ std::vector<char> getImageData(const std::string& filename,
   }
 
   std::int32_t tmp_width = 0, tmp_height = 0, tmp_components = 0;
-  std::uint8_t* image_data =
-      stbi_load_from_memory(reinterpret_cast<std::uint8_t*>(&file_data[0]),
-          static_cast<std::int32_t>(file_data.size()),
-          &tmp_width,
-          &tmp_height,
-          &tmp_components,
-          requested_components);
+  std::uint8_t* image_data = stbi_load_from_memory(
+      reinterpret_cast<std::uint8_t*>(&file_data[0]),
+      static_cast<std::int32_t>(file_data.size()),
+      &tmp_width,
+      &tmp_height,
+      &tmp_components,
+      requested_components);
   if ((image_data == nullptr) || (tmp_width <= 0) || (tmp_height <= 0) ||
       (tmp_components <= 0)) {
     std::cout << "Could not read image data!" << std::endl;
@@ -209,7 +210,8 @@ vulkan_graphix::Math::Mat4<float> getOrthographicProjectionMatrix(
       Vec4<float>(2.0f / (right_plane - left_plane), 0.0f, 0.0f, 0.0f),
       Vec4<float>(0.0f, 2.0f / (bottom_plane - top_plane), 0.0f, 0.0f),
       Vec4<float>(0.0f, 0.0f, 1.0f / (near_plane - far_plane), 0.0f),
-      Vec4<float>(-(right_plane + left_plane) / (right_plane - left_plane),
+      Vec4<float>(
+          -(right_plane + left_plane) / (right_plane - left_plane),
           -(bottom_plane + top_plane) / (bottom_plane - top_plane),
           near_plane / (near_plane - far_plane),
           1.0f));

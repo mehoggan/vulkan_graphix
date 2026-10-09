@@ -83,7 +83,8 @@ bool quit_requested = false;
 // (unlike Windows, where it's the primary display's resolution). Ask
 // RandR for the primary monitor's real geometry instead, so the window
 // created from it stays confined to that one monitor.
-static void primaryMonitorGeometry(std::int32_t* pos_x,
+static void primaryMonitorGeometry(
+    std::int32_t* pos_x,
     std::int32_t* pos_y,
     std::int32_t* width,
     std::int32_t* height) {
@@ -260,7 +261,8 @@ public:
     return true;
   }
 
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override {
@@ -339,13 +341,15 @@ int main() {
   global_settings = new GlobalSettings();
   player_factory = new PlayerFactory(global_settings);
   player_factory->setNumberofPlayers(global_settings->getPlayerCount());
-  mainmenu = new MainMenu(win_width,
+  mainmenu = new MainMenu(
+      win_width,
       win_height,
       0.01f,
       global_settings,
       player_factory,
       &screen_state);
-  loading_screen = new LoadingScreen(-win_width / 4.0,
+  loading_screen = new LoadingScreen(
+      -win_width / 4.0,
       win_height / 4.0,
       10,
       win_width * 0.5,
@@ -406,9 +410,11 @@ void resize(std::int32_t width, std::int32_t height) {
 // where one unit is one pixel.
 void menuLookAt(render::RenderContext& context) {
   std::int32_t distance = win_height / 2 * tan(1.04719755);
-  context.setCamera(context.projection(),
+  context.setCamera(
+      context.projection(),
       context.view() *
-          glm::lookAt(math::Vec3<float>(0, 0, distance),
+          glm::lookAt(
+              math::Vec3<float>(0, 0, distance),
               math::Vec3<float>(0, 0, 0),
               math::Vec3<float>(0, 1, 0)));
 }
@@ -461,7 +467,8 @@ bool draw() {
         if (!renderer.endFrame()) {
           return false;
         }
-        readymenu = new ReadyMenu(win_width,
+        readymenu = new ReadyMenu(
+            win_width,
             win_height,
             0.01f,
             global_settings,
@@ -483,7 +490,8 @@ bool draw() {
     }
     case SHOP_MENU: {
       if (shopmenu == nullptr) {
-        shopmenu = new ShopMenu(win_width,
+        shopmenu = new ShopMenu(
+            win_width,
             win_height,
             0.01f,
             global_settings,
@@ -500,7 +508,8 @@ bool draw() {
     }
     case GAME_PLAY: {
       if (game_state == nullptr) {
-        game_state = new GameState(win_width,
+        game_state = new GameState(
+            win_width,
             win_height,
             player_factory,
             global_settings,
@@ -518,24 +527,25 @@ bool draw() {
       game_state->draw(*context);
 
       // World axes at the origin (red x, green y, blue z).
-      const render::UiVertices axes = {{math::Vec3<float>(0, 0, 0),
-                                           math::Vec4<float>(1, 0, 0, 1),
-                                           math::Vec2<float>(0.0f)},
+      const render::UiVertices axes = {
+          {math::Vec3<float>(0, 0, 0),
+           math::Vec4<float>(1, 0, 0, 1),
+           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(1000, 0, 0),
-              math::Vec4<float>(1, 0, 0, 1),
-              math::Vec2<float>(0.0f)},
+           math::Vec4<float>(1, 0, 0, 1),
+           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(0, 0, 0),
-              math::Vec4<float>(0, 1, 0, 1),
-              math::Vec2<float>(0.0f)},
+           math::Vec4<float>(0, 1, 0, 1),
+           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(0, 1000, 0),
-              math::Vec4<float>(0, 1, 0, 1),
-              math::Vec2<float>(0.0f)},
+           math::Vec4<float>(0, 1, 0, 1),
+           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(0, 0, 0),
-              math::Vec4<float>(0, 0, 1, 1),
-              math::Vec2<float>(0.0f)},
+           math::Vec4<float>(0, 0, 1, 1),
+           math::Vec2<float>(0.0f)},
           {math::Vec3<float>(0, 0, 1000),
-              math::Vec4<float>(0, 0, 1, 1),
-              math::Vec2<float>(0.0f)}};
+           math::Vec4<float>(0, 0, 1, 1),
+           math::Vec2<float>(0.0f)}};
       context->drawTransient(
           axes, vulkan_earth::pipelines().m_ui_lines, nullptr);
 
@@ -672,7 +682,8 @@ void mouseHandler(
           // GLUT_MOUSEHANDLER_CALLBACK_MOUSEDOWN are now [0]=%s --
           // [1]=%s\n",mainmenu->getSubMenuI(0)->getCaption(),mainmenu->getSubMenuI(1)->getCaption());
         }
-        mainmenu->buttonTest(x - (win_width / 2),
+        mainmenu->buttonTest(
+            x - (win_width / 2),
             (win_height / 2) - y,
             state);  // remember to check about screen
                      // size changing
@@ -687,7 +698,8 @@ void mouseHandler(
           state = 1;
         }
         if (readymenu)
-          readymenu->buttonTest(x - (win_width / 2),
+          readymenu->buttonTest(
+              x - (win_width / 2),
               (win_height / 2) - y,
               state);  // remember to check about
                        // screen size changing
@@ -702,7 +714,8 @@ void mouseHandler(
           state = 1;
         }
         if (shopmenu)
-          shopmenu->buttonTest(x - (win_width / 2),
+          shopmenu->buttonTest(
+              x - (win_width / 2),
               (win_height / 2) - y,
               state);  // remember to check about
                        // screen size changing

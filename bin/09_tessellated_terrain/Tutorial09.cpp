@@ -240,7 +240,8 @@ Tutorial09::Tutorial09() = default;
 
 Tutorial09::~Tutorial09() { childClear(); }
 
-void Tutorial09::onMouseButton(std::int32_t button,
+void Tutorial09::onMouseButton(
+    std::int32_t button,
     bool pressed,
     std::int32_t pos_x,
     std::int32_t pos_y) {
@@ -254,18 +255,19 @@ void Tutorial09::onMouseMove(std::int32_t pos_x, std::int32_t pos_y) {
 bool Tutorial09::createCommandPool(
     std::uint32_t queue_family_index, VkCommandPool* pool) {
   if (!VulkanCommon::FrameResourceFactory(getVkDevice())
-          .createCommandPool(queue_family_index, pool)) {
+           .createCommandPool(queue_family_index, pool)) {
     Logging::error(LOG_TAG, "Could not create command pool!");
     return false;
   }
   return true;
 }
 
-bool Tutorial09::allocateCommandBuffers(VkCommandPool pool,
+bool Tutorial09::allocateCommandBuffers(
+    VkCommandPool pool,
     std::uint32_t count,
     VkCommandBuffer* command_buffers) {
   if (!VulkanCommon::FrameResourceFactory(getVkDevice())
-          .allocateCommandBuffers(pool, count, command_buffers)) {
+           .allocateCommandBuffers(pool, count, command_buffers)) {
     Logging::error(LOG_TAG, "Could not allocate command buffer!");
     return false;
   }
@@ -273,7 +275,8 @@ bool Tutorial09::allocateCommandBuffers(VkCommandPool pool,
 }
 
 bool Tutorial09::createCommandBuffers() {
-  if (!createCommandPool(getGraphicsQueueParameters().getFamilyIndex(),
+  if (!createCommandPool(
+          getGraphicsQueueParameters().getFamilyIndex(),
           &m_vulkan_tutorial09_parameters.getVkCommandPool())) {
     return false;
   }
@@ -352,11 +355,12 @@ bool Tutorial09::createRenderingResources() {
   return true;
 }
 
-bool Tutorial09::createBuffer(VkBufferUsageFlags usage,
+bool Tutorial09::createBuffer(
+    VkBufferUsageFlags usage,
     VkMemoryPropertyFlags memory_property,
     BufferParameters& buffer) {
   if (!VulkanCommon::BufferFactory(getVkDevice(), getVkPhysicalDevice())
-          .create(usage, memory_property, buffer)) {
+           .create(usage, memory_property, buffer)) {
     Logging::error(LOG_TAG, "Could not create buffer!");
     return false;
   }
@@ -367,7 +371,8 @@ bool Tutorial09::createStagingBuffer() {
   BufferParameters& staging_buffer =
       m_vulkan_tutorial09_parameters.getStagingBufferParameters();
   staging_buffer.setSize(4000000);
-  if (!createBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+  if (!createBuffer(
+          VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
           staging_buffer)) {
     Logging::error(LOG_TAG, "Could not create staging buffer!");
@@ -377,7 +382,8 @@ bool Tutorial09::createStagingBuffer() {
   return true;
 }
 
-bool Tutorial09::createImage(std::uint32_t width,
+bool Tutorial09::createImage(
+    std::uint32_t width,
     std::uint32_t height,
     VkFormat format,
     VkImageUsageFlags usage,
@@ -392,7 +398,8 @@ bool Tutorial09::allocateImageMemory(
       .allocateMemory(image, property, memory);
 }
 
-bool Tutorial09::createImageView(VkImage image,
+bool Tutorial09::createImageView(
+    VkImage image,
     VkFormat format,
     VkImageAspectFlags aspect_mask,
     VkImageView* image_view) {
@@ -405,7 +412,8 @@ bool Tutorial09::createDepthResources() {
       m_vulkan_tutorial09_parameters.getDepthImageParameters();
 
   VkImage vk_image;
-  if (!createImage(getSwapchainParameters().getVkExtent2d().width,
+  if (!createImage(
+          getSwapchainParameters().getVkExtent2d().width,
           getSwapchainParameters().getVkExtent2d().height,
           c_depth_format,
           VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -416,7 +424,8 @@ bool Tutorial09::createDepthResources() {
   depth_image.setVkImage(vk_image);
 
   VkDeviceMemory vk_device_memory;
-  if (!allocateImageMemory(depth_image.getVkImage(),
+  if (!allocateImageMemory(
+          depth_image.getVkImage(),
           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
           &vk_device_memory)) {
     Logging::error(LOG_TAG, "Could not allocate memory for depth image!");
@@ -424,7 +433,8 @@ bool Tutorial09::createDepthResources() {
   }
   depth_image.setVkDeviceMemory(vk_device_memory);
 
-  if (vkBindImageMemory(getVkDevice(),
+  if (vkBindImageMemory(
+          getVkDevice(),
           depth_image.getVkImage(),
           depth_image.getVkDeviceMemory(),
           0) != VK_SUCCESS) {
@@ -433,7 +443,8 @@ bool Tutorial09::createDepthResources() {
   }
 
   VkImageView vk_image_view;
-  if (!createImageView(depth_image.getVkImage(),
+  if (!createImageView(
+          depth_image.getVkImage(),
           c_depth_format,
           VK_IMAGE_ASPECT_DEPTH_BIT,
           &vk_image_view)) {
@@ -457,7 +468,8 @@ bool Tutorial09::createSampler(
       .createSampler(address_mode, sampler);
 }
 
-bool Tutorial09::copyTextureData(char* texture_data,
+bool Tutorial09::copyTextureData(
+    char* texture_data,
     std::uint32_t data_size,
     std::uint32_t width,
     std::uint32_t height) {
@@ -466,17 +478,20 @@ bool Tutorial09::copyTextureData(char* texture_data,
   ImageParameters& image_parameters =
       m_vulkan_tutorial09_parameters.getTextureImageParameters();
 
-  if (!VulkanCommon::StagedUploader(getVkDevice(),
-          getGraphicsQueueParameters().getVkQueue(),
-          m_vulkan_tutorial09_parameters.getRenderingResources()[0]
-              .getVkCommandBuffer())
-          .uploadToImage(staging_buffer,
-              image_parameters.getVkImage(),
-              texture_data,
-              data_size,
-              width,
-              height)) {
-    Logging::error(LOG_TAG,
+  if (!VulkanCommon::StagedUploader(
+           getVkDevice(),
+           getGraphicsQueueParameters().getVkQueue(),
+           m_vulkan_tutorial09_parameters.getRenderingResources()[0]
+               .getVkCommandBuffer())
+           .uploadToImage(
+               staging_buffer,
+               image_parameters.getVkImage(),
+               texture_data,
+               data_size,
+               width,
+               height)) {
+    Logging::error(
+        LOG_TAG,
         "Could not map memory and upload texture data to a "
         "staging buffer!");
     return false;
@@ -497,7 +512,8 @@ bool Tutorial09::createTexture() {
       m_vulkan_tutorial09_parameters.getTextureImageParameters();
 
   VkImage vk_image;
-  if (!createImage(static_cast<std::uint32_t>(width),
+  if (!createImage(
+          static_cast<std::uint32_t>(width),
           static_cast<std::uint32_t>(height),
           c_texture_format,
           VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -508,7 +524,8 @@ bool Tutorial09::createTexture() {
   image_parameters.setVkImage(vk_image);
 
   VkDeviceMemory vk_device_memory;
-  if (!allocateImageMemory(image_parameters.getVkImage(),
+  if (!allocateImageMemory(
+          image_parameters.getVkImage(),
           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
           &vk_device_memory)) {
     Logging::error(LOG_TAG, "Could not allocate memory for image!");
@@ -516,7 +533,8 @@ bool Tutorial09::createTexture() {
   }
   image_parameters.setVkDeviceMemory(vk_device_memory);
 
-  if (vkBindImageMemory(getVkDevice(),
+  if (vkBindImageMemory(
+          getVkDevice(),
           image_parameters.getVkImage(),
           image_parameters.getVkDeviceMemory(),
           0) != VK_SUCCESS) {
@@ -525,7 +543,8 @@ bool Tutorial09::createTexture() {
   }
 
   VkImageView vk_image_view;
-  if (!createImageView(image_parameters.getVkImage(),
+  if (!createImageView(
+          image_parameters.getVkImage(),
           c_texture_format,
           VK_IMAGE_ASPECT_COLOR_BIT,
           &vk_image_view)) {
@@ -544,7 +563,8 @@ bool Tutorial09::createTexture() {
   }
   image_parameters.setVkSampler(vk_sampler);
 
-  if (!copyTextureData(texture_data.data(),
+  if (!copyTextureData(
+          texture_data.data(),
           static_cast<std::uint32_t>(data_size),
           static_cast<std::uint32_t>(width),
           static_cast<std::uint32_t>(height))) {
@@ -563,7 +583,8 @@ bool Tutorial09::createUniformBuffer() {
   // is rewritten every frame as the orbit camera moves; see
   // updateUniformBufferData()/draw() for how the CPU/GPU race that
   // creates is avoided.
-  if (!createBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+  if (!createBuffer(
+          VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
           uniform_buffer)) {
@@ -599,7 +620,8 @@ bool Tutorial09::updateUniformBufferData() {
       m_vulkan_tutorial09_parameters.getUniformBufferParameters();
 
   void* uniform_buffer_memory_pointer;
-  if (vkMapMemory(getVkDevice(),
+  if (vkMapMemory(
+          getVkDevice(),
           uniform_buffer.getVkDeviceMemory(),
           0,
           VK_WHOLE_SIZE,
@@ -618,16 +640,15 @@ bool Tutorial09::updateUniformBufferData() {
 bool Tutorial09::createDescriptorSetLayout() {
   std::vector<VkDescriptorSetLayoutBinding> layout_bindings = {
       {.binding = 0,
-          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-          .descriptorCount = 1,
-          .stageFlags =
-              VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-          .pImmutableSamplers = nullptr},
+       .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+       .descriptorCount = 1,
+       .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+       .pImmutableSamplers = nullptr},
       {.binding = 1,
-          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .descriptorCount = 1,
-          .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .pImmutableSamplers = nullptr}};
+       .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+       .descriptorCount = 1,
+       .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+       .pImmutableSamplers = nullptr}};
 
   VkDescriptorSetLayoutCreateInfo descriptor_set_layout_create_info = {
       .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
@@ -640,7 +661,8 @@ bool Tutorial09::createDescriptorSetLayout() {
       m_vulkan_tutorial09_parameters.getDescriptorSetParameters();
 
   VkDescriptorSetLayout vk_descriptor_set_layout;
-  if (vkCreateDescriptorSetLayout(getVkDevice(),
+  if (vkCreateDescriptorSetLayout(
+          getVkDevice(),
           &descriptor_set_layout_create_info,
           nullptr,
           &vk_descriptor_set_layout) != VK_SUCCESS) {
@@ -656,7 +678,7 @@ bool Tutorial09::createDescriptorPool() {
   std::vector<VkDescriptorPoolSize> pool_sizes = {
       {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, .descriptorCount = 1},
       {.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .descriptorCount = 1}};
+       .descriptorCount = 1}};
 
   VkDescriptorPoolCreateInfo descriptor_pool_create_info = {
       .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
@@ -670,7 +692,8 @@ bool Tutorial09::createDescriptorPool() {
       m_vulkan_tutorial09_parameters.getDescriptorSetParameters();
 
   VkDescriptorPool vk_descriptor_pool;
-  if (vkCreateDescriptorPool(getVkDevice(),
+  if (vkCreateDescriptorPool(
+          getVkDevice(),
           &descriptor_pool_create_info,
           nullptr,
           &vk_descriptor_pool) != VK_SUCCESS) {
@@ -696,9 +719,9 @@ bool Tutorial09::allocateDescriptorSet() {
       .pSetLayouts = &vk_descriptor_set_layout};
 
   VkDescriptorSet vk_descriptor_set;
-  if (vkAllocateDescriptorSets(getVkDevice(),
-          &descriptor_set_allocate_info,
-          &vk_descriptor_set) != VK_SUCCESS) {
+  if (vkAllocateDescriptorSets(
+          getVkDevice(), &descriptor_set_allocate_info, &vk_descriptor_set) !=
+      VK_SUCCESS) {
     Logging::error(LOG_TAG, "Could not allocate descriptor set!");
     return false;
   }
@@ -715,7 +738,8 @@ bool Tutorial09::updateDescriptorSet() {
   const DescriptorSetParameters& descriptor_set =
       m_vulkan_tutorial09_parameters.getDescriptorSetParameters();
 
-  VkDescriptorBufferInfo buffer_info = {.buffer = uniform_buffer.getVkBuffer(),
+  VkDescriptorBufferInfo buffer_info = {
+      .buffer = uniform_buffer.getVkBuffer(),
       .offset = 0,
       .range = uniform_buffer.getSize()};
 
@@ -726,27 +750,28 @@ bool Tutorial09::updateDescriptorSet() {
 
   std::vector<VkWriteDescriptorSet> descriptor_writes = {
       {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-          .pNext = nullptr,
-          .dstSet = descriptor_set.getVkDescriptorSet(),
-          .dstBinding = 0,
-          .dstArrayElement = 0,
-          .descriptorCount = 1,
-          .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-          .pImageInfo = nullptr,
-          .pBufferInfo = &buffer_info,
-          .pTexelBufferView = nullptr},
+       .pNext = nullptr,
+       .dstSet = descriptor_set.getVkDescriptorSet(),
+       .dstBinding = 0,
+       .dstArrayElement = 0,
+       .descriptorCount = 1,
+       .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+       .pImageInfo = nullptr,
+       .pBufferInfo = &buffer_info,
+       .pTexelBufferView = nullptr},
       {.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-          .pNext = nullptr,
-          .dstSet = descriptor_set.getVkDescriptorSet(),
-          .dstBinding = 1,
-          .dstArrayElement = 0,
-          .descriptorCount = 1,
-          .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-          .pImageInfo = &image_info,
-          .pBufferInfo = nullptr,
-          .pTexelBufferView = nullptr}};
+       .pNext = nullptr,
+       .dstSet = descriptor_set.getVkDescriptorSet(),
+       .dstBinding = 1,
+       .dstArrayElement = 0,
+       .descriptorCount = 1,
+       .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+       .pImageInfo = &image_info,
+       .pBufferInfo = nullptr,
+       .pTexelBufferView = nullptr}};
 
-  vkUpdateDescriptorSets(getVkDevice(),
+  vkUpdateDescriptorSets(
+      getVkDevice(),
       static_cast<std::uint32_t>(descriptor_writes.size()),
       descriptor_writes.data(),
       0,
@@ -757,40 +782,42 @@ bool Tutorial09::updateDescriptorSet() {
 bool Tutorial09::createRenderPass() {
   VkAttachmentDescription attachment_descriptions[] = {
       {.flags = 0,
-          .format = getSwapchainParameters().getVkFormat(),
-          .samples = VK_SAMPLE_COUNT_1_BIT,
-          .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-          .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-          .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-          .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-          .initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-          .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL},
+       .format = getSwapchainParameters().getVkFormat(),
+       .samples = VK_SAMPLE_COUNT_1_BIT,
+       .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+       .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+       .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+       .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+       .initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+       .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL},
       {.flags = 0,
-          .format = c_depth_format,
-          .samples = VK_SAMPLE_COUNT_1_BIT,
-          .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-          .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-          .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-          .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-          .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-          .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL}};
+       .format = c_depth_format,
+       .samples = VK_SAMPLE_COUNT_1_BIT,
+       .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+       .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+       .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+       .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+       .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+       .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL}};
 
   VkAttachmentReference color_attachment_references[] = {
       {.attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL}};
 
-  VkAttachmentReference depth_attachment_reference = {.attachment = 1,
+  VkAttachmentReference depth_attachment_reference = {
+      .attachment = 1,
       .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
 
-  VkSubpassDescription subpass_descriptions[] = {{.flags = 0,
-      .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-      .inputAttachmentCount = 0,
-      .pInputAttachments = nullptr,
-      .colorAttachmentCount = 1,
-      .pColorAttachments = color_attachment_references,
-      .pResolveAttachments = nullptr,
-      .pDepthStencilAttachment = &depth_attachment_reference,
-      .preserveAttachmentCount = 0,
-      .pPreserveAttachments = nullptr}};
+  VkSubpassDescription subpass_descriptions[] = {
+      {.flags = 0,
+       .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+       .inputAttachmentCount = 0,
+       .pInputAttachments = nullptr,
+       .colorAttachmentCount = 1,
+       .pColorAttachments = color_attachment_references,
+       .pResolveAttachments = nullptr,
+       .pDepthStencilAttachment = &depth_attachment_reference,
+       .preserveAttachmentCount = 0,
+       .pPreserveAttachments = nullptr}};
 
   VkRenderPassCreateInfo render_pass_create_info = {
       .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
@@ -803,7 +830,8 @@ bool Tutorial09::createRenderPass() {
       .dependencyCount = 0,
       .pDependencies = nullptr};
 
-  if (vkCreateRenderPass(getVkDevice(),
+  if (vkCreateRenderPass(
+          getVkDevice(),
           &render_pass_create_info,
           nullptr,
           &m_vulkan_tutorial09_parameters.getVkRenderPass()) != VK_SUCCESS) {
@@ -827,7 +855,8 @@ bool Tutorial09::createPipelineLayout() {
       .pushConstantRangeCount = 0,
       .pPushConstantRanges = nullptr};
 
-  if (vkCreatePipelineLayout(getVkDevice(),
+  if (vkCreatePipelineLayout(
+          getVkDevice(),
           &layout_create_info,
           nullptr,
           &m_vulkan_tutorial09_parameters.getVkPipelineLayout()) !=
@@ -844,7 +873,8 @@ Tutorial09::createShaderModule(const char* filename) {
   Tools::AutoDeleter<VkShaderModule, PFN_vkDestroyShaderModule> module =
       VulkanCommon::createShaderModule(getVkDevice(), filename);
   if (!module) {
-    Logging::error(LOG_TAG,
+    Logging::error(
+        LOG_TAG,
         "Could not create shader module from a \"",
         filename,
         "\" file!");
@@ -864,39 +894,39 @@ bool Tutorial09::createPipeline() {
 
   std::vector<VkPipelineShaderStageCreateInfo> shader_stage_create_infos = {
       {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_VERTEX_BIT,
-          .module = vertex_shader_module.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr},
+       .pNext = nullptr,
+       .flags = 0,
+       .stage = VK_SHADER_STAGE_VERTEX_BIT,
+       .module = vertex_shader_module.get(),
+       .pName = "main",
+       .pSpecializationInfo = nullptr},
       {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-          .pNext = nullptr,
-          .flags = 0,
-          .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-          .module = fragment_shader_module.get(),
-          .pName = "main",
-          .pSpecializationInfo = nullptr}};
+       .pNext = nullptr,
+       .flags = 0,
+       .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+       .module = fragment_shader_module.get(),
+       .pName = "main",
+       .pSpecializationInfo = nullptr}};
 
   std::vector<VkVertexInputBindingDescription> vertex_binding_descriptions = {
       {.binding = 0,
-          .stride = VertexAttributeTraits::stride,
-          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
+       .stride = VertexAttributeTraits::stride,
+       .inputRate = VK_VERTEX_INPUT_RATE_VERTEX}};
 
   std::vector<VkVertexInputAttributeDescription>
       vertex_attribute_descriptions = {
           {.location = 0,
-              .binding = vertex_binding_descriptions[0].binding,
-              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-              .offset = offsetof(struct Tutorial09VertexData, m_position)},
+           .binding = vertex_binding_descriptions[0].binding,
+           .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+           .offset = offsetof(struct Tutorial09VertexData, m_position)},
           {.location = 1,
-              .binding = vertex_binding_descriptions[0].binding,
-              .format = VK_FORMAT_R32G32B32_SFLOAT,
-              .offset = offsetof(struct Tutorial09VertexData, m_normal)},
+           .binding = vertex_binding_descriptions[0].binding,
+           .format = VK_FORMAT_R32G32B32_SFLOAT,
+           .offset = offsetof(struct Tutorial09VertexData, m_normal)},
           {.location = 2,
-              .binding = vertex_binding_descriptions[0].binding,
-              .format = VK_FORMAT_R32G32_SFLOAT,
-              .offset = offsetof(struct Tutorial09VertexData, m_texcoord)}};
+           .binding = vertex_binding_descriptions[0].binding,
+           .format = VK_FORMAT_R32G32_SFLOAT,
+           .offset = offsetof(struct Tutorial09VertexData, m_texcoord)}};
 
   VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {
       .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -1021,7 +1051,8 @@ bool Tutorial09::createPipeline() {
       .basePipelineHandle = VK_NULL_HANDLE,
       .basePipelineIndex = -1};
 
-  if (vkCreateGraphicsPipelines(getVkDevice(),
+  if (vkCreateGraphicsPipelines(
+          getVkDevice(),
           VK_NULL_HANDLE,
           1,
           &pipeline_create_info,
@@ -1046,9 +1077,10 @@ const std::vector<Tutorial09VertexData>& Tutorial09::getVertexData() const {
           (2.0f * c_terrain_half_size) * c_texture_tile_repeat;
       const float texcoord_v = (point.z + c_terrain_half_size) /
           (2.0f * c_terrain_half_size) * c_texture_tile_repeat;
-      data.push_back({Math::Vec4<float>(point, 1.0f),
-          Math::Vec3<float>(0.0f, 1.0f, 0.0f),
-          Math::Vec2<float>(texcoord_u, texcoord_v)});
+      data.push_back(
+          {Math::Vec4<float>(point, 1.0f),
+           Math::Vec3<float>(0.0f, 1.0f, 0.0f),
+           Math::Vec2<float>(texcoord_u, texcoord_v)});
     }
     return data;
   }();
@@ -1060,7 +1092,8 @@ const std::vector<std::uint32_t>& Tutorial09::getIndexData() const {
   return getTerrainTessellation().indices();
 }
 
-bool Tutorial09::copyBufferData(BufferParameters& destination,
+bool Tutorial09::copyBufferData(
+    BufferParameters& destination,
     const void* data,
     std::uint32_t data_size,
     VkAccessFlags dst_access_mask,
@@ -1068,16 +1101,18 @@ bool Tutorial09::copyBufferData(BufferParameters& destination,
   BufferParameters& staging_buffer =
       m_vulkan_tutorial09_parameters.getStagingBufferParameters();
 
-  if (!VulkanCommon::StagedUploader(getVkDevice(),
-          getGraphicsQueueParameters().getVkQueue(),
-          m_vulkan_tutorial09_parameters.getRenderingResources()[0]
-              .getVkCommandBuffer())
-          .uploadToBuffer(staging_buffer,
-              destination,
-              data,
-              data_size,
-              dst_access_mask,
-              dst_stage_mask)) {
+  if (!VulkanCommon::StagedUploader(
+           getVkDevice(),
+           getGraphicsQueueParameters().getVkQueue(),
+           m_vulkan_tutorial09_parameters.getRenderingResources()[0]
+               .getVkCommandBuffer())
+           .uploadToBuffer(
+               staging_buffer,
+               destination,
+               data,
+               data_size,
+               dst_access_mask,
+               dst_stage_mask)) {
     Logging::error(
         LOG_TAG, "Could not map memory and upload data to a staging buffer!");
     return false;
@@ -1101,7 +1136,8 @@ bool Tutorial09::createVertexBuffer() {
     return false;
   }
 
-  return copyBufferData(vertex_buffer,
+  return copyBufferData(
+      vertex_buffer,
       vertex_data.data(),
       vertex_buffer.getSize(),
       VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
@@ -1125,7 +1161,8 @@ bool Tutorial09::createIndexBuffer() {
     return false;
   }
 
-  return copyBufferData(index_buffer,
+  return copyBufferData(
+      index_buffer,
       index_data.data(),
       index_buffer.getSize(),
       VK_ACCESS_INDEX_READ_BIT,
@@ -1139,7 +1176,8 @@ bool Tutorial09::createFramebuffer(
     framebuffer = VK_NULL_HANDLE;
   }
 
-  VkImageView attachments[] = {image_view,
+  VkImageView attachments[] = {
+      image_view,
       m_vulkan_tutorial09_parameters.getDepthImageParameters()
           .getVkImageView()};
 
@@ -1164,7 +1202,8 @@ bool Tutorial09::createFramebuffer(
   return true;
 }
 
-bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
+bool Tutorial09::prepareFrame(
+    VkCommandBuffer command_buffer,
     const ImageParameters& image_parameters,
     VkFramebuffer& framebuffer) {
   if (!createFramebuffer(framebuffer, image_parameters.getVkImageView())) {
@@ -1205,7 +1244,8 @@ bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
       .dstQueueFamilyIndex = graphics_queue_family_index,
       .image = image_parameters.getVkImage(),
       .subresourceRange = image_subresource_range};
-  vkCmdPipelineBarrier(command_buffer,
+  vkCmdPipelineBarrier(
+      command_buffer,
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
       0,
@@ -1225,19 +1265,22 @@ bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
       .pNext = nullptr,
       .renderPass = m_vulkan_tutorial09_parameters.getVkRenderPass(),
       .framebuffer = framebuffer,
-      .renderArea = {.offset = {.x = 0, .y = 0},
-          .extent = getSwapchainParameters().getVkExtent2d()},
+      .renderArea =
+          {.offset = {.x = 0, .y = 0},
+           .extent = getSwapchainParameters().getVkExtent2d()},
       .clearValueCount = 2,
       .pClearValues = clear_values};
 
   vkCmdBeginRenderPass(
       command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-  vkCmdBindPipeline(command_buffer,
+  vkCmdBindPipeline(
+      command_buffer,
       VK_PIPELINE_BIND_POINT_GRAPHICS,
       m_vulkan_tutorial09_parameters.getVkGraphicsPipeline());
 
-  VkViewport viewport = {.x = 0.0f,
+  VkViewport viewport = {
+      .x = 0.0f,
       .y = 0.0f,
       .width =
           static_cast<float>(getSwapchainParameters().getVkExtent2d().width),
@@ -1246,21 +1289,24 @@ bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
       .minDepth = 0.0f,
       .maxDepth = 1.0f};
 
-  VkRect2D scissor = {.offset = {.x = 0, .y = 0},
+  VkRect2D scissor = {
+      .offset = {.x = 0, .y = 0},
       .extent = getSwapchainParameters().getVkExtent2d()};
 
   vkCmdSetViewport(command_buffer, 0, 1, &viewport);
   vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
   VkDeviceSize offset = 0;
-  vkCmdBindVertexBuffers(command_buffer,
+  vkCmdBindVertexBuffers(
+      command_buffer,
       0,
       1,
       &m_vulkan_tutorial09_parameters.getVertexBufferParameters()
-          .getVkBuffer(),
+           .getVkBuffer(),
       &offset);
 
-  vkCmdBindIndexBuffer(command_buffer,
+  vkCmdBindIndexBuffer(
+      command_buffer,
       m_vulkan_tutorial09_parameters.getIndexBufferParameters().getVkBuffer(),
       0,
       VK_INDEX_TYPE_UINT32);
@@ -1268,7 +1314,8 @@ bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
   VkDescriptorSet vk_descriptor_set =
       m_vulkan_tutorial09_parameters.getDescriptorSetParameters()
           .getVkDescriptorSet();
-  vkCmdBindDescriptorSets(command_buffer,
+  vkCmdBindDescriptorSets(
+      command_buffer,
       VK_PIPELINE_BIND_POINT_GRAPHICS,
       m_vulkan_tutorial09_parameters.getVkPipelineLayout(),
       0,
@@ -1277,7 +1324,8 @@ bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
       0,
       nullptr);
 
-  vkCmdDrawIndexed(command_buffer,
+  vkCmdDrawIndexed(
+      command_buffer,
       m_vulkan_tutorial09_parameters.getIndexCount(),
       1,
       0,
@@ -1297,7 +1345,8 @@ bool Tutorial09::prepareFrame(VkCommandBuffer command_buffer,
       .dstQueueFamilyIndex = present_queue_family_index,
       .image = image_parameters.getVkImage(),
       .subresourceRange = image_subresource_range};
-  vkCmdPipelineBarrier(command_buffer,
+  vkCmdPipelineBarrier(
+      command_buffer,
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
       VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
       0,
@@ -1325,7 +1374,8 @@ bool Tutorial09::draw() {
   resource_index =
       (resource_index + 1) % VulkanTutorial09Parameters::resources_count;
 
-  if (vkWaitForFences(getVkDevice(),
+  if (vkWaitForFences(
+          getVkDevice(),
           1,
           &current_rendering_resource.getVkFence(),
           VK_FALSE,
@@ -1346,7 +1396,8 @@ bool Tutorial09::draw() {
     return false;
   }
 
-  VkResult result = vkAcquireNextImageKHR(getVkDevice(),
+  VkResult result = vkAcquireNextImageKHR(
+      getVkDevice(),
       swap_chain,
       UINT64_MAX,
       current_rendering_resource.getImageAvailableVkSemaphore(),
@@ -1364,7 +1415,8 @@ bool Tutorial09::draw() {
       return false;
   }
 
-  if (!prepareFrame(current_rendering_resource.getVkCommandBuffer(),
+  if (!prepareFrame(
+          current_rendering_resource.getVkCommandBuffer(),
           getSwapchainParameters().getImageParameters()[image_index],
           current_rendering_resource.getVkFramebuffer())) {
     return false;
@@ -1376,7 +1428,8 @@ bool Tutorial09::draw() {
 
   VkPipelineStageFlags wait_dst_stage_mask =
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-  VkSubmitInfo submit_info = {.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+  VkSubmitInfo submit_info = {
+      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
       .pNext = nullptr,
       .waitSemaphoreCount = 1,
       .pWaitSemaphores =
@@ -1387,14 +1440,16 @@ bool Tutorial09::draw() {
       .signalSemaphoreCount = 1,
       .pSignalSemaphores = &finished_rendering_semaphore};
 
-  if (vkQueueSubmit(getGraphicsQueueParameters().getVkQueue(),
+  if (vkQueueSubmit(
+          getGraphicsQueueParameters().getVkQueue(),
           1,
           &submit_info,
           current_rendering_resource.getVkFence()) != VK_SUCCESS) {
     return false;
   }
 
-  VkPresentInfoKHR present_info = {.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+  VkPresentInfoKHR present_info = {
+      .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
       .pNext = nullptr,
       .waitSemaphoreCount = 1,
       .pWaitSemaphores = &finished_rendering_semaphore,
@@ -1498,14 +1553,16 @@ void Tutorial09::childClear() {
       rendering_resources[i].setVkFramebuffer(VK_NULL_HANDLE);
     }
     if (rendering_resources[i].getVkCommandBuffer() != VK_NULL_HANDLE) {
-      vkFreeCommandBuffers(getVkDevice(),
+      vkFreeCommandBuffers(
+          getVkDevice(),
           m_vulkan_tutorial09_parameters.getVkCommandPool(),
           1,
           &rendering_resources[i].getVkCommandBuffer());
     }
     if (rendering_resources[i].getImageAvailableVkSemaphore() !=
         VK_NULL_HANDLE) {
-      vkDestroySemaphore(getVkDevice(),
+      vkDestroySemaphore(
+          getVkDevice(),
           rendering_resources[i].getImageAvailableVkSemaphore(),
           nullptr);
     }
@@ -1526,7 +1583,8 @@ void Tutorial09::childClear() {
   finished_rendering_semaphores.clear();
 
   if (m_vulkan_tutorial09_parameters.getVkCommandPool() != VK_NULL_HANDLE) {
-    vkDestroyCommandPool(getVkDevice(),
+    vkDestroyCommandPool(
+        getVkDevice(),
         m_vulkan_tutorial09_parameters.getVkCommandPool(),
         nullptr);
     m_vulkan_tutorial09_parameters.getVkCommandPool() = VK_NULL_HANDLE;
@@ -1538,21 +1596,24 @@ void Tutorial09::childClear() {
 
   if (m_vulkan_tutorial09_parameters.getVkGraphicsPipeline() !=
       VK_NULL_HANDLE) {
-    vkDestroyPipeline(getVkDevice(),
+    vkDestroyPipeline(
+        getVkDevice(),
         m_vulkan_tutorial09_parameters.getVkGraphicsPipeline(),
         nullptr);
     m_vulkan_tutorial09_parameters.getVkGraphicsPipeline() = VK_NULL_HANDLE;
   }
 
   if (m_vulkan_tutorial09_parameters.getVkPipelineLayout() != VK_NULL_HANDLE) {
-    vkDestroyPipelineLayout(getVkDevice(),
+    vkDestroyPipelineLayout(
+        getVkDevice(),
         m_vulkan_tutorial09_parameters.getVkPipelineLayout(),
         nullptr);
     m_vulkan_tutorial09_parameters.getVkPipelineLayout() = VK_NULL_HANDLE;
   }
 
   if (m_vulkan_tutorial09_parameters.getVkRenderPass() != VK_NULL_HANDLE) {
-    vkDestroyRenderPass(getVkDevice(),
+    vkDestroyRenderPass(
+        getVkDevice(),
         m_vulkan_tutorial09_parameters.getVkRenderPass(),
         nullptr);
     m_vulkan_tutorial09_parameters.getVkRenderPass() = VK_NULL_HANDLE;

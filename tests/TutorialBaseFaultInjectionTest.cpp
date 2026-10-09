@@ -50,7 +50,8 @@ using vulkan_graphix::test::bringUpThroughInstance;
 using vulkan_graphix::test::bringUpThroughSurface;
 using vulkan_graphix::test::TestableTutorialBase;
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     CreateInstanceFailsWhenEnumerateExtensionPropertiesFails) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver)";
@@ -70,7 +71,8 @@ TEST(TutorialBaseFaultInjectionTest,
   vulkan_graphix::vkEnumerateInstanceExtensionProperties = real_fn;
 }
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     CreateInstanceFailsWhenCreateInstanceFails) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver)";
@@ -81,8 +83,8 @@ TEST(TutorialBaseFaultInjectionTest,
 
   auto real_fn = vulkan_graphix::vkCreateInstance;
   vulkan_graphix::vkCreateInstance = [](const VkInstanceCreateInfo*,
-                                         const VkAllocationCallbacks*,
-                                         VkInstance*) -> VkResult {
+                                        const VkAllocationCallbacks*,
+                                        VkInstance*) -> VkResult {
     return VK_ERROR_INITIALIZATION_FAILED;
   };
 
@@ -104,9 +106,9 @@ TEST(TutorialBaseFaultInjectionTest, CreateDeviceFailsWhenCreateDeviceFails) {
 
   auto real_fn = vulkan_graphix::vkCreateDevice;
   vulkan_graphix::vkCreateDevice = [](VkPhysicalDevice,
-                                       const VkDeviceCreateInfo*,
-                                       const VkAllocationCallbacks*,
-                                       VkDevice*) -> VkResult {
+                                      const VkDeviceCreateInfo*,
+                                      const VkAllocationCallbacks*,
+                                      VkDevice*) -> VkResult {
     return VK_ERROR_INITIALIZATION_FAILED;
   };
 
@@ -115,7 +117,8 @@ TEST(TutorialBaseFaultInjectionTest, CreateDeviceFailsWhenCreateDeviceFails) {
   vulkan_graphix::vkCreateDevice = real_fn;
 }
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     CreateDeviceFailsWhenEnumeratePhysicalDevicesFails) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
@@ -138,7 +141,8 @@ TEST(TutorialBaseFaultInjectionTest,
   vulkan_graphix::vkEnumeratePhysicalDevices = real_fn;
 }
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     CreateDeviceFailsWhenNoPhysicalDeviceHasTheRequiredExtensions) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
@@ -164,7 +168,8 @@ TEST(TutorialBaseFaultInjectionTest,
   vulkan_graphix::vkEnumerateDeviceExtensionProperties = real_fn;
 }
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     CheckPhysicalDevicePropertiesFailsWhenEnumerateExtensionsFails) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver "
@@ -177,17 +182,19 @@ TEST(TutorialBaseFaultInjectionTest,
   ASSERT_TRUE(bringUpThroughSurface(tutorial, window.getParameters()));
 
   std::uint32_t device_count = 0;
-  ASSERT_EQ(vulkan_graphix::vkEnumeratePhysicalDevices(
-                tutorial.m_vulkan_common_parameters.getVkInstance(),
-                &device_count,
-                nullptr),
+  ASSERT_EQ(
+      vulkan_graphix::vkEnumeratePhysicalDevices(
+          tutorial.m_vulkan_common_parameters.getVkInstance(),
+          &device_count,
+          nullptr),
       VK_SUCCESS);
   ASSERT_GT(device_count, 0u);
   std::vector<VkPhysicalDevice> physical_devices(device_count);
-  ASSERT_EQ(vulkan_graphix::vkEnumeratePhysicalDevices(
-                tutorial.m_vulkan_common_parameters.getVkInstance(),
-                &device_count,
-                physical_devices.data()),
+  ASSERT_EQ(
+      vulkan_graphix::vkEnumeratePhysicalDevices(
+          tutorial.m_vulkan_common_parameters.getVkInstance(),
+          &device_count,
+          physical_devices.data()),
       VK_SUCCESS);
 
   auto real_fn = vulkan_graphix::vkEnumerateDeviceExtensionProperties;
@@ -208,8 +215,8 @@ namespace {
 PFN_vkGetInstanceProcAddr g_real_get_instance_proc_addr = nullptr;
 const char* g_poisoned_instance_function_name = nullptr;
 
-PFN_vkVoidFunction VKAPI_CALL fakeGetInstanceProcAddr(
-    VkInstance instance, const char* name) {
+PFN_vkVoidFunction VKAPI_CALL
+fakeGetInstanceProcAddr(VkInstance instance, const char* name) {
   if ((g_poisoned_instance_function_name != nullptr) &&
       (std::strcmp(name, g_poisoned_instance_function_name) == 0)) {
     return nullptr;
@@ -219,7 +226,8 @@ PFN_vkVoidFunction VKAPI_CALL fakeGetInstanceProcAddr(
 
 }  // namespace
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     LoadGlobalLevelEntryPointsFailsWhenAFunctionIsMissing) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver)";
@@ -237,7 +245,8 @@ TEST(TutorialBaseFaultInjectionTest,
   g_poisoned_instance_function_name = nullptr;
 }
 
-TEST(TutorialBaseFaultInjectionTest,
+TEST(
+    TutorialBaseFaultInjectionTest,
     LoadInstanceLevelEntryPointsFailsWhenAFunctionIsMissing) {
   if (!vulkan_graphix::test::hasDisplay()) {
     GTEST_SKIP() << "No DISPLAY - skipping (needs a live Vulkan driver)";

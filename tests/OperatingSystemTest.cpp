@@ -32,7 +32,8 @@ public:
 
   bool readyToDraw() const override { return true; }
 
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y) override {
@@ -64,7 +65,8 @@ public:
   std::int32_t m_last_move_y = 0;
 };
 
-void sendButtonEvent(Display* send_display,
+void sendButtonEvent(
+    Display* send_display,
     ::Window handle,
     std::int32_t event_type,
     std::uint64_t mask,
@@ -88,7 +90,8 @@ void sendButtonEvent(Display* send_display,
   XSendEvent(send_display, handle, False, mask, &event);
 }
 
-void sendMotionEvent(Display* send_display,
+void sendMotionEvent(
+    Display* send_display,
     ::Window handle,
     std::int32_t pos_x,
     std::int32_t pos_y) {
@@ -108,7 +111,8 @@ void sendMotionEvent(Display* send_display,
   XSendEvent(send_display, handle, False, PointerMotionMask, &event);
 }
 
-void sendDeleteWindowMessage(Display* send_display,
+void sendDeleteWindowMessage(
+    Display* send_display,
     ::Window handle,
     Atom wm_protocols,
     Atom wm_delete_window) {
@@ -163,7 +167,8 @@ TEST(OperatingSystemTest, RenderingLoopProcessesEventsAndExitsOnClose) {
   sendButtonEvent(
       send_display, handle, ButtonPress, ButtonPressMask, Button1, 100, 100);
   sendMotionEvent(send_display, handle, 120, 110);
-  sendButtonEvent(send_display,
+  sendButtonEvent(
+      send_display,
       handle,
       ButtonRelease,
       ButtonReleaseMask,
@@ -217,7 +222,8 @@ public:
   bool m_quit = false;
 };
 
-void sendKeyEvent(Display* send_display,
+void sendKeyEvent(
+    Display* send_display,
     ::Window handle,
     std::int32_t event_type,
     std::uint64_t mask,

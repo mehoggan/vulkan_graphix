@@ -13,7 +13,8 @@
 class ImageObject {
 public:
   ImageObject();
-  ImageObject(float new_x_pos,
+  ImageObject(
+      float new_x_pos,
       float new_y_pos,
       float new_z_pos,
       std::int32_t new_width,

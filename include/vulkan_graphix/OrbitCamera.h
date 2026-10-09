@@ -21,11 +21,13 @@ public:
   // Lets a tutorial start from a specific vantage point (e.g. a 3/4 view)
   // instead of the default front-on one, without changing the default
   // constructor's behavior for tutorials that don't care.
-  OrbitCamera(float initial_yaw_radians,
+  OrbitCamera(
+      float initial_yaw_radians,
       float initial_pitch_radians,
       float initial_distance);
 
-  void onMouseButton(std::int32_t button,
+  void onMouseButton(
+      std::int32_t button,
       bool pressed,
       std::int32_t pos_x,
       std::int32_t pos_y);
