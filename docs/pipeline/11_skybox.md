@@ -31,20 +31,19 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>vkDeviceWaitIdle · write UBO from OrbitCamera<br/>FrameLoop::draw: bind pipeline, VB, IB, set<br/>vkCmdDrawIndexed"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> RP --> PIPE --> GEO --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click RP "./vulkancommon.md" "VulkanCommon"
-    click UBO "./08_phong_sphere.md" "Tutorial08"
-    click DESC "./07_uniform_buffers.md" "Tutorial07"
-    click PIPE "./07_uniform_buffers.md" "Tutorial07"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md) (context, render pass, frame loop);
-[Tutorial07](07_uniform_buffers.md) (bindings and shaders);
-[Tutorial08](08_phong_sphere.md) (per-frame uniform).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| createRenderPass | [VulkanCommon](vulkancommon.md) |
+| createUniformBuffer | [Tutorial08](08_phong_sphere.md) |
+| bindings: 0 sampler (frag), 1 UBO (vert) | [Tutorial07](07_uniform_buffers.md) |
+| shader.11 = Tutorial07's GLSL, unchanged | [Tutorial07](07_uniform_buffers.md) |
 
 ## What's new
 

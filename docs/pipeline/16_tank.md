@@ -31,20 +31,19 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write UBO from OrbitCamera<br/>bind pipeline + set once, then per part:<br/>bind VB · vkCmdPushConstants(model) · vkCmdDraw<br/>models from HellfireTank / TankPlacement"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> RP --> PLL --> PIPE --> PARTS --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click DESC "./11_skybox.md" "Tutorial11"
-    click RP "./13_projectile_model.md" "Tutorial13"
-    click PLL "./10_spline_polyline.md" "Tutorial10"
-    click PARTS "./13_projectile_model.md" "Tutorial13"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial10](10_spline_polyline.md)
-(push constants); [Tutorial11](11_skybox.md) (bindings, fragment shader);
-[Tutorial13](13_projectile_model.md) (render pass, `.ogl` loading).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| bindings: 0 sampler (frag), 1 UBO (vert) | [Tutorial11](11_skybox.md) |
+| createRenderPass (color only, no depth) | [Tutorial13](13_projectile_model.md) |
+| createPipelineLayout | [Tutorial10](10_spline_polyline.md) |
+| createPart × 3 | [Tutorial13](13_projectile_model.md) |
 
 ## What's new
 

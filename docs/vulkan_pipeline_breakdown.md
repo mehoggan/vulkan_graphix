@@ -3,8 +3,8 @@
 Each tutorial has its own page under [`pipeline/`](pipeline/) with one
 Mermaid diagram of its setup, in the order the code runs it, followed by
 its per-frame `draw()`. A step a tutorial takes unchanged from an earlier
-one is a grey dashed box naming that tutorial and linking to its page,
-so each page shows in color only what that tutorial adds or changes.
+one is a grey dashed box naming that tutorial, so each page shows in
+color only what that tutorial adds or changes.
 
 ## Legend
 
@@ -23,14 +23,18 @@ flowchart LR
     F(["per-frame draw()"]):::frame
 ```
 
-Boxes that point at another page carry a Mermaid `click` link. Not every
-Markdown viewer follows those, so every page also lists the same links as
-plain Markdown under its diagram.
+The diagrams themselves aren't clickable. GitHub draws them in a frame on
+a separate domain, where links inside a diagram can't reach the repo's
+files, so every link is plain Markdown instead: the table under each
+diagram links each reused box to the page it comes from, and the
+[Pages](#pages) table below links every tutorial. Those links work the
+same on GitHub and in a local clone.
 
 ## How the tutorials build on each other
 
 Solid arrows: the tutorial is a modified copy of the one it points from.
-Dotted arrows: it borrows one technique or shader from it.
+Dotted arrows: it borrows one technique or shader from it. Each box's page
+is linked in the [Pages](#pages) table.
 
 ```mermaid
 %%{init: {"flowchart": {"wrappingWidth": 400}}}%%
@@ -88,31 +92,6 @@ flowchart TD
     T09 -.-> T12
     T08 -.-> T14
     T10 -.-> T16
-
-    click T01 "./pipeline/01_device_initialization.md"
-    click T02 "./pipeline/02_swap_chain.md"
-    click TB "./pipeline/tutorialbase.md"
-    click T03 "./pipeline/03_first_triangle.md"
-    click T04 "./pipeline/04_vertex_attributes.md"
-    click T05 "./pipeline/05_staging_resources.md"
-    click T06 "./pipeline/06_descriptor_sets.md"
-    click T07 "./pipeline/07_uniform_buffers.md"
-    click T08 "./pipeline/08_phong_sphere.md"
-    click T09 "./pipeline/09_tessellated_terrain.md"
-    click T10 "./pipeline/10_spline_polyline.md"
-    click VC "./pipeline/vulkancommon.md"
-    click T11 "./pipeline/11_skybox.md"
-    click T12 "./pipeline/12_generated_terrain.md"
-    click T13 "./pipeline/13_projectile_model.md"
-    click T14 "./pipeline/14_particle_sphere.md"
-    click T15 "./pipeline/15_text_and_button.md"
-    click T16 "./pipeline/16_tank.md"
-    click T17 "./pipeline/17_item_inventory.md"
-    click T18 "./pipeline/18_player_tanks_hud.md"
-    click T19 "./pipeline/19_weapons_projectiles.md"
-    click T20 "./pipeline/20_particle_effects.md"
-    click T21 "./pipeline/21_world_scene.md"
-    click T22 "./pipeline/22_menu_tank_preview.md"
 ```
 
 ## Pages

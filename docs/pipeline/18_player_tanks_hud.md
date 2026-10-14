@@ -34,20 +34,19 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write 3D UBO from OrbitCamera · clear color + depth<br/>3D pipeline: per player × per part:<br/>push model + tint · vkCmdDraw<br/>HUD pipeline: bind HUD set + VB · vkCmdDraw"]):::frame
 
     BASE --> RC --> TTEX --> FONT --> UBO --> DESC --> DEPTH --> PLL --> P3D --> PHUD --> PARTS --> HUDVB --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click TTEX "./16_tank.md" "Tutorial16"
-    click FONT "./15_text_and_button.md" "Tutorial15"
-    click DEPTH "./12_generated_terrain.md" "Tutorial12"
-    click PARTS "./16_tank.md" "Tutorial16"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial12](12_generated_terrain.md)
-(depth); [Tutorial15](15_text_and_button.md) (font, HUD shaders, HUD
-bindings); [Tutorial16](16_tank.md) (tank texture, meshes, 3D bindings).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create(depth view) | [VulkanCommon](vulkancommon.md) |
+| tank texture (TestImage.raw) | [Tutorial16](16_tank.md) |
+| font atlas texture | [Tutorial15](15_text_and_button.md) |
+| createDepthImage · render pass color + depth | [Tutorial12](12_generated_terrain.md) |
+| createPart × 3 (Hellfire meshes) | [Tutorial16](16_tank.md) |
 
 ## What's new
 

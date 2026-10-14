@@ -33,22 +33,20 @@ flowchart TD
 
     BASE --> RR --> STG --> TEX --> UBO --> DSL --> POOL --> UPD --> RP --> PLL --> PIPE --> VB --> DRAW
     DRAW -. resize .-> RESIZE
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RR "./04_vertex_attributes.md" "Tutorial04"
-    click STG "./06_descriptor_sets.md" "Tutorial06"
-    click TEX "./06_descriptor_sets.md" "Tutorial06"
-    click RP "./06_descriptor_sets.md" "Tutorial06"
-    click PLL "./06_descriptor_sets.md" "Tutorial06"
-    click VB "./05_staging_resources.md" "Tutorial05"
-    click DRAW "./06_descriptor_sets.md" "Tutorial06"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[Tutorial04](04_vertex_attributes.md) (rendering resources);
-[Tutorial05](05_staging_resources.md) (vertex buffer);
-[Tutorial06](06_descriptor_sets.md) (staging size, texture, render pass,
-pipeline layout, frame recording).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
+| createStagingBuffer (1 MB) | [Tutorial06](06_descriptor_sets.md) |
+| createTexture | [Tutorial06](06_descriptor_sets.md) |
+| createRenderPass | [Tutorial06](06_descriptor_sets.md) |
+| createPipelineLayout | [Tutorial06](06_descriptor_sets.md) |
+| createVertexBuffer | [Tutorial05](05_staging_resources.md) |
+| draw() / prepareFrame | [Tutorial06](06_descriptor_sets.md) |
 
 ## What's new
 

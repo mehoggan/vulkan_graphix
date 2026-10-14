@@ -33,22 +33,20 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write both UBOs from OrbitCamera<br/>1 skybox pipeline: push model · vkCmdDrawIndexed<br/>2 terrain pipeline: vkCmdDraw<br/>3 object pipeline: per part push model<br/>(placed via TerrainGenerator::heightAt) · vkCmdDraw"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> DEPTH --> PLL --> PTER --> POBJ --> PSKY --> GEO --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click DEPTH "./12_generated_terrain.md" "Tutorial12"
-    click PTER "./12_generated_terrain.md" "Tutorial12"
-    click POBJ "./16_tank.md" "Tutorial16"
-    click TEX "./11_skybox.md" "Tutorial11"
-    click GEO "./12_generated_terrain.md" "Tutorial12"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial11](11_skybox.md) (skybox
-texture and geometry); [Tutorial12](12_generated_terrain.md) (terrain
-texture, uniform, bindings, pipeline, depth); [Tutorial16](16_tank.md)
-(tank texture, object pipeline, parts).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create(depth view) | [VulkanCommon](vulkancommon.md) |
+| createDepthImage · render pass color + depth | [Tutorial12](12_generated_terrain.md) |
+| terrain pipeline: shader.21_terrain = Tutorial12's GLSL | [Tutorial12](12_generated_terrain.md) |
+| object pipeline: shader.21_object = Tutorial16's GLSL | [Tutorial16](16_tank.md) |
+| Three textures | [Tutorial11](11_skybox.md) |
+| Geometry | [Tutorial12](12_generated_terrain.md) |
 
 ## What's new
 

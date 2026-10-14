@@ -35,24 +35,21 @@ flowchart TD
 
     BASE --> RR --> STG --> DEPTH --> TEX --> UBO --> DSL --> POOL --> RP --> PLL --> PIPE --> VB --> IB --> DRAW
     CAM -. mouse .-> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RR "./04_vertex_attributes.md" "Tutorial04"
-    click STG "./06_descriptor_sets.md" "Tutorial06"
-    click DEPTH "./08_phong_sphere.md" "Tutorial08"
-    click TEX "./07_uniform_buffers.md" "Tutorial07"
-    click UBO "./08_phong_sphere.md" "Tutorial08"
-    click RP "./08_phong_sphere.md" "Tutorial08"
-    click PLL "./06_descriptor_sets.md" "Tutorial06"
-    click IB "./08_phong_sphere.md" "Tutorial08"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[Tutorial04](04_vertex_attributes.md) (rendering resources);
-[Tutorial06](06_descriptor_sets.md) (staging, pipeline layout);
-[Tutorial07](07_uniform_buffers.md) (texture path);
-[Tutorial08](08_phong_sphere.md) (depth, uniform buffer, render pass,
-index buffer, frame loop).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
+| createStagingBuffer | [Tutorial06](06_descriptor_sets.md) |
+| createDepthResources (D32_SFLOAT) | [Tutorial08](08_phong_sphere.md) |
+| createTexture | [Tutorial07](07_uniform_buffers.md) |
+| createUniformBuffer | [Tutorial08](08_phong_sphere.md) |
+| createRenderPass (color + depth) | [Tutorial08](08_phong_sphere.md) |
+| createPipelineLayout | [Tutorial06](06_descriptor_sets.md) |
+| createIndexBuffer | [Tutorial08](08_phong_sphere.md) |
 
 ## What's new
 

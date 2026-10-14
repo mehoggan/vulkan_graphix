@@ -25,14 +25,15 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>wait fence · acquire<br/>submit to graphics queue,<br/>waiting at COLOR_ATTACHMENT_OUTPUT<br/>present on present queue"]):::frame
 
     BASE --> RP --> FB --> PIPE --> SEM --> CB --> REC --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
 ```
 
-**Linked steps:** device and swapchain setup is
-[TutorialBase](tutorialbase.md), which packages
-[Tutorial01](01_device_initialization.md) and
-[Tutorial02](02_swap_chain.md).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+
+Also builds on: [Tutorial01](01_device_initialization.md), [Tutorial02](02_swap_chain.md).
 
 ## What's new
 

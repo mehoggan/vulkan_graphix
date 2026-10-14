@@ -31,17 +31,17 @@ flowchart TD
     RESIZE["<b>onWindowSizeChanged</b><br/>vkDeviceWaitIdle → childClear()<br/>→ createSwapChain() → childOnWindowSizeChanged()"]:::shared
     DONE -. "window resized or<br/>VK_ERROR_OUT_OF_DATE_KHR" .-> RESIZE
     RESIZE -.-> SC
-
-    click LIB "./01_device_initialization.md" "Tutorial01"
-    click ILEP "./01_device_initialization.md" "Tutorial01"
-    click DLEP "./01_device_initialization.md" "Tutorial01"
-    click SURF "./02_swap_chain.md" "Tutorial02"
-    click Q "./02_swap_chain.md" "Tutorial02"
 ```
 
-**Linked steps:** library and entry-point loading come from
-[Tutorial01](01_device_initialization.md); the surface and the two queues
-come from [Tutorial02](02_swap_chain.md).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| loadVulkanLibrary · loadExportedEntryPoints | [Tutorial01](01_device_initialization.md) |
+| loadInstanceLevelEntryPoints | [Tutorial01](01_device_initialization.md) |
+| loadDeviceLevelEntryPoints | [Tutorial01](01_device_initialization.md) |
+| createPresentationSurface | [Tutorial02](02_swap_chain.md) |
+| getDeviceQueue | [Tutorial02](02_swap_chain.md) |
 
 ## What the base adds over Tutorial02
 

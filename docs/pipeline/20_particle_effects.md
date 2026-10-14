@@ -33,21 +33,21 @@ flowchart TD
 
     BASE --> RC --> UBO --> RP --> PLL --> PIPE --> GEO --> FL --> DRAW
     SIM -. every frame .-> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click RP "./14_particle_sphere.md" "Tutorial14"
-    click PLL "./18_player_tanks_hud.md" "Tutorial18"
-    click PIPE "./14_particle_sphere.md" "Tutorial14"
-    click GEO "./14_particle_sphere.md" "Tutorial14"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial14](14_particle_sphere.md)
-(render pass, blending, sphere); [Tutorial16](16_tank.md) (one push per
-draw); [Tutorial18](18_player_tanks_hud.md) (push constant in both
-stages).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| createRenderPass (color only) | [Tutorial14](14_particle_sphere.md) |
+| createPipelineLayout | [Tutorial18](18_player_tanks_hud.md) |
+| createGraphicsPipeline | [Tutorial14](14_particle_sphere.md) |
+| Math::Sphere vertices + indices | [Tutorial14](14_particle_sphere.md) |
+
+Also builds on: [Tutorial16](16_tank.md).
 
 ## What's new
 

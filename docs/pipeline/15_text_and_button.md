@@ -31,18 +31,19 @@ flowchart TD
 
     BASE --> RC --> FONT --> UBO --> DESC --> RP --> PIPE --> VB --> FL --> DRAW
     INPUT -. mouse .-> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click RP "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click UBO "./07_uniform_buffers.md" "Tutorial07"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial07](07_uniform_buffers.md)
-(orthographic projection); [Tutorial14](14_particle_sphere.md) (alpha
-blending).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| createRenderPass | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| createUniformBuffer | [Tutorial07](07_uniform_buffers.md) |
+
+Also builds on: [Tutorial14](14_particle_sphere.md).
 
 ## What's new
 

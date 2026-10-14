@@ -32,27 +32,24 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>tank_angle += step · rebuild panel quads<br/>1 panel pipeline, full extent · vkCmdDraw<br/>2 tank pipeline: <i>vkCmdSetViewport + vkCmdSetScissor<br/>to the preview sub-rectangle</i><br/>per part push model (with spin) · vkCmdDraw"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> DEPTH --> PLL --> PTANK --> PPANEL --> PARTS --> PVB --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click TEX "./16_tank.md" "Tutorial16"
-    click UBO "./16_tank.md" "Tutorial16"
-    click DESC "./18_player_tanks_hud.md" "Tutorial18"
-    click DEPTH "./12_generated_terrain.md" "Tutorial12"
-    click PLL "./18_player_tanks_hud.md" "Tutorial18"
-    click PTANK "./16_tank.md" "Tutorial16"
-    click PPANEL "./18_player_tanks_hud.md" "Tutorial18"
-    click PARTS "./16_tank.md" "Tutorial16"
-    click PVB "./15_text_and_button.md" "Tutorial15"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial12](12_generated_terrain.md)
-(depth); [Tutorial15](15_text_and_button.md) (font, panel shaders,
-per-frame vertex buffer); [Tutorial16](16_tank.md) (tank texture,
-pipeline, parts); [Tutorial18](18_player_tanks_hud.md) (two layouts, two
-pipelines, depth-off overlay).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create(depth view) | [VulkanCommon](vulkancommon.md) |
+| Two textures | [Tutorial16](16_tank.md) |
+| Two uniform buffers | [Tutorial16](16_tank.md) |
+| two set layouts, pool of 2 sets | [Tutorial18](18_player_tanks_hud.md) |
+| createDepthImage · render pass color + depth | [Tutorial12](12_generated_terrain.md) |
+| tank layout: push constant mat4 model (vertex) | [Tutorial18](18_player_tanks_hud.md) |
+| tank pipeline: shader.22_3d = Tutorial16's GLSL | [Tutorial16](16_tank.md) |
+| panel pipeline: shader.22_panel = Tutorial15's GLSL | [Tutorial18](18_player_tanks_hud.md) |
+| tank parts × 3 | [Tutorial16](16_tank.md) |
+| host-visible panel vertex buffer | [Tutorial15](15_text_and_button.md) |
 
 ## What's new
 

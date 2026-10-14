@@ -33,25 +33,24 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write 3D UBO · rebuild grid quads<br/>3D: per projectile: bind its set + VB<br/>push scaled model · vkCmdDraw<br/>grid: ↩ Tutorial17's font pass + icon pass"]):::frame
 
     BASE --> RC --> PROJ --> GRIDTEX --> UBO --> DESC --> RP --> PLL --> P3D --> PGRID --> VB --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click RP "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click PROJ "./13_projectile_model.md" "Tutorial13"
-    click GRIDTEX "./17_item_inventory.md" "Tutorial17"
-    click PLL "./16_tank.md" "Tutorial16"
-    click P3D "./16_tank.md" "Tutorial16"
-    click PGRID "./17_item_inventory.md" "Tutorial17"
-    click VB "./17_item_inventory.md" "Tutorial17"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial13](13_projectile_model.md)
-(mesh and raw texture loading); [Tutorial16](16_tank.md) (3D pipeline,
-push constant); [Tutorial17](17_item_inventory.md) (grid textures,
-pipeline, buffer, two-pass draw); [Tutorial18](18_player_tanks_hud.md)
-(two pipelines in one pass).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| createRenderPass | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| Per projectile type × 3 | [Tutorial13](13_projectile_model.md) |
+| font atlas + icon atlas textures | [Tutorial17](17_item_inventory.md) |
+| Two pipeline layouts | [Tutorial16](16_tank.md) |
+| 3D pipeline: shader.19_3d = Tutorial16's GLSL | [Tutorial16](16_tank.md) |
+| grid pipeline: shader.19_grid = Tutorial17's GLSL | [Tutorial17](17_item_inventory.md) |
+| host-visible grid vertex buffer | [Tutorial17](17_item_inventory.md) |
+
+Also builds on: [Tutorial18](18_player_tanks_hud.md).
 
 ## What's new
 

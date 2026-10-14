@@ -27,19 +27,19 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write UBO from OrbitCamera<br/>bind · vkCmdDraw(vertex count)"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> RP --> PIPE --> VB --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click UBO "./11_skybox.md" "Tutorial11"
-    click DESC "./11_skybox.md" "Tutorial11"
-    click RP "./11_skybox.md" "Tutorial11"
-    click PIPE "./11_skybox.md" "Tutorial11"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial11](11_skybox.md) (uniform,
-bindings, render pass, pipeline).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| createUniformBuffer (one mat4) | [Tutorial11](11_skybox.md) |
+| bindings: 0 sampler (frag), 1 UBO (vert) | [Tutorial11](11_skybox.md) |
+| createRenderPass (color only) | [Tutorial11](11_skybox.md) |
+| shader.13 = Tutorial11's GLSL | [Tutorial11](11_skybox.md) |
 
 ## What's new
 

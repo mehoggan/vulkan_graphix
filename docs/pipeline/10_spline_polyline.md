@@ -32,20 +32,20 @@ flowchart TD
     DRAW(["<b>draw()</b> (changed)<br/>↩ Tutorial09 loop + OrbitCamera<br/>curve: push color · vkCmdSetLineWidth(wide) · vkCmdDraw<br/>polygon: push color · vkCmdSetLineWidth(1) · vkCmdDraw<br/>no index buffer"]):::frame
 
     BASE --> RR --> STG --> DEPTH --> UBO --> DSL --> POOL --> RP --> PLL --> PIPE --> CVB --> PVB --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RR "./04_vertex_attributes.md" "Tutorial04"
-    click STG "./06_descriptor_sets.md" "Tutorial06"
-    click DEPTH "./08_phong_sphere.md" "Tutorial08"
-    click POOL "./08_phong_sphere.md" "Tutorial08"
-    click RP "./08_phong_sphere.md" "Tutorial08"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[Tutorial04](04_vertex_attributes.md) (rendering resources);
-[Tutorial06](06_descriptor_sets.md) (staging);
-[Tutorial08](08_phong_sphere.md) (depth, descriptors, render pass);
-[Tutorial09](09_tessellated_terrain.md) (frame loop, orbit camera).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
+| createStagingBuffer | [Tutorial06](06_descriptor_sets.md) |
+| createDepthResources | [Tutorial08](08_phong_sphere.md) |
+| createDescriptorPool + allocate + update | [Tutorial08](08_phong_sphere.md) |
+| createRenderPass (color + depth) | [Tutorial08](08_phong_sphere.md) |
+
+Also builds on: [Tutorial09](09_tessellated_terrain.md).
 
 ## What's new
 
