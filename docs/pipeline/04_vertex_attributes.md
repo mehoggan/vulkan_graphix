@@ -16,21 +16,24 @@ flowchart TD
     classDef new fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
     classDef frame fill:#f3e5f5,stroke:#6a1b9a,color:#311b92
 
-    BASE["↩ TutorialBase<br/>prepareVulkan()"]:::reused
-    RP["<b>createRenderPass</b> (changed)<br/>same attachment as Tutorial03<br/>+ 2 subpass dependencies<br/>(EXTERNAL → 0, 0 → EXTERNAL)"]:::changed
-    PIPE["<b>createPipeline</b> (changed)<br/>1 vertex binding: position vec4 + color vec4<br/>TRIANGLE_STRIP<br/>dynamic viewport + scissor"]:::changed
-    VB["<b>createVertexBuffer</b><br/>HOST_VISIBLE memory (BufferFactory)<br/>vkMapMemory → memcpy<br/>→ vkFlushMappedMemoryRanges → unmap"]:::new
-    RR["<b>createRenderingResources</b><br/>pool + 3 command buffers<br/>3 image-available semaphores · 3 fences<br/>1 rendering-finished semaphore per image"]:::new
-    DRAW(["<b>draw()</b> — next of 3 frames<br/>wait fence · acquire<br/>prepareFrame: create framebuffer for this image,<br/>record: barrier · begin pass · set viewport/scissor<br/>vkCmdBindVertexBuffers · vkCmdDraw(4)<br/>submit · present"]):::frame
+    BASE["↩ TutorialBase<br/><b>prepareVulkan()</b>"]:::reused
+    RP["<b>createRenderPass</b><br/>vkCreateRenderPass"]:::changed
+    PIPE["<b>createPipeline</b><br/>vkCreateShaderModule  ·  vkCreatePipelineLayout<br/>vkCreateGraphicsPipelines"]:::changed
+    VB["<b>createVertexBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkFlushMappedMemoryRanges  ·  vkUnmapMemory"]:::new
+    RR["<b>createRenderingResources</b><br/>vkCreateCommandPool  ·  vkAllocateCommandBuffers<br/>vkCreateSemaphore  ·  vkCreateFence"]:::new
+    DRAW(["<b>draw() / prepareFrame</b><br/>vkWaitForFences  ·  vkResetFences<br/>vkAcquireNextImageKHR  ·  vkCreateFramebuffer<br/>vkBeginCommandBuffer  ·  vkCmdPipelineBarrier<br/>vkCmdBeginRenderPass  ·  vkCmdBindPipeline<br/>vkCmdSetViewport  ·  vkCmdSetScissor<br/>vkCmdBindVertexBuffers  ·  vkCmdDraw<br/>vkCmdEndRenderPass  ·  vkEndCommandBuffer<br/>vkQueueSubmit  ·  vkQueuePresentKHR"]):::frame
 
     BASE --> RP --> PIPE --> VB --> RR --> DRAW
 ```
 
-**Where the reused boxes come from:**
-
-| Box | Defined in |
-|---|---|
-| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| Step | From | Vulkan calls |
+|---|---|---|
+| **prepareVulkan()** | [TutorialBase](tutorialbase.md) | — |
+| **createRenderPass** | changed here | [vkCreateRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass.html) |
+| **createPipeline** | changed here | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreatePipelineLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineLayout.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **createVertexBuffer** | new here | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkFlushMappedMemoryRanges](https://registry.khronos.org/vulkan/specs/latest/man/html/vkFlushMappedMemoryRanges.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html) |
+| **createRenderingResources** | new here | [vkCreateCommandPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html), [vkAllocateCommandBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html), [vkCreateSemaphore](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html), [vkCreateFence](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html) |
+| **draw() / prepareFrame** | this tutorial | [vkWaitForFences](https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitForFences.html), [vkResetFences](https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetFences.html), [vkAcquireNextImageKHR](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquireNextImageKHR.html), [vkCreateFramebuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFramebuffer.html), [vkBeginCommandBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBeginCommandBuffer.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdBeginRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginRenderPass.html), [vkCmdBindPipeline](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html), [vkCmdSetViewport](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetViewport.html), [vkCmdSetScissor](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetScissor.html), [vkCmdBindVertexBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html), [vkCmdDraw](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDraw.html), [vkCmdEndRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRenderPass.html), [vkEndCommandBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkEndCommandBuffer.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html), [vkQueuePresentKHR](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueuePresentKHR.html) |
 
 Also builds on: [page](03_first_triangle.md).
 
@@ -42,14 +45,5 @@ Also builds on: [page](03_first_triangle.md).
 - The framebuffer is made at record time for the acquired image.
 - Viewport and scissor are dynamic state, so a resize doesn't require a
   new pipeline for them.
-
-## Spec links
-
-[`VkVertexInputAttributeDescription`](https://registry.khronos.org/vulkan/specs/latest/man/html/VkVertexInputAttributeDescription.html) ·
-[`VkSubpassDependency`](https://registry.khronos.org/vulkan/specs/latest/man/html/VkSubpassDependency.html) ·
-[`vkMapMemory`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html) ·
-[`vkFlushMappedMemoryRanges`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkFlushMappedMemoryRanges.html) ·
-[`vkCmdBindVertexBuffers`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html) ·
-[`vkCmdSetViewport`](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetViewport.html)
 
 Source: `bin/04_vertex_attributes/Tutorial04.cpp`

@@ -18,37 +18,38 @@ flowchart TD
     classDef shared fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef frame fill:#f3e5f5,stroke:#6a1b9a,color:#311b92
 
-    BASE["↩ TutorialBase<br/>prepareVulkan()"]:::reused
-    RC["↩ VulkanCommon<br/>ResourceContext::initialize"]:::shared
-    PROJ["<b>Per projectile type</b> × 3<br/>loadRawTexture (512²)<br/>+ loadOglTexturedMesh → device-local VB<br/>↩ Tutorial13's loading"]:::changed
-    GRIDTEX["↩ Tutorial17<br/>font atlas + icon atlas textures"]:::reused
-    UBO["<b>Two uniform buffers</b><br/>3D: view + projection (↩ Tutorial16)<br/>grid: orthographic (↩ Tutorial17)"]:::changed
-    DESC["<b>Two set layouts, pool of 3 + 2 sets</b><br/>3 sets for 3D, one per projectile texture<br/>font + icon sets ↩ Tutorial17"]:::changed
-    RP["<b>createRenderPass</b><br/>color only, no depth"]:::shared
-    PLL["<b>Two pipeline layouts</b><br/>3D: push constant mat4 model (↩ Tutorial16)<br/>grid: none"]:::reused
-    P3D["↩ Tutorial16<br/>3D pipeline: shader.19_3d = Tutorial16's GLSL"]:::reused
-    PGRID["↩ Tutorial17<br/>grid pipeline: shader.19_grid = Tutorial17's GLSL<br/>alpha blend"]:::reused
-    VB["↩ Tutorial17<br/>host-visible grid vertex buffer"]:::reused
-    FL["↩ VulkanCommon<br/>FrameLoop::create"]:::shared
-    DRAW(["<b>draw()</b><br/>write 3D UBO · rebuild grid quads<br/>3D: per projectile: bind its set + VB<br/>push scaled model · vkCmdDraw<br/>grid: ↩ Tutorial17's font pass + icon pass"]):::frame
+    BASE["↩ TutorialBase<br/><b>prepareVulkan()</b>"]:::reused
+    RC["↩ VulkanCommon<br/><b>ResourceContext::initialize</b>"]:::shared
+    PROJ["<b>per projectile: loadRawTexture + mesh buffer</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView<br/>vkCreateSampler  ·  vkCmdPipelineBarrier<br/>vkCmdCopyBufferToImage  ·  vkQueueSubmit<br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkCmdCopyBuffer"]:::changed
+    GRIDTEX["↩ Tutorial17<br/><b>font atlas + icon atlas</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView<br/>vkCreateSampler  ·  vkCmdPipelineBarrier<br/>vkCmdCopyBufferToImage  ·  vkQueueSubmit"]:::reused
+    UBO["<b>createUniformBuffer × 2</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkUnmapMemory"]:::changed
+    DESC["<b>Descriptors (2 layouts, 5 sets)</b><br/>vkCreateDescriptorSetLayout  ·  vkCreateDescriptorPool<br/>vkAllocateDescriptorSets  ·  vkUpdateDescriptorSets"]:::changed
+    RP["<b>createRenderPass</b><br/>vkCreateRenderPass"]:::shared
+    PLL["<b>createPipelineLayout × 2</b><br/>vkCreatePipelineLayout"]:::reused
+    P3D["↩ Tutorial16<br/><b>3D pipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::reused
+    PGRID["↩ Tutorial17<br/><b>grid pipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::reused
+    VB["↩ Tutorial17<br/><b>createHostVisibleBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkUnmapMemory"]:::reused
+    FL["↩ VulkanCommon<br/><b>FrameLoop::create</b><br/>vkCreateCommandPool  ·  vkAllocateCommandBuffers<br/>vkCreateSemaphore  ·  vkCreateFence<br/>vkCreateFramebuffer"]:::shared
+    DRAW(["<b>draw() → FrameLoop::draw</b><br/>vkDeviceWaitIdle  ·  vkMapMemory<br/>vkCmdBindPipeline  ·  vkCmdBindDescriptorSets<br/>vkCmdBindVertexBuffers  ·  vkCmdPushConstants<br/>vkCmdDraw"]):::frame
 
     BASE --> RC --> PROJ --> GRIDTEX --> UBO --> DESC --> RP --> PLL --> P3D --> PGRID --> VB --> FL --> DRAW
 ```
 
-**Where the reused boxes come from:**
-
-| Box | Defined in |
-|---|---|
-| prepareVulkan() | [TutorialBase](tutorialbase.md) |
-| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
-| createRenderPass | [VulkanCommon](vulkancommon.md) |
-| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
-| Per projectile type × 3 | [Tutorial13](13_projectile_model.md) |
-| font atlas + icon atlas textures | [Tutorial17](17_item_inventory.md) |
-| Two pipeline layouts | [Tutorial16](16_tank.md) |
-| 3D pipeline: shader.19_3d = Tutorial16's GLSL | [Tutorial16](16_tank.md) |
-| grid pipeline: shader.19_grid = Tutorial17's GLSL | [Tutorial17](17_item_inventory.md) |
-| host-visible grid vertex buffer | [Tutorial17](17_item_inventory.md) |
+| Step | From | Vulkan calls |
+|---|---|---|
+| **prepareVulkan()** | [TutorialBase](tutorialbase.md) | — |
+| **ResourceContext::initialize** | [VulkanCommon](vulkancommon.md) | — |
+| **per projectile: loadRawTexture + mesh buffer** | [Tutorial13](13_projectile_model.md) | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html), [vkCreateSampler](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSampler.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdCopyBufferToImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html), [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkCmdCopyBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html) |
+| **font atlas + icon atlas** | [Tutorial17](17_item_inventory.md) | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html), [vkCreateSampler](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSampler.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdCopyBufferToImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **createUniformBuffer × 2** | changed here | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html) |
+| **Descriptors (2 layouts, 5 sets)** | changed here | [vkCreateDescriptorSetLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorSetLayout.html), [vkCreateDescriptorPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorPool.html), [vkAllocateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html), [vkUpdateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html) |
+| **createRenderPass** | [VulkanCommon](vulkancommon.md) | [vkCreateRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass.html) |
+| **createPipelineLayout × 2** | [Tutorial16](16_tank.md) | [vkCreatePipelineLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineLayout.html) |
+| **3D pipeline** | [Tutorial16](16_tank.md) | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **grid pipeline** | [Tutorial17](17_item_inventory.md) | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **createHostVisibleBuffer** | [Tutorial17](17_item_inventory.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html) |
+| **FrameLoop::create** | [VulkanCommon](vulkancommon.md) | [vkCreateCommandPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html), [vkAllocateCommandBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html), [vkCreateSemaphore](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html), [vkCreateFence](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html), [vkCreateFramebuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFramebuffer.html) |
+| **draw() → FrameLoop::draw** | this tutorial | [vkDeviceWaitIdle](https://registry.khronos.org/vulkan/specs/latest/man/html/vkDeviceWaitIdle.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdBindPipeline](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html), [vkCmdBindDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html), [vkCmdBindVertexBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html), [vkCmdPushConstants](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html), [vkCmdDraw](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDraw.html) |
 
 Also builds on: [Tutorial18](18_player_tanks_hud.md).
 

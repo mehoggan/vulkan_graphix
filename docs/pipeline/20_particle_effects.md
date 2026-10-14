@@ -20,32 +20,33 @@ flowchart TD
     classDef shared fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef frame fill:#f3e5f5,stroke:#6a1b9a,color:#311b92
 
-    BASE["↩ TutorialBase<br/>prepareVulkan()"]:::reused
-    RC["↩ VulkanCommon<br/>ResourceContext::initialize"]:::shared
-    UBO["<b>createUniformBuffer</b> (changed)<br/>view + projection only<br/>binding 0: UBO, vertex stage"]:::changed
-    RP["↩ Tutorial14<br/>createRenderPass (color only)"]:::reused
-    PLL["<b>createPipelineLayout</b> (changed)<br/>push constant: mat4 model + vec4 color<br/>vertex + fragment stages<br/>↩ Tutorial18's two-stage range"]:::changed
-    PIPE["<b>createGraphicsPipeline</b> (changed)<br/>new shader.20 · position only, unlit<br/>↩ Tutorial14: cull BACK · CW · alpha blend"]:::changed
-    GEO["↩ Tutorial14<br/>Math::Sphere vertices + indices"]:::reused
-    FL["↩ VulkanCommon<br/>FrameLoop::create"]:::shared
-    SIM["<b>updateParticles / updateExplosion</b><br/>EffectSimulation: same code the game runs<br/>ParticleGenerator 1000-slot pools"]:::new
-    DRAW(["<b>draw()</b><br/>step simulation · write UBO from OrbitCamera<br/>bind pipeline, VB, IB, set once<br/>draw_sphere(shield) · every live particle ·<br/>explosion: push model + color · vkCmdDrawIndexed"]):::frame
+    BASE["↩ TutorialBase<br/><b>prepareVulkan()</b>"]:::reused
+    RC["↩ VulkanCommon<br/><b>ResourceContext::initialize</b>"]:::shared
+    UBO["<b>createUniformBuffer · Descriptors</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkUnmapMemory  ·  vkCreateDescriptorSetLayout<br/>vkCreateDescriptorPool  ·  vkAllocateDescriptorSets<br/>vkUpdateDescriptorSets"]:::changed
+    RP["↩ Tutorial14<br/><b>createRenderPass</b><br/>vkCreateRenderPass"]:::reused
+    PLL["<b>createPipelineLayout</b><br/>vkCreatePipelineLayout"]:::changed
+    PIPE["<b>createGraphicsPipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::changed
+    GEO["↩ Tutorial14<br/><b>vertex + index buffers</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkCmdCopyBuffer  ·  vkQueueSubmit"]:::reused
+    FL["↩ VulkanCommon<br/><b>FrameLoop::create</b><br/>vkCreateCommandPool  ·  vkAllocateCommandBuffers<br/>vkCreateSemaphore  ·  vkCreateFence<br/>vkCreateFramebuffer"]:::shared
+    SIM["<b>updateParticles · updateExplosion</b>"]:::new
+    DRAW(["<b>draw() → FrameLoop::draw</b><br/>vkDeviceWaitIdle  ·  vkMapMemory<br/>vkCmdBindPipeline  ·  vkCmdBindVertexBuffers<br/>vkCmdBindIndexBuffer  ·  vkCmdBindDescriptorSets<br/>vkCmdPushConstants  ·  vkCmdDrawIndexed"]):::frame
 
     BASE --> RC --> UBO --> RP --> PLL --> PIPE --> GEO --> FL --> DRAW
     SIM -. every frame .-> DRAW
 ```
 
-**Where the reused boxes come from:**
-
-| Box | Defined in |
-|---|---|
-| prepareVulkan() | [TutorialBase](tutorialbase.md) |
-| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
-| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
-| createRenderPass (color only) | [Tutorial14](14_particle_sphere.md) |
-| createPipelineLayout | [Tutorial18](18_player_tanks_hud.md) |
-| createGraphicsPipeline | [Tutorial14](14_particle_sphere.md) |
-| Math::Sphere vertices + indices | [Tutorial14](14_particle_sphere.md) |
+| Step | From | Vulkan calls |
+|---|---|---|
+| **prepareVulkan()** | [TutorialBase](tutorialbase.md) | — |
+| **ResourceContext::initialize** | [VulkanCommon](vulkancommon.md) | — |
+| **createUniformBuffer · Descriptors** | changed here | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html), [vkCreateDescriptorSetLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorSetLayout.html), [vkCreateDescriptorPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorPool.html), [vkAllocateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html), [vkUpdateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html) |
+| **createRenderPass** | [Tutorial14](14_particle_sphere.md) | [vkCreateRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass.html) |
+| **createPipelineLayout** | [Tutorial18](18_player_tanks_hud.md) | [vkCreatePipelineLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineLayout.html) |
+| **createGraphicsPipeline** | [Tutorial14](14_particle_sphere.md) | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **vertex + index buffers** | [Tutorial14](14_particle_sphere.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdCopyBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **FrameLoop::create** | [VulkanCommon](vulkancommon.md) | [vkCreateCommandPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html), [vkAllocateCommandBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html), [vkCreateSemaphore](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html), [vkCreateFence](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html), [vkCreateFramebuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFramebuffer.html) |
+| **updateParticles · updateExplosion** | new here | — |
+| **draw() → FrameLoop::draw** | this tutorial | [vkDeviceWaitIdle](https://registry.khronos.org/vulkan/specs/latest/man/html/vkDeviceWaitIdle.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdBindPipeline](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html), [vkCmdBindVertexBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html), [vkCmdBindIndexBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindIndexBuffer.html), [vkCmdBindDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html), [vkCmdPushConstants](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html), [vkCmdDrawIndexed](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexed.html) |
 
 Also builds on: [Tutorial16](16_tank.md).
 

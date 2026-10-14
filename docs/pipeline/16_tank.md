@@ -18,32 +18,34 @@ flowchart TD
     classDef shared fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef frame fill:#f3e5f5,stroke:#6a1b9a,color:#311b92
 
-    BASE["↩ TutorialBase<br/>prepareVulkan()"]:::reused
-    RC["↩ VulkanCommon<br/>ResourceContext::initialize"]:::shared
-    TEX["<b>loadRawTexture</b><br/>TestImage.raw 1024² · CLAMP_TO_EDGE"]:::new
-    UBO["<b>createUniformBuffer</b> (changed)<br/>view + projection only<br/>(model moves to the push constant)"]:::changed
-    DESC["↩ Tutorial11<br/>bindings: 0 sampler (frag), 1 UBO (vert)"]:::reused
-    RP["↩ Tutorial13<br/>createRenderPass (color only, no depth)"]:::reused
-    PLL["<b>createPipelineLayout</b> (changed)<br/>+ push constant: vertex stage, mat4 model<br/>↩ Tutorial10's push-constant technique"]:::changed
-    PIPE["<b>createGraphicsPipeline</b> (changed)<br/>new vertex shader (applies push model)<br/>fragment shader = Tutorial11/13's<br/>position + texcoord"]:::changed
-    PARTS["<b>createPart</b> × 3<br/>Hellfire_Body / _Head / _Turret.ogl<br/>↩ Tutorial13's loadOglTexturedMesh"]:::changed
-    FL["↩ VulkanCommon<br/>FrameLoop::create"]:::shared
-    DRAW(["<b>draw()</b><br/>write UBO from OrbitCamera<br/>bind pipeline + set once, then per part:<br/>bind VB · vkCmdPushConstants(model) · vkCmdDraw<br/>models from HellfireTank / TankPlacement"]):::frame
+    BASE["↩ TutorialBase<br/><b>prepareVulkan()</b>"]:::reused
+    RC["↩ VulkanCommon<br/><b>ResourceContext::initialize</b>"]:::shared
+    TEX["<b>loadRawTexture</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView<br/>vkCreateSampler  ·  vkCmdPipelineBarrier<br/>vkCmdCopyBufferToImage  ·  vkQueueSubmit"]:::new
+    UBO["<b>createUniformBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkUnmapMemory"]:::changed
+    DESC["↩ Tutorial11<br/><b>Descriptors</b><br/>vkCreateDescriptorSetLayout  ·  vkCreateDescriptorPool<br/>vkAllocateDescriptorSets  ·  vkUpdateDescriptorSets"]:::reused
+    RP["↩ Tutorial13<br/><b>createRenderPass</b><br/>vkCreateRenderPass"]:::reused
+    PLL["<b>createPipelineLayout</b><br/>vkCreatePipelineLayout"]:::changed
+    PIPE["<b>createGraphicsPipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::changed
+    PARTS["<b>createPart × 3</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkCmdCopyBuffer  ·  vkQueueSubmit"]:::changed
+    FL["↩ VulkanCommon<br/><b>FrameLoop::create</b><br/>vkCreateCommandPool  ·  vkAllocateCommandBuffers<br/>vkCreateSemaphore  ·  vkCreateFence<br/>vkCreateFramebuffer"]:::shared
+    DRAW(["<b>draw() → FrameLoop::draw</b><br/>vkDeviceWaitIdle  ·  vkMapMemory<br/>vkCmdBindPipeline  ·  vkCmdBindDescriptorSets<br/>vkCmdBindVertexBuffers  ·  vkCmdPushConstants<br/>vkCmdDraw"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> RP --> PLL --> PIPE --> PARTS --> FL --> DRAW
 ```
 
-**Where the reused boxes come from:**
-
-| Box | Defined in |
-|---|---|
-| prepareVulkan() | [TutorialBase](tutorialbase.md) |
-| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
-| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
-| bindings: 0 sampler (frag), 1 UBO (vert) | [Tutorial11](11_skybox.md) |
-| createRenderPass (color only, no depth) | [Tutorial13](13_projectile_model.md) |
-| createPipelineLayout | [Tutorial10](10_spline_polyline.md) |
-| createPart × 3 | [Tutorial13](13_projectile_model.md) |
+| Step | From | Vulkan calls |
+|---|---|---|
+| **prepareVulkan()** | [TutorialBase](tutorialbase.md) | — |
+| **ResourceContext::initialize** | [VulkanCommon](vulkancommon.md) | — |
+| **loadRawTexture** | new here | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html), [vkCreateSampler](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSampler.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdCopyBufferToImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **createUniformBuffer** | changed here | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html) |
+| **Descriptors** | [Tutorial11](11_skybox.md) | [vkCreateDescriptorSetLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorSetLayout.html), [vkCreateDescriptorPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorPool.html), [vkAllocateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html), [vkUpdateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html) |
+| **createRenderPass** | [Tutorial13](13_projectile_model.md) | [vkCreateRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass.html) |
+| **createPipelineLayout** | [Tutorial10](10_spline_polyline.md) | [vkCreatePipelineLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineLayout.html) |
+| **createGraphicsPipeline** | changed here | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **createPart × 3** | [Tutorial13](13_projectile_model.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdCopyBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **FrameLoop::create** | [VulkanCommon](vulkancommon.md) | [vkCreateCommandPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html), [vkAllocateCommandBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html), [vkCreateSemaphore](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html), [vkCreateFence](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html), [vkCreateFramebuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFramebuffer.html) |
+| **draw() → FrameLoop::draw** | this tutorial | [vkDeviceWaitIdle](https://registry.khronos.org/vulkan/specs/latest/man/html/vkDeviceWaitIdle.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdBindPipeline](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html), [vkCmdBindDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html), [vkCmdBindVertexBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html), [vkCmdPushConstants](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html), [vkCmdDraw](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDraw.html) |
 
 ## What's new
 

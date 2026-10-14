@@ -17,39 +17,43 @@ flowchart TD
     classDef new fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
     classDef frame fill:#f3e5f5,stroke:#6a1b9a,color:#311b92
 
-    BASE["↩ TutorialBase<br/>prepareVulkan()"]:::reused
-    RR["↩ Tutorial04<br/>createRenderingResources"]:::reused
-    STG["↩ Tutorial06<br/>createStagingBuffer"]:::reused
-    DEPTH["↩ Tutorial08<br/>createDepthResources (D32_SFLOAT)"]:::reused
-    TEX["<b>createTexture</b> (changed)<br/>↩ Tutorial06/07 path<br/>texture.09.png · sampler <i>REPEAT</i><br/>UVs go past 1 so the ground tiles"]:::changed
-    UBO["↩ Tutorial08<br/>createUniformBuffer<br/>host-visible, rewritten per frame"]:::reused
-    DSL["<b>createDescriptorSetLayout</b> (changed)<br/>binding 0: UNIFORM_BUFFER, vertex + fragment<br/>binding 1: COMBINED_IMAGE_SAMPLER, fragment"]:::changed
-    POOL["<b>createDescriptorPool</b> (changed)<br/>+ allocate + update<br/>1 uniform + 1 sampler · 2 writes"]:::changed
-    RP["↩ Tutorial08<br/>createRenderPass (color + depth)"]:::reused
-    PLL["↩ Tutorial06<br/>createPipelineLayout"]:::reused
-    PIPE["<b>createPipeline</b> (changed)<br/>position + normal + texcoord<br/>cull <i>NONE</i> · depth test LESS<br/>fragment shader flips back-facing normals"]:::changed
-    VB["<b>createVertexBuffer</b> (changed)<br/>two triangles over a square, subdivided by<br/>Math::tessellateTrianglesByMidpointSubdivision"]:::changed
-    IB["↩ Tutorial08<br/>createIndexBuffer<br/>indices from the tessellator"]:::reused
-    DRAW(["<b>draw()</b> (changed)<br/>↩ Tutorial08 loop · static identity model<br/>view from OrbitCamera every frame"]):::frame
-    CAM["<b>OrbitCamera</b><br/>onMouseButton / onMouseMove<br/>left-drag orbits · wheel zooms"]:::new
+    BASE["↩ TutorialBase<br/><b>prepareVulkan()</b>"]:::reused
+    RR["↩ Tutorial04<br/><b>createRenderingResources</b><br/>vkCreateCommandPool  ·  vkAllocateCommandBuffers<br/>vkCreateSemaphore  ·  vkCreateFence"]:::reused
+    STG["↩ Tutorial06<br/><b>createStagingBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory"]:::reused
+    DEPTH["↩ Tutorial08<br/><b>createDepthResources</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView"]:::reused
+    TEX["<b>createTexture</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView<br/>vkCreateSampler  ·  vkCmdPipelineBarrier<br/>vkCmdCopyBufferToImage  ·  vkQueueSubmit"]:::changed
+    UBO["↩ Tutorial08<br/><b>createUniformBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory"]:::reused
+    DSL["<b>createDescriptorSetLayout</b><br/>vkCreateDescriptorSetLayout"]:::changed
+    POOL["<b>createDescriptorPool</b><br/><b>allocateDescriptorSet</b><br/><b>updateDescriptorSet</b><br/>vkCreateDescriptorPool  ·  vkAllocateDescriptorSets<br/>vkUpdateDescriptorSets"]:::changed
+    RP["↩ Tutorial08<br/><b>createRenderPass</b><br/>vkCreateRenderPass"]:::reused
+    PLL["↩ Tutorial06<br/><b>createPipelineLayout</b><br/>vkCreatePipelineLayout"]:::reused
+    PIPE["<b>createPipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::changed
+    VB["<b>createVertexBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkCmdCopyBuffer<br/>vkCmdPipelineBarrier  ·  vkQueueSubmit"]:::changed
+    IB["↩ Tutorial08<br/><b>createIndexBuffer</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkCmdCopyBuffer<br/>vkCmdPipelineBarrier  ·  vkQueueSubmit"]:::reused
+    DRAW(["<b>draw() / prepareFrame</b><br/>vkDeviceWaitIdle  ·  vkMapMemory<br/>vkUnmapMemory  ·  vkWaitForFences<br/>vkResetFences  ·  vkAcquireNextImageKHR<br/>vkCreateFramebuffer  ·  vkBeginCommandBuffer<br/>vkCmdPipelineBarrier  ·  vkCmdBeginRenderPass<br/>vkCmdBindPipeline  ·  vkCmdSetViewport<br/>vkCmdSetScissor  ·  vkCmdBindVertexBuffers<br/>vkCmdBindIndexBuffer  ·  vkCmdBindDescriptorSets<br/>vkCmdDrawIndexed  ·  vkCmdEndRenderPass<br/>vkEndCommandBuffer  ·  vkQueueSubmit<br/>vkQueuePresentKHR"]):::frame
+    CAM["<b>OrbitCamera (mouse input)</b>"]:::new
 
     BASE --> RR --> STG --> DEPTH --> TEX --> UBO --> DSL --> POOL --> RP --> PLL --> PIPE --> VB --> IB --> DRAW
     CAM -. mouse .-> DRAW
 ```
 
-**Where the reused boxes come from:**
-
-| Box | Defined in |
-|---|---|
-| prepareVulkan() | [TutorialBase](tutorialbase.md) |
-| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
-| createStagingBuffer | [Tutorial06](06_descriptor_sets.md) |
-| createDepthResources (D32_SFLOAT) | [Tutorial08](08_phong_sphere.md) |
-| createTexture | [Tutorial07](07_uniform_buffers.md) |
-| createUniformBuffer | [Tutorial08](08_phong_sphere.md) |
-| createRenderPass (color + depth) | [Tutorial08](08_phong_sphere.md) |
-| createPipelineLayout | [Tutorial06](06_descriptor_sets.md) |
-| createIndexBuffer | [Tutorial08](08_phong_sphere.md) |
+| Step | From | Vulkan calls |
+|---|---|---|
+| **prepareVulkan()** | [TutorialBase](tutorialbase.md) | — |
+| **createRenderingResources** | [Tutorial04](04_vertex_attributes.md) | [vkCreateCommandPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html), [vkAllocateCommandBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html), [vkCreateSemaphore](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html), [vkCreateFence](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html) |
+| **createStagingBuffer** | [Tutorial06](06_descriptor_sets.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html) |
+| **createDepthResources** | [Tutorial08](08_phong_sphere.md) | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html) |
+| **createTexture** | [Tutorial07](07_uniform_buffers.md) | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html), [vkCreateSampler](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSampler.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdCopyBufferToImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **createUniformBuffer** | [Tutorial08](08_phong_sphere.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html) |
+| **createDescriptorSetLayout** | changed here | [vkCreateDescriptorSetLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorSetLayout.html) |
+| **createDescriptorPool · allocateDescriptorSet · updateDescriptorSet** | changed here | [vkCreateDescriptorPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorPool.html), [vkAllocateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html), [vkUpdateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html) |
+| **createRenderPass** | [Tutorial08](08_phong_sphere.md) | [vkCreateRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass.html) |
+| **createPipelineLayout** | [Tutorial06](06_descriptor_sets.md) | [vkCreatePipelineLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineLayout.html) |
+| **createPipeline** | changed here | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **createVertexBuffer** | changed here | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkCmdCopyBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **createIndexBuffer** | [Tutorial08](08_phong_sphere.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkCmdCopyBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **draw() / prepareFrame** | this tutorial | [vkDeviceWaitIdle](https://registry.khronos.org/vulkan/specs/latest/man/html/vkDeviceWaitIdle.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html), [vkWaitForFences](https://registry.khronos.org/vulkan/specs/latest/man/html/vkWaitForFences.html), [vkResetFences](https://registry.khronos.org/vulkan/specs/latest/man/html/vkResetFences.html), [vkAcquireNextImageKHR](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAcquireNextImageKHR.html), [vkCreateFramebuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFramebuffer.html), [vkBeginCommandBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBeginCommandBuffer.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdBeginRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBeginRenderPass.html), [vkCmdBindPipeline](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html), [vkCmdSetViewport](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetViewport.html), [vkCmdSetScissor](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdSetScissor.html), [vkCmdBindVertexBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html), [vkCmdBindIndexBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindIndexBuffer.html), [vkCmdBindDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html), [vkCmdDrawIndexed](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexed.html), [vkCmdEndRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdEndRenderPass.html), [vkEndCommandBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkEndCommandBuffer.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html), [vkQueuePresentKHR](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueuePresentKHR.html) |
+| **OrbitCamera (mouse input)** | new here | — |
 
 ## What's new
 
