@@ -31,23 +31,21 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write UBO from OrbitCamera<br/>clear color + depth 1.0<br/>bind · vkCmdDraw(vertex count)"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> DEPTH --> RP --> PIPE --> VB --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click RP "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click TEX "./09_tessellated_terrain.md" "Tutorial09"
-    click UBO "./09_tessellated_terrain.md" "Tutorial09"
-    click DESC "./09_tessellated_terrain.md" "Tutorial09"
-    click PIPE "./09_tessellated_terrain.md" "Tutorial09"
-    click DEPTH "./08_phong_sphere.md" "Tutorial08"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md);
-[Tutorial08](08_phong_sphere.md) (depth);
-[Tutorial09](09_tessellated_terrain.md) (texture tiling, uniforms,
-bindings, shaders).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| createRenderPass | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create(depth view) | [VulkanCommon](vulkancommon.md) |
+| loadRawTexture | [Tutorial09](09_tessellated_terrain.md) |
+| createUniformBuffer | [Tutorial09](09_tessellated_terrain.md) |
+| bindings: 0 UBO (vert + frag), 1 sampler (frag) | [Tutorial09](09_tessellated_terrain.md) |
+| shader.12 = Tutorial09's GLSL | [Tutorial09](09_tessellated_terrain.md) |
+| createDepthImage (D32_SFLOAT) | [Tutorial08](08_phong_sphere.md) |
 
 ## What's new
 

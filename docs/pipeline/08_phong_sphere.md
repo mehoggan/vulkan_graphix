@@ -31,19 +31,17 @@ flowchart TD
     DRAW(["<b>draw()</b> (changed)<br/>vkDeviceWaitIdle → rewrite UBO (rotating model)<br/>↩ Tutorial06 frame recording, plus:<br/>framebuffer gets the depth view · clear depth 1.0<br/>vkCmdBindIndexBuffer · vkCmdDrawIndexed"]):::frame
 
     BASE --> RR --> STG --> DEPTH --> UBO --> DSL --> POOL --> RP --> PLL --> PIPE --> VB --> IB --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RR "./04_vertex_attributes.md" "Tutorial04"
-    click STG "./06_descriptor_sets.md" "Tutorial06"
-    click POOL "./07_uniform_buffers.md" "Tutorial07"
-    click PLL "./06_descriptor_sets.md" "Tutorial06"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[Tutorial04](04_vertex_attributes.md) (rendering resources);
-[Tutorial06](06_descriptor_sets.md) (staging, pipeline layout, frame
-recording); [Tutorial07](07_uniform_buffers.md) (descriptor pool and
-update shape).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
+| createStagingBuffer | [Tutorial06](06_descriptor_sets.md) |
+| createDescriptorPool + allocateDescriptorSet | [Tutorial07](07_uniform_buffers.md) |
+| createPipelineLayout | [Tutorial06](06_descriptor_sets.md) |
 
 ## What's new
 

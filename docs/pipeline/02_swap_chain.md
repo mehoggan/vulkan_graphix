@@ -30,14 +30,15 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>wait fence · vkAcquireNextImageKHR<br/>vkQueueSubmit on the present queue,<br/>waiting at TRANSFER stage<br/>vkQueuePresentKHR"]):::frame
 
     LOAD --> INST --> ILEP --> SURF --> DEV --> DLEP --> Q --> SEM --> SC --> CB --> REC --> DRAW
-
-    click LOAD "./01_device_initialization.md" "Tutorial01"
-    click ILEP "./01_device_initialization.md" "Tutorial01"
-    click DLEP "./01_device_initialization.md" "Tutorial01"
 ```
 
-**Linked steps:** loading and instance-level entry points come from
-[Tutorial01](01_device_initialization.md).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| loadVulkanLibrary · loadExportedEntryPoints | [Tutorial01](01_device_initialization.md) |
+| loadInstanceLevelEntryPoints | [Tutorial01](01_device_initialization.md) |
+| loadDeviceLevelEntryPoints | [Tutorial01](01_device_initialization.md) |
 
 ## What's new
 

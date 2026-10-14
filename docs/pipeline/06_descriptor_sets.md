@@ -31,17 +31,16 @@ flowchart TD
     DRAW(["<b>draw() / prepareFrame</b> (changed)<br/>↩ Tutorial04's 3-frame loop, plus:<br/>barrier UNDEFINED → COLOR_ATTACHMENT before the pass<br/>vkCmdBindDescriptorSets<br/>barrier COLOR_ATTACHMENT → PRESENT_SRC after it"]):::frame
 
     BASE --> RR --> STG --> TEX --> DSL --> POOL --> UPD --> RP --> PLL --> PIPE --> VB --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RR "./04_vertex_attributes.md" "Tutorial04"
-    click STG "./05_staging_resources.md" "Tutorial05"
-    click VB "./05_staging_resources.md" "Tutorial05"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-rendering resources and the frame loop from
-[Tutorial04](04_vertex_attributes.md); staging and the device-local
-vertex buffer from [Tutorial05](05_staging_resources.md).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
+| createStagingBuffer | [Tutorial05](05_staging_resources.md) |
+| createVertexBuffer | [Tutorial05](05_staging_resources.md) |
 
 ## What's new
 

@@ -31,20 +31,20 @@ flowchart TD
     DRAW(["<b>draw()</b> (changed)<br/>rebuild quads: panel + GridLayout cells<br/>+ wrapped description text<br/>pass 1: bind font set · draw text/flat quads<br/>pass 2: bind icon set + offset · draw icons"]):::frame
 
     BASE --> RC --> FONT --> ICON --> UBO --> DESC --> RP --> PIPE --> VB --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click FONT "./15_text_and_button.md" "Tutorial15"
-    click UBO "./15_text_and_button.md" "Tutorial15"
-    click RP "./15_text_and_button.md" "Tutorial15"
-    click PIPE "./15_text_and_button.md" "Tutorial15"
-    click VB "./15_text_and_button.md" "Tutorial15"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); everything else drawn grey is
-[Tutorial15](15_text_and_button.md)'s.
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| BitmapFont atlas → createTexture | [Tutorial15](15_text_and_button.md) |
+| orthographic mat4 UBO | [Tutorial15](15_text_and_button.md) |
+| createRenderPass (color only) | [Tutorial15](15_text_and_button.md) |
+| shader.17 = Tutorial15's GLSL | [Tutorial15](15_text_and_button.md) |
+| createHostVisibleBuffer | [Tutorial15](15_text_and_button.md) |
 
 ## What's new
 

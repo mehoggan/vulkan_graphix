@@ -33,16 +33,15 @@ flowchart TD
     FL["<b>FrameLoop::create</b><br/>3 frames in flight: cmd buffer, semaphore, fence<br/>per swapchain image: framebuffer<br/>(+ depth view) + rendering-finished semaphore"]:::shared
 
     BASE --> INIT --> TEX --> UBO --> DESC --> DEPTH --> RP --> PL --> GP --> VB --> FL
-
-    click BASE "./tutorialbase.md" "TutorialBase"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md). The techniques each
-helper wraps were introduced in
-[Tutorial05](05_staging_resources.md) (staging),
-[Tutorial06](06_descriptor_sets.md) (textures, descriptors),
-[Tutorial07](07_uniform_buffers.md) (uniform binding), and
-[Tutorial08](08_phong_sphere.md) (depth, host-visible uniforms).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+
+Also builds on: [Tutorial05](05_staging_resources.md), [Tutorial06](06_descriptor_sets.md), [Tutorial07](07_uniform_buffers.md), [Tutorial08](08_phong_sphere.md).
 
 ## Per frame: `draw()` through `FrameLoop::draw()`
 

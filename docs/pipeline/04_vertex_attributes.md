@@ -24,13 +24,15 @@ flowchart TD
     DRAW(["<b>draw()</b> — next of 3 frames<br/>wait fence · acquire<br/>prepareFrame: create framebuffer for this image,<br/>record: barrier · begin pass · set viewport/scissor<br/>vkCmdBindVertexBuffers · vkCmdDraw(4)<br/>submit · present"]):::frame
 
     BASE --> RP --> PIPE --> VB --> RR --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md). The render pass and
-pipeline are Tutorial03's ([page](03_first_triangle.md)) with the changes
-above.
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+
+Also builds on: [page](03_first_triangle.md).
 
 ## What's new
 

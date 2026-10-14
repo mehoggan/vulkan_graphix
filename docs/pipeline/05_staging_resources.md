@@ -25,17 +25,17 @@ flowchart TD
     DRAW(["↩ Tutorial04<br/>draw() / prepareFrame"]):::reused
 
     BASE --> RR --> RP --> PIPE --> VB --> STG --> COPY --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RR "./04_vertex_attributes.md" "Tutorial04"
-    click RP "./04_vertex_attributes.md" "Tutorial04"
-    click PIPE "./04_vertex_attributes.md" "Tutorial04"
-    click DRAW "./04_vertex_attributes.md" "Tutorial04"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-rendering resources, render pass, pipeline, and the draw loop are
-[Tutorial04](04_vertex_attributes.md)'s.
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| createRenderingResources | [Tutorial04](04_vertex_attributes.md) |
+| createRenderPass | [Tutorial04](04_vertex_attributes.md) |
+| createPipeline | [Tutorial04](04_vertex_attributes.md) |
+| draw() / prepareFrame | [Tutorial04](04_vertex_attributes.md) |
 
 ## What's new
 

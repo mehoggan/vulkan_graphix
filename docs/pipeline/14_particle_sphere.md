@@ -28,19 +28,19 @@ flowchart TD
     DRAW(["<b>draw()</b><br/>write UBO from OrbitCamera<br/>bind VB + IB + set · vkCmdDrawIndexed"]):::frame
 
     BASE --> RC --> UBO --> DESC --> RP --> PIPE --> GEO --> FL --> DRAW
-
-    click BASE "./tutorialbase.md" "TutorialBase"
-    click RC "./vulkancommon.md" "VulkanCommon"
-    click RP "./vulkancommon.md" "VulkanCommon"
-    click FL "./vulkancommon.md" "VulkanCommon"
-    click UBO "./08_phong_sphere.md" "Tutorial08"
-    click DESC "./08_phong_sphere.md" "Tutorial08"
-    click GEO "./08_phong_sphere.md" "Tutorial08"
 ```
 
-**Linked steps:** [TutorialBase](tutorialbase.md);
-[VulkanCommon](vulkancommon.md); [Tutorial08](08_phong_sphere.md)
-(uniform, binding, vertex shader, sphere geometry).
+**Where the reused boxes come from:**
+
+| Box | Defined in |
+|---|---|
+| prepareVulkan() | [TutorialBase](tutorialbase.md) |
+| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
+| createRenderPass | [VulkanCommon](vulkancommon.md) |
+| FrameLoop::create | [VulkanCommon](vulkancommon.md) |
+| createUniformBuffer | [Tutorial08](08_phong_sphere.md) |
+| binding 0: UBO (vert + frag) | [Tutorial08](08_phong_sphere.md) |
+| Math::Sphere vertices + indices | [Tutorial08](08_phong_sphere.md) |
 
 ## What's new
 
