@@ -64,6 +64,22 @@ button), `move x y`, `key c`/`keyup c` (`space` and `esc` by name),
 `spec n`/`specup n` (a GLUT special key code, e.g. 1 for F1),
 `capture out.ppm`, or `quit`.
 
+### Continuous Integration
+
+`.github/workflows/ci.yml` builds everything and runs `make check` on every
+pull request to `main` and every push to `main`; its "Build and test" job
+must pass before a pull request can merge. GitHub's runners have no GPU, so
+the Vulkan tests run on Mesa's software driver inside a virtual display.
+To reproduce that locally without a GPU or desktop session:
+
+```sh
+sudo apt install -y xvfb xauth mesa-vulkan-drivers
+xvfb-run -a -s "-screen 0 1280x1024x24" make check
+```
+
+Without a `DISPLAY` the Vulkan tests skip themselves but still count as
+passed, so CI also fails if any test case reports `[  SKIPPED ]`.
+
 ### Code Coverage
 
 `tests/MathTest.cpp`/`tests/VertexTypesTest.cpp` exercise the header-only

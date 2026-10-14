@@ -1,0 +1,81 @@
+# Builds everything and runs `make check` on every pull request to main
+# and on every push to main. The "Build and test" job is a required status
+# check on main, so a pull request can't merge until it passes.
+#
+# GitHub's runners have no GPU, so the Vulkan integration and
+# fault-injection tests run on Mesa's software Vulkan driver (lavapipe)
+# inside a virtual X display (Xvfb). Without a DISPLAY those tests
+# GTEST_SKIP() themselves and Automake still counts them as PASS, so the
+# last step fails the job if any test case was skipped - otherwise CI
+# could go green while silently testing nothing that touches Vulkan.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            autoconf autoconf-archive automake libtool pkg-config g++ \
+            libvulkan-dev libx11-dev libxrandr-dev libglm-dev libgtest-dev \
+            libsdl1.2-dev libsdl-mixer1.2-dev fonts-dejavu-core \
+            xvfb xauth mesa-vulkan-drivers vulkan-validationlayers
+
+      - name: Configure
+        run: |
+          autoreconf -i
+          ./configure
+
+      - name: Build
+        run: make -j"$(nproc)"
+
+      - name: Run tests (software Vulkan in a virtual display)
+        run: |
+          xvfb-run -a -s "-screen 0 1280x1024x24" \
+            make -j"$(nproc)" check
+
+      - name: Fail if any test was skipped
+        run: |
+          skipped=$(grep -l '\[  SKIPPED \]' tests/*.log || true)
+          if [ -n "$skipped" ]; then
+            echo "::error::Tests were skipped, so CI did not exercise them:"
+            for log in $skipped; do
+              echo "--- $log"
+              grep '\[  SKIPPED \]' "$log"
+            done
+            exit 1
+          fi
+          echo "No skipped tests."
+
+      - name: Upload test logs
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-logs
+          path: |
+            config.log
+            tests/*.log
+            tests/*.trs
+          if-no-files-found: ignore
