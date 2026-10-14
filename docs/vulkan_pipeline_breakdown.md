@@ -25,9 +25,11 @@ flowchart LR
 
 The diagrams themselves aren't clickable. GitHub draws them in a frame on
 a separate domain, where links inside a diagram can't reach the repo's
-files, so every link is plain Markdown instead: the table under each
-diagram links each reused box to the page it comes from, and the
-[Pages](#pages) table below links every tutorial. Those links work the
+files, so every link is plain Markdown instead. Each box names its step
+and the Vulkan functions it calls; the table under each diagram repeats
+those with every function linked to its Khronos reference page, and links
+each reused box to the page it comes from. The [Pages](#pages) table
+below links every tutorial. Those links work the
 same on GitHub and in a local clone.
 
 ## How the tutorials build on each other

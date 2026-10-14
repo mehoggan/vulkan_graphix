@@ -18,35 +18,38 @@ flowchart TD
     classDef shared fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef frame fill:#f3e5f5,stroke:#6a1b9a,color:#311b92
 
-    BASE["↩ TutorialBase<br/>prepareVulkan()"]:::reused
-    RC["↩ VulkanCommon<br/>ResourceContext::initialize"]:::shared
-    TEX["<b>Three textures</b><br/>Rocky.raw, REPEAT (↩ Tutorial12)<br/>TestImage.raw (↩ Tutorial16)<br/>SkyBox.jpg (↩ Tutorial11)"]:::reused
-    UBO["<b>Two uniform buffers</b><br/>terrain: matrices + light (↩ Tutorial12)<br/>object: view + projection (↩ Tutorial16)"]:::changed
-    DESC["<b>Two set layouts, pool of 3 sets</b><br/>terrain set ↩ Tutorial12's bindings<br/>tank set + skybox set: object layout,<br/>same UBO, different texture"]:::changed
-    DEPTH["↩ Tutorial12<br/>createDepthImage · render pass color + depth"]:::reused
-    PLL["<b>Two pipeline layouts</b><br/>terrain: none (↩ Tutorial12)<br/>object: push constant mat4 model (↩ Tutorial16)"]:::reused
-    PTER["↩ Tutorial12<br/>terrain pipeline: shader.21_terrain = Tutorial12's GLSL<br/>depth test + write"]:::reused
-    POBJ["↩ Tutorial16<br/>object pipeline: shader.21_object = Tutorial16's GLSL<br/>depth test + write"]:::reused
-    PSKY["<b>skybox pipeline</b><br/>object description again, depth <i>off</i><br/>(ALWAYS, no write)"]:::new
-    GEO["<b>Geometry</b><br/>terrain VB: TerrainGenerator (↩ Tutorial12)<br/>skybox VB + IB: SkyboxGeometry (↩ Tutorial11)<br/>tank parts × 3 (↩ Tutorial16)"]:::reused
-    FL["↩ VulkanCommon<br/>FrameLoop::create(depth view)"]:::shared
-    DRAW(["<b>draw()</b><br/>write both UBOs from OrbitCamera<br/>1 skybox pipeline: push model · vkCmdDrawIndexed<br/>2 terrain pipeline: vkCmdDraw<br/>3 object pipeline: per part push model<br/>(placed via TerrainGenerator::heightAt) · vkCmdDraw"]):::frame
+    BASE["↩ TutorialBase<br/><b>prepareVulkan()</b>"]:::reused
+    RC["↩ VulkanCommon<br/><b>ResourceContext::initialize</b>"]:::shared
+    TEX["<b>three textures</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView<br/>vkCreateSampler  ·  vkCmdPipelineBarrier<br/>vkCmdCopyBufferToImage  ·  vkQueueSubmit"]:::reused
+    UBO["<b>createUniformBuffer × 2</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkUnmapMemory"]:::changed
+    DESC["<b>Descriptors (2 layouts, 3 sets)</b><br/>vkCreateDescriptorSetLayout  ·  vkCreateDescriptorPool<br/>vkAllocateDescriptorSets  ·  vkUpdateDescriptorSets"]:::changed
+    DEPTH["↩ Tutorial12<br/><b>createDepthImage · createRenderPass</b><br/>vkCreateImage  ·  vkAllocateMemory<br/>vkBindImageMemory  ·  vkCreateImageView<br/>vkCreateRenderPass"]:::reused
+    PLL["<b>createPipelineLayout × 2</b><br/>vkCreatePipelineLayout"]:::reused
+    PTER["↩ Tutorial12<br/><b>terrain pipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::reused
+    POBJ["↩ Tutorial16<br/><b>object pipeline</b><br/>vkCreateShaderModule  ·  vkCreateGraphicsPipelines"]:::reused
+    PSKY["<b>skybox pipeline</b><br/>vkCreateGraphicsPipelines"]:::new
+    GEO["<b>terrain, skybox, and tank buffers</b><br/>vkCreateBuffer  ·  vkAllocateMemory<br/>vkBindBufferMemory  ·  vkMapMemory<br/>vkCmdCopyBuffer  ·  vkQueueSubmit"]:::reused
+    FL["↩ VulkanCommon<br/><b>FrameLoop::create(depth view)</b><br/>vkCreateCommandPool  ·  vkAllocateCommandBuffers<br/>vkCreateSemaphore  ·  vkCreateFence<br/>vkCreateFramebuffer"]:::shared
+    DRAW(["<b>draw() → FrameLoop::draw</b><br/>vkDeviceWaitIdle  ·  vkMapMemory<br/>vkCmdBindPipeline  ·  vkCmdBindDescriptorSets<br/>vkCmdBindVertexBuffers  ·  vkCmdBindIndexBuffer<br/>vkCmdPushConstants  ·  vkCmdDrawIndexed<br/>vkCmdDraw"]):::frame
 
     BASE --> RC --> TEX --> UBO --> DESC --> DEPTH --> PLL --> PTER --> POBJ --> PSKY --> GEO --> FL --> DRAW
 ```
 
-**Where the reused boxes come from:**
-
-| Box | Defined in |
-|---|---|
-| prepareVulkan() | [TutorialBase](tutorialbase.md) |
-| ResourceContext::initialize | [VulkanCommon](vulkancommon.md) |
-| FrameLoop::create(depth view) | [VulkanCommon](vulkancommon.md) |
-| createDepthImage · render pass color + depth | [Tutorial12](12_generated_terrain.md) |
-| terrain pipeline: shader.21_terrain = Tutorial12's GLSL | [Tutorial12](12_generated_terrain.md) |
-| object pipeline: shader.21_object = Tutorial16's GLSL | [Tutorial16](16_tank.md) |
-| Three textures | [Tutorial11](11_skybox.md) |
-| Geometry | [Tutorial12](12_generated_terrain.md) |
+| Step | From | Vulkan calls |
+|---|---|---|
+| **prepareVulkan()** | [TutorialBase](tutorialbase.md) | — |
+| **ResourceContext::initialize** | [VulkanCommon](vulkancommon.md) | — |
+| **three textures** | [Tutorial11](11_skybox.md) | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html), [vkCreateSampler](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSampler.html), [vkCmdPipelineBarrier](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPipelineBarrier.html), [vkCmdCopyBufferToImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBufferToImage.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **createUniformBuffer × 2** | changed here | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkUnmapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUnmapMemory.html) |
+| **Descriptors (2 layouts, 3 sets)** | changed here | [vkCreateDescriptorSetLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorSetLayout.html), [vkCreateDescriptorPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateDescriptorPool.html), [vkAllocateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateDescriptorSets.html), [vkUpdateDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkUpdateDescriptorSets.html) |
+| **createDepthImage · createRenderPass** | [Tutorial12](12_generated_terrain.md) | [vkCreateImage](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImage.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindImageMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindImageMemory.html), [vkCreateImageView](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateImageView.html), [vkCreateRenderPass](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateRenderPass.html) |
+| **createPipelineLayout × 2** | reused | [vkCreatePipelineLayout](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreatePipelineLayout.html) |
+| **terrain pipeline** | [Tutorial12](12_generated_terrain.md) | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **object pipeline** | [Tutorial16](16_tank.md) | [vkCreateShaderModule](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateShaderModule.html), [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **skybox pipeline** | new here | [vkCreateGraphicsPipelines](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateGraphicsPipelines.html) |
+| **terrain, skybox, and tank buffers** | [Tutorial12](12_generated_terrain.md) | [vkCreateBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateBuffer.html), [vkAllocateMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateMemory.html), [vkBindBufferMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkBindBufferMemory.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdCopyBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdCopyBuffer.html), [vkQueueSubmit](https://registry.khronos.org/vulkan/specs/latest/man/html/vkQueueSubmit.html) |
+| **FrameLoop::create(depth view)** | [VulkanCommon](vulkancommon.md) | [vkCreateCommandPool](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateCommandPool.html), [vkAllocateCommandBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkAllocateCommandBuffers.html), [vkCreateSemaphore](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateSemaphore.html), [vkCreateFence](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFence.html), [vkCreateFramebuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCreateFramebuffer.html) |
+| **draw() → FrameLoop::draw** | this tutorial | [vkDeviceWaitIdle](https://registry.khronos.org/vulkan/specs/latest/man/html/vkDeviceWaitIdle.html), [vkMapMemory](https://registry.khronos.org/vulkan/specs/latest/man/html/vkMapMemory.html), [vkCmdBindPipeline](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindPipeline.html), [vkCmdBindDescriptorSets](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindDescriptorSets.html), [vkCmdBindVertexBuffers](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindVertexBuffers.html), [vkCmdBindIndexBuffer](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdBindIndexBuffer.html), [vkCmdPushConstants](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdPushConstants.html), [vkCmdDrawIndexed](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDrawIndexed.html), [vkCmdDraw](https://registry.khronos.org/vulkan/specs/latest/man/html/vkCmdDraw.html) |
 
 ## What's new
 
